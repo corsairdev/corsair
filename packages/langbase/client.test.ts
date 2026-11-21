@@ -1,7 +1,14 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
-import { LANGBASE_API_BASE, makeLangbaseRequest } from './client';
+import {
+	LANGBASE_API_BASE,
+	LANGBASE_RATE_LIMIT_CONFIG,
+	makeLangbaseRequest,
+} from './client';
 import { errorHandlers } from './error-handlers';
+
+const actualRequest =
+	jest.requireActual<typeof import('corsair/http')>('corsair/http').request;
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
@@ -9,6 +16,7 @@ jest.mock('corsair/http', () => {
 });
 
 const mockRequest = jest.mocked(request);
+const originalFetch = globalThis.fetch;
 
 function apiError(status: number, message: string, retryAfter?: number) {
 	return new ApiError(
@@ -27,6 +35,10 @@ function apiError(status: number, message: string, retryAfter?: number) {
 
 beforeEach(() => {
 	mockRequest.mockReset();
+});
+
+afterEach(() => {
+	globalThis.fetch = originalFetch;
 });
 
 describe('makeLangbaseRequest', () => {
@@ -63,6 +75,9 @@ describe('makeLangbaseRequest', () => {
 				body: { messages: [{ role: 'user', content: 'test' }] },
 			}),
 		);
+		expect(mockRequest.mock.calls[0]?.[2]).toEqual({
+			rateLimitConfig: LANGBASE_RATE_LIMIT_CONFIG,
+		});
 	});
 
 	it('throws AuthMissingError when key is explicitly empty without sending network request', async () => {
@@ -86,10 +101,37 @@ describe('makeLangbaseRequest', () => {
 		).rejects.toBe(rateLimited);
 
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(rateLimited)).toBe(true);
-		await expect(
-			errorHandlers.RATE_LIMIT_ERROR.handler(rateLimited),
-		).resolves.toEqual({
+		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
 			maxRetries: 0,
 		});
+	});
+
+	it('uses real transport to preserve Retry-After without a second retry loop', async () => {
+		const fetchMock = jest.fn(
+			async (_input: string | URL | Request, _init?: RequestInit) =>
+				new Response(JSON.stringify({ error: 'rate limited' }), {
+					status: 429,
+					headers: {
+						'Content-Type': 'application/json',
+						'Retry-After': '4',
+					},
+				}),
+		);
+		globalThis.fetch = fetchMock;
+
+		await expect(
+			actualRequest(
+				{
+					BASE: LANGBASE_API_BASE,
+					VERSION: '1.0.0',
+					WITH_CREDENTIALS: false,
+					CREDENTIALS: 'omit',
+					HEADERS: { Accept: 'application/json' },
+				},
+				{ method: 'GET', url: '/pipes' },
+				{ rateLimitConfig: LANGBASE_RATE_LIMIT_CONFIG },
+			),
+		).rejects.toMatchObject({ status: 429, retryAfter: 4_000 });
+		expect(fetchMock).toHaveBeenCalledTimes(1);
 	});
 });

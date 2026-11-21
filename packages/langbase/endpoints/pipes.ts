@@ -3,8 +3,6 @@ import type { LangbasePluginContext } from '../index';
 import type {
 	CreatePipeInput,
 	CreatePipeOutput,
-	DeletePipeInput,
-	DeletePipeOutput,
 	GetPipeInput,
 	GetPipeOutput,
 	ListPipesInput,
@@ -16,7 +14,6 @@ import type {
 } from './types';
 import {
 	CreatePipeOutputSchema,
-	DeletePipeOutputSchema,
 	GetPipeOutputSchema,
 	LangbaseEndpointInputSchemas,
 	ListPipesOutputSchema,
@@ -30,11 +27,10 @@ export const pipes = {
 		input: RunPipeInput,
 	): Promise<RunPipeOutput> => {
 		const parsedInput = LangbaseEndpointInputSchemas['pipes.run'].parse(input);
-		// unknown because response envelope varies between text completion and function call outputs.
+		// `unknown` because the provider response is untrusted until parsed below.
 		const raw = await makeLangbaseRequest<unknown>('/pipes/run', ctx.key, {
 			method: 'POST',
-			// unknown because request body is a dynamic JSON payload.
-			body: parsedInput as Record<string, unknown>,
+			body: parsedInput,
 		});
 		return RunPipeOutputSchema.parse(raw);
 	},
@@ -44,7 +40,7 @@ export const pipes = {
 		input: ListPipesInput,
 	): Promise<ListPipesOutput> => {
 		LangbaseEndpointInputSchemas['pipes.list'].parse(input);
-		// unknown because pipe records contain model configs and metadata.
+		// `unknown` because the provider response is untrusted until parsed below.
 		const raw = await makeLangbaseRequest<unknown>('/pipes', ctx.key, {
 			method: 'GET',
 		});
@@ -56,12 +52,11 @@ export const pipes = {
 		input: GetPipeInput,
 	): Promise<GetPipeOutput> => {
 		const parsedInput = LangbaseEndpointInputSchemas['pipes.get'].parse(input);
-		// unknown because pipe definition contains provider-specific model configs.
-		const raw = await makeLangbaseRequest<unknown>(
-			`/pipes/${encodeURIComponent(parsedInput.name)}`,
-			ctx.key,
-			{ method: 'GET' },
-		);
+		const path = `/pipes/${encodeURIComponent(parsedInput.ownerLogin)}/${encodeURIComponent(parsedInput.pipeName)}`;
+		// `unknown` because the provider response is untrusted until parsed below.
+		const raw = await makeLangbaseRequest<unknown>(path, ctx.key, {
+			method: 'GET',
+		});
 		return GetPipeOutputSchema.parse(raw);
 	},
 
@@ -71,11 +66,10 @@ export const pipes = {
 	): Promise<CreatePipeOutput> => {
 		const parsedInput =
 			LangbaseEndpointInputSchemas['pipes.create'].parse(input);
-		// unknown because created pipe includes deployment endpoints and keys.
+		// `unknown` because the provider response is untrusted until parsed below.
 		const raw = await makeLangbaseRequest<unknown>('/pipes', ctx.key, {
 			method: 'POST',
-			// unknown because request body is a dynamic JSON payload.
-			body: parsedInput as Record<string, unknown>,
+			body: parsedInput,
 		});
 		return CreatePipeOutputSchema.parse(raw);
 	},
@@ -86,32 +80,12 @@ export const pipes = {
 	): Promise<UpdatePipeOutput> => {
 		const parsedInput =
 			LangbaseEndpointInputSchemas['pipes.update'].parse(input);
-		const { name, ...body } = parsedInput;
-		// unknown because updated pipe includes updated configuration.
-		const raw = await makeLangbaseRequest<unknown>(
-			`/pipes/${encodeURIComponent(name)}`,
-			ctx.key,
-			{
-				method: 'PATCH',
-				// unknown because request body is a dynamic JSON payload.
-				body: body as Record<string, unknown>,
-			},
-		);
+		const path = `/pipes/${encodeURIComponent(parsedInput.name)}`;
+		// `unknown` because the provider response is untrusted until parsed below.
+		const raw = await makeLangbaseRequest<unknown>(path, ctx.key, {
+			method: 'POST',
+			body: parsedInput,
+		});
 		return UpdatePipeOutputSchema.parse(raw);
-	},
-
-	delete: async (
-		ctx: LangbasePluginContext,
-		input: DeletePipeInput,
-	): Promise<DeletePipeOutput> => {
-		const parsedInput =
-			LangbaseEndpointInputSchemas['pipes.delete'].parse(input);
-		// unknown because delete response contains confirmation status.
-		const raw = await makeLangbaseRequest<unknown>(
-			`/pipes/${encodeURIComponent(parsedInput.name)}`,
-			ctx.key,
-			{ method: 'DELETE' },
-		);
-		return DeletePipeOutputSchema.parse(raw);
 	},
 };

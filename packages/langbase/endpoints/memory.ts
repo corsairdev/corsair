@@ -5,17 +5,17 @@ import type {
 	CreateMemoryOutput,
 	DeleteMemoryInput,
 	DeleteMemoryOutput,
-	GetMemoryInput,
-	GetMemoryOutput,
 	ListMemoryInput,
 	ListMemoryOutput,
+	RetrieveMemoryInput,
+	RetrieveMemoryOutput,
 } from './types';
 import {
 	CreateMemoryOutputSchema,
 	DeleteMemoryOutputSchema,
-	GetMemoryOutputSchema,
 	LangbaseEndpointInputSchemas,
 	ListMemoryOutputSchema,
+	RetrieveMemoryOutputSchema,
 } from './types';
 
 export const memory = {
@@ -24,25 +24,11 @@ export const memory = {
 		input: ListMemoryInput,
 	): Promise<ListMemoryOutput> => {
 		LangbaseEndpointInputSchemas['memory.list'].parse(input);
-		// unknown because memory sets contain indexing state and metadata.
+		// `unknown` because the provider response is untrusted until parsed below.
 		const raw = await makeLangbaseRequest<unknown>('/memory', ctx.key, {
 			method: 'GET',
 		});
 		return ListMemoryOutputSchema.parse(raw);
-	},
-
-	get: async (
-		ctx: LangbasePluginContext,
-		input: GetMemoryInput,
-	): Promise<GetMemoryOutput> => {
-		const parsedInput = LangbaseEndpointInputSchemas['memory.get'].parse(input);
-		// unknown because memory details include vector dimension and document stats.
-		const raw = await makeLangbaseRequest<unknown>(
-			`/memory/${encodeURIComponent(parsedInput.name)}`,
-			ctx.key,
-			{ method: 'GET' },
-		);
-		return GetMemoryOutputSchema.parse(raw);
 	},
 
 	create: async (
@@ -51,11 +37,10 @@ export const memory = {
 	): Promise<CreateMemoryOutput> => {
 		const parsedInput =
 			LangbaseEndpointInputSchemas['memory.create'].parse(input);
-		// unknown because created memory contains managed index metadata.
+		// `unknown` because the provider response is untrusted until parsed below.
 		const raw = await makeLangbaseRequest<unknown>('/memory', ctx.key, {
 			method: 'POST',
-			// unknown because request body is a dynamic JSON payload.
-			body: parsedInput as Record<string, unknown>,
+			body: parsedInput,
 		});
 		return CreateMemoryOutputSchema.parse(raw);
 	},
@@ -66,12 +51,29 @@ export const memory = {
 	): Promise<DeleteMemoryOutput> => {
 		const parsedInput =
 			LangbaseEndpointInputSchemas['memory.delete'].parse(input);
-		// unknown because deleted memory response contains status confirmation.
-		const raw = await makeLangbaseRequest<unknown>(
-			`/memory/${encodeURIComponent(parsedInput.name)}`,
-			ctx.key,
-			{ method: 'DELETE' },
-		);
+		const path = `/memory/${encodeURIComponent(parsedInput.name)}`;
+		// `unknown` because the provider response is untrusted until parsed below.
+		const raw = await makeLangbaseRequest<unknown>(path, ctx.key, {
+			method: 'DELETE',
+		});
 		return DeleteMemoryOutputSchema.parse(raw);
+	},
+
+	retrieve: async (
+		ctx: LangbasePluginContext,
+		input: RetrieveMemoryInput,
+	): Promise<RetrieveMemoryOutput> => {
+		const parsedInput =
+			LangbaseEndpointInputSchemas['memory.retrieve'].parse(input);
+		// `unknown` because the provider response is untrusted until parsed below.
+		const raw = await makeLangbaseRequest<unknown>(
+			'/memory/retrieve',
+			ctx.key,
+			{
+				method: 'POST',
+				body: parsedInput,
+			},
+		);
+		return RetrieveMemoryOutputSchema.parse(raw);
 	},
 };

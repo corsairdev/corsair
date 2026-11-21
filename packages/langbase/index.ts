@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { memory, pipes, tools } from './endpoints';
+import { documents, memory, pipes, threads } from './endpoints';
 import type {
 	LangbaseEndpointInputs,
 	LangbaseEndpointOutputs,
@@ -55,17 +55,7 @@ type LangbaseEndpoint<K extends keyof LangbaseEndpointOutputs> =
 	>;
 
 export type LangbaseEndpoints = {
-	'pipes.run': LangbaseEndpoint<'pipes.run'>;
-	'pipes.list': LangbaseEndpoint<'pipes.list'>;
-	'pipes.get': LangbaseEndpoint<'pipes.get'>;
-	'pipes.create': LangbaseEndpoint<'pipes.create'>;
-	'pipes.update': LangbaseEndpoint<'pipes.update'>;
-	'pipes.delete': LangbaseEndpoint<'pipes.delete'>;
-	'memory.list': LangbaseEndpoint<'memory.list'>;
-	'memory.get': LangbaseEndpoint<'memory.get'>;
-	'memory.create': LangbaseEndpoint<'memory.create'>;
-	'memory.delete': LangbaseEndpoint<'memory.delete'>;
-	'tools.webSearch': LangbaseEndpoint<'tools.webSearch'>;
+	[K in keyof LangbaseEndpointOutputs]: LangbaseEndpoint<K>;
 };
 
 const langbaseEndpointsNested = {
@@ -75,16 +65,26 @@ const langbaseEndpointsNested = {
 		get: pipes.get,
 		create: pipes.create,
 		update: pipes.update,
-		delete: pipes.delete,
 	},
 	memory: {
 		list: memory.list,
-		get: memory.get,
 		create: memory.create,
 		delete: memory.delete,
+		retrieve: memory.retrieve,
 	},
-	tools: {
-		webSearch: tools.webSearch,
+	documents: {
+		list: documents.list,
+		upload: documents.upload,
+		delete: documents.delete,
+		retryEmbeddings: documents.retryEmbeddings,
+	},
+	threads: {
+		create: threads.create,
+		get: threads.get,
+		update: threads.update,
+		delete: threads.delete,
+		appendMessages: threads.appendMessages,
+		listMessages: threads.listMessages,
 	},
 } as const;
 
@@ -109,17 +109,9 @@ export const langbaseEndpointSchemas = {
 		input: LangbaseEndpointInputSchemas['pipes.update'],
 		output: LangbaseEndpointOutputSchemas['pipes.update'],
 	},
-	'pipes.delete': {
-		input: LangbaseEndpointInputSchemas['pipes.delete'],
-		output: LangbaseEndpointOutputSchemas['pipes.delete'],
-	},
 	'memory.list': {
 		input: LangbaseEndpointInputSchemas['memory.list'],
 		output: LangbaseEndpointOutputSchemas['memory.list'],
-	},
-	'memory.get': {
-		input: LangbaseEndpointInputSchemas['memory.get'],
-		output: LangbaseEndpointOutputSchemas['memory.get'],
 	},
 	'memory.create': {
 		input: LangbaseEndpointInputSchemas['memory.create'],
@@ -129,9 +121,49 @@ export const langbaseEndpointSchemas = {
 		input: LangbaseEndpointInputSchemas['memory.delete'],
 		output: LangbaseEndpointOutputSchemas['memory.delete'],
 	},
-	'tools.webSearch': {
-		input: LangbaseEndpointInputSchemas['tools.webSearch'],
-		output: LangbaseEndpointOutputSchemas['tools.webSearch'],
+	'memory.retrieve': {
+		input: LangbaseEndpointInputSchemas['memory.retrieve'],
+		output: LangbaseEndpointOutputSchemas['memory.retrieve'],
+	},
+	'documents.list': {
+		input: LangbaseEndpointInputSchemas['documents.list'],
+		output: LangbaseEndpointOutputSchemas['documents.list'],
+	},
+	'documents.upload': {
+		input: LangbaseEndpointInputSchemas['documents.upload'],
+		output: LangbaseEndpointOutputSchemas['documents.upload'],
+	},
+	'documents.delete': {
+		input: LangbaseEndpointInputSchemas['documents.delete'],
+		output: LangbaseEndpointOutputSchemas['documents.delete'],
+	},
+	'documents.retryEmbeddings': {
+		input: LangbaseEndpointInputSchemas['documents.retryEmbeddings'],
+		output: LangbaseEndpointOutputSchemas['documents.retryEmbeddings'],
+	},
+	'threads.create': {
+		input: LangbaseEndpointInputSchemas['threads.create'],
+		output: LangbaseEndpointOutputSchemas['threads.create'],
+	},
+	'threads.get': {
+		input: LangbaseEndpointInputSchemas['threads.get'],
+		output: LangbaseEndpointOutputSchemas['threads.get'],
+	},
+	'threads.update': {
+		input: LangbaseEndpointInputSchemas['threads.update'],
+		output: LangbaseEndpointOutputSchemas['threads.update'],
+	},
+	'threads.delete': {
+		input: LangbaseEndpointInputSchemas['threads.delete'],
+		output: LangbaseEndpointOutputSchemas['threads.delete'],
+	},
+	'threads.appendMessages': {
+		input: LangbaseEndpointInputSchemas['threads.appendMessages'],
+		output: LangbaseEndpointOutputSchemas['threads.appendMessages'],
+	},
+	'threads.listMessages': {
+		input: LangbaseEndpointInputSchemas['threads.listMessages'],
+		output: LangbaseEndpointOutputSchemas['threads.listMessages'],
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof langbaseEndpointsNested
@@ -141,48 +173,80 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const langbaseEndpointMeta = {
 	'pipes.run': {
-		riskLevel: 'write',
-		description: 'Execute an AI agent pipe and return generation completion',
+		riskLevel: 'destructive',
+		description: 'Run an AI pipe, which can consume Langbase usage credits',
 	},
 	'pipes.list': {
 		riskLevel: 'read',
-		description: 'Retrieve all configured pipes in the account',
+		description: 'List the configured pipes in the Langbase account',
 	},
 	'pipes.get': {
 		riskLevel: 'read',
-		description: 'Retrieve a specific pipe definition by name',
+		description: 'Retrieve a pipe by owner login and pipe name',
 	},
 	'pipes.create': {
 		riskLevel: 'write',
-		description: 'Create a new AI agent pipe',
+		description: 'Create a pipe with the supplied Langbase configuration',
 	},
 	'pipes.update': {
 		riskLevel: 'write',
-		description: 'Update an existing pipe configuration',
-	},
-	'pipes.delete': {
-		riskLevel: 'destructive',
-		description: 'Delete a pipe definition',
+		description: 'Update a pipe configuration by name',
 	},
 	'memory.list': {
 		riskLevel: 'read',
-		description: 'Retrieve all managed semantic memory sets',
-	},
-	'memory.get': {
-		riskLevel: 'read',
-		description: 'Retrieve a specific semantic memory set by name',
+		description: 'List semantic memories in the Langbase account',
 	},
 	'memory.create': {
 		riskLevel: 'write',
-		description: 'Create a new managed semantic memory set',
+		description: 'Create a semantic memory with embedding settings',
 	},
 	'memory.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a semantic memory set',
+		description: 'Delete a semantic memory and its stored documents',
 	},
-	'tools.webSearch': {
+	'memory.retrieve': {
 		riskLevel: 'read',
-		description: 'Perform web searches via Langbase Tools API',
+		description: 'Retrieve relevant text chunks from one or more memories',
+	},
+	'documents.list': {
+		riskLevel: 'read',
+		description: 'List documents and indexing status in a memory',
+	},
+	'documents.upload': {
+		riskLevel: 'destructive',
+		description: 'Upload a document and start memory indexing',
+	},
+	'documents.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a document from a Langbase memory',
+	},
+	'documents.retryEmbeddings': {
+		riskLevel: 'destructive',
+		description: 'Retry generating a document embedding',
+	},
+	'threads.create': {
+		riskLevel: 'destructive',
+		description: 'Create a conversation thread with optional messages',
+	},
+	'threads.get': {
+		riskLevel: 'read',
+		description: 'Retrieve thread metadata by thread ID',
+	},
+	'threads.update': {
+		riskLevel: 'write',
+		description: 'Update metadata on an existing conversation thread',
+	},
+	'threads.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a conversation thread and its history',
+	},
+	'threads.appendMessages': {
+		riskLevel: 'destructive',
+		description: 'Append messages to an existing conversation thread',
+	},
+	'threads.listMessages': {
+		riskLevel: 'read',
+		description: 'Retrieve the chronological messages in a thread',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof langbaseEndpointsNested>;
 
@@ -238,28 +302,48 @@ export function langbase<const T extends LangbasePluginOptions>(
 }
 
 export type {
+	AppendThreadMessagesInput,
+	AppendThreadMessagesOutput,
 	CreateMemoryInput,
 	CreateMemoryOutput,
 	CreatePipeInput,
 	CreatePipeOutput,
+	CreateThreadInput,
+	CreateThreadOutput,
+	DeleteDocumentInput,
+	DeleteDocumentOutput,
 	DeleteMemoryInput,
 	DeleteMemoryOutput,
-	DeletePipeInput,
-	DeletePipeOutput,
-	GetMemoryInput,
-	GetMemoryOutput,
+	DeleteThreadInput,
+	DeleteThreadOutput,
 	GetPipeInput,
 	GetPipeOutput,
+	GetThreadInput,
+	GetThreadOutput,
 	LangbaseEndpointInputs,
 	LangbaseEndpointOutputs,
+	ListDocumentsInput,
+	ListDocumentsOutput,
 	ListMemoryInput,
 	ListMemoryOutput,
 	ListPipesInput,
 	ListPipesOutput,
+	ListThreadMessagesInput,
+	ListThreadMessagesOutput,
+	MemoryFilter,
+	MemoryRecord,
+	Pipe,
+	RetrieveMemoryInput,
+	RetrieveMemoryOutput,
+	RetryDocumentEmbeddingsInput,
+	RetryDocumentEmbeddingsOutput,
 	RunPipeInput,
 	RunPipeOutput,
+	Thread,
 	UpdatePipeInput,
 	UpdatePipeOutput,
-	WebSearchInput,
-	WebSearchOutput,
+	UpdateThreadInput,
+	UpdateThreadOutput,
+	UploadDocumentInput,
+	UploadDocumentOutput,
 } from './endpoints/types';

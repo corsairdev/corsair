@@ -16,6 +16,6 @@ describeLive('Langbase live API (env-gated)', () => {
 			method: 'GET',
 		});
 		const parsed = ListPipesOutputSchema.parse(res);
-		expect(Array.isArray(parsed.pipes)).toBe(true);
+		expect(Array.isArray(parsed)).toBe(true);
 	});
 });

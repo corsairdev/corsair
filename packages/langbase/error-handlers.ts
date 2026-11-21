@@ -1,17 +1,14 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { LangbaseAPIError } from './client';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
-			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('too many requests') ||
-				msg.includes('rate limit') ||
-				msg.includes('rate_limit') ||
-				msg.includes('429')
-			);
+			if (error instanceof ApiError || error instanceof LangbaseAPIError) {
+				return error.status === 429;
+			}
+			return false;
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
@@ -59,7 +56,7 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
-		match: () => true,
+		match: (_error: Error) => true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;

@@ -1,4 +1,5 @@
 import { ApiError } from 'corsair/http';
+import { LangbaseAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
 describe('Langbase error handlers', () => {
@@ -21,6 +22,22 @@ describe('Langbase error handlers', () => {
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(apiError)).toBe(true);
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler();
 		expect(result.maxRetries).toBe(0);
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(
+				new Error('HTTP 429 in unrelated text'),
+			),
+		).toBe(false);
+
+		const uploadError = new LangbaseAPIError(
+			'Langbase document upload failed (HTTP 429)',
+			429,
+			undefined,
+			4_000,
+		);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(uploadError)).toBe(true);
+		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
 	});
 
 	it('matches AUTH_ERROR for 401 and 403', async () => {

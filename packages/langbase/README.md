@@ -1,6 +1,6 @@
 # @corsair-dev/langbase
 
-Langbase plugin for Corsair.
+Langbase plugin for Corsair. Manage AI pipes, semantic memories and documents, retrieve context, and manage conversation threads.
 
 ## Install
 
@@ -8,33 +8,58 @@ Langbase plugin for Corsair.
 pnpm add @corsair-dev/langbase
 ```
 
-## Endpoints
+## Authentication
 
-| Operation | Operation ID | Risk | Description |
-|-----------|--------------|------|-------------|
-| `pipes.run` | `langbase.api.pipes.run` | `write` | Execute an AI agent pipe and return generation completion |
-| `pipes.list` | `langbase.api.pipes.list` | `read` | Retrieve all configured pipes in the account |
-| `pipes.get` | `langbase.api.pipes.get` | `read` | Retrieve a specific pipe definition by name |
-| `pipes.create` | `langbase.api.pipes.create` | `write` | Create a new AI agent pipe |
-| `pipes.update` | `langbase.api.pipes.update` | `write` | Update an existing pipe configuration |
-| `pipes.delete` | `langbase.api.pipes.delete` | `destructive` | Delete a pipe definition |
-| `memory.list` | `langbase.api.memory.list` | `read` | Retrieve all managed semantic memory sets |
-| `memory.get` | `langbase.api.memory.get` | `read` | Retrieve a specific semantic memory set by name |
-| `memory.create` | `langbase.api.memory.create` | `write` | Create a new managed semantic memory set |
-| `memory.delete` | `langbase.api.memory.delete` | `destructive` | Delete a semantic memory set |
-| `tools.webSearch` | `langbase.api.tools.webSearch` | `read` | Perform web searches via Langbase Tools API |
+Configure a Langbase User or Organization API key with Corsair's `api_key` auth. Requests use `Authorization: Bearer <key>`. See the [Langbase API reference](https://langbase.com/docs/api-reference) and [API key guide](https://langbase.com/docs/api-reference/api-keys).
 
-## Auth
+## Operations
 
-Auth: API key (Bearer token). Corsair prompts your tenant for credentials on first use.
+The plugin exposes 19 operations:
 
-## Webhooks
+| Operation | Method and route | Risk | Official reference |
+|---|---|---|---|
+| `pipes.run` | `POST /v1/pipes/run` | destructive | [Run pipe](https://langbase.com/docs/api-reference/pipe/run) |
+| `pipes.list` | `GET /v1/pipes` | read | [List pipes](https://langbase.com/docs/api-reference/pipe/list) |
+| `pipes.get` | `GET /v1/pipes/{ownerLogin}/{pipeName}` | read | [Pipe API](https://langbase.com/docs/api-reference/pipe) |
+| `pipes.create` | `POST /v1/pipes` | write | [Create pipe](https://langbase.com/docs/api-reference/pipe/create) |
+| `pipes.update` | `POST /v1/pipes/{pipeName}` | write | [Update pipe](https://langbase.com/docs/api-reference/pipe/update) |
+| `memory.list` | `GET /v1/memory` | read | [List memories](https://langbase.com/docs/api-reference/memory/list) |
+| `memory.create` | `POST /v1/memory` | write | [Create memory](https://langbase.com/docs/api-reference/memory/create) |
+| `memory.delete` | `DELETE /v1/memory/{memoryName}` | destructive | [Delete memory](https://langbase.com/docs/api-reference/memory/delete) |
+| `memory.retrieve` | `POST /v1/memory/retrieve` | read | [Retrieve memory](https://langbase.com/docs/api-reference/memory/retrieve) |
+| `documents.list` | `GET /v1/memory/{memoryName}/documents` | read | [List documents](https://langbase.com/docs/api-reference/memory/document-list) |
+| `documents.upload` | `POST /v1/memory/documents`, then `PUT {signedUrl}` | destructive | [Upload document](https://langbase.com/docs/api-reference/memory/document-upload) |
+| `documents.delete` | `DELETE /v1/memory/{memoryName}/documents/{documentName}` | destructive | [Delete document](https://langbase.com/docs/api-reference/memory/document-delete) |
+| `documents.retryEmbeddings` | `GET /v1/memory/{memoryName}/documents/{documentName}/embeddings/retry` | destructive | [Retry embeddings](https://langbase.com/docs/api-reference/memory/document-embeddings-retry) |
+| `threads.create` | `POST /v1/threads` | destructive | [Create thread](https://langbase.com/docs/api-reference/threads/create) |
+| `threads.get` | `GET /v1/threads/{threadId}` | read | [Get thread](https://langbase.com/docs/api-reference/threads/get) |
+| `threads.update` | `POST /v1/threads/{threadId}` | write | [Update thread](https://langbase.com/docs/api-reference/threads/update) |
+| `threads.delete` | `DELETE /v1/threads/{threadId}` | destructive | [Delete thread](https://langbase.com/docs/api-reference/threads/delete) |
+| `threads.appendMessages` | `POST /v1/threads/{threadId}/messages` | destructive | [Append messages](https://langbase.com/docs/api-reference/threads/append-messages) |
+| `threads.listMessages` | `GET /v1/threads/{threadId}/messages` | read | [List messages](https://langbase.com/docs/api-reference/threads/list-messages) |
 
-No webhooks.
+Pipe runs are marked destructive because they can consume usage credits. The run operation accepts JSON mode only; `stream: true` is rejected and the plugin sends `stream: false`. Thread/message operations provide conversation context and history. Langbase's documented list routes do not expose pagination parameters.
+
+Thread creation and message append are destructive because they persist conversation content and Langbase documents no per-message delete operation.
+
+Rate and usage limits depend on the Langbase subscription plan; see the [official limits reference](https://langbase.com/docs/api-reference/limits). The plugin does not assume a fixed per-call credit cost.
+
+Document uploads accept base64 file contents and a supported MIME type. The plugin obtains and uses the signed upload URL internally, never returns it, and does not forward the Langbase API key to the upload host.
+
+## Exclusions
+
+- Pipe deletion and single-memory GET are not exposed because the current Langbase v1 API reference does not define those routes.
+- Web search is not exposed because it requires a separate Exa API key in `LB-WEB-SEARCH-KEY`; this plugin configures only the Langbase credential. See [Langbase web-search requirements](https://langbase.com/docs/api-reference/tools/web-search).
+- Langbase documents no separate run-history retrieval route. Use `threads.get` and `threads.listMessages` to retrieve conversation context.
+- No webhooks are included; they were not requested for this integration.
+
+## Errors and privacy
+
+Provider responses are validated with Zod before being returned. Rate limits retain `Retry-After` and are not retried by a second plugin-level loop. Request bodies, documents, signed URLs, and credentials are not logged.
 
 ## Reference
 
-Full docs, types, and examples: https://docs.corsair.dev/plugins/langbase
+Corsair docs: [Langbase overview](https://docs.corsair.dev/plugins/langbase/overview) · [API reference](https://docs.corsair.dev/plugins/langbase/api)
 
 ## License
 

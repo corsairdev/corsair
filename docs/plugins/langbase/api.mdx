@@ -8,18 +8,173 @@ description: "API reference for the Langbase plugin in Corsair: every `langbase.
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
+## Documents
+
+### delete
+
+`documents.delete`
+
+Delete a document from a Langbase memory
+
+**Risk:** `destructive`
+
+```ts
+await corsair.langbase.api.documents.delete({ memoryName: 'support-knowledge', documentName: 'support-guide.pdf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memoryName` | `string` | Yes | — |
+| `documentName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`documents.list`
+
+List documents and indexing status in a memory
+
+**Risk:** `read`
+
+```ts
+await corsair.langbase.api.documents.list({ memoryName: 'support-knowledge' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memoryName` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name: string,
+  status: queued | in_progress | completed | failed,
+  status_message: string | null,
+  metadata: {
+    size: number,
+    type: application/pdf | text/plain | text/markdown | text/csv | application/vnd.openxmlformats-officedocument.spreadsheetml.sheet | application/vnd.ms-excel
+  },
+  enabled: boolean,
+  chunk_size: number,
+  chunk_overlap: number,
+  owner_login: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retryEmbeddings
+
+`documents.retryEmbeddings`
+
+Retry generating a document embedding
+
+**Risk:** `destructive`
+
+```ts
+await corsair.langbase.api.documents.retryEmbeddings({ memoryName: 'support-knowledge', documentName: 'support-guide.pdf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memoryName` | `string` | Yes | — |
+| `documentName` | `string` | Yes | — |
+
+This GET request initiates a document embedding retry and may consume provider usage.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### upload
+
+`documents.upload`
+
+Upload a document and start memory indexing
+
+**Risk:** `destructive`
+
+```ts
+await corsair.langbase.api.documents.upload({
+	memoryName: 'support-knowledge',
+	documentName: 'support-guide.pdf',
+	contentBase64: 'SGVsbG8=',
+	contentType: 'application/pdf',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `memoryName` | `string` | Yes | — |
+| `documentName` | `string` | Yes | — |
+| `contentBase64` | `string` | Yes | — |
+| `contentType` | `application/pdf \| text/plain \| text/markdown \| text/csv` | Yes | — |
+| `meta` | `Record<string, string>` | No | — |
+
+Upload requires `memoryName`, `documentName`, base64 file contents, and a supported MIME type (`application/pdf`, `text/plain`, `text/markdown`, or `text/csv`). The content type should match the document name; code files use `text/plain`. The signed URL is created and consumed internally; the output contains only the upload status.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `status` | `number` | Yes | — |
+| `statusText` | `string` | Yes | — |
+
+
+
+---
+
 ## Memory
 
 ### create
 
 `memory.create`
 
-Create a new managed semantic memory set
+Create a semantic memory with embedding settings
 
 **Risk:** `write`
 
 ```ts
-await corsair.langbase.api.memory.create({});
+await corsair.langbase.api.memory.create({ name: 'support-knowledge', description: 'Support reference documents' });
 ```
 
 **Input**
@@ -28,7 +183,10 @@ await corsair.langbase.api.memory.create({});
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
 | `description` | `string` | No | — |
-| `embedding_model` | `string` | No | — |
+| `embedding_model` | `openai:text-embedding-3-large \| cohere:embed-v4.0 \| cohere:embed-multilingual-v3.0 \| cohere:embed-multilingual-light-v3.0 \| google:text-embedding-004` | No | — |
+| `chunk_size` | `number` | No | — |
+| `chunk_overlap` | `number` | No | — |
+| `top_k` | `number` | No | — |
 
 
 
@@ -36,7 +194,13 @@ await corsair.langbase.api.memory.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `memory` | `Record<string, any>` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `owner_login` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `chunk_size` | `number` | Yes | — |
+| `chunk_overlap` | `number` | Yes | — |
+| `embedding_model` | `string` | Yes | — |
 
 
 
@@ -46,12 +210,12 @@ await corsair.langbase.api.memory.create({});
 
 `memory.delete`
 
-Delete a semantic memory set
+Delete a semantic memory and its stored documents
 
 **Risk:** `destructive`
 
 ```ts
-await corsair.langbase.api.memory.delete({});
+await corsair.langbase.api.memory.delete({ name: 'support-knowledge' });
 ```
 
 **Input**
@@ -66,38 +230,7 @@ await corsair.langbase.api.memory.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `result` | `Record<string, any>` | No | — |
-
-
-
----
-
-### get
-
-`memory.get`
-
-Retrieve a specific semantic memory set by name
-
-**Risk:** `read`
-
-```ts
-await corsair.langbase.api.memory.get({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `name` | `string` | Yes | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `memory` | `Record<string, any>` | Yes | — |
+| `success` | `boolean` | Yes | — |
 
 
 
@@ -107,7 +240,7 @@ await corsair.langbase.api.memory.get({});
 
 `memory.list`
 
-Retrieve all managed semantic memory sets
+List semantic memories in the Langbase account
 
 **Risk:** `read`
 
@@ -118,12 +251,89 @@ await corsair.langbase.api.memory.list({});
 **Input:** _empty object_
 
 
-**Output**
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name: string,
+  description?: string,
+  owner_login?: string,
+  url?: string,
+  chunk_size?: number,
+  chunk_overlap?: number,
+  embedding_model?: string,
+  embeddingModel?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieve
+
+`memory.retrieve`
+
+Retrieve relevant text chunks from one or more memories
+
+**Risk:** `read`
+
+```ts
+await corsair.langbase.api.memory.retrieve({
+	query: 'How can I contact support?',
+	memory: [{ name: 'support-knowledge' }],
+});
+```
+
+**Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `memories` | `Record<string, any>[]` | Yes | — |
+| `query` | `string` | Yes | — |
+| `memory` | `object[]` | Yes | — |
+| `topK` | `number` | No | — |
 
+`topK` is optional and ranges from 1 to 100. Filters use Langbase's documented nested tuple format.
+
+<AccordionGroup>
+<Accordion title="memory full type">
+
+```ts
+{
+  name: string,
+  filters?: [
+    string,
+    Eq | NotEq | In | NotIn,
+    string | string[]
+  ] | [
+    And | Or,
+    (recursive)[]
+  ]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  text: string,
+  similarity: number,
+  meta: Record<string, string>
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -134,12 +344,12 @@ await corsair.langbase.api.memory.list({});
 
 `pipes.create`
 
-Create a new AI agent pipe
+Create a pipe with the supplied Langbase configuration
 
 **Risk:** `write`
 
 ```ts
-await corsair.langbase.api.pipes.create({});
+await corsair.langbase.api.pipes.create({ name: 'support-agent', description: 'Sample support pipe', model: 'openai:gpt-4o-mini' });
 ```
 
 **Input**
@@ -147,12 +357,197 @@ await corsair.langbase.api.pipes.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | — |
+| `upsert` | `boolean` | No | — |
 | `description` | `string` | No | — |
+| `status` | `public \| private` | No | — |
 | `model` | `string` | No | — |
-| `prompt` | `string` | No | — |
+| `stream` | `boolean` | No | — |
+| `json` | `boolean` | No | — |
+| `store` | `boolean` | No | — |
+| `moderate` | `boolean` | No | — |
+| `top_p` | `number` | No | — |
+| `max_tokens` | `number` | No | — |
+| `temperature` | `number` | No | — |
+| `presence_penalty` | `number` | No | — |
+| `frequency_penalty` | `number` | No | — |
+| `stop` | `string[]` | No | — |
+| `tools` | `object[]` | No | — |
+| `tool_choice` | `auto \| required \| object` | No | — |
+| `parallel_tool_calls` | `boolean` | No | — |
+| `messages` | `object[]` | No | — |
+| `variables` | `Record<string, string>` | No | — |
+| `memory` | `object[]` | No | — |
+| `response_format` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tools full type">
+
+```ts
+{
+  type: function,
+  function: {
+    name: string,
+    description?: string,
+    parameters?: Record<string, JsonValue>
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="tool_choice full type">
+
+```ts
+auto | required | {
+  type: function,
+  function: {
+    name: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="messages full type">
+
+```ts
+{
+  role: system | user | assistant | tool,
+  content: string,
+  name?: json | safety | opening | rag
+}[]
+```
+</Accordion>
+
+<Accordion title="memory full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="response_format full type">
+
+```ts
+{
+  type: text
+} | {
+  type: json_object
+} | {
+  type: json_schema,
+  json_schema: {
+    description?: string,
+    name: string,
+    schema?: Record<string, JsonValue>,
+    strict?: boolean | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `status` | `public \| private` | Yes | — |
+| `owner_login` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `type` | `chat \| generate \| run` | Yes | — |
+| `api_key` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`pipes.get`
+
+Retrieve a pipe by owner login and pipe name
+
+**Risk:** `read`
+
+```ts
+await corsair.langbase.api.pipes.get({ ownerLogin: 'sample-owner', pipeName: 'support-agent' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ownerLogin` | `string` | Yes | — |
+| `pipeName` | `string` | Yes | — |
+
+Provide both `ownerLogin` and `pipeName`; the GET route contains both path segments.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `status` | `public \| private` | No | — |
+| `owner_login` | `string` | No | — |
+| `url` | `string` | No | — |
+| `model` | `string` | No | — |
+| `stream` | `boolean` | No | — |
+| `json` | `boolean` | No | — |
+| `store` | `boolean` | No | — |
+| `moderate` | `boolean` | No | — |
+| `top_p` | `number` | No | — |
+| `max_tokens` | `number` | No | — |
+| `temperature` | `number` | No | — |
+| `presence_penalty` | `number` | No | — |
+| `frequency_penalty` | `number` | No | — |
+| `stop` | `string[]` | No | — |
+| `tool_choice` | `auto \| required \| object` | No | — |
+| `parallel_tool_calls` | `boolean` | No | — |
+| `messages` | `object[]` | No | — |
+| `variables` | `object[]` | No | — |
+| `tools` | `Record<string, JsonValue>[]` | No | — |
 | `memory` | `object[]` | No | — |
 
 <AccordionGroup>
+<Accordion title="tool_choice full type">
+
+```ts
+auto | required | {
+  type: function,
+  function: {
+    name: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="messages full type">
+
+```ts
+{
+  role: system | user | assistant | tool,
+  content: string | null,
+  name?: json | safety | opening | rag | null
+}[]
+```
+</Accordion>
+
+<Accordion title="variables full type">
+
+```ts
+{
+  name: string,
+  value: string
+}[]
+```
+</Accordion>
+
 <Accordion title="memory full type">
 
 ```ts
@@ -165,82 +560,13 @@ await corsair.langbase.api.pipes.create({});
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `pipe` | `Record<string, any>` | Yes | — |
-
-
-
----
-
-### delete
-
-`pipes.delete`
-
-Delete a pipe definition
-
-**Risk:** `destructive`
-
-```ts
-await corsair.langbase.api.pipes.delete({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `name` | `string` | Yes | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `success` | `boolean` | No | — |
-| `result` | `Record<string, any>` | No | — |
-
-
-
----
-
-### get
-
-`pipes.get`
-
-Retrieve a specific pipe definition by name
-
-**Risk:** `read`
-
-```ts
-await corsair.langbase.api.pipes.get({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `name` | `string` | Yes | — |
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `pipe` | `Record<string, any>` | Yes | — |
-
-
-
 ---
 
 ### list
 
 `pipes.list`
 
-Retrieve all configured pipes in the account
+List the configured pipes in the Langbase account
 
 **Risk:** `read`
 
@@ -251,12 +577,53 @@ await corsair.langbase.api.pipes.list({});
 **Input:** _empty object_
 
 
-**Output**
+**Output:** `object[]`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `pipes` | `Record<string, any>[]` | Yes | — |
+<AccordionGroup>
+<Accordion title="Output full type">
 
+```ts
+{
+  name: string,
+  description?: string,
+  status?: public | private,
+  owner_login?: string,
+  url?: string,
+  model?: string,
+  stream?: boolean,
+  json?: boolean,
+  store?: boolean,
+  moderate?: boolean,
+  top_p?: number,
+  max_tokens?: number,
+  temperature?: number,
+  presence_penalty?: number,
+  frequency_penalty?: number,
+  stop?: string[],
+  tool_choice?: auto | required | {
+    type: function,
+    function: {
+      name: string
+    }
+  },
+  parallel_tool_calls?: boolean,
+  messages?: {
+    role: system | user | assistant | tool,
+    content: string | null,
+    name?: json | safety | opening | rag | null
+  }[],
+  variables?: {
+    name: string,
+    value: string
+  }[],
+  tools?: Record<string, JsonValue>[],
+  memory?: {
+    name: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -265,12 +632,14 @@ await corsair.langbase.api.pipes.list({});
 
 `pipes.run`
 
-Execute an AI agent pipe and return generation completion
+Run an AI pipe, which can consume Langbase usage credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.langbase.api.pipes.run({});
+await corsair.langbase.api.pipes.run({
+	messages: [{ role: 'user', content: 'Hello' }],
+});
 ```
 
 **Input**
@@ -278,10 +647,13 @@ await corsair.langbase.api.pipes.run({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `messages` | `object[]` | Yes | — |
-| `name` | `string` | No | — |
-| `stream` | `boolean` | No | — |
+| `stream` | `false` | No | Defaults to false. |
+| `threadId` | `string` | No | — |
 | `memory` | `object[]` | No | — |
-| `variables` | `Record<string, any>` | No | — |
+| `variables` | `Record<string, string>` | No | — |
+| `tools` | `object[]` | No | — |
+
+This endpoint accepts JSON responses only. `stream: true` is rejected; the plugin sends `stream: false`. Use `threadId` to continue a conversation and `threads.listMessages` to retrieve its context.
 
 <AccordionGroup>
 <Accordion title="messages full type">
@@ -289,7 +661,15 @@ await corsair.langbase.api.pipes.run({});
 ```ts
 {
   role: system | user | assistant | tool,
-  content: string,
+  content?: string | {
+    type: string,
+    text?: string,
+    image_url?: {
+      url: string,
+      detail?: string
+    }
+  }[] | null,
+  tool_call_id?: string,
   name?: string
 }[]
 ```
@@ -303,50 +683,17 @@ await corsair.langbase.api.pipes.run({});
 }[]
 ```
 </Accordion>
-</AccordionGroup>
 
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `completion` | `string` | No | — |
-| `raw` | `Record<string, any>` | No | — |
-| `thread` | `Record<string, any>` | No | — |
-
-
-
----
-
-### update
-
-`pipes.update`
-
-Update an existing pipe configuration
-
-**Risk:** `write`
-
-```ts
-await corsair.langbase.api.pipes.update({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `name` | `string` | Yes | — |
-| `description` | `string` | No | — |
-| `model` | `string` | No | — |
-| `prompt` | `string` | No | — |
-| `memory` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="memory full type">
+<Accordion title="tools full type">
 
 ```ts
 {
-  name: string
+  type: function,
+  function: {
+    name: string,
+    description?: string,
+    parameters?: Record<string, JsonValue>
+  }
 }[]
 ```
 </Accordion>
@@ -358,33 +705,118 @@ await corsair.langbase.api.pipes.update({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `pipe` | `Record<string, any>` | Yes | — |
+| `completion` | `string` | Yes | — |
+| `raw` | `Record<string, JsonValue>` | Yes | — |
 
 
 
 ---
 
-## Tools
+### update
 
-### webSearch
+`pipes.update`
 
-`tools.webSearch`
+Update a pipe configuration by name
 
-Perform web searches via Langbase Tools API
-
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
-await corsair.langbase.api.tools.webSearch({});
+await corsair.langbase.api.pipes.update({ name: 'support-agent', description: 'Updated support pipe' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | Yes | — |
-| `totalResults` | `number` | No | — |
-| `domains` | `string[]` | No | — |
+| `name` | `string` | Yes | — |
+| `upsert` | `boolean` | No | — |
+| `description` | `string` | No | — |
+| `status` | `public \| private` | No | — |
+| `model` | `string` | No | — |
+| `stream` | `boolean` | No | — |
+| `json` | `boolean` | No | — |
+| `store` | `boolean` | No | — |
+| `moderate` | `boolean` | No | — |
+| `top_p` | `number` | No | — |
+| `max_tokens` | `number` | No | — |
+| `temperature` | `number` | No | — |
+| `presence_penalty` | `number` | No | — |
+| `frequency_penalty` | `number` | No | — |
+| `stop` | `string[]` | No | — |
+| `tools` | `object[]` | No | — |
+| `tool_choice` | `auto \| required \| object` | No | — |
+| `parallel_tool_calls` | `boolean` | No | — |
+| `messages` | `object[]` | No | — |
+| `variables` | `Record<string, string>` | No | — |
+| `memory` | `object[]` | No | — |
+| `response_format` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tools full type">
+
+```ts
+{
+  type: function,
+  function: {
+    name: string,
+    description?: string,
+    parameters?: Record<string, JsonValue>
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="tool_choice full type">
+
+```ts
+auto | required | {
+  type: function,
+  function: {
+    name: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="messages full type">
+
+```ts
+{
+  role: system | user | assistant | tool,
+  content: string,
+  name?: json | safety | opening | rag
+}[]
+```
+</Accordion>
+
+<Accordion title="memory full type">
+
+```ts
+{
+  name: string
+}[]
+```
+</Accordion>
+
+<Accordion title="response_format full type">
+
+```ts
+{
+  type: text
+} | {
+  type: json_object
+} | {
+  type: json_schema,
+  json_schema: {
+    description?: string,
+    name: string,
+    schema?: Record<string, JsonValue>,
+    strict?: boolean | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -392,7 +824,313 @@ await corsair.langbase.api.tools.webSearch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results` | `Record<string, any>[]` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+| `status` | `public \| private` | Yes | — |
+| `owner_login` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `type` | `chat \| generate \| run` | Yes | — |
+| `api_key` | `string` | Yes | — |
+
+
+
+---
+
+## Threads
+
+### appendMessages
+
+`threads.appendMessages`
+
+Append messages to an existing conversation thread
+
+**Risk:** `destructive`
+
+```ts
+await corsair.langbase.api.threads.appendMessages({
+	threadId: 'thread-sample',
+	messages: [{ role: 'user', content: 'I still need help.' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadId` | `string` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+
+Langbase accepts an array of messages as the request body; tool messages may have null content and a `tool_call_id`.
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: system | user | assistant | tool,
+  content: string | null,
+  name?: string,
+  tool_call_id?: string,
+  tool_calls?: {
+    id: string,
+    type: function,
+    function: {
+      name: string,
+      arguments: string
+    }
+  }[],
+  attachments?: JsonValue[],
+  metadata?: Record<string, string>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  thread_id: string,
+  created_at: number,
+  role: user | assistant | system | tool,
+  content: string | null,
+  tool_call_id?: string | null,
+  tool_calls?: {
+    id: string,
+    type: function,
+    function: {
+      name: string,
+      arguments: string
+    }
+  }[],
+  name?: string | null,
+  attachments?: JsonValue[],
+  metadata?: Record<string, string>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`threads.create`
+
+Create a conversation thread with optional messages
+
+**Risk:** `destructive`
+
+```ts
+await corsair.langbase.api.threads.create({
+	metadata: { topic: 'support' },
+	messages: [{ role: 'user', content: 'Hello' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadId` | `string` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `messages` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: system | user | assistant | tool,
+  content: string | null,
+  name?: string,
+  tool_call_id?: string,
+  tool_calls?: {
+    id: string,
+    type: function,
+    function: {
+      name: string,
+      arguments: string
+    }
+  }[],
+  attachments?: JsonValue[],
+  metadata?: Record<string, string>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `thread` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
+
+
+
+---
+
+### delete
+
+`threads.delete`
+
+Delete a conversation thread and its history
+
+**Risk:** `destructive`
+
+```ts
+await corsair.langbase.api.threads.delete({ threadId: 'thread-sample' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`threads.get`
+
+Retrieve thread metadata by thread ID
+
+**Risk:** `read`
+
+```ts
+await corsair.langbase.api.threads.get({ threadId: 'thread-sample' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `thread` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
+
+
+
+---
+
+### listMessages
+
+`threads.listMessages`
+
+Retrieve the chronological messages in a thread
+
+**Risk:** `read`
+
+```ts
+await corsair.langbase.api.threads.listMessages({ threadId: 'thread-sample' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadId` | `string` | Yes | — |
+
+Messages are returned in chronological order.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  thread_id: string,
+  created_at: number,
+  role: user | assistant | system | tool,
+  content: string | null,
+  tool_call_id?: string | null,
+  tool_calls?: {
+    id: string,
+    type: function,
+    function: {
+      name: string,
+      arguments: string
+    }
+  }[],
+  name?: string | null,
+  attachments?: JsonValue[],
+  metadata?: Record<string, string>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`threads.update`
+
+Update metadata on an existing conversation thread
+
+**Risk:** `write`
+
+```ts
+await corsair.langbase.api.threads.update({
+	threadId: 'thread-sample',
+	metadata: { status: 'resolved' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadId` | `string` | Yes | — |
+| `metadata` | `Record<string, string>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `thread` | Yes | — |
+| `created_at` | `number` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 

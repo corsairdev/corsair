@@ -1,14 +1,22 @@
 ---
 title: "Langbase plugin"
 sidebarTitle: "Overview"
-description: "Serverless AI agent, pipe orchestration, and semantic memory platform for building and scaling AI workflows."
+description: "Run AI pipes, manage memories and documents, retrieve semantic context, and manage conversation threads with Langbase."
 ---
 
 Use **Langbase** through Corsair: one client, typed API calls.
 
+Configure a Langbase User or Organization API key as the tenant's `api_key` credential. All calls use the `Authorization: Bearer` header.
+
+`pipes.run` only supports JSON responses in this plugin: `stream: true` is rejected and the request sends `stream: false`. Use the thread endpoints to retrieve conversation context; the current v1 API reference does not define a separate run-history retrieval route.
+
+Document upload follows Langbase's two-step signed URL contract. Pass the file contents as base64 and a supported content type; the signed URL remains internal and is never returned. Lists are complete arrays; the documented Langbase list APIs do not expose pagination parameters.
+
+Web search is not included because Langbase requires a separate Exa key in `LB-WEB-SEARCH-KEY`. Pipe deletion and single-memory GET are also omitted because the current v1 API reference does not define those routes.
+
 **What you get:**
 
-- 11 typed API operations
+- 19 typed API operations
 
 ## Setup
 
@@ -94,19 +102,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`memory.get`**
+**Retrieve conversation context**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.langbase.api.memory.get({});
+await tenant.langbase.api.threads.listMessages({ threadId: 'sample-thread' });
 ```
 
 
-**`memory.create`**
+**Create an AI pipe**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.langbase.api.memory.create({});
+await tenant.langbase.api.pipes.create({ name: 'sample-support-pipe' });
 ```
 
 

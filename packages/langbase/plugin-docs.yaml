@@ -1,3 +1,119 @@
 displayName: Langbase
-description: Serverless AI agent, pipe orchestration, and semantic memory platform for building and scaling AI workflows.
+description: Run AI pipes, manage memories and documents, retrieve semantic context, and manage conversation threads with Langbase.
 domain: langbase.com
+recommendedAuth: api_key
+overviewNote: |
+  Configure a Langbase User or Organization API key as the tenant's `api_key` credential. All calls use the `Authorization: Bearer` header.
+
+  `pipes.run` only supports JSON responses in this plugin: `stream: true` is rejected and the request sends `stream: false`. Use the thread endpoints to retrieve conversation context; the current v1 API reference does not define a separate run-history retrieval route.
+
+  Document upload follows Langbase's two-step signed URL contract. Pass the file contents as base64 and a supported content type; the signed URL remains internal and is never returned. Lists are complete arrays; the documented Langbase list APIs do not expose pagination parameters.
+
+  Web search is not included because Langbase requires a separate Exa key in `LB-WEB-SEARCH-KEY`. Pipe deletion and single-memory GET are also omitted because the current v1 API reference does not define those routes.
+references:
+  - title: Langbase API reference
+    url: https://langbase.com/docs/api-reference
+  - title: Pipes API
+    url: https://langbase.com/docs/api-reference/pipe
+  - title: Memory and documents API
+    url: https://langbase.com/docs/api-reference/memory
+  - title: Threads API
+    url: https://langbase.com/docs/api-reference/threads
+examples:
+  read:
+    path: threads.listMessages
+    title: Retrieve conversation context
+    args:
+      threadId: sample-thread
+  write:
+    path: pipes.create
+    title: Create an AI pipe
+    args:
+      name: sample-support-pipe
+apiNotes:
+  pipes.run: "This endpoint accepts JSON responses only. `stream: true` is rejected; the plugin sends `stream: false`. Use `threadId` to continue a conversation and `threads.listMessages` to retrieve its context."
+  pipes.get: "Provide both `ownerLogin` and `pipeName`; the GET route contains both path segments."
+  memory.retrieve: "`topK` is optional and ranges from 1 to 100. Filters use Langbase's documented nested tuple format."
+  documents.upload: "Upload requires `memoryName`, `documentName`, base64 file contents, and a supported MIME type (`application/pdf`, `text/plain`, `text/markdown`, or `text/csv`). The content type should match the document name; code files use `text/plain`. The signed URL is created and consumed internally; the output contains only the upload status."
+  documents.retryEmbeddings: "This GET request initiates a document embedding retry and may consume provider usage."
+  threads.appendMessages: "Langbase accepts an array of messages as the request body; tool messages may have null content and a `tool_call_id`."
+  threads.listMessages: "Messages are returned in chronological order."
+apiExamples:
+  pipes.run:
+    args:
+      messages:
+        - role: user
+          content: Hello
+  pipes.list:
+    args: {}
+  pipes.get:
+    args:
+      ownerLogin: sample-owner
+      pipeName: support-agent
+  pipes.create:
+    args:
+      name: support-agent
+      description: Sample support pipe
+      model: openai:gpt-4o-mini
+  pipes.update:
+    args:
+      name: support-agent
+      description: Updated support pipe
+  memory.list:
+    args: {}
+  memory.create:
+    args:
+      name: support-knowledge
+      description: Support reference documents
+  memory.delete:
+    args:
+      name: support-knowledge
+  memory.retrieve:
+    args:
+      query: How can I contact support?
+      memory:
+        - name: support-knowledge
+  documents.list:
+    args:
+      memoryName: support-knowledge
+  documents.upload:
+    args:
+      memoryName: support-knowledge
+      documentName: support-guide.pdf
+      contentBase64: SGVsbG8=
+      contentType: application/pdf
+  documents.delete:
+    args:
+      memoryName: support-knowledge
+      documentName: support-guide.pdf
+  documents.retryEmbeddings:
+    args:
+      memoryName: support-knowledge
+      documentName: support-guide.pdf
+  threads.create:
+    args:
+      metadata:
+        topic: support
+      messages:
+        - role: user
+          content: Hello
+  threads.get:
+    args:
+      threadId: thread-sample
+  threads.update:
+    args:
+      threadId: thread-sample
+      metadata:
+        status: resolved
+  threads.delete:
+    args:
+      threadId: thread-sample
+  threads.appendMessages:
+    args:
+      threadId: thread-sample
+      messages:
+        - role: user
+          content: I still need help.
+  threads.listMessages:
+    args:
+      threadId: thread-sample
