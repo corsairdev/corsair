@@ -1,8 +1,10 @@
 import { AuthMissingError } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import {
+	makePipedriveBinaryRequest,
 	makePipedriveRequest,
 	PIPEDRIVE_API_BASE,
+	PIPEDRIVE_API_V1_BASE,
 	PIPEDRIVE_RATE_LIMIT_CONFIG,
 	withOAuthRetry,
 } from './client';
@@ -67,6 +69,189 @@ describe('Pipedrive HTTP client', () => {
 		expect(mockedRequest.mock.calls[0]?.[1]?.query).toBeUndefined();
 	});
 
+	it('uses the v1 server and preserves URL-encoded request bodies', async () => {
+		mockedRequest.mockResolvedValue({ success: true });
+		await makePipedriveRequest('/files/remote', 'test-token', 'api_key', {
+			method: 'POST',
+			body: 'remote_url=https%3A%2F%2Ffiles.example.invalid%2Freport.pdf',
+			apiVersion: 'v1',
+			contentType: 'application/x-www-form-urlencoded',
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: PIPEDRIVE_API_V1_BASE,
+				VERSION: '1.0.0',
+				HEADERS: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+					'x-api-token': 'test-token',
+				},
+			}),
+			expect.objectContaining({
+				url: '/files/remote',
+				method: 'POST',
+				body: 'remote_url=https%3A%2F%2Ffiles.example.invalid%2Freport.pdf',
+				mediaType: 'application/x-www-form-urlencoded',
+			}),
+			expect.anything(),
+		);
+	});
+
+	it('downloads v1 files as bounded base64 and uses the configured token header', async () => {
+		const originalFetch = globalThis.fetch;
+		const fetchMock = jest.fn().mockResolvedValue(
+			new Response(new Uint8Array([80, 68]), {
+				status: 200,
+				headers: { 'Content-Type': 'application/pdf' },
+			}),
+		);
+		globalThis.fetch = fetchMock;
+		try {
+			await expect(
+				makePipedriveBinaryRequest(
+					'/files/7/download',
+					'test-token',
+					'api_key',
+					{
+						method: 'GET',
+						apiVersion: 'v1',
+					},
+				),
+			).resolves.toEqual({
+				content_type: 'application/pdf',
+				base64: 'UEQ=',
+				byte_length: 2,
+			});
+			expect(fetchMock).toHaveBeenCalledWith(
+				`${PIPEDRIVE_API_V1_BASE}/files/7/download`,
+				expect.objectContaining({
+					method: 'GET',
+					redirect: 'manual',
+					headers: expect.any(Headers),
+				}),
+			);
+			const request = fetchMock.mock.calls[0]?.[1];
+			expect(new Headers(request?.headers).get('x-api-token')).toBe(
+				'test-token',
+			);
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+	});
+
+	it('rejects cross-origin file redirects before forwarding the API token', async () => {
+		const originalFetch = globalThis.fetch;
+		const fetchMock = jest.fn().mockResolvedValue(
+			new Response(null, {
+				status: 302,
+				headers: { Location: 'https://attacker.example.invalid/collect' },
+			}),
+		);
+		globalThis.fetch = fetchMock;
+		try {
+			const rejection = await makePipedriveBinaryRequest(
+				'/files/7/download',
+				'test-token',
+				'api_key',
+				{ method: 'GET', apiVersion: 'v1' },
+			).catch(
+				// `unknown` because a rejected fetch promise may contain any JavaScript value.
+				(error: unknown) => error,
+			);
+			expect(rejection).toBeInstanceOf(ApiError);
+			if (!(rejection instanceof ApiError))
+				throw new Error('Expected ApiError');
+			expect(rejection.status).toBe(302);
+			expect(JSON.stringify(rejection)).not.toContain(
+				'attacker.example.invalid',
+			);
+			expect(JSON.stringify(rejection)).not.toContain('test-token');
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+			expect(fetchMock).toHaveBeenCalledWith(
+				expect.stringContaining('/files/7/download'),
+				expect.objectContaining({ redirect: 'manual' }),
+			);
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+	});
+
+	it('follows same-provider redirects without leaving Pipedrive origins', async () => {
+		const originalFetch = globalThis.fetch;
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValueOnce(
+				new Response(null, {
+					status: 302,
+					headers: {
+						Location: 'https://app.pipedrive.com/api/v1/files/7/download',
+					},
+				}),
+			)
+			.mockResolvedValueOnce(
+				new Response(new Uint8Array([80, 68]), {
+					status: 200,
+					headers: { 'Content-Type': 'application/pdf' },
+				}),
+			);
+		globalThis.fetch = fetchMock;
+		try {
+			await expect(
+				makePipedriveBinaryRequest(
+					'/files/7/download',
+					'test-token',
+					'api_key',
+					{
+						method: 'GET',
+						apiVersion: 'v1',
+					},
+				),
+			).resolves.toMatchObject({ base64: 'UEQ=', byte_length: 2 });
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+			expect(fetchMock.mock.calls[1]?.[0]).toBe(
+				'https://app.pipedrive.com/api/v1/files/7/download',
+			);
+			for (const [, requestOptions] of fetchMock.mock.calls) {
+				expect(requestOptions?.redirect).toBe('manual');
+				expect(new Headers(requestOptions?.headers).get('x-api-token')).toBe(
+					'test-token',
+				);
+			}
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+	});
+
+	it('preserves rate-limit reset metadata for binary-download errors', async () => {
+		const originalFetch = globalThis.fetch;
+		globalThis.fetch = jest.fn().mockResolvedValue(
+			new Response('private provider details', {
+				status: 429,
+				headers: { 'x-ratelimit-reset': '2' },
+			}),
+		);
+		try {
+			const rejection = await makePipedriveBinaryRequest(
+				'/files/7/download',
+				'test-token',
+				'api_key',
+				{ method: 'GET', apiVersion: 'v1' },
+			).catch(
+				// `unknown` because a rejected fetch promise may contain any value.
+				(error: unknown) => error,
+			);
+			expect(rejection).toBeInstanceOf(ApiError);
+			if (!(rejection instanceof ApiError))
+				throw new Error('Expected ApiError');
+			expect(rejection.status).toBe(429);
+			expect(rejection.retryAfter).toBe(2000);
+			expect(JSON.stringify(rejection)).not.toContain(
+				'private provider details',
+			);
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+	});
+
 	it('lets multipart image requests set their own boundary and omits binary data from errors', async () => {
 		const formData = new FormData();
 		formData.append(
@@ -112,9 +297,11 @@ describe('Pipedrive HTTP client', () => {
 			(error: unknown) => error,
 		);
 		expect(rejection).toBeInstanceOf(ApiError);
+		expect(rejection).not.toBe(apiError);
 		if (!(rejection instanceof ApiError)) throw new Error('Expected ApiError');
 		expect(rejection.status).toBe(429);
 		expect(rejection.retryAfter).toBe(4000);
+		expect(rejection.body).toEqual({ error: 'Rate limited' });
 		expect(rejection.request).not.toHaveProperty('body');
 	});
 
@@ -125,7 +312,7 @@ describe('Pipedrive HTTP client', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
-	it('preserves ApiError status, retry metadata, and keeps API token out of request details', async () => {
+	it('strips request data while preserving rate-limit response metadata', async () => {
 		const rateLimited = apiError(429, 4000);
 		mockedRequest.mockRejectedValue(rateLimited);
 		const rejection = await makePipedriveRequest(
@@ -136,10 +323,14 @@ describe('Pipedrive HTTP client', () => {
 			// `unknown` because a Promise rejection may contain any JavaScript value.
 			(error: unknown) => error,
 		);
-		expect(rejection).toBe(rateLimited);
+		expect(rejection).not.toBe(rateLimited);
 		if (!(rejection instanceof ApiError)) throw new Error('Expected ApiError');
 		expect(rejection.status).toBe(429);
 		expect(rejection.retryAfter).toBe(4000);
+		expect(rejection.request).not.toHaveProperty('body');
+		expect(rejection.request).not.toHaveProperty('query');
+		expect(rejection.body).toEqual({ error: 'Request failed' });
+		expect(rejection.url).toBe(`${PIPEDRIVE_API_BASE}/deals`);
 		expect(JSON.stringify(rejection.request)).not.toContain('secret-token');
 		expect(JSON.stringify(mockedRequest.mock.calls[0]?.[1])).not.toContain(
 			'test-token',
@@ -198,11 +389,34 @@ describe('Pipedrive HTTP client', () => {
 			tokenUrl: 'https://oauth.pipedrive.com/oauth/token',
 			tokenAuthMethod: 'basic',
 			scopes: [
-				'deals:full',
-				'contacts:full',
 				'activities:full',
-				'projects:full',
+				'activities:read',
+				'admin',
+				'base',
+				'contact-fields:full',
+				'contacts:full',
+				'contacts:read',
+				'deal-fields:full',
+				'deals:full',
+				'deals:read',
+				'goals:full',
+				'goals:read',
+				'leads:full',
+				'leads:read',
+				'mail:full',
+				'mail:read',
+				'messengers-integration',
+				'phone-integration',
+				'product-fields:full',
 				'products:full',
+				'products:read',
+				'project-fields:full',
+				'projects:full',
+				'projects:read',
+				'recents:read',
+				'search:read',
+				'users:read',
+				'video-calls',
 			],
 		});
 
@@ -314,21 +528,46 @@ describe('Pipedrive HTTP client', () => {
 });
 
 describe('Pipedrive request errors', () => {
-	it('drops a JSON write body (customer fields) from the ApiError', async () => {
-		const sent = { name: 'Private Person', notes: 'confidential note' };
-		mockedRequest.mockRejectedValueOnce(
-			new ApiError(
-				{ method: 'POST', url: '/persons', body: sent },
-				{
-					url: `${PIPEDRIVE_API_BASE}/persons`,
-					ok: false,
-					status: 400,
-					statusText: 'Bad Request',
-					body: { success: false, error: 'Invalid field' },
+	it('redacts echoed customer values and preserves safe ApiError metadata', async () => {
+		const sent = {
+			name: 'Bo',
+			title: 'A',
+			notes: 'confidential\nnote',
+			org_id: 12,
+		};
+		const echoedError = {
+			error: 'Invalid values for Bo: confidential\nnote',
+			code: 'INVALID_FIELD',
+		};
+		const apiError = new ApiError(
+			{ method: 'POST', url: '/persons', body: sent },
+			{
+				url: `${PIPEDRIVE_API_BASE}/persons`,
+				ok: false,
+				status: 429,
+				statusText: 'Rate limited',
+				body: {
+					success: false,
+					code: 'INVALID_FIELD',
+					api_token: 'test-token',
+					error: echoedError.error,
+					details: {
+						name: 'Bo',
+						title: 'A',
+						notes: 'confidential\nnote',
+						org_id: 12,
+					},
 				},
-				'Bad Request',
-			),
+			},
+			JSON.stringify(echoedError),
+			{
+				retryAfter: 4000,
+				rateLimitReset: 4,
+				rateLimitRemaining: 2,
+				rateLimitLimit: 10,
+			},
 		);
+		mockedRequest.mockRejectedValueOnce(apiError);
 		const error = await makePipedriveRequest(
 			'/persons',
 			'test-token',
@@ -340,12 +579,65 @@ describe('Pipedrive request errors', () => {
 			// `unknown`: a rejection can carry any value; the next lines check it is an ApiError.
 		).catch((caught: unknown) => caught);
 		expect(error).toBeInstanceOf(ApiError);
+		expect(error).not.toBe(apiError);
 		expect(error).toMatchObject({
-			status: 400,
-			body: { error: 'Invalid field' },
+			status: 429,
+			retryAfter: 4000,
+			rateLimitReset: 4,
+			rateLimitRemaining: 2,
+			rateLimitLimit: 10,
+			body: {
+				success: false,
+				code: 'INVALID_FIELD',
+				api_token: '[REDACTED]',
+				error: 'Invalid values for [REDACTED]: [REDACTED]',
+				details: {
+					name: '[REDACTED]',
+					title: '[REDACTED]',
+					notes: '[REDACTED]',
+					org_id: '[REDACTED]',
+				},
+			},
 		});
-		expect((error as ApiError).request.body).toBeUndefined();
-		expect(JSON.stringify(error)).not.toContain('confidential note');
+		if (!(error instanceof ApiError)) throw new Error('Expected ApiError');
+		expect(error.request.body).toBeUndefined();
+		expect(error.request.query).toBeUndefined();
+		expect(error.message).toBe(
+			JSON.stringify({
+				error: 'Invalid values for [REDACTED]: [REDACTED]',
+				code: 'INVALID_FIELD',
+			}),
+		);
+		expect(error.body.code).toBe('INVALID_FIELD');
+		expect(JSON.stringify(error)).not.toContain('Bo');
+		expect(JSON.stringify(error)).not.toContain('confidential');
+		expect(JSON.stringify(error)).not.toContain('org_id":12');
+	});
+
+	it('passes through an ApiError when there is no request data to redact', async () => {
+		const apiError = new ApiError(
+			{ method: 'GET', url: '/deals' },
+			{
+				url: `${PIPEDRIVE_API_BASE}/deals`,
+				ok: false,
+				status: 400,
+				statusText: 'Bad Request',
+				body: { code: 'INVALID_REQUEST', error: 'Invalid request' },
+			},
+			'Invalid request',
+		);
+		mockedRequest.mockRejectedValueOnce(apiError);
+
+		const error = await makePipedriveRequest(
+			'/deals',
+			'test-token',
+			'api_key',
+		).catch(
+			// `unknown` because a Promise rejection may contain any JavaScript value.
+			(caught: unknown) => caught,
+		);
+
+		expect(error).toBe(apiError);
 	});
 });
 
