@@ -1,13 +1,13 @@
 {
   "id": "parallel",
   "displayName": "Parallel",
-  "description": "Search, extract, run research tasks, monitor changes, and generate grounded responses with Parallel.",
+  "description": "Search the web, images, places, flights, hotels and products, extract pages, run research tasks and FindAll lists, monitor changes, and generate grounded responses with Parallel.",
   "npmPackageName": "@corsair-dev/parallel",
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
   "counts": {
-    "api": 35,
-    "webhooks": 0,
+    "api": 38,
+    "webhooks": 10,
     "db": 0
   },
   "auth": [
@@ -246,7 +246,7 @@
           {
             "key": "advanced_settings",
             "optional": true,
-            "type": "{ fetch_policy?: { max_age_seconds?: number | null, timeout_seconds?: number | null, disable_cache_fallback?: boolean } | null, excerpt_settings?: { max_chars_per_result?: number | null } | null, full_content?: boolean | { max_chars_per_result?: number | null }, links?: boolean | null } | null"
+            "type": "{ fetch_policy?: { max_age_seconds?: number | null, timeout_seconds?: number | null, disable_cache_fallback?: boolean, as_of?: string | null } | null, excerpt_settings?: { max_chars_per_result?: number | null } | null, full_content?: boolean | { max_chars_per_result?: number | null }, links?: boolean | null } | null"
           }
         ]
       },
@@ -353,7 +353,7 @@
           {
             "key": "webhook",
             "optional": true,
-            "type": "{ url: string, event_types?: task_run.status[] } | null"
+            "type": "{ url: string, event_types?: (findall.candidate.generated | findall.candidate.matched | findall.candidate.enriched | findall.run.completed | findall.run.cancelled | findall.run.failed)[] } | null"
           },
           {
             "key": "memory_scope_key",
@@ -736,6 +736,298 @@
             "key": "match_limit",
             "optional": true,
             "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.flights.search",
+      "shortPath": "flights.search",
+      "description": "Search one-way or round-trip flights with where to book them",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origins",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "destinations",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "departure_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "return_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "adults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "children",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "infants_in_seat",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "infants_on_lap",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cabin",
+            "optional": true,
+            "type": "economy | premium_economy | business | first"
+          },
+          {
+            "key": "max_stops",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "max_price",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "max_duration_minutes",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "include_airlines",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "exclude_airlines",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "departure_hours",
+            "optional": true,
+            "type": "{ earliest: number, latest: number } | null"
+          },
+          {
+            "key": "arrival_hours",
+            "optional": true,
+            "type": "{ earliest: number, latest: number } | null"
+          },
+          {
+            "key": "return_hours",
+            "optional": true,
+            "type": "{ earliest: number, latest: number } | null"
+          },
+          {
+            "key": "return_arrival_hours",
+            "optional": true,
+            "type": "{ earliest: number, latest: number } | null"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "best | price | duration | departure_time | arrival_time"
+          },
+          {
+            "key": "advanced_settings",
+            "optional": true,
+            "type": "{ max_results?: number | null } | null"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "advanced | null"
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "client_model",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ type: string, message: string, detail?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ name: string, count: number }[] | null"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ url: string, price?: number | null, outbound: { departure_airport: string, departure_time: string, arrival_airport: string, arrival_time: string, duration_minutes?: number | null, stops: number, segments: { airline: string, flight_number: string, departure_airport: string, departure_time: string, arrival_airport: string, arrival_time: string, duration_minutes?: number | null, aircraft?: string | null, cabin?: string | null, legroom?: string | null, overnight?: boolean }[], layovers?: { airport: string, duration_minutes?: number | null, overnight?: boolean }[] }, inbound?: { departure_airport: string, departure_time: string, arrival_airport: string, arrival_time: string, duration_minutes?: number | null, stops: number, segments: { airline: string, flight_number: string, departure_airport: string, departure_time: string, arrival_airport: string, arrival_time: string, duration_minutes?: number | null, aircraft?: string | null, cabin?: string | null, legroom?: string | null, overnight?: boolean }[], layovers?: { airport: string, duration_minutes?: number | null, overnight?: boolean }[] } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parallel.api.hotels.search",
+      "shortPath": "hotels.search",
+      "description": "Search hotels and vacation rentals for a stay",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "check_in_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "check_out_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "adults",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "children_ages",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "rooms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "property_types",
+            "optional": true,
+            "type": "(hotel | vacation_rental)[]"
+          },
+          {
+            "key": "min_price",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "max_price",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "min_rating",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "hotel_classes",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "free_cancellation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "relevance | price | rating"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "advanced | null"
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "client_model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "advanced_settings",
+            "optional": true,
+            "type": "{ max_results?: number | null } | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ type: string, message: string, detail?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ name: string, count: number }[] | null"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ url: string, url_kind: property_website | booking_page | string, name: string, property_type: hotel | vacation_rental | string, address?: string | null, latitude?: number | null, longitude?: number | null, hotel_class?: number | null, rating?: fair | good | great | excellent | string | null, images?: string[], price_per_night?: number | null, total_price?: number | null, currency: string, free_cancellation?: boolean | null, offers: { seller?: string | null, url?: string | null, price_per_night?: number | null, total_price?: number | null, currency: string, free_cancellation?: boolean | null }[], amenities?: string[], check_in_time?: string | null, check_out_time?: string | null }[]"
           }
         ]
       }
@@ -1415,6 +1707,11 @@
             "key": "client_model",
             "optional": true,
             "type": "string | null"
+          },
+          {
+            "key": "advanced_settings",
+            "optional": true,
+            "type": "{ max_results?: number | null } | null"
           }
         ]
       },
@@ -1444,7 +1741,7 @@
           {
             "key": "results",
             "optional": false,
-            "type": "{ name: string, url?: string | null, address?: string | null, phone?: string | null, latitude?: number | null, longitude?: number | null, distance_km?: number | null, rating?: fair | good | great | excellent | string | null, price_level?: number | null, opening_hours?: { monday?: { opens: string, closes: string }[] | null, tuesday?: { opens: string, closes: string }[] | null, wednesday?: { opens: string, closes: string }[] | null, thursday?: { opens: string, closes: string }[] | null, friday?: { opens: string, closes: string }[] | null, saturday?: { opens: string, closes: string }[] | null, sunday?: { opens: string, closes: string }[] | null } | null, timezone?: string | null, open_now?: boolean | null }[]"
+            "type": "{ name: string, url?: string | null, description?: string | null, address?: string | null, phone?: string | null, latitude?: number | null, longitude?: number | null, distance_km?: number | null, rating?: fair | good | great | excellent | string | null, price_level?: number | null, opening_hours?: { monday?: { opens: string, closes: string }[] | null, tuesday?: { opens: string, closes: string }[] | null, wednesday?: { opens: string, closes: string }[] | null, thursday?: { opens: string, closes: string }[] | null, friday?: { opens: string, closes: string }[] | null, saturday?: { opens: string, closes: string }[] | null, sunday?: { opens: string, closes: string }[] | null } | null, timezone?: string | null, open_now?: boolean | null }[]"
           }
         ]
       }
@@ -1611,7 +1908,7 @@
           {
             "key": "advanced_settings",
             "optional": true,
-            "type": "{ source_policy?: { include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null, fetch_policy?: { max_age_seconds?: number | null, timeout_seconds?: number | null, disable_cache_fallback?: boolean } | null, excerpt_settings?: { max_chars_per_result?: number | null } | null, location?: string | null, max_results?: number | null } | null"
+            "type": "{ source_policy?: { include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null, fetch_policy?: { max_age_seconds?: number | null, timeout_seconds?: number | null, disable_cache_fallback?: boolean, as_of?: string | null } | null, excerpt_settings?: { max_chars_per_result?: number | null } | null, location?: string | null, max_results?: number | null } | null"
           }
         ]
       },
@@ -1647,6 +1944,92 @@
       }
     },
     {
+      "path": "parallel.api.shopping.search",
+      "shortPath": "shopping.search",
+      "description": "Search products to buy, linked to store product pages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_queries",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "objective",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "min_price",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "max_price",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "condition",
+            "optional": true,
+            "type": "new | used | refurbished | any"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "advanced | null"
+          },
+          {
+            "key": "session_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "client_model",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "advanced_settings",
+            "optional": true,
+            "type": "{ max_results?: number | null, location?: string | null } | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "{ type: string, message: string, detail?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "usage",
+            "optional": true,
+            "type": "{ name: string, count: number }[] | null"
+          },
+          {
+            "key": "session_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ url: string, title?: string | null, description?: string | null, merchant?: string | null, brand?: string | null, price?: number | null, currency?: string | null, original_price?: number | null, rating?: number | null, review_count?: number | null, image_url?: string | null, condition?: new | used | refurbished | string | null, availability?: in_stock | out_of_stock | preorder | string | null, offers?: { url: string, merchant?: string | null, price?: number | null, currency?: string | null }[] }[]"
+          }
+        ]
+      }
+    },
+    {
       "path": "parallel.api.tasks.addGroupRuns",
       "shortPath": "tasks.addGroupRuns",
       "description": "Add runs to a task group",
@@ -1672,7 +2055,7 @@
           {
             "key": "body",
             "optional": false,
-            "type": "{ default_task_spec?: { output_schema: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null }, input_schema?: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null } | null } | null, inputs: { processor: string, input: string | Record<string, JsonValue>, metadata?: Record<string, string | number | boolean> | null, memory_scope_key?: string | null, source_policy?: { include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null, advanced_settings?: { location?: string | null, fetch_policy?: { max_age_seconds?: number | null, timeout_seconds?: number | null, disable_cache_fallback?: boolean } | null, data_sources?: { pay_per_use?: string[], free?: string[], excluded?: string[] } | null } | null, task_spec?: { output_schema: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null }, input_schema?: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null } | null } | null, previous_interaction_id?: string | null, mcp_servers?: { type?: url, url: string, name: string, headers?: Record<string, string> | null, allowed_tools?: string[] | null }[] | null, enable_events?: boolean | null, webhook?: { url: string, event_types?: task_run.status[] } | null }[] }"
+            "type": "{ default_task_spec?: { output_schema: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null }, input_schema?: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null } | null } | null, inputs: { processor: string, input: string | Record<string, JsonValue>, metadata?: Record<string, string | number | boolean> | null, memory_scope_key?: string | null, source_policy?: { include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null, advanced_settings?: { location?: string | null, fetch_policy?: { max_age_seconds?: number | null, timeout_seconds?: number | null, disable_cache_fallback?: boolean, as_of?: null } | null, data_sources?: { pay_per_use?: string[], free?: string[], excluded?: string[] } | null } | null, task_spec?: { output_schema: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null }, input_schema?: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null } | null } | null, previous_interaction_id?: string | null, mcp_servers?: { type?: url, url: string, name: string, headers?: Record<string, string> | null, allowed_tools?: string[] | null }[] | null, enable_events?: boolean | null, webhook?: { url: string, event_types?: task_run.status[] } | null }[] }"
           }
         ]
       },
@@ -1754,7 +2137,7 @@
           {
             "key": "body",
             "optional": false,
-            "type": "{ processor: string, input: string | Record<string, JsonValue>, metadata?: Record<string, string | number | boolean> | null, memory_scope_key?: string | null, source_policy?: { include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null, advanced_settings?: { location?: string | null, fetch_policy?: { max_age_seconds?: number | null, timeout_seconds?: number | null, disable_cache_fallback?: boolean } | null, data_sources?: { pay_per_use?: string[], free?: string[], excluded?: string[] } | null } | null, task_spec?: { output_schema: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null }, input_schema?: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null } | null } | null, previous_interaction_id?: string | null, mcp_servers?: { type?: url, url: string, name: string, headers?: Record<string, string> | null, allowed_tools?: string[] | null }[] | null, enable_events?: boolean | null, webhook?: { url: string, event_types?: task_run.status[] } | null }"
+            "type": "{ processor: string, input: string | Record<string, JsonValue>, metadata?: Record<string, string | number | boolean> | null, memory_scope_key?: string | null, source_policy?: { include_domains?: string[], exclude_domains?: string[], after_date?: string | null } | null, advanced_settings?: { location?: string | null, fetch_policy?: { max_age_seconds?: number | null, timeout_seconds?: number | null, disable_cache_fallback?: boolean, as_of?: null } | null, data_sources?: { pay_per_use?: string[], free?: string[], excluded?: string[] } | null } | null, task_spec?: { output_schema: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null }, input_schema?: string | { json_schema: Record<string, JsonValue>, type?: json } | { type: auto } | { type?: text, description?: string | null } | null } | null, previous_interaction_id?: string | null, mcp_servers?: { type?: url, url: string, name: string, headers?: Record<string, string> | null, allowed_tools?: string[] | null }[] | null, enable_events?: boolean | null, webhook?: { url: string, event_types?: task_run.status[] } | null }"
           },
           {
             "key": "parallel_beta",
@@ -2109,7 +2492,7 @@
           {
             "key": "advanced_settings",
             "optional": true,
-            "type": "{ location?: string | null, fetch_policy?: { max_age_seconds?: number | null, timeout_seconds?: number | null, disable_cache_fallback?: boolean } | null, data_sources?: { pay_per_use?: string[], free?: string[], excluded?: string[] } | null } | null"
+            "type": "{ location?: string | null, fetch_policy?: { max_age_seconds?: number | null, timeout_seconds?: number | null, disable_cache_fallback?: boolean, as_of?: null } | null, data_sources?: { pay_per_use?: string[], free?: string[], excluded?: string[] } | null } | null"
           },
           {
             "key": "task_spec",
@@ -2140,6 +2523,277 @@
       }
     }
   ],
-  "webhooks": [],
+  "webhooks": [
+    {
+      "path": "parallel.webhooks.findall.candidateEnriched",
+      "shortPath": "findall.candidateEnriched",
+      "description": "Enrichment data was extracted for a FindAll candidate",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "findall.candidate.enriched"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ candidate_id: string, name: string, url: string, match_status: generated | matched | unmatched | discarded | string, description?: string | null, output?: Record<string, JsonValue> | null, basis?: { field: string, reasoning: string, confidence?: string | null, citations?: { url: string, title?: string | null, excerpts?: string[] | null }[] }[] | null, findall_id: string }"
+          }
+        ]
+      },
+      "responseType": "{ type: findall.candidate.enriched, timestamp: string, data: { candidate_id: string, name: string, url: string, match_status: generated | matched | unmatched | discarded | string, description?: string | null, output?: Record<string, JsonValue> | null, basis?: { field: string, reasoning: string, confidence?: string | null, citations?: { url: string, title?: string | null, excerpts?: string[] | null }[] }[] | null, findall_id: string } }",
+      "usageExample": "parallel({\n    webhookHooks: {\n        findall: {\n            candidateEnriched: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "parallel.webhooks.findall.candidateGenerated",
+      "shortPath": "findall.candidateGenerated",
+      "description": "A FindAll run found a candidate and queued it for checking",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "findall.candidate.generated"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ candidate_id: string, name: string, url: string, match_status: generated | matched | unmatched | discarded | string, description?: string | null, output?: Record<string, JsonValue> | null, basis?: { field: string, reasoning: string, confidence?: string | null, citations?: { url: string, title?: string | null, excerpts?: string[] | null }[] }[] | null, findall_id: string }"
+          }
+        ]
+      },
+      "responseType": "{ type: findall.candidate.generated, timestamp: string, data: { candidate_id: string, name: string, url: string, match_status: generated | matched | unmatched | discarded | string, description?: string | null, output?: Record<string, JsonValue> | null, basis?: { field: string, reasoning: string, confidence?: string | null, citations?: { url: string, title?: string | null, excerpts?: string[] | null }[] }[] | null, findall_id: string } }",
+      "usageExample": "parallel({\n    webhookHooks: {\n        findall: {\n            candidateGenerated: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "parallel.webhooks.findall.candidateMatched",
+      "shortPath": "findall.candidateMatched",
+      "description": "A FindAll candidate met every match condition",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "findall.candidate.matched"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ candidate_id: string, name: string, url: string, match_status: generated | matched | unmatched | discarded | string, description?: string | null, output?: Record<string, JsonValue> | null, basis?: { field: string, reasoning: string, confidence?: string | null, citations?: { url: string, title?: string | null, excerpts?: string[] | null }[] }[] | null, findall_id: string }"
+          }
+        ]
+      },
+      "responseType": "{ type: findall.candidate.matched, timestamp: string, data: { candidate_id: string, name: string, url: string, match_status: generated | matched | unmatched | discarded | string, description?: string | null, output?: Record<string, JsonValue> | null, basis?: { field: string, reasoning: string, confidence?: string | null, citations?: { url: string, title?: string | null, excerpts?: string[] | null }[] }[] | null, findall_id: string } }",
+      "usageExample": "parallel({\n    webhookHooks: {\n        findall: {\n            candidateMatched: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "parallel.webhooks.findall.runCancelled",
+      "shortPath": "findall.runCancelled",
+      "description": "A FindAll run was cancelled",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "findall.run.cancelled"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ findall_id: string, generator: base | core | pro | preview | string, status: { status: queued | action_required | running | completed | failed | cancelling | cancelled | string, is_active: boolean, metrics: { generated_candidates_count?: number, matched_candidates_count?: number }, termination_reason?: low_match_rate | match_limit_met | candidates_exhausted | user_cancelled | error_occurred | timeout | insufficient_funds | string | null }, metadata?: Record<string, string | number | boolean> | null, created_at?: string | null, modified_at?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ type: findall.run.cancelled, timestamp: string, data: { findall_id: string, generator: base | core | pro | preview | string, status: { status: queued | action_required | running | completed | failed | cancelling | cancelled | string, is_active: boolean, metrics: { generated_candidates_count?: number, matched_candidates_count?: number }, termination_reason?: low_match_rate | match_limit_met | candidates_exhausted | user_cancelled | error_occurred | timeout | insufficient_funds | string | null }, metadata?: Record<string, string | number | boolean> | null, created_at?: string | null, modified_at?: string | null } }",
+      "usageExample": "parallel({\n    webhookHooks: {\n        findall: {\n            runCancelled: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "parallel.webhooks.findall.runCompleted",
+      "shortPath": "findall.runCompleted",
+      "description": "A FindAll run completed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "findall.run.completed"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ findall_id: string, generator: base | core | pro | preview | string, status: { status: queued | action_required | running | completed | failed | cancelling | cancelled | string, is_active: boolean, metrics: { generated_candidates_count?: number, matched_candidates_count?: number }, termination_reason?: low_match_rate | match_limit_met | candidates_exhausted | user_cancelled | error_occurred | timeout | insufficient_funds | string | null }, metadata?: Record<string, string | number | boolean> | null, created_at?: string | null, modified_at?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ type: findall.run.completed, timestamp: string, data: { findall_id: string, generator: base | core | pro | preview | string, status: { status: queued | action_required | running | completed | failed | cancelling | cancelled | string, is_active: boolean, metrics: { generated_candidates_count?: number, matched_candidates_count?: number }, termination_reason?: low_match_rate | match_limit_met | candidates_exhausted | user_cancelled | error_occurred | timeout | insufficient_funds | string | null }, metadata?: Record<string, string | number | boolean> | null, created_at?: string | null, modified_at?: string | null } }",
+      "usageExample": "parallel({\n    webhookHooks: {\n        findall: {\n            runCompleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "parallel.webhooks.findall.runFailed",
+      "shortPath": "findall.runFailed",
+      "description": "A FindAll run failed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "findall.run.failed"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ findall_id: string, generator: base | core | pro | preview | string, status: { status: queued | action_required | running | completed | failed | cancelling | cancelled | string, is_active: boolean, metrics: { generated_candidates_count?: number, matched_candidates_count?: number }, termination_reason?: low_match_rate | match_limit_met | candidates_exhausted | user_cancelled | error_occurred | timeout | insufficient_funds | string | null }, metadata?: Record<string, string | number | boolean> | null, created_at?: string | null, modified_at?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ type: findall.run.failed, timestamp: string, data: { findall_id: string, generator: base | core | pro | preview | string, status: { status: queued | action_required | running | completed | failed | cancelling | cancelled | string, is_active: boolean, metrics: { generated_candidates_count?: number, matched_candidates_count?: number }, termination_reason?: low_match_rate | match_limit_met | candidates_exhausted | user_cancelled | error_occurred | timeout | insufficient_funds | string | null }, metadata?: Record<string, string | number | boolean> | null, created_at?: string | null, modified_at?: string | null } }",
+      "usageExample": "parallel({\n    webhookHooks: {\n        findall: {\n            runFailed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "parallel.webhooks.monitor.eventDetected",
+      "shortPath": "monitor.eventDetected",
+      "description": "A monitor run detected one or more events",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "monitor.event.detected"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ monitor_id: string, event: { event_group_id: string }, metadata?: Record<string, string | number | boolean> | null }"
+          }
+        ]
+      },
+      "responseType": "{ type: monitor.event.detected, timestamp: string, data: { monitor_id: string, event: { event_group_id: string }, metadata?: Record<string, string | number | boolean> | null } }",
+      "usageExample": "parallel({\n    webhookHooks: {\n        monitor: {\n            eventDetected: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "parallel.webhooks.monitor.executionCompleted",
+      "shortPath": "monitor.executionCompleted",
+      "description": "A monitor run completed without detecting events",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "monitor.execution.completed"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ monitor_id: string, event: { type?: string, monitor_ts?: string | null }, metadata?: Record<string, string | number | boolean> | null }"
+          }
+        ]
+      },
+      "responseType": "{ type: monitor.execution.completed, timestamp: string, data: { monitor_id: string, event: { type?: string, monitor_ts?: string | null }, metadata?: Record<string, string | number | boolean> | null } }",
+      "usageExample": "parallel({\n    webhookHooks: {\n        monitor: {\n            executionCompleted: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "parallel.webhooks.monitor.executionFailed",
+      "shortPath": "monitor.executionFailed",
+      "description": "A monitor run failed",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "monitor.execution.failed"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ monitor_id: string, event: { type?: string, error?: string | null, id?: string | null, date?: string | null }, metadata?: Record<string, string | number | boolean> | null }"
+          }
+        ]
+      },
+      "responseType": "{ type: monitor.execution.failed, timestamp: string, data: { monitor_id: string, event: { type?: string, error?: string | null, id?: string | null, date?: string | null }, metadata?: Record<string, string | number | boolean> | null } }",
+      "usageExample": "parallel({\n    webhookHooks: {\n        monitor: {\n            executionFailed: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "parallel.webhooks.taskRun.status",
+      "shortPath": "taskRun.status",
+      "description": "A task run finished, successfully or not",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "task_run.status"
+          },
+          {
+            "key": "timestamp",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ run_id: string, interaction_id: string, status: queued | action_required | running | completed | failed | cancelling | cancelled | string, is_active: boolean, processor: string, created_at: string | null, modified_at: string | null, warnings?: { type: string, message: string, detail?: Record<string, any> | null }[] | null, error?: { message: string, ref_id?: string, detail?: Record<string, JsonValue> | null, details?: string | JsonValue | null } | null, metadata?: Record<string, string | number | boolean> | null, taskgroup_id?: string | null }"
+          }
+        ]
+      },
+      "responseType": "{ type: task_run.status, timestamp: string, data: { run_id: string, interaction_id: string, status: queued | action_required | running | completed | failed | cancelling | cancelled | string, is_active: boolean, processor: string, created_at: string | null, modified_at: string | null, warnings?: { type: string, message: string, detail?: Record<string, any> | null }[] | null, error?: { message: string, ref_id?: string, detail?: Record<string, JsonValue> | null, details?: string | JsonValue | null } | null, metadata?: Record<string, string | number | boolean> | null, taskgroup_id?: string | null } }",
+      "usageExample": "parallel({\n    webhookHooks: {\n        taskRun: {\n            status: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
   "db": []
 }
