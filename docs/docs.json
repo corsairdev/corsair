@@ -2739,6 +2739,14 @@
                 ]
               },
               {
+                "group": "Google Admin",
+                "pages": [
+                  "plugins/googleadmin/overview",
+                  "plugins/googleadmin/api",
+                  "plugins/googleadmin/database"
+                ]
+              },
+              {
                 "group": "Google Contacts",
                 "pages": [
                   "plugins/googlecontacts/overview",

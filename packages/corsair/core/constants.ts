@@ -321,6 +321,7 @@ export const BaseProviders = [
 	'godial',
 	'gong',
 	'googleaddressvalidation',
+	'googleadmin',
 	'googleads',
 	'googleanalytics',
 	'googlebigquery',
@@ -1069,6 +1070,7 @@ export const ProviderDisplayNames = {
 	godial: 'GoDial',
 	gong: 'Gong',
 	googleaddressvalidation: 'Google Address Validation',
+	googleadmin: 'Google Admin',
 	googleads: 'Google Ads',
 	googleanalytics: 'Google Analytics',
 	googlebigquery: 'Google BigQuery',
@@ -1824,6 +1826,7 @@ export type AllProviders =
 	| 'godial'
 	| 'gong'
 	| 'googleaddressvalidation'
+	| 'googleadmin'
 	| 'googleads'
 	| 'googleanalytics'
 	| 'googlebigquery'
