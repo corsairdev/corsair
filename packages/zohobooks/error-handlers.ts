@@ -1,24 +1,42 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
+import { getZohoBooksApiErrorCode } from './client';
+
+function statusOf(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
+}
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+		match: (error: Error) => statusOf(error) === 429,
+		// Daily plan quota exhaustion (code 45) cannot recover by retrying.
+		handler: async (error) => {
+			const code = getZohoBooksApiErrorCode(error);
+			if (code === 45 || code === '45') return { maxRetries: 0 };
+			const retryAfter =
+				error instanceof ApiError ? error.retryAfter : undefined;
+			return {
+				maxRetries: 1,
+				...(retryAfter !== undefined
+					? { headersRetryAfterMs: retryAfter }
+					: {}),
+			};
 		},
-		// Core's request() has already retried this 429 (three times, honouring
-		// Retry-After) before it reaches a handler. Retrying the endpoint again
-		// here would multiply the attempts and the wait.
-		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
-		},
+		match: (error: Error) => statusOf(error) === 401,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	PERMISSION_ERROR: {
+		match: (error: Error) => statusOf(error) === 403,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	NOT_FOUND_ERROR: {
+		match: (error: Error) => statusOf(error) === 404,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	BAD_REQUEST_ERROR: {
+		match: (error: Error) => statusOf(error) === 400,
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {

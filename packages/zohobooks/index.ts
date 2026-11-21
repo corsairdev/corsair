@@ -1,11 +1,10 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
-	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -14,189 +13,142 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { ZohoBooksEndpointInputs, ZohoBooksEndpointOutputs } from './endpoints/types';
-import { ZohoBooksEndpointInputSchemas, ZohoBooksEndpointOutputSchemas } from './endpoints/types';
-import type {
-	ZohoBooksWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { ZohoBooksSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+import { getOAuthAccessToken } from 'corsair/core';
+import { zohoBooksOAuthAuthUrl, zohoBooksOAuthTokenUrl } from './client';
+import {
+	zohoBooksEndpointMeta,
+	zohoBooksEndpointSchemas,
+	zohoBooksEndpointsNested,
+} from './endpoints/generated';
 import { errorHandlers } from './error-handlers';
-import { matchZohoBooksTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveZohoBooksOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { zohoBooksOAuthScopes } from './openapi';
+import { ZohoBooksSchema } from './schema';
+import type { ZohoBooksRegion } from './schema/openapi-types';
+
+const zohoBooksWebhooks = {} as const;
+const zohoBooksWebhookSchemas = {} satisfies RequiredPluginWebhookSchemas<
+	typeof zohoBooksWebhooks
+>;
+const zohoBooksEndpointMetaValidated =
+	zohoBooksEndpointMeta satisfies RequiredPluginEndpointMeta<
+		typeof zohoBooksEndpointsNested
+	>;
+const zohoBooksEndpointSchemasValidated =
+	zohoBooksEndpointSchemas satisfies RequiredPluginEndpointSchemas<
+		typeof zohoBooksEndpointsNested
+	>;
+
+export const zohoBooksAuthConfig = {
+	oauth_2: {},
+} as const satisfies PluginAuthConfig;
 
 export type ZohoBooksPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
-	key?: string;
-	webhookSecret?: string;
+	authType?: PickAuth<'oauth_2'>;
+	/** Zoho Books data center. Defaults to US; set the value matching the organization. */
+	region?: ZohoBooksRegion;
 	hooks?: InternalZohoBooksPlugin['hooks'];
-	webhookHooks?: InternalZohoBooksPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof zohoBooksEndpointsNested>;
 };
 
 export type ZohoBooksContext = CorsairPluginContext<
 	typeof ZohoBooksSchema,
-	ZohoBooksPluginOptions
+	ZohoBooksPluginOptions,
+	undefined,
+	typeof zohoBooksAuthConfig
 >;
 
-export type ZohoBooksKeyBuilderContext = KeyBuilderContext<ZohoBooksPluginOptions>;
-
-export type ZohoBooksBoundEndpoints = BindEndpoints<typeof zohoBooksEndpointsNested>;
-
-type ZohoBooksEndpoint<
-	K extends keyof ZohoBooksEndpointOutputs,
-> = CorsairEndpoint<
-	ZohoBooksContext,
-	ZohoBooksEndpointInputs[K],
-	ZohoBooksEndpointOutputs[K]
+export type ZohoBooksKeyBuilderContext = KeyBuilderContext<
+	ZohoBooksPluginOptions,
+	typeof zohoBooksAuthConfig
 >;
 
-export type ZohoBooksEndpoints = {
-	exampleGet: ZohoBooksEndpoint<'exampleGet'>;
-};
-
-type ZohoBooksWebhook<
-	K extends keyof ZohoBooksWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<ZohoBooksContext, TEvent, ZohoBooksWebhookOutputs[K]>;
-
-export type ZohoBooksWebhooks = {
-	example: ZohoBooksWebhook<'example', ExampleEvent>;
-};
-
-export type ZohoBooksBoundWebhooks = BindWebhooks<ZohoBooksWebhooks>;
-
-const zohoBooksEndpointsNested = {
-	example: {
-		get: Example.get,
-	},
-} as const;
-
-const zohoBooksWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
-
-export const zohoBooksEndpointSchemas = {
-	'example.get': {
-		input: ZohoBooksEndpointInputSchemas.exampleGet,
-		output: ZohoBooksEndpointOutputSchemas.exampleGet,
-	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof zohoBooksEndpointsNested>;
-
-const zohoBooksWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof zohoBooksWebhooksNested>;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
-
-const zohoBooksEndpointMeta = {
-	'example.get': {
-		riskLevel: 'read',
-		description: 'Get an example resource by ID',
-	},
-} as const satisfies RequiredPluginEndpointMeta<typeof zohoBooksEndpointsNested>;
-
-export const zohoBooksAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
-} as const satisfies PluginAuthConfig;
-
-export type BaseZohoBooksPlugin<T extends ZohoBooksPluginOptions> = CorsairPlugin<
-	'zohobooks',
-	typeof ZohoBooksSchema,
-	typeof zohoBooksEndpointsNested,
-	typeof zohoBooksWebhooksNested,
-	T,
-	typeof defaultAuthType
+export type ZohoBooksBoundEndpoints = BindEndpoints<
+	typeof zohoBooksEndpointsNested
 >;
 
-export type InternalZohoBooksPlugin = BaseZohoBooksPlugin<ZohoBooksPluginOptions>;
+export type ZohoBooksBoundWebhooks = BindWebhooks<typeof zohoBooksWebhooks>;
+
+export type BaseZohoBooksPlugin<T extends ZohoBooksPluginOptions> =
+	CorsairPlugin<
+		'zohobooks',
+		typeof ZohoBooksSchema,
+		typeof zohoBooksEndpointsNested,
+		typeof zohoBooksWebhooks,
+		T,
+		typeof defaultAuthType
+	>;
+
+export type InternalZohoBooksPlugin =
+	BaseZohoBooksPlugin<ZohoBooksPluginOptions>;
 
 export type ExternalZohoBooksPlugin<T extends ZohoBooksPluginOptions> =
 	BaseZohoBooksPlugin<T>;
 
+const defaultAuthType: AuthTypes = 'oauth_2' as const;
+
 export function zohobooks<const T extends ZohoBooksPluginOptions>(
-	incomingOptions: ZohoBooksPluginOptions & T = {} as ZohoBooksPluginOptions & T,
+	incomingOptions: ZohoBooksPluginOptions & T = {} as ZohoBooksPluginOptions &
+		T,
 ): ExternalZohoBooksPlugin<T> {
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	const { DEFAULT: builtInDefault, ...builtIns } = errorHandlers;
+	const { DEFAULT: callerDefault, ...callers } = options.errorHandlers ?? {};
 	return {
 		id: 'zohobooks',
 		authConfig: zohoBooksAuthConfig,
-		schema: ZohoBooksSchema,
-		options: options,
-		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
-		endpoints: zohoBooksEndpointsNested,
-		webhooks: zohoBooksWebhooksNested,
-		endpointMeta: zohoBooksEndpointMeta,
-		endpointSchemas: zohoBooksEndpointSchemas,
-		webhookSchemas: zohoBooksWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-zohobooks-signature' in headers;
+		oauthConfig: {
+			providerName: 'Zoho Books',
+			authUrl: zohoBooksOAuthAuthUrl(options.region),
+			tokenUrl: zohoBooksOAuthTokenUrl(options.region),
+			// Zoho Books documents comma-separated scope names and offline refresh tokens.
+			scopes: [zohoBooksOAuthScopes.join(',')],
+			authParams: { access_type: 'offline', prompt: 'consent' },
+			tokenAuthMethod: 'body',
 		},
-		pluginTenantWebhookMatcher: matchZohoBooksTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveZohoBooksOAuthWebhookTenantLink,
+		schema: ZohoBooksSchema,
+		options,
+		hooks: options.hooks,
+		endpoints: zohoBooksEndpointsNested,
+		webhooks: zohoBooksWebhooks,
+		endpointMeta: zohoBooksEndpointMetaValidated,
+		endpointSchemas: zohoBooksEndpointSchemasValidated,
+		webhookSchemas: zohoBooksWebhookSchemas,
+		pluginWebhookMatcher: () => false,
 		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
+			...callers,
+			...builtIns,
+			...callers,
+			DEFAULT: callerDefault ?? builtInDefault,
 		},
 		keyBuilder: async (ctx: ZohoBooksKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && options.key) {
-				return options.key;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			if (source !== 'endpoint') return '';
+			return getOAuthAccessToken(ctx, {
+				plugin: 'zohobooks',
+				tokenUrl: zohoBooksOAuthTokenUrl(ctx.options.region),
+				tokenAuthMethod: 'body',
+			});
 		},
 	} satisfies InternalZohoBooksPlugin;
 }
 
 export type {
-	ExampleEvent,
-	ZohoBooksWebhookOutputs,
-} from './webhooks/types';
+	JsonScalar,
+	JsonValue,
+	ZohoBooksBinaryOutput,
+	ZohoBooksOperationDefinition,
+	ZohoBooksOperationInput,
+	ZohoBooksOperationOutput,
+	ZohoBooksRegion,
+} from './schema/openapi-types';
 
-export type {
-	ZohoBooksEndpointInputs,
-	ZohoBooksEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
-} from './endpoints/types';
+export type ZohoBooksEndpoints = ZohoBooksBoundEndpoints;
+export type ZohoBooksWebhooks = ZohoBooksBoundWebhooks;
+
+export const zohoBooksApiReference =
+	'https://www.zoho.com/books/api/v3/introduction/';
+
+export type { RequiredPluginEndpointMeta, RequiredPluginEndpointSchemas };

@@ -6214,6 +6214,14 @@
                 ]
               },
               {
+                "group": "Zoho Books",
+                "pages": [
+                  "plugins/zohobooks/overview",
+                  "plugins/zohobooks/api",
+                  "plugins/zohobooks/database"
+                ]
+              },
+              {
                 "group": "Zoho Desk",
                 "pages": [
                   "plugins/zohodesk/overview",

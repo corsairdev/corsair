@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/zohobooks",
   "version": "0.1.0",
-  "description": "ZohoBooks plugin for Corsair",
+  "description": "Zoho Books API v3 integration for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -16,7 +16,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",
@@ -36,9 +37,15 @@
     "zohobooks",
     "plugin"
   ],
-  "author": "",
+  "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
   "files": [
     "dist"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/corsairdev/corsair.git",
+    "directory": "packages/zohobooks"
+  },
+  "homepage": "https://docs.corsair.dev/plugins/zohobooks"
 }
