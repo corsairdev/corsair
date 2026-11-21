@@ -83,4 +83,29 @@ describe('Lexware live response shapes', () => {
 		};
 		expect(input.version).toBeUndefined();
 	});
+
+	it('still drops token-like text in issue fields and messages', () => {
+		const error = new ApiError(
+			{ method: 'GET', url: '/profile' },
+			{
+				url: 'https://api.lexware.io/v1/profile',
+				ok: false,
+				status: 401,
+				statusText: 'Unauthorized',
+				body: {
+					message: 'bearer_abcdefghijklmnopqrstuvwxyz',
+					IssueList: [
+						{ i18nKey: 'bearer_abcdefghijklmnopqrstuvwxyz' },
+						{ source: 'abcdefghijklmnopqrstuvwxyzabcd' },
+						{ source: 'secret_value_here' },
+					],
+				},
+			},
+			'Unauthorized',
+		);
+		sanitizeApiError(error);
+		expect(error.body).toEqual({ message: 'Lexware API request failed' });
+		expect(error.message).toBe('Lexware API request failed');
+		expect(String(error.stack)).not.toContain('abcdefghij');
+	});
 });

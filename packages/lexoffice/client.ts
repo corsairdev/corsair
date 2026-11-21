@@ -61,10 +61,11 @@ function safeProviderText(value: unknown): string | undefined {
 	if (typeof value !== 'string' || value.length === 0 || value.length > 300) {
 		return undefined;
 	}
+	if (/@|bearer|token|secret|apikey|api_key/i.test(value)) return undefined;
 	// Lexware issue identifiers such as contact_has_not_mappable_phone_number are
-	// lowercase snake_case and safe at any length.
-	if (/^[a-z]+(?:_[a-z]+)*$/.test(value)) return value;
-	if (/@|bearer/i.test(value) || /[A-Za-z0-9_-]{24,}/.test(value)) {
+	// snake_case words of ordinary length; a long single run is still dropped.
+	if (/^[a-z]{1,15}(?:_[a-z]{1,15})+$/.test(value)) return value;
+	if (/[A-Za-z0-9_-]{24,}/.test(value)) {
 		return undefined;
 	}
 	return value;
