@@ -530,9 +530,13 @@ describe('Pipedrive HTTP client', () => {
 describe('Pipedrive request errors', () => {
 	it('redacts echoed customer values and preserves safe ApiError metadata', async () => {
 		const sent = {
-			name: 'Private Person',
-			notes: 'confidential note',
-			org_id: 12345,
+			name: 'Bo',
+			notes: 'confidential\nnote',
+			org_id: 12,
+		};
+		const echoedError = {
+			error: 'Invalid values for Bo: confidential\nnote',
+			code: 'INVALID_FIELD',
 		};
 		const apiError = new ApiError(
 			{ method: 'POST', url: '/persons', body: sent },
@@ -545,15 +549,15 @@ describe('Pipedrive request errors', () => {
 					success: false,
 					code: 'INVALID_FIELD',
 					api_token: 'test-token',
-					error: 'Invalid values for Private Person: confidential note',
+					error: echoedError.error,
 					details: {
-						name: 'Private Person',
-						notes: 'confidential note',
-						org_id: 12345,
+						name: 'Bo',
+						notes: 'confidential\nnote',
+						org_id: 12,
 					},
 				},
 			},
-			'Invalid values for Private Person: confidential note',
+			JSON.stringify(echoedError),
 			{
 				retryAfter: 4000,
 				rateLimitReset: 4,
@@ -595,11 +599,15 @@ describe('Pipedrive request errors', () => {
 		if (!(error instanceof ApiError)) throw new Error('Expected ApiError');
 		expect(error.request.body).toBeUndefined();
 		expect(error.request.query).toBeUndefined();
-		expect(error.message).not.toContain('Private Person');
-		expect(error.message).not.toContain('confidential note');
-		expect(JSON.stringify(error)).not.toContain('Private Person');
-		expect(JSON.stringify(error)).not.toContain('confidential note');
-		expect(JSON.stringify(error)).not.toContain('12345');
+		expect(error.message).toBe(
+			JSON.stringify({
+				error: 'Invalid values for [REDACTED]: [REDACTED]',
+				code: 'INVALID_FIELD',
+			}),
+		);
+		expect(JSON.stringify(error)).not.toContain('Bo');
+		expect(JSON.stringify(error)).not.toContain('confidential');
+		expect(JSON.stringify(error)).not.toContain('org_id":12');
 	});
 
 	it('passes through an ApiError when there is no request data to redact', async () => {

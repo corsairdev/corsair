@@ -48,10 +48,42 @@ const SENSITIVE_ERROR_FIELDS = new Set([
 	'xapikey',
 	'xapitoken',
 ]);
+const SHORT_CUSTOMER_VALUE_FIELDS = new Set([
+	'address',
+	'companyname',
+	'content',
+	'customername',
+	'description',
+	'firstname',
+	'lastname',
+	'message',
+	'name',
+	'notes',
+	'organizationname',
+	'personname',
+	'phone',
+	'search',
+	'subject',
+	'term',
+	'title',
+	'username',
+]);
+
+function normalizedErrorField(fieldName: string): string {
+	return fieldName.toLowerCase().replace(/[-_]/g, '');
+}
 
 function isSensitiveErrorField(fieldName: string): boolean {
-	return SENSITIVE_ERROR_FIELDS.has(
-		fieldName.toLowerCase().replace(/[-_]/g, ''),
+	return SENSITIVE_ERROR_FIELDS.has(normalizedErrorField(fieldName));
+}
+
+function isShortCustomerValueField(fieldName: string): boolean {
+	const normalizedField = normalizedErrorField(fieldName);
+	return (
+		isSensitiveErrorField(fieldName) ||
+		SHORT_CUSTOMER_VALUE_FIELDS.has(normalizedField) ||
+		normalizedField === 'id' ||
+		normalizedField.endsWith('id')
 	);
 }
 
@@ -66,7 +98,7 @@ function collectRequestValues(
 	if (typeof value === 'string') {
 		if (
 			value.length > 0 &&
-			(value.length >= 4 || isSensitiveErrorField(fieldName))
+			(value.length >= 4 || isShortCustomerValueField(fieldName))
 		) {
 			values.add(value);
 		}
@@ -92,7 +124,7 @@ function collectRequestValues(
 	}
 	if (typeof value === 'number') {
 		const numericValue = String(value);
-		if (isSensitiveErrorField(fieldName) || numericValue.length >= 4) {
+		if (numericValue.length >= 4 || isShortCustomerValueField(fieldName)) {
 			values.add(numericValue);
 		}
 		return;
@@ -131,12 +163,19 @@ function collectRequestValues(
 
 function redactErrorText(value: string, values: Set<string>): string {
 	let redacted = value;
-	for (const sensitiveValue of [...values].sort(
+	const redactionValues = new Set<string>();
+	for (const sensitiveValue of values) {
+		if (sensitiveValue.length === 0) continue;
+		redactionValues.add(sensitiveValue);
+		const jsonEscapedValue = JSON.stringify(sensitiveValue).slice(1, -1);
+		if (jsonEscapedValue !== sensitiveValue) {
+			redactionValues.add(jsonEscapedValue);
+		}
+	}
+	for (const sensitiveValue of [...redactionValues].sort(
 		(a, b) => b.length - a.length,
 	)) {
-		if (sensitiveValue.length > 0) {
-			redacted = redacted.split(sensitiveValue).join(REDACTED_ERROR_VALUE);
-		}
+		redacted = redacted.split(sensitiveValue).join(REDACTED_ERROR_VALUE);
 	}
 	return redacted;
 }
