@@ -388,7 +388,7 @@
     {
       "path": "conversiontools.api.files.upload",
       "shortPath": "files.upload",
-      "description": "Upload a file as multipart form data. https://conversiontools.io/api-documentation#upload-file-to-server",
+      "description": "Upload a file as multipart form data. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id. https://conversiontools.io/api-documentation#upload-file-to-server",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -396,7 +396,8 @@
           {
             "key": "file",
             "optional": false,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…)."
           }
         ]
       },
@@ -420,7 +421,7 @@
     {
       "path": "conversiontools.api.files.uploadToSession",
       "shortPath": "files.uploadToSession",
-      "description": "Upload raw file bytes to a one-time session URL. https://conversiontools.io/llms-full.txt",
+      "description": "Upload raw file bytes to a one-time session URL. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id. https://conversiontools.io/llms-full.txt",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -433,7 +434,8 @@
           {
             "key": "file",
             "optional": false,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The file: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…)."
           }
         ]
       },

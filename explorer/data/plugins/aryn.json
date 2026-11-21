@@ -317,7 +317,7 @@
     {
       "path": "aryn.api.document.partition",
       "shortPath": "document.partition",
-      "description": "Partition document using Aryn DocParse",
+      "description": "Partition document using Aryn DocParse. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -325,7 +325,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The document: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Downloaded here and uploaded; file_url instead has Aryn fetch the link itself."
           },
           {
             "key": "file_url",
@@ -373,7 +374,7 @@
     {
       "path": "aryn.api.document.submitAsyncAdd",
       "shortPath": "document.submitAsyncAdd",
-      "description": "Submit document asynchronously to a DocSet",
+      "description": "Submit document asynchronously to a DocSet. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -386,7 +387,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The document: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Downloaded here and uploaded; file_url instead has Aryn fetch the link itself."
           },
           {
             "key": "file_url",

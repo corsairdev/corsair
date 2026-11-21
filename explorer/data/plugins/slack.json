@@ -6,7 +6,7 @@
   "authTypes": ["api_key", "oauth_2"],
   "defaultAuthType": "api_key",
   "counts": {
-    "api": 45,
+    "api": 46,
     "webhooks": 9,
     "db": 5
   },
@@ -25,7 +25,8 @@
         "expires_at",
         "scope",
         "webhook_signature",
-        "team_id"
+        "team_id",
+        "user_token"
       ]
     }
   ],
@@ -1022,6 +1023,82 @@
             "key": "types",
             "optional": true,
             "type": "string"
+          },
+          {
+            "key": "team_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "needed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "provided",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "response_metadata",
+            "optional": true,
+            "type": "{ next_cursor?: string, messages?: string[] }"
+          },
+          {
+            "key": "channels",
+            "optional": true,
+            "type": "{ id: string, name?: string, is_channel?: boolean, is_group?: boolean, is_im?: boolean, is_mpim?: boolean, is_private?: boolean, created?: number, is_archived?: boolean, is_general?: boolean, unlinked?: number, name_normalized?: string, is_shared?: boolean, is_org_shared?: boolean, is_pending_ext_shared?: boolean, pending_shared?: string[], context_team_id?: string, updated?: number, creator?: string, is_member?: boolean, num_members?: number, topic?: { value: string, creator: string, last_set: number }, purpose?: { value: string, creator: string, last_set: number } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "slack.api.channels.listMine",
+      "shortPath": "channels.listMine",
+      "description": "List the connected user's own conversations (needs a user token)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "exclude_archived",
+            "optional": true,
+            "type": "boolean"
           },
           {
             "key": "team_id",

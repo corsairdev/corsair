@@ -6,9 +6,9 @@
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
   "counts": {
-    "api": 22,
+    "api": 24,
     "webhooks": 1,
-    "db": 3
+    "db": 4
   },
   "auth": [
     {
@@ -193,6 +193,11 @@
             "key": "ownedByMe",
             "optional": true,
             "type": "boolean"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "{ kind?: string, displayName?: string, photoLink?: string, me?: boolean, permissionId?: string, emailAddress?: string }[]"
           },
           {
             "key": "permissionIds",
@@ -436,6 +441,11 @@
             "type": "boolean"
           },
           {
+            "key": "owners",
+            "optional": true,
+            "type": "{ kind?: string, displayName?: string, photoLink?: string, me?: boolean, permissionId?: string, emailAddress?: string }[]"
+          },
+          {
             "key": "permissionIds",
             "optional": true,
             "type": "string[]"
@@ -542,7 +552,7 @@
     {
       "path": "googledrive.api.files.download",
       "shortPath": "files.download",
-      "description": "Download a file. A text file comes back as text, any other file as base64, up to about 700 KB; size and type are always returned. Google Docs, Sheets and Slides cannot be downloaded this way.",
+      "description": "Download a file with its name, type and size. Up to about 700 KB the content comes back inline: a text file as text, any other file as base64. A larger file comes back with fileId, where the host saved it (on Corsair, a Files id to pass to another app or read with files.read_text), or with contentOmitted when the host keeps no files. Google Docs, Sheets and Slides can't be downloaded; use files.export.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -602,7 +612,133 @@
             "key": "fileId",
             "optional": true,
             "type": "string",
-            "description": "Where the host saved the file, in place of its content, when it was over the limit. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.files.export",
+      "shortPath": "files.export",
+      "description": "Export a Google Docs, Sheets, Slides or Drawings file to a regular format: Markdown for Docs, CSV (first sheet only) for Sheets, PDF for Slides and PNG for Drawings unless mimeType names another, such as docx, xlsx or pptx. Drive exports up to 10 MB. The result comes back like files.download: inline up to about 700 KB, otherwise as fileId where the host saved it, or with contentOmitted.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "The Google Docs, Sheets, Slides or Drawings file."
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string",
+            "description": "The format to export to, for example application/pdf or application/vnd.openxmlformats-officedocument.wordprocessingml.document. Defaults to Markdown for Docs, CSV (first sheet only) for Sheets, PDF for Slides and PNG for Drawings."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+          }
+        ]
+      }
+    },
+    {
+      "path": "googledrive.api.files.exportText",
+      "shortPath": "files.exportText",
+      "description": "Get the plain text of a Google Doc across all of its tabs and store it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "modifiedTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "webViewLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
           }
         ]
       }
@@ -637,6 +773,11 @@
           },
           {
             "key": "includePermissionsForView",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fields",
             "optional": true,
             "type": "string"
           }
@@ -774,6 +915,11 @@
             "key": "ownedByMe",
             "optional": true,
             "type": "boolean"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "{ kind?: string, displayName?: string, photoLink?: string, me?: boolean, permissionId?: string, emailAddress?: string }[]"
           },
           {
             "key": "permissionIds",
@@ -915,6 +1061,11 @@
             "key": "teamDriveId",
             "optional": true,
             "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string"
           }
         ]
       },
@@ -939,7 +1090,7 @@
           {
             "key": "files",
             "optional": true,
-            "type": "{ id?: string, name?: string, mimeType?: string, description?: string, starred?: boolean, trashed?: boolean, explicitlyTrashed?: boolean, parents?: string[], properties?: Record<string, string>, appProperties?: Record<string, string>, spaces?: string[], version?: string, webViewLink?: string, webContentLink?: string, iconLink?: string, hasThumbnail?: boolean, thumbnailLink?: string, thumbnailVersion?: string, viewedByMe?: boolean, viewedByMeTime?: string, createdTime?: string, modifiedTime?: string, modifiedByMeTime?: string, modifiedByMe?: boolean, shared?: boolean, ownedByMe?: boolean, permissionIds?: string[], hasAugmentedPermissions?: boolean, folderColorRgb?: string, originalFilename?: string, fullFileExtension?: string, fileExtension?: string, md5Checksum?: string, size?: string, quotaBytesUsed?: string, headRevisionId?: string, isAppAuthorized?: boolean, resourceKey?: string, sha1Checksum?: string, sha256Checksum?: string }[]"
+            "type": "{ id?: string, name?: string, mimeType?: string, description?: string, starred?: boolean, trashed?: boolean, explicitlyTrashed?: boolean, parents?: string[], properties?: Record<string, string>, appProperties?: Record<string, string>, spaces?: string[], version?: string, webViewLink?: string, webContentLink?: string, iconLink?: string, hasThumbnail?: boolean, thumbnailLink?: string, thumbnailVersion?: string, viewedByMe?: boolean, viewedByMeTime?: string, createdTime?: string, modifiedTime?: string, modifiedByMeTime?: string, modifiedByMe?: boolean, shared?: boolean, ownedByMe?: boolean, owners?: { kind?: string, displayName?: string, photoLink?: string, me?: boolean, permissionId?: string, emailAddress?: string }[], permissionIds?: string[], hasAugmentedPermissions?: boolean, folderColorRgb?: string, originalFilename?: string, fullFileExtension?: string, fileExtension?: string, md5Checksum?: string, size?: string, quotaBytesUsed?: string, headRevisionId?: string, isAppAuthorized?: boolean, resourceKey?: string, sha1Checksum?: string, sha256Checksum?: string }[]"
           }
         ]
       }
@@ -1111,6 +1262,11 @@
             "key": "ownedByMe",
             "optional": true,
             "type": "boolean"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "{ kind?: string, displayName?: string, photoLink?: string, me?: boolean, permissionId?: string, emailAddress?: string }[]"
           },
           {
             "key": "permissionIds",
@@ -1530,6 +1686,11 @@
             "type": "boolean"
           },
           {
+            "key": "owners",
+            "optional": true,
+            "type": "{ kind?: string, displayName?: string, photoLink?: string, me?: boolean, permissionId?: string, emailAddress?: string }[]"
+          },
+          {
             "key": "permissionIds",
             "optional": true,
             "type": "string[]"
@@ -1766,6 +1927,11 @@
             "type": "boolean"
           },
           {
+            "key": "owners",
+            "optional": true,
+            "type": "{ kind?: string, displayName?: string, photoLink?: string, me?: boolean, permissionId?: string, emailAddress?: string }[]"
+          },
+          {
             "key": "permissionIds",
             "optional": true,
             "type": "string[]"
@@ -1995,6 +2161,11 @@
             "key": "ownedByMe",
             "optional": true,
             "type": "boolean"
+          },
+          {
+            "key": "owners",
+            "optional": true,
+            "type": "{ kind?: string, displayName?: string, photoLink?: string, me?: boolean, permissionId?: string, emailAddress?: string }[]"
           },
           {
             "key": "permissionIds",
@@ -2264,6 +2435,11 @@
             "type": "boolean"
           },
           {
+            "key": "owners",
+            "optional": true,
+            "type": "{ kind?: string, displayName?: string, photoLink?: string, me?: boolean, permissionId?: string, emailAddress?: string }[]"
+          },
+          {
             "key": "permissionIds",
             "optional": true,
             "type": "string[]"
@@ -2427,7 +2603,7 @@
           {
             "key": "files",
             "optional": true,
-            "type": "{ id?: string, name?: string, mimeType?: string, description?: string, starred?: boolean, trashed?: boolean, explicitlyTrashed?: boolean, parents?: string[], properties?: Record<string, string>, appProperties?: Record<string, string>, spaces?: string[], version?: string, webViewLink?: string, webContentLink?: string, iconLink?: string, hasThumbnail?: boolean, thumbnailLink?: string, thumbnailVersion?: string, viewedByMe?: boolean, viewedByMeTime?: string, createdTime?: string, modifiedTime?: string, modifiedByMeTime?: string, modifiedByMe?: boolean, shared?: boolean, ownedByMe?: boolean, permissionIds?: string[], hasAugmentedPermissions?: boolean, folderColorRgb?: string, originalFilename?: string, fullFileExtension?: string, fileExtension?: string, md5Checksum?: string, size?: string, quotaBytesUsed?: string, headRevisionId?: string, isAppAuthorized?: boolean, resourceKey?: string, sha1Checksum?: string, sha256Checksum?: string }[]"
+            "type": "{ id?: string, name?: string, mimeType?: string, description?: string, starred?: boolean, trashed?: boolean, explicitlyTrashed?: boolean, parents?: string[], properties?: Record<string, string>, appProperties?: Record<string, string>, spaces?: string[], version?: string, webViewLink?: string, webContentLink?: string, iconLink?: string, hasThumbnail?: boolean, thumbnailLink?: string, thumbnailVersion?: string, viewedByMe?: boolean, viewedByMeTime?: string, createdTime?: string, modifiedTime?: string, modifiedByMeTime?: string, modifiedByMe?: boolean, shared?: boolean, ownedByMe?: boolean, owners?: { kind?: string, displayName?: string, photoLink?: string, me?: boolean, permissionId?: string, emailAddress?: string }[], permissionIds?: string[], hasAugmentedPermissions?: boolean, folderColorRgb?: string, originalFilename?: string, fullFileExtension?: string, fileExtension?: string, md5Checksum?: string, size?: string, quotaBytesUsed?: string, headRevisionId?: string, isAppAuthorized?: boolean, resourceKey?: string, sha1Checksum?: string, sha256Checksum?: string }[]"
           }
         ]
       }
@@ -2664,7 +2840,7 @@
           {
             "key": "files",
             "optional": true,
-            "type": "{ id?: string, name?: string, mimeType?: string, description?: string, starred?: boolean, trashed?: boolean, explicitlyTrashed?: boolean, parents?: string[], properties?: Record<string, string>, appProperties?: Record<string, string>, spaces?: string[], version?: string, webViewLink?: string, webContentLink?: string, iconLink?: string, hasThumbnail?: boolean, thumbnailLink?: string, thumbnailVersion?: string, viewedByMe?: boolean, viewedByMeTime?: string, createdTime?: string, modifiedTime?: string, modifiedByMeTime?: string, modifiedByMe?: boolean, shared?: boolean, ownedByMe?: boolean, permissionIds?: string[], hasAugmentedPermissions?: boolean, folderColorRgb?: string, originalFilename?: string, fullFileExtension?: string, fileExtension?: string, md5Checksum?: string, size?: string, quotaBytesUsed?: string, headRevisionId?: string, isAppAuthorized?: boolean, resourceKey?: string, sha1Checksum?: string, sha256Checksum?: string }[]"
+            "type": "{ id?: string, name?: string, mimeType?: string, description?: string, starred?: boolean, trashed?: boolean, explicitlyTrashed?: boolean, parents?: string[], properties?: Record<string, string>, appProperties?: Record<string, string>, spaces?: string[], version?: string, webViewLink?: string, webContentLink?: string, iconLink?: string, hasThumbnail?: boolean, thumbnailLink?: string, thumbnailVersion?: string, viewedByMe?: boolean, viewedByMeTime?: string, createdTime?: string, modifiedTime?: string, modifiedByMeTime?: string, modifiedByMe?: boolean, shared?: boolean, ownedByMe?: boolean, owners?: { kind?: string, displayName?: string, photoLink?: string, me?: boolean, permissionId?: string, emailAddress?: string }[], permissionIds?: string[], hasAugmentedPermissions?: boolean, folderColorRgb?: string, originalFilename?: string, fullFileExtension?: string, fileExtension?: string, md5Checksum?: string, size?: string, quotaBytesUsed?: string, headRevisionId?: string, isAppAuthorized?: boolean, resourceKey?: string, sha1Checksum?: string, sha256Checksum?: string }[]"
           }
         ]
       }
@@ -3025,6 +3201,52 @@
     }
   ],
   "db": [
+    {
+      "path": "googledrive.db.fileContents.search",
+      "entityName": "fileContents",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "mimeType",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "createdTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "modifiedTime",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "webViewLink",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
     {
       "path": "googledrive.db.files.search",
       "entityName": "files",
