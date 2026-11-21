@@ -1,5 +1,7 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
+import type { FileInput } from 'corsair/http';
+import { resolveFileInput } from 'corsair/http';
 import type { ZodType } from 'zod';
 import { z } from 'zod';
 import { makeElorusRequest } from '../client';
@@ -13,9 +15,51 @@ type ElorusOperationInput = {
 	query?: Record<string, unknown>;
 	// Every body is endpoint-specific and was parsed against its generated OpenAPI schema.
 	body?: unknown;
-	form?: Record<string, string | number | boolean | Blob | undefined>;
+	// `file` may arrive as a link or base64 (core's FileInput); it is turned into bytes before sending.
+	form?: Record<string, ElorusFormValue | FileInput>;
 	demo?: boolean;
 };
+
+type ElorusFormValue = string | number | boolean | Blob | undefined;
+
+/** Elorus stores attachments of up to 3 MB each (help.elorus.com/docs/attachments). */
+export const ATTACHMENT_MAX_BYTES = 3 * 1024 * 1024;
+
+/**
+ * The multipart fields to send. An attachment's `file` given as a link is
+ * downloaded through core's guarded fetch, and base64 is decoded, into a File
+ * with its name and media type; a Blob is sent as it was given. The other
+ * fields are scalars and pass through.
+ */
+export async function resolveElorusForm(
+	form: Record<string, ElorusFormValue | FileInput> | undefined,
+): Promise<Record<string, ElorusFormValue> | undefined> {
+	if (!form) return undefined;
+	const resolved: Record<string, ElorusFormValue> = {};
+	for (const [key, value] of Object.entries(form)) {
+		if (
+			value === undefined ||
+			typeof value === 'number' ||
+			typeof value === 'boolean' ||
+			value instanceof Blob ||
+			(typeof value === 'string' && key !== 'file')
+		) {
+			resolved[key] = value;
+		} else if (key === 'file') {
+			resolved[key] = (
+				await resolveFileInput(value, {
+					maxBytes: ATTACHMENT_MAX_BYTES,
+					fallbackName: 'attachment',
+				})
+			).file;
+		} else {
+			throw new Error(
+				`Elorus form field ${key} must be a string, number or boolean.`,
+			);
+		}
+	}
+	return resolved;
+}
 
 export type ElorusRegisteredOperation<
 	K extends ElorusOperationKey,
@@ -100,7 +144,7 @@ export function createElorusOperation<
 			path: parsed.path,
 			query: parsed.query,
 			body: parsed.body,
-			form: parsed.form,
+			form: await resolveElorusForm(parsed.form),
 			organizationId,
 			demo: parsed.demo ?? ctx.options.demo,
 			mode: specification.mode,

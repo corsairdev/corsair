@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 // Every schema below mirrors the Google Slides discovery document
@@ -850,13 +851,20 @@ const UngroupResponseSchema = z
 	})
 	.loose();
 
-const ExportResponseSchema = z
-	.object({
+const ExportResponseSchema = FileOutputSchema.omit({
+	contentBase64: true,
+	text: true,
+})
+	.extend({
 		presentationId: id,
 		format: z.enum(['pdf', 'pptx']),
 		mimeType: z.string(),
-		byteLength: z.number().int().min(0),
-		data: z.string().describe('Base64-encoded file'),
+		data: z
+			.string()
+			.optional()
+			.describe(
+				'The file, base64-encoded. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId).',
+			),
 	})
 	.loose();
 

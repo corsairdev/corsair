@@ -15,7 +15,8 @@ pnpm add @corsair-dev/googledrive
 | `files.copy` | `googledrive.api.files.copy` | `write` | Copy a file in Google Drive |
 | `files.createFromText` | `googledrive.api.files.createFromText` | `write` | Create a new Drive file from text content |
 | `files.delete` | `googledrive.api.files.delete` | `destructive` | Permanently delete a file [DESTRUCTIVE · IRREVERSIBLE] |
-| `files.download` | `googledrive.api.files.download` | `read` | Download the content of a file |
+| `files.download` | `googledrive.api.files.download` | `read` | Download a file with its name, type and size. Up to about 700 KB the content comes back inline: a text file as text, any other file as base64. A larger file comes back with fileId, where the host saved it (on Corsair, a Files id to pass to another app or read with files.read_text), or with contentOmitted when the host keeps no files. Google Docs, Sheets and Slides can't be downloaded; use files.export. |
+| `files.export` | `googledrive.api.files.export` | `read` | Export a Google Docs, Sheets, Slides or Drawings file to a regular format: Markdown for Docs, CSV (first sheet only) for Sheets, PDF for Slides and PNG for Drawings unless mimeType names another, such as docx, xlsx or pptx. Drive exports up to 10 MB. The result comes back like files.download: inline up to about 700 KB, otherwise as fileId where the host saved it, or with contentOmitted. |
 | `files.get` | `googledrive.api.files.get` | `read` | Get metadata for a specific file |
 | `files.list` | `googledrive.api.files.list` | `read` | List files in Google Drive |
 | `files.move` | `googledrive.api.files.move` | `write` | Move a file to a different folder |

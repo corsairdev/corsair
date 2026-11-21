@@ -2097,7 +2097,7 @@
     {
       "path": "pipedrive.api.products.images.update",
       "shortPath": "products.images.update",
-      "description": "Replace a product image with binary data",
+      "description": "Replace a product image with binary data. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -2110,7 +2110,8 @@
           {
             "key": "data",
             "optional": false,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The image (GIF, JPG, PNG or WEBP): a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…)."
           },
           {
             "key": "file_name",
@@ -2138,7 +2139,7 @@
     {
       "path": "pipedrive.api.products.images.upload",
       "shortPath": "products.images.upload",
-      "description": "Upload a binary image for a product",
+      "description": "Upload a binary image for a product. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -2151,7 +2152,8 @@
           {
             "key": "data",
             "optional": false,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The image (GIF, JPG, PNG or WEBP): a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…)."
           },
           {
             "key": "file_name",

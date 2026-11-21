@@ -654,7 +654,7 @@
     {
       "path": "googleslides.api.presentations.exportPdf",
       "shortPath": "presentations.exportPdf",
-      "description": "Export a presentation to PDF or PPTX as base64",
+      "description": "Export a presentation to PDF or PPTX. On Corsair up to about 700 KB comes back inline as data and a larger file comes back as fileId, a Files id; without a host that keeps files the file comes back inline as base64 up to 100 MB, or contentOmitted beyond it.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -676,6 +676,36 @@
         "kind": "object",
         "fields": [
           {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+          },
+          {
             "key": "presentationId",
             "optional": false,
             "type": "string"
@@ -691,15 +721,10 @@
             "type": "string"
           },
           {
-            "key": "byteLength",
-            "optional": false,
-            "type": "number"
-          },
-          {
             "key": "data",
-            "optional": false,
+            "optional": true,
             "type": "string",
-            "description": "Base64-encoded file"
+            "description": "The file, base64-encoded. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId)."
           }
         ]
       }

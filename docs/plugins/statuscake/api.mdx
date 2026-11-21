@@ -1,0 +1,1884 @@
+---
+title: "StatusCake API reference"
+sidebarTitle: "API"
+description: "API reference for the StatusCake plugin in Corsair: every `statuscake.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Contact Groups
+
+### create
+
+`contactGroups.create`
+
+Create a contact group to alert when a check fails
+
+**Risk:** `write`
+
+```ts
+await corsair.statuscake.api.contactGroups.create({ name: 'DevOps', email_addresses: ['oncall@example.com'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the contact group. |
+| `email_addresses` | `string[]` | No | List of email addresses. Sending an empty array clears them. |
+| `mobile_numbers` | `string[]` | No | International format mobile numbers. Sending an empty array clears them. |
+| `integrations` | `string[]` | No | Integration IDs. Sending an empty array clears them. |
+| `ping_url` | `string` | No | HTTP GET endpoint pushed with uptime events. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  new_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contactGroups.delete`
+
+Permanently delete a contact group; checks using it keep running but no longer alert it
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.statuscake.api.contactGroups.delete({ group_id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | The contact group ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`contactGroups.get`
+
+Get one contact group by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.contactGroups.get({ group_id: '123' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | The contact group ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email_addresses?: string[] | null,
+  mobile_numbers?: string[] | null,
+  integrations?: string[] | null,
+  ping_url?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contactGroups.list`
+
+List contact groups with their email addresses, mobile numbers and integrations, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.contactGroups.list({ page: 1, limit: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | The page to return, starting at 1. |
+| `limit` | `number` | No | The number of results per page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email_addresses?: string[] | null,
+  mobile_numbers?: string[] | null,
+  integrations?: string[] | null,
+  ping_url?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  page_count?: number | null,
+  total_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contactGroups.update`
+
+Change a contact group's name, addresses, numbers, integrations or ping URL; only the fields passed change
+
+**Risk:** `write`
+
+```ts
+await corsair.statuscake.api.contactGroups.update({ group_id: '123', name: 'DevOps primary' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `string` | Yes | The contact group ID. |
+| `name` | `string` | No | Name of the contact group. |
+| `email_addresses` | `string[]` | No | List of email addresses. Sending an empty array clears them. |
+| `mobile_numbers` | `string[]` | No | International format mobile numbers. Sending an empty array clears them. |
+| `integrations` | `string[]` | No | Integration IDs. Sending an empty array clears them. |
+| `ping_url` | `string` | No | HTTP GET endpoint pushed with uptime events. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Heartbeat
+
+### create
+
+`heartbeat.create`
+
+Create a heartbeat check that alerts when a job stops pinging its URL
+
+**Risk:** `write`
+
+```ts
+await corsair.statuscake.api.heartbeat.create({ name: 'nightly backup', period: 86400, contact_groups: ['123'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the check. |
+| `period` | `number` | Yes | Seconds since the last ping before the check is considered down. Defaults to 1800. |
+| `contact_groups` | `string[]` | No | Contact groups alerted by this check. |
+| `host` | `string` | No | Name of the hosting provider. |
+| `paused` | `boolean` | No | Whether the check should be run. Defaults to false. |
+| `tags` | `string[]` | No | List of tags. Sending an empty array clears every tag on an update. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  new_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`heartbeat.delete`
+
+Permanently delete a heartbeat check; this cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.statuscake.api.heartbeat.delete({ test_id: '123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `string` | Yes | The heartbeat check ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`heartbeat.get`
+
+Get one heartbeat check with its last tested time and uptime
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.heartbeat.get({ test_id: '123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `string` | Yes | The heartbeat check ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  url?: string | null,
+  period?: number | null,
+  contact_groups?: string[] | null,
+  host?: string | null,
+  last_tested_at?: string | null,
+  paused?: boolean | null,
+  status?: up | down | null,
+  tags?: string[] | null,
+  uptime?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`heartbeat.list`
+
+List heartbeat (cron monitoring) checks with their status and uptime, filtered by state or tags and paged
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.heartbeat.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | The page to return, starting at 1. |
+| `limit` | `number` | No | The number of results per page. |
+| `status` | `up \| down` | No | Only checks in this state. |
+| `tags` | `string[]` | No | Only checks carrying these tags. |
+| `matchany` | `boolean` | No | True matches checks carrying any one of the tags rather than all of them. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  url?: string | null,
+  period?: number | null,
+  contact_groups?: string[] | null,
+  paused?: boolean | null,
+  status?: up | down | null,
+  tags?: string[] | null,
+  uptime?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  page_count?: number | null,
+  total_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`heartbeat.update`
+
+Change a heartbeat check's name, period, contact groups, host, paused state or tags; only the fields passed change
+
+**Risk:** `write`
+
+```ts
+await corsair.statuscake.api.heartbeat.update({ test_id: '123456', paused: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `string` | Yes | The heartbeat check ID. |
+| `name` | `string` | No | Name of the check. |
+| `period` | `number` | No | Seconds since the last ping before the check is considered down. Defaults to 1800. |
+| `contact_groups` | `string[]` | No | Contact groups alerted by this check. |
+| `host` | `string` | No | Name of the hosting provider. |
+| `paused` | `boolean` | No | Whether the check should be run. Defaults to false. |
+| `tags` | `string[]` | No | List of tags. Sending an empty array clears every tag on an update. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Locations
+
+### pagespeed
+
+`locations.pagespeed`
+
+List monitoring locations pagespeed checks can run from
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.locations.pagespeed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | No | Only the location matching this value. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  description?: string | null,
+  ipv4?: string | null,
+  ipv6?: string | null,
+  region?: string | null,
+  region_code?: string | null,
+  status?: up | down | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### uptime
+
+`locations.uptime`
+
+List monitoring locations uptime checks can run from, with their current status
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.locations.uptime({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `region_code` | `string` | No | Only the location with this region code. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  description?: string | null,
+  ipv4?: string | null,
+  ipv6?: string | null,
+  region?: string | null,
+  region_code?: string | null,
+  status?: up | down | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Maintenance Windows
+
+### create
+
+`maintenanceWindows.create`
+
+Create a maintenance window that silences chosen uptime checks, by ID or by tags, for a time period
+
+**Risk:** `write`
+
+```ts
+await corsair.statuscake.api.maintenanceWindows.create({ name: 'deploy window', start_at: '2026-12-01T02:00:00Z', end_at: '2026-12-01T04:00:00Z', timezone: 'Europe/London', tests: ['123456'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the maintenance window. |
+| `start_at` | `string` | Yes | Start of the window in RFC3339 format; the UTC offset is ignored. |
+| `end_at` | `string` | Yes | End of the window in RFC3339 format; the UTC offset is ignored. |
+| `timezone` | `string` | Yes | Timezone of the window, from the tz database (such as Europe/London). |
+| `repeat_interval` | `never \| 1d \| 1w \| 2w \| 1m` | No | How often the window repeats. Defaults to never. |
+| `tests` | `string[]` | No | Uptime checks the window covers. At least one of tests and tags is required on create. |
+| `tags` | `string[]` | No | List of tags. Sending an empty array clears every tag on an update. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  new_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`maintenanceWindows.delete`
+
+Permanently delete a maintenance window; alerts resume immediately
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.statuscake.api.maintenanceWindows.delete({ window_id: '42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `window_id` | `string` | Yes | The maintenance window ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`maintenanceWindows.get`
+
+Get one maintenance window by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.maintenanceWindows.get({ window_id: '42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `window_id` | `string` | Yes | The maintenance window ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  start_at?: string | null,
+  end_at?: string | null,
+  timezone?: string | null,
+  repeat_interval?: never | 1d | 1w | 2w | 1m | null,
+  state?: active | paused | pending | null,
+  tags?: string[] | null,
+  tests?: string[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`maintenanceWindows.list`
+
+List maintenance windows with their state and schedule, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.maintenanceWindows.list({ state: 'pending' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | The page to return, starting at 1. |
+| `limit` | `number` | No | The number of results per page. |
+| `state` | `active \| paused \| pending` | No | Only windows in this state. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  start_at?: string | null,
+  end_at?: string | null,
+  timezone?: string | null,
+  repeat_interval?: never | 1d | 1w | 2w | 1m | null,
+  state?: active | paused | pending | null,
+  tags?: string[] | null,
+  tests?: string[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  page_count?: number | null,
+  total_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`maintenanceWindows.update`
+
+Change a maintenance window's schedule, timezone, repeat interval, covered checks or tags; only the fields passed change
+
+**Risk:** `write`
+
+```ts
+await corsair.statuscake.api.maintenanceWindows.update({ window_id: '42', end_at: '2026-12-01T05:00:00Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `window_id` | `string` | Yes | The maintenance window ID. |
+| `name` | `string` | No | Name of the maintenance window. |
+| `start_at` | `string` | No | Start of the window in RFC3339 format; the UTC offset is ignored. |
+| `end_at` | `string` | No | End of the window in RFC3339 format; the UTC offset is ignored. |
+| `timezone` | `string` | No | Timezone of the window, from the tz database (such as Europe/London). |
+| `repeat_interval` | `never \| 1d \| 1w \| 2w \| 1m` | No | How often the window repeats. Defaults to never. |
+| `tests` | `string[]` | No | Uptime checks the window covers. At least one of tests and tags is required on create. |
+| `tags` | `string[]` | No | List of tags. Sending an empty array clears every tag on an update. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Pagespeed
+
+### create
+
+`pagespeed.create`
+
+Create a pagespeed check that runs from a chosen region and can alert on page size or load time
+
+**Risk:** `write`
+
+```ts
+await corsair.statuscake.api.pagespeed.create({ name: 'marketing site', website_url: 'https://www.example.com', check_rate: 3600, region: 'UK', alert_slower: 3000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the check. |
+| `website_url` | `string` | Yes | URL, FQDN, or IP address of the website under test. |
+| `check_rate` | `number \| string` | Yes | Seconds between checks, one of 60, 300, 600, 900, 1800, 3600, 86400. Defaults to 300 (5 minutes). |
+| `region` | `AU \| CA \| DE \| FR \| IN \| JP \| NL \| SG \| UK \| US \| USW` | Yes | Region to run the check from, from the pagespeed locations list. |
+| `alert_bigger` | `number` | No | Alert when the page is larger than this many kb. Defaults to 0 (disabled). |
+| `alert_slower` | `number` | No | Alert when the page loads slower than this many ms. Defaults to 0 (disabled). |
+| `alert_smaller` | `number` | No | Alert when the page is smaller than this many kb. Defaults to 0 (disabled). |
+| `contact_groups` | `string[]` | No | Contact groups alerted by this check. |
+| `paused` | `boolean` | No | Whether the check should be run. Defaults to false. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  new_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`pagespeed.delete`
+
+Permanently delete a pagespeed check; this cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.statuscake.api.pagespeed.delete({ test_id: '123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `string` | Yes | The pagespeed check ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`pagespeed.get`
+
+Get one pagespeed check with its latest stats
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.pagespeed.get({ test_id: '123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `string` | Yes | The pagespeed check ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  website_url?: string | null,
+  check_rate?: number | null,
+  alert_bigger?: number | null,
+  alert_slower?: number | null,
+  alert_smaller?: number | null,
+  contact_groups?: string[] | null,
+  location?: string | null,
+  paused?: boolean | null,
+  latest_stats?: {
+    filesize?: number | null,
+    has_issue?: boolean | null,
+    loadtime?: number | null,
+    latest_issue?: string | null,
+    requests?: number | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### history
+
+`pagespeed.history`
+
+Read recorded pagespeed results (loadtime, filesize, requests) newest first, in a time window with a next link for paging
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.pagespeed.history({ test_id: '123456', limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `string` | Yes | The pagespeed check ID. |
+| `limit` | `number` | No | Maximum number of results; newest first. |
+| `before` | `number` | No | Only results before this Unix timestamp (seconds). |
+| `after` | `number` | No | Only results after this Unix timestamp (seconds). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+| `metadata` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  created_at?: string | null,
+  filesize?: number | null,
+  har_location?: string | null,
+  loadtime?: number | null,
+  requests?: number | null,
+  throttling?: NONE | 3G_FAST | 3G_SLOW | 4G | EDGE | GPRS | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  aggregates?: Record<string, Record<string, any>> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`pagespeed.list`
+
+List pagespeed checks with their latest stats, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.pagespeed.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | The page to return, starting at 1. |
+| `limit` | `number` | No | The number of results per page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  website_url?: string | null,
+  check_rate?: number | null,
+  alert_bigger?: number | null,
+  alert_slower?: number | null,
+  alert_smaller?: number | null,
+  contact_groups?: string[] | null,
+  location?: string | null,
+  paused?: boolean | null,
+  latest_stats?: {
+    filesize?: number | null,
+    has_issue?: boolean | null,
+    loadtime?: number | null,
+    latest_issue?: string | null,
+    requests?: number | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  page_count?: number | null,
+  total_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`pagespeed.update`
+
+Change a pagespeed check's target, rate, region, alert thresholds or paused state; only the fields passed change
+
+**Risk:** `write`
+
+```ts
+await corsair.statuscake.api.pagespeed.update({ test_id: '123456', alert_slower: 2000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `string` | Yes | The pagespeed check ID. |
+| `name` | `string` | No | Name of the check. |
+| `website_url` | `string` | No | URL, FQDN, or IP address of the website under test. |
+| `check_rate` | `number \| string` | No | Seconds between checks, one of 60, 300, 600, 900, 1800, 3600, 86400. Defaults to 300 (5 minutes). |
+| `region` | `AU \| CA \| DE \| FR \| IN \| JP \| NL \| SG \| UK \| US \| USW` | No | Region to run the check from, from the pagespeed locations list. |
+| `alert_bigger` | `number` | No | Alert when the page is larger than this many kb. Defaults to 0 (disabled). |
+| `alert_slower` | `number` | No | Alert when the page loads slower than this many ms. Defaults to 0 (disabled). |
+| `alert_smaller` | `number` | No | Alert when the page is smaller than this many kb. Defaults to 0 (disabled). |
+| `contact_groups` | `string[]` | No | Contact groups alerted by this check. |
+| `paused` | `boolean` | No | Whether the check should be run. Defaults to false. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Ssl
+
+### create
+
+`ssl.create`
+
+Create an SSL check that alerts before a certificate expires
+
+**Risk:** `write`
+
+```ts
+await corsair.statuscake.api.ssl.create({ website_url: 'https://www.example.com', check_rate: 86400, alert_at: [30, 14, 7], alert_expiry: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `website_url` | `string` | Yes | URL of the server under test. Must begin with `https://`. |
+| `check_rate` | `number \| string` | Yes | Seconds between checks, one of 300, 600, 1800, 3600, 86400, 2073600. Defaults to 86400 (daily). |
+| `alert_at` | `number[]` | Yes | Exactly 3 numbers: the days before expiry when alerts are sent, such as [30, 14, 7]. |
+| `alert_broken` | `boolean` | No | Alert when certificate issues are found. Defaults to false. |
+| `alert_expiry` | `boolean` | No | Alert when the certificate is to expire. Defaults to false. |
+| `alert_mixed` | `boolean` | No | Alert when mixed content is found. Defaults to false. |
+| `alert_reminder` | `boolean` | No | Send alert reminders. Defaults to false. |
+| `contact_groups` | `string[]` | No | Contact groups alerted by this check. |
+| `follow_redirects` | `boolean` | No | Defaults to false. |
+| `hostname` | `string` | No | Hostname of the server under test. |
+| `paused` | `boolean` | No | Whether the check should be run. Defaults to false. |
+| `user_agent` | `string` | No | Custom user agent used when testing. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  new_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`ssl.delete`
+
+Permanently delete an SSL check; this cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.statuscake.api.ssl.delete({ test_id: '123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `string` | Yes | The SSL check ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`ssl.get`
+
+Get one SSL check with certificate dates, issuer, scores and mixed content
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.ssl.get({ test_id: '123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `string` | Yes | The SSL check ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  website_url?: string | null,
+  check_rate?: number | null,
+  alert_at?: (number | null)[] | null,
+  alert_broken?: boolean | null,
+  alert_expiry?: boolean | null,
+  alert_mixed?: boolean | null,
+  alert_reminder?: boolean | null,
+  certificate_score?: number | null,
+  certificate_status?: string | null,
+  cipher?: string | null,
+  cipher_score?: number | null,
+  contact_groups?: string[] | null,
+  flags?: {
+    follow_redirects?: boolean | null,
+    has_mixed?: boolean | null,
+    has_pfs?: boolean | null,
+    is_broken?: boolean | null,
+    is_expired?: boolean | null,
+    is_extended?: boolean | null,
+    is_missing?: boolean | null,
+    is_revoked?: boolean | null
+  } | null,
+  follow_redirects?: boolean | null,
+  hostname?: string | null,
+  last_reminder?: number | null,
+  mixed_content?: {
+    src?: string | null,
+    type?: string | null
+  }[] | null,
+  paused?: boolean | null,
+  updated_at?: string | null,
+  user_agent?: string | null,
+  valid_from?: string | null,
+  valid_until?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`ssl.list`
+
+List SSL checks with certificate validity, scores and flags, paged
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.ssl.list({ page: 1 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | The page to return, starting at 1. |
+| `limit` | `number` | No | The number of results per page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  website_url?: string | null,
+  check_rate?: number | null,
+  alert_at?: (number | null)[] | null,
+  alert_broken?: boolean | null,
+  alert_expiry?: boolean | null,
+  alert_mixed?: boolean | null,
+  alert_reminder?: boolean | null,
+  certificate_score?: number | null,
+  certificate_status?: string | null,
+  cipher?: string | null,
+  cipher_score?: number | null,
+  contact_groups?: string[] | null,
+  flags?: {
+    follow_redirects?: boolean | null,
+    has_mixed?: boolean | null,
+    has_pfs?: boolean | null,
+    is_broken?: boolean | null,
+    is_expired?: boolean | null,
+    is_extended?: boolean | null,
+    is_missing?: boolean | null,
+    is_revoked?: boolean | null
+  } | null,
+  follow_redirects?: boolean | null,
+  hostname?: string | null,
+  last_reminder?: number | null,
+  mixed_content?: {
+    src?: string | null,
+    type?: string | null
+  }[] | null,
+  paused?: boolean | null,
+  updated_at?: string | null,
+  user_agent?: string | null,
+  valid_from?: string | null,
+  valid_until?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  page_count?: number | null,
+  total_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`ssl.update`
+
+Change an SSL check's target, rate, alerting or paused state; only the fields passed change
+
+**Risk:** `write`
+
+```ts
+await corsair.statuscake.api.ssl.update({ test_id: '123456', alert_at: [21, 14, 7] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `string` | Yes | The SSL check ID. |
+| `website_url` | `string` | No | URL of the server under test. Must begin with `https://`. |
+| `check_rate` | `number \| string` | No | Seconds between checks, one of 300, 600, 1800, 3600, 86400, 2073600. Defaults to 86400 (daily). |
+| `alert_at` | `number[]` | No | Exactly 3 numbers: the days before expiry when alerts are sent, such as [30, 14, 7]. |
+| `alert_broken` | `boolean` | No | Alert when certificate issues are found. Defaults to false. |
+| `alert_expiry` | `boolean` | No | Alert when the certificate is to expire. Defaults to false. |
+| `alert_mixed` | `boolean` | No | Alert when mixed content is found. Defaults to false. |
+| `alert_reminder` | `boolean` | No | Send alert reminders. Defaults to false. |
+| `contact_groups` | `string[]` | No | Contact groups alerted by this check. |
+| `follow_redirects` | `boolean` | No | Defaults to false. |
+| `hostname` | `string` | No | Hostname of the server under test. |
+| `paused` | `boolean` | No | Whether the check should be run. Defaults to false. |
+| `user_agent` | `string` | No | Custom user agent used when testing. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Uptime
+
+### alerts
+
+`uptime.alerts`
+
+Read the alerts a check sent, newest first, in a time window with a next link for paging
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.uptime.alerts({ test_id: '123456', limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `string` | Yes | The uptime check ID. |
+| `limit` | `number` | No | Maximum number of results; newest first. |
+| `before` | `number` | No | Only results before this Unix timestamp (seconds). |
+| `after` | `number` | No | Only results after this Unix timestamp (seconds). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  status?: up | down | null,
+  status_code?: number | null,
+  triggered_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`uptime.create`
+
+Create an uptime check for a URL, domain or port, with content checks, basic auth, regions and alert settings
+
+**Risk:** `write`
+
+```ts
+await corsair.statuscake.api.uptime.create({ name: 'statuscake.com', test_type: 'HTTP', website_url: 'https://www.statuscake.com', check_rate: 300, tags: ['production'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the check. |
+| `test_type` | `DNS \| HEAD \| HTTP \| PING \| SMTP \| SSH \| TCP` | Yes | Kind of check. Required on create. |
+| `website_url` | `string` | Yes | URL, FQDN, or IP address of the server under test. |
+| `check_rate` | `number \| string` | Yes | Seconds between checks, one of 0, 30, 60, 300, 900, 1800, 3600, 86400. 0 runs the check only from the regions set in regions. |
+| `basic_username` | `string` | No | Basic authentication username. |
+| `basic_password` | `string` | No | Basic authentication password. |
+| `confirmation` | `number` | No | Confirmation servers that must agree on downtime. Defaults to 2. |
+| `contact_groups` | `string[]` | No | Contact groups alerted by this check. |
+| `custom_header` | `string` | No | JSON object of headers to send with requests. |
+| `do_not_find` | `boolean` | No | Consider the check down when find_string IS present. Defaults to false. |
+| `dns_ips` | `string[]` | No | IP addresses compared against returned DNS records. |
+| `dns_server` | `string` | No | Nameserver to query for DNS checks. |
+| `enable_ssl_alert` | `boolean` | No | Alert when the SSL certificate is soon to expire. Defaults to false. |
+| `final_endpoint` | `string` | No | Where the redirect chain should end. |
+| `find_string` | `string` | No | String to look for in the response; the check is down when absent. |
+| `follow_redirects` | `boolean` | No | Defaults to false. |
+| `host` | `string` | No | Name of the hosting provider. |
+| `include_header` | `boolean` | No | Include header content in the string match. Defaults to false. |
+| `port` | `number` | No | Destination port for TCP checks. |
+| `post_body` | `string` | No | JSON payload; setting it switches the check to POST. |
+| `post_raw` | `string` | No | Raw HTTP POST string to send. |
+| `regions` | `string[]` | No | Region codes to run the check from, from the uptime locations list. |
+| `paused` | `boolean` | No | Whether the check should be run. Defaults to false. |
+| `status_codes_csv` | `string` | No | Comma separated status codes that trigger an alert, such as "200,301". |
+| `tags` | `string[]` | No | List of tags. Sending an empty array clears every tag on an update. |
+| `timeout` | `number` | No | Seconds to wait for the first byte. Defaults to 15. |
+| `trigger_rate` | `number` | No | Minutes to wait before sending an alert. Defaults to 0. |
+| `use_jar` | `boolean` | No | Enable cookie storage. Defaults to false. |
+| `user_agent` | `string` | No | Custom user agent used when testing. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  new_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`uptime.delete`
+
+Permanently delete an uptime check; this cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.statuscake.api.uptime.delete({ test_id: '123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `string` | Yes | The uptime check ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`uptime.get`
+
+Get one uptime check with its full configuration and status
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.uptime.get({ test_id: '123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `string` | Yes | The uptime check ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  test_type?: DNS | HEAD | HTTP | PING | SMTP | SSH | TCP | null,
+  website_url?: string | null,
+  check_rate?: number | null,
+  confirmation?: number | null,
+  contact_groups?: string[] | null,
+  custom_header?: string | null,
+  dns_ips?: string[] | null,
+  dns_server?: string | null,
+  do_not_find?: boolean | null,
+  enable_ssl_alert?: boolean | null,
+  final_endpoint?: string | null,
+  find_string?: string | null,
+  follow_redirects?: boolean | null,
+  host?: string | null,
+  include_header?: boolean | null,
+  last_tested_at?: string | null,
+  next_location?: string | null,
+  paused?: boolean | null,
+  port?: number | null,
+  post_body?: string | null,
+  post_raw?: string | null,
+  processing?: boolean | null,
+  processing_on?: string | null,
+  processing_state?: complete | pretest | retest | up_retest | null,
+  servers?: {
+    description?: string | null,
+    ipv4?: string | null,
+    ipv6?: string | null,
+    region?: string | null,
+    region_code?: string | null,
+    status?: up | down | null
+  }[] | null,
+  status?: up | down | null,
+  status_codes?: string[] | null,
+  tags?: string[] | null,
+  timeout?: number | null,
+  trigger_rate?: number | null,
+  uptime?: number | null,
+  use_jar?: boolean | null,
+  user_agent?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### history
+
+`uptime.history`
+
+Read recorded check results (loadtime, status code) newest first, in a time window with a next link for paging
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.uptime.history({ test_id: '123456', limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `string` | Yes | The uptime check ID. |
+| `limit` | `number` | No | Maximum number of results; newest first. |
+| `before` | `number` | No | Only results before this Unix timestamp (seconds). |
+| `after` | `number` | No | Only results after this Unix timestamp (seconds). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  created_at?: string | null,
+  location?: string | null,
+  performance?: number | null,
+  status_code?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`uptime.list`
+
+List uptime checks with type, status and uptime percentage, filtered by state or tags and paged
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.uptime.list({ status: 'up', limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | The page to return, starting at 1. |
+| `limit` | `number` | No | The number of results per page. |
+| `status` | `up \| down` | No | Only checks in this state. |
+| `tags` | `string[]` | No | Only checks carrying these tags. |
+| `matchany` | `boolean` | No | True matches checks carrying any one of the tags rather than all of them. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  website_url?: string | null,
+  test_type?: DNS | HEAD | HTTP | PING | SMTP | SSH | TCP | null,
+  check_rate?: number | null,
+  contact_groups?: string[] | null,
+  paused?: boolean | null,
+  status?: up | down | null,
+  tags?: string[] | null,
+  uptime?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  page?: number | null,
+  per_page?: number | null,
+  page_count?: number | null,
+  total_count?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### periods
+
+`uptime.periods`
+
+Read the check up/down periods, newest first, in a time window with a next link for paging
+
+**Risk:** `read`
+
+```ts
+await corsair.statuscake.api.uptime.periods({ test_id: '123456', limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `string` | Yes | The uptime check ID. |
+| `limit` | `number` | No | Maximum number of results; newest first. |
+| `before` | `number` | No | Only results before this Unix timestamp (seconds). |
+| `after` | `number` | No | Only results after this Unix timestamp (seconds). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  created_at?: string | null,
+  duration?: number | null,
+  ended_at?: string | null,
+  status?: up | down | null
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  self?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`uptime.update`
+
+Change an uptime check's configuration; only the fields passed change. Sending a field empty clears it
+
+**Risk:** `write`
+
+```ts
+await corsair.statuscake.api.uptime.update({ test_id: '123456', paused: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test_id` | `string` | Yes | The uptime check ID. |
+| `name` | `string` | No | Name of the check. |
+| `website_url` | `string` | No | URL, FQDN, or IP address of the server under test. |
+| `check_rate` | `number \| string` | No | Seconds between checks, one of 0, 30, 60, 300, 900, 1800, 3600, 86400. 0 runs the check only from the regions set in regions. |
+| `basic_username` | `string` | No | Basic authentication username. |
+| `basic_password` | `string` | No | Basic authentication password. |
+| `confirmation` | `number` | No | Confirmation servers that must agree on downtime. Defaults to 2. |
+| `contact_groups` | `string[]` | No | Contact groups alerted by this check. |
+| `custom_header` | `string` | No | JSON object of headers to send with requests. |
+| `do_not_find` | `boolean` | No | Consider the check down when find_string IS present. Defaults to false. |
+| `dns_ips` | `string[]` | No | IP addresses compared against returned DNS records. |
+| `dns_server` | `string` | No | Nameserver to query for DNS checks. |
+| `enable_ssl_alert` | `boolean` | No | Alert when the SSL certificate is soon to expire. Defaults to false. |
+| `final_endpoint` | `string` | No | Where the redirect chain should end. |
+| `find_string` | `string` | No | String to look for in the response; the check is down when absent. |
+| `follow_redirects` | `boolean` | No | Defaults to false. |
+| `host` | `string` | No | Name of the hosting provider. |
+| `include_header` | `boolean` | No | Include header content in the string match. Defaults to false. |
+| `port` | `number` | No | Destination port for TCP checks. |
+| `post_body` | `string` | No | JSON payload; setting it switches the check to POST. |
+| `post_raw` | `string` | No | Raw HTTP POST string to send. |
+| `regions` | `string[]` | No | Region codes to run the check from, from the uptime locations list. |
+| `paused` | `boolean` | No | Whether the check should be run. Defaults to false. |
+| `status_codes_csv` | `string` | No | Comma separated status codes that trigger an alert, such as "200,301". |
+| `tags` | `string[]` | No | List of tags. Sending an empty array clears every tag on an update. |
+| `timeout` | `number` | No | Seconds to wait for the first byte. Defaults to 15. |
+| `trigger_rate` | `number` | No | Minutes to wait before sending an alert. Defaults to 0. |
+| `use_jar` | `boolean` | No | Enable cookie storage. Defaults to false. |
+| `user_agent` | `string` | No | Custom user agent used when testing. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+

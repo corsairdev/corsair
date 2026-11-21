@@ -1,3 +1,4 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 import { MAX_BINARY_DOWNLOAD_SIZE_LABEL } from '../limits';
 
@@ -190,8 +191,18 @@ export type AccountGetConfigResponse = z.infer<
 
 // ── Files ───────────────────────────────────────────────────────────────────
 
+/**
+ * The file to upload. An agent holds no bytes, so it may be a link or base64
+ * (core's FileInput); a Blob or File still works from TypeScript.
+ */
+const UploadFileSchema = z
+	.union([FileInputSchema, z.instanceof(Blob)])
+	.describe(
+		'The file: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…).',
+	);
+
 export const FilesUploadInputSchema = z
-	.object({ file: z.instanceof(Blob) })
+	.object({ file: UploadFileSchema })
 	.strict();
 export type FilesUploadInput = z.infer<typeof FilesUploadInputSchema>;
 
@@ -292,7 +303,7 @@ export type FilesCreateUploadSessionResponse = z.infer<
 export const FilesUploadToSessionInputSchema = z
 	.object({
 		upload_url: z.string().url(),
-		file: z.instanceof(Blob),
+		file: UploadFileSchema,
 	})
 	.strict();
 export type FilesUploadToSessionInput = z.infer<

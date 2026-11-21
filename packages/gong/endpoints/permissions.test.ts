@@ -16,6 +16,7 @@ import {
 } from './permissions-types';
 
 jest.mock('corsair/http', () => ({
+	...jest.requireActual('corsair/http'),
 	ApiError: class ApiError extends Error {},
 	request: jest.fn(),
 }));

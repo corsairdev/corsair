@@ -4,6 +4,7 @@ import {
 	listAccountSummaries,
 	upsertAccount,
 } from '../core/account-lookup';
+import { getCallableProperty } from '../core/utils/callable';
 import {
 	getCorsairInternal,
 	requireCorsairPlugin,
@@ -41,6 +42,9 @@ export type ProcessManagedOAuthDeliveryOptions = {
 	refreshToken?: string;
 	expiresIn?: number;
 	scope?: string;
+	// The connecting user's own token beside the app's,
+	// stored only when the plugin declares a `user_token` account field.
+	userAccessToken?: string;
 	authType?: 'managed' | 'oauth_2';
 	// Provider token-body identity (Slack team, Notion workspace_id, …) the Hub
 	// forwards so the tenant-link resolver can read it. Absent = API-call class.
@@ -69,6 +73,7 @@ export async function processManagedOAuthDelivery(
 		refreshToken,
 		expiresIn,
 		scope,
+		userAccessToken,
 		authType = 'managed',
 		providerData,
 	} = options;
@@ -161,6 +166,7 @@ export async function processManagedOAuthDelivery(
 		}
 	}
 
+	const extraAccountFields = plugin.authConfig?.[authType]?.account ?? [];
 	const accountKm = createAccountKeyManager({
 		account: account ? { ref: account.id } : undefined,
 		authType,
@@ -168,6 +174,7 @@ export async function processManagedOAuthDelivery(
 		tenantId,
 		kek: internal.kek,
 		database: internal.database,
+		extraAccountFields,
 	});
 
 	await accountKm.set_access_token(accessToken);
@@ -181,6 +188,9 @@ export async function processManagedOAuthDelivery(
 	}
 	if (scope) {
 		await accountKm.set_scope(scope);
+	}
+	if (userAccessToken && extraAccountFields.includes('user_token')) {
+		await getCallableProperty(accountKm, 'set_user_token')?.(userAccessToken);
 	}
 
 	// Ack the stored token to Hub so the grid and list_connections flip to
@@ -204,7 +214,6 @@ export async function processManagedOAuthDelivery(
 		);
 		if (tenantLink) {
 			try {
-				const extraAccountFields = plugin.authConfig?.[authType]?.account ?? [];
 				await setWebhookTenantLink({
 					database: internal.database,
 					kek: internal.kek,

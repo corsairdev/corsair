@@ -1,0 +1,77 @@
+displayName: Storeganise
+description: >-
+  Storeganise is self-storage management software. This plugin reads sites,
+  units, users, invoices, unit rentals, jobs and add-ons from the Admin API,
+  updates unit-rental custom fields (access codes, overlock flags), and
+  verifies the signed webhook deliveries Storeganise sends for system events.
+domain: storeganise.com
+recommendedAuth: api_key
+overviewNote: >-
+  Storeganise serves each operator from its own subdomain, so the account
+  needs two credentials: the API key (Main Settings > Developer) and the
+  business code, which is the subdomain of
+  https://<business_code>.storeganise.com. Keys authenticate with a literal
+  scheme header, Authorization: ApiKey <key>, where the word ApiKey is the
+  scheme itself and must not be replaced; the legacy
+  <business_code>-api.storeganise.com host named in older onboarding docs no
+  longer answers. The complete Admin API reference is access-gated by the
+  vendor, so this plugin covers the endpoints Storeganise documents publicly
+  (articles 297, 287, 475, 19 and 33 in the help center); response fields
+  beyond those evidenced there are passed through loosely rather than typed.
+  Webhook deliveries POST { id, created, type, data } and carry an
+  sg-signature header: HMAC-SHA256 of the raw body keyed with the webhook
+  secret (visible from api.settings.get), digested base64; set the secret on
+  the plugin or with keys.set_webhook_signature, or deliveries are rejected
+  with 401. Answer a delivery with 200 within 30 seconds; failures are
+  retried twice more, then the related job is marked failed. One endpoint
+  receives every event type, among 50+ documented names such as
+  job.unit_moveIn.completed, unitRental.markOverdue and invoice.created.
+  Pagination is not publicly documented; list reads accept the documented
+  sync patterns instead: updatedAfter (UTC, formatted
+  YYYY-MM-DDTHH:MM:SS.000Z) on users and invoices, and ids (up to 50,
+  comma-separated) on users, invoices and unit rentals.
+examples:
+  read:
+    path: sites.list
+    title: List storage sites
+  write:
+    path: unitRentals.update
+    title: Set access-code custom fields on a unit rental
+    args:
+      unitRentalId: 5bf540e8d986a91cd713affe
+      customFields:
+        myAC_accessCode: '482913'
+apiExamples:
+  settings.get: {}
+  sites.list: {}
+  sites.get:
+    args:
+      siteIdOrCode: central
+  units.list: {}
+  users.list: {}
+  users.get:
+    args:
+      userIdOrEmail: john@example.com
+  invoices.list: {}
+  unitRentals.list: {}
+  unitRentals.get:
+    args:
+      unitRentalId: 5bf540e8d986a91cd713affe
+      include: unit,owner,customFields
+  unitRentals.update:
+    args:
+      unitRentalId: 5bf540e8d986a91cd713affe
+      customFields:
+        myAC_accessCode: '482913'
+  jobs.get:
+    args:
+      jobId: 5bf540e8d986a91cd713affe
+  addons.list: {}
+  addons.get:
+    args:
+      addonId: 5bf540e8d986a91cd713affe
+apiNotes:
+  unitRentals.update: >-
+    The only documented write. Sets custom fields on one rental, which is
+    how access-control integrations store access codes and overlock flags
+    under prefixed keys such as myAC_accessCode or myAC_overlocked.

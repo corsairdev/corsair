@@ -1,0 +1,680 @@
+{
+  "id": "googlephotos",
+  "displayName": "Google Photos",
+  "description": "Read albums and media items, upload photos and videos, and manage album membership through the Google Photos Library API.",
+  "npmPackageName": "@corsair-dev/googlephotos",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 13,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "googlephotos.api.albums.addEnrichment",
+      "shortPath": "albums.addEnrichment",
+      "description": "Add a text note or a location to an app-created album, at a chosen position",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "albumId",
+            "optional": false,
+            "type": "string",
+            "description": "An album id from albums.create or albums.list"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null",
+            "description": "A text note to add"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ locationName?: string | null, latlng?: { latitude: number, longitude: number } | null } | null"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "{ position: POSITION_TYPE_UNSPECIFIED | FIRST_IN_ALBUM | LAST_IN_ALBUM | AFTER_MEDIA_ITEM | AFTER_ENRICHMENT_ITEM, relativeMediaItemId?: string | null, relativeEnrichmentItemId?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "enrichmentItem",
+            "optional": true,
+            "type": "{ id?: string | null } | null",
+            "description": "The new enrichment, named by its id"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlephotos.api.albums.batchAddMediaItems",
+      "shortPath": "albums.batchAddMediaItems",
+      "description": "Add up to 50 media items to an app-created album",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "albumId",
+            "optional": false,
+            "type": "string",
+            "description": "An album id from albums.create or albums.list"
+          },
+          {
+            "key": "mediaItemIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "1 to 50 distinct ids per call"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "googlephotos.api.albums.batchRemoveMediaItems",
+      "shortPath": "albums.batchRemoveMediaItems",
+      "description": "Remove up to 50 media items from an album. The items stay in the library, so this is reversible by adding them back",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "albumId",
+            "optional": false,
+            "type": "string",
+            "description": "An album id from albums.create or albums.list"
+          },
+          {
+            "key": "mediaItemIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "1 to 50 distinct ids per call"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "googlephotos.api.albums.create",
+      "shortPath": "albums.create",
+      "description": "Create an album with a title",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "The album name, at most 500 characters"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "A persistent album id"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null",
+            "description": "At most 500 characters"
+          },
+          {
+            "key": "productUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isWriteable",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when the granted scopes allow adding items"
+          },
+          {
+            "key": "mediaItemsCount",
+            "optional": true,
+            "type": "string | null",
+            "description": "int64 as a string, not a number"
+          },
+          {
+            "key": "coverPhotoBaseUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "A prefix that needs a size parameter, like a media baseUrl"
+          },
+          {
+            "key": "coverPhotoMediaItemId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "shareInfo",
+            "optional": true,
+            "type": "{ sharedAlbumOptions?: { isCollaborative?: boolean | null, isCommentable?: boolean | null } | null, shareableUrl?: string | null, shareToken?: string | null, isOwned?: boolean | null, isJoinable?: boolean | null, isJoined?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlephotos.api.albums.get",
+      "shortPath": "albums.get",
+      "description": "Read one album this app created",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "albumId",
+            "optional": false,
+            "type": "string",
+            "description": "An album id from albums.create or albums.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "A persistent album id"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null",
+            "description": "At most 500 characters"
+          },
+          {
+            "key": "productUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isWriteable",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when the granted scopes allow adding items"
+          },
+          {
+            "key": "mediaItemsCount",
+            "optional": true,
+            "type": "string | null",
+            "description": "int64 as a string, not a number"
+          },
+          {
+            "key": "coverPhotoBaseUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "A prefix that needs a size parameter, like a media baseUrl"
+          },
+          {
+            "key": "coverPhotoMediaItemId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "shareInfo",
+            "optional": true,
+            "type": "{ sharedAlbumOptions?: { isCollaborative?: boolean | null, isCommentable?: boolean | null } | null, shareableUrl?: string | null, shareToken?: string | null, isOwned?: boolean | null, isJoinable?: boolean | null, isJoined?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlephotos.api.albums.list",
+      "shortPath": "albums.list",
+      "description": "List the albums this app created; since March 2025 the API reads nothing else",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "1 to 50. The API default is 20"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "nextPageToken from a previous page of the same call"
+          },
+          {
+            "key": "excludeNonAppCreatedData",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Leave out albums the app did not create. Reads of the user's whole library need a scope Google removed in March 2025, so this is effectively the only data a current scope can see"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "albums",
+            "optional": true,
+            "type": "{ id: string, title?: string | null, productUrl?: string | null, isWriteable?: boolean | null, mediaItemsCount?: string | null, coverPhotoBaseUrl?: string | null, coverPhotoMediaItemId?: string | null, shareInfo?: { sharedAlbumOptions?: { isCollaborative?: boolean | null, isCommentable?: boolean | null } | null, shareableUrl?: string | null, shareToken?: string | null, isOwned?: boolean | null, isJoinable?: boolean | null, isJoined?: boolean | null } | null }[] | null",
+            "description": "Absent when the account has no albums"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlephotos.api.albums.update",
+      "shortPath": "albums.update",
+      "description": "Rename an app-created album (sends the title update mask)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "albumId",
+            "optional": false,
+            "type": "string",
+            "description": "An album id from albums.create or albums.list"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string",
+            "description": "At most 500 characters"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "A persistent album id"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null",
+            "description": "At most 500 characters"
+          },
+          {
+            "key": "productUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "isWriteable",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when the granted scopes allow adding items"
+          },
+          {
+            "key": "mediaItemsCount",
+            "optional": true,
+            "type": "string | null",
+            "description": "int64 as a string, not a number"
+          },
+          {
+            "key": "coverPhotoBaseUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "A prefix that needs a size parameter, like a media baseUrl"
+          },
+          {
+            "key": "coverPhotoMediaItemId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "shareInfo",
+            "optional": true,
+            "type": "{ sharedAlbumOptions?: { isCollaborative?: boolean | null, isCommentable?: boolean | null } | null, shareableUrl?: string | null, shareToken?: string | null, isOwned?: boolean | null, isJoinable?: boolean | null, isJoined?: boolean | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlephotos.api.mediaItems.batchGet",
+      "shortPath": "mediaItems.batchGet",
+      "description": "Read up to 50 app-created media items by id, with a per-id status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mediaItemIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "1 to 50 distinct ids to read in one call"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mediaItemResults",
+            "optional": false,
+            "type": "{ status?: { code?: number | null, message?: string | null, details?: Record<string, any>[] | null } | null, mediaItem?: { id: string, filename?: string | null, mimeType?: string | null, description?: string | null, productUrl?: string | null, baseUrl?: string | null, mediaMetadata?: { creationTime?: string | null, width?: string | null, height?: string | null, photo?: { cameraMake?: string | null, cameraModel?: string | null, focalLength?: number | null, apertureFNumber?: number | null, isoEquivalent?: number | null, exposureTime?: string | null } | null, video?: { cameraMake?: string | null, cameraModel?: string | null, fps?: number | null, status?: string | null } | null } | null, contributorInfo?: { profilePictureBaseUrl?: string | null, displayName?: string | null } | null } | null }[]",
+            "description": "One entry per requested id. An entry can carry a status error instead of an item"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlephotos.api.mediaItems.create",
+      "shortPath": "mediaItems.create",
+      "description": "Upload bytes and create up to 50 media items, optionally in an album; uploads count toward the user's Google storage past 25MB",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "newMediaItems",
+            "optional": false,
+            "type": "{ file: string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string }, fileName?: string | null, description?: string | null }[]",
+            "description": "1 to 50 items per call; the API refuses more"
+          },
+          {
+            "key": "albumId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Also add the items to this album, which must be app-created"
+          },
+          {
+            "key": "albumPosition",
+            "optional": true,
+            "type": "{ position: POSITION_TYPE_UNSPECIFIED | FIRST_IN_ALBUM | LAST_IN_ALBUM | AFTER_MEDIA_ITEM | AFTER_ENRICHMENT_ITEM, relativeMediaItemId?: string | null, relativeEnrichmentItemId?: string | null } | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "newMediaItemResults",
+            "optional": false,
+            "type": "{ uploadToken?: string | null, status?: { code?: number | null, message?: string | null, details?: Record<string, any>[] | null } | null, mediaItem?: { id: string, filename?: string | null, mimeType?: string | null, description?: string | null, productUrl?: string | null, baseUrl?: string | null, mediaMetadata?: { creationTime?: string | null, width?: string | null, height?: string | null, photo?: { cameraMake?: string | null, cameraModel?: string | null, focalLength?: number | null, apertureFNumber?: number | null, isoEquivalent?: number | null, exposureTime?: string | null } | null, video?: { cameraMake?: string | null, cameraModel?: string | null, fps?: number | null, status?: string | null } | null } | null, contributorInfo?: { profilePictureBaseUrl?: string | null, displayName?: string | null } | null } | null }[]",
+            "description": "One entry per submitted item, in the order they were sent, each with its own status"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlephotos.api.mediaItems.get",
+      "shortPath": "mediaItems.get",
+      "description": "Read one media item this app created",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mediaItemId",
+            "optional": false,
+            "type": "string",
+            "description": "A media item id from a search or a batchCreate result"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "A persistent id, stable between sessions"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string | null",
+            "description": "e.g. `image/jpeg`"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "productUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "A Google Photos link the user can open when signed in"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "A prefix for the bytes, valid for 60 minutes. A parameter must be appended before it can be fetched (`=d` for photo bytes, `=dv` for video bytes, `=w<w>-h<h>` for a scaled copy); the exported mediaBytesUrl helper builds it"
+          },
+          {
+            "key": "mediaMetadata",
+            "optional": true,
+            "type": "{ creationTime?: string | null, width?: string | null, height?: string | null, photo?: { cameraMake?: string | null, cameraModel?: string | null, focalLength?: number | null, apertureFNumber?: number | null, isoEquivalent?: number | null, exposureTime?: string | null } | null, video?: { cameraMake?: string | null, cameraModel?: string | null, fps?: number | null, status?: string | null } | null } | null"
+          },
+          {
+            "key": "contributorInfo",
+            "optional": true,
+            "type": "{ profilePictureBaseUrl?: string | null, displayName?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlephotos.api.mediaItems.list",
+      "shortPath": "mediaItems.list",
+      "description": "List the media items this app created, 25 per page by default",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "1 to 100. The API default is 25"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "nextPageToken from a previous page of the same call"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mediaItems",
+            "optional": true,
+            "type": "{ id: string, filename?: string | null, mimeType?: string | null, description?: string | null, productUrl?: string | null, baseUrl?: string | null, mediaMetadata?: { creationTime?: string | null, width?: string | null, height?: string | null, photo?: { cameraMake?: string | null, cameraModel?: string | null, focalLength?: number | null, apertureFNumber?: number | null, isoEquivalent?: number | null, exposureTime?: string | null } | null, video?: { cameraMake?: string | null, cameraModel?: string | null, fps?: number | null, status?: string | null } | null } | null, contributorInfo?: { profilePictureBaseUrl?: string | null, displayName?: string | null } | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlephotos.api.mediaItems.search",
+      "shortPath": "mediaItems.search",
+      "description": "Search the media items this app created with date, content, feature and media-type filters, or list one app-created album",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "albumId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Search inside one album. Cannot be combined with filters"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ dateFilter?: { dates?: { year?: number | null, month?: number | null, day?: number | null }[], ranges?: { startDate?: { year?: number | null, month?: number | null, day?: number | null }, endDate?: { year?: number | null, month?: number | null, day?: number | null } }[] }, contentFilter?: { includedContentCategories?: (NONE | LANDSCAPES | RECEIPTS | CITYSCAPES | LANDMARKS | SELFIES | PEOPLE | PETS | WEDDINGS | BIRTHDAYS | DOCUMENTS | TRAVEL | ANIMALS | FOOD | SPORT | NIGHT | PERFORMANCES | WHITEBOARDS | SCREENSHOTS | UTILITY | ARTS | CRAFTS | FASHION | HOUSES | GARDENS | FLOWERS | HOLIDAYS)[], excludedContentCategories?: (NONE | LANDSCAPES | RECEIPTS | CITYSCAPES | LANDMARKS | SELFIES | PEOPLE | PETS | WEDDINGS | BIRTHDAYS | DOCUMENTS | TRAVEL | ANIMALS | FOOD | SPORT | NIGHT | PERFORMANCES | WHITEBOARDS | SCREENSHOTS | UTILITY | ARTS | CRAFTS | FASHION | HOUSES | GARDENS | FLOWERS | HOLIDAYS)[] }, mediaTypeFilter?: { mediaTypes?: (ALL_MEDIA | VIDEO | PHOTO)[] }, featureFilter?: { includedFeatures?: (NONE | FAVORITES)[] }, includeArchivedMedia?: boolean, excludeNonAppCreatedData?: boolean } | null"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "MediaMetadata.creation_time desc | MediaMetadata.creation_time | null",
+            "description": "Only usable with a date filter, and not with content, media type or feature filters. `desc` is newest first, which is also the default"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "1 to 100. The API default is 25"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "nextPageToken from a previous page of the same call"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mediaItems",
+            "optional": true,
+            "type": "{ id: string, filename?: string | null, mimeType?: string | null, description?: string | null, productUrl?: string | null, baseUrl?: string | null, mediaMetadata?: { creationTime?: string | null, width?: string | null, height?: string | null, photo?: { cameraMake?: string | null, cameraModel?: string | null, focalLength?: number | null, apertureFNumber?: number | null, isoEquivalent?: number | null, exposureTime?: string | null } | null, video?: { cameraMake?: string | null, cameraModel?: string | null, fps?: number | null, status?: string | null } | null } | null, contributorInfo?: { profilePictureBaseUrl?: string | null, displayName?: string | null } | null }[] | null",
+            "description": "Absent when nothing matched"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Its presence is the only reliable sign that more pages exist"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlephotos.api.mediaItems.update",
+      "shortPath": "mediaItems.update",
+      "description": "Change an app-created media item's description, the only editable field",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mediaItemId",
+            "optional": false,
+            "type": "string",
+            "description": "A media item id from a search or a batchCreate result"
+          },
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string",
+            "description": "The new description, under 1000 characters. The only field the API lets an update change"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "A persistent id, stable between sessions"
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string | null",
+            "description": "e.g. `image/jpeg`"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "productUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "A Google Photos link the user can open when signed in"
+          },
+          {
+            "key": "baseUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "A prefix for the bytes, valid for 60 minutes. A parameter must be appended before it can be fetched (`=d` for photo bytes, `=dv` for video bytes, `=w<w>-h<h>` for a scaled copy); the exported mediaBytesUrl helper builds it"
+          },
+          {
+            "key": "mediaMetadata",
+            "optional": true,
+            "type": "{ creationTime?: string | null, width?: string | null, height?: string | null, photo?: { cameraMake?: string | null, cameraModel?: string | null, focalLength?: number | null, apertureFNumber?: number | null, isoEquivalent?: number | null, exposureTime?: string | null } | null, video?: { cameraMake?: string | null, cameraModel?: string | null, fps?: number | null, status?: string | null } | null } | null"
+          },
+          {
+            "key": "contributorInfo",
+            "optional": true,
+            "type": "{ profilePictureBaseUrl?: string | null, displayName?: string | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
