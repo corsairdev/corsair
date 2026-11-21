@@ -1,9 +1,6 @@
 import { inspect } from 'node:util';
-import {
-	describePerigonError,
-	makePerigonRequest,
-	PerigonAPIError,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describePerigonError, makePerigonRequest } from './client';
 import { invalidKey } from './test-fixtures';
 
 const API_KEY = 'pg-test-key';
@@ -21,10 +18,10 @@ function respond(body: unknown, status: number) {
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<PerigonAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(PerigonAPIError);
-	if (!(error instanceof PerigonAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -69,7 +66,9 @@ describe('makePerigonRequest', () => {
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toContain('Invalid API key');
-		expect(error.name).toBe('PerigonAPIError');
+		// R8: core's own ApiError, so management maps it to its real status.
+		expect(error.name).toBe('ApiError');
+		expect(error.constructor).toBe(ApiError);
 	});
 
 	it('keeps no licensed article content on the rebuilt error', async () => {

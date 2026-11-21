@@ -1,8 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { PerigonAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof PerigonAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // The client retries a 429 up to three times through core, honouring
@@ -24,8 +24,8 @@ export const errorHandlers = {
 	// Every route here is a GET, so a retry after a 5xx replays nothing.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof PerigonAPIError &&
-			error.method === 'GET' &&
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
 			(error.status ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
