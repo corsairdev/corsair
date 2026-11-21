@@ -38,6 +38,26 @@ export function freeAgentApiBase(sandbox: boolean | undefined): string {
 	return sandbox ? FREEAGENT_SANDBOX_API_BASE : FREEAGENT_API_BASE;
 }
 
+function sanitizeWriteError(error: ApiError, sandbox: boolean): ApiError {
+	return new ApiError(
+		{ method: error.request.method, url: '/' },
+		{
+			url: freeAgentApiBase(sandbox),
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: undefined,
+		},
+		`FreeAgent API request failed with HTTP ${error.status}`,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
 export async function makeFreeAgentRequest<T>(
 	endpoint: string,
 	auth: string | FreeAgentAuth,
@@ -76,7 +96,18 @@ export async function makeFreeAgentRequest<T>(
 		mediaType: 'application/json; charset=utf-8',
 		query,
 	};
-	return request<T>(config, requestOptions);
+	try {
+		return await request<T>(config, requestOptions);
+	} catch (error) {
+		if (
+			(method === 'POST' || method === 'PUT' || method === 'DELETE') &&
+			error instanceof ApiError
+		) {
+			// Provider error bodies and request diagnostics can echo arbitrary customer data.
+			throw sanitizeWriteError(error, sandbox);
+		}
+		throw error;
+	}
 }
 
 export async function makeFreeAgentPaginatedRequest<T>(

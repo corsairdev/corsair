@@ -20,7 +20,7 @@ FreeAgent documents 25 items per page by default and a maximum `per_page` of 100
 
 All implemented requests use JSON over HTTPS, OAuth 2.0 bearer tokens, and the required `User-Agent`. FreeAgent supports XML as an alternate encoding of the same routes; this plugin uses JSON only. No global provider error envelope is invented because the official docs do not specify one.
 
-Corsair core's current `ApiError` implementation still retains a failed request body in its request diagnostics. Per R8, this plugin passes `ApiError` through unchanged so status, `Retry-After`, and OAuth-refresh behavior are preserved. The shared request configuration exposes no plugin-scoped pre-construction body-redaction hook, so fixing the gap requires a core transport change and remains outside this plugin's R1 scope. The plugin itself does not log request/response bodies or customer records.
+Failed POST/PUT/DELETE errors are rebuilt as `ApiError` instances with request and response payloads, query, and endpoint details omitted, because provider errors can echo customer data. The sanitized error preserves the HTTP status, status text, `Retry-After`, and rate-limit fields used by error handling. Read-only GET errors still pass through unchanged. The plugin does not log request/response bodies or customer records.
 
 <!-- ROUTE_MATRIX_START -->
 

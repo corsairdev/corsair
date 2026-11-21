@@ -80,6 +80,73 @@ describe('FreeAgent client', () => {
 		).rejects.toBe(rateLimit);
 	});
 
+	it.each(['POST', 'PUT', 'DELETE'] as const)(
+		'redacts request and echoed response data when a %s fails',
+		async (method) => {
+			const email = 'contact@example.test';
+			const address = '14 Private Road';
+			const body =
+				method === 'DELETE'
+					? undefined
+					: { contact: { email, address1: address } };
+			const transportError = new ApiError(
+				{
+					method,
+					url: '/v2/contacts',
+					body,
+				},
+				{
+					url: `${FREEAGENT_API_BASE}/v2/contacts`,
+					ok: false,
+					status: 403,
+					statusText: 'Forbidden',
+					body: { errors: { message: `Rejected ${email} at ${address}` } },
+				},
+				`Rejected ${email} at ${address}`,
+				{
+					retryAfter: 5000,
+					rateLimitReset: 6000,
+					rateLimitRemaining: 3,
+					rateLimitLimit: 120,
+				},
+			);
+			mockedRequest.mockRejectedValue(transportError);
+
+			// `unknown` because Promise rejection values have no static type; the guard below narrows it.
+			const caught = await makeFreeAgentRequest(
+				'/v2/contacts',
+				'access-token',
+				{
+					method,
+					body,
+				},
+			).catch((error: unknown) => error);
+
+			expect(caught).toBeInstanceOf(ApiError);
+			if (!(caught instanceof ApiError)) {
+				throw new Error('Expected a sanitized ApiError');
+			}
+			expect(caught).not.toBe(transportError);
+			expect(caught).toMatchObject({
+				status: 403,
+				statusText: 'Forbidden',
+				retryAfter: 5000,
+				rateLimitReset: 6000,
+				rateLimitRemaining: 3,
+				rateLimitLimit: 120,
+				url: FREEAGENT_API_BASE,
+				request: { method, url: '/' },
+				body: undefined,
+			});
+			expect(caught.request.body).toBeUndefined();
+			expect(caught.message).toBe('FreeAgent API request failed with HTTP 403');
+			expect(JSON.stringify(caught)).not.toContain(email);
+			expect(JSON.stringify(caught)).not.toContain(address);
+			expect(caught.message).not.toContain(email);
+			expect(caught.message).not.toContain(address);
+		},
+	);
+
 	it('returns the documented Link and X-Total-Count pagination headers', async () => {
 		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
 			new Response(JSON.stringify({ contacts: [] }), {
