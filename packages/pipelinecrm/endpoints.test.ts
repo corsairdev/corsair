@@ -79,6 +79,7 @@ describe('output parsing', () => {
 	it('keeps a null closed_time nullish', async () => {
 		respond(dealsList);
 		const page = (await invoke(Deals.list, {})) as {
+			// unknown: the field is read only to check it is absent or null.
 			entries: Array<{ closed_time?: unknown }>;
 		};
 		expect(page.entries[0]?.closed_time).toBeNull();
