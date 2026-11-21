@@ -139,9 +139,7 @@ const checkCommonFields = {
 				),
 		)
 		.optional()
-		.describe(
-			'Probe region filters, e.g. [{"region":"EU"}] or [{"region":"NA"}]',
-		),
+		.describe('Probe region filters, e.g. ["region: EU"] or ["region: NA"]'),
 	ipv6: z.boolean().optional().describe('Test over IPv6'),
 	responseTimeThreshold: z
 		.number()
@@ -161,7 +159,6 @@ type CheckCommon = {
 	notifyAgainEvery?: number;
 	notifyWhenBackup?: boolean;
 	tags?: string;
-	// unknown: probe filters are provider-defined region objects.
 	probeFilters?: string[];
 	ipv6?: boolean;
 	responseTimeThreshold?: number;
