@@ -1,0 +1,930 @@
+---
+title: "Metabase API reference"
+sidebarTitle: "API"
+description: "API reference for the Metabase plugin in Corsair: every `metabase.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Collection Permissions
+
+### graph.get
+
+`collectionPermissions.graph.get`
+
+Read collection permission graph
+
+**Risk:** `read`
+
+```ts
+await corsair.metabase.api.collectionPermissions.graph.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  namespace?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groups` | `Record<string, Record<string, write \| read \| none>>` | Yes | — |
+| `revision` | `number \| null` | No | — |
+
+
+
+---
+
+### graph.update
+
+`collectionPermissions.graph.update`
+
+Replace collection permission graph entries
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metabase.api.collectionPermissions.graph.update({
+	body: {
+		groups: {
+			2: { 8: 'read' },
+		},
+		revision: 1,
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+The graph update can overwrite permission entries. Metabase documents `force=true` as persisting the supplied graph without requiring a revision, which may clobber intervening writes. This operation is marked destructive.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  force?: boolean | null,
+  skip-graph?: boolean | null
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  groups: Record<string, Record<string, write | read | none>>,
+  namespace?: string | null,
+  revision?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `revision` | `number \| null` | No | — |
+
+
+
+---
+
+## Collections
+
+### candidates.list
+
+`collections.candidates.list`
+
+List collection questions eligible to move into dashboards
+
+**Risk:** `read`
+
+```ts
+await corsair.metabase.api.collections.candidates.list({
+	path: { id: 8 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `total` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  description: string | null,
+  id: number,
+  name: string,
+  sole_dashboard_info: {
+    description: string | null,
+    id: number,
+    name: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### candidates.move
+
+`collections.candidates.move`
+
+Move eligible collection questions into their dashboards
+
+**Risk:** `write`
+
+```ts
+await corsair.metabase.api.collections.candidates.move({
+	path: { id: 8 },
+	body: {
+		card_ids: [15],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  card_ids?: number[]
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `moved` | `number[]` | Yes | — |
+
+
+
+---
+
+### create
+
+`collections.create`
+
+Create a Metabase collection
+
+**Risk:** `write`
+
+```ts
+await corsair.metabase.api.collections.create({
+	body: { name: 'Analytics' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  authority_level?: official | null,
+  description?: string | null,
+  name: string,
+  namespace?: string | null,
+  parent_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`collections.delete`
+
+Permanently delete a collection
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metabase.api.collections.delete({
+	path: { id: 8 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+`DELETE /api/collection/{id}` permanently deletes a collection. This operation is marked destructive.
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `number`
+
+
+---
+
+### get
+
+`collections.get`
+
+Get a collection by its numeric ID or NanoID
+
+**Risk:** `read`
+
+```ts
+await corsair.metabase.api.collections.get({
+	path: { id: 8 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number | string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### items.list
+
+`collections.items.list`
+
+List items in a collection
+
+**Risk:** `read`
+
+```ts
+await corsair.metabase.api.collections.items.list({
+	path: { id: 8 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+The `data` array contains heterogeneous collection items. The official OpenAPI schema intentionally leaves item properties open; the plugin preserves JSON-compatible fields instead of claiming a fixed item model. Metabase returns `limit` and `offset` where applicable, but the documented route does not expose them as request parameters.
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number | string
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  q?: string | null,
+  pinned-state?: is_not_pinned | is_pinned | all | null,
+  archived?: boolean | null,
+  sort-direction?: desc | asc | null,
+  show-dashboard-questions?: boolean | null,
+  show-exploration-documents?: boolean | null,
+  include-available-models?: boolean | null,
+  models?: (dashboard | table | exploration | dataset | no_models | timeline | snippet | collection | measure | transform | document | pulse | action | metric | card)[] | null,
+  official-collections-first?: boolean | null,
+  sort-column?: model | name | last_edited_by | last_edited_at | description | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `available_models` | `JsonValue[]` | No | — |
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `limit` | `number \| null` | No | — |
+| `models` | `JsonValue[] \| null` | Yes | — |
+| `offset` | `number \| null` | No | — |
+| `total` | `number` | Yes | — |
+
+
+
+---
+
+### items.metadata
+
+`collections.items.metadata`
+
+Get model and count metadata for collection items
+
+**Risk:** `read`
+
+```ts
+await corsair.metabase.api.collections.items.metadata({
+	path: { id: 8 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number | string
+}
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  models?: (dashboard | table | exploration | dataset | no_models | timeline | snippet | collection | measure | transform | document | pulse | action | metric | card)[] | null,
+  archived?: boolean | null,
+  pinned-state?: is_not_pinned | is_pinned | all | null,
+  show-dashboard-questions?: boolean | null,
+  show-exploration-documents?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `available_models` | `string[]` | Yes | — |
+| `total_items` | `number` | Yes | — |
+
+
+
+---
+
+### list
+
+`collections.list`
+
+List collections visible to the API key group
+
+**Risk:** `read`
+
+```ts
+await corsair.metabase.api.collections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  archived?: boolean | null,
+  exclude-other-user-collections?: boolean | null,
+  namespace?: string | null,
+  personal-only?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### root.candidates.list
+
+`collections.root.candidates.list`
+
+List root questions eligible to move into dashboards
+
+**Risk:** `read`
+
+```ts
+await corsair.metabase.api.collections.root.candidates.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `total` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  description: string | null,
+  id: number,
+  name: string,
+  sole_dashboard_info: {
+    description: string | null,
+    id: number,
+    name: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### root.candidates.move
+
+`collections.root.candidates.move`
+
+Move eligible root questions into their dashboards
+
+**Risk:** `write`
+
+```ts
+await corsair.metabase.api.collections.root.candidates.move({
+	body: {
+		card_ids: [15],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  card_ids?: number[]
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `moved` | `number[]` | Yes | — |
+
+
+
+---
+
+### root.get
+
+`collections.root.get`
+
+Get the virtual root collection
+
+**Risk:** `read`
+
+```ts
+await corsair.metabase.api.collections.root.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  namespace?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### root.items.list
+
+`collections.root.items.list`
+
+List items visible at the collection root
+
+**Risk:** `read`
+
+```ts
+await corsair.metabase.api.collections.root.items.list({
+	query: {
+		models: ['dashboard'],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+The `data` array contains heterogeneous collection items. The official OpenAPI schema intentionally leaves item properties open; the plugin preserves JSON-compatible fields instead of claiming a fixed item model. Metabase returns `limit` and `offset` where applicable, but the documented route does not expose them as request parameters.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  collection-type?: remote-synced | null,
+  include-library?: boolean | null,
+  q?: string | null,
+  pinned-state?: is_not_pinned | is_pinned | all | null,
+  archived?: boolean | null,
+  sort-direction?: desc | asc | null,
+  show-dashboard-questions?: boolean | null,
+  show-exploration-documents?: boolean | null,
+  include-available-models?: boolean | null,
+  namespace?: string | null,
+  models?: (dashboard | table | exploration | dataset | no_models | timeline | snippet | collection | measure | transform | document | pulse | action | metric | card)[] | null,
+  official-collections-first?: boolean | null,
+  sort-column?: model | name | last_edited_by | last_edited_at | description | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `available_models` | `JsonValue[]` | No | — |
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `limit` | `number \| null` | No | — |
+| `models` | `JsonValue[] \| null` | Yes | — |
+| `offset` | `number \| null` | No | — |
+| `total` | `number` | Yes | — |
+
+
+
+---
+
+### root.items.metadata
+
+`collections.root.items.metadata`
+
+Get model and count metadata for root items
+
+**Risk:** `read`
+
+```ts
+await corsair.metabase.api.collections.root.items.metadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  models?: (dashboard | table | exploration | dataset | no_models | timeline | snippet | collection | measure | transform | document | pulse | action | metric | card)[] | null,
+  archived?: boolean | null,
+  namespace?: string | null,
+  pinned-state?: is_not_pinned | is_pinned | all | null,
+  collection-type?: remote-synced | null,
+  include-library?: boolean | null,
+  show-dashboard-questions?: boolean | null,
+  show-exploration-documents?: boolean | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `available_models` | `string[]` | Yes | — |
+| `total_items` | `number` | Yes | — |
+
+
+
+---
+
+### trash.get
+
+`collections.trash.get`
+
+Get the virtual trash collection
+
+**Risk:** `read`
+
+```ts
+await corsair.metabase.api.collections.trash.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---
+
+### tree
+
+`collections.tree`
+
+Get the collection tree
+
+**Risk:** `read`
+
+```ts
+await corsair.metabase.api.collections.tree({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  exclude-archived?: boolean | null,
+  exclude-other-user-collections?: boolean | null,
+  include-library?: boolean | null,
+  namespace?: string | null,
+  namespaces?: string[] | null,
+  shallow?: boolean | null,
+  collection-id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  children?: boolean | (recursive)[],
+  id: number | string,
+  name: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`collections.update`
+
+Update or move a collection
+
+**Risk:** `write`
+
+```ts
+await corsair.metabase.api.collections.update({
+	path: { id: 8 },
+	body: { name: 'Finance reports' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `object` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="path full type">
+
+```ts
+{
+  id: number
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  archived?: boolean | null,
+  authority_level?: official | null,
+  description?: string | null,
+  name?: string | null,
+  parent_id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+---

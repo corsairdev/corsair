@@ -1,4 +1,83 @@
-# Display copy for the docs, the catalog, corsair.dev and Hub.
-# `pnpm validate:plugins` fails until the TODO is replaced.
-displayName: "Metabase"
-description: TODO one sentence on what the API is and what this plugin can do with it.
+displayName: Metabase
+description: Manage Metabase collections, browse collection content, and inspect or update collection permission graphs.
+domain: metabase.com
+recommendedAuth: api_key
+factory:
+  options:
+    baseUrl: https://metabase.invalid
+  note: >-
+    `baseUrl` is the administrator-configured origin of the Metabase instance. It cannot be supplied by an endpoint
+    caller; use HTTPS, or HTTP only for localhost development. The API key is stored separately as Corsair tenant
+    credentials.
+overviewNote: >-
+  Metabase's REST API is unversioned. The official latest reference currently describes Metabase 65, but available
+  endpoints vary by the installed instance. This plugin implements the collection and collection-permissions routes
+  whose request and response schemas are declared in that reference. An API key inherits permissions from the group
+  assigned when the key is created. Configure the instance origin in `metabase({ baseUrl })`; every request sends
+  `X-API-Key`, omits cookies, and refuses redirects so the key is not forwarded to another host. HTTP is accepted only
+  for localhost development.
+apiNotes:
+  collections.delete: >-
+    `DELETE /api/collection/{id}` permanently deletes a collection. This operation is marked destructive.
+  collectionPermissions.graph.update: >-
+    The graph update can overwrite permission entries. Metabase documents `force=true` as persisting the supplied
+    graph without requiring a revision, which may clobber intervening writes. This operation is marked destructive.
+  collections.items.list: >-
+    The `data` array contains heterogeneous collection items. The official OpenAPI schema intentionally leaves item
+    properties open; the plugin preserves JSON-compatible fields instead of claiming a fixed item model. Metabase
+    returns `limit` and `offset` where applicable, but the documented route does not expose them as request parameters.
+  collections.root.items.list: >-
+    The `data` array contains heterogeneous collection items. The official OpenAPI schema intentionally leaves item
+    properties open; the plugin preserves JSON-compatible fields instead of claiming a fixed item model. Metabase
+    returns `limit` and `offset` where applicable, but the documented route does not expose them as request parameters.
+apiExamples:
+  collections.list: {}
+  collections.create:
+    body:
+      name: Analytics
+  collections.get:
+    path:
+      id: 8
+  collections.update:
+    path:
+      id: 8
+    body:
+      name: Finance reports
+  collections.delete:
+    path:
+      id: 8
+  collections.tree: {}
+  collections.root.get: {}
+  collections.root.items.list:
+    query:
+      models:
+        - dashboard
+  collections.root.items.metadata: {}
+  collections.root.candidates.list: {}
+  collections.root.candidates.move:
+    body:
+      card_ids:
+        - 15
+  collections.trash.get: {}
+  collections.items.list:
+    path:
+      id: 8
+  collections.items.metadata:
+    path:
+      id: 8
+  collections.candidates.list:
+    path:
+      id: 8
+  collections.candidates.move:
+    path:
+      id: 8
+    body:
+      card_ids:
+        - 15
+  collectionPermissions.graph.get: {}
+  collectionPermissions.graph.update:
+    body:
+      groups:
+        '2':
+          '8': read
+      revision: 1
