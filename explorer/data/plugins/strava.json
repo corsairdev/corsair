@@ -2193,7 +2193,7 @@
     {
       "path": "strava.api.uploads.create",
       "shortPath": "uploads.create",
-      "description": "Upload an activity file (FIT, TCX, GPX)",
+      "description": "Upload an activity file (FIT, TCX, GPX). Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -2201,7 +2201,8 @@
           {
             "key": "file",
             "optional": false,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The activity file (FIT, TCX or GPX, optionally gzipped; data_type says which): a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…)."
           },
           {
             "key": "data_type",

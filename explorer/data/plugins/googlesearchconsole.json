@@ -1,0 +1,431 @@
+{
+  "id": "googlesearchconsole",
+  "displayName": "Google Search Console",
+  "description": "Query search performance and inspect indexing, mobile usability and rich results through the Google Search Console API.",
+  "npmPackageName": "@corsair-dev/googlesearchconsole",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 10,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "googlesearchconsole.api.searchanalytics.query",
+      "shortPath": "searchanalytics.query",
+      "description": "Query search traffic: clicks, impressions, CTR and position, grouped by date, query, page, country, device or another dimension",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteUrl",
+            "optional": false,
+            "type": "string",
+            "description": "The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property"
+          },
+          {
+            "key": "startDate",
+            "optional": false,
+            "type": "string",
+            "description": "YYYY-MM-DD, in Pacific Time (the API's own time zone)"
+          },
+          {
+            "key": "endDate",
+            "optional": false,
+            "type": "string",
+            "description": "YYYY-MM-DD, in Pacific Time (the API's own time zone)"
+          },
+          {
+            "key": "dimensions",
+            "optional": true,
+            "type": "(DATE | QUERY | PAGE | COUNTRY | DEVICE | SEARCH_APPEARANCE | HOUR | BRANDED_CLASSIFICATION)[] | null",
+            "description": "Zero or more dimensions to group by. `HOUR` requires dataState HOURLY_ALL"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "WEB | IMAGE | VIDEO | NEWS | DISCOVER | GOOGLE_NEWS | WEB_MULTIMODAL | null",
+            "description": "Defaults to `WEB`"
+          },
+          {
+            "key": "searchType",
+            "optional": true,
+            "type": "WEB | IMAGE | VIDEO | NEWS | DISCOVER | GOOGLE_NEWS | WEB_MULTIMODAL | null",
+            "description": "The older spelling of `type`, with the same values and default. Send one, not both"
+          },
+          {
+            "key": "dimensionFilterGroups",
+            "optional": true,
+            "type": "{ groupType?: AND | null, filters?: { dimension: QUERY | PAGE | COUNTRY | DEVICE | SEARCH_APPEARANCE | BRANDED_CLASSIFICATION, operator: EQUALS | NOT_EQUALS | CONTAINS | NOT_CONTAINS | INCLUDING_REGEX | EXCLUDING_REGEX, expression: string }[] | null, filterLists?: { dimension: QUERY | PAGE | COUNTRY | DEVICE | SEARCH_APPEARANCE | BRANDED_CLASSIFICATION, expressions: string[] }[] | null }[] | null",
+            "description": "Filters applied to the grouped values"
+          },
+          {
+            "key": "aggregationType",
+            "optional": true,
+            "type": "AUTO | BY_PROPERTY | BY_PAGE | BY_NEWS_SHOWCASE_PANEL | null",
+            "description": "`BY_PROPERTY` merges data across properties; `BY_PAGE` groups by URI. Neither is supported for DISCOVER or GOOGLE_NEWS"
+          },
+          {
+            "key": "rowLimit",
+            "optional": true,
+            "type": "number | null",
+            "description": "1 to 25,000. The API default is 1,000"
+          },
+          {
+            "key": "startRow",
+            "optional": true,
+            "type": "number | null",
+            "description": "Zero-based row to start at, which is how a caller pages. Past the end, the answer is a successful empty page"
+          },
+          {
+            "key": "dataState",
+            "optional": true,
+            "type": "DATA_STATE_UNSPECIFIED | FINAL | ALL | HOURLY_ALL | null",
+            "description": "`ALL` includes fresh, unfinalized data; `FINAL` is the default; `HOURLY_ALL` is required for the HOUR dimension"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rows",
+            "optional": true,
+            "type": "{ keys?: string[] | null, clicks?: number | null, impressions?: number | null, ctr?: number | null, position?: number | null }[] | null",
+            "description": "Grouped rows, sorted by clicks descending. Absent when nothing matched"
+          },
+          {
+            "key": "responseAggregationType",
+            "optional": true,
+            "type": "string | null",
+            "description": "How the rows were aggregated, which can differ from what was asked"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ firstIncompleteDate?: string | null, firstIncompleteHour?: string | null } | null",
+            "description": "The date or hour still being processed"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlesearchconsole.api.sitemaps.delete",
+      "shortPath": "sitemaps.delete",
+      "description": "Remove a sitemap from the property's Sitemaps report. Google may still crawl the sitemap and the URLs it already found",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteUrl",
+            "optional": false,
+            "type": "string",
+            "description": "The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property"
+          },
+          {
+            "key": "feedpath",
+            "optional": false,
+            "type": "string",
+            "description": "The sitemap's own URL, e.g. `https://example.com/sitemap.xml`. It is a URL, not a path"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googlesearchconsole.api.sitemaps.get",
+      "shortPath": "sitemaps.get",
+      "description": "Read one submitted sitemap",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteUrl",
+            "optional": false,
+            "type": "string",
+            "description": "The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property"
+          },
+          {
+            "key": "feedpath",
+            "optional": false,
+            "type": "string",
+            "description": "The sitemap's own URL, e.g. `https://example.com/sitemap.xml`. It is a URL, not a path"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "path",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastSubmitted",
+            "optional": true,
+            "type": "string | null",
+            "description": "RFC 3339"
+          },
+          {
+            "key": "lastDownloaded",
+            "optional": true,
+            "type": "string | null",
+            "description": "RFC 3339"
+          },
+          {
+            "key": "isPending",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isSitemapsIndex",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True when this sitemap is a collection of other sitemaps"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "`sitemap`, `rssFeed`, `atomFeed`, `urlList`, `patternSitemap` or `notSitemap`"
+          },
+          {
+            "key": "warnings",
+            "optional": true,
+            "type": "string | null",
+            "description": "int64 as a string"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "string | null",
+            "description": "int64 as a string"
+          },
+          {
+            "key": "contents",
+            "optional": true,
+            "type": "{ type?: string | null, submitted?: string | null, indexed?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlesearchconsole.api.sitemaps.list",
+      "shortPath": "sitemaps.list",
+      "description": "List the sitemaps submitted for a property, with their errors and warnings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteUrl",
+            "optional": false,
+            "type": "string",
+            "description": "The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property"
+          },
+          {
+            "key": "sitemapIndex",
+            "optional": true,
+            "type": "string | null",
+            "description": "List only the sitemaps named inside this sitemap index"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sitemap",
+            "optional": true,
+            "type": "{ path?: string | null, lastSubmitted?: string | null, lastDownloaded?: string | null, isPending?: boolean | null, isSitemapsIndex?: boolean | null, type?: string | null, warnings?: string | null, errors?: string | null, contents?: { type?: string | null, submitted?: string | null, indexed?: string | null }[] | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlesearchconsole.api.sitemaps.submit",
+      "shortPath": "sitemaps.submit",
+      "description": "Submit a sitemap URL, which asks Google to fetch it. Sending one already listed refreshes its status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteUrl",
+            "optional": false,
+            "type": "string",
+            "description": "The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property"
+          },
+          {
+            "key": "feedpath",
+            "optional": false,
+            "type": "string",
+            "description": "The sitemap's own URL, e.g. `https://example.com/sitemap.xml`. It is a URL, not a path"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googlesearchconsole.api.sites.add",
+      "shortPath": "sites.add",
+      "description": "Add a property the account already controls to the API's property list. It does not verify ownership",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteUrl",
+            "optional": false,
+            "type": "string",
+            "description": "The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googlesearchconsole.api.sites.delete",
+      "shortPath": "sites.delete",
+      "description": "Remove a property from this account's Search Console property list. Other owners keep it, and it can usually be re-added without verifying again",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteUrl",
+            "optional": false,
+            "type": "string",
+            "description": "The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googlesearchconsole.api.sites.get",
+      "shortPath": "sites.get",
+      "description": "Read one property and the permission level on it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteUrl",
+            "optional": false,
+            "type": "string",
+            "description": "The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteUrl",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "permissionLevel",
+            "optional": true,
+            "type": "string | null",
+            "description": "What this credential may do on the property: `siteOwner`, `siteFullUser`, `siteRestrictedUser` or `siteUnverifiedUser`. Owners and full users can manage it, restricted users can view most data including Performance, and unverified users can read nothing"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlesearchconsole.api.sites.list",
+      "shortPath": "sites.list",
+      "description": "List the properties the credentials can reach, with the permission level on each",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteEntry",
+            "optional": true,
+            "type": "{ siteUrl?: string | null, permissionLevel?: string | null }[] | null",
+            "description": "Absent when the credential can reach no properties"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googlesearchconsole.api.urlInspection.inspect",
+      "shortPath": "urlInspection.inspect",
+      "description": "Inspect one URL: whether Google indexed it, the canonical it chose, and any mobile-usability, rich-result or AMP issues",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteUrl",
+            "optional": false,
+            "type": "string",
+            "description": "The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property"
+          },
+          {
+            "key": "inspectionUrl",
+            "optional": false,
+            "type": "string",
+            "description": "The URL to inspect. It must be under the property in siteUrl"
+          },
+          {
+            "key": "languageCode",
+            "optional": true,
+            "type": "string | null",
+            "description": "IETF BCP-47 language for the localized issue messages, e.g. `en-US`"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inspectionResult",
+            "optional": true,
+            "type": "{ inspectionResultLink?: string | null, indexStatusResult?: { verdict?: VERDICT_UNSPECIFIED | PASS | PARTIAL | FAIL | NEUTRAL | null, coverageState?: string | null, robotsTxtState?: ROBOTS_TXT_STATE_UNSPECIFIED | ALLOWED | DISALLOWED | null, indexingState?: INDEXING_STATE_UNSPECIFIED | INDEXING_ALLOWED | BLOCKED_BY_META_TAG | BLOCKED_BY_HTTP_HEADER | BLOCKED_BY_ROBOTS_TXT | null, lastCrawlTime?: string | null, pageFetchState?: PAGE_FETCH_STATE_UNSPECIFIED | SUCCESSFUL | SOFT_404 | BLOCKED_ROBOTS_TXT | NOT_FOUND | ACCESS_DENIED | SERVER_ERROR | REDIRECT_ERROR | ACCESS_FORBIDDEN | BLOCKED_4XX | INTERNAL_CRAWL_ERROR | INVALID_URL | null, googleCanonical?: string | null, userCanonical?: string | null, crawledAs?: CRAWLING_USER_AGENT_UNSPECIFIED | DESKTOP | MOBILE | null, referringUrls?: string[] | null, sitemap?: string[] | null } | null, mobileUsabilityResult?: { verdict?: VERDICT_UNSPECIFIED | PASS | PARTIAL | FAIL | NEUTRAL | null, issues?: { message?: string | null, issueType?: string | null, severity?: string | null }[] | null } | null, richResultsResult?: { verdict?: VERDICT_UNSPECIFIED | PASS | PARTIAL | FAIL | NEUTRAL | null, detectedItems?: Record<string, any>[] | null } | null, ampResult?: { verdict?: VERDICT_UNSPECIFIED | PASS | PARTIAL | FAIL | NEUTRAL | null, ampUrl?: string | null, robotsTxtState?: ROBOTS_TXT_STATE_UNSPECIFIED | ALLOWED | DISALLOWED | null, indexingState?: AMP_INDEXING_STATE_UNSPECIFIED | AMP_INDEXING_ALLOWED | BLOCKED_DUE_TO_NOINDEX | BLOCKED_DUE_TO_EXPIRED_UNAVAILABLE_AFTER | null, pageFetchState?: string | null, lastCrawlTime?: string | null, issues?: Record<string, any>[] | null } | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

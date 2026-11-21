@@ -2739,6 +2739,14 @@
                 ]
               },
               {
+                "group": "Google Admin",
+                "pages": [
+                  "plugins/googleadmin/overview",
+                  "plugins/googleadmin/api",
+                  "plugins/googleadmin/database"
+                ]
+              },
+              {
                 "group": "Google Contacts",
                 "pages": [
                   "plugins/googlecontacts/overview",
@@ -4076,7 +4084,8 @@
                 "pages": [
                   "plugins/parallel/overview",
                   "plugins/parallel/api",
-                  "plugins/parallel/database"
+                  "plugins/parallel/database",
+                  "plugins/parallel/webhooks"
                 ]
               },
               {
@@ -5335,6 +5344,14 @@
                   "plugins/taggun/overview",
                   "plugins/taggun/api",
                   "plugins/taggun/database"
+                ]
+              },
+              {
+                "group": "Tailscale",
+                "pages": [
+                  "plugins/tailscale/overview",
+                  "plugins/tailscale/api",
+                  "plugins/tailscale/database"
                 ]
               },
               {
