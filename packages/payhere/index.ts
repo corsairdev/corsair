@@ -271,7 +271,7 @@ export function payhere<const T extends PayherePluginOptions>(
 	} satisfies InternalPayherePlugin;
 }
 
-export { PayhereAPIError } from './client';
+export { buildPayhereApiError } from './client';
 
 export type {
 	Company,

@@ -1,9 +1,10 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
-import { PayhereAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { buildPayhereApiError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-function apiError(status: number, method: string = 'GET'): PayhereAPIError {
-	return new PayhereAPIError(`Payhere ${status}: boom`, {
+function apiError(status: number, method: string = 'GET'): ApiError {
+	return buildPayhereApiError(`Payhere ${status}: boom`, {
 		method,
 		path: '/api/v1/payments',
 		status,
@@ -107,7 +108,7 @@ describe('mergeErrorHandlers', () => {
 		const entry = merged.OVERLOADED_ERROR;
 		if (!entry) throw new Error('caller handler missing');
 		const result = await entry.handler(
-			new PayhereAPIError('overloaded', {
+			buildPayhereApiError('overloaded', {
 				method: 'GET',
 				path: '/x',
 				status: 529,
@@ -146,5 +147,5 @@ describe('mergeErrorHandlers', () => {
 });
 
 function statusIs(error: Error, status: number): boolean {
-	return error instanceof PayhereAPIError && error.status === status;
+	return error instanceof ApiError && error.status === status;
 }

@@ -1,9 +1,6 @@
 import { inspect } from 'node:util';
-import {
-	describePayhereError,
-	makePayhereRequest,
-	PayhereAPIError,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describePayhereError, makePayhereRequest } from './client';
 import { unauthorized, user } from './test-fixtures';
 
 const API_KEY = 'ph-test-key';
@@ -29,10 +26,10 @@ function respond(
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<PayhereAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(PayhereAPIError);
-	if (!(error instanceof PayhereAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -95,7 +92,7 @@ describe('makePayhereRequest', () => {
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toContain('Unauthorized');
-		expect(error.name).toBe('PayhereAPIError');
+		expect(error.name).toBe('ApiError');
 	});
 
 	it('keeps no request body on the rebuilt error', async () => {

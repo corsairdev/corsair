@@ -1,8 +1,8 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { PayhereAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof PayhereAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // The client retries a 429 up to three times through core, honouring
@@ -25,8 +25,8 @@ export const errorHandlers = {
 	// twice, and Payhere documents no idempotency contract.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof PayhereAPIError &&
-			error.method === 'GET' &&
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
 			(error.status ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
