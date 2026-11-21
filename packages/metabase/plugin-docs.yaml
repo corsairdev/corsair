@@ -1,0 +1,671 @@
+displayName: Metabase
+description: Work with Metabase's documented REST API for collections, queries, permissions, people, embedding, and administration.
+domain: metabase.com
+recommendedAuth: api_key
+factory:
+  note: >-
+    Configure the administrator-controlled Metabase instance origin. Use HTTPS, or HTTP only for localhost development.
+    Store each tenant's API key separately; Metabase grants that key the permissions of its assigned group.
+overviewNote: >-
+  Metabase's REST API is unversioned. The current latest documentation is for Metabase 65, but available routes depend
+  on the installed instance. This plugin implements JSON-schema-backed OpenAPI routes compatible with Corsair;
+  the custom-viz Server-Sent Events proxy and inbound Slack event receiver are excluded. API keys use the documented X-API-Key
+  header and inherit permissions from their assigned group. Configure the instance in metabase({ baseUrl }); agent
+  inputs cannot change the host. Cookies are omitted and redirects are not followed.
+apiNotes:
+  "collections.delete": "DELETE /api/collection/{id} permanently removes a collection; the operation is marked destructive."
+  "collectionPermissions.graph.update": "The permission-graph update can overwrite supplied entries. force=true persists the supplied graph without a revision check and can overwrite concurrent updates; the operation is marked destructive."
+  "collections.items.list": "Collection item rows are heterogeneous and the OpenAPI schema intentionally leaves their item fields open. The plugin preserves JSON-compatible fields instead of claiming a fixed model."
+  "collections.root.items.list": "Root item rows are heterogeneous and the OpenAPI schema intentionally leaves their item fields open. The plugin preserves JSON-compatible fields instead of claiming a fixed model."
+  "embedMcp.postFeedback": "The OpenAPI models a JSON response wrapper with status 204, but HTTP 204 responses have no body. The adapter returns and validates null for the successful empty response."
+  "metabot.postFeedback": "The OpenAPI models a JSON response wrapper with status 204, but HTTP 204 responses have no body. The adapter returns and validates null for the successful empty response."
+  "metabot.postSourceFeedback": "The OpenAPI models a JSON response wrapper with status 204, but HTTP 204 responses have no body. The adapter returns and validates null for the successful empty response."
+  "apiKey.putByIdRegenerate": "The OpenAPI pattern `^mb_.*{4}\\*+$` is invalid ECMAScript. Metabase's schema description says masked values start with `mb_` and end in asterisks; the plugin validates that documented shape."
+  "dashboard.postByIdPdf": "The route description specifies a PDF download while the OpenAPI success media/schema is JSON with an unconstrained body. The adapter returns a bounded binary artifact and preserves documented response headers."
+  "dataset.postByExportFormat": "The route description specifies a file download while the OpenAPI success schema references a JSON query result. The adapter follows the explicit file-download description and returns a bounded binary artifact."
+  "ee.postAuditAppAnalyticsDevExport": "The route description specifies a tar.gz file while the OpenAPI response schema describes a JSON body envelope. The adapter follows the explicit tarball description and returns a bounded binary artifact."
+  "ee.getAppsSandboxHost": "The HTML sandbox document is returned as a bounded binary artifact; the Content-Security-Policy header is preserved and the HTML is never executed by the plugin."
+  "ee.getAppsBySlugBundle": "The JavaScript bundle is returned as a bounded binary artifact with the response content type and selected cache headers preserved."
+  "ee.getCustomVizPluginSandboxHost": "The HTML sandbox document is returned as a bounded binary artifact; the Content-Security-Policy header is preserved and the HTML is never executed by the plugin."
+  "ee.getCustomVizPluginByIdAsset": "The manifest icon is returned as a bounded binary artifact with its content type preserved."
+  "ee.getCustomVizPluginByIdBundle": "The JavaScript bundle is returned as a bounded binary artifact with the response content type and selected cache headers preserved."
+  "ee.getSessionManagement": "The official route description documents optional `status=ended` and `status=all` filters; omitting it lists live sessions."
+  "ee.postCustomVizPlugin": "Metabase multipart file input maps to a Corsair Blob-backed file. The default local upload cap is 20 MiB (configurable to 100 MiB); this is a plugin safety cap, not a provider limit."
+  "ee.putCustomVizPluginByIdBundle": "Replaces a custom-visualization tar.gz bundle using a multipart file part; the output is the documented plugin record."
+  "evalTrace.getBySessionId": "The JSONL response is returned as a bounded binary artifact rather than passed through JSON decoding."
+  "exploration.getQueryById": "`format=api` and `format=json` return the declared JSON response; `format=csv` and `format=xlsx` return bounded binary artifacts."
+  "session.getIllustrationByKey": "The uploaded illustration is returned as a bounded binary artifact with its content type preserved."
+apiExamples:
+  collections.list: {}
+  collections.create:
+    body:
+      name: Analytics
+  collections.get:
+    path:
+      id: 8
+  collections.update:
+    path:
+      id: 8
+    body:
+      name: Finance reports
+  collections.delete:
+    path:
+      id: 8
+  collections.tree: {}
+  collections.root.get: {}
+  collections.root.items.list:
+    query:
+      models:
+        - dashboard
+  collections.root.items.metadata: {}
+  collections.root.candidates.list: {}
+  collections.root.candidates.move:
+    body:
+      card_ids:
+        - 15
+  collections.trash.get: {}
+  collections.items.list:
+    path:
+      id: 8
+  collections.items.metadata:
+    path:
+      id: 8
+  collections.candidates.list:
+    path:
+      id: 8
+  collections.candidates.move:
+    path:
+      id: 8
+    body:
+      card_ids:
+        - 15
+  collectionPermissions.graph.get: {}
+  collectionPermissions.graph.update:
+    body:
+      groups:
+        '2':
+          '8': read
+      revision: 1
+# OpenAPI v65 generated calls
+  "action.get":
+    call: "{ \"query\": {  } }"
+  "action.post":
+    call: "{ \"body\": { \"name\": \"\", \"type\": \"implicit\" } }"
+  "action.postExecute":
+    call: "{ \"body\": { \"action\": { \"name\": \"\", \"type\": \"implicit\" } } }"
+  "action.getPublic":
+    call: "{  }"
+  "action.getByActionId":
+    call: "{ \"path\": { \"action-id\": 1 } }"
+  "action.postByActionIdExecuteValues":
+    call: "{ \"path\": { \"action-id\": 1 }, \"body\": { \"parameters\": {  } } }"
+  "agent.postV1Collection":
+    call: "{ \"body\": { \"name\": \"a\" } }"
+  "agent.postV1ConstructNativeQuery":
+    call: "{ \"body\": { \"database_id\": 1, \"sql\": \"a\" } }"
+  "agent.postV1Dashboard":
+    call: "{ \"body\": { \"name\": \"a\" } }"
+  "agent.putV1DashboardById":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": {  } }"
+  "agent.postV1Execute":
+    call: "{ \"body\": { \"query\": \"a\" } }"
+  "agent.postV1ExecuteSql":
+    call: "{ \"body\": { \"database_id\": 1, \"sql\": \"a\" } }"
+  "agent.postV1Metric":
+    call: "{ \"body\": { \"name\": \"a\", \"query\": \"a\" } }"
+  "agent.putV1MetricById":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": {  } }"
+  "agent.getV1Ping":
+    call: "{  }"
+  "agent.postV1Question":
+    call: "{ \"body\": { \"name\": \"a\", \"query\": \"a\" } }"
+  "agent.putV1QuestionById":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": {  } }"
+  "agent.postV1QuestionByIdQuery":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": {  } }"
+  "agent.postV1ReadResource":
+    call: "{ \"body\": { \"uris\": [] } }"
+  "agent.postV1Search":
+    call: "{ \"body\": {  } }"
+  "agent.postV2ConstructQuery":
+    call: "{ \"body\": { \"query\": {  } } }"
+  "agent.postV2Query":
+    call: "{ \"body\": { \"continuation_token\": \"a\" } }"
+  "analytics.postInternal":
+    call: "{ \"body\": { \"events\": [] } }"
+  "apiKey.putByIdRegenerate":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "cache.get":
+    call: "{ \"query\": {  } }"
+  "cache.put":
+    call: "{ \"body\": { \"model\": \"root\", \"model_id\": 0, \"strategy\": { \"type\": \"nocache\" } } }"
+  "cache.delete":
+    call: "{ \"body\": { \"model\": \"root\", \"model_id\": [] } }"
+  "cache.postInvalidate":
+    call: "{ \"query\": {  } }"
+  "dashboard.postByDashboardIdDashcardByDashcardIdExecuteValues":
+    call: "{ \"path\": { \"dashboard-id\": 1, \"dashcard-id\": 1 }, \"body\": {  } }"
+  "dashboard.postByIdPdf":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": {  } }"
+  "dataStudio.postTableDiscardValues":
+    call: "{ \"body\": {  } }"
+  "dataStudio.postTableEdit":
+    call: "{ \"body\": {  } }"
+  "dataStudio.postTableRescanValues":
+    call: "{ \"body\": {  } }"
+  "dataStudio.postTableSelection":
+    call: "{ \"body\": {  } }"
+  "dataStudio.postTableSyncSchema":
+    call: "{ \"body\": {  } }"
+  "database.getByIdSchemas":
+    call: "{ \"path\": { \"id\": 1 }, \"query\": {  } }"
+  "database.getByIdSettingsAvailable":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "dataset.post":
+    call: "{ \"body\": { \"type\": \"internal\" } }"
+  "dataset.postPivot":
+    call: "{ \"body\": { \"stages\": [{ \"lib/type\": \"mbql.stage/native\" }] } }"
+  "dataset.postByExportFormat":
+    call: "{ \"path\": { \"export-format\": \"csv\" }, \"body\": { \"query\": { \"type\": \"internal\" } } }"
+  "document.getPublic":
+    call: "{  }"
+  "document.postByDocumentIdPublicLink":
+    call: "{ \"path\": { \"document-id\": 1 } }"
+  "document.postByFromDocumentIdCopy":
+    call: "{ \"path\": { \"from-document-id\": 1 }, \"body\": {  } }"
+  "ee.getAiControlsMcpPermissions":
+    call: "{  }"
+  "ee.putAiControlsMcpPermissions":
+    call: "{ \"body\": { \"permissions\": [] } }"
+  "ee.postAiControlsMcpPermissionsAdvanced":
+    call: "{  }"
+  "ee.deleteAiControlsMcpPermissionsAdvanced":
+    call: "{  }"
+  "ee.getAiControlsPermissions":
+    call: "{  }"
+  "ee.putAiControlsPermissions":
+    call: "{ \"body\": { \"permissions\": [] } }"
+  "ee.postAiControlsPermissionsAdvanced":
+    call: "{  }"
+  "ee.deleteAiControlsPermissionsAdvanced":
+    call: "{  }"
+  "ee.getAiControlsUsageGroup":
+    call: "{  }"
+  "ee.getAiControlsUsageGroupByGroupId":
+    call: "{ \"path\": { \"group-id\": 1 } }"
+  "ee.putAiControlsUsageGroupByGroupId":
+    call: "{ \"path\": { \"group-id\": 1 }, \"body\": { \"max_usage\": 0 } }"
+  "ee.getAiControlsUsageInstance":
+    call: "{  }"
+  "ee.putAiControlsUsageInstance":
+    call: "{ \"body\": { \"max_usage\": 0 } }"
+  "ee.getAiControlsUsageTenant":
+    call: "{  }"
+  "ee.getAiControlsUsageTenantByTenantId":
+    call: "{ \"path\": { \"tenant-id\": 1 } }"
+  "ee.putAiControlsUsageTenantByTenantId":
+    call: "{ \"path\": { \"tenant-id\": 1 }, \"body\": { \"max_usage\": 0 } }"
+  "ee.getApps":
+    call: "{  }"
+  "ee.postAppsGenerateActions":
+    call: "{ \"body\": { \"collection\": \"aaaaaaaaaaaaaaaaaaaaa\", \"actions\": {  } } }"
+  "ee.postAppsGenerateQueries":
+    call: "{ \"body\": { \"collection\": \"aaaaaaaaaaaaaaaaaaaaa\", \"queries\": {  } } }"
+  "ee.getAppsGenerateSchema":
+    call: "{  }"
+  "ee.getAppsRepoStatus":
+    call: "{  }"
+  "ee.getAppsSandboxHost":
+    call: "{  }"
+  "ee.putAppsBySlug":
+    call: "{ \"path\": { \"slug\": \"a\" }, \"body\": { \"enabled\": false } }"
+  "ee.getAppsBySlug":
+    call: "{ \"path\": { \"slug\": \"a\" } }"
+  "ee.getAppsBySlugBundle":
+    call: "{ \"path\": { \"slug\": \"a\" } }"
+  "ee.getAppsBySlugGroupPermissionWarnings":
+    call: "{ \"path\": { \"slug\": \"a\" } }"
+  "ee.getAppsBySlugGroups":
+    call: "{ \"path\": { \"slug\": \"a\" } }"
+  "ee.postAppsBySlugGroups":
+    call: "{ \"path\": { \"slug\": \"a\" }, \"body\": { \"group_ids\": [1] } }"
+  "ee.deleteAppsBySlugGroupsByGroupId":
+    call: "{ \"path\": { \"slug\": \"a\", \"group-id\": 1 } }"
+  "ee.postAuditAppAnalyticsDevExport":
+    call: "{  }"
+  "ee.deleteCloudAddOnsByProductType":
+    call: "{ \"path\": { \"product-type\": \"metabase-ai\" } }"
+  "ee.getContentDiagnosticsDuplicated":
+    call: "{ \"query\": {  } }"
+  "ee.getContentDiagnosticsImbalanced":
+    call: "{ \"query\": {  } }"
+  "ee.postContentDiagnosticsInvalidate":
+    call: "{ \"body\": { \"ids\": [1] } }"
+  "ee.getContentDiagnosticsSlow":
+    call: "{ \"query\": {  } }"
+  "ee.getContentDiagnosticsStale":
+    call: "{ \"query\": {  } }"
+  "ee.getContentTranslationDictionary":
+    call: "{ \"query\": { \"locale\": \"\" } }"
+  "ee.postCustomVizPlugin":
+    call: "{ \"body\": { \"file\": { \"filename\": \"\", \"size\": 20, \"tempfile\": new Blob([\"metabase-test-bundle\"]) } } }"
+  "ee.getCustomVizPlugin":
+    call: "{  }"
+  "ee.postCustomVizPluginDev":
+    call: "{ \"body\": { \"dev_bundle_url\": \"a\" } }"
+  "ee.getCustomVizPluginList":
+    call: "{  }"
+  "ee.getCustomVizPluginSandboxHost":
+    call: "{  }"
+  "ee.deleteCustomVizPluginById":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "ee.putCustomVizPluginById":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": {  } }"
+  "ee.getCustomVizPluginByIdAsset":
+    call: "{ \"path\": { \"id\": 1 }, \"query\": { \"path\": \"a\" } }"
+  "ee.putCustomVizPluginByIdBundle":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": { \"file\": { \"filename\": \"\", \"size\": 20, \"tempfile\": new Blob([\"metabase-test-bundle\"]) } } }"
+  "ee.getCustomVizPluginByIdBundle":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "ee.putCustomVizPluginByIdDevUrl":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": { \"dev_bundle_url\": \"\" } }"
+  "ee.postCustomVizPluginByIdRefresh":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "ee.getDataComplexityScoreComplexity":
+    call: "{ \"query\": {  } }"
+  "ee.postDataStudioTablePublishTables":
+    call: "{ \"body\": { \"collection_id\": 1 } }"
+  "ee.postDataStudioTableUnpublishTables":
+    call: "{ \"body\": {  } }"
+  "ee.getDataStudioTableByIdPublishingInfo":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "ee.getDependenciesBackfillStatus":
+    call: "{  }"
+  "ee.getDependenciesGraph":
+    call: "{ \"query\": {  } }"
+  "ee.getDependenciesGraphBreaking":
+    call: "{ \"query\": {  } }"
+  "ee.getDependenciesGraphBroken":
+    call: "{ \"query\": { \"id\": 1, \"type\": \"transform\" } }"
+  "ee.getDependenciesGraphDependents":
+    call: "{ \"query\": { \"id\": 1, \"type\": \"transform\" } }"
+  "ee.getDependenciesGraphUnreferenced":
+    call: "{ \"query\": {  } }"
+  "ee.getErd":
+    call: "{  }"
+  "ee.postGsheetsConnection":
+    call: "{ \"body\": { \"url\": \"a\" } }"
+  "ee.getGsheetsConnection":
+    call: "{  }"
+  "ee.getGsheetsServiceAccount":
+    call: "{  }"
+  "ee.getLibrary":
+    call: "{  }"
+  "ee.getMetabotAnalyticsConversations":
+    call: "{ \"query\": {  } }"
+  "ee.getMetabotAnalyticsConversationsById":
+    call: "{ \"path\": { \"id\": \"00000000-0000-4000-8000-000000000001\" } }"
+  "ee.getMetabotUsage":
+    call: "{  }"
+  "ee.getMfaAdminEnrolledUsers":
+    call: "{ \"query\": {  } }"
+  "ee.getMfaAdminOverview":
+    call: "{  }"
+  "ee.getMfaAdminUnenrolledUsers":
+    call: "{ \"query\": {  } }"
+  "ee.postMfaEnroll":
+    call: "{ \"body\": { \"password\": \"a\" } }"
+  "ee.postMfaEnrollConfirm":
+    call: "{ \"body\": { \"code\": \"a\" } }"
+  "ee.postMfaRecoveryCodes":
+    call: "{ \"body\": { \"code\": \"a\" } }"
+  "ee.getMfaStatus":
+    call: "{  }"
+  "ee.getPermissionDebug":
+    call: "{ \"query\": { \"user_id\": 1, \"model_id\": 1, \"action_type\": \"card/read\" } }"
+  "ee.getRemoteSyncBranches":
+    call: "{  }"
+  "ee.postRemoteSyncCreateBranch":
+    call: "{ \"body\": { \"name\": \"a\" } }"
+  "ee.getRemoteSyncCurrentTask":
+    call: "{  }"
+  "ee.postRemoteSyncCurrentTaskCancel":
+    call: "{  }"
+  "ee.getRemoteSyncDirty":
+    call: "{  }"
+  "ee.postRemoteSyncExport":
+    call: "{ \"body\": { \"branch\": \"a\" } }"
+  "ee.getRemoteSyncExportPreflight":
+    call: "{ \"query\": { \"branch\": \"a\" } }"
+  "ee.getRemoteSyncHasRemoteChanges":
+    call: "{ \"query\": {  } }"
+  "ee.postRemoteSyncImport":
+    call: "{ \"body\": {  } }"
+  "ee.getRemoteSyncIsDirty":
+    call: "{  }"
+  "ee.putRemoteSyncSettings":
+    call: "{ \"body\": {  } }"
+  "ee.postRemoteSyncStash":
+    call: "{ \"body\": { \"new_branch\": \"a\", \"message\": \"a\" } }"
+  "ee.postRemoteSyncTestConnection":
+    call: "{ \"body\": {  } }"
+  "ee.postReplacementCheckReplaceSource":
+    call: "{ \"body\": { \"source_entity_id\": 1, \"source_entity_type\": \"card\", \"target_entity_id\": 1, \"target_entity_type\": \"card\" } }"
+  "ee.postReplacementReplaceModelWithTransform":
+    call: "{ \"body\": { \"card_id\": 1, \"transform_name\": \"\", \"transform_target\": { \"type\": \"table\", \"name\": \"\" } } }"
+  "ee.postReplacementReplaceSource":
+    call: "{ \"body\": { \"source_entity_id\": 1, \"source_entity_type\": \"card\", \"target_entity_id\": 1, \"target_entity_type\": \"card\" } }"
+  "ee.getReplacementRuns":
+    call: "{ \"query\": {  } }"
+  "ee.getReplacementRunsById":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "ee.postReplacementRunsByIdCancel":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "ee.getSecurityCenter":
+    call: "{  }"
+  "ee.postSecurityCenterAcknowledge":
+    call: "{ \"body\": { \"advisory_ids\": [] } }"
+  "ee.postSecurityCenterSync":
+    call: "{  }"
+  "ee.postSecurityCenterTestNotification":
+    call: "{ \"body\": {  } }"
+  "ee.postSecurityCenterByAdvisoryIdAcknowledge":
+    call: "{ \"path\": { \"advisory-id\": \"a\" } }"
+  "ee.getSessionManagement":
+    call: "{ \"query\": {  } }"
+  "ee.postSessionManagementRevoke":
+    call: "{ \"body\": {  } }"
+  "ee.postSupportAccessGrant":
+    call: "{ \"body\": { \"grant_duration_minutes\": 1 } }"
+  "ee.getSupportAccessGrant":
+    call: "{ \"query\": {  } }"
+  "ee.getSupportAccessGrantCurrent":
+    call: "{  }"
+  "ee.putSupportAccessGrantByIdRevoke":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "ee.postTenant":
+    call: "{ \"body\": { \"name\": \"a\", \"slug\": \"a\" } }"
+  "ee.getTenant":
+    call: "{ \"query\": {  } }"
+  "ee.putTenantById":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": {  } }"
+  "ee.getTenantById":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "ee.getTransformTest":
+    call: "{ \"query\": {  } }"
+  "ee.postTransformTest":
+    call: "{ \"body\": { \"transform_id\": 1, \"name\": \"a\", \"inputs\": [], \"expectations\": [] } }"
+  "ee.getTransformTestById":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "ee.putTransformTestById":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": {  } }"
+  "ee.deleteTransformTestById":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "ee.getTransformTestByIdRun":
+    call: "{ \"path\": { \"id\": 1 }, \"query\": {  } }"
+  "ee.postTransformTestByIdRun":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "ee.postTransformsPythonTestRun":
+    call: "{ \"body\": { \"code\": \"\", \"source_tables\": [{ \"alias\": \"\" }] } }"
+  "ee.getTransformsByIdInspect":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "ee.getTransformsByIdInspectByLensId":
+    call: "{ \"path\": { \"id\": 1, \"lens-id\": \"a\" } }"
+  "ee.postTransformsByIdInspectByLensIdQuery":
+    call: "{ \"path\": { \"id\": 1, \"lens-id\": \"a\" }, \"body\": { \"query\": { \"stages\": [{ \"lib/type\": \"mbql.stage/native\" }] } } }"
+  "embedMcp.getBootstrap":
+    call: "{  }"
+  "embedMcp.postFeedback":
+    call: "{ \"body\": { \"feedback\": { \"positive\": false }, \"conversation_data\": { \"source\": \"mcp\" } } }"
+  "embedMcp.getQueriesByHandle":
+    call: "{ \"path\": { \"handle\": \"00000000-0000-4000-8000-000000000001\" } }"
+  "embedTheme.get":
+    call: "{  }"
+  "embedTheme.post":
+    call: "{ \"body\": { \"name\": \"a\", \"settings\": {  } } }"
+  "embedTheme.postSeedDefaults":
+    call: "{ \"body\": { \"themes\": [] } }"
+  "embedTheme.getById":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "embedTheme.putById":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": {  } }"
+  "embedTheme.deleteById":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "embedTheme.postByIdCopy":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "embeddingHub.getChecklist":
+    call: "{  }"
+  "embeddingSdk.getReact18Hosts":
+    call: "{  }"
+  "evalTrace.getBySessionId":
+    call: "{ \"path\": { \"session-id\": \"a\" } }"
+  "exploration.post":
+    call: "{ \"body\": { \"name\": \"a\" } }"
+  "exploration.getDimensions":
+    call: "{  }"
+  "exploration.getMine":
+    call: "{  }"
+  "exploration.putPageByIdStarred":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": { \"starred\": false } }"
+  "exploration.putPagesHidden":
+    call: "{ \"body\": { \"page_ids\": [], \"hidden\": false } }"
+  "exploration.getQueryById":
+    call: "{ \"path\": { \"id\": 1 }, \"query\": {  } }"
+  "exploration.postThreadByThreadIdCancel":
+    call: "{ \"path\": { \"thread-id\": 1 } }"
+  "exploration.postThreadByThreadIdRestart":
+    call: "{ \"path\": { \"thread-id\": 1 } }"
+  "exploration.getById":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "exploration.putById":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": {  } }"
+  "exploration.deleteById":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "exploration.postByIdExploreFurther":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": { \"page_id\": 1, \"explore_filters\": [{ \"operator\": \"=\", \"field_ref\": [\"expression\", \"a\"], \"value\": \"\", \"display_value\": \"a\" }] } }"
+  "exploration.postByIdSummaryAppend":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": { \"exploration_query_ids\": [1], \"display\": \"\", \"visualization_settings\": {  } } }"
+  "field.postTableIds":
+    call: "{ \"body\": { \"field_ids\": [] } }"
+  "healthInspector.get":
+    call: "{ \"query\": {  } }"
+  "index.get":
+    call: "{ \"query\": { \"transform-id\": 1 } }"
+  "index.postRequest":
+    call: "{ \"body\": { \"transform_id\": 1, \"structured\": { \"kind\": \"btree\", \"name\": \"a\", \"columns\": [{ \"name\": \"a\" }] } } }"
+  "index.getRequestById":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "index.putRequestById":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": { \"structured\": { \"kind\": \"btree\", \"name\": \"a\", \"columns\": [{ \"name\": \"a\" }] } } }"
+  "llm.postExtractSources":
+    call: "{ \"body\": { \"database_id\": 1, \"sql\": \"\" } }"
+  "llm.getModels":
+    call: "{  }"
+  "llm.getProviderTypes":
+    call: "{  }"
+  "llm.getProviders":
+    call: "{  }"
+  "llm.postProviders":
+    call: "{ \"body\": { \"type\": \"\" } }"
+  "llm.putProvidersByKey":
+    call: "{ \"path\": { \"key\": \"\" }, \"body\": {  } }"
+  "llm.deleteProvidersByKey":
+    call: "{ \"path\": { \"key\": \"\" } }"
+  "logger.getPresets":
+    call: "{  }"
+  "measure.post":
+    call: "{ \"body\": { \"name\": \"a\", \"definition\": { \"stages\": [{ \"lib/type\": \"mbql.stage/native\" }] } } }"
+  "measure.get":
+    call: "{  }"
+  "measure.getById":
+    call: "{ \"path\": { \"id\": 1 }, \"query\": {  } }"
+  "measure.putById":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": { \"revision_message\": \"a\" } }"
+  "measure.getByIdDimensionByDimensionKeyRemapping":
+    call: "{ \"path\": { \"id\": 1, \"dimension-key\": \"00000000-0000-4000-8000-000000000001\" }, \"query\": { \"value\": \"\" } }"
+  "measure.getByIdDimensionByDimensionKeySearch":
+    call: "{ \"path\": { \"id\": 1, \"dimension-key\": \"00000000-0000-4000-8000-000000000001\" }, \"query\": { \"query\": \"a\" } }"
+  "measure.getByIdDimensionByDimensionKeyValues":
+    call: "{ \"path\": { \"id\": 1, \"dimension-key\": \"00000000-0000-4000-8000-000000000001\" } }"
+  "metabot.getConversations":
+    call: "{  }"
+  "metabot.getConversationsById":
+    call: "{ \"path\": { \"id\": \"00000000-0000-4000-8000-000000000001\" } }"
+  "metabot.postConversationsByIdFork":
+    call: "{ \"path\": { \"id\": \"00000000-0000-4000-8000-000000000001\" }, \"body\": { \"message_id\": \"00000000-0000-4000-8000-000000000001\" } }"
+  "metabot.postConversationsByIdSavedEntity":
+    call: "{ \"path\": { \"id\": \"00000000-0000-4000-8000-000000000001\" }, \"body\": { \"chart_id\": \"a\", \"card\": { \"name\": \"a\", \"dataset_query\": { \"stages\": [{ \"lib/type\": \"mbql.stage/native\" }] }, \"display\": \"a\" } } }"
+  "metabot.getConversationsByIdTitle":
+    call: "{ \"path\": { \"id\": \"00000000-0000-4000-8000-000000000001\" } }"
+  "metabot.postDocumentGenerateContent":
+    call: "{ \"body\": { \"instructions\": \"a\" } }"
+  "metabot.postFeedback":
+    call: "{ \"body\": { \"metabot_id\": 1, \"message_id\": \"a\", \"positive\": false } }"
+  "metabot.postMetabotByIdPromptSuggestionsRegenerate":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "metabot.getPermissionsUserPermissions":
+    call: "{  }"
+  "metabot.putSlackSettings":
+    call: "{ \"body\": { \"slack-connect-client-id\": \"a\", \"slack-connect-client-secret\": \"a\", \"metabot-slack-signing-secret\": \"a\" } }"
+  "metabot.postSourceFeedback":
+    call: "{ \"body\": { \"metabot_id\": 1, \"message_id\": \"a\", \"source_id\": 1, \"source_type\": \"table\", \"positive\": false } }"
+  "metric.get":
+    call: "{  }"
+  "metric.postBreakoutValues":
+    call: "{ \"body\": { \"definition\": { \"expression\": [\"metric\", { \"lib/uuid\": \"a\" }, 1] } } }"
+  "metric.postDataset":
+    call: "{ \"body\": { \"definition\": { \"expression\": [\"metric\", { \"lib/uuid\": \"a\" }, 1] } } }"
+  "metric.getById":
+    call: "{ \"path\": { \"id\": 1 }, \"query\": {  } }"
+  "metric.getByIdDimension":
+    call: "{ \"path\": { \"id\": 1 }, \"query\": {  } }"
+  "metric.postByIdDimensionAdd":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": { \"dimensions\": [] } }"
+  "metric.postByIdDimensionRemove":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": { \"dimension_ids\": [] } }"
+  "metric.postByIdDimensionReorder":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": { \"dimension_ids\": [] } }"
+  "metric.postByIdDimensionSetDefault":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": { \"dimension_id\": \"a\" } }"
+  "metric.postByIdDimensionByDimensionKey":
+    call: "{ \"path\": { \"id\": 1, \"dimension-key\": \"00000000-0000-4000-8000-000000000001\" }, \"body\": {  } }"
+  "metric.getByIdDimensionByDimensionKeyRemapping":
+    call: "{ \"path\": { \"id\": 1, \"dimension-key\": \"00000000-0000-4000-8000-000000000001\" }, \"query\": { \"value\": \"\" } }"
+  "metric.getByIdDimensionByDimensionKeySearch":
+    call: "{ \"path\": { \"id\": 1, \"dimension-key\": \"00000000-0000-4000-8000-000000000001\" }, \"query\": { \"query\": \"a\" } }"
+  "metric.getByIdDimensionByDimensionKeyValues":
+    call: "{ \"path\": { \"id\": 1, \"dimension-key\": \"00000000-0000-4000-8000-000000000001\" } }"
+  "notification.post":
+    call: "{ \"body\": { \"payload_type\": \"notification/dashboard\", \"payload\": { \"card_id\": 1 } } }"
+  "notification.getAdmin":
+    call: "{ \"query\": {  } }"
+  "notification.postAdminBulk":
+    call: "{ \"body\": { \"notification_ids\": [1], \"action\": \"archive\" } }"
+  "notification.getAdminById":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "oauth.getAuthorizations":
+    call: "{ \"query\": {  } }"
+  "osi.getAiContext":
+    call: "{  }"
+  "osi.postAiContextReconcile":
+    call: "{  }"
+  "osi.getAiContextByEntityTypeByEntityLocalId":
+    call: "{ \"path\": { \"entity-type\": \"a\", \"entity-local-id\": 1 } }"
+  "osi.putAiContextByEntityTypeByEntityLocalId":
+    call: "{ \"path\": { \"entity-type\": \"a\", \"entity-local-id\": 1 }, \"body\": { \"ai_context\": {  } } }"
+  "permissions.getInviteGroupIds":
+    call: "{ \"query\": { \"type\": \"dashboard\", \"id\": 1 } }"
+  "previewEmbed.getCardByTokenParamsByParamKeyValues":
+    call: "{ \"path\": { \"token\": \"\", \"param-key\": \"\" } }"
+  "public.postDashboardByUuidDashcardByDashcardIdExecuteValues":
+    call: "{ \"path\": { \"uuid\": \"00000000-0000-4000-8000-000000000001\", \"dashcard-id\": 1 }, \"body\": { \"parameters\": {  } } }"
+  "session.getIllustrationByKey":
+    call: "{ \"path\": { \"key\": \"a\" }, \"query\": {  } }"
+  "session.postMfaEnroll":
+    call: "{ \"body\": { \"enrollment_token\": \"a\", \"code\": \"a\" } }"
+  "session.postMfaSendEmailOtp":
+    call: "{ \"body\": { \"challenge_token\": \"a\" } }"
+  "slack.getAppInfo":
+    call: "{  }"
+  "slack.getManifest":
+    call: "{  }"
+  "table.putByIdFieldsOrder":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": [] }"
+  "task.getRuns":
+    call: "{  }"
+  "task.getRunsEntities":
+    call: "{ \"query\": { \"run-type\": \"alert\", \"started-at\": \"a\" } }"
+  "task.getRunsById":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "timeline.post":
+    call: "{ \"body\": { \"name\": \"a\" } }"
+  "timeline.get":
+    call: "{ \"query\": {  } }"
+  "timeline.getById":
+    call: "{ \"path\": { \"id\": 1 }, \"query\": {  } }"
+  "transform.get":
+    call: "{ \"query\": {  } }"
+  "transform.post":
+    call: "{ \"body\": { \"name\": \"\", \"source\": { \"type\": \"query\", \"query\": { \"stages\": [{ \"lib/type\": \"mbql.stage/native\" }] } }, \"target\": { \"type\": \"table\", \"name\": \"\" } } }"
+  "transformDagRun.postByRunIdCancel":
+    call: "{ \"path\": { \"run-id\": 1 } }"
+  "transformDagRun.getByRunIdTransformRuns":
+    call: "{ \"path\": { \"run-id\": 1 } }"
+  "transformJob.post":
+    call: "{ \"body\": { \"name\": \"a\", \"schedule\": \"a\" } }"
+  "transformJob.get":
+    call: "{ \"query\": {  } }"
+  "transformJob.putActive":
+    call: "{ \"body\": { \"active\": false } }"
+  "transformJob.putByJobId":
+    call: "{ \"path\": { \"job-id\": 1 }, \"body\": {  } }"
+  "transformJob.getByJobId":
+    call: "{ \"path\": { \"job-id\": 1 } }"
+  "transformJob.postByJobIdRun":
+    call: "{ \"path\": { \"job-id\": 1 }, \"body\": {  } }"
+  "transformJob.getByJobIdRuns":
+    call: "{ \"path\": { \"job-id\": 1 }, \"query\": {  } }"
+  "transformJob.postByJobIdRunsByRunIdCancel":
+    call: "{ \"path\": { \"job-id\": 1, \"run-id\": 1 } }"
+  "transformJob.getByJobIdRunsByRunIdTransformRuns":
+    call: "{ \"path\": { \"job-id\": 1, \"run-id\": 1 } }"
+  "transformJob.getByJobIdTransforms":
+    call: "{ \"path\": { \"job-id\": 1 } }"
+  "transformTag.post":
+    call: "{ \"body\": { \"name\": \"a\" } }"
+  "transformTag.get":
+    call: "{  }"
+  "transformTag.putByTagId":
+    call: "{ \"path\": { \"tag-id\": 1 }, \"body\": { \"name\": \"a\" } }"
+  "transformTag.deleteByTagId":
+    call: "{ \"path\": { \"tag-id\": 1 } }"
+  "transform.getRun":
+    call: "{ \"query\": {  } }"
+  "transform.getRunByRunId":
+    call: "{ \"path\": { \"run-id\": 1 } }"
+  "transform.getRuns":
+    call: "{ \"query\": {  } }"
+  "transform.getById":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "transform.putById":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": {  } }"
+  "transform.deleteById":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "transform.postByIdCancel":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "transform.getByIdDagTransforms":
+    call: "{ \"path\": { \"id\": 1 }, \"query\": { \"direction\": \"upstream\" } }"
+  "transform.getByIdDependencies":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "transform.postByIdResetCheckpoint":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "transform.postByIdRun":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "transform.postByIdRunDag":
+    call: "{ \"path\": { \"id\": 1 }, \"body\": { \"direction\": \"upstream\" } }"
+  "transform.deleteByIdTable":
+    call: "{ \"path\": { \"id\": 1 } }"
+  "user.getCurrent":
+    call: "{  }"
+  "user.postByIdPasswordResetUrl":
+    call: "{ \"path\": { \"id\": 1 } }"

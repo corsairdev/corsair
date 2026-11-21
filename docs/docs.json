@@ -3649,6 +3649,14 @@
                 ]
               },
               {
+                "group": "Metabase",
+                "pages": [
+                  "plugins/metabase/overview",
+                  "plugins/metabase/api",
+                  "plugins/metabase/database"
+                ]
+              },
+              {
                 "group": "Microsoft Clarity",
                 "pages": [
                   "plugins/microsoftclarity/overview",
