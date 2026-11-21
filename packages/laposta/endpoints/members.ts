@@ -85,14 +85,14 @@ export const members = {
 	): Promise<UpdateMemberOutput> => {
 		const parsedInput =
 			LapostaEndpointInputSchemas['members.update'].parse(input);
-		const { list_id, member_id, ...body } = parsedInput;
+		// Laposta reads list_id from the form body on POST /member/{member_id}.
+		const { member_id, ...body } = parsedInput;
 		// unknown because raw API response is unvalidated before Zod parsing.
 		const raw = await makeLapostaRequest<unknown>(
 			`/member/${encodeMemberId(member_id)}`,
 			ctx.key,
 			{
 				method: 'POST',
-				query: { list_id },
 				body,
 			},
 		);

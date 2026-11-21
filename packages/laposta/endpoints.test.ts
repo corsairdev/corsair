@@ -224,8 +224,11 @@ const endpointCases: EndpointCase[] = [
 				state: 'unsubscribed',
 				custom_fields: { city: 'Utrecht' },
 			}),
-		query: { list_id: 'list-1' },
-		form: { state: 'unsubscribed', 'custom_fields[city]': 'Utrecht' },
+		form: {
+			list_id: 'list-1',
+			state: 'unsubscribed',
+			'custom_fields[city]': 'Utrecht',
+		},
 	},
 	{
 		name: 'members.update clears an empty custom-field selection',
@@ -238,8 +241,7 @@ const endpointCases: EndpointCase[] = [
 				member_id: 'member-1',
 				custom_fields: { interests: [] },
 			}),
-		query: { list_id: 'list-1' },
-		form: { 'custom_fields[interests]': '' },
+		form: { list_id: 'list-1', 'custom_fields[interests]': '' },
 	},
 	{
 		name: 'members.delete',
