@@ -358,7 +358,14 @@ export const TokensUpdateInputSchema = z
 	.object({
 		tokenId: z.number().int().describe('Id of the token to update'),
 		description: z.string().optional().describe('New description'),
-		restricted: z.boolean().optional().describe('New restricted flag'),
+		// The docs say any supplied value restricts the token, so only true
+		// is accepted; a token cannot be unrestricted through this call.
+		restricted: z
+			.literal(true)
+			.optional()
+			.describe(
+				'true restricts the token to billingAccountId; false is not supported',
+			),
 		billingAccountId: z
 			.number()
 			.int()

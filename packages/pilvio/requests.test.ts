@@ -82,7 +82,7 @@ afterEach(() => {
 });
 
 describe('account', () => {
-	it('token update PATCHes the encoded fields, masks the answer, never sends restricted=false', async () => {
+	it('token update PATCHes the encoded fields and masks the answer', async () => {
 		respond({
 			id: 3,
 			token: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456',
@@ -92,7 +92,6 @@ describe('account', () => {
 		const updated = (await invoke(Account.updateToken, {
 			tokenId: 3,
 			description: 'ci',
-			restricted: false,
 			// unknown: provider-shaped or untyped until a schema narrows it; no stricter type fits.
 		})) as Record<string, unknown>;
 		expectCall({

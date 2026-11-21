@@ -196,6 +196,14 @@ describe('output parsing', () => {
 });
 
 describe('input validation', () => {
+	it('refuses restricted: false on a token update (the API would restrict it)', async () => {
+		await rejects(
+			Account.updateToken,
+			{ tokenId: 3, restricted: false },
+			'true',
+		);
+	});
+
 	it('rejects a VM get without a uuid', async () => {
 		await rejects(Vm.get, {}, 'uuid');
 	});

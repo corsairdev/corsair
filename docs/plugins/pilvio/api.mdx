@@ -272,7 +272,7 @@ await corsair.pilvio.api.account.tokens.update({ tokenId: 3, description: "rotat
 |------|------|----------|-------------|
 | `tokenId` | `number` | Yes | Id of the token to update |
 | `description` | `string` | No | New description |
-| `restricted` | `boolean` | No | New restricted flag |
+| `restricted` | `true` | No | true restricts the token to billingAccountId; false is not supported |
 | `billingAccountId` | `number` | No | Billing account for a restricted token |
 
 
