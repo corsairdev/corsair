@@ -10977,5 +10977,21 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/litescrape",
+    "dir": "packages/litescrape",
+    "name": "LiteScrape",
+    "version": "0.1.2",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2651,
+        "title": "Accept managed_pricing auth"
+      }
+    ]
   }
 ]
