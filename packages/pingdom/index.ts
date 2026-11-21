@@ -318,7 +318,7 @@ export const pingdomEndpointMeta = {
 	},
 	'checks.updateMulti': {
 		riskLevel: 'write',
-		description: 'Pause or re-time multiple checks at once',
+		description: 'Pause, unpause or re-time the listed checks at once',
 	},
 	'checks.deleteMulti': {
 		riskLevel: 'destructive',
@@ -517,7 +517,7 @@ export function pingdom<const T extends PingdomPluginOptions>(
 	} satisfies InternalPingdomPlugin;
 }
 
-export { PingdomAPIError } from './client';
+export { buildPingdomApiError } from './client';
 
 export type {
 	Action,

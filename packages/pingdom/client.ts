@@ -20,48 +20,42 @@ const RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * A failed call throws this: core's `ApiError` (R8: core and the handlers
- * read `status` and `retryAfter` from it), rebuilt without the request
- * body and query. Check settings ride through the request, which core's
- * own ApiError keeps on the request.
+ * A failed call throws core's `ApiError` (R8: core and the handlers read
+ * `status` and `retryAfter` from it, and management maps errors named
+ * ApiError to a provider error with its status), rebuilt without the request
+ * body and query. Check settings ride through the request, which core's own
+ * ApiError keeps.
  */
-export class PingdomAPIError extends ApiError {
-	/** The HTTP method of the failed request, for replay-safety decisions. */
-	readonly method: string;
-
-	constructor(
-		message: string,
-		options: {
-			method: string;
-			/** Request path, without query. */
-			path: string;
-			status: number;
-			statusText?: string;
-			// unknown: error bodies are the documented
-			// {"error": {statuscode, statusdesc, errormessage}} envelope or
-			// non-JSON from the edge.
-			body?: unknown;
-			retryAfter?: number;
+export function buildPingdomApiError(
+	message: string,
+	options: {
+		method: string;
+		/** Request path, without query. */
+		path: string;
+		status: number;
+		statusText?: string;
+		// unknown: error bodies are the documented
+		// {"error": {statuscode, statusdesc, errormessage}} envelope or
+		// non-JSON from the edge.
+		body?: unknown;
+		retryAfter?: number;
+	},
+): ApiError {
+	return new ApiError(
+		{
+			method: options.method as ApiRequestOptions['method'],
+			url: options.path,
 		},
-	) {
-		super(
-			{
-				method: options.method as ApiRequestOptions['method'],
-				url: options.path,
-			},
-			{
-				url: options.path,
-				ok: false,
-				status: options.status,
-				statusText: options.statusText ?? '',
-				body: options.body,
-			},
-			message,
-			{ retryAfter: options.retryAfter },
-		);
-		this.name = 'PingdomAPIError';
-		this.method = options.method;
-	}
+		{
+			url: options.path,
+			ok: false,
+			status: options.status,
+			statusText: options.statusText ?? '',
+			body: options.body,
+		},
+		message,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 /**
@@ -146,7 +140,7 @@ export async function makePingdomRequest(
 				error.body,
 				error.statusText || 'request failed',
 			);
-			throw new PingdomAPIError(`Pingdom ${error.status}: ${detail}`, {
+			throw buildPingdomApiError(`Pingdom ${error.status}: ${detail}`, {
 				method,
 				path,
 				status: error.status,

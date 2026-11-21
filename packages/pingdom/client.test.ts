@@ -1,8 +1,5 @@
-import {
-	describePingdomError,
-	makePingdomRequest,
-	PingdomAPIError,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describePingdomError, makePingdomRequest } from './client';
 import { unauthorized } from './test-fixtures';
 
 const TOKEN = 'pd-test-token';
@@ -20,10 +17,10 @@ function respond(body: unknown, status: number) {
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<PingdomAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(PingdomAPIError);
-	if (!(error instanceof PingdomAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -84,7 +81,7 @@ describe('makePingdomRequest', () => {
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toBe('Pingdom 401: Please provide a valid API token');
-		expect(error.method).toBe('GET');
+		expect(error.request.method).toBe('GET');
 		expect(error.url).toBe('/api/3.1/checks');
 	});
 

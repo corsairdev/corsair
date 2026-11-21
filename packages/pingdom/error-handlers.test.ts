@@ -1,9 +1,10 @@
 import type { ErrorContext } from 'corsair/core';
-import { PingdomAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { buildPingdomApiError } from './client';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-function pingdomError(method: string, status: number): PingdomAPIError {
-	return new PingdomAPIError(`Pingdom ${status}`, {
+function pingdomError(method: string, status: number): ApiError {
+	return buildPingdomApiError(`Pingdom ${status}`, {
 		method,
 		path: '/api/3.1/checks',
 		status,
@@ -74,8 +75,7 @@ describe('mergeErrorHandlers', () => {
 	it('lets a caller handler run before the builtins it does not name', async () => {
 		const merged = mergeErrorHandlers(errorHandlers, {
 			TOO_MANY_REQUESTS: {
-				match: (error) =>
-					error instanceof PingdomAPIError && error.status === 429,
+				match: (error) => error instanceof ApiError && error.status === 429,
 				handler: async () => ({ maxRetries: 5 }),
 			},
 		});
