@@ -24,9 +24,9 @@ pnpm add @corsair-dev/paystack
 | `refunds.create` | `paystack.api.refunds.create` | `destructive` | Refund a transaction fully or partially; money leaves the account and refunds cannot be undone |
 | `refunds.get` | `paystack.api.refunds.get` | `read` | Read one refund by id |
 | `refunds.list` | `paystack.api.refunds.list` | `read` | List refunds, filtered by transaction, currency and dates |
-| `subscriptions.create` | `paystack.api.subscriptions.create` | `write` | Subscribe a customer to a plan |
+| `subscriptions.create` | `paystack.api.subscriptions.create` | `destructive` | Subscribe a customer to a plan; Paystack then debits the saved card every interval |
 | `subscriptions.disable` | `paystack.api.subscriptions.disable` | `write` | Disable a subscription with its email token; debits stop until it is enabled again |
-| `subscriptions.enable` | `paystack.api.subscriptions.enable` | `write` | Enable a subscription with its email token |
+| `subscriptions.enable` | `paystack.api.subscriptions.enable` | `destructive` | Enable a subscription with its email token; card debits resume |
 | `subscriptions.get` | `paystack.api.subscriptions.get` | `read` | Read one subscription by id or code |
 | `subscriptions.list` | `paystack.api.subscriptions.list` | `read` | List subscriptions, filtered by customer and plan |
 | `transactions.get` | `paystack.api.transactions.get` | `read` | Read one transaction by id |

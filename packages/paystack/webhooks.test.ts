@@ -252,6 +252,29 @@ describe('paystack.event handler', () => {
 		expect(result).toMatchObject({ success: false, statusCode: 400 });
 	});
 
+	it('accepts a signed subscription.expiring_cards delivery with array data', async () => {
+		const body = {
+			event: 'subscription.expiring_cards',
+			data: [
+				{
+					expiry_date: '12/2026',
+					description: 'visa ending with 4081',
+					subscription: { subscription_code: 'SUB_x', amount: 50000 },
+				},
+			],
+		};
+		const result = await event.handler(
+			webhookContext(SECRET_KEY),
+			rawRequest(body, {
+				'x-paystack-signature': legacySign(JSON.stringify(body), SECRET_KEY),
+			}) as never,
+		);
+		expect(result.success).toBe(true);
+		// unknown: the handler's data field is the parsed event object.
+		const data = (result as { data?: { data?: unknown } }).data;
+		expect(Array.isArray(data?.data)).toBe(true);
+	});
+
 	it('returns the parsed event for a verified legacy delivery', async () => {
 		const result = await event.handler(
 			webhookContext(SECRET_KEY),
