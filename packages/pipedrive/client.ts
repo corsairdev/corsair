@@ -68,6 +68,7 @@ const SHORT_CUSTOMER_VALUE_FIELDS = new Set([
 	'title',
 	'username',
 ]);
+const SAFE_ERROR_CODE_FIELDS = new Set(['code', 'errorcode']);
 
 function normalizedErrorField(fieldName: string): string {
 	return fieldName.toLowerCase().replace(/[-_]/g, '');
@@ -85,6 +86,30 @@ function isShortCustomerValueField(fieldName: string): boolean {
 		normalizedField === 'id' ||
 		normalizedField.endsWith('id')
 	);
+}
+
+function isSafeErrorCodeField(fieldName: string): boolean {
+	return SAFE_ERROR_CODE_FIELDS.has(normalizedErrorField(fieldName));
+}
+
+function isErrorWordCharacter(character: string | undefined): boolean {
+	return character !== undefined && /[\p{L}\p{N}_]/u.test(character);
+}
+
+function redactWholeErrorValue(text: string, value: string): string {
+	let redacted = '';
+	let copiedThrough = 0;
+	let index = text.indexOf(value, copiedThrough);
+	while (index !== -1) {
+		const before = text[index - 1];
+		const after = text[index + value.length];
+		if (!isErrorWordCharacter(before) && !isErrorWordCharacter(after)) {
+			redacted += text.slice(copiedThrough, index) + REDACTED_ERROR_VALUE;
+			copiedThrough = index + value.length;
+		}
+		index = text.indexOf(value, index + value.length);
+	}
+	return redacted + text.slice(copiedThrough);
 }
 
 function collectRequestValues(
@@ -175,7 +200,10 @@ function redactErrorText(value: string, values: Set<string>): string {
 	for (const sensitiveValue of [...redactionValues].sort(
 		(a, b) => b.length - a.length,
 	)) {
-		redacted = redacted.split(sensitiveValue).join(REDACTED_ERROR_VALUE);
+		redacted =
+			sensitiveValue.length < 4
+				? redactWholeErrorValue(redacted, sensitiveValue)
+				: redacted.split(sensitiveValue).join(REDACTED_ERROR_VALUE);
 	}
 	return redacted;
 }
@@ -187,6 +215,12 @@ function redactProviderErrorValue(
 	fieldName = '',
 ): unknown {
 	if (isSensitiveErrorField(fieldName)) return REDACTED_ERROR_VALUE;
+	if (
+		isSafeErrorCodeField(fieldName) &&
+		(typeof value === 'string' || typeof value === 'number')
+	) {
+		return value;
+	}
 	if (typeof value === 'string') return redactErrorText(value, values);
 	if (typeof value === 'number' && values.has(String(value))) {
 		return REDACTED_ERROR_VALUE;

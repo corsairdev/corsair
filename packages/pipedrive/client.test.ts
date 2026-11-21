@@ -531,6 +531,7 @@ describe('Pipedrive request errors', () => {
 	it('redacts echoed customer values and preserves safe ApiError metadata', async () => {
 		const sent = {
 			name: 'Bo',
+			title: 'A',
 			notes: 'confidential\nnote',
 			org_id: 12,
 		};
@@ -552,6 +553,7 @@ describe('Pipedrive request errors', () => {
 					error: echoedError.error,
 					details: {
 						name: 'Bo',
+						title: 'A',
 						notes: 'confidential\nnote',
 						org_id: 12,
 					},
@@ -591,6 +593,7 @@ describe('Pipedrive request errors', () => {
 				error: 'Invalid values for [REDACTED]: [REDACTED]',
 				details: {
 					name: '[REDACTED]',
+					title: '[REDACTED]',
 					notes: '[REDACTED]',
 					org_id: '[REDACTED]',
 				},
@@ -605,6 +608,7 @@ describe('Pipedrive request errors', () => {
 				code: 'INVALID_FIELD',
 			}),
 		);
+		expect(error.body.code).toBe('INVALID_FIELD');
 		expect(JSON.stringify(error)).not.toContain('Bo');
 		expect(JSON.stringify(error)).not.toContain('confidential');
 		expect(JSON.stringify(error)).not.toContain('org_id":12');
