@@ -4075,7 +4075,8 @@
                 "pages": [
                   "plugins/parallel/overview",
                   "plugins/parallel/api",
-                  "plugins/parallel/database"
+                  "plugins/parallel/database",
+                  "plugins/parallel/webhooks"
                 ]
               },
               {
