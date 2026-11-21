@@ -1,0 +1,565 @@
+displayName: Meta Ads
+description: Read ad accounts and activity, manage campaigns, ads, pixels, access assignments and ad rules, work with custom-audience memberships, and run synchronous or asynchronous Marketing API reports through Meta API v27.0.
+overviewNote: "Supply an OAuth access token with ads_read for reporting or ads_management for management; the token must also have access to the target ad account."
+examples:
+  read:
+    path: accounts.list
+    title: List ad accounts
+  write:
+    path: labels.create
+    title: Create an ad label
+    args:
+      accountId: "1234567890"
+      name: "Spring promotion"
+apiNotes:
+  accounts.list: "Meta requires access_token as a request parameter. Use a user or system-user access token stored in Corsair's encrypted credential store."
+  accounts.usersList: "Lists the documented app-scoped ad-account users and tasks. This edge does not create, update, or remove permissions."
+  accounts.activitiesList: "Reads the recent account activity feed; use standard Graph cursor pagination to continue."
+  accounts.assignedUsersList: "Requires businessId and lists only documented task fields; account-user assignment mutations require an explicit user ID."
+  accounts.assignUser: "Grants only the documented account task enum; this changes account access and is marked destructive."
+  accounts.removeUser: "Revokes one explicitly identified business or system user assignment; this is marked destructive."
+  accounts.controlsCreate: "Creates account-wide audience and placement controls; submitted constraints are removed from propagated error metadata."
+  accounts.agenciesList: "Lists documented business access fields and supports cursor pagination."
+  accounts.agencyRemove: "Removes the explicitly named business association from the account; this is marked destructive."
+  accounts.subscribedAppUpdate: "Subscribes an app by optional documented app_id. No callback URL or webhook handler is exposed."
+  accounts.subscribedAppRemove: "Unsubscribes an app by optional documented app_id. No callback URL or webhook handler is exposed."
+  accounts.trackingCreate: "Meta documents tracking_specs only as a generic Object without nested fields; request data is removed from propagated errors."
+  accounts.pixelsList: "Lists account pixels with the documented scalar AdsPixel fields and Graph cursor pagination."
+  accounts.adRulesLibraryCreate: "Creates a potentially consequential automation rule. New rules default to DISABLED; PING_ENDPOINT and NOTIFICATION execution types are excluded because outbound callback lifecycle is not supported."
+  accounts.smartSuggestedAdsList: "Exposes documented objective, optimizationGoal, pixelId and productSetId filters, plus Graph pagination."
+  accounts.suggestedAdsList: "Exposes a bounded documented filter set; unsupported filters are rejected rather than passed through."
+  accounts.placePageSetsCreate: "Creates a place-page set only for a published parent Page; the token must have access to that Page."
+  accounts.reachEstimate: "Requires targetingSpec.geo_locations.countries, accepts at most one country, and may return -1 bounds when a custom audience estimate is unavailable."
+  accounts.impactingAdStudiesList: "Lists documented ad studies affecting the account or descendant ad objects."
+  accounts.adRulesLibraryList: "Lists account ad rules. Use adRulesLibraryCreate for documented rule creation; editing/deleting rules is not exposed."
+  accounts.activeAdRulesList: "Requires selectedIds and accepts an optional passEvaluation filter; it does not execute or change rules."
+  accounts.generatePreviews: "Accepts only an object_story_spec with a documented link_data or other supported single content type, plus a bounded placement enum; returns expiring HTML as inert text."
+  accounts.broadTargetingCategoriesList: "Lists the documented broad-targeting category fields; this is separate from the unified targeting browse/search edges whose node contract is pending."
+  images.upload: "Accepts base64 bytes or copies an image by source account and hash. The adapter removes upload form data from propagated core errors."
+  images.delete: "Only images not currently used by an ad creative can be deleted from the account library."
+  campaigns.list: "Pass returned paging.cursors.after to continue and use paging.hasNextPage to detect continuation; the adapter never returns or follows Meta's paging.next URL because it may contain credentials."
+  campaigns.adSetsList: "Lists the documented ad sets edge for one campaign; use the cursor fields to continue through results."
+  campaigns.adsList: "Lists the documented ads edge for one campaign; use the cursor fields to continue through results."
+  campaigns.copiesList: "Lists the documented campaign copies edge and supports Graph cursor pagination."
+  campaigns.copy: "Creates a shallow campaign copy with status_option fixed to PAUSED. Deep-copying child ads and arbitrary campaign parameter overrides are not exposed, and the non-idempotent write is not retried."
+  campaigns.labelsAdd: "Associates documented label IDs or names with a campaign. The Ad Set association endpoint is not exposed because its route-specific reference could not be verified."
+  campaigns.budgetSchedulesList: "Supports the documented timeStart/timeStop filters and Graph cursor paging."
+  campaigns.budgetScheduleCreate: "Schedules a high-demand budget period. The daily-budget, 3-hour minimum, 8x ceiling, and account capability constraints remain provider-enforced; this write is not retried."
+  campaigns.adStudiesList: "Lists ad studies associated with this campaign."
+  campaigns.adRulesGovernedList: "Lists rules that govern the campaign; passEvaluation is an optional documented filter."
+  highDemandPeriods.get: "Reads a single high-demand period by its Graph object ID."
+  campaigns.create: "Campaign creation requires objective (for example OUTCOME_TRAFFIC) and specialAdCategories (use [] when no special category applies). Meta v27's campaign-create example uses OUTCOME_TRAFFIC with an empty special_ad_categories array. This consequential write is destructive and isn't automatically retried. Budget values are integer smallest-currency units."
+  campaigns.update: "Budget and spend-cap edits are consequential writes and aren't automatically retried."
+  adSets.list: "Pass returned paging.cursors.after to continue and use paging.hasNextPage to detect continuation; the adapter never returns or follows Meta's paging.next URL because it may contain credentials."
+  adSets.adsList: "Lists the documented ads edge for one ad set; use the cursor fields to continue through results."
+  adSets.adCreativesList: "Lists creatives associated with the ad set and forwards standard Graph cursors."
+  adSets.copiesList: "Lists the documented ad-set copies edge and supports Graph cursor pagination."
+  adSets.copy: "Creates a copy with status_option fixed to PAUSED. Deep-copying child ads is not exposed and the non-idempotent write is not retried. EU-targeted copies may require DSA payor and beneficiary settings."
+  adSets.activitiesList: "Reads ad-set activity history; businessId may be required by Meta for accounts associated with a business."
+  adSets.adStudiesList: "Lists ad studies associated with this ad set."
+  adSets.adRulesGovernedList: "Lists rules that govern the ad set; passEvaluation is an optional documented filter."
+  ads.adRulesGovernedList: "Lists rules that govern the ad; passEvaluation is an optional documented filter."
+  adSets.create: "Supply optimizationGoal (REACH) and billingEvent (IMPRESSIONS), a documented Meta v27 ad-set example. This consequential write is destructive and isn't automatically retried. Budgets use integer smallest-currency units; initial status defaults to PAUSED. Meta v27 can enable cross-device expansion for eligible Sales ad sets unless the documented targeting automation setting is set to 0; EU targeting needs beneficiary/payer account defaults or explicit values."
+  ads.create: "Use an existing creative ID or the documented inline AdCreative envelope: the creative form field contains a nested creative object with name and object_story_spec. Optionally pass a bare conversionDomain for campaigns that share data with a pixel; Meta requires it only for those campaigns. New ads enter review and can deliver after approval; this consequential write isn't automatically retried."
+  ads.adCreativesList: "Lists creatives attached to the ad and forwards standard Graph cursors."
+  ads.adStudiesList: "Lists ad studies containing this ad."
+  ads.previewsList: "Returns provider HTML in the body field. Only seven common formats are accepted here; treat preview HTML as untrusted text and note Meta says the iframe is valid for 24 hours."
+  ads.copiesList: "Lists the documented ad copies edge and supports Graph cursor pagination."
+  ads.copy: "Creates a copy with status_option fixed to PAUSED. Creative overrides are not exposed; optionally pass adSetId to choose a parent ad set. The non-idempotent write is not retried."
+  creatives.create: "Use either an existing Page post ID or object_story_spec with page_id and exactly one documented content type: link_data, photo_data, video_data, text_data, or template_data. Political issue/election creatives need the documented authorizationCategory."
+  creatives.insightsList: "Reads the documented aesthetics quality metric; it does not expose a generalized performance-report surface."
+  creatives.previewsList: "Returns provider HTML in the body field. Only seven common formats are accepted here; treat preview HTML as untrusted text and note Meta says the iframe is valid for 24 hours."
+  audiences.create: "Creates a blank CUSTOM audience. Pass customerFileSource (USER_PROVIDED_ONLY, PARTNER_PROVIDED_ONLY, or BOTH_USER_AND_PARTNER_PROVIDED) for customer-file uploads; the field is optional in the general create reference, though Meta's Customer File guide says to specify it for that workflow. Add or remove members later with usersAdd/usersRemove; only single-key SHA-256 email or phone hashes are accepted, up to 10000 per request. Adds also require upload-session and batch metadata. Raw identifiers and multi-key matching are not exposed. Request payloads are omitted from propagated error metadata and echoed invalid-entry samples are stripped from successful results."
+  audiences.acceptTerms: "Accepts the provider's custom-audience terms for the specified ad account; this legal acceptance is marked destructive."
+  audiences.adsList: "Lists ads associated with the custom audience; this is a read-only edge and requires permission to read the audience and its ads."
+  audiences.adAccountsList: "Lists shared ad-account IDs and can filter by targeting or targeting_and_insights permission."
+  audiences.delete: "Deletion is permanent and ads using the audience stop; they cannot be restarted."
+  audiences.sessionsList: "Reads documented upload session status fields; it does not upload audience members."
+  audiences.usersAdd: "Set schema to EMAIL_SHA256 or PHONE_SHA256; only single-key SHA-256 hashes are accepted, up to 10000 per batch. Use a unique ad-account session ID and sequential batch numbers; input payloads are omitted from propagated error metadata and invalid-entry samples are stripped from results."
+  audiences.usersRemove: "Set schema to EMAIL_SHA256 or PHONE_SHA256; removes up to 10000 single-key SHA-256 hashes. Input payloads are omitted from propagated error metadata."
+  audiences.usersReplace: "Replaces audience members in a unique upload session using only single-key SHA-256 email or phone hashes. This is a destructive membership operation; request values and echoed samples are redacted."
+  audiences.adAccountsShare: "Requires a business to claim both the owner and recipient accounts. Sharing grants cross-account access and is a destructive operation; use explicit recipient IDs."
+  audiences.adAccountsUnshare: "Revoking access may stop recipient ads using the audience, and Meta says those ads cannot be restarted."
+  studies.create: "Creates only a simple SPLIT_TEST using ad-set cells. Each cell needs at least 10% treatment, treatment percentages must total at most 100%, and each cell must include an ad set. This non-idempotent operation is not automatically retried."
+  studies.update: "Only name, description, and endTime are exposed. Meta limits changes after the study starts; extending the end time changes the experiment."
+  studies.get: "Reads a single documented ad study by ID."
+  studies.relatedAccountsList: "Lists ad accounts related to the study."
+  studies.viewersList: "Lists users who can view the study."
+  videos.delete: "Dissociates the specified video from the ad-account library; it does not delete the source video."
+  asyncCreatives.create: "Starts a non-idempotent creative job with notifications fixed to OFF; notification URIs are intentionally unsupported and creative form data is removed from propagated errors."
+  asyncCreatives.list: "Lists safe asynchronous creative job status fields and supports Graph cursor pagination."
+  asyncRequestSets.create: "Starts potentially deliverable ad creation from documented string-valued ad spec maps; notifications are fixed to OFF, request data is removed from propagated errors, and the write is not retried."
+  asyncRequestSets.list: "Lists safe status/count fields and supports Graph cursor pagination."
+  asyncRequestSets.get: "Accepts numeric or string requestSetId values and stringifies the Graph path. Only documented status/count fields are selectable; notification_uri is omitted to avoid exposing callback URLs."
+  asyncRequestSets.update: "Renames a request set and returns literal true on success. Numeric or string IDs are accepted; notification_uri and notification_mode are omitted because outbound callback handling is outside this plugin."
+  asyncRequestSets.cancel: "Cancels a request set only while it remains unprocessed and returns literal true; numeric or string IDs are accepted and cancellation is marked destructive."
+  asyncRequests.listForSet: "Accepts numeric or string requestSetId values and stringifies the Graph path. Only request IDs, parent IDs and statuses can be selected; raw request input and result/error content are excluded."
+  asyncRequests.listForAdSet: "Only request IDs, parent IDs and statuses can be selected; use the documented statuses filter and cursor paging."
+  asyncRequests.cancel: "Cancels one request only while it remains unprocessed and returns literal true; numeric or string request IDs are accepted and cancellation is marked destructive."
+  reachFrequencyPredictions.list: "Lists safe documented prediction fields and supports cursor pagination; pause_periods is omitted because its item field types are not specified."
+  reachFrequencyPredictions.get: "Reads selected documented prediction fields; pause_periods is omitted because its item field types are not specified."
+  reachFrequencyPredictions.create: "Creates a non-idempotent forecast/reservation. predictionMode 0 requires reach; mode 1 requires budget. Day-part entries require at least three hours. Country and budget thresholds remain provider enforced."
+  pixels.create: "Creates an Ads Pixel for an account; Meta allows at most one pixel per account in the documented error contract."
+  pixels.get: "Only the documented scalar AdsPixel fields are selectable; nested creator, owner-business and usage objects are not exposed."
+  pixels.update: "Updates only documented AdsPixel fields; server_events_business_ids changes access and are marked destructive with the request body removed from propagated errors."
+  publisherBlockLists.create: "Creates a named block list but does not apply it to account delivery."
+  customConversions.create: "Creates a custom conversion definition from documented event-source fields; this operation does not send Conversions API events."
+  insights.list: "Synchronous metrics with allow-listed fields, breakdowns, filters, attribution windows, sorting, summary, and time increments. Meta may reject unsupported field/breakdown combinations."
+  insights.listForCampaign: "Reads the same typed synchronous Insights fields directly from a campaign node."
+  insights.listForAdSet: "Reads the same typed synchronous Insights fields directly from an ad-set node."
+  insights.listForAd: "Reads the same typed synchronous Insights fields directly from an ad node."
+  insights.createAsync: "Starts a non-idempotent Insights report job. Poll insights.getAsyncReport until completion, then call insights.getAsyncResults; report IDs expire after 30 days."
+  insights.getAsyncReport: "Accept numeric or string reportRunId values, including report_run_id returned by createAsync, and poll async_status and async_percent_completion. Failed jobs include documented error details on v25 and later."
+  insights.getAsyncResults: "Accept numeric or string reportRunId values, including report_run_id returned by createAsync, and fetch cursor-paginated results only after the report job completes."
+  insights.listFeatures: "Lists documented account Insights features, including breakdown features."
+  insights.listEnabledFeatures: "Lists enabled features; a missing feature is equivalent to disabled."
+  insights.enableFeature: "Pass a documented featureName: comscore, impression_device, time_of_day_viewer_tz, or frequency_value. This is a one-way enable operation; Meta documents no API to disable a feature. New breakdown data can take about 24 hours to become available."
+apiExamples:
+  accounts.list: {}
+  accounts.get:
+    accountId: "1234567890"
+  accounts.usersList:
+    accountId: "1234567890"
+  images.list:
+    accountId: "1234567890"
+    name: "campaign image"
+  images.upload:
+    accountId: "1234567890"
+    bytes: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/jN8AAAAASUVORK5CYII="
+  images.delete:
+    accountId: "1234567890"
+    hash: "0123456789abcdef0123456789abcdef"
+  campaigns.list:
+    accountId: "1234567890"
+  campaigns.adSetsList:
+    campaignId: "120000000000001"
+  campaigns.adsList:
+    campaignId: "120000000000001"
+  campaigns.copiesList:
+    campaignId: "120000000000001"
+  campaigns.copy:
+    campaignId: "120000000000001"
+  campaigns.get:
+    campaignId: "120000000000001"
+  campaigns.create:
+    call: |-
+      {
+        accountId: "1234567890",
+        name: "Sample campaign",
+        objective: "OUTCOME_TRAFFIC",
+        specialAdCategories: [],
+      }
+  campaigns.update:
+    campaignId: "120000000000001"
+    name: "Updated campaign"
+  campaigns.delete:
+    campaignId: "120000000000001"
+  adSets.list:
+    accountId: "1234567890"
+  adSets.adsList:
+    adSetId: "120000000000002"
+  adSets.adCreativesList:
+    adSetId: "120000000000002"
+  adSets.copiesList:
+    adSetId: "120000000000002"
+  adSets.copy:
+    adSetId: "120000000000002"
+  adSets.get:
+    adSetId: "120000000000002"
+  adSets.create:
+    call: |-
+      {
+        accountId: "1234567890",
+        campaignId: "120000000000001",
+        name: "Sample ad set",
+        optimizationGoal: "REACH",
+        billingEvent: "IMPRESSIONS",
+        targeting: { geo_locations: { countries: ["US"] } },
+      }
+  adSets.update:
+    adSetId: "120000000000002"
+    name: "Updated ad set"
+  adSets.delete:
+    adSetId: "120000000000002"
+  ads.list:
+    accountId: "1234567890"
+  ads.adCreativesList:
+    adId: "120000000000003"
+  ads.copiesList:
+    adId: "120000000000003"
+  ads.copy:
+    adId: "120000000000003"
+  ads.get:
+    adId: "120000000000003"
+  ads.create:
+    accountId: "1234567890"
+    adSetId: "120000000000002"
+    name: "Sample ad"
+    creativeId: "120000000000004"
+  ads.update:
+    adId: "120000000000003"
+    name: "Updated ad"
+  ads.delete:
+    adId: "120000000000003"
+  creatives.list:
+    accountId: "1234567890"
+  creatives.get:
+    creativeId: "120000000000004"
+  creatives.create:
+    accountId: "1234567890"
+    name: "Sample creative"
+    objectStoryId: "1234567890_1234567890"
+  creatives.update:
+    creativeId: "120000000000004"
+    name: "Updated creative"
+  creatives.delete:
+    creativeId: "120000000000004"
+  audiences.list:
+    accountId: "1234567890"
+  audiences.adsList:
+    audienceId: "120000000000005"
+  audiences.get:
+    audienceId: "120000000000005"
+  audiences.create:
+    accountId: "1234567890"
+    name: "Sample audience"
+  audiences.update:
+    audienceId: "120000000000005"
+    name: "Updated audience"
+  audiences.delete:
+    audienceId: "120000000000005"
+  audiences.sessionsList:
+    audienceId: "120000000000005"
+  audiences.usersAdd:
+    call: |-
+      {
+        audienceId: "120000000000005",
+        schema: "EMAIL_SHA256",
+        hashes: ["f1904cf1a9d73a55fa5de0ac823c4403ded71afd4c3248d00bdcd0866552bb79"],
+        sessionId: 123456789,
+        batchSequence: 1,
+        lastBatch: true,
+        estimatedTotal: 1,
+      }
+  audiences.usersRemove:
+    call: |-
+      {
+        audienceId: "120000000000005",
+        schema: "EMAIL_SHA256",
+        hashes: ["f1904cf1a9d73a55fa5de0ac823c4403ded71afd4c3248d00bdcd0866552bb79"],
+      }
+  insights.list:
+    accountId: "1234567890"
+    fields: [impressions, spend]
+    breakdowns: [age, gender]
+    filtering:
+      - field: "campaign.id"
+        operator: IN
+        value: ["120000000000001"]
+  insights.listForCampaign:
+    campaignId: "120000000000001"
+    fields: [impressions, spend]
+  insights.listForAdSet:
+    adSetId: "120000000000002"
+    fields: [impressions, spend]
+  insights.listForAd:
+    adId: "120000000000003"
+    fields: [impressions, spend]
+  insights.createAsync:
+    accountId: "1234567890"
+    fields: [impressions, spend]
+  insights.getAsyncReport:
+    reportRunId: "123456789012345"
+    fields: [id, async_status, async_percent_completion]
+  insights.getAsyncResults:
+    reportRunId: "123456789012345"
+  insights.listFeatures:
+    accountId: "1234567890"
+  insights.listEnabledFeatures:
+    accountId: "1234567890"
+  insights.enableFeature:
+    call: |-
+      { accountId: "1234567890", featureName: "impression_device" }
+  accounts.activitiesList:
+    accountId: "1234567890"
+  accounts.impactingAdStudiesList:
+    accountId: "1234567890"
+  accounts.adRulesLibraryList:
+    accountId: "1234567890"
+  accounts.activeAdRulesList:
+    accountId: "1234567890"
+    selectedIds: ["120000000000001", "120000000000002"]
+  accounts.generatePreviews:
+    call: |-
+      {
+        accountId: "1234567890",
+        adFormat: "DESKTOP_FEED_STANDARD",
+        creativeSpec: {
+          objectStorySpec: {
+            page_id: "1234567890",
+            link_data: { link: "https://example.test/", message: "Preview" },
+          },
+        },
+      }
+  accounts.broadTargetingCategoriesList:
+    accountId: "1234567890"
+    customCategoriesOnly: true
+  accounts.reachEstimate:
+    call: |-
+      {
+        accountId: "1234567890",
+        targetingSpec: { geo_locations: { countries: ["US"] }, age_min: 20, age_max: 40 },
+      }
+  accounts.assignedUsersList:
+    accountId: "1234567890"
+    businessId: "1234567891"
+  accounts.assignUser:
+    call: |-
+      { accountId: "1234567890", userId: "1234567892", tasks: ["ADVERTISE", "ANALYZE"] }
+  accounts.removeUser:
+    accountId: "1234567890"
+    userId: "1234567892"
+  accounts.controlsCreate:
+    call: |-
+      {
+        accountId: "1234567890",
+        audienceControls: { ageMin: 18, geoLocations: { countries: ["US"] } },
+        placementControls: { placementExclusions: ["FACEBOOK_MARKETPLACE"] },
+      }
+  accounts.agenciesList:
+    accountId: "1234567890"
+  accounts.agencyRemove:
+    accountId: "1234567890"
+    businessId: "1234567891"
+  accounts.subscribedAppUpdate:
+    accountId: "1234567890"
+    appId: "1234567893"
+  accounts.subscribedAppRemove:
+    accountId: "1234567890"
+    appId: "1234567893"
+  accounts.trackingCreate:
+    call: |-
+      {
+        accountId: "1234567890",
+        trackingSpecs: { "action.type": ["offsite_conversion"], fb_pixel: ["1234567894"] },
+      }
+  accounts.pixelsList:
+    accountId: "1234567890"
+  accounts.adRulesLibraryCreate:
+    call: |-
+      {
+        accountId: "1234567890",
+        name: "Pause on spend limit",
+        evaluationSpec: {
+          evaluationType: "SCHEDULE",
+          filters: [{ field: "spend", value: 100, operator: "GREATER_THAN" }],
+        },
+        executionSpec: { executionType: "PAUSE" },
+        scheduleSpec: { scheduleType: "DAILY" },
+        status: "DISABLED",
+      }
+  accounts.smartSuggestedAdsList:
+    call: |-
+      { accountId: "1234567890", objective: "OUTCOME_TRAFFIC", optimizationGoal: "LINK_CLICKS" }
+  accounts.suggestedAdsList:
+    call: |-
+      { accountId: "1234567890", countries: ["US"], objective: "OUTCOME_SALES", useCase: "AUTOMATED_SHOPPING_ADS" }
+  accounts.placePageSetsCreate:
+    call: |-
+      { accountId: "1234567890", name: "Store locations", parentPageId: "1234567895", locationTypes: ["recent", "home"] }
+  pixels.create:
+    accountId: "1234567890"
+    name: "Website pixel"
+  pixels.get:
+    pixelId: "1234567894"
+    fields: [id, name, data_use_setting]
+  pixels.update:
+    call: |-
+      { pixelId: "1234567894", name: "Updated pixel", dataUseSetting: "ANALYTICS_ONLY", enableAutomaticMatching: false }
+  publisherBlockLists.create:
+    accountId: "1234567890"
+    name: "Sensitive placements"
+  audiences.acceptTerms:
+    accountId: "1234567890"
+    termsId: "1234567896"
+  asyncCreatives.list:
+    accountId: "1234567890"
+  asyncCreatives.create:
+    call: |-
+      {
+        accountId: "1234567890",
+        name: "Creative job",
+        creativeSpec: { name: "Sample creative", objectStoryId: "1234567895_1234567897" },
+      }
+  asyncRequestSets.list:
+    accountId: "1234567890"
+  asyncRequestSets.create:
+    call: |-
+      {
+        accountId: "1234567890",
+        name: "Ad request set",
+        adSpecs: [{ name: "Paused ad", adset_id: "120000000000002", status: "PAUSED" }],
+      }
+  asyncRequestSets.get:
+    requestSetId: "1234567898"
+    fields: [id, name, is_completed]
+  asyncRequestSets.update:
+    requestSetId: "1234567898"
+    name: "Renamed request set"
+  asyncRequestSets.cancel:
+    requestSetId: "1234567898"
+  asyncRequests.listForSet:
+    requestSetId: "1234567898"
+    status: [SUCCESS, ERROR]
+    fields: [id, scope_object_id, status]
+  asyncRequests.listForAdSet:
+    adSetId: "120000000000002"
+    status: [IN_PROGRESS]
+    fields: [id, scope_object_id, status]
+  asyncRequests.cancel:
+    requestId: "1234567899"
+  reachFrequencyPredictions.list:
+    accountId: "1234567890"
+    fields: [id, name, prediction_mode, prediction_progress]
+  reachFrequencyPredictions.get:
+    predictionId: "1234567900"
+    fields: [id, name, prediction_mode, prediction_progress]
+  reachFrequencyPredictions.create:
+    call: |-
+      {
+        accountId: "1234567890",
+        budget: 500000,
+        predictionMode: 1,
+        startTime: 1800000000,
+        stopTime: 1800086400,
+        dayPartingSchedule: [{ startMinute: 360, endMinute: 1440, days: [0, 1, 2, 3, 4, 5, 6] }],
+        targetSpec: { geo_locations: { countries: ["US"] } },
+      }
+  customConversions.create:
+    call: |-
+      {
+        accountId: "1234567890",
+        name: "Completed checkout",
+        actionSourceType: "website",
+        customEventType: "PURCHASE",
+        eventSourceId: "1234567894",
+        rule: "url contains /checkout",
+      }
+  labels.list:
+    accountId: "1234567890"
+  labels.get:
+    labelId: "120000000000010"
+    fields: "id,name"
+  labels.create:
+    accountId: "1234567890"
+    name: "Spring promotion"
+  labels.update:
+    labelId: "120000000000010"
+    name: "Spring sale"
+  labels.delete:
+    labelId: "120000000000010"
+  labels.adsList:
+    labelId: "120000000000010"
+  labels.adSetsList:
+    labelId: "120000000000010"
+  labels.campaignsList:
+    labelId: "120000000000010"
+  labels.creativesList:
+    labelId: "120000000000010"
+  campaigns.labelsAdd:
+    campaignId: "120000000000001"
+    adlabels: [{ id: "120000000000010" }]
+  campaigns.budgetSchedulesList:
+    campaignId: "120000000000001"
+  campaigns.budgetScheduleCreate:
+    call: |-
+      {
+        campaignId: "120000000000001",
+        budgetValue: 150,
+        budgetValueType: "ABSOLUTE",
+        timeStart: 1800000000,
+        timeEnd: 1800010800,
+      }
+  campaigns.adStudiesList:
+    campaignId: "120000000000001"
+  campaigns.adRulesGovernedList:
+    campaignId: "120000000000001"
+    passEvaluation: true
+  highDemandPeriods.get:
+    periodId: "120000000000020"
+  adSets.budgetSchedulesList:
+    adSetId: "120000000000002"
+  adSets.budgetScheduleCreate:
+    call: |-
+      {
+        adSetId: "120000000000002",
+        budgetValue: 150,
+        budgetValueType: "MULTIPLIER",
+        timeStart: 1800000000,
+        timeEnd: 1800010800,
+      }
+  adSets.activitiesList:
+    call: |-
+      { adSetId: "120000000000002", category: "BUDGET", limit: 10 }
+  adSets.adStudiesList:
+    adSetId: "120000000000002"
+  adSets.adRulesGovernedList:
+    adSetId: "120000000000002"
+    passEvaluation: true
+  ads.adStudiesList:
+    adId: "120000000000003"
+  ads.adRulesGovernedList:
+    adId: "120000000000003"
+    passEvaluation: true
+  ads.previewsList:
+    call: |-
+      { adId: "120000000000003", adFormat: "DESKTOP_FEED_STANDARD" }
+  creatives.insightsList:
+    creativeId: "120000000000004"
+  creatives.previewsList:
+    call: |-
+      { creativeId: "120000000000004", adFormat: "INSTAGRAM_STANDARD" }
+  audiences.adAccountsList:
+    call: |-
+      { audienceId: "120000000000005", permissions: "targeting" }
+  audiences.usersReplace:
+    call: |-
+      {
+        audienceId: "120000000000005",
+        schema: "EMAIL_SHA256",
+        hashes: ["f1904cf1a9d73a55fa5de0ac823c4403ded71afd4c3248d00bdcd0866552bb79"],
+        sessionId: 123456790,
+        batchSequence: 1,
+        lastBatch: true,
+      }
+  audiences.adAccountsShare:
+    call: |-
+      { audienceId: "120000000000005", adAccountIds: ["1234567890"], permissions: "targeting" }
+  audiences.adAccountsUnshare:
+    audienceId: "120000000000005"
+    adAccountIds: ["1234567890"]
+  studies.get:
+    studyId: "120000000000030"
+  studies.create:
+    call: |-
+      {
+        businessId: "1234567890",
+        name: "Spring split test",
+        startTime: 1800000000,
+        endTime: 1800086400,
+        type: "SPLIT_TEST",
+        cells: [
+          { name: "Control", treatmentPercentage: 50, adSetIds: ["120000000000002"] },
+          { name: "Variant", treatmentPercentage: 50, adSetIds: ["120000000000006"] },
+        ],
+      }
+  studies.update:
+    studyId: "120000000000030"
+    endTime: 1800172800
+  studies.relatedAccountsList:
+    studyId: "120000000000030"
+  studies.viewersList:
+    studyId: "120000000000030"
+  videos.delete:
+    accountId: "1234567890"
+    videoId: "120000000000040"

@@ -1,0 +1,7760 @@
+---
+title: "Meta Ads API reference"
+sidebarTitle: "API"
+description: "API reference for the Meta Ads plugin in Corsair: every `metaads.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Accounts
+
+### activeAdRulesList
+
+`accounts.activeAdRulesList`
+
+List active rules for explicitly selected ad objects
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.accounts.activeAdRulesList({
+	accountId: '1234567890',
+	selectedIds: ['120000000000001', '120000000000002'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `selectedIds` | `string[]` | Yes | — |
+| `passEvaluation` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Requires selectedIds and accepts an optional passEvaluation filter; it does not execute or change rules.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  created_by?: {
+    id: string,
+    name?: string
+  },
+  created_time?: string,
+  disable_error_code?: number,
+  name?: string,
+  status?: string,
+  updated_time?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### activitiesList
+
+`accounts.activitiesList`
+
+Read recent account and ad object activity events
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.accounts.activitiesList({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Reads the recent account activity feed; use standard Graph cursor pagination to continue.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  actor_id?: string,
+  actor_name?: string,
+  application_id?: string,
+  application_name?: string,
+  date_time_in_timezone?: string,
+  event_time?: string,
+  event_type: string,
+  extra_data?: string,
+  object_id?: string,
+  object_name?: string,
+  object_type?: string,
+  translated_event_type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### adRulesLibraryCreate
+
+`accounts.adRulesLibraryCreate`
+
+Create a rule that can change ad delivery, budgets, or bids
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.accounts.adRulesLibraryCreate({
+  accountId: "1234567890",
+  name: "Pause on spend limit",
+  evaluationSpec: {
+    evaluationType: "SCHEDULE",
+    filters: [{ field: "spend", value: 100, operator: "GREATER_THAN" }],
+  },
+  executionSpec: { executionType: "PAUSE" },
+  scheduleSpec: { scheduleType: "DAILY" },
+  status: "DISABLED",
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `evaluationSpec` | `object` | Yes | — |
+| `executionSpec` | `object` | Yes | — |
+| `scheduleSpec` | `object` | No | — |
+| `status` | `ENABLED \| DISABLED \| DELETED \| HAS_ISSUES` | No | — |
+
+Creates a potentially consequential automation rule. New rules default to DISABLED; PING_ENDPOINT and NOTIFICATION execution types are excluded because outbound callback lifecycle is not supported.
+
+<AccordionGroup>
+<Accordion title="evaluationSpec full type">
+
+```ts
+{
+  evaluationType: SCHEDULE | TRIGGER,
+  filters: {
+    field: string,
+    value: string | number | boolean | (string | number | boolean)[] | Record<string, any>,
+    operator: GREATER_THAN | LESS_THAN | EQUAL | NOT_EQUAL | IN_RANGE | NOT_IN_RANGE | IN | NOT_IN | CONTAIN | NOT_CONTAIN | ANY | ALL | NONE
+  }[],
+  trigger?: {
+    type: METADATA_CREATION | METADATA_UPDATE | STATS_MILESTONE | STATS_CHANGE | DELIVERY_INSIGHTS_CHANGE,
+    field?: string,
+    value?: string | number | boolean | (string | number | boolean)[] | Record<string, any>,
+    operator?: GREATER_THAN | LESS_THAN | EQUAL | NOT_EQUAL | IN_RANGE | NOT_IN_RANGE | IN | NOT_IN | CONTAIN | NOT_CONTAIN | ANY | ALL | NONE
+  }
+}
+```
+</Accordion>
+
+<Accordion title="executionSpec full type">
+
+```ts
+{
+  executionType: DCO | PAUSE | REBALANCE_BUDGET | CHANGE_BUDGET | CHANGE_BID | ROTATE | UNPAUSE | CHANGE_CAMPAIGN_BUDGET | ADD_INTEREST_RELAXATION | ADD_QUESTIONNAIRE_INTERESTS | INCREASE_RADIUS | UPDATE_CREATIVE | UPDATE_LAX_BUDGET | UPDATE_LAX_DURATION | AUDIENCE_CONSOLIDATION | AUDIENCE_CONSOLIDATION_ASK_FIRST | AD_RECOMMENDATION_APPLY,
+  isOnceOff?: boolean,
+  executionOptions?: {
+    field: string,
+    value: string | number | boolean | (string | number | boolean)[] | Record<string, any>,
+    operator: EQUAL | IN
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="scheduleSpec full type">
+
+```ts
+{
+  scheduleType: DAILY | HOURLY | SEMI_HOURLY | CUSTOM,
+  schedule?: {
+    startMinute?: number,
+    endMinute?: number,
+    days?: number[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### adRulesLibraryList
+
+`accounts.adRulesLibraryList`
+
+List account ad rules without creating or changing rules
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.accounts.adRulesLibraryList({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists account ad rules. Use adRulesLibraryCreate for documented rule creation; editing/deleting rules is not exposed.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  created_by?: {
+    id: string,
+    name?: string
+  },
+  created_time?: string,
+  disable_error_code?: number,
+  name?: string,
+  status?: string,
+  updated_time?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### agenciesList
+
+`accounts.agenciesList`
+
+List businesses associated with an ad account
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.accounts.agenciesList({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists documented business access fields and supports cursor pagination.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  access_requested_time?: string,
+  access_status?: string,
+  access_updated_time?: string,
+  permitted_tasks?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### agencyRemove
+
+`accounts.agencyRemove`
+
+Remove a business association from an ad account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.accounts.agencyRemove({ accountId: '1234567890', businessId: '1234567891' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `businessId` | `string` | Yes | — |
+
+Removes the explicitly named business association from the account; this is marked destructive.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### assignedUsersList
+
+`accounts.assignedUsersList`
+
+List business and system users assigned to an ad account
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.accounts.assignedUsersList({ accountId: '1234567890', businessId: '1234567891' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `businessId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Requires businessId and lists only documented task fields; account-user assignment mutations require an explicit user ID.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+| `summary` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  permitted_tasks?: string[],
+  tasks: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+
+<Accordion title="summary full type">
+
+```ts
+{
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### assignUser
+
+`accounts.assignUser`
+
+Grant ad-account tasks to a business or system user
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.accounts.assignUser({ accountId: "1234567890", userId: "1234567892", tasks: ["ADVERTISE", "ANALYZE"] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+| `tasks` | `(MANAGE \| ADVERTISE \| ANALYZE \| DRAFT \| AA_ANALYZE)[]` | No | — |
+
+Grants only the documented account task enum; this changes account access and is marked destructive.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### broadTargetingCategoriesList
+
+`accounts.broadTargetingCategoriesList`
+
+List documented broad-targeting categories for the account
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.accounts.broadTargetingCategoriesList({ accountId: '1234567890', customCategoriesOnly: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `customCategoriesOnly` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists the documented broad-targeting category fields; this is separate from the unified targeting browse/search edges whose node contract is pending.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  name: string,
+  parent_category?: string,
+  size_lower_bound?: number,
+  size_upper_bound?: number,
+  type?: number,
+  type_name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### controlsCreate
+
+`accounts.controlsCreate`
+
+Set account-wide audience and placement controls
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.accounts.controlsCreate({
+  accountId: "1234567890",
+  audienceControls: { ageMin: 18, geoLocations: { countries: ["US"] } },
+  placementControls: { placementExclusions: ["FACEBOOK_MARKETPLACE"] },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `audienceControls` | `object` | Yes | — |
+| `placementControls` | `object` | No | — |
+
+Creates account-wide audience and placement controls; submitted constraints are removed from propagated error metadata.
+
+<AccordionGroup>
+<Accordion title="audienceControls full type">
+
+```ts
+{
+  ageMin: number,
+  geoLocations?: Record<string, any>,
+  excludedGeoLocations?: Record<string, any>,
+  exclusions?: Record<string, any>
+}
+```
+</Accordion>
+
+<Accordion title="placementControls full type">
+
+```ts
+{
+  placementExclusions?: (AUDIENCE_NETWORK_CLASSIC | AUDIENCE_NETWORK_REWARDED_VIDEO | AUDIENCE_NETWORK_INSTREAM_VIDEO | FACEBOOK_MARKETPLACE | FACEBOOK_RIGHT_HAND_COLUMN)[],
+  campaignIdsToSetAp?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+| `error_code` | `string` | No | — |
+| `error_message` | `string` | No | — |
+
+
+
+---
+
+### generatePreviews
+
+`accounts.generatePreviews`
+
+Generate an ad preview from a supported link-story creative spec
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.accounts.generatePreviews({
+  accountId: "1234567890",
+  adFormat: "DESKTOP_FEED_STANDARD",
+  creativeSpec: {
+    objectStorySpec: {
+      page_id: "1234567890",
+      link_data: { link: "https://example.test/", message: "Preview" },
+    },
+  },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `adFormat` | `DESKTOP_FEED_STANDARD \| MOBILE_FEED_STANDARD \| RIGHT_COLUMN_STANDARD \| INSTAGRAM_STANDARD \| INSTAGRAM_STORY \| FACEBOOK_STORY_MOBILE \| INSTAGRAM_REELS` | Yes | — |
+| `creativeSpec` | `object` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Accepts only an object_story_spec with a documented link_data or other supported single content type, plus a bounded placement enum; returns expiring HTML as inert text.
+
+<AccordionGroup>
+<Accordion title="creativeSpec full type">
+
+```ts
+{
+  objectStorySpec: {
+    page_id: string,
+    link_data?: Record<string, any>,
+    photo_data?: Record<string, any>,
+    video_data?: Record<string, any>,
+    text_data?: Record<string, any>,
+    template_data?: Record<string, any>
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  body: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`accounts.get`
+
+Retrieve an ad account by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.accounts.get({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `account_id` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `configured_status` | `string \| null` | No | — |
+| `effective_status` | `string \| null` | No | — |
+
+
+
+---
+
+### impactingAdStudiesList
+
+`accounts.impactingAdStudiesList`
+
+List ad studies affecting an account or its child objects
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.accounts.impactingAdStudiesList({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists documented ad studies affecting the account or descendant ad objects.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  business?: {
+    id: string,
+    name?: string
+  } | null,
+  canceled_time?: string | null,
+  cooldown_start_time?: string | null,
+  created_by?: {
+    id: string,
+    name?: string
+  } | null,
+  created_time?: string | null,
+  description?: string | null,
+  end_time?: string | null,
+  name?: string | null,
+  observation_end_time?: string | null,
+  results_first_available_date?: string | null,
+  start_time?: string | null,
+  type?: string | null,
+  updated_by?: {
+    id: string,
+    name?: string
+  } | null,
+  updated_time?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`accounts.list`
+
+List ad accounts available to the access token
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.accounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Meta requires access_token as a request parameter. Use a user or system-user access token stored in Corsair's encrypted credential store.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pixelsList
+
+`accounts.pixelsList`
+
+List pixels accessible from an ad account
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.accounts.pixelsList({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists account pixels with the documented scalar AdsPixel fields and Graph cursor pagination.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+| `summary` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  automatic_matching_fields?: string[],
+  can_proxy?: boolean,
+  code?: string,
+  config?: string,
+  creation_time?: string,
+  data_use_setting?: string,
+  description?: string,
+  duplicate_entries?: number,
+  enable_auto_assign_to_accounts?: boolean,
+  enable_automatic_matching?: boolean,
+  event_stats?: string,
+  event_time_max?: number,
+  event_time_min?: number,
+  first_party_cookie_status?: string,
+  has_1p_pixel_event?: boolean,
+  is_consolidated_container?: boolean,
+  is_created_by_business?: boolean,
+  is_crm?: boolean,
+  is_mta_use?: boolean,
+  is_restricted_use?: boolean,
+  is_unavailable?: boolean,
+  last_fired_time?: string,
+  last_upload_app?: string,
+  last_upload_app_changed_time?: number,
+  match_rate_approx?: number,
+  matched_entries?: number,
+  name?: string,
+  valid_entries?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+
+<Accordion title="summary full type">
+
+```ts
+{
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### placePageSetsCreate
+
+`accounts.placePageSetsCreate`
+
+Create a place-page set from a published parent Page
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.accounts.placePageSetsCreate({ accountId: "1234567890", name: "Store locations", parentPageId: "1234567895", locationTypes: ["recent", "home"] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `parentPageId` | `string` | Yes | — |
+| `locationTypes` | `(recent \| home)[]` | No | — |
+
+Creates a place-page set only for a published parent Page; the token must have access to that Page.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### reachEstimate
+
+`accounts.reachEstimate`
+
+Estimate an ad-account audience range for a targeting spec
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.accounts.reachEstimate({
+  accountId: "1234567890",
+  targetingSpec: { geo_locations: { countries: ["US"] }, age_min: 20, age_max: 40 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `objectStoreUrl` | `string` | No | — |
+| `targetingSpec` | `Record<string, any>` | Yes | — |
+
+Requires targetingSpec.geo_locations.countries, accepts at most one country, and may return -1 bounds when a custom audience estimate is unavailable.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  users_lower_bound: number,
+  users_upper_bound: number
+}
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeUser
+
+`accounts.removeUser`
+
+Revoke a business or system user assignment from an account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.accounts.removeUser({ accountId: '1234567890', userId: '1234567892' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `userId` | `string` | Yes | — |
+
+Revokes one explicitly identified business or system user assignment; this is marked destructive.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### smartSuggestedAdsList
+
+`accounts.smartSuggestedAdsList`
+
+List smart ad suggestions for an account
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.accounts.smartSuggestedAdsList({ accountId: "1234567890", objective: "OUTCOME_TRAFFIC", optimizationGoal: "LINK_CLICKS" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `objective` | `APP_INSTALLS \| BRAND_AWARENESS \| CONVERSIONS \| EVENT_RESPONSES \| LEAD_GENERATION \| LINK_CLICKS \| LOCAL_AWARENESS \| MESSAGES \| OFFER_CLAIMS \| OUTCOME_APP_PROMOTION \| OUTCOME_AWARENESS \| OUTCOME_ENGAGEMENT \| OUTCOME_LEADS \| OUTCOME_SALES \| OUTCOME_TRAFFIC \| PAGE_LIKES \| POST_ENGAGEMENT \| PRODUCT_CATALOG_SALES \| REACH \| STORE_VISITS \| VIDEO_VIEWS` | No | — |
+| `optimizationGoal` | `NONE \| APP_INSTALLS \| AD_RECALL_LIFT \| ENGAGED_USERS \| EVENT_RESPONSES \| IMPRESSIONS \| LEAD_GENERATION \| QUALITY_LEAD \| LINK_CLICKS \| OFFSITE_CONVERSIONS \| PAGE_LIKES \| POST_ENGAGEMENT \| QUALITY_CALL \| REACH \| LANDING_PAGE_VIEWS \| VISIT_INSTAGRAM_PROFILE \| ENGAGED_PAGE_VIEWS \| VALUE \| THRUPLAY \| DERIVED_EVENTS \| APP_INSTALLS_AND_OFFSITE_CONVERSIONS \| CONVERSATIONS \| IN_APP_VALUE \| MESSAGING_PURCHASE_CONVERSION \| MESSAGING_DEEP_CONVERSATION_AND_FOLLOW \| SUBSCRIBERS \| REMINDERS_SET \| MEANINGFUL_CALL_ATTEMPT \| PROFILE_VISIT \| PROFILE_AND_PAGE_ENGAGEMENT \| ADVERTISER_SILOED_VALUE \| AUTOMATIC_OBJECTIVE \| MESSAGING_APPOINTMENT_CONVERSION` | No | — |
+| `pixelId` | `string` | No | — |
+| `productSetId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Exposes documented objective, optimizationGoal, pixelId and productSetId filters, plus Graph pagination.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subscribedAppRemove
+
+`accounts.subscribedAppRemove`
+
+Unsubscribe an application from an ad account
+
+**Risk:** `write`
+
+```ts
+await corsair.metaads.api.accounts.subscribedAppRemove({ accountId: '1234567890', appId: '1234567893' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `appId` | `string` | No | — |
+
+Unsubscribes an app by optional documented app_id. No callback URL or webhook handler is exposed.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### subscribedAppUpdate
+
+`accounts.subscribedAppUpdate`
+
+Subscribe an application to an ad account
+
+**Risk:** `write`
+
+```ts
+await corsair.metaads.api.accounts.subscribedAppUpdate({ accountId: '1234567890', appId: '1234567893' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `appId` | `string` | No | — |
+
+Subscribes an app by optional documented app_id. No callback URL or webhook handler is exposed.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### suggestedAdsList
+
+`accounts.suggestedAdsList`
+
+List ad suggestions using documented account filters
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.accounts.suggestedAdsList({ accountId: "1234567890", countries: ["US"], objective: "OUTCOME_SALES", useCase: "AUTOMATED_SHOPPING_ADS" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `applicationId` | `string` | No | — |
+| `cmsId` | `string` | No | — |
+| `countries` | `string[]` | No | — |
+| `objective` | `string` | No | — |
+| `optimizationGoal` | `NONE \| APP_INSTALLS \| AD_RECALL_LIFT \| ENGAGED_USERS \| EVENT_RESPONSES \| IMPRESSIONS \| LEAD_GENERATION \| QUALITY_LEAD \| LINK_CLICKS \| OFFSITE_CONVERSIONS \| PAGE_LIKES \| POST_ENGAGEMENT \| QUALITY_CALL \| REACH \| LANDING_PAGE_VIEWS \| VISIT_INSTAGRAM_PROFILE \| ENGAGED_PAGE_VIEWS \| VALUE \| THRUPLAY \| DERIVED_EVENTS \| APP_INSTALLS_AND_OFFSITE_CONVERSIONS \| CONVERSATIONS \| IN_APP_VALUE \| MESSAGING_PURCHASE_CONVERSION \| MESSAGING_DEEP_CONVERSATION_AND_FOLLOW \| SUBSCRIBERS \| REMINDERS_SET \| MEANINGFUL_CALL_ATTEMPT \| PROFILE_VISIT \| PROFILE_AND_PAGE_ENGAGEMENT \| ADVERTISER_SILOED_VALUE \| AUTOMATIC_OBJECTIVE \| MESSAGING_APPOINTMENT_CONVERSION` | No | — |
+| `pixelId` | `string` | No | — |
+| `promotedObjectPageId` | `string` | No | — |
+| `promotedObjectProductSetId` | `string` | No | — |
+| `rankBy` | `string` | No | — |
+| `useCase` | `AD_STRATEGIES \| AUTOMATED_APP_ADS \| AUTOMATED_SHOPPING_ADS \| AUTOMATED_SHOPPING_ADS_MDSA \| LEAD_GEN_ASC_ADS \| MANUAL_FLOW_APP_ADS \| MANUAL_FLOW_SHOPS_ADS \| MANUAL_FLOW_WEBSITE_ADS \| MANUAL_FLOW_WEBSITE_AND_APP_ADS \| SALES_WEB_APP_ADS` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Exposes a bounded documented filter set; unsupported filters are rejected rather than passed through.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trackingCreate
+
+`accounts.trackingCreate`
+
+Add account-level tracking specifications
+
+**Risk:** `write`
+
+```ts
+await corsair.metaads.api.accounts.trackingCreate({
+  accountId: "1234567890",
+  trackingSpecs: { "action.type": ["offsite_conversion"], fb_pixel: ["1234567894"] },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `trackingSpecs` | `Record<string, any>` | Yes | — |
+
+Meta documents tracking_specs only as a generic Object without nested fields; request data is removed from propagated errors.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### usersList
+
+`accounts.usersList`
+
+List app-scoped users and task grants on an ad account
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.accounts.usersList({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists the documented app-scoped ad-account users and tasks. This edge does not create, update, or remove permissions.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  tasks?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ads
+
+### adCreativesList
+
+`ads.adCreativesList`
+
+List creatives attached to an ad
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.ads.adCreativesList({ adId: '120000000000003' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists creatives attached to the ad and forwards standard Graph cursors.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### adRulesGovernedList
+
+`ads.adRulesGovernedList`
+
+List rules that govern an ad
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.ads.adRulesGovernedList({ adId: '120000000000003', passEvaluation: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adId` | `string` | Yes | — |
+| `passEvaluation` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists rules that govern the ad; passEvaluation is an optional documented filter.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  created_by?: {
+    id: string,
+    name?: string
+  },
+  created_time?: string,
+  disable_error_code?: number,
+  name?: string,
+  status?: string,
+  updated_time?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### adStudiesList
+
+`ads.adStudiesList`
+
+List ad studies associated with an ad
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.ads.adStudiesList({ adId: '120000000000003' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists ad studies containing this ad.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  business?: {
+    id: string,
+    name?: string
+  } | null,
+  canceled_time?: string | null,
+  cooldown_start_time?: string | null,
+  created_by?: {
+    id: string,
+    name?: string
+  } | null,
+  created_time?: string | null,
+  description?: string | null,
+  end_time?: string | null,
+  name?: string | null,
+  observation_end_time?: string | null,
+  results_first_available_date?: string | null,
+  start_time?: string | null,
+  type?: string | null,
+  updated_by?: {
+    id: string,
+    name?: string
+  } | null,
+  updated_time?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### copiesList
+
+`ads.copiesList`
+
+List copies of an ad
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.ads.copiesList({ adId: '120000000000003' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists the documented ad copies edge and supports Graph cursor pagination.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### copy
+
+`ads.copy`
+
+Create a paused copy of an ad
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.ads.copy({ adId: '120000000000003' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adId` | `string` | Yes | — |
+| `adSetId` | `string` | No | — |
+| `renameOptions` | `object` | No | — |
+
+Creates a copy with status_option fixed to PAUSED. Creative overrides are not exposed; optionally pass adSetId to choose a parent ad set. The non-idempotent write is not retried.
+
+<AccordionGroup>
+<Accordion title="renameOptions full type">
+
+```ts
+{
+  renameStrategy?: DEEP_RENAME | ONLY_TOP_LEVEL_RENAME | NO_RENAME,
+  renamePrefix?: string,
+  renameSuffix?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `copied_ad_id` | `string` | Yes | — |
+
+
+
+---
+
+### create
+
+`ads.create`
+
+Create an ad that may be delivered after review
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.ads.create({
+	accountId: '1234567890',
+	adSetId: '120000000000002',
+	name: 'Sample ad',
+	creativeId: '120000000000004',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `adSetId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `conversionDomain` | `string` | No | — |
+| `creativeId` | `string` | No | — |
+| `creativeSpec` | `object` | No | — |
+| `status` | `ACTIVE \| PAUSED` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+Use an existing creative ID or the documented inline AdCreative envelope: the creative form field contains a nested creative object with name and object_story_spec. Optionally pass a bare conversionDomain for campaigns that share data with a pixel; Meta requires it only for those campaigns. New ads enter review and can deliver after approval; this consequential write isn't automatically retried.
+
+<AccordionGroup>
+<Accordion title="creativeSpec full type">
+
+```ts
+{
+  name: string,
+  objectStorySpec: {
+    page_id: string,
+    link_data?: Record<string, any>,
+    photo_data?: Record<string, any>,
+    video_data?: Record<string, any>,
+    text_data?: Record<string, any>,
+    template_data?: Record<string, any>
+  },
+  authorizationCategory?: POLITICAL | POLITICAL_WITH_DIGITALLY_CREATED_MEDIA
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`ads.delete`
+
+Delete an ad
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.ads.delete({ adId: '120000000000003' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`ads.get`
+
+Retrieve an ad by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.ads.get({ adId: '120000000000003' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `account_id` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `configured_status` | `string \| null` | No | — |
+| `effective_status` | `string \| null` | No | — |
+
+
+
+---
+
+### labelsAdd
+
+`ads.labelsAdd`
+
+Associate documented ad labels with an ad
+
+**Risk:** `write`
+
+```ts
+await corsair.metaads.api.ads.labelsAdd({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adId` | `string` | Yes | — |
+| `adlabels` | `object[]` | Yes | — |
+| `executionOptions` | `validate_only[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="adlabels full type">
+
+```ts
+(
+  {
+    id: string
+  } | {
+    name: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`ads.list`
+
+List ads in an ad account
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.ads.list({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### previewsList
+
+`ads.previewsList`
+
+Generate an ad preview in a supported placement format
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.ads.previewsList({ adId: "120000000000003", adFormat: "DESKTOP_FEED_STANDARD" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adId` | `string` | Yes | — |
+| `adFormat` | `DESKTOP_FEED_STANDARD \| MOBILE_FEED_STANDARD \| RIGHT_COLUMN_STANDARD \| INSTAGRAM_STANDARD \| INSTAGRAM_STORY \| FACEBOOK_STORY_MOBILE \| INSTAGRAM_REELS` | Yes | — |
+| `creativeFeature` | `ig_video_native_subtitle \| image_animation \| product_browsing \| product_metadata_automation \| profile_card \| standard_enhancements_catalog \| text_overlay_translation` | No | — |
+| `dynamicAssetLabel` | `string` | No | — |
+| `productItemIds` | `string[]` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Returns provider HTML in the body field. Only seven common formats are accepted here; treat preview HTML as untrusted text and note Meta says the iframe is valid for 24 hours.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  body: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`ads.update`
+
+Change an ad name or delivery status
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.ads.update({ adId: '120000000000003', name: 'Updated ad' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `ACTIVE \| PAUSED \| DELETED \| ARCHIVED` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Ad Sets
+
+### activitiesList
+
+`adSets.activitiesList`
+
+Read activity history for an ad set
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.adSets.activitiesList({ adSetId: "120000000000002", category: "BUDGET", limit: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adSetId` | `string` | Yes | — |
+| `after` | `string` | No | — |
+| `businessId` | `string` | No | — |
+| `category` | `ACCOUNT \| AD \| AD_KEYWORDS \| AD_SET \| AUDIENCE \| BID \| BUDGET \| CAMPAIGN \| DATE \| STATUS \| TARGETING` | No | — |
+| `limit` | `number` | No | — |
+| `since` | `string` | No | — |
+| `uid` | `number` | No | — |
+| `until` | `string` | No | — |
+
+Reads ad-set activity history; businessId may be required by Meta for accounts associated with a business.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  actor_id?: string,
+  actor_name?: string,
+  application_id?: string,
+  application_name?: string,
+  date_time_in_timezone?: string,
+  event_time?: string,
+  event_type: string,
+  extra_data?: string,
+  object_id?: string,
+  object_name?: string,
+  object_type?: string,
+  translated_event_type?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### adCreativesList
+
+`adSets.adCreativesList`
+
+List creatives associated with an ad set
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.adSets.adCreativesList({ adSetId: '120000000000002' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adSetId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists creatives associated with the ad set and forwards standard Graph cursors.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### adRulesGovernedList
+
+`adSets.adRulesGovernedList`
+
+List rules that govern an ad set
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.adSets.adRulesGovernedList({ adSetId: '120000000000002', passEvaluation: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adSetId` | `string` | Yes | — |
+| `passEvaluation` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists rules that govern the ad set; passEvaluation is an optional documented filter.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  created_by?: {
+    id: string,
+    name?: string
+  },
+  created_time?: string,
+  disable_error_code?: number,
+  name?: string,
+  status?: string,
+  updated_time?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### adsList
+
+`adSets.adsList`
+
+List ads belonging to an ad set
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.adSets.adsList({ adSetId: '120000000000002' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adSetId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists the documented ads edge for one ad set; use the cursor fields to continue through results.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### adStudiesList
+
+`adSets.adStudiesList`
+
+List ad studies associated with an ad set
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.adSets.adStudiesList({ adSetId: '120000000000002' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adSetId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists ad studies associated with this ad set.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  business?: {
+    id: string,
+    name?: string
+  } | null,
+  canceled_time?: string | null,
+  cooldown_start_time?: string | null,
+  created_by?: {
+    id: string,
+    name?: string
+  } | null,
+  created_time?: string | null,
+  description?: string | null,
+  end_time?: string | null,
+  name?: string | null,
+  observation_end_time?: string | null,
+  results_first_available_date?: string | null,
+  start_time?: string | null,
+  type?: string | null,
+  updated_by?: {
+    id: string,
+    name?: string
+  } | null,
+  updated_time?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### budgetScheduleCreate
+
+`adSets.budgetScheduleCreate`
+
+Schedule a temporary ad-set budget increase
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.adSets.budgetScheduleCreate({
+  adSetId: "120000000000002",
+  budgetValue: 150,
+  budgetValueType: "MULTIPLIER",
+  timeStart: 1800000000,
+  timeEnd: 1800010800,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adSetId` | `string` | Yes | — |
+| `budgetValue` | `number` | Yes | — |
+| `budgetValueType` | `ABSOLUTE \| MULTIPLIER` | Yes | — |
+| `timeStart` | `number` | Yes | — |
+| `timeEnd` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### budgetSchedulesList
+
+`adSets.budgetSchedulesList`
+
+List scheduled high-demand budget periods on an ad set
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.adSets.budgetSchedulesList({ adSetId: '120000000000002' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adSetId` | `string` | Yes | — |
+| `timeStart` | `number \| string` | No | — |
+| `timeStop` | `number \| string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  budget_value?: number | string,
+  budget_value_type?: ABSOLUTE | MULTIPLIER,
+  recurrence_type?: string,
+  time_end?: string | number,
+  time_start?: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### copiesList
+
+`adSets.copiesList`
+
+List copies of an ad set
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.adSets.copiesList({ adSetId: '120000000000002' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adSetId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists the documented ad-set copies edge and supports Graph cursor pagination.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### copy
+
+`adSets.copy`
+
+Create a paused copy of an ad set
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.adSets.copy({ adSetId: '120000000000002' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adSetId` | `string` | Yes | — |
+| `campaignId` | `string` | No | — |
+| `renameOptions` | `object` | No | — |
+
+Creates a copy with status_option fixed to PAUSED. Deep-copying child ads is not exposed and the non-idempotent write is not retried. EU-targeted copies may require DSA payor and beneficiary settings.
+
+<AccordionGroup>
+<Accordion title="renameOptions full type">
+
+```ts
+{
+  renameStrategy?: DEEP_RENAME | ONLY_TOP_LEVEL_RENAME | NO_RENAME,
+  renamePrefix?: string,
+  renameSuffix?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `copied_adset_id` | `string` | Yes | — |
+| `ad_object_ids` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="ad_object_ids full type">
+
+```ts
+{
+  ad_object_type: unique_adcreative | ad | ad_set | campaign | opportunities | privacy_info_center | topline | ad_account | product,
+  source_id: string,
+  copied_id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`adSets.create`
+
+Create a targeted ad set with a budget and schedule
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.adSets.create({
+  accountId: "1234567890",
+  campaignId: "120000000000001",
+  name: "Sample ad set",
+  optimizationGoal: "REACH",
+  billingEvent: "IMPRESSIONS",
+  targeting: { geo_locations: { countries: ["US"] } },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `campaignId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `optimizationGoal` | `NONE \| APP_INSTALLS \| AD_RECALL_LIFT \| ENGAGED_USERS \| EVENT_RESPONSES \| IMPRESSIONS \| LEAD_GENERATION \| QUALITY_LEAD \| LINK_CLICKS \| OFFSITE_CONVERSIONS \| PAGE_LIKES \| POST_ENGAGEMENT \| QUALITY_CALL \| REACH \| LANDING_PAGE_VIEWS \| VISIT_INSTAGRAM_PROFILE \| ENGAGED_PAGE_VIEWS \| VALUE \| THRUPLAY \| DERIVED_EVENTS \| APP_INSTALLS_AND_OFFSITE_CONVERSIONS \| CONVERSATIONS \| IN_APP_VALUE \| MESSAGING_PURCHASE_CONVERSION \| MESSAGING_DEEP_CONVERSATION_AND_FOLLOW \| SUBSCRIBERS \| REMINDERS_SET \| MEANINGFUL_CALL_ATTEMPT \| PROFILE_VISIT \| PROFILE_AND_PAGE_ENGAGEMENT \| ADVERTISER_SILOED_VALUE \| AUTOMATIC_OBJECTIVE \| MESSAGING_APPOINTMENT_CONVERSION` | Yes | — |
+| `billingEvent` | `APP_INSTALLS \| CLICKS \| IMPRESSIONS \| LINK_CLICKS \| NONE \| OFFER_CLAIMS \| PAGE_LIKES \| POST_ENGAGEMENT \| THRUPLAY \| PURCHASE \| LISTING_INTERACTION` | Yes | — |
+| `targeting` | `Record<string, any>` | Yes | — |
+| `status` | `ACTIVE \| PAUSED` | No | — |
+| `dailyBudget` | `number` | No | — |
+| `lifetimeBudget` | `number` | No | — |
+| `startTime` | `string` | No | — |
+| `endTime` | `string` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+Supply optimizationGoal (REACH) and billingEvent (IMPRESSIONS), a documented Meta v27 ad-set example. This consequential write is destructive and isn't automatically retried. Budgets use integer smallest-currency units; initial status defaults to PAUSED. Meta v27 can enable cross-device expansion for eligible Sales ad sets unless the documented targeting automation setting is set to 0; EU targeting needs beneficiary/payer account defaults or explicit values.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`adSets.delete`
+
+Delete an ad set and affect ad delivery
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.adSets.delete({ adSetId: '120000000000002' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adSetId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`adSets.get`
+
+Retrieve an ad set by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.adSets.get({ adSetId: '120000000000002' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adSetId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `account_id` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `configured_status` | `string \| null` | No | — |
+| `effective_status` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`adSets.list`
+
+List ad sets in an ad account
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.adSets.list({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Pass returned paging.cursors.after to continue and use paging.hasNextPage to detect continuation; the adapter never returns or follows Meta's paging.next URL because it may contain credentials.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`adSets.update`
+
+Change an ad set status, budget, or end time
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.adSets.update({ adSetId: '120000000000002', name: 'Updated ad set' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adSetId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `ACTIVE \| PAUSED \| DELETED \| ARCHIVED` | No | — |
+| `dailyBudget` | `number` | No | — |
+| `lifetimeBudget` | `number` | No | — |
+| `endTime` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Async Creatives
+
+### create
+
+`asyncCreatives.create`
+
+Start a non-idempotent asynchronous creative creation job
+
+**Risk:** `write`
+
+```ts
+await corsair.metaads.api.asyncCreatives.create({
+  accountId: "1234567890",
+  name: "Creative job",
+  creativeSpec: { name: "Sample creative", objectStoryId: "1234567895_1234567897" },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `creativeSpec` | `object` | Yes | — |
+
+Starts a non-idempotent creative job with notifications fixed to OFF; notification URIs are intentionally unsupported and creative form data is removed from propagated errors.
+
+<AccordionGroup>
+<Accordion title="creativeSpec full type">
+
+```ts
+{
+  name: string,
+  objectStoryId?: string,
+  objectStorySpec?: {
+    page_id: string,
+    link_data?: Record<string, any>,
+    photo_data?: Record<string, any>,
+    video_data?: Record<string, any>,
+    text_data?: Record<string, any>,
+    template_data?: Record<string, any>
+  },
+  authorizationCategory?: POLITICAL | POLITICAL_WITH_DIGITALLY_CREATED_MEDIA
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+---
+
+### list
+
+`asyncCreatives.list`
+
+List asynchronous ad creative jobs for an account
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.asyncCreatives.list({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `isCompleted` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists safe asynchronous creative job status fields and supports Graph cursor pagination.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  owner_id?: string | number,
+  name?: string,
+  is_completed?: boolean,
+  total_count?: number,
+  initial_count?: number,
+  in_progress_count?: number,
+  success_count?: number,
+  error_count?: number,
+  canceled_count?: number,
+  notification_mode?: OFF | ON_COMPLETE
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Async Requests
+
+### cancel
+
+`asyncRequests.cancel`
+
+Cancel one asynchronous request before processing
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.asyncRequests.cancel({ requestId: '1234567899' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestId` | `string \| number` | Yes | — |
+
+Cancels one request only while it remains unprocessed and returns literal true; numeric or string request IDs are accepted and cancellation is marked destructive.
+
+
+
+**Output:** `true`
+
+
+---
+
+### listForAdSet
+
+`asyncRequests.listForAdSet`
+
+List safe status fields for requests associated with an ad set
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.asyncRequests.listForAdSet({
+	adSetId: '120000000000002',
+	status: ['IN_PROGRESS'],
+	fields: ['id', 'scope_object_id', 'status'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `adSetId` | `string` | Yes | — |
+| `status` | `(INITIAL \| IN_PROGRESS \| SUCCESS \| ERROR \| CANCELED \| PENDING_DEPENDENCY \| CANCELED_DEPENDENCY \| ERROR_DEPENDENCY \| ERROR_CONFLICTS \| USER_CANCELED \| USER_CANCELED_DEPENDENCY \| PROCESS_BY_EVENT_PROCESSOR \| PROCESS_BY_AD_ASYNC_ENGINE \| Initial \| In_progress \| Success \| Error \| Canceled)[]` | No | — |
+| `fields` | `(id \| scope_object_id \| status)[]` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Only request IDs, parent IDs and statuses can be selected; use the documented statuses filter and cursor paging.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  scope_object_id?: string | number,
+  status?: INITIAL | IN_PROGRESS | SUCCESS | ERROR | CANCELED | PENDING_DEPENDENCY | CANCELED_DEPENDENCY | ERROR_DEPENDENCY | ERROR_CONFLICTS | USER_CANCELED | USER_CANCELED_DEPENDENCY | PROCESS_BY_EVENT_PROCESSOR | PROCESS_BY_AD_ASYNC_ENGINE | Initial | In_progress | Success | Error | Canceled
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForSet
+
+`asyncRequests.listForSet`
+
+List safe status fields for requests in a set
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.asyncRequests.listForSet({
+	requestSetId: '1234567898',
+	status: ['SUCCESS', 'ERROR'],
+	fields: ['id', 'scope_object_id', 'status'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestSetId` | `string \| number` | Yes | — |
+| `status` | `(INITIAL \| IN_PROGRESS \| SUCCESS \| ERROR \| CANCELED \| PENDING_DEPENDENCY \| CANCELED_DEPENDENCY \| ERROR_DEPENDENCY \| ERROR_CONFLICTS \| USER_CANCELED \| USER_CANCELED_DEPENDENCY \| PROCESS_BY_EVENT_PROCESSOR \| PROCESS_BY_AD_ASYNC_ENGINE \| Initial \| In_progress \| Success \| Error \| Canceled)[]` | No | — |
+| `fields` | `(id \| scope_object_id \| status)[]` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Accepts numeric or string requestSetId values and stringifies the Graph path. Only request IDs, parent IDs and statuses can be selected; raw request input and result/error content are excluded.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  scope_object_id?: string | number,
+  status?: INITIAL | IN_PROGRESS | SUCCESS | ERROR | CANCELED | PENDING_DEPENDENCY | CANCELED_DEPENDENCY | ERROR_DEPENDENCY | ERROR_CONFLICTS | USER_CANCELED | USER_CANCELED_DEPENDENCY | PROCESS_BY_EVENT_PROCESSOR | PROCESS_BY_AD_ASYNC_ENGINE | Initial | In_progress | Success | Error | Canceled
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Async Request Sets
+
+### cancel
+
+`asyncRequestSets.cancel`
+
+Cancel an asynchronous request set before processing
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.asyncRequestSets.cancel({ requestSetId: '1234567898' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestSetId` | `string \| number` | Yes | — |
+
+Cancels a request set only while it remains unprocessed and returns literal true; numeric or string IDs are accepted and cancellation is marked destructive.
+
+
+
+**Output:** `true`
+
+
+---
+
+### create
+
+`asyncRequestSets.create`
+
+Start ad creation requests that may lead to delivery and spend
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.asyncRequestSets.create({
+  accountId: "1234567890",
+  name: "Ad request set",
+  adSpecs: [{ name: "Paused ad", adset_id: "120000000000002", status: "PAUSED" }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `adSpecs` | `Record<string, string>[]` | Yes | — |
+
+Starts potentially deliverable ad creation from documented string-valued ad spec maps; notifications are fixed to OFF, request data is removed from propagated errors, and the write is not retried.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+---
+
+### get
+
+`asyncRequestSets.get`
+
+Read safe status and count fields for an async request set
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.asyncRequestSets.get({
+	requestSetId: '1234567898',
+	fields: ['id', 'name', 'is_completed'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestSetId` | `string \| number` | Yes | — |
+| `fields` | `(id \| owner_id \| name \| is_completed \| total_count \| initial_count \| in_progress_count \| success_count \| error_count \| canceled_count \| notification_mode)[]` | No | — |
+
+Accepts numeric or string requestSetId values and stringifies the Graph path. Only documented status/count fields are selectable; notification_uri is omitted to avoid exposing callback URLs.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `owner_id` | `string \| number` | No | — |
+| `name` | `string` | No | — |
+| `is_completed` | `boolean` | No | — |
+| `total_count` | `number` | No | — |
+| `initial_count` | `number` | No | — |
+| `in_progress_count` | `number` | No | — |
+| `success_count` | `number` | No | — |
+| `error_count` | `number` | No | — |
+| `canceled_count` | `number` | No | — |
+| `notification_mode` | `OFF \| ON_COMPLETE` | No | — |
+
+
+
+---
+
+### list
+
+`asyncRequestSets.list`
+
+List asynchronous ad request sets for an account
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.asyncRequestSets.list({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `isCompleted` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists safe status/count fields and supports Graph cursor pagination.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  owner_id?: string | number,
+  name?: string,
+  is_completed?: boolean,
+  total_count?: number,
+  initial_count?: number,
+  in_progress_count?: number,
+  success_count?: number,
+  error_count?: number,
+  canceled_count?: number,
+  notification_mode?: OFF | ON_COMPLETE
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`asyncRequestSets.update`
+
+Rename an asynchronous ad request set
+
+**Risk:** `write`
+
+```ts
+await corsair.metaads.api.asyncRequestSets.update({ requestSetId: '1234567898', name: 'Renamed request set' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requestSetId` | `string \| number` | Yes | — |
+| `name` | `string` | Yes | — |
+
+Renames a request set and returns literal true on success. Numeric or string IDs are accepted; notification_uri and notification_mode are omitted because outbound callback handling is outside this plugin.
+
+
+
+**Output:** `true`
+
+
+---
+
+## Audiences
+
+### acceptTerms
+
+`audiences.acceptTerms`
+
+Accept custom-audience terms for an account or business
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.audiences.acceptTerms({ accountId: '1234567890', termsId: '1234567896' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `termsId` | `string` | Yes | — |
+| `businessId` | `string` | No | — |
+
+Accepts the provider's custom-audience terms for the specified ad account; this legal acceptance is marked destructive.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### adAccountsList
+
+`audiences.adAccountsList`
+
+List ad accounts with access to a custom audience
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.audiences.adAccountsList({ audienceId: "120000000000005", permissions: "targeting" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audienceId` | `string` | Yes | — |
+| `permissions` | `targeting \| targeting_and_insights` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists shared ad-account IDs and can filter by targeting or targeting_and_insights permission.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### adAccountsShare
+
+`audiences.adAccountsShare`
+
+Share a custom audience with specified ad accounts
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.audiences.adAccountsShare({ audienceId: "120000000000005", adAccountIds: ["1234567890"], permissions: "targeting" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audienceId` | `string` | Yes | — |
+| `adAccountIds` | `string[]` | Yes | — |
+| `permissions` | `targeting \| targeting_and_insights` | Yes | — |
+| `replace` | `boolean` | No | — |
+
+Requires a business to claim both the owner and recipient accounts. Sharing grants cross-account access and is a destructive operation; use explicit recipient IDs.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `sharing_data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="sharing_data full type">
+
+```ts
+{
+  ad_acct_id: string,
+  business_id?: string | number,
+  audience_share_status?: string,
+  errors?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### adAccountsUnshare
+
+`audiences.adAccountsUnshare`
+
+Revoke ad account access to a shared custom audience
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.audiences.adAccountsUnshare({
+	audienceId: '120000000000005',
+	adAccountIds: ['1234567890'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audienceId` | `string` | Yes | — |
+| `adAccountIds` | `string[]` | Yes | — |
+
+Revoking access may stop recipient ads using the audience, and Meta says those ads cannot be restarted.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### adsList
+
+`audiences.adsList`
+
+List ads using a custom audience
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.audiences.adsList({ audienceId: '120000000000005' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audienceId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists ads associated with the custom audience; this is a read-only edge and requires permission to read the audience and its ads.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`audiences.create`
+
+Create a custom audience object
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.audiences.create({ accountId: '1234567890', name: 'Sample audience' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `customerFileSource` | `USER_PROVIDED_ONLY \| PARTNER_PROVIDED_ONLY \| BOTH_USER_AND_PARTNER_PROVIDED` | No | — |
+| `subtype` | `CUSTOM` | No | Defaults to "CUSTOM". |
+
+Creates a blank CUSTOM audience. Pass customerFileSource (USER_PROVIDED_ONLY, PARTNER_PROVIDED_ONLY, or BOTH_USER_AND_PARTNER_PROVIDED) for customer-file uploads; the field is optional in the general create reference, though Meta's Customer File guide says to specify it for that workflow. Add or remove members later with usersAdd/usersRemove; only single-key SHA-256 email or phone hashes are accepted, up to 10000 per request. Adds also require upload-session and batch metadata. Raw identifiers and multi-key matching are not exposed. Request payloads are omitted from propagated error metadata and echoed invalid-entry samples are stripped from successful results.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`audiences.delete`
+
+Permanently delete a custom audience
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.audiences.delete({ audienceId: '120000000000005' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audienceId` | `string` | Yes | — |
+
+Deletion is permanent and ads using the audience stop; they cannot be restarted.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`audiences.get`
+
+Retrieve a custom audience by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.audiences.get({ audienceId: '120000000000005' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audienceId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `account_id` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `configured_status` | `string \| null` | No | — |
+| `effective_status` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`audiences.list`
+
+List custom audiences for an ad account
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.audiences.list({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sessionsList
+
+`audiences.sessionsList`
+
+List upload sessions for a custom audience
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.audiences.sessionsList({ audienceId: '120000000000005' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audienceId` | `string` | Yes | — |
+| `sessionId` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Reads documented upload session status fields; it does not upload audience members.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  end_time?: string,
+  num_invalid_entries?: string,
+  num_matched?: string,
+  num_received?: string,
+  progress?: string,
+  session_id?: string,
+  stage?: string,
+  start_time?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`audiences.update`
+
+Change custom audience metadata
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.audiences.update({ audienceId: '120000000000005', name: 'Updated audience' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audienceId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### usersAdd
+
+`audiences.usersAdd`
+
+Upload a batch of SHA-256 customer hashes to a custom audience
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.audiences.usersAdd({
+  audienceId: "120000000000005",
+  schema: "EMAIL_SHA256",
+  hashes: ["f1904cf1a9d73a55fa5de0ac823c4403ded71afd4c3248d00bdcd0866552bb79"],
+  sessionId: 123456789,
+  batchSequence: 1,
+  lastBatch: true,
+  estimatedTotal: 1,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audienceId` | `string` | Yes | — |
+| `schema` | `EMAIL_SHA256 \| PHONE_SHA256` | Yes | — |
+| `hashes` | `string[]` | Yes | — |
+| `sessionId` | `number` | Yes | — |
+| `batchSequence` | `number` | Yes | — |
+| `lastBatch` | `boolean` | Yes | — |
+| `estimatedTotal` | `number` | No | — |
+
+Set schema to EMAIL_SHA256 or PHONE_SHA256; only single-key SHA-256 hashes are accepted, up to 10000 per batch. Use a unique ad-account session ID and sequential batch numbers; input payloads are omitted from propagated error metadata and invalid-entry samples are stripped from results.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audience_id` | `string` | Yes | — |
+| `session_id` | `string \| number` | Yes | — |
+| `num_received` | `number` | Yes | — |
+| `num_invalid_entries` | `number` | Yes | — |
+
+
+
+---
+
+### usersRemove
+
+`audiences.usersRemove`
+
+Remove a batch of SHA-256 customer hashes from a custom audience
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.audiences.usersRemove({
+  audienceId: "120000000000005",
+  schema: "EMAIL_SHA256",
+  hashes: ["f1904cf1a9d73a55fa5de0ac823c4403ded71afd4c3248d00bdcd0866552bb79"],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audienceId` | `string` | Yes | — |
+| `schema` | `EMAIL_SHA256 \| PHONE_SHA256` | Yes | — |
+| `hashes` | `string[]` | Yes | — |
+
+Set schema to EMAIL_SHA256 or PHONE_SHA256; removes up to 10000 single-key SHA-256 hashes. Input payloads are omitted from propagated error metadata.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audience_id` | `string` | Yes | — |
+| `session_id` | `string \| number` | Yes | — |
+| `num_received` | `number` | Yes | — |
+| `num_invalid_entries` | `number` | Yes | — |
+
+
+
+---
+
+### usersReplace
+
+`audiences.usersReplace`
+
+Replace a custom audience membership batch with hashed records
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.audiences.usersReplace({
+  audienceId: "120000000000005",
+  schema: "EMAIL_SHA256",
+  hashes: ["f1904cf1a9d73a55fa5de0ac823c4403ded71afd4c3248d00bdcd0866552bb79"],
+  sessionId: 123456790,
+  batchSequence: 1,
+  lastBatch: true,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audienceId` | `string` | Yes | — |
+| `schema` | `EMAIL_SHA256 \| PHONE_SHA256` | Yes | — |
+| `hashes` | `string[]` | Yes | — |
+| `sessionId` | `number` | Yes | — |
+| `batchSequence` | `number` | Yes | — |
+| `lastBatch` | `boolean` | Yes | — |
+| `estimatedTotal` | `number` | No | — |
+
+Replaces audience members in a unique upload session using only single-key SHA-256 email or phone hashes. This is a destructive membership operation; request values and echoed samples are redacted.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `audience_id` | `string` | Yes | — |
+| `session_id` | `string \| number` | Yes | — |
+| `num_received` | `number` | Yes | — |
+| `num_invalid_entries` | `number` | Yes | — |
+
+
+
+---
+
+## Campaigns
+
+### adRulesGovernedList
+
+`campaigns.adRulesGovernedList`
+
+List rules that govern a campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.campaigns.adRulesGovernedList({ campaignId: '120000000000001', passEvaluation: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `passEvaluation` | `boolean` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists rules that govern the campaign; passEvaluation is an optional documented filter.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  created_by?: {
+    id: string,
+    name?: string
+  },
+  created_time?: string,
+  disable_error_code?: number,
+  name?: string,
+  status?: string,
+  updated_time?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### adSetsList
+
+`campaigns.adSetsList`
+
+List ad sets belonging to a campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.campaigns.adSetsList({ campaignId: '120000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists the documented ad sets edge for one campaign; use the cursor fields to continue through results.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### adsList
+
+`campaigns.adsList`
+
+List ads belonging to a campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.campaigns.adsList({ campaignId: '120000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists the documented ads edge for one campaign; use the cursor fields to continue through results.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### adStudiesList
+
+`campaigns.adStudiesList`
+
+List ad studies associated with a campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.campaigns.adStudiesList({ campaignId: '120000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists ad studies associated with this campaign.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  business?: {
+    id: string,
+    name?: string
+  } | null,
+  canceled_time?: string | null,
+  cooldown_start_time?: string | null,
+  created_by?: {
+    id: string,
+    name?: string
+  } | null,
+  created_time?: string | null,
+  description?: string | null,
+  end_time?: string | null,
+  name?: string | null,
+  observation_end_time?: string | null,
+  results_first_available_date?: string | null,
+  start_time?: string | null,
+  type?: string | null,
+  updated_by?: {
+    id: string,
+    name?: string
+  } | null,
+  updated_time?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### budgetScheduleCreate
+
+`campaigns.budgetScheduleCreate`
+
+Schedule a temporary campaign budget increase
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.campaigns.budgetScheduleCreate({
+  campaignId: "120000000000001",
+  budgetValue: 150,
+  budgetValueType: "ABSOLUTE",
+  timeStart: 1800000000,
+  timeEnd: 1800010800,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `budgetValue` | `number` | Yes | — |
+| `budgetValueType` | `ABSOLUTE \| MULTIPLIER` | Yes | — |
+| `timeStart` | `number` | Yes | — |
+| `timeEnd` | `number` | Yes | — |
+
+Schedules a high-demand budget period. The daily-budget, 3-hour minimum, 8x ceiling, and account capability constraints remain provider-enforced; this write is not retried.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### budgetSchedulesList
+
+`campaigns.budgetSchedulesList`
+
+List scheduled high-demand budget periods on a campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.campaigns.budgetSchedulesList({ campaignId: '120000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `timeStart` | `number \| string` | No | — |
+| `timeStop` | `number \| string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Supports the documented timeStart/timeStop filters and Graph cursor paging.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  budget_value?: number | string,
+  budget_value_type?: ABSOLUTE | MULTIPLIER,
+  recurrence_type?: string,
+  time_end?: string | number,
+  time_start?: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### copiesList
+
+`campaigns.copiesList`
+
+List copies of a campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.campaigns.copiesList({ campaignId: '120000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists the documented campaign copies edge and supports Graph cursor pagination.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### copy
+
+`campaigns.copy`
+
+Create a paused, shallow copy of a campaign
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.campaigns.copy({ campaignId: '120000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `renameOptions` | `object` | No | — |
+
+Creates a shallow campaign copy with status_option fixed to PAUSED. Deep-copying child ads and arbitrary campaign parameter overrides are not exposed, and the non-idempotent write is not retried.
+
+<AccordionGroup>
+<Accordion title="renameOptions full type">
+
+```ts
+{
+  renameStrategy?: DEEP_RENAME | ONLY_TOP_LEVEL_RENAME | NO_RENAME,
+  renamePrefix?: string,
+  renameSuffix?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `copied_campaign_id` | `string` | Yes | — |
+| `ad_object_ids` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="ad_object_ids full type">
+
+```ts
+{
+  ad_object_type: unique_adcreative | ad | ad_set | campaign | opportunities | privacy_info_center | topline | ad_account | product,
+  source_id: string,
+  copied_id: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`campaigns.create`
+
+Create a campaign that can spend an ad account budget
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.campaigns.create({
+  accountId: "1234567890",
+  name: "Sample campaign",
+  objective: "OUTCOME_TRAFFIC",
+  specialAdCategories: [],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `objective` | `OUTCOME_AWARENESS \| OUTCOME_ENGAGEMENT \| OUTCOME_LEADS \| OUTCOME_SALES \| OUTCOME_TRAFFIC \| OUTCOME_APP_PROMOTION \| APP_INSTALLS \| BRAND_AWARENESS \| CONVERSIONS \| LEAD_GENERATION \| LINK_CLICKS \| REACH \| VIDEO_VIEWS` | Yes | — |
+| `specialAdCategories` | `(NONE \| EMPLOYMENT \| HOUSING \| CREDIT \| ISSUES_ELECTIONS_POLITICS \| ONLINE_GAMBLING_AND_GAMING \| FINANCIAL_PRODUCTS_SERVICES)[]` | Yes | — |
+| `status` | `ACTIVE \| PAUSED` | No | — |
+| `dailyBudget` | `number` | No | — |
+| `lifetimeBudget` | `number` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+Campaign creation requires objective (for example OUTCOME_TRAFFIC) and specialAdCategories (use [] when no special category applies). Meta v27's campaign-create example uses OUTCOME_TRAFFIC with an empty special_ad_categories array. This consequential write is destructive and isn't automatically retried. Budget values are integer smallest-currency units.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`campaigns.delete`
+
+Delete a campaign and affect its delivery
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.campaigns.delete({ campaignId: '120000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Retrieve a campaign by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.campaigns.get({ campaignId: '120000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `account_id` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `configured_status` | `string \| null` | No | — |
+| `effective_status` | `string \| null` | No | — |
+
+
+
+---
+
+### labelsAdd
+
+`campaigns.labelsAdd`
+
+Associate documented ad labels with a campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.metaads.api.campaigns.labelsAdd({
+	campaignId: '120000000000001',
+	adlabels: [{ id: '120000000000010' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `adlabels` | `object[]` | Yes | — |
+| `executionOptions` | `validate_only[]` | No | — |
+
+Associates documented label IDs or names with a campaign. The Ad Set association endpoint is not exposed because its route-specific reference could not be verified.
+
+<AccordionGroup>
+<Accordion title="adlabels full type">
+
+```ts
+(
+  {
+    id: string
+  } | {
+    name: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+List campaigns for an ad account
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.campaigns.list({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Pass returned paging.cursors.after to continue and use paging.hasNextPage to detect continuation; the adapter never returns or follows Meta's paging.next URL because it may contain credentials.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Change campaign status or its budget and spend cap
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.campaigns.update({ campaignId: '120000000000001', name: 'Updated campaign' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `ACTIVE \| PAUSED \| DELETED \| ARCHIVED` | No | — |
+| `dailyBudget` | `number` | No | — |
+| `lifetimeBudget` | `number` | No | — |
+| `spendCap` | `number` | No | — |
+
+Budget and spend-cap edits are consequential writes and aren't automatically retried.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Creatives
+
+### create
+
+`creatives.create`
+
+Create a creative from an existing Page post
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.creatives.create({ accountId: '1234567890', name: 'Sample creative', objectStoryId: '1234567890_1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `objectStoryId` | `string` | No | — |
+| `objectStorySpec` | `object` | No | — |
+| `authorizationCategory` | `POLITICAL \| POLITICAL_WITH_DIGITALLY_CREATED_MEDIA` | No | — |
+| `idempotencyKey` | `string` | No | — |
+
+Use either an existing Page post ID or object_story_spec with page_id and exactly one documented content type: link_data, photo_data, video_data, text_data, or template_data. Political issue/election creatives need the documented authorizationCategory.
+
+<AccordionGroup>
+<Accordion title="objectStorySpec full type">
+
+```ts
+{
+  page_id: string,
+  link_data?: Record<string, any>,
+  photo_data?: Record<string, any>,
+  video_data?: Record<string, any>,
+  text_data?: Record<string, any>,
+  template_data?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### delete
+
+`creatives.delete`
+
+Delete an ad creative
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.creatives.delete({ creativeId: '120000000000004' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `creativeId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`creatives.get`
+
+Retrieve an ad creative by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.creatives.get({ creativeId: '120000000000004' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `creativeId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `account_id` | `string` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `configured_status` | `string \| null` | No | — |
+| `effective_status` | `string \| null` | No | — |
+
+
+
+---
+
+### insightsList
+
+`creatives.insightsList`
+
+Read the documented quality insight for a creative
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.creatives.insightsList({ creativeId: '120000000000004' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `creativeId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Reads the documented aesthetics quality metric; it does not expose a generalized performance-report surface.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  aesthetics?: {
+    key: string,
+    value: string
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### labelsAdd
+
+`creatives.labelsAdd`
+
+Associate documented ad labels with a creative
+
+**Risk:** `write`
+
+```ts
+await corsair.metaads.api.creatives.labelsAdd({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `creativeId` | `string` | Yes | — |
+| `adlabels` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="adlabels full type">
+
+```ts
+(
+  {
+    id: string
+  } | {
+    name: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`creatives.list`
+
+List ad creatives stored in an ad account
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.creatives.list({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### previewsList
+
+`creatives.previewsList`
+
+Generate a preview for a creative in a supported placement
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.creatives.previewsList({ creativeId: "120000000000004", adFormat: "INSTAGRAM_STANDARD" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `creativeId` | `string` | Yes | — |
+| `adFormat` | `DESKTOP_FEED_STANDARD \| MOBILE_FEED_STANDARD \| RIGHT_COLUMN_STANDARD \| INSTAGRAM_STANDARD \| INSTAGRAM_STORY \| FACEBOOK_STORY_MOBILE \| INSTAGRAM_REELS` | Yes | — |
+| `creativeFeature` | `ig_video_native_subtitle \| image_animation \| product_browsing \| product_metadata_automation \| profile_card \| standard_enhancements_catalog \| text_overlay_translation` | No | — |
+| `dynamicAssetLabel` | `string` | No | — |
+| `productItemIds` | `string[]` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+| `width` | `number` | No | — |
+| `height` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Returns provider HTML in the body field. Only seven common formats are accepted here; treat preview HTML as untrusted text and note Meta says the iframe is valid for 24 hours.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  body: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`creatives.update`
+
+Change an ad creative name
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.creatives.update({ creativeId: '120000000000004', name: 'Updated creative' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `creativeId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Custom Conversions
+
+### create
+
+`customConversions.create`
+
+Create a measurement conversion definition for an ad account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.customConversions.create({
+  accountId: "1234567890",
+  name: "Completed checkout",
+  actionSourceType: "website",
+  customEventType: "PURCHASE",
+  eventSourceId: "1234567894",
+  rule: "url contains /checkout",
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `actionSourceType` | `app \| chat \| email \| other \| phone_call \| physical_store \| system_generated \| website \| business_messaging` | No | — |
+| `advancedRule` | `string` | No | — |
+| `customEventType` | `ADD_PAYMENT_INFO \| ADD_TO_CART \| ADD_TO_WISHLIST \| COMPLETE_REGISTRATION \| CONTENT_VIEW \| INITIATED_CHECKOUT \| LEAD \| PURCHASE \| SEARCH \| CONTACT \| CUSTOMIZE_PRODUCT \| DONATE \| FIND_LOCATION \| SCHEDULE \| START_TRIAL \| SUBMIT_APPLICATION \| SUBSCRIBE \| LISTING_INTERACTION \| FACEBOOK_SELECTED \| OTHER` | No | — |
+| `defaultConversionValue` | `number` | No | — |
+| `description` | `string` | No | — |
+| `eventSourceId` | `string \| number` | No | — |
+| `name` | `string` | Yes | — |
+| `rule` | `string` | No | — |
+
+Creates a custom conversion definition from documented event-source fields; this operation does not send Conversions API events.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `is_custom_event_type_predicted` | `string` | Yes | — |
+
+
+
+---
+
+## High Demand Periods
+
+### get
+
+`highDemandPeriods.get`
+
+Read one documented high-demand budget period
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.highDemandPeriods.get({ periodId: '120000000000020' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `periodId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+Reads a single high-demand period by its Graph object ID.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `budget_value` | `number \| string` | No | — |
+| `budget_value_type` | `ABSOLUTE \| MULTIPLIER` | No | — |
+| `recurrence_type` | `string` | No | — |
+| `time_end` | `string \| number` | No | — |
+| `time_start` | `string \| number` | No | — |
+
+
+
+---
+
+## Images
+
+### delete
+
+`images.delete`
+
+Dissociate an unused image from an ad account library
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.images.delete({ accountId: '1234567890', hash: '0123456789abcdef0123456789abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `hash` | `string` | Yes | — |
+| `imageId` | `string` | No | — |
+
+Only images not currently used by an ad creative can be deleted from the account library.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### list
+
+`images.list`
+
+List images stored in an ad account library
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.images.list({ accountId: '1234567890', name: 'campaign image' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `hashes` | `string[]` | No | — |
+| `minHeight` | `number` | No | — |
+| `minWidth` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+| `summary` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  hash: string,
+  id?: string,
+  account_id?: string,
+  created_time?: string,
+  creatives?: string[],
+  height?: number,
+  name?: string,
+  original_height?: number,
+  original_width?: number,
+  permalink_url?: string,
+  status?: ACTIVE | INTERNAL | DELETED,
+  updated_time?: string,
+  url?: string,
+  url_128?: string,
+  width?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+
+<Accordion title="summary full type">
+
+```ts
+{
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upload
+
+`images.upload`
+
+Upload a base64 image or copy an image into an ad account library
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.images.upload({ accountId: '1234567890', bytes: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/jN8AAAAASUVORK5CYII=' });
+```
+
+**Input:** `object`
+
+Accepts base64 bytes or copies an image by source account and hash. The adapter removes upload form data from propagated core errors.
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  accountId: string,
+  bytes: string
+} | {
+  accountId: string,
+  copyFrom: {
+    sourceAccountId: string,
+    hash: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+Record<string, {
+  hash: string,
+  url?: string,
+  url_128?: string,
+  url_256?: string,
+  url_256_height?: number,
+  url_256_width?: number,
+  height?: number,
+  width?: number,
+  name?: string
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Insights
+
+### createAsync
+
+`insights.createAsync`
+
+Start a non-idempotent asynchronous Ads Insights report job
+
+**Risk:** `write`
+
+```ts
+await corsair.metaads.api.insights.createAsync({
+	accountId: '1234567890',
+	fields: ['impressions', 'spend'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `fields` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | Yes | — |
+| `datePreset` | `today \| yesterday \| this_month \| last_month \| this_quarter \| maximum \| data_maximum \| last_3d \| last_7d \| last_14d \| last_28d \| last_30d \| last_90d \| last_week_mon_sun \| last_week_sun_sat \| last_quarter \| last_year \| this_week_mon_today \| this_week_sun_today \| this_year` | No | — |
+| `since` | `string` | No | — |
+| `until` | `string` | No | — |
+| `level` | `account \| campaign \| adset \| ad` | No | — |
+| `breakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type \| ad_format_asset \| age \| app_id \| body_asset \| call_to_action_asset \| country \| creative_automation_asset_id \| description_asset \| device_platform \| dma \| frequency_value \| gender \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| image_asset \| impression_device \| link_url_asset \| pa_creator_ig_handle \| place_page_id \| platform_position \| product_id \| publisher_platform \| region \| skan_campaign_id \| skan_conversion_id \| title_asset \| user_segment_key \| video_asset)[]` | No | — |
+| `actionBreakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type)[]` | No | — |
+| `actionAttributionWindows` | `(1d_view \| 7d_view \| 28d_view \| 1d_click \| 7d_click \| 28d_click \| 1d_ev \| dda \| default \| 7d_view_first_conversion \| 28d_view_first_conversion \| 7d_view_all_conversions \| 28d_view_all_conversions \| skan_view \| skan_click \| skan_click_second_postback \| skan_view_second_postback \| skan_click_third_postback \| skan_view_third_postback \| incrementality \| custom \| 1d_sequenced \| 7d_sequenced \| 28d_sequenced)[]` | No | — |
+| `filtering` | `object[]` | No | — |
+| `timeIncrement` | `monthly \| all_days \| number` | No | — |
+| `sort` | `string[]` | No | — |
+| `summary` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | No | — |
+| `summaryActionBreakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type)[]` | No | — |
+| `defaultSummary` | `boolean` | No | — |
+| `productIdLimit` | `number` | No | — |
+
+Starts a non-idempotent Insights report job. Poll insights.getAsyncReport until completion, then call insights.getAsyncResults; report IDs expire after 30 days.
+
+<AccordionGroup>
+<Accordion title="filtering full type">
+
+```ts
+{
+  field: string,
+  operator: EQUAL | NOT_EQUAL | GREATER_THAN | GREATER_THAN_OR_EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL | IN_RANGE | NOT_IN_RANGE | CONTAIN | NOT_CONTAIN | CONTAINS_ANY | CONTAINS_ALL | NOT_CONTAINS_ANY | STEM_MATCH | IN | NOT_IN | STARTS_WITH | ENDS_WITH | ANY | ALL | AFTER | BEFORE | ON_OR_AFTER | ON_OR_BEFORE | NONE | TOP,
+  value: string | number | boolean | (string | number | boolean)[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `report_run_id` | `string \| number` | Yes | — |
+
+
+
+---
+
+### enableFeature
+
+`insights.enableFeature`
+
+Permanently enable an Insights feature for an ad account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.insights.enableFeature({ accountId: "1234567890", featureName: "impression_device" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `featureName` | `comscore \| impression_device \| time_of_day_viewer_tz \| frequency_value` | Yes | — |
+
+Pass a documented featureName: comscore, impression_device, time_of_day_viewer_tz, or frequency_value. This is a one-way enable operation; Meta documents no API to disable a feature. New breakdown data can take about 24 hours to become available.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### getAsyncReport
+
+`insights.getAsyncReport`
+
+Read the status and completion details of an Insights report job
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.insights.getAsyncReport({
+	reportRunId: '123456789012345',
+	fields: ['id', 'async_status', 'async_percent_completion'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reportRunId` | `string \| number` | Yes | — |
+| `fields` | `(id \| account_id \| time_ref \| time_completed \| async_status \| async_percent_completion \| error_code \| error_message \| error_subcode \| error_user_title \| error_user_msg)[]` | No | — |
+
+Accept numeric or string reportRunId values, including report_run_id returned by createAsync, and poll async_status and async_percent_completion. Failed jobs include documented error details on v25 and later.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | No | — |
+| `account_id` | `string` | No | — |
+| `time_ref` | `number` | No | — |
+| `time_completed` | `number` | No | — |
+| `async_status` | `string` | No | — |
+| `async_percent_completion` | `number` | No | — |
+| `error_code` | `number` | No | — |
+| `error_message` | `string` | No | — |
+| `error_subcode` | `number` | No | — |
+| `error_user_title` | `string` | No | — |
+| `error_user_msg` | `string` | No | — |
+
+
+
+---
+
+### getAsyncResults
+
+`insights.getAsyncResults`
+
+Read paginated results for a completed Insights report job
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.insights.getAsyncResults({ reportRunId: '123456789012345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reportRunId` | `string \| number` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Accept numeric or string reportRunId values, including report_run_id returned by createAsync, and fetch cursor-paginated results only after the report job completes.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+| `summary` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  account_id?: string,
+  campaign_id?: string,
+  adset_id?: string,
+  ad_id?: string,
+  date_start?: string,
+  date_stop?: string,
+  impressions?: string,
+  reach?: string,
+  frequency?: string,
+  spend?: string,
+  clicks?: string,
+  inline_link_clicks?: string,
+  cpc?: string,
+  cpm?: string,
+  ctr?: string,
+  inline_link_click_ctr?: string,
+  outbound_clicks?: {
+    action_type?: string,
+    value?: string
+  }[],
+  unique_clicks?: string,
+  unique_impressions?: string,
+  actions?: {
+    action_type?: string,
+    value?: string
+  }[],
+  action_values?: {
+    action_type?: string,
+    value?: string
+  }[],
+  ad_name?: string,
+  campaign_name?: string,
+  adset_name?: string,
+  age?: string,
+  gender?: string,
+  country?: string,
+  region?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`insights.list`
+
+Read paginated, filtered and broken-down ad reporting metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.insights.list({
+	accountId: '1234567890',
+	fields: ['impressions', 'spend'],
+	breakdowns: ['age', 'gender'],
+	filtering: [{
+		field: 'campaign.id',
+		operator: 'IN',
+		value: ['120000000000001'],
+	}],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `fields` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | Yes | — |
+| `datePreset` | `today \| yesterday \| this_month \| last_month \| this_quarter \| maximum \| data_maximum \| last_3d \| last_7d \| last_14d \| last_28d \| last_30d \| last_90d \| last_week_mon_sun \| last_week_sun_sat \| last_quarter \| last_year \| this_week_mon_today \| this_week_sun_today \| this_year` | No | — |
+| `since` | `string` | No | — |
+| `until` | `string` | No | — |
+| `level` | `account \| campaign \| adset \| ad` | No | — |
+| `breakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type \| ad_format_asset \| age \| app_id \| body_asset \| call_to_action_asset \| country \| creative_automation_asset_id \| description_asset \| device_platform \| dma \| frequency_value \| gender \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| image_asset \| impression_device \| link_url_asset \| pa_creator_ig_handle \| place_page_id \| platform_position \| product_id \| publisher_platform \| region \| skan_campaign_id \| skan_conversion_id \| title_asset \| user_segment_key \| video_asset)[]` | No | — |
+| `actionBreakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type)[]` | No | — |
+| `actionAttributionWindows` | `(1d_view \| 7d_view \| 28d_view \| 1d_click \| 7d_click \| 28d_click \| 1d_ev \| dda \| default \| 7d_view_first_conversion \| 28d_view_first_conversion \| 7d_view_all_conversions \| 28d_view_all_conversions \| skan_view \| skan_click \| skan_click_second_postback \| skan_view_second_postback \| skan_click_third_postback \| skan_view_third_postback \| incrementality \| custom \| 1d_sequenced \| 7d_sequenced \| 28d_sequenced)[]` | No | — |
+| `filtering` | `object[]` | No | — |
+| `timeIncrement` | `monthly \| all_days \| number` | No | — |
+| `sort` | `string[]` | No | — |
+| `summary` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | No | — |
+| `summaryActionBreakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type)[]` | No | — |
+| `defaultSummary` | `boolean` | No | — |
+| `productIdLimit` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Synchronous metrics with allow-listed fields, breakdowns, filters, attribution windows, sorting, summary, and time increments. Meta may reject unsupported field/breakdown combinations.
+
+<AccordionGroup>
+<Accordion title="filtering full type">
+
+```ts
+{
+  field: string,
+  operator: EQUAL | NOT_EQUAL | GREATER_THAN | GREATER_THAN_OR_EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL | IN_RANGE | NOT_IN_RANGE | CONTAIN | NOT_CONTAIN | CONTAINS_ANY | CONTAINS_ALL | NOT_CONTAINS_ANY | STEM_MATCH | IN | NOT_IN | STARTS_WITH | ENDS_WITH | ANY | ALL | AFTER | BEFORE | ON_OR_AFTER | ON_OR_BEFORE | NONE | TOP,
+  value: string | number | boolean | (string | number | boolean)[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+| `summary` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  account_id?: string,
+  campaign_id?: string,
+  adset_id?: string,
+  ad_id?: string,
+  date_start?: string,
+  date_stop?: string,
+  impressions?: string,
+  reach?: string,
+  frequency?: string,
+  spend?: string,
+  clicks?: string,
+  inline_link_clicks?: string,
+  cpc?: string,
+  cpm?: string,
+  ctr?: string,
+  inline_link_click_ctr?: string,
+  outbound_clicks?: {
+    action_type?: string,
+    value?: string
+  }[],
+  unique_clicks?: string,
+  unique_impressions?: string,
+  actions?: {
+    action_type?: string,
+    value?: string
+  }[],
+  action_values?: {
+    action_type?: string,
+    value?: string
+  }[],
+  ad_name?: string,
+  campaign_name?: string,
+  adset_name?: string,
+  age?: string,
+  gender?: string,
+  country?: string,
+  region?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEnabledFeatures
+
+`insights.listEnabledFeatures`
+
+List breakdown features enabled for an ad account
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.insights.listEnabledFeatures({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists enabled features; a missing feature is equivalent to disabled.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  feature_name: comscore | impression_device | time_of_day_viewer_tz | frequency_value,
+  status: enabled,
+  insights_effective_date?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listFeatures
+
+`insights.listFeatures`
+
+List breakdown features available to an ad account
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.insights.listFeatures({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists documented account Insights features, including breakdown features.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  feature_name: comscore | impression_device | time_of_day_viewer_tz | frequency_value,
+  feature_type: breakdown
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForAd
+
+`insights.listForAd`
+
+Read paginated reporting metrics for one ad
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.insights.listForAd({
+	adId: '120000000000003',
+	fields: ['impressions', 'spend'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | Yes | — |
+| `datePreset` | `today \| yesterday \| this_month \| last_month \| this_quarter \| maximum \| data_maximum \| last_3d \| last_7d \| last_14d \| last_28d \| last_30d \| last_90d \| last_week_mon_sun \| last_week_sun_sat \| last_quarter \| last_year \| this_week_mon_today \| this_week_sun_today \| this_year` | No | — |
+| `since` | `string` | No | — |
+| `until` | `string` | No | — |
+| `level` | `account \| campaign \| adset \| ad` | No | — |
+| `breakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type \| ad_format_asset \| age \| app_id \| body_asset \| call_to_action_asset \| country \| creative_automation_asset_id \| description_asset \| device_platform \| dma \| frequency_value \| gender \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| image_asset \| impression_device \| link_url_asset \| pa_creator_ig_handle \| place_page_id \| platform_position \| product_id \| publisher_platform \| region \| skan_campaign_id \| skan_conversion_id \| title_asset \| user_segment_key \| video_asset)[]` | No | — |
+| `actionBreakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type)[]` | No | — |
+| `actionAttributionWindows` | `(1d_view \| 7d_view \| 28d_view \| 1d_click \| 7d_click \| 28d_click \| 1d_ev \| dda \| default \| 7d_view_first_conversion \| 28d_view_first_conversion \| 7d_view_all_conversions \| 28d_view_all_conversions \| skan_view \| skan_click \| skan_click_second_postback \| skan_view_second_postback \| skan_click_third_postback \| skan_view_third_postback \| incrementality \| custom \| 1d_sequenced \| 7d_sequenced \| 28d_sequenced)[]` | No | — |
+| `filtering` | `object[]` | No | — |
+| `timeIncrement` | `monthly \| all_days \| number` | No | — |
+| `sort` | `string[]` | No | — |
+| `summary` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | No | — |
+| `summaryActionBreakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type)[]` | No | — |
+| `defaultSummary` | `boolean` | No | — |
+| `productIdLimit` | `number` | No | — |
+| `adId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Reads the same typed synchronous Insights fields directly from an ad node.
+
+<AccordionGroup>
+<Accordion title="filtering full type">
+
+```ts
+{
+  field: string,
+  operator: EQUAL | NOT_EQUAL | GREATER_THAN | GREATER_THAN_OR_EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL | IN_RANGE | NOT_IN_RANGE | CONTAIN | NOT_CONTAIN | CONTAINS_ANY | CONTAINS_ALL | NOT_CONTAINS_ANY | STEM_MATCH | IN | NOT_IN | STARTS_WITH | ENDS_WITH | ANY | ALL | AFTER | BEFORE | ON_OR_AFTER | ON_OR_BEFORE | NONE | TOP,
+  value: string | number | boolean | (string | number | boolean)[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+| `summary` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  account_id?: string,
+  campaign_id?: string,
+  adset_id?: string,
+  ad_id?: string,
+  date_start?: string,
+  date_stop?: string,
+  impressions?: string,
+  reach?: string,
+  frequency?: string,
+  spend?: string,
+  clicks?: string,
+  inline_link_clicks?: string,
+  cpc?: string,
+  cpm?: string,
+  ctr?: string,
+  inline_link_click_ctr?: string,
+  outbound_clicks?: {
+    action_type?: string,
+    value?: string
+  }[],
+  unique_clicks?: string,
+  unique_impressions?: string,
+  actions?: {
+    action_type?: string,
+    value?: string
+  }[],
+  action_values?: {
+    action_type?: string,
+    value?: string
+  }[],
+  ad_name?: string,
+  campaign_name?: string,
+  adset_name?: string,
+  age?: string,
+  gender?: string,
+  country?: string,
+  region?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForAdSet
+
+`insights.listForAdSet`
+
+Read paginated reporting metrics for one ad set
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.insights.listForAdSet({
+	adSetId: '120000000000002',
+	fields: ['impressions', 'spend'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | Yes | — |
+| `datePreset` | `today \| yesterday \| this_month \| last_month \| this_quarter \| maximum \| data_maximum \| last_3d \| last_7d \| last_14d \| last_28d \| last_30d \| last_90d \| last_week_mon_sun \| last_week_sun_sat \| last_quarter \| last_year \| this_week_mon_today \| this_week_sun_today \| this_year` | No | — |
+| `since` | `string` | No | — |
+| `until` | `string` | No | — |
+| `level` | `account \| campaign \| adset \| ad` | No | — |
+| `breakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type \| ad_format_asset \| age \| app_id \| body_asset \| call_to_action_asset \| country \| creative_automation_asset_id \| description_asset \| device_platform \| dma \| frequency_value \| gender \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| image_asset \| impression_device \| link_url_asset \| pa_creator_ig_handle \| place_page_id \| platform_position \| product_id \| publisher_platform \| region \| skan_campaign_id \| skan_conversion_id \| title_asset \| user_segment_key \| video_asset)[]` | No | — |
+| `actionBreakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type)[]` | No | — |
+| `actionAttributionWindows` | `(1d_view \| 7d_view \| 28d_view \| 1d_click \| 7d_click \| 28d_click \| 1d_ev \| dda \| default \| 7d_view_first_conversion \| 28d_view_first_conversion \| 7d_view_all_conversions \| 28d_view_all_conversions \| skan_view \| skan_click \| skan_click_second_postback \| skan_view_second_postback \| skan_click_third_postback \| skan_view_third_postback \| incrementality \| custom \| 1d_sequenced \| 7d_sequenced \| 28d_sequenced)[]` | No | — |
+| `filtering` | `object[]` | No | — |
+| `timeIncrement` | `monthly \| all_days \| number` | No | — |
+| `sort` | `string[]` | No | — |
+| `summary` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | No | — |
+| `summaryActionBreakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type)[]` | No | — |
+| `defaultSummary` | `boolean` | No | — |
+| `productIdLimit` | `number` | No | — |
+| `adSetId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Reads the same typed synchronous Insights fields directly from an ad-set node.
+
+<AccordionGroup>
+<Accordion title="filtering full type">
+
+```ts
+{
+  field: string,
+  operator: EQUAL | NOT_EQUAL | GREATER_THAN | GREATER_THAN_OR_EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL | IN_RANGE | NOT_IN_RANGE | CONTAIN | NOT_CONTAIN | CONTAINS_ANY | CONTAINS_ALL | NOT_CONTAINS_ANY | STEM_MATCH | IN | NOT_IN | STARTS_WITH | ENDS_WITH | ANY | ALL | AFTER | BEFORE | ON_OR_AFTER | ON_OR_BEFORE | NONE | TOP,
+  value: string | number | boolean | (string | number | boolean)[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+| `summary` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  account_id?: string,
+  campaign_id?: string,
+  adset_id?: string,
+  ad_id?: string,
+  date_start?: string,
+  date_stop?: string,
+  impressions?: string,
+  reach?: string,
+  frequency?: string,
+  spend?: string,
+  clicks?: string,
+  inline_link_clicks?: string,
+  cpc?: string,
+  cpm?: string,
+  ctr?: string,
+  inline_link_click_ctr?: string,
+  outbound_clicks?: {
+    action_type?: string,
+    value?: string
+  }[],
+  unique_clicks?: string,
+  unique_impressions?: string,
+  actions?: {
+    action_type?: string,
+    value?: string
+  }[],
+  action_values?: {
+    action_type?: string,
+    value?: string
+  }[],
+  ad_name?: string,
+  campaign_name?: string,
+  adset_name?: string,
+  age?: string,
+  gender?: string,
+  country?: string,
+  region?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForCampaign
+
+`insights.listForCampaign`
+
+Read paginated reporting metrics for one campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.insights.listForCampaign({
+	campaignId: '120000000000001',
+	fields: ['impressions', 'spend'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fields` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | Yes | — |
+| `datePreset` | `today \| yesterday \| this_month \| last_month \| this_quarter \| maximum \| data_maximum \| last_3d \| last_7d \| last_14d \| last_28d \| last_30d \| last_90d \| last_week_mon_sun \| last_week_sun_sat \| last_quarter \| last_year \| this_week_mon_today \| this_week_sun_today \| this_year` | No | — |
+| `since` | `string` | No | — |
+| `until` | `string` | No | — |
+| `level` | `account \| campaign \| adset \| ad` | No | — |
+| `breakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type \| ad_format_asset \| age \| app_id \| body_asset \| call_to_action_asset \| country \| creative_automation_asset_id \| description_asset \| device_platform \| dma \| frequency_value \| gender \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| image_asset \| impression_device \| link_url_asset \| pa_creator_ig_handle \| place_page_id \| platform_position \| product_id \| publisher_platform \| region \| skan_campaign_id \| skan_conversion_id \| title_asset \| user_segment_key \| video_asset)[]` | No | — |
+| `actionBreakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type)[]` | No | — |
+| `actionAttributionWindows` | `(1d_view \| 7d_view \| 28d_view \| 1d_click \| 7d_click \| 28d_click \| 1d_ev \| dda \| default \| 7d_view_first_conversion \| 28d_view_first_conversion \| 7d_view_all_conversions \| 28d_view_all_conversions \| skan_view \| skan_click \| skan_click_second_postback \| skan_view_second_postback \| skan_click_third_postback \| skan_view_third_postback \| incrementality \| custom \| 1d_sequenced \| 7d_sequenced \| 28d_sequenced)[]` | No | — |
+| `filtering` | `object[]` | No | — |
+| `timeIncrement` | `monthly \| all_days \| number` | No | — |
+| `sort` | `string[]` | No | — |
+| `summary` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | No | — |
+| `summaryActionBreakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type)[]` | No | — |
+| `defaultSummary` | `boolean` | No | — |
+| `productIdLimit` | `number` | No | — |
+| `campaignId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Reads the same typed synchronous Insights fields directly from a campaign node.
+
+<AccordionGroup>
+<Accordion title="filtering full type">
+
+```ts
+{
+  field: string,
+  operator: EQUAL | NOT_EQUAL | GREATER_THAN | GREATER_THAN_OR_EQUAL | LESS_THAN | LESS_THAN_OR_EQUAL | IN_RANGE | NOT_IN_RANGE | CONTAIN | NOT_CONTAIN | CONTAINS_ANY | CONTAINS_ALL | NOT_CONTAINS_ANY | STEM_MATCH | IN | NOT_IN | STARTS_WITH | ENDS_WITH | ANY | ALL | AFTER | BEFORE | ON_OR_AFTER | ON_OR_BEFORE | NONE | TOP,
+  value: string | number | boolean | (string | number | boolean)[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+| `summary` | `Record<string, any>` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  account_id?: string,
+  campaign_id?: string,
+  adset_id?: string,
+  ad_id?: string,
+  date_start?: string,
+  date_stop?: string,
+  impressions?: string,
+  reach?: string,
+  frequency?: string,
+  spend?: string,
+  clicks?: string,
+  inline_link_clicks?: string,
+  cpc?: string,
+  cpm?: string,
+  ctr?: string,
+  inline_link_click_ctr?: string,
+  outbound_clicks?: {
+    action_type?: string,
+    value?: string
+  }[],
+  unique_clicks?: string,
+  unique_impressions?: string,
+  actions?: {
+    action_type?: string,
+    value?: string
+  }[],
+  action_values?: {
+    action_type?: string,
+    value?: string
+  }[],
+  ad_name?: string,
+  campaign_name?: string,
+  adset_name?: string,
+  age?: string,
+  gender?: string,
+  country?: string,
+  region?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Labels
+
+### adSetsList
+
+`labels.adSetsList`
+
+List ad sets associated with an ad label
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.labels.adSetsList({ labelId: '120000000000010' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labelId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### adsList
+
+`labels.adsList`
+
+List ads associated with an ad label
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.labels.adsList({ labelId: '120000000000010' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labelId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### campaignsList
+
+`labels.campaignsList`
+
+List campaigns associated with an ad label
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.labels.campaignsList({ labelId: '120000000000010' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labelId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`labels.create`
+
+Create a reusable label for ad objects
+
+**Risk:** `write`
+
+```ts
+await corsair.metaads.api.labels.create({ accountId: '1234567890', name: 'Spring promotion' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### creativesList
+
+`labels.creativesList`
+
+List creatives associated with an ad label
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.labels.creativesList({ labelId: '120000000000010' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labelId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`labels.delete`
+
+Delete an ad label from an account
+
+**Risk:** `write`
+
+```ts
+await corsair.metaads.api.labels.delete({ labelId: '120000000000010' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labelId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`labels.get`
+
+Read one ad label and its documented fields
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.labels.get({ labelId: '120000000000010', fields: 'id,name' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labelId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `created_time` | `string` | No | — |
+| `updated_time` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`labels.list`
+
+List ad labels defined for an ad account
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.labels.list({ accountId: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+| `summary` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  created_time?: string,
+  updated_time?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+
+<Accordion title="summary full type">
+
+```ts
+{
+  total_count?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`labels.update`
+
+Rename a label shared by ad objects
+
+**Risk:** `write`
+
+```ts
+await corsair.metaads.api.labels.update({ labelId: '120000000000010', name: 'Spring sale' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `labelId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Pixels
+
+### create
+
+`pixels.create`
+
+Create a pixel measurement asset for an ad account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.pixels.create({ accountId: '1234567890', name: 'Website pixel' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+Creates an Ads Pixel for an account; Meta allows at most one pixel per account in the documented error contract.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`pixels.get`
+
+Read documented scalar fields from an ads pixel
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.pixels.get({
+	pixelId: '1234567894',
+	fields: ['id', 'name', 'data_use_setting'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pixelId` | `string` | Yes | — |
+| `fields` | `(id \| automatic_matching_fields \| can_proxy \| code \| config \| creation_time \| data_use_setting \| description \| duplicate_entries \| enable_auto_assign_to_accounts \| enable_automatic_matching \| event_stats \| event_time_max \| event_time_min \| first_party_cookie_status \| has_1p_pixel_event \| is_consolidated_container \| is_created_by_business \| is_crm \| is_mta_use \| is_restricted_use \| is_unavailable \| last_fired_time \| last_upload_app \| last_upload_app_changed_time \| match_rate_approx \| matched_entries \| name \| valid_entries)[]` | No | — |
+
+Only the documented scalar AdsPixel fields are selectable; nested creator, owner-business and usage objects are not exposed.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `automatic_matching_fields` | `string[]` | No | — |
+| `can_proxy` | `boolean` | No | — |
+| `code` | `string` | No | — |
+| `config` | `string` | No | — |
+| `creation_time` | `string` | No | — |
+| `data_use_setting` | `string` | No | — |
+| `description` | `string` | No | — |
+| `duplicate_entries` | `number` | No | — |
+| `enable_auto_assign_to_accounts` | `boolean` | No | — |
+| `enable_automatic_matching` | `boolean` | No | — |
+| `event_stats` | `string` | No | — |
+| `event_time_max` | `number` | No | — |
+| `event_time_min` | `number` | No | — |
+| `first_party_cookie_status` | `string` | No | — |
+| `has_1p_pixel_event` | `boolean` | No | — |
+| `is_consolidated_container` | `boolean` | No | — |
+| `is_created_by_business` | `boolean` | No | — |
+| `is_crm` | `boolean` | No | — |
+| `is_mta_use` | `boolean` | No | — |
+| `is_restricted_use` | `boolean` | No | — |
+| `is_unavailable` | `boolean` | No | — |
+| `last_fired_time` | `string` | No | — |
+| `last_upload_app` | `string` | No | — |
+| `last_upload_app_changed_time` | `number` | No | — |
+| `match_rate_approx` | `number` | No | — |
+| `matched_entries` | `number` | No | — |
+| `name` | `string` | No | — |
+| `valid_entries` | `number` | No | — |
+
+
+
+---
+
+### update
+
+`pixels.update`
+
+Change pixel data-use, matching, or business-access settings
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.pixels.update({ pixelId: "1234567894", name: "Updated pixel", dataUseSetting: "ANALYTICS_ONLY", enableAutomaticMatching: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pixelId` | `string` | Yes | — |
+| `automaticMatchingFields` | `(em \| fn \| ln \| ph \| ge \| zp \| ct \| st \| country \| db \| external_id)[]` | No | — |
+| `dataUseSetting` | `EMPTY \| ADVERTISING_AND_ANALYTICS \| ANALYTICS_ONLY` | No | — |
+| `enableAutomaticMatching` | `boolean` | No | — |
+| `firstPartyCookieStatus` | `EMPTY \| FIRST_PARTY_COOKIE_ENABLED \| FIRST_PARTY_COOKIE_DISABLED` | No | — |
+| `name` | `string` | No | — |
+| `serverEventsBusinessIds` | `string[]` | No | — |
+| `serverEventsBusinessIdsAdd` | `string[]` | No | — |
+| `serverEventsBusinessIdsRemove` | `string[]` | No | — |
+
+Updates only documented AdsPixel fields; server_events_business_ids changes access and are marked destructive with the request body removed from propagated errors.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+## Publisher Block Lists
+
+### create
+
+`publisherBlockLists.create`
+
+Create a publisher block list without applying it to delivery
+
+**Risk:** `write`
+
+```ts
+await corsair.metaads.api.publisherBlockLists.create({ accountId: '1234567890', name: 'Sensitive placements' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+Creates a named block list but does not apply it to account delivery.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+## Reach Frequency Predictions
+
+### create
+
+`reachFrequencyPredictions.create`
+
+Create a non-idempotent reach/frequency forecast or reservation
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.reachFrequencyPredictions.create({
+  accountId: "1234567890",
+  budget: 500000,
+  predictionMode: 1,
+  startTime: 1800000000,
+  stopTime: 1800086400,
+  dayPartingSchedule: [{ startMinute: 360, endMinute: 1440, days: [0, 1, 2, 3, 4, 5, 6] }],
+  targetSpec: { geo_locations: { countries: ["US"] } },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `budget` | `number` | No | — |
+| `campaignGroupId` | `string \| number` | No | — |
+| `dayPartingSchedule` | `object[]` | No | — |
+| `dealId` | `string \| number` | No | — |
+| `destinationId` | `string \| number` | No | — |
+| `destinationIds` | `(string \| number)[]` | No | — |
+| `endTime` | `number` | No | — |
+| `frequencyCap` | `number` | No | — |
+| `instreamPackages` | `(NORMAL \| PREMIUM \| SPORTS \| ENTERTAINMENT \| BEAUTY \| FOOD \| SPANISH \| REGULAR_ANIMALS_PETS \| REGULAR_FOOD \| REGULAR_GAMES \| REGULAR_POLITICS \| REGULAR_SPORTS \| REGULAR_STYLE \| REGULAR_TV_MOVIES)[]` | No | — |
+| `intervalFrequencyCapResetPeriod` | `number` | No | — |
+| `numCurvePoints` | `number` | No | — |
+| `objective` | `BRAND_AWARENESS \| LINK_CLICKS \| POST_ENGAGEMENT \| MOBILE_APP_INSTALLS \| WEBSITE_CONVERSIONS \| REACH \| VIDEO_VIEWS` | No | — |
+| `optimizationGoal` | `string` | No | — |
+| `predictionMode` | `0 \| 1` | No | — |
+| `reach` | `number` | No | — |
+| `rfPredictionIdToShare` | `string \| number` | No | — |
+| `startTime` | `number` | No | — |
+| `stopTime` | `number` | No | — |
+| `storyEventType` | `0 \| 128 \| 256 \| 384` | No | — |
+| `targetSpec` | `Record<string, any>` | No | — |
+| `metaMomentMakerSpec` | `Record<string, any>` | No | — |
+| `trendingTopicsSpec` | `object` | No | — |
+
+Creates a non-idempotent forecast/reservation. predictionMode 0 requires reach; mode 1 requires budget. Day-part entries require at least three hours. Country and budget thresholds remain provider enforced.
+
+<AccordionGroup>
+<Accordion title="dayPartingSchedule full type">
+
+```ts
+{
+  startMinute: number,
+  endMinute: number,
+  days: number[],
+  timezoneType?: USER | ADVERTISER
+}[]
+```
+</Accordion>
+
+<Accordion title="trendingTopicsSpec full type">
+
+```ts
+{
+  isAllTrending?: boolean,
+  isSpecialBudgetAlloc?: boolean,
+  trendingTopics?: (TRENDING_ALL | TRENDING_FASHION | TRENDING_BEAUTY | TRENDING_SPORTS | TRENDING_FOOD | TRENDING_CARS | TRENDING_BEAUTY_FASHION | TRENDING_FITNESS | TRENDING_MOVIES | TRENDING_PETS_ANIMALS | TRENDING_VIDEO_GAMING | TRENDING_ALL_VERIFIED | TRENDING_MUSIC | TRENDING_SUPERBOWL | TRENDING_NBC_WINTER_OLYMPICS | TRENDING_BASKETBALL | TRENDING_TRAVEL | TRENDING_BUSINESS_FINANCE | TRENDING_BASKETBALL_NBA_PLAYOFFS | TRENDING_DISNEY_WOMENS_MARCH_MADNESS_2026 | TRENDING_DISNEY_SPORTS | TRENDING_VANITY_FAIR_OSCARS_2026 | TRENDING_VANITY_FAIR_ALL | TRENDING_SOCCER | TRENDING_ELECTRONICS_TECHNOLOGY | TRENDING_HEALTH_WELLNESS | TRENDING_DISNEY_NBA_2026 | TRENDING_VOGUE_METGALA_2026 | TRENDING_CONDE_METGALA_2026 | TRENDING_CONDE_ALL | TRENDING_FOX_SPORTS | TRENDING_NBC_LOVE_ISLAND_2026 | TRENDING_PEACOCK_ALL | TRENDING_BACK_TO_SCHOOL | TRENDING_CAR_RACING | TRENDING_SPANISH | TRENDING_BASKETBALL_PEAK_SEASON | TRENDING_AGRIBUSINESS | TRENDING_LIBERTADORES | TRENDING_FOOTBALL | TRENDING_TENNIS_US_OPEN | TRENDING_LIBERTADORES_LALIGA | POE_SPORTS | POE_FOOD | POE_TRAVEL | POE_MOVIES | POE_MUSIC | POE_TOY)[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`reachFrequencyPredictions.get`
+
+Read documented scalar fields from a reach/frequency prediction
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.reachFrequencyPredictions.get({
+	predictionId: '1234567900',
+	fields: ['id', 'name', 'prediction_mode', 'prediction_progress'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `predictionId` | `string` | Yes | — |
+| `fields` | `(id \| account_id \| audience_size_lower_bound \| audience_size_upper_bound \| campaign_group_id \| campaign_id \| campaign_time_start \| campaign_time_stop \| curve_budget_reach \| daily_impression_curve \| destination_id \| expiration_time \| external_budget \| external_impression \| external_maximum_budget \| external_maximum_impression \| external_maximum_reach \| external_minimum_budget \| external_minimum_impression \| external_minimum_reach \| external_reach \| frequency_cap \| frequency_distribution_map \| frequency_distribution_map_agg \| grp_dmas_audience_size \| holdout_percentage \| instagram_destination_id \| interval_frequency_cap \| interval_frequency_cap_reset_period \| is_io \| name \| placement_breakdown \| prediction_mode \| prediction_progress \| reservation_status \| status \| story_event_type \| target_spec \| time_created \| time_updated)[]` | No | — |
+
+Reads selected documented prediction fields; pause_periods is omitted because its item field types are not specified.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `account_id` | `string \| number` | No | — |
+| `audience_size_lower_bound` | `number` | No | — |
+| `audience_size_upper_bound` | `number` | No | — |
+| `campaign_group_id` | `string \| number` | No | — |
+| `campaign_id` | `string` | No | — |
+| `campaign_time_start` | `string` | No | — |
+| `campaign_time_stop` | `string` | No | — |
+| `curve_budget_reach` | `string` | No | — |
+| `daily_impression_curve` | `number[]` | No | — |
+| `destination_id` | `string \| number` | No | — |
+| `expiration_time` | `string` | No | — |
+| `external_budget` | `number` | No | — |
+| `external_impression` | `number` | No | — |
+| `external_maximum_budget` | `number` | No | — |
+| `external_maximum_impression` | `number` | No | — |
+| `external_maximum_reach` | `number` | No | — |
+| `external_minimum_budget` | `number` | No | — |
+| `external_minimum_impression` | `number` | No | — |
+| `external_minimum_reach` | `number` | No | — |
+| `external_reach` | `number` | No | — |
+| `frequency_cap` | `number` | No | — |
+| `frequency_distribution_map` | `object[]` | No | — |
+| `frequency_distribution_map_agg` | `object[]` | No | — |
+| `grp_dmas_audience_size` | `number` | No | — |
+| `holdout_percentage` | `number` | No | — |
+| `instagram_destination_id` | `string` | No | — |
+| `interval_frequency_cap` | `number` | No | — |
+| `interval_frequency_cap_reset_period` | `number` | No | — |
+| `is_io` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `placement_breakdown` | `object` | No | — |
+| `prediction_mode` | `0 \| 1` | No | — |
+| `prediction_progress` | `number` | No | — |
+| `reservation_status` | `0 \| 1 \| 2` | No | — |
+| `status` | `number` | No | — |
+| `story_event_type` | `0 \| 128 \| 256 \| 384` | No | — |
+| `target_spec` | `string` | No | — |
+| `time_created` | `string` | No | — |
+| `time_updated` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="frequency_distribution_map full type">
+
+```ts
+{
+  key: number,
+  value: number[]
+}[]
+```
+</Accordion>
+
+<Accordion title="frequency_distribution_map_agg full type">
+
+```ts
+{
+  key: number,
+  value: number[]
+}[]
+```
+</Accordion>
+
+<Accordion title="placement_breakdown full type">
+
+```ts
+{
+  msite?: number,
+  android?: number,
+  ios?: number,
+  desktop?: number,
+  ig_android?: number,
+  ig_ios?: number,
+  ig_reels?: number,
+  ig_story?: number,
+  explore_home?: number,
+  ig_others?: number,
+  audience_network?: number,
+  instant_articles?: number,
+  instream_videos?: number,
+  suggested_videos?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`reachFrequencyPredictions.list`
+
+List reach/frequency predictions with safe documented fields
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.reachFrequencyPredictions.list({
+	accountId: '1234567890',
+	fields: ['id', 'name', 'prediction_mode', 'prediction_progress'],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `fields` | `(id \| account_id \| audience_size_lower_bound \| audience_size_upper_bound \| campaign_group_id \| campaign_id \| campaign_time_start \| campaign_time_stop \| curve_budget_reach \| daily_impression_curve \| destination_id \| expiration_time \| external_budget \| external_impression \| external_maximum_budget \| external_maximum_impression \| external_maximum_reach \| external_minimum_budget \| external_minimum_impression \| external_minimum_reach \| external_reach \| frequency_cap \| frequency_distribution_map \| frequency_distribution_map_agg \| grp_dmas_audience_size \| holdout_percentage \| instagram_destination_id \| interval_frequency_cap \| interval_frequency_cap_reset_period \| is_io \| name \| placement_breakdown \| prediction_mode \| prediction_progress \| reservation_status \| status \| story_event_type \| target_spec \| time_created \| time_updated)[]` | No | — |
+| `limit` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+Lists safe documented prediction fields and supports cursor pagination; pause_periods is omitted because its item field types are not specified.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string | number,
+  audience_size_lower_bound?: number,
+  audience_size_upper_bound?: number,
+  campaign_group_id?: string | number,
+  campaign_id?: string,
+  campaign_time_start?: string,
+  campaign_time_stop?: string,
+  curve_budget_reach?: string,
+  daily_impression_curve?: number[],
+  destination_id?: string | number,
+  expiration_time?: string,
+  external_budget?: number,
+  external_impression?: number,
+  external_maximum_budget?: number,
+  external_maximum_impression?: number,
+  external_maximum_reach?: number,
+  external_minimum_budget?: number,
+  external_minimum_impression?: number,
+  external_minimum_reach?: number,
+  external_reach?: number,
+  frequency_cap?: number,
+  frequency_distribution_map?: {
+    key: number,
+    value: number[]
+  }[],
+  frequency_distribution_map_agg?: {
+    key: number,
+    value: number[]
+  }[],
+  grp_dmas_audience_size?: number,
+  holdout_percentage?: number,
+  instagram_destination_id?: string,
+  interval_frequency_cap?: number,
+  interval_frequency_cap_reset_period?: number,
+  is_io?: boolean,
+  name?: string,
+  placement_breakdown?: {
+    msite?: number,
+    android?: number,
+    ios?: number,
+    desktop?: number,
+    ig_android?: number,
+    ig_ios?: number,
+    ig_reels?: number,
+    ig_story?: number,
+    explore_home?: number,
+    ig_others?: number,
+    audience_network?: number,
+    instant_articles?: number,
+    instream_videos?: number,
+    suggested_videos?: number
+  },
+  prediction_mode?: 0 | 1,
+  prediction_progress?: number,
+  reservation_status?: 0 | 1 | 2,
+  status?: number,
+  story_event_type?: 0 | 128 | 256 | 384,
+  target_spec?: string,
+  time_created?: string,
+  time_updated?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Studies
+
+### create
+
+`studies.create`
+
+Create a split test with ad-set cells and specified treatment percentages
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.studies.create({
+  businessId: "1234567890",
+  name: "Spring split test",
+  startTime: 1800000000,
+  endTime: 1800086400,
+  type: "SPLIT_TEST",
+  cells: [
+    { name: "Control", treatmentPercentage: 50, adSetIds: ["120000000000002"] },
+    { name: "Variant", treatmentPercentage: 50, adSetIds: ["120000000000006"] },
+  ],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `businessId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `startTime` | `number` | Yes | — |
+| `endTime` | `number` | Yes | — |
+| `type` | `SPLIT_TEST` | Yes | — |
+| `cells` | `object[]` | Yes | — |
+
+Creates only a simple SPLIT_TEST using ad-set cells. Each cell needs at least 10% treatment, treatment percentages must total at most 100%, and each cell must include an ad set. This non-idempotent operation is not automatically retried.
+
+<AccordionGroup>
+<Accordion title="cells full type">
+
+```ts
+{
+  name: string,
+  treatmentPercentage: number,
+  controlPercentage?: number,
+  adSetIds: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `cell_ids` | `string[]` | No | — |
+| `objective_ids` | `string[]` | No | — |
+
+
+
+---
+
+### get
+
+`studies.get`
+
+Retrieve a documented ad study by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.studies.get({ studyId: '120000000000030' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `studyId` | `string` | Yes | — |
+| `fields` | `string` | No | — |
+
+Reads a single documented ad study by ID.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `business` | `object \| null` | No | — |
+| `canceled_time` | `string \| null` | No | — |
+| `cooldown_start_time` | `string \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `created_time` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `end_time` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `observation_end_time` | `string \| null` | No | — |
+| `results_first_available_date` | `string \| null` | No | — |
+| `start_time` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `updated_by` | `object \| null` | No | — |
+| `updated_time` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="business full type">
+
+```ts
+{
+  id: string,
+  name?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  id: string,
+  name?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="updated_by full type">
+
+```ts
+{
+  id: string,
+  name?: string
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### relatedAccountsList
+
+`studies.relatedAccountsList`
+
+List ad accounts related to an ad study
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.studies.relatedAccountsList({ studyId: '120000000000030' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `studyId` | `string` | Yes | — |
+
+Lists ad accounts related to the study.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  account_id?: string,
+  name?: string | null,
+  status?: string | null,
+  configured_status?: string | null,
+  effective_status?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`studies.update`
+
+Change documented ad study metadata or extend its end time
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.studies.update({ studyId: '120000000000030', endTime: 1800172800 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `studyId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `endTime` | `number` | No | — |
+
+Only name, description, and endTime are exposed. Meta limits changes after the study starts; extending the end time changes the experiment.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+| `cell_ids` | `string[]` | No | — |
+| `objective_ids` | `string[]` | No | — |
+
+
+
+---
+
+### viewersList
+
+`studies.viewersList`
+
+List users who can view an ad study
+
+**Risk:** `read`
+
+```ts
+await corsair.metaads.api.studies.viewersList({ studyId: '120000000000030' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `studyId` | `string` | Yes | — |
+
+Lists users who can view the study.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `paging` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string,
+    after?: string
+  },
+  hasNextPage: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Videos
+
+### delete
+
+`videos.delete`
+
+Dissociate a video from an ad account library
+
+**Risk:** `destructive`
+
+```ts
+await corsair.metaads.api.videos.delete({ accountId: '1234567890', videoId: '120000000000040' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accountId` | `string` | Yes | — |
+| `videoId` | `string` | Yes | — |
+
+Dissociates the specified video from the ad-account library; it does not delete the source video.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
