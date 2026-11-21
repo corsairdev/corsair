@@ -1159,14 +1159,14 @@ await corsair.laposta.api.fields.update({ list_id: 'list-1', field_id: 'field-1'
 | `in_form` | `boolean` | No | — |
 | `in_list` | `boolean` | No | — |
 
-Laposta requires `options_full` to be sent as JSON. Changing a field datatype removes its stored values.
+Laposta requires `options_full` to be sent as JSON. Existing option IDs are numeric in field responses; array updates accept existing numeric IDs and temporary string IDs such as `new-0`. Changing a field datatype removes its stored values.
 
 <AccordionGroup>
 <Accordion title="options_full full type">
 
 ```ts
 Record<string, string> | {
-  id: string,
+  id: number | string,
   value: string
 }[]
 ```
@@ -2318,7 +2318,7 @@ Create a segment for a mailing list
 **Risk:** `write`
 
 ```ts
-await corsair.laposta.api.segments.create({ list_id: "list-1", name: "Local members", definition: "\"city\" = 'Utrecht'" });
+await corsair.laposta.api.segments.create({ list_id: 'list-1', name: 'Local members', definition: '{"city"} = \'Utrecht\'' });
 ```
 
 **Input**

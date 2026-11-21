@@ -275,7 +275,14 @@ const endpointCases: EndpointCase[] = [
 		name: 'fields.get',
 		method: 'GET',
 		path: '/v2/field/field-1',
-		response: { field },
+		response: {
+			field: {
+				...field,
+				datatype: 'select_single',
+				options: ['Red'],
+				options_full: [{ id: 1, value: 'Red' }],
+			},
+		},
 		run: () => api.fields.get({ list_id: 'list-1', field_id: 'field-1' }),
 		query: { list_id: 'list-1' },
 	},
@@ -321,6 +328,38 @@ const endpointCases: EndpointCase[] = [
 		jsonBody: {
 			list_id: 'list-1',
 			options_full: { '1': 'Red', 'new-0': 'Blue' },
+		},
+	},
+	{
+		name: 'fields.update accepts numeric existing and string new option IDs',
+		method: 'POST',
+		path: '/v2/field/field-1',
+		response: {
+			field: {
+				...field,
+				datatype: 'select_single',
+				options: ['Red', 'Blue'],
+				options_full: [
+					{ id: 1, value: 'Red' },
+					{ id: 2, value: 'Blue' },
+				],
+			},
+		},
+		run: () =>
+			api.fields.update({
+				list_id: 'list-1',
+				field_id: 'field-1',
+				options_full: [
+					{ id: 1, value: 'Red' },
+					{ id: 'new-0', value: 'Blue' },
+				],
+			}),
+		jsonBody: {
+			list_id: 'list-1',
+			options_full: [
+				{ id: 1, value: 'Red' },
+				{ id: 'new-0', value: 'Blue' },
+			],
 		},
 	},
 	{

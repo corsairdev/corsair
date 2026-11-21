@@ -317,6 +317,28 @@ describe('Laposta endpoint schemas', () => {
 		).toBe(false);
 	});
 
+	it('accepts numeric option IDs in field responses and numeric or temporary IDs in updates', () => {
+		expect(
+			LapostaEndpointOutputSchemas['fields.get'].safeParse({
+				field: {
+					...field,
+					datatype: 'select_single',
+					options_full: [{ id: 1, value: 'Red' }],
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			LapostaEndpointInputSchemas['fields.update'].safeParse({
+				list_id: 'list-1',
+				field_id: 'field-1',
+				options_full: [
+					{ id: 1, value: 'Red' },
+					{ id: 'new-0', value: 'Blue' },
+				],
+			}).success,
+		).toBe(true);
+	});
+
 	it('rejects malformed documented output while accepting dynamic custom-field values', () => {
 		expect(
 			LapostaEndpointOutputSchemas['members.get'].safeParse({

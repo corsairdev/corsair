@@ -686,7 +686,12 @@ export const UpdateFieldInputSchema = z
 		options_full: z
 			.union([
 				z.record(z.string(), z.string()),
-				z.array(z.object({ id: z.string(), value: z.string() })),
+				z.array(
+					z.object({
+						id: z.union([z.number(), z.string()]),
+						value: z.string(),
+					}),
+				),
 			])
 			.optional(),
 		defaultvalue: z.string().optional(),

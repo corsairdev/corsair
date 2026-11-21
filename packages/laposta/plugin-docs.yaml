@@ -9,7 +9,7 @@ overviewNote: |
 examples:
   read:
     path: members.list
-    title: List active subscribers
+    title: List subscribers
     args:
       list_id: list-1
       limit: 100
@@ -25,7 +25,7 @@ apiNotes:
   members.update: 'Pass an empty array for a multiselect custom field to clear its current value. Laposta requires the field to be present in the form body with no assigned value.'
   members.history: 'History uses cursor pagination with a default limit of 100 and maximum of 1000. Keep the same filters and order when sending the next cursor.'
   fields.create: 'The `required`, `in_form`, and `in_list` booleans are mandatory. Select fields need at least one option.'
-  fields.update: 'Laposta requires `options_full` to be sent as JSON. Changing a field datatype removes its stored values.'
+  fields.update: 'Laposta requires `options_full` to be sent as JSON. Existing option IDs are numeric in field responses; array updates accept existing numeric IDs and temporary string IDs such as `new-0`. Changing a field datatype removes its stored values.'
   segments.create: 'Laposta recommends creating a segment in its application first and retrieving it through `segments.get` before composing a definition string.'
   campaigns.list: 'Use `limit` (1–1000) and `cursor` to page through campaigns. `status` may be `draft` or `sent`.'
   campaigns.history: 'Campaign history uses cursor pagination with a default limit of 100 and maximum of 1000. Keep the same filters and ordering when sending the next cursor.'
@@ -77,7 +77,8 @@ apiExamples:
   segments.get:
     call: "{ list_id: 'list-1', segment_id: 'segment-1' }"
   segments.create:
-    call: '{ list_id: "list-1", name: "Local members", definition: "\"city\" = ''Utrecht''" }'
+    call: >-
+      { list_id: 'list-1', name: 'Local members', definition: '{"city"} = \'Utrecht\'' }
   segments.update:
     call: "{ list_id: 'list-1', segment_id: 'segment-1', name: 'Local members' }"
   segments.delete:
