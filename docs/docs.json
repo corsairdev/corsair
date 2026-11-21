@@ -5329,6 +5329,14 @@
                 ]
               },
               {
+                "group": "Tailscale",
+                "pages": [
+                  "plugins/tailscale/overview",
+                  "plugins/tailscale/api",
+                  "plugins/tailscale/database"
+                ]
+              },
+              {
                 "group": "TalentHR",
                 "pages": [
                   "plugins/talenthr/overview",
