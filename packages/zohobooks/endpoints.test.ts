@@ -18,7 +18,10 @@ import type {
 	ZohoBooksOperationInput,
 	ZohoBooksOperationOutput,
 } from './schema/openapi-types';
-import { ZohoBooksEndpointInputSchemas } from './schema/openapi-validation';
+import {
+	isJsonValue,
+	ZohoBooksEndpointInputSchemas,
+} from './schema/openapi-validation';
 import type {
 	ZohoBooksOperationInputFor,
 	ZohoBooksOperationOutputFor,
@@ -132,10 +135,6 @@ function isJsonRecord(value: JsonValue | undefined): value is JsonRecord {
 		value !== null &&
 		!Array.isArray(value)
 	);
-}
-
-function isUnknownRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function objectValue(value: JsonValue | undefined): JsonRecord | undefined {
@@ -457,14 +456,15 @@ describe('Zoho Books operation endpoints', () => {
 	});
 
 	it('keeps every published API example valid against its operation input schema', () => {
-		// `unknown` because both YAML and embedded JSON are author-controlled text until parsed.
-		const docsConfig: unknown = parseYaml(
+		// `yaml.parse` returns untrusted data; narrow it to JSON before reading keys.
+		const parsedDocs = parseYaml(
 			readFileSync(join(__dirname, 'plugin-docs.yaml'), 'utf8'),
 		);
-		if (
-			!isUnknownRecord(docsConfig) ||
-			!isUnknownRecord(docsConfig.apiExamples)
-		)
+		if (!isJsonValue(parsedDocs))
+			throw new Error('plugin-docs.yaml contains non-JSON values.');
+		const docsConfig = objectValue(parsedDocs);
+		const apiExamples = objectValue(docsConfig?.apiExamples);
+		if (!apiExamples)
 			throw new Error('plugin-docs.yaml has no API examples map.');
 
 		const operationsByName = new Map(
@@ -474,13 +474,14 @@ describe('Zoho Books operation endpoints', () => {
 			]),
 		);
 		const invalidExamples: string[] = [];
-		for (const [name, rawExample] of Object.entries(docsConfig.apiExamples)) {
+		for (const [name, exampleValue] of Object.entries(apiExamples)) {
 			const operation = operationsByName.get(name);
-			if (!operation || !isUnknownRecord(rawExample)) {
+			const rawExample = objectValue(exampleValue);
+			if (!operation || !rawExample) {
 				invalidExamples.push(`${name}: unknown operation or malformed example`);
 				continue;
 			}
-			let args: unknown = rawExample.args;
+			let args = rawExample.args;
 			if (typeof rawExample.call === 'string') {
 				try {
 					args = JSON.parse(rawExample.call);

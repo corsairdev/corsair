@@ -6,6 +6,10 @@ import {
 	ZohoBooksEndpointInputSchemas,
 	ZohoBooksEndpointOutputSchemas,
 } from '../schema/openapi-validation';
+import type {
+	ZohoBooksOperationId,
+	zohoBooksOperationId,
+} from '../schema/operation-types';
 import { createZohoBooksOperationEndpoint } from './factory';
 
 export const zohoBooksEndpointsNested = {
@@ -2225,7 +2229,9 @@ export const zohoBooksEndpointsNested = {
 } as const;
 
 type EndpointKeyTree<Tree> = {
-	[Key in keyof Tree]: Tree[Key] extends (...args: never[]) => unknown
+	[Key in keyof Tree]: Tree[Key] extends {
+		readonly [zohoBooksOperationId]: ZohoBooksOperationId;
+	}
 		? () => Promise<void>
 		: Tree[Key] extends object
 			? EndpointKeyTree<Tree[Key]>
