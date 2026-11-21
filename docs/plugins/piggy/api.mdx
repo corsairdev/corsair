@@ -115,9 +115,9 @@ await corsair.piggy.api.businesses.listProfiles({});
 
 `contacts.claim`
 
-Claim an anonymous contact with a real email, merging on match
+Claim an anonymous contact with a real email; merges into a matching contact, which cannot be undone
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.piggy.api.contacts.claim({ anonymousContactUuid: "3a685add-1711-425d-9184-fc6db18e0e1d", email: "patrick@bikinibottom.sea" });

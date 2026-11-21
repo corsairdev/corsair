@@ -28,6 +28,9 @@ export const errorHandlers = {
 		match: (error: Error) =>
 			error instanceof ApiError &&
 			error.request.method === 'GET' &&
+			// find-or-create is a GET that can create a contact; a 5xx after
+			// the create landed must not repeat it.
+			!error.request.url.includes('/contacts/find-or-create') &&
 			(error.status ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,

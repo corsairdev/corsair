@@ -42,6 +42,7 @@ describe('plugin registration', () => {
 			.filter(([, meta]) => meta.riskLevel === 'destructive')
 			.map(([key]) => key);
 		expect(destructive.sort()).toEqual([
+			'contacts.claim',
 			'contacts.delete',
 			'contacts.merge',
 			'giftcards.create',

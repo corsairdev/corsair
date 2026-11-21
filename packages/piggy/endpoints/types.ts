@@ -75,6 +75,7 @@ export const TierInfoSchema = z
 		// unknown: media records vary by asset type and aren't documented field by field.
 		media: z.unknown().nullish().describe('Tier media'),
 		perks: z
+			// unknown: perk records are not documented field by field.
 			.array(z.unknown())
 			.nullish()
 			.describe('Perks attached to the tier'),

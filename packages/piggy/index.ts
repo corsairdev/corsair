@@ -391,9 +391,9 @@ export const piggyEndpointMeta = {
 		description: 'Delete a contact (DEFAULT or GDPR); cannot be undone',
 	},
 	'contacts.claim': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Claim an anonymous contact with a real email, merging on match',
+			'Claim an anonymous contact with a real email; merges into a matching contact, which cannot be undone',
 	},
 	'contacts.merge': {
 		riskLevel: 'destructive',
@@ -604,6 +604,9 @@ export function piggy<const T extends PiggyPluginOptions>(
 				// empty secret makes the handler reject deliveries with 401
 				// rather than accept them unverified.
 				if (options.webhookSecret) return options.webhookSecret;
+				// Without a key manager (a database-free client) there is no
+				// stored secret; the handler then answers 401, not 500.
+				if (!ctx.keys) return '';
 				const stored = await ctx.keys.get_webhook_signature();
 				return stored ?? '';
 			}

@@ -572,6 +572,28 @@ describe('reads and updates the review listed', () => {
 		});
 	});
 
+	it('contacts.get reads one contact by UUID', async () => {
+		respond(contactAnswer);
+		const contact = (await invoke(Contacts.get, { contactUuid: 'c1' })) as {
+			data: { uuid?: string };
+		};
+		expect(contact.data.uuid).toBeTruthy();
+		expectCall({ path: '/api/v3/oauth/clients/contacts/c1', method: 'GET' });
+	});
+
+	it('contacts.list keeps the validated paging over attribute filters', async () => {
+		respond(contactsList);
+		await invoke(Contacts.list, {
+			limit: 25,
+			page: 2,
+			attributesQuery: { page: 1, city: 'Bikini Bottom' },
+		});
+		const sent = lastRequest();
+		expect(sent.query.page).toBe('2');
+		expect(sent.query.limit).toBe('25');
+		expect(sent.query.city).toBe('Bikini Bottom');
+	});
+
 	it('points.get reads one transaction', async () => {
 		respond(directPointsTransaction);
 		await invoke(Points.get, { uuid: 't1' });

@@ -5,8 +5,8 @@ import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 function piggyError(
 	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
 	status: number,
+	url = '/api/v3/oauth/clients/contacts',
 ): ApiError {
-	const url = '/api/v3/oauth/clients/contacts';
 	return new ApiError(
 		{ method, url },
 		{ url, ok: false, status, statusText: '', body: null },
@@ -62,6 +62,12 @@ describe('errorHandlers', () => {
 	it('replays only GET requests on a 5xx', async () => {
 		expect(await retriesFor(piggyError('GET', 503))).toBe(2);
 		expect(await retriesFor(piggyError('POST', 503))).toBe(0);
+		// find-or-create is a GET that can create a contact.
+		expect(
+			await retriesFor(
+				piggyError('GET', 503, '/api/v3/oauth/clients/contacts/find-or-create'),
+			),
+		).toBe(0);
 		expect(await retriesFor(piggyError('PUT', 500))).toBe(0);
 	});
 

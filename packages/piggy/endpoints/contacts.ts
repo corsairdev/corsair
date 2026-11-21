@@ -29,17 +29,19 @@ export const list: PiggyEndpoints['contactsList'] = (ctx, input) =>
 		}) => ({
 			method: 'GET',
 			path: `${CLIENT}/contacts`,
+			// Attribute filters go first so they can never replace the
+			// validated paging, sort or date parameters.
 			query: {
-				limit,
-				page,
-				sort,
+				...attributesQuery,
 				...createdAtQuery({
 					createdAtGt,
 					createdAtGte,
 					createdAtLt,
 					createdAtLte,
 				}),
-				...attributesQuery,
+				limit,
+				page,
+				sort,
 			},
 		}),
 		{ log: (_, page) => ({ count: page.data.length }) },

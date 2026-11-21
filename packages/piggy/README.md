@@ -14,7 +14,7 @@ pnpm add @corsair-dev/piggy
 |-----------|--------------|------|-------------|
 | `businesses.getProfile` | `piggy.api.businesses.getProfile` | `read` | Read one business profile by UUID |
 | `businesses.listProfiles` | `piggy.api.businesses.listProfiles` | `read` | List the account business profiles |
-| `contacts.claim` | `piggy.api.contacts.claim` | `write` | Claim an anonymous contact with a real email, merging on match |
+| `contacts.claim` | `piggy.api.contacts.claim` | `destructive` | Claim an anonymous contact with a real email; merges into a matching contact, which cannot be undone |
 | `contacts.create` | `piggy.api.contacts.create` | `write` | Create a contact from an email address |
 | `contacts.createAnonymous` | `piggy.api.contacts.createAnonymous` | `write` | Create an anonymous contact with a fictional email |
 | `contacts.delete` | `piggy.api.contacts.delete` | `destructive` | Delete a contact (DEFAULT or GDPR); cannot be undone |
