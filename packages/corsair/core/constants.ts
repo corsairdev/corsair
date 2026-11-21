@@ -504,6 +504,7 @@ export const BaseProviders = [
 	'phantombuster',
 	'pinecone',
 	'pipedrive',
+	'pipelinecrm',
 	'placid',
 	'plain',
 	'platerecognizer',
@@ -1253,6 +1254,7 @@ export const ProviderDisplayNames = {
 	phantombuster: 'PhantomBuster',
 	pinecone: 'Pinecone',
 	pipedrive: 'Pipedrive',
+	pipelinecrm: 'Pipeline CRM',
 	placid: 'Placid',
 	plain: 'Plain',
 	platerecognizer: 'Plate Recognizer',
@@ -2009,6 +2011,7 @@ export type AllProviders =
 	| 'phantombuster'
 	| 'pinecone'
 	| 'pipedrive'
+	| 'pipelinecrm'
 	| 'placid'
 	| 'plain'
 	| 'platerecognizer'

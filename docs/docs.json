@@ -4177,6 +4177,14 @@
                 ]
               },
               {
+                "group": "Pipeline CRM",
+                "pages": [
+                  "plugins/pipelinecrm/overview",
+                  "plugins/pipelinecrm/api",
+                  "plugins/pipelinecrm/database"
+                ]
+              },
+              {
                 "group": "Placid",
                 "pages": [
                   "plugins/placid/overview",
