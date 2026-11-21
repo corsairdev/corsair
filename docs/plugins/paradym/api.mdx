@@ -62,10 +62,9 @@ await corsair.paradym.api.credentialTemplates.create({ type: "urn:eudi:pid:1", n
 | `type` | `string` | Yes | Credential type identifier, e.g. urn:eudi:pid:1 |
 | `name` | `string` | Yes | Template name |
 | `attributes` | `object` | Yes | Credential attributes keyed by attribute name |
-| `description` | `string` | No | Template description |
 | `revocable` | `boolean` | No | Enable revocation for credentials from this template |
-| `validFrom` | `string` | No | Credentials are valid from this time |
-| `validUntil` | `string` | No | Credentials are valid until this time |
+| `validFrom` | `string \| object` | No | A date, e.g. 2026-11-21, or &#123; future: &#123; days, months, years &#125; &#125; |
+| `validUntil` | `string \| object` | No | A date, or &#123; start: issuance \| validFrom, future: &#123; days, months, years &#125; &#125; |
 
 The attributes object is keyed by attribute name; Paradym validates its contents, including the credential type identifier.
 
@@ -75,6 +74,33 @@ The attributes object is keyed by attribute name; Paradym validates its contents
 ```ts
 Record<string, {
 }>
+```
+</Accordion>
+
+<Accordion title="validFrom full type">
+
+```ts
+string | {
+  future: {
+    days?: number,
+    months?: number,
+    years?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="validUntil full type">
+
+```ts
+string | {
+  start: issuance | validFrom,
+  future: {
+    days?: number,
+    months?: number,
+    years?: number
+  }
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -228,15 +254,8 @@ await corsair.paradym.api.credentialTemplates.unarchive({ credentialTemplateId: 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | Template id |
-| `walletId` | `string \| null` | No | Wallet the template belongs to |
-| `name` | `string \| null` | No | Template name |
-| `description` | `string \| null` | No | Template description |
-| `format` | `string \| null` | No | Credential format |
-| `revocable` | `boolean \| null` | No | Whether credentials from this template can be revoked |
-| `archived` | `boolean \| null` | No | Whether the template is archived |
-| `createdAt` | `string \| null` | No | Creation timestamp |
-| `updatedAt` | `string \| null` | No | Last modification timestamp |
+| `credentialTemplateId` | `string` | Yes | Unarchived template id |
+| `success` | `boolean` | Yes | Whether the unarchive succeeded |
 
 
 
@@ -251,7 +270,7 @@ Update an SD-JWT VC credential template
 **Risk:** `write`
 
 ```ts
-await corsair.paradym.api.credentialTemplates.update({ credentialTemplateId: "tmpl_1", name: "PID v2" });
+await corsair.paradym.api.credentialTemplates.update({ credentialTemplateId: "tmpl_1", name: "PID v2", attributes: { given_name: { type: "string" } } });
 ```
 
 **Input**
@@ -259,11 +278,10 @@ await corsair.paradym.api.credentialTemplates.update({ credentialTemplateId: "tm
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `credentialTemplateId` | `string` | Yes | Template id |
-| `type` | `string` | No | Credential type identifier |
-| `name` | `string` | No | Template name |
-| `attributes` | `object` | No | Credential attributes keyed by attribute name |
-| `description` | `string` | No | Template description |
-| `revocable` | `boolean` | No | Enable revocation for credentials from this template |
+| `name` | `string` | Yes | Template name |
+| `attributes` | `object` | Yes | Credential attributes keyed by attribute name |
+| `validFrom` | `string \| object` | No | A date, e.g. 2026-11-21, or &#123; future: &#123; days, months, years &#125; &#125; |
+| `validUntil` | `string \| object` | No | A date, or &#123; start: issuance \| validFrom, future: &#123; days, months, years &#125; &#125; |
 
 <AccordionGroup>
 <Accordion title="attributes full type">
@@ -271,6 +289,33 @@ await corsair.paradym.api.credentialTemplates.update({ credentialTemplateId: "tm
 ```ts
 Record<string, {
 }>
+```
+</Accordion>
+
+<Accordion title="validFrom full type">
+
+```ts
+string | {
+  future: {
+    days?: number,
+    months?: number,
+    years?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="validUntil full type">
+
+```ts
+string | {
+  start: issuance | validFrom,
+  future: {
+    days?: number,
+    months?: number,
+    years?: number
+  }
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -306,7 +351,7 @@ Create a credential offer a holder wallet can accept
 **Risk:** `write`
 
 ```ts
-await corsair.paradym.api.issuance.createOffer({ credentials: [{ credentialTemplateId: "tmpl_1", claims: { given_name: "Jane" } }], expirationInMinutes: 15 });
+await corsair.paradym.api.issuance.createOffer({ credentials: [{ credentialTemplateId: "tmpl_1", attributes: { given_name: "Jane" } }], expirationInMinutes: 15 });
 ```
 
 **Input**
@@ -323,6 +368,8 @@ The answer carries the offer URI, QR image and deep link a holder wallet opens; 
 
 ```ts
 {
+  credentialTemplateId: string,
+  attributes?: Record<string, any>
 }[]
 ```
 </Accordion>
@@ -506,7 +553,6 @@ await corsair.paradym.api.presentationTemplates.create({ name: "PID check", cred
 |------|------|----------|-------------|
 | `name` | `string` | Yes | Template name |
 | `credentials` | `object[]` | Yes | The credentials the holder must present |
-| `description` | `string` | No | Template description |
 
 The credentials array names the credential types and attributes the holder must present; Paradym validates the per-format attribute definitions.
 
@@ -515,11 +561,12 @@ The credentials array names the credential types and attributes the holder must 
 
 ```ts
 {
-  type: string,
   format: sd-jwt-vc | mdoc | anoncreds,
+  type?: string,
+  schema?: string,
   attributes: Record<string, {
   }>,
-  name?: string | null
+  name?: string
 }[]
 ```
 </Accordion>
@@ -671,7 +718,7 @@ Update a presentation template
 **Risk:** `write`
 
 ```ts
-await corsair.paradym.api.presentationTemplates.update({ presentationTemplateId: "pres_1", name: "Renamed" });
+await corsair.paradym.api.presentationTemplates.update({ presentationTemplateId: "pres_1", name: "Renamed", credentials: [{ format: "sd-jwt-vc", type: "urn:eudi:pid:1", attributes: { given_name: {} } }] });
 ```
 
 **Input**
@@ -679,20 +726,20 @@ await corsair.paradym.api.presentationTemplates.update({ presentationTemplateId:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `presentationTemplateId` | `string` | Yes | Template id |
-| `name` | `string` | No | Template name |
-| `credentials` | `object[]` | No | The credentials to present |
-| `description` | `string` | No | Template description |
+| `name` | `string` | Yes | Template name |
+| `credentials` | `object[]` | Yes | The credentials to present |
 
 <AccordionGroup>
 <Accordion title="credentials full type">
 
 ```ts
 {
-  type: string,
   format: sd-jwt-vc | mdoc | anoncreds,
+  type?: string,
+  schema?: string,
   attributes: Record<string, {
   }>,
-  name?: string | null
+  name?: string
 }[]
 ```
 </Accordion>
@@ -808,7 +855,7 @@ Trust at least one DID or one certificate.
 
 ```ts
 {
-  pem: string
+  certificate: string
 }[]
 ```
 </Accordion>
@@ -1030,7 +1077,7 @@ Mark a succeeded verification session as completed
 **Risk:** `write`
 
 ```ts
-await corsair.paradym.api.verification.complete({ verificationId: "verification_1" });
+await corsair.paradym.api.verification.complete({ verificationId: "verification_1", challenge: "challenge-1", responseCode: "code-1" });
 ```
 
 **Input**
@@ -1038,8 +1085,10 @@ await corsair.paradym.api.verification.complete({ verificationId: "verification_
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `verificationId` | `string` | Yes | Verification session id |
+| `challenge` | `string` | Yes | The challenge the verification request was created with |
+| `responseCode` | `string` | Yes | The response_code the wallet redirect returned |
 
-Completes a session that succeeded but was not marked completed by the holder flow.
+Completes a redirect-flow session with the challenge it was created with and the response_code the wallet redirect returned.
 
 
 
@@ -1116,7 +1165,7 @@ Read one OpenID4VC verification session, including presented credentials
 **Risk:** `read`
 
 ```ts
-await corsair.paradym.api.verification.getSession({ verificationId: "verification_1" });
+await corsair.paradym.api.verification.getSession({ verificationId: "verification_1", challenge: "challenge-1", responseCode: "code-1" });
 ```
 
 **Input**
@@ -1227,7 +1276,7 @@ Create a wallet with its own agent, templates and credentials
 **Risk:** `write`
 
 ```ts
-await corsair.paradym.api.wallets.create({ name: "Government wallet", verificationDataAccess: false });
+await corsair.paradym.api.wallets.create({ name: "Government wallet", verificationDataAccess: "webhook" });
 ```
 
 **Input**
@@ -1235,8 +1284,8 @@ await corsair.paradym.api.wallets.create({ name: "Government wallet", verificati
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | Yes | Wallet name |
-| `verificationDataAccess` | `boolean` | No | Store the credential data presented to this wallet for verification |
-| `openId4VcVersion` | `v1 \| draft-00` | No | OpenID4VC version this wallet interoperates with |
+| `verificationDataAccess` | `webhook \| once \| 15min` | No | How long presented credential data stays readable: webhook (only in the webhook), once (one read) or 15min |
+| `openId4VcVersion` | `v1` | No | OpenID4VC version this wallet interoperates with |
 
 Wallet creation gives the wallet its own agent and template space.
 
@@ -1249,7 +1298,7 @@ Wallet creation gives the wallet its own agent and template space.
 | `id` | `string` | Yes | Wallet id |
 | `name` | `string` | Yes | Wallet name |
 | `ownerId` | `string` | Yes | Id of the owning user |
-| `verificationDataAccess` | `boolean` | Yes | Whether the wallet stores presented credential data |
+| `verificationDataAccess` | `string \| null` | No | Access mode for presented data: webhook, once or 15min |
 | `createdAt` | `string` | Yes | Creation timestamp |
 | `updatedAt` | `string` | Yes | Last modification timestamp |
 
@@ -1275,6 +1324,8 @@ await corsair.paradym.api.wallets.get({ walletId: "8f2a1c3d-4e5f-6a7b-8c9d-0e1f2
 |------|------|----------|-------------|
 | `walletId` | `string` | Yes | Wallet id |
 
+Paradym has no single-wallet GET route, so this reads the wallet list filtered by id.
+
 
 
 **Output**
@@ -1284,7 +1335,7 @@ await corsair.paradym.api.wallets.get({ walletId: "8f2a1c3d-4e5f-6a7b-8c9d-0e1f2
 | `id` | `string` | Yes | Wallet id |
 | `name` | `string` | Yes | Wallet name |
 | `ownerId` | `string` | Yes | Id of the owning user |
-| `verificationDataAccess` | `boolean` | Yes | Whether the wallet stores presented credential data |
+| `verificationDataAccess` | `string \| null` | No | Access mode for presented data: webhook, once or 15min |
 | `createdAt` | `string` | Yes | Creation timestamp |
 | `updatedAt` | `string` | Yes | Last modification timestamp |
 
@@ -1335,7 +1386,7 @@ Needs no wallet id; searches by name and filters by id or exact name.
   id: string,
   name: string,
   ownerId: string,
-  verificationDataAccess: boolean,
+  verificationDataAccess?: string | null,
   createdAt: string,
   updatedAt: string
 }[]
@@ -1379,7 +1430,7 @@ await corsair.paradym.api.wallets.update({ walletId: "8f2a1c3d-4e5f-6a7b-8c9d-0e
 |------|------|----------|-------------|
 | `walletId` | `string` | Yes | Wallet id |
 | `name` | `string` | No | New wallet name |
-| `verificationDataAccess` | `boolean` | No | Whether verification data is stored |
+| `verificationDataAccess` | `webhook \| once \| 15min` | No | How long presented credential data stays readable: webhook (only in the webhook), once (one read) or 15min |
 
 Takes the wallet id as an explicit input, not the account wallet.
 
@@ -1392,7 +1443,7 @@ Takes the wallet id as an explicit input, not the account wallet.
 | `id` | `string` | Yes | Wallet id |
 | `name` | `string` | Yes | Wallet name |
 | `ownerId` | `string` | Yes | Id of the owning user |
-| `verificationDataAccess` | `boolean` | Yes | Whether the wallet stores presented credential data |
+| `verificationDataAccess` | `string \| null` | No | Access mode for presented data: webhook, once or 15min |
 | `createdAt` | `string` | Yes | Creation timestamp |
 | `updatedAt` | `string` | Yes | Last modification timestamp |
 
@@ -1593,7 +1644,14 @@ List the wallet webhook subscriptions
 await corsair.paradym.api.webhooks.listSubscriptions({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | Results per page (sent as page[size]); the meta.page response carries maxSize |
+| `pageAfter` | `string` | No | Cursor of the first record to return (sent as page[after]; take it from meta.page.after) |
+| `pageBefore` | `string` | No | Cursor of the last record to return (sent as page[before]; take it from meta.page.before) |
+
 
 
 **Output**
@@ -1627,9 +1685,9 @@ await corsair.paradym.api.webhooks.listSubscriptions({});
 
 `webhooks.redeliverDelivery`
 
-Redeliver a pending or failed webhook delivery
+Redeliver a pending or failed webhook delivery: the payload is posted to the subscription URL again
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.paradym.api.webhooks.redeliverDelivery({ deliveryId: "del_1" });

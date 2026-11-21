@@ -115,7 +115,7 @@ const tenant = corsair.withTenant('acme');
 await tenant.paradym.api.issuance.createOffer({
 	credentials: [{
 		credentialTemplateId: 'tmpl_1',
-		claims: { given_name: 'Jane' },
+		attributes: { given_name: 'Jane' },
 	}],
 });
 ```
