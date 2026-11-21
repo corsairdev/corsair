@@ -33,8 +33,31 @@ export const HUNTERIO_RATE_LIMIT_CONFIG: RateLimitConfig = {
 		remaining: 'x-ratelimit-remaining',
 		limit: 'x-ratelimit-limit',
 	},
-	isRateLimitError: (status: number) => status === 403,
+	isRateLimitError: (status: number, body: unknown) =>
+		status === 403 && isHunterThrottleBody(body),
 };
+
+// Hunter also answers 403 for permanent refusals (`no_signals_access`,
+// `no_opportunities_access`, `optional_ai_features_off`, ...). Only the
+// throttle id `too_many_requests` is transient; a 403 whose body carries
+// no error id is treated as a throttle, as before.
+export function isHunterThrottleBody(body: unknown): boolean {
+	const ids = hunterErrorIds(body);
+	return ids.length === 0 || ids.includes('too_many_requests');
+}
+
+export function hunterErrorIds(body: unknown): string[] {
+	if (body === null || typeof body !== 'object') return [];
+	const errors = (body as { errors?: unknown }).errors;
+	if (!Array.isArray(errors)) return [];
+	return errors
+		.map((entry) =>
+			entry !== null && typeof entry === 'object'
+				? (entry as { id?: unknown }).id
+				: undefined,
+		)
+		.filter((id): id is string => typeof id === 'string');
+}
 
 export async function makeHunterioRequest<T>(
 	endpoint: string,
@@ -66,16 +89,20 @@ export async function makeHunterioRequest<T>(
 		// Email finder (max_duration up to 20s) and multi-domain search can
 		// exceed the shared 20s default.
 		TIMEOUT: 30_000,
+		// No fixed Content-Type: core adds it when a request has a body. The
+		// API keys routes answer 401 to a GET that carries
+		// `Content-Type: application/json` (checked 2026-11-21).
 		HEADERS: {
-			'Content-Type': 'application/json',
-			...(apiKey ? { 'X-API-KEY': apiKey } : {}),
+			// Bearer works on every v2 route. X-API-KEY does not: the API keys
+			// routes answer 401 "No user found for the API key supplied" to it.
+			...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		// The key travels only in the X-API-KEY header so it never appears
+		// The key travels only in the Authorization header so it never appears
 		// in request URLs (and therefore in proxy/access logs). Bodies are
 		// sent for every method because DELETE /sequences/{id}/recipients
 		// documents a JSON body.

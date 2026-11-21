@@ -422,6 +422,125 @@ await corsair.hunterio.api.apiKeys.update({});
 
 ---
 
+## Briefing
+
+### get
+
+`briefing.get`
+
+Get what needs attention today: counts of new lead and Monitored Signals events, new opportunities this week, and the credit balance, each with its follow-up call
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.briefing.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `since` | `string` | No | — |
+| `leads_since` | `string` | No | — |
+| `monitored_since` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  needs_attention: {
+    items: {
+      type: string,
+      status: string,
+      reason: string | null,
+      count: number | null,
+      count_exact: boolean | null,
+      next_call: {
+        endpoint: string,
+        params: Record<string, any>,
+        mcp_tool?: string | null,
+        charges_credits: boolean
+      } | null,
+      next_since: string | null
+    }[]
+  },
+  new_this_week: {
+    items: {
+      type: string,
+      status: string,
+      reason: string | null,
+      count: number | null,
+      count_exact: boolean | null,
+      next_call: {
+        endpoint: string,
+        params: Record<string, any>,
+        mcp_tool?: string | null,
+        charges_credits: boolean
+      } | null,
+      next_since: string | null
+    }[]
+  },
+  account: {
+    status: string,
+    plan_name: string | null,
+    plan_level: number | null,
+    reset_date: string | null,
+    requests: {
+      credits?: {
+        used?: number,
+        available?: number,
+        remaining?: number,
+        over_quota?: number
+      },
+      searches?: {
+        used?: number,
+        available?: number,
+        remaining?: number,
+        over_quota?: number
+      },
+      verifications?: {
+        used?: number,
+        available?: number,
+        remaining?: number,
+        over_quota?: number
+      }
+    } | null,
+    next_call: {
+      endpoint: string,
+      params: Record<string, any>,
+      mcp_tool?: string | null,
+      charges_credits: boolean
+    } | null
+  }
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  since: string,
+  next_since: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Companies
 
 ### bulkCopy
@@ -705,7 +824,7 @@ await corsair.hunterio.api.companies.create({});
 {
   id?: number,
   domain?: string | null,
-  leads_count?: number,
+  leads_count?: number | null,
   created_at?: string
 }
 ```
@@ -789,7 +908,7 @@ await corsair.hunterio.api.companies.get({});
 {
   id?: number,
   domain?: string | null,
-  leads_count?: number,
+  leads_count?: number | null,
   created_at?: string
 }
 ```
@@ -880,7 +999,7 @@ await corsair.hunterio.api.companies.list({});
   companies: {
     id?: number,
     domain?: string | null,
-    leads_count?: number,
+    leads_count?: number | null,
     created_at?: string
   }[]
 }
@@ -1295,7 +1414,7 @@ await corsair.hunterio.api.companyLists.addCompany({});
 {
   id?: number,
   domain?: string | null,
-  leads_count?: number,
+  leads_count?: number | null,
   created_at?: string
 }
 ```
@@ -1530,7 +1649,7 @@ await corsair.hunterio.api.companyLists.get({});
   companies?: {
     id?: number,
     domain?: string | null,
-    leads_count?: number,
+    leads_count?: number | null,
     created_at?: string
   }[]
 }
@@ -1599,6 +1718,67 @@ await corsair.hunterio.api.companyLists.list({});
     filters?: any
   }[]
 }
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listCompanies
+
+`companyLists.listCompanies`
+
+List the companies in a static company list, most recently added first
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.companyLists.listCompanies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_list_id` | `number \| string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  domain: string,
+  created_at?: string,
+  organization?: string | null
+}[]
 ```
 </Accordion>
 
@@ -1941,7 +2121,7 @@ await corsair.hunterio.api.companyTags.list({});
 
 ```ts
 {
-  tags: {
+  company_tags: {
     id?: number,
     name?: string,
     color?: string | null,
@@ -2726,11 +2906,11 @@ await corsair.hunterio.api.discover.companies({});
 ```ts
 {
   domain?: string,
-  organization?: string,
+  organization?: string | null,
   emails_count?: {
-    personal?: number,
-    generic?: number,
-    total?: number
+    personal?: number | null,
+    generic?: number | null,
+    total?: number | null
   },
   already_saved?: boolean,
   city?: string | null,
@@ -2739,7 +2919,7 @@ await corsair.hunterio.api.discover.companies({});
   company_type?: string | null,
   headcount?: string | null,
   industry?: string | null,
-  keywords?: string[],
+  keywords?: string[] | null,
   description?: string | null,
   year_founded?: number | null,
   socials?: {
@@ -2750,9 +2930,9 @@ await corsair.hunterio.api.discover.companies({});
   },
   technologies?: string[],
   technology_details?: {
-    category?: string,
-    category_label?: string,
-    name?: string,
+    category?: string | null,
+    category_label?: string | null,
+    name?: string | null,
     slug?: string,
     website?: string | null
   }[]
@@ -2770,7 +2950,7 @@ await corsair.hunterio.api.discover.companies({});
   results?: number,
   params?: any,
   filters?: any,
-  permalink?: string
+  permalink?: string | null
 }
 ```
 </Accordion>
@@ -2983,7 +3163,7 @@ await corsair.hunterio.api.discover.people({});
   results?: number,
   params?: any,
   filters?: any,
-  permalink?: string,
+  permalink?: string | null,
   total_emails?: {
     personal?: number,
     generic?: number,
@@ -3201,7 +3381,7 @@ await corsair.hunterio.api.discover.peoplePost({});
   results?: number,
   params?: any,
   filters?: any,
-  permalink?: string,
+  permalink?: string | null,
   total_emails?: {
     personal?: number,
     generic?: number,
@@ -3384,7 +3564,7 @@ await corsair.hunterio.api.discoverViews.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `string` | No | — |
-| `data` | `object[]` | Yes | — |
+| `data` | `object` | Yes | — |
 | `meta` | `object` | No | — |
 
 <AccordionGroup>
@@ -3392,12 +3572,14 @@ await corsair.hunterio.api.discoverViews.list({});
 
 ```ts
 {
-  id?: number,
-  name?: string,
-  filters?: Record<string, any>,
-  created_at?: string,
-  updated_at?: string
-}[]
+  views: {
+    id?: number,
+    name?: string,
+    filters?: Record<string, any>,
+    created_at?: string,
+    updated_at?: string
+  }[]
+}
 ```
 </Accordion>
 
@@ -3748,13 +3930,248 @@ await corsair.hunterio.api.domainFinder.findPost({});
 
 ## Domain Search
 
+### found
+
+`domainSearch.found`
+
+Search the email addresses Hunter found on the web for a domain, without generated guesses. Charges 1 credit per 10 emails returned [DESTRUCTIVE · SPENDS CREDITS]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hunterio.api.domainSearch.found({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `company` | `string` | No | — |
+| `type` | `personal \| generic` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `department` | `string` | No | — |
+| `seniority` | `string` | No | — |
+| `job_titles` | `string` | No | — |
+| `decision_maker` | `boolean` | No | — |
+| `required_field` | `string` | No | — |
+| `verification_status` | `string` | No | — |
+| `source_type` | `found \| generated` | No | — |
+| `saved_leads` | `boolean` | No | — |
+| `aggregations` | `boolean` | No | — |
+| `provenance` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domain?: string | null,
+  disposable?: boolean,
+  webmail?: boolean,
+  accept_all?: boolean,
+  pattern?: string | null,
+  organization?: string | null,
+  linked_domains?: string[],
+  emails?: {
+    value?: string,
+    type?: string,
+    confidence?: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    position?: string | null,
+    position_raw?: string | null,
+    seniority?: string | null,
+    department?: string | null,
+    decision_maker?: boolean,
+    linkedin?: string | null,
+    twitter?: string | null,
+    phone_number?: string | null,
+    source_type?: string,
+    verification?: {
+      date?: string | null,
+      status?: string | null
+    } | null,
+    sources?: {
+      domain?: string,
+      uri?: string,
+      extracted_on?: string | null,
+      last_seen_on?: string | null,
+      still_on_page?: boolean
+    }[]
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any,
+  results_approximate?: boolean,
+  aggregations?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### foundPost
+
+`domainSearch.foundPost`
+
+Search found email addresses for a domain with body filters, including location. Charges 1 credit per 10 emails returned [DESTRUCTIVE · SPENDS CREDITS]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.hunterio.api.domainSearch.foundPost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | No | — |
+| `company` | `string` | No | — |
+| `type` | `personal \| generic` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+| `department` | `string` | No | — |
+| `seniority` | `string` | No | — |
+| `job_titles` | `string` | No | — |
+| `decision_maker` | `boolean` | No | — |
+| `required_field` | `string` | No | — |
+| `verification_status` | `string` | No | — |
+| `source_type` | `found \| generated` | No | — |
+| `saved_leads` | `boolean` | No | — |
+| `aggregations` | `boolean` | No | — |
+| `provenance` | `string` | No | — |
+| `location` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  include?: {
+    continent?: string,
+    business_region?: string,
+    country?: string,
+    state?: string,
+    city?: string
+  }[],
+  exclude?: {
+    continent?: string,
+    business_region?: string,
+    country?: string,
+    state?: string,
+    city?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domain?: string | null,
+  disposable?: boolean,
+  webmail?: boolean,
+  accept_all?: boolean,
+  pattern?: string | null,
+  organization?: string | null,
+  linked_domains?: string[],
+  emails?: {
+    value?: string,
+    type?: string,
+    confidence?: number,
+    first_name?: string | null,
+    last_name?: string | null,
+    position?: string | null,
+    position_raw?: string | null,
+    seniority?: string | null,
+    department?: string | null,
+    decision_maker?: boolean,
+    linkedin?: string | null,
+    twitter?: string | null,
+    phone_number?: string | null,
+    source_type?: string,
+    verification?: {
+      date?: string | null,
+      status?: string | null
+    } | null,
+    sources?: {
+      domain?: string,
+      uri?: string,
+      extracted_on?: string | null,
+      last_seen_on?: string | null,
+      still_on_page?: boolean
+    }[]
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total?: number,
+  limit?: number,
+  offset?: number,
+  results?: number,
+  params?: any,
+  results_approximate?: boolean,
+  aggregations?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### search
 
 `domainSearch.search`
 
-List the email addresses found for a domain
+List the email addresses found for a domain. Charges 1 credit per 10 emails returned [DESTRUCTIVE · SPENDS CREDITS]
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hunterio.api.domainSearch.search({});
@@ -3794,7 +4211,7 @@ await corsair.hunterio.api.domainSearch.search({});
 
 ```ts
 {
-  domain?: string,
+  domain?: string | null,
   disposable?: boolean,
   webmail?: boolean,
   accept_all?: boolean,
@@ -3856,9 +4273,9 @@ await corsair.hunterio.api.domainSearch.search({});
 
 `domainSearch.searchPost`
 
-List the email addresses found for a domain (POST form)
+List the email addresses found for a domain (POST form). Charges 1 credit per 10 emails returned [DESTRUCTIVE · SPENDS CREDITS]
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hunterio.api.domainSearch.searchPost({});
@@ -3923,7 +4340,7 @@ await corsair.hunterio.api.domainSearch.searchPost({});
 
 ```ts
 {
-  domain?: string,
+  domain?: string | null,
   disposable?: boolean,
   webmail?: boolean,
   accept_all?: boolean,
@@ -4129,14 +4546,14 @@ await corsair.hunterio.api.emailAccounts.get({});
   daily_limit?: number,
   provider?: string,
   sender_name?: string | null,
-  default_account?: boolean,
+  default_account?: boolean | null,
   signature?: string | null,
   profile_picture_url?: string | null,
   custom_tracking_domain?: string | null,
   sending_schedule?: {
-    days?: number[],
-    start_time?: string,
-    end_time?: string,
+    days?: number[] | null,
+    start_time?: string | null,
+    end_time?: string | null,
     time_zone?: string
   },
   warmup?: {
@@ -4273,14 +4690,14 @@ await corsair.hunterio.api.emailAccounts.list({});
   daily_limit?: number,
   provider?: string,
   sender_name?: string | null,
-  default_account?: boolean,
+  default_account?: boolean | null,
   signature?: string | null,
   profile_picture_url?: string | null,
   custom_tracking_domain?: string | null,
   sending_schedule?: {
-    days?: number[],
-    start_time?: string,
-    end_time?: string,
+    days?: number[] | null,
+    start_time?: string | null,
+    end_time?: string | null,
     time_zone?: string
   },
   warmup?: {
@@ -4357,14 +4774,14 @@ await corsair.hunterio.api.emailAccounts.replace({});
   daily_limit?: number,
   provider?: string,
   sender_name?: string | null,
-  default_account?: boolean,
+  default_account?: boolean | null,
   signature?: string | null,
   profile_picture_url?: string | null,
   custom_tracking_domain?: string | null,
   sending_schedule?: {
-    days?: number[],
-    start_time?: string,
-    end_time?: string,
+    days?: number[] | null,
+    start_time?: string | null,
+    end_time?: string | null,
     time_zone?: string
   },
   warmup?: {
@@ -4504,14 +4921,14 @@ await corsair.hunterio.api.emailAccounts.update({});
   daily_limit?: number,
   provider?: string,
   sender_name?: string | null,
-  default_account?: boolean,
+  default_account?: boolean | null,
   signature?: string | null,
   profile_picture_url?: string | null,
   custom_tracking_domain?: string | null,
   sending_schedule?: {
-    days?: number[],
-    start_time?: string,
-    end_time?: string,
+    days?: number[] | null,
+    start_time?: string | null,
+    end_time?: string | null,
     time_zone?: string
   },
   warmup?: {
@@ -4750,9 +5167,9 @@ await corsair.hunterio.api.emailCount.get({});
 
 `emailFinder.find`
 
-Find the most likely email of a person
+Find the most likely email of a person. Charges 1 credit when an email is found [DESTRUCTIVE · SPENDS CREDITS]
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hunterio.api.emailFinder.find({});
@@ -4787,7 +5204,7 @@ await corsair.hunterio.api.emailFinder.find({});
 {
   email?: string | null,
   score?: number | null,
-  domain?: string,
+  domain?: string | null,
   company?: string | null,
   first_name?: string | null,
   last_name?: string | null,
@@ -4795,8 +5212,8 @@ await corsair.hunterio.api.emailFinder.find({});
   linkedin_url?: string | null,
   twitter?: string | null,
   phone_number?: string | null,
-  accept_all?: boolean,
-  source_type?: string,
+  accept_all?: boolean | null,
+  source_type?: string | null,
   sources?: {
     domain?: string,
     uri?: string,
@@ -4835,9 +5252,9 @@ await corsair.hunterio.api.emailFinder.find({});
 
 `emailFinder.findFound`
 
-Check whether an email was already found for a person
+Check whether an email was already found for a person. Charges 1 credit when an email is found [DESTRUCTIVE · SPENDS CREDITS]
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hunterio.api.emailFinder.findFound({});
@@ -4872,7 +5289,7 @@ await corsair.hunterio.api.emailFinder.findFound({});
 {
   email?: string | null,
   score?: number | null,
-  domain?: string,
+  domain?: string | null,
   company?: string | null,
   first_name?: string | null,
   last_name?: string | null,
@@ -4880,8 +5297,8 @@ await corsair.hunterio.api.emailFinder.findFound({});
   linkedin_url?: string | null,
   twitter?: string | null,
   phone_number?: string | null,
-  accept_all?: boolean,
-  source_type?: string,
+  accept_all?: boolean | null,
+  source_type?: string | null,
   sources?: {
     domain?: string,
     uri?: string,
@@ -4920,9 +5337,9 @@ await corsair.hunterio.api.emailFinder.findFound({});
 
 `emailFinder.findFoundPost`
 
-Check whether an email was already found (POST form)
+Check whether an email was already found (POST form). Charges 1 credit when an email is found [DESTRUCTIVE · SPENDS CREDITS]
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hunterio.api.emailFinder.findFoundPost({});
@@ -4957,7 +5374,7 @@ await corsair.hunterio.api.emailFinder.findFoundPost({});
 {
   email?: string | null,
   score?: number | null,
-  domain?: string,
+  domain?: string | null,
   company?: string | null,
   first_name?: string | null,
   last_name?: string | null,
@@ -4965,8 +5382,8 @@ await corsair.hunterio.api.emailFinder.findFoundPost({});
   linkedin_url?: string | null,
   twitter?: string | null,
   phone_number?: string | null,
-  accept_all?: boolean,
-  source_type?: string,
+  accept_all?: boolean | null,
+  source_type?: string | null,
   sources?: {
     domain?: string,
     uri?: string,
@@ -5071,9 +5488,9 @@ await corsair.hunterio.api.emailInsight.get({});
 
 `emailVerifier.verify`
 
-Verify the deliverability of an email address
+Verify the deliverability of an email address. Charges 0.5 credit per verification [DESTRUCTIVE · SPENDS CREDITS]
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hunterio.api.emailVerifier.verify({});
@@ -5110,7 +5527,7 @@ await corsair.hunterio.api.emailVerifier.verify({});
   disposable?: boolean,
   webmail?: boolean,
   mx_records?: boolean,
-  smtp_server?: string | null,
+  smtp_server?: boolean | null,
   smtp_check?: boolean,
   accept_all?: boolean,
   block?: boolean,
@@ -5159,9 +5576,9 @@ await corsair.hunterio.api.emailVerifier.verify({});
 
 `enrichment.combined`
 
-Enrich a person and their company together
+Enrich a person and their company together. Charges 0.2 credit when data is found [DESTRUCTIVE · SPENDS CREDITS]
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hunterio.api.enrichment.combined({});
@@ -5529,9 +5946,9 @@ await corsair.hunterio.api.enrichment.combined({});
 
 `enrichment.company`
 
-Enrich a company profile from a domain or name
+Enrich a company profile from a domain or name. Charges 0.2 credit when data is found [DESTRUCTIVE · SPENDS CREDITS]
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hunterio.api.enrichment.company({});
@@ -5746,9 +6163,9 @@ await corsair.hunterio.api.enrichment.company({});
 
 `enrichment.person`
 
-Enrich a person profile from an email or name
+Enrich a person profile from an email or name. Charges 0.2 credit when data is found [DESTRUCTIVE · SPENDS CREDITS]
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hunterio.api.enrichment.person({});
@@ -7793,6 +8210,7 @@ await corsair.hunterio.api.leadsLists.merge({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| string` | Yes | — |
+| `destination_leads_list_id` | `number \| string` | Yes | — |
 
 
 
@@ -8183,9 +8601,9 @@ await corsair.hunterio.api.messages.list({});
 
 `messages.send`
 
-Send a message from a connected email account
+Send a message from a connected email account. Sends a real email [DESTRUCTIVE · SENDS EMAIL]
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hunterio.api.messages.send({});
@@ -8623,15 +9041,77 @@ await corsair.hunterio.api.messageTemplates.update({});
 
 ---
 
+## Monitored Signals
+
+### list
+
+`monitoredSignals.list`
+
+List the Monitored Signals of the team: funding signals, job openings signals and company follows
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.monitoredSignals.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  type: string,
+  status: string,
+  filters: Record<string, any>,
+  event_types: string[],
+  created_at: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total: number,
+  limit: number,
+  offset: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Multi Domain Search
 
 ### reveal
 
 `multiDomainSearch.reveal`
 
-Reveal the verified email addresses of a multi-domain search
+Reveal the verified email addresses of a multi-domain search. Charges 1 credit per email revealed for the first time this billing period [DESTRUCTIVE · SPENDS CREDITS]
 
-**Risk:** `read`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hunterio.api.multiDomainSearch.reveal({});
@@ -8741,7 +9221,7 @@ await corsair.hunterio.api.multiDomainSearch.search({});
     status?: string | null
   },
   reveal_handle?: string,
-  provenance?: string
+  provenance?: string | null
 }[]
 ```
 </Accordion>
@@ -8760,6 +9240,152 @@ await corsair.hunterio.api.multiDomainSearch.search({});
     domain?: string,
     emails?: number
   }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Opportunities
+
+### list
+
+`opportunities.list`
+
+List the opportunities of this week: groups of people or companies similar to the leads and companies you saved
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.opportunities.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  type: string,
+  source: string,
+  description: string,
+  results_count: number,
+  score: number,
+  seen_at: string | null,
+  created_at: string,
+  next_call: {
+    endpoint: string,
+    params: Record<string, any>,
+    mcp_tool?: string | null,
+    charges_credits: boolean
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  results: number,
+  limit: number,
+  offset: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### results
+
+`opportunities.results`
+
+List the masked people or the companies of one opportunity; reveal emails with multiDomainSearch.reveal
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.opportunities.results({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+(
+  {
+    name: string,
+    position: string | null,
+    department: string | null,
+    seniority: string | null,
+    type: string,
+    provenance: string | null,
+    decision_maker: boolean | null,
+    domain: string,
+    company_name: string | null,
+    full_name_exists: boolean,
+    phone_number_exists: boolean,
+    verification: {
+      date: string | null,
+      status: string | null
+    },
+    reveal_handle: string
+  } | {
+    domain: string,
+    company_name: string | null,
+    emails_count: number
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  type: string,
+  results: number,
+  limit: number,
+  offset: number
 }
 ```
 </Accordion>
@@ -9940,9 +10566,9 @@ await corsair.hunterio.api.sequences.resume({});
 
 `sequences.start`
 
-Start a sequence
+Start a sequence. Starts sending emails to the recipients [DESTRUCTIVE · SENDS EMAIL]
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hunterio.api.sequences.start({});
@@ -9997,9 +10623,9 @@ await corsair.hunterio.api.sequences.start({});
 
 `sequences.test`
 
-Send test emails for every step of a sequence
+Send test emails for every step of a sequence. Sends a real test email [DESTRUCTIVE · SENDS EMAIL]
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.hunterio.api.sequences.test({});
@@ -10226,6 +10852,85 @@ await corsair.hunterio.api.sequenceStats.get({});
   offset?: number,
   results?: number,
   params?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Signals
+
+### list
+
+`signals.list`
+
+List signal events from the last 30 days (funding rounds, tech changes, new contacts, hires, job posts, contact moves) for your leads or your Monitored Signals
+
+**Risk:** `read`
+
+```ts
+await corsair.hunterio.api.signals.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source` | `leads \| monitored` | Yes | — |
+| `signal_id` | `number` | No | — |
+| `since` | `string` | No | — |
+| `types` | `(funding_round \| technology_added \| technology_removed \| new_contact \| new_executive \| job_posted \| hiring_volume \| hiring_spike \| company_growth \| location_changed \| position_changed \| email_invalidated)[]` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  source: string,
+  type: string,
+  occurred_at: string,
+  company: {
+    domain: string,
+    name: string | null
+  },
+  details: Record<string, any>,
+  signal_id: number | null,
+  next_call: {
+    endpoint: string,
+    params: Record<string, any>,
+    mcp_tool?: string | null,
+    charges_credits: boolean
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  limit: number,
+  next_cursor: string | null,
+  next_since: string,
+  window_start: string,
+  types_skipped?: string[],
+  signals_included?: number[],
+  signals_skipped?: number[]
 }
 ```
 </Accordion>

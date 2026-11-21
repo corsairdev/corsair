@@ -512,12 +512,12 @@ export const DiscoverFiltersSchema = z.object({
 export const DiscoverCompanySchema = z
 	.object({
 		domain: z.string().optional(),
-		organization: z.string().optional(),
+		organization: z.string().nullable().optional(),
 		emails_count: z
 			.object({
-				personal: z.number().optional(),
-				generic: z.number().optional(),
-				total: z.number().optional(),
+				personal: z.number().nullable().optional(),
+				generic: z.number().nullable().optional(),
+				total: z.number().nullable().optional(),
 			})
 			.passthrough()
 			.optional(),
@@ -528,7 +528,7 @@ export const DiscoverCompanySchema = z
 		company_type: z.string().nullable().optional(),
 		headcount: z.string().nullable().optional(),
 		industry: z.string().nullable().optional(),
-		keywords: z.array(z.string()).optional(),
+		keywords: z.array(z.string()).nullable().optional(),
 		description: z.string().nullable().optional(),
 		year_founded: z.number().nullable().optional(),
 		socials: z
@@ -545,9 +545,9 @@ export const DiscoverCompanySchema = z
 			.array(
 				z
 					.object({
-						category: z.string().optional(),
-						category_label: z.string().optional(),
-						name: z.string().optional(),
+						category: z.string().nullable().optional(),
+						category_label: z.string().nullable().optional(),
+						name: z.string().nullable().optional(),
 						slug: z.string().optional(),
 						website: z.string().nullable().optional(),
 					})
@@ -563,7 +563,7 @@ export const DiscoverCompanySchema = z
 const discoverMetaFields = {
 	// Stricter typing is not feasible because meta.filters echoes dynamic filter state resolved server-side from natural-language search queries whose shape depends on the query criteria.
 	filters: z.unknown().optional(),
-	permalink: z.string().optional(),
+	permalink: z.string().nullable().optional(),
 };
 
 export const DiscoverCompaniesInputSchema = DiscoverFiltersSchema;
@@ -651,8 +651,9 @@ export type DiscoverViewsListInput = z.infer<
 	typeof DiscoverViewsListInputSchema
 >;
 
+// Live API (checked 2026-11-21): `{ data: { views: [...] }, meta }`.
 export const DiscoverViewsListOutputSchema = envelope(
-	z.array(DiscoverViewSchema),
+	z.object({ views: z.array(DiscoverViewSchema) }).passthrough(),
 );
 export type DiscoverViewsListOutput = z.infer<
 	typeof DiscoverViewsListOutputSchema
@@ -822,7 +823,7 @@ export const DomainSearchEmailSchema = z
 
 export const DomainSearchDataSchema = z
 	.object({
-		domain: z.string().optional(),
+		domain: z.string().nullable().optional(),
 		disposable: z.boolean().optional(),
 		webmail: z.boolean().optional(),
 		accept_all: z.boolean().optional(),
@@ -853,6 +854,36 @@ export type DomainSearchSearchOutput = z.infer<
 export const DomainSearchSearchPostOutputSchema = domainSearchOutput;
 export type DomainSearchSearchPostOutput = z.infer<
 	typeof DomainSearchSearchPostOutputSchema
+>;
+
+// Domain Search restricted to addresses Hunter found on the web (no
+// generated pattern guesses). Same response shape as Domain Search.
+const domainSearchFoundFields = {
+	...domainSearchFields,
+	provenance: z.string().optional(),
+};
+
+export const DomainSearchFoundInputSchema = z.object(domainSearchFoundFields);
+export type DomainSearchFoundInput = z.infer<
+	typeof DomainSearchFoundInputSchema
+>;
+
+export const DomainSearchFoundPostInputSchema = z.object({
+	...domainSearchFoundFields,
+	location: z.object(locationFilterFields).optional(),
+});
+export type DomainSearchFoundPostInput = z.infer<
+	typeof DomainSearchFoundPostInputSchema
+>;
+
+export const DomainSearchFoundOutputSchema = domainSearchOutput;
+export type DomainSearchFoundOutput = z.infer<
+	typeof DomainSearchFoundOutputSchema
+>;
+
+export const DomainSearchFoundPostOutputSchema = domainSearchOutput;
+export type DomainSearchFoundPostOutput = z.infer<
+	typeof DomainSearchFoundPostOutputSchema
 >;
 
 // ── Multi-Domain Search ─────────────────────────────────────────────────────
@@ -906,7 +937,7 @@ export const MultiDomainSearchRowSchema = z
 			.optional(),
 		// Signed opaque handle fed to multiDomainSearchReveal.
 		reveal_handle: z.string().optional(),
-		provenance: z.string().optional(),
+		provenance: z.string().nullable().optional(),
 	})
 	.passthrough();
 
@@ -988,7 +1019,7 @@ export const EmailFinderDataSchema = z
 	.object({
 		email: z.string().nullable().optional(),
 		score: z.number().nullable().optional(),
-		domain: z.string().optional(),
+		domain: z.string().nullable().optional(),
 		company: z.string().nullable().optional(),
 		first_name: z.string().nullable().optional(),
 		last_name: z.string().nullable().optional(),
@@ -996,8 +1027,8 @@ export const EmailFinderDataSchema = z
 		linkedin_url: z.string().nullable().optional(),
 		twitter: z.string().nullable().optional(),
 		phone_number: z.string().nullable().optional(),
-		accept_all: z.boolean().optional(),
-		source_type: z.string().optional(),
+		accept_all: z.boolean().nullable().optional(),
+		source_type: z.string().nullable().optional(),
 		sources: z.array(EmailFinderSourceSchema).optional(),
 		verification: z
 			.object({
@@ -1059,7 +1090,8 @@ export const EmailVerifierDataSchema = z
 		disposable: z.boolean().optional(),
 		webmail: z.boolean().optional(),
 		mx_records: z.boolean().optional(),
-		smtp_server: z.string().nullable().optional(),
+		// Boolean per the docs example and the OpenAPI spec (was string).
+		smtp_server: z.boolean().nullable().optional(),
 		smtp_check: z.boolean().optional(),
 		accept_all: z.boolean().optional(),
 		block: z.boolean().optional(),
@@ -1478,11 +1510,14 @@ export const LeadVerificationSchema = z
 	})
 	.passthrough();
 
+// A lead saved automatically (Email Verifier, Email Finder with automatic
+// lead saving on) sits in no list and comes back with
+// `leads_list: { id: null, name: null, leads_count: null }` (live, 2026-11-21).
 export const LeadListRefSchema = z
 	.object({
-		id: z.number().optional(),
-		name: z.string().optional(),
-		leads_count: z.number().optional(),
+		id: z.number().nullable().optional(),
+		name: z.string().nullable().optional(),
+		leads_count: z.number().nullable().optional(),
 	})
 	.passthrough();
 
@@ -2116,7 +2151,12 @@ export type LeadsListsUnfavoriteOutput = z.infer<
 // docs only describe it as merging one leads list into another without
 // publishing the semantics (source of the contents, destination list, or
 // which list survives), so only the path id is sent.
-export const LeadsListsMergeInputSchema = z.object({ id: IdSchema });
+// The API answers 400 "You are missing the destination_leads_list_id
+// parameter" without it. The leads of list `id` move into the destination.
+export const LeadsListsMergeInputSchema = z.object({
+	id: IdSchema,
+	destination_leads_list_id: IdSchema,
+});
 export type LeadsListsMergeInput = z.infer<typeof LeadsListsMergeInputSchema>;
 
 export const LeadsListsMergeOutputSchema = z.undefined();
@@ -2234,7 +2274,8 @@ export const CompanySchema = z
 	.object({
 		id: z.number().optional(),
 		domain: z.string().nullable().optional(),
-		leads_count: z.number().optional(),
+		// Live API (2026-11-21): null for a company with no saved leads.
+		leads_count: z.number().nullable().optional(),
 		created_at: z.string().optional(),
 	})
 	.passthrough();
@@ -2568,6 +2609,32 @@ export type CompanyListsAddCompanyOutput = z.infer<
 	typeof CompanyListsAddCompanyOutputSchema
 >;
 
+export const CompanyListsListCompaniesInputSchema = z.object({
+	company_list_id: IdSchema,
+	limit: z.number().int().min(1).max(100).optional(),
+	offset: z.number().int().min(0).optional(),
+});
+export type CompanyListsListCompaniesInput = z.infer<
+	typeof CompanyListsListCompaniesInputSchema
+>;
+
+export const CompanyListCompanySchema = z
+	.object({
+		id: z.number(),
+		domain: z.string(),
+		created_at: z.string().optional(),
+		organization: z.string().nullable().optional(),
+	})
+	.passthrough();
+
+// Static lists only; a dynamic list answers 400 `dynamic_company_list`.
+export const CompanyListsListCompaniesOutputSchema = envelope(
+	z.array(CompanyListCompanySchema),
+);
+export type CompanyListsListCompaniesOutput = z.infer<
+	typeof CompanyListsListCompaniesOutputSchema
+>;
+
 export const CompanyListsRemoveCompanyInputSchema = z.object({
 	company_list_id: IdSchema,
 	company_id: IdSchema,
@@ -2700,8 +2767,9 @@ export const CompanyTagsListInputSchema = z.object({
 });
 export type CompanyTagsListInput = z.infer<typeof CompanyTagsListInputSchema>;
 
+// Live API (checked 2026-11-21): `{ data: { company_tags: [...] }, meta }`.
 export const CompanyTagsListOutputSchema = envelope(
-	z.object({ tags: z.array(TagSchema) }).passthrough(),
+	z.object({ company_tags: z.array(TagSchema) }).passthrough(),
 );
 export type CompanyTagsListOutput = z.infer<typeof CompanyTagsListOutputSchema>;
 
@@ -2757,6 +2825,265 @@ export type CompanyTagsDeleteInput = z.infer<
 export const CompanyTagsDeleteOutputSchema = z.undefined();
 export type CompanyTagsDeleteOutput = z.infer<
 	typeof CompanyTagsDeleteOutputSchema
+>;
+
+// ── Briefing, Signals, Monitored Signals, Opportunities ────────────────────
+// Documented at https://hunter.io/api-documentation/v2#briefing and the
+// sections after it. All four calls are free.
+
+// `next_call` names the follow-up request (endpoint + params) that returns
+// the details of an item; `charges_credits` says whether it costs credits.
+export const HunterNextCallSchema = z
+	.object({
+		endpoint: z.string(),
+		// Stricter typing is not feasible because the params differ per follow-up endpoint (source/since/limit for Signals, empty for Account, ...).
+		params: z.record(z.string(), z.unknown()),
+		mcp_tool: z.string().nullable().optional(),
+		charges_credits: z.boolean(),
+	})
+	.passthrough();
+
+const isoDateTime = z.string();
+
+export const BriefingGetInputSchema = z.object({
+	// ISO 8601 date-time, not in the future. Defaults to 7 days ago; older
+	// than 30 days reads as 30 days ago.
+	since: isoDateTime.optional(),
+	leads_since: isoDateTime.optional(),
+	monitored_since: isoDateTime.optional(),
+});
+export type BriefingGetInput = z.infer<typeof BriefingGetInputSchema>;
+
+export const BriefingItemSchema = z
+	.object({
+		// lead_signals | monitored_signals | opportunities (new types may come)
+		type: z.string(),
+		// ok | unavailable | no_access
+		status: z.string(),
+		reason: z.string().nullable(),
+		count: z.number().nullable(),
+		count_exact: z.boolean().nullable(),
+		next_call: HunterNextCallSchema.nullable(),
+		next_since: z.string().nullable(),
+	})
+	.passthrough();
+
+export const BriefingGetOutputSchema = z
+	.object({
+		data: z
+			.object({
+				needs_attention: z
+					.object({ items: z.array(BriefingItemSchema) })
+					.passthrough(),
+				new_this_week: z
+					.object({ items: z.array(BriefingItemSchema) })
+					.passthrough(),
+				account: z
+					.object({
+						status: z.string(),
+						plan_name: z.string().nullable(),
+						plan_level: z.number().nullable(),
+						reset_date: z.string().nullable(),
+						requests: AccountRequestsSchema.nullable(),
+						next_call: HunterNextCallSchema.nullable(),
+					})
+					.passthrough(),
+			})
+			.passthrough(),
+		meta: z.object({ since: z.string(), next_since: z.string() }).passthrough(),
+	})
+	.passthrough();
+export type BriefingGetOutput = z.infer<typeof BriefingGetOutputSchema>;
+
+export const SignalEventTypeValues = [
+	'funding_round',
+	'technology_added',
+	'technology_removed',
+	'new_contact',
+	'new_executive',
+	'job_posted',
+	'hiring_volume',
+	'hiring_spike',
+	'company_growth',
+	'location_changed',
+	'position_changed',
+	'email_invalidated',
+] as const;
+
+export const SignalsListInputSchema = z.object({
+	source: z.enum(['leads', 'monitored']),
+	// With source=monitored only: one Monitored Signal's feed.
+	signal_id: z.number().int().min(1).optional(),
+	since: isoDateTime.optional(),
+	types: z.array(z.enum(SignalEventTypeValues)).optional(),
+	limit: z.number().int().min(1).max(100).optional(),
+	// `meta.next_cursor` of the previous page; the call has no offset.
+	cursor: z.string().optional(),
+});
+export type SignalsListInput = z.infer<typeof SignalsListInputSchema>;
+
+export const SignalEventSchema = z
+	.object({
+		id: z.string(),
+		source: z.string(),
+		// Event types are open-ended: early access types appear per account.
+		type: z.string(),
+		occurred_at: z.string(),
+		company: z
+			.object({ domain: z.string(), name: z.string().nullable() })
+			.passthrough(),
+		// Stricter typing is not feasible because the details fields depend on the event type (round_type/amount_usd for funding, technology for tech changes, job for job_posted, from/to for moves).
+		details: z.record(z.string(), z.unknown()),
+		signal_id: z.number().nullable(),
+		next_call: HunterNextCallSchema.nullable(),
+	})
+	.passthrough();
+
+export const SignalsListOutputSchema = z
+	.object({
+		data: z.array(SignalEventSchema),
+		meta: z
+			.object({
+				limit: z.number(),
+				next_cursor: z.string().nullable(),
+				next_since: z.string(),
+				window_start: z.string(),
+				types_skipped: z.array(z.string()).optional(),
+				signals_included: z.array(z.number()).optional(),
+				signals_skipped: z.array(z.number()).optional(),
+			})
+			.passthrough(),
+	})
+	.passthrough();
+export type SignalsListOutput = z.infer<typeof SignalsListOutputSchema>;
+
+export const MonitoredSignalsListInputSchema = z.object({
+	limit: z.number().int().min(1).max(100).optional(),
+	offset: z.number().int().min(0).optional(),
+});
+export type MonitoredSignalsListInput = z.infer<
+	typeof MonitoredSignalsListInputSchema
+>;
+
+export const MonitoredSignalSchema = z
+	.object({
+		id: z.number(),
+		name: z.string(),
+		// funding_rounds | job_openings | company_follow
+		type: z.string(),
+		// active | paused
+		status: z.string(),
+		// Stricter typing is not feasible because the filter keys depend on the signal type (countries/series for funding, title_include/job_countries for jobs, domain/updates for follows).
+		filters: z.record(z.string(), z.unknown()),
+		event_types: z.array(z.string()),
+		created_at: z.string(),
+	})
+	.passthrough();
+
+export const MonitoredSignalsListOutputSchema = z
+	.object({
+		data: z.array(MonitoredSignalSchema),
+		meta: z
+			.object({ total: z.number(), limit: z.number(), offset: z.number() })
+			.passthrough(),
+	})
+	.passthrough();
+export type MonitoredSignalsListOutput = z.infer<
+	typeof MonitoredSignalsListOutputSchema
+>;
+
+export const OpportunitiesListInputSchema = z.object({
+	limit: z.number().int().min(1).max(100).optional(),
+	offset: z.number().int().min(0).optional(),
+});
+export type OpportunitiesListInput = z.infer<
+	typeof OpportunitiesListInputSchema
+>;
+
+export const OpportunitySchema = z
+	.object({
+		id: z.number(),
+		// people | companies
+		type: z.string(),
+		// leads | campaign_replies | companies | companies_funding; the docs
+		// say to read unknown values as new sources.
+		source: z.string(),
+		description: z.string(),
+		results_count: z.number(),
+		score: z.number(),
+		seen_at: z.string().nullable(),
+		created_at: z.string(),
+		next_call: HunterNextCallSchema,
+	})
+	.passthrough();
+
+export const OpportunitiesListOutputSchema = z
+	.object({
+		data: z.array(OpportunitySchema),
+		meta: z
+			.object({ results: z.number(), limit: z.number(), offset: z.number() })
+			.passthrough(),
+	})
+	.passthrough();
+export type OpportunitiesListOutput = z.infer<
+	typeof OpportunitiesListOutputSchema
+>;
+
+export const OpportunitiesResultsInputSchema = z.object({
+	id: z.number().int().min(1),
+	limit: z.number().int().min(1).max(100).optional(),
+	offset: z.number().int().min(0).optional(),
+});
+export type OpportunitiesResultsInput = z.infer<
+	typeof OpportunitiesResultsInputSchema
+>;
+
+// People are masked (first name + last initial, no email). Send the
+// `reveal_handle` values to multiDomainSearch.reveal to get the addresses.
+export const OpportunityPersonSchema = z
+	.object({
+		name: z.string(),
+		position: z.string().nullable(),
+		department: z.string().nullable(),
+		seniority: z.string().nullable(),
+		type: z.string(),
+		provenance: z.string().nullable(),
+		decision_maker: z.boolean().nullable(),
+		domain: z.string(),
+		company_name: z.string().nullable(),
+		full_name_exists: z.boolean(),
+		phone_number_exists: z.boolean(),
+		verification: z
+			.object({ date: z.string().nullable(), status: z.string().nullable() })
+			.passthrough(),
+		reveal_handle: z.string(),
+	})
+	.passthrough();
+
+export const OpportunityCompanySchema = z
+	.object({
+		domain: z.string(),
+		company_name: z.string().nullable(),
+		emails_count: z.number(),
+	})
+	.passthrough();
+
+export const OpportunitiesResultsOutputSchema = z
+	.object({
+		data: z.array(z.union([OpportunityPersonSchema, OpportunityCompanySchema])),
+		meta: z
+			.object({
+				// people | companies: tells which shape `data` holds
+				type: z.string(),
+				results: z.number(),
+				limit: z.number(),
+				offset: z.number(),
+			})
+			.passthrough(),
+	})
+	.passthrough();
+export type OpportunitiesResultsOutput = z.infer<
+	typeof OpportunitiesResultsOutputSchema
 >;
 
 // ── Lookalikes ──────────────────────────────────────────────────────────────
@@ -3474,16 +3801,16 @@ export const EmailAccountSchema = z
 		provider: z.string().optional(),
 		// Detail fields returned by the single-account calls.
 		sender_name: z.string().nullable().optional(),
-		default_account: z.boolean().optional(),
+		default_account: z.boolean().nullable().optional(),
 		signature: z.string().nullable().optional(),
 		profile_picture_url: z.string().nullable().optional(),
 		custom_tracking_domain: z.string().nullable().optional(),
 		sending_schedule: z
 			.object({
 				// 0 = Monday through 6 = Sunday.
-				days: z.array(z.number().int()).optional(),
-				start_time: z.string().optional(),
-				end_time: z.string().optional(),
+				days: z.array(z.number().int()).nullable().optional(),
+				start_time: z.string().nullable().optional(),
+				end_time: z.string().nullable().optional(),
 				time_zone: z.string().optional(),
 			})
 			.passthrough()
@@ -3828,6 +4155,8 @@ export const HunterioEndpointInputSchemas = {
 	domainsSuggestionGet: DomainsSuggestionGetInputSchema,
 	domainSearchSearch: DomainSearchSearchInputSchema,
 	domainSearchSearchPost: DomainSearchSearchPostInputSchema,
+	domainSearchFound: DomainSearchFoundInputSchema,
+	domainSearchFoundPost: DomainSearchFoundPostInputSchema,
 	multiDomainSearchSearch: MultiDomainSearchSearchInputSchema,
 	multiDomainSearchReveal: MultiDomainSearchRevealInputSchema,
 	emailFinderFind: EmailFinderFindInputSchema,
@@ -3900,6 +4229,7 @@ export const HunterioEndpointInputSchemas = {
 	companyListsDelete: CompanyListsDeleteInputSchema,
 	companyListsAddCompany: CompanyListsAddCompanyInputSchema,
 	companyListsRemoveCompany: CompanyListsRemoveCompanyInputSchema,
+	companyListsListCompanies: CompanyListsListCompaniesInputSchema,
 	companyListsFavorite: CompanyListsFavoriteInputSchema,
 	companyListsUnfavorite: CompanyListsUnfavoriteInputSchema,
 	companyListFoldersList: CompanyListFoldersListInputSchema,
@@ -3915,6 +4245,11 @@ export const HunterioEndpointInputSchemas = {
 	companyTagsReplace: CompanyTagsReplaceInputSchema,
 	companyTagsDelete: CompanyTagsDeleteInputSchema,
 	lookalikesList: LookalikesListInputSchema,
+	briefingGet: BriefingGetInputSchema,
+	signalsList: SignalsListInputSchema,
+	monitoredSignalsList: MonitoredSignalsListInputSchema,
+	opportunitiesList: OpportunitiesListInputSchema,
+	opportunitiesResults: OpportunitiesResultsInputSchema,
 	sequencesList: SequencesListInputSchema,
 	sequencesCreate: SequencesCreateInputSchema,
 	sequencesGet: SequencesGetInputSchema,
@@ -3997,6 +4332,8 @@ export const HunterioEndpointOutputSchemas = {
 	domainsSuggestionGet: DomainsSuggestionGetOutputSchema,
 	domainSearchSearch: DomainSearchSearchOutputSchema,
 	domainSearchSearchPost: DomainSearchSearchPostOutputSchema,
+	domainSearchFound: DomainSearchFoundOutputSchema,
+	domainSearchFoundPost: DomainSearchFoundPostOutputSchema,
 	multiDomainSearchSearch: MultiDomainSearchSearchOutputSchema,
 	multiDomainSearchReveal: MultiDomainSearchRevealOutputSchema,
 	emailFinderFind: EmailFinderFindOutputSchema,
@@ -4069,6 +4406,7 @@ export const HunterioEndpointOutputSchemas = {
 	companyListsDelete: CompanyListsDeleteOutputSchema,
 	companyListsAddCompany: CompanyListsAddCompanyOutputSchema,
 	companyListsRemoveCompany: CompanyListsRemoveCompanyOutputSchema,
+	companyListsListCompanies: CompanyListsListCompaniesOutputSchema,
 	companyListsFavorite: CompanyListsFavoriteOutputSchema,
 	companyListsUnfavorite: CompanyListsUnfavoriteOutputSchema,
 	companyListFoldersList: CompanyListFoldersListOutputSchema,
@@ -4084,6 +4422,11 @@ export const HunterioEndpointOutputSchemas = {
 	companyTagsReplace: CompanyTagsReplaceOutputSchema,
 	companyTagsDelete: CompanyTagsDeleteOutputSchema,
 	lookalikesList: LookalikesListOutputSchema,
+	briefingGet: BriefingGetOutputSchema,
+	signalsList: SignalsListOutputSchema,
+	monitoredSignalsList: MonitoredSignalsListOutputSchema,
+	opportunitiesList: OpportunitiesListOutputSchema,
+	opportunitiesResults: OpportunitiesResultsOutputSchema,
 	sequencesList: SequencesListOutputSchema,
 	sequencesCreate: SequencesCreateOutputSchema,
 	sequencesGet: SequencesGetOutputSchema,
