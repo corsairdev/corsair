@@ -16,7 +16,7 @@ overviewNote: >
   of full bracketed keys to values, e.g. "conditions[deal_stage][]": 3 or
   "conditions[deal_created][selection]": "last_30" — each list page
   documents its keys, and the API ignores unknown keys rather than
-  rejecting them. Sorting uses sort=-field. Money fields such as a deal's
+  rejecting them. Sorting uses sort=<field> or sort=-<field> with record field names such as value or created_at (sort=-deal_value answers 500). Money fields such as a deal's
   value serialize as decimal strings ("12000.0"); send numbers or numeric
   strings.
 
@@ -43,7 +43,7 @@ examples:
       value: 12000
 apiExamples:
   deals.list:
-    call: '{ conditions: { "conditions[deal_stage][]": 3 }, sort: "-deal_value", perPage: 50 }'
+    call: '{ conditions: { "conditions[deal_stage][]": 3 }, sort: "-value", perPage: 50 }'
   deals.create:
     call: '{ name: "Acme renewal", value: 12000, dealStageId: 3, companyName: "Acme Corporation" }'
   deals.get:

@@ -148,7 +148,8 @@ describe('deals', () => {
 		await invoke(Deals.deleteDeal, { id: 4521 });
 		expectCall({ path: '/api/v3/deals/4521', method: 'DELETE' });
 
-		respond([stageTotal]);
+		// Live (11-21) total comes back as a number, not the documented string.
+		respond([stageTotal, { ...stageTotal, deal_stage_id: 4, total: 1500.5 }]);
 		const totals = (await invoke(Deals.totalsByStage, {})) as Array<{
 			deal_stage_id?: number;
 		}>;
@@ -162,6 +163,24 @@ describe('deals', () => {
 });
 
 describe('people', () => {
+	it('get, update and delete hang off the person id', async () => {
+		respond(person);
+		await invoke(People.get, { id: 900 });
+		expectCall({ path: '/api/v3/people/900', method: 'GET' });
+
+		respond(person);
+		await invoke(People.update, { id: 900, position: 'Tester' });
+		expectCall({
+			path: '/api/v3/people/900',
+			method: 'PUT',
+			body: { person: { position: 'Tester' } },
+		});
+
+		respond({});
+		await invoke(People.deletePerson, { id: 900 });
+		expectCall({ path: '/api/v3/people/900', method: 'DELETE' });
+	});
+
 	it('create wraps the fields in a person body', async () => {
 		respond(person);
 		await invoke(People.create, {
@@ -187,7 +206,7 @@ describe('people', () => {
 		await invoke(People.autocomplete, { q: 'john', companyId: 77 });
 		expectCall({
 			path: '/api/v3/people/autocomplete',
-			query: { q: 'john', company_id: '77' },
+			query: { autocomplete: 'john', q: 'john', company_id: '77' },
 		});
 	});
 
@@ -214,6 +233,28 @@ describe('people', () => {
 });
 
 describe('companies', () => {
+	it('get, update (owner included), and delete hang off the company id', async () => {
+		respond(company);
+		await invoke(Companies.get, { id: 77 });
+		expectCall({ path: '/api/v3/companies/77', method: 'GET' });
+
+		respond(company);
+		await invoke(Companies.update, {
+			id: 77,
+			userId: 5,
+			description: 'updated',
+		});
+		expectCall({
+			path: '/api/v3/companies/77',
+			method: 'PUT',
+			body: { company: { user_id: 5, description: 'updated' } },
+		});
+
+		respond({});
+		await invoke(Companies.deleteCompany, { id: 77 });
+		expectCall({ path: '/api/v3/companies/77', method: 'DELETE' });
+	});
+
 	it('create wraps the fields and passes the duplicate check', async () => {
 		respond(company);
 		await invoke(Companies.create, {

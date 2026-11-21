@@ -147,7 +147,9 @@ export const autocomplete: PipelineCrmEndpoints['peopleAutocomplete'] = (
 		({ q, companyId, dealId }) => ({
 			method: 'GET',
 			path: `${V3}/people/autocomplete`,
-			query: { q, company_id: companyId, deal_id: dealId },
+			// Live, the API answers 422 without an autocomplete parameter (the
+			// reference only names q), so the text goes in both.
+			query: { autocomplete: q, q, company_id: companyId, deal_id: dealId },
 		}),
 		{ log: (_, matches) => ({ count: matches.length }) },
 	);

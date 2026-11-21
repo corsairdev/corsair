@@ -87,6 +87,7 @@ export const DealSchema = z
 		deal_won_reason_id: z.number().nullish().describe('Won reason id'),
 		deal_won_reason_notes: z.string().nullish().describe('Won reason notes'),
 		deal_source: z.number().nullish().describe('Lead source id'),
+		// unknown: the currency record's fields vary by account settings.
 		currency: z.unknown().nullish().describe('Currency record'),
 		custom_fields: z
 			// unknown: custom field values keyed by custom_label_<id>.
@@ -198,6 +199,7 @@ export const PipelineUserSchema = z
 		work_phone: z.string().nullish().describe('Work phone'),
 		mobile: z.string().nullish().describe('Mobile phone'),
 		admin: z.boolean().nullish().describe('Whether the user is an admin'),
+		// unknown: the role level record is not documented field by field.
 		user_level: z.unknown().nullish().describe('Role level record'),
 		created_at: z.string().nullish().describe('Creation timestamp'),
 		updated_at: z.string().nullish().describe('Last update timestamp'),
@@ -212,7 +214,10 @@ export const StageTotalSchema = z
 		deal_stage_id: z.number().nullish().describe('Deal stage id'),
 		deal_stage_name: z.string().nullish().describe('Deal stage name'),
 		count: z.number().nullish().describe('Deals in the stage'),
-		total: z.string().nullish().describe('Total value as a decimal string'),
+		total: z
+			.union([z.string(), z.number()])
+			.nullish()
+			.describe('Total value (a number live, a decimal string in the docs)'),
 	})
 	.loose()
 	.describe('A per-stage deal total');
@@ -263,7 +268,12 @@ export type EmptyInput = z.infer<typeof EmptyInputSchema>;
 export const DealsListInputSchema = z
 	.object({
 		conditions: conditionsParam,
-		sort: z.string().optional().describe('Sort field; prefix - for descending'),
+		sort: z
+			.string()
+			.optional()
+			.describe(
+				'Record field to sort by, e.g. value, name, created_at; prefix - for descending',
+			),
 		...pagingParams,
 	})
 	.describe('Query parameters for listing deals');
@@ -325,6 +335,7 @@ export const DealCreateInputSchema = z
 		dealSource: z.number().int().optional().describe('Lead source id'),
 		tagIds: z.array(z.number().int()).optional().describe('Tag ids'),
 		customFields: z
+			// unknown: values follow each custom field's type, keyed custom_label_<id>.
 			.record(z.string(), z.unknown())
 			.optional()
 			.describe('Custom field values keyed by custom_label_<id>'),
@@ -390,6 +401,7 @@ export const DealUpdateInputSchema = z
 		dealSource: z.number().int().optional().describe('Lead source id'),
 		tagIds: z.array(z.number().int()).optional().describe('Tag ids'),
 		customFields: z
+			// unknown: values follow each custom field's type, keyed custom_label_<id>.
 			.record(z.string(), z.unknown())
 			.optional()
 			.describe('Custom field values keyed by custom_label_<id>'),
@@ -421,7 +433,12 @@ export const NotesListOutputSchema = listEnvelope(
 export const PeopleListInputSchema = z
 	.object({
 		conditions: conditionsParam,
-		sort: z.string().optional().describe('Sort field; prefix - for descending'),
+		sort: z
+			.string()
+			.optional()
+			.describe(
+				'Record field to sort by, e.g. value, name, created_at; prefix - for descending',
+			),
 		...pagingParams,
 	})
 	.describe('Query parameters for listing people');
@@ -461,6 +478,7 @@ export const PersonCreateInputSchema = z
 			.optional()
 			.describe('Predefined contact tag ids'),
 		customFields: z
+			// unknown: values follow each custom field's type, keyed custom_label_<id>.
 			.record(z.string(), z.unknown())
 			.optional()
 			.describe('Custom field values keyed by custom_label_<id>'),
@@ -497,6 +515,7 @@ export const PersonUpdateInputSchema = z
 			.optional()
 			.describe('Predefined contact tag ids'),
 		customFields: z
+			// unknown: values follow each custom field's type, keyed custom_label_<id>.
 			.record(z.string(), z.unknown())
 			.optional()
 			.describe('Custom field values keyed by custom_label_<id>'),
@@ -533,7 +552,12 @@ export const DealsListForParentOutputSchema = listEnvelope(
 export const CompaniesListInputSchema = z
 	.object({
 		conditions: conditionsParam,
-		sort: z.string().optional().describe('Sort field; prefix - for descending'),
+		sort: z
+			.string()
+			.optional()
+			.describe(
+				'Record field to sort by, e.g. value, name, created_at; prefix - for descending',
+			),
 		...pagingParams,
 	})
 	.describe('Query parameters for listing companies');
@@ -563,6 +587,7 @@ export const CompanyCreateInputSchema = z
 		twitter: z.string().optional().describe('Twitter username'),
 		userId: z.number().int().optional().describe('Owning user id'),
 		customFields: z
+			// unknown: values follow each custom field's type, keyed custom_label_<id>.
 			.record(z.string(), z.unknown())
 			.optional()
 			.describe('Custom field values keyed by custom_label_<id>'),
@@ -594,7 +619,9 @@ export const CompanyUpdateInputSchema = z
 		facebookUrl: z.string().optional().describe('Facebook URL'),
 		linkedInUrl: z.string().optional().describe('LinkedIn URL'),
 		twitter: z.string().optional().describe('Twitter username'),
+		userId: z.number().int().optional().describe('New owning user id'),
 		customFields: z
+			// unknown: values follow each custom field's type, keyed custom_label_<id>.
 			.record(z.string(), z.unknown())
 			.optional()
 			.describe('Custom field values keyed by custom_label_<id>'),
