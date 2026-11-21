@@ -1211,14 +1211,6 @@
                 ]
               },
               {
-                "group": "Cert Spotter",
-                "pages": [
-                  "plugins/certspotter/overview",
-                  "plugins/certspotter/api",
-                  "plugins/certspotter/database"
-                ]
-              },
-              {
                 "group": "Chaser",
                 "pages": [
                   "plugins/chaser/overview",
@@ -2697,6 +2689,14 @@
                 ]
               },
               {
+                "group": "Google Ads",
+                "pages": [
+                  "plugins/googleads/overview",
+                  "plugins/googleads/api",
+                  "plugins/googleads/database"
+                ]
+              },
+              {
                 "group": "Google Analytics",
                 "pages": [
                   "plugins/googleanalytics/overview",
@@ -2736,6 +2736,14 @@
                   "plugins/googlecloudvision/overview",
                   "plugins/googlecloudvision/api",
                   "plugins/googlecloudvision/database"
+                ]
+              },
+              {
+                "group": "Google Admin",
+                "pages": [
+                  "plugins/googleadmin/overview",
+                  "plugins/googleadmin/api",
+                  "plugins/googleadmin/database"
                 ]
               },
               {
@@ -2779,6 +2787,22 @@
                   "plugins/googlemeet/overview",
                   "plugins/googlemeet/api",
                   "plugins/googlemeet/database"
+                ]
+              },
+              {
+                "group": "Google Photos",
+                "pages": [
+                  "plugins/googlephotos/overview",
+                  "plugins/googlephotos/api",
+                  "plugins/googlephotos/database"
+                ]
+              },
+              {
+                "group": "Google Search Console",
+                "pages": [
+                  "plugins/googlesearchconsole/overview",
+                  "plugins/googlesearchconsole/api",
+                  "plugins/googlesearchconsole/database"
                 ]
               },
               {
@@ -2995,6 +3019,14 @@
                 ]
               },
               {
+                "group": "HotspotSystem",
+                "pages": [
+                  "plugins/hotspotsystem/overview",
+                  "plugins/hotspotsystem/api",
+                  "plugins/hotspotsystem/database"
+                ]
+              },
+              {
                 "group": "HTML to Image",
                 "pages": [
                   "plugins/htmltoimage/overview",
@@ -3155,6 +3187,14 @@
                 ]
               },
               {
+                "group": "Interzoid",
+                "pages": [
+                  "plugins/interzoid/overview",
+                  "plugins/interzoid/api",
+                  "plugins/interzoid/database"
+                ]
+              },
+              {
                 "group": "IP2Proxy",
                 "pages": [
                   "plugins/ip2proxy/overview",
@@ -3266,6 +3306,14 @@
                   "plugins/keenable/overview",
                   "plugins/keenable/api",
                   "plugins/keenable/database"
+                ]
+              },
+              {
+                "group": "Kernel",
+                "pages": [
+                  "plugins/kernel/overview",
+                  "plugins/kernel/api",
+                  "plugins/kernel/database"
                 ]
               },
               {
@@ -3395,6 +3443,14 @@
                   "plugins/leiga/overview",
                   "plugins/leiga/api",
                   "plugins/leiga/database"
+                ]
+              },
+              {
+                "group": "Lemlist",
+                "pages": [
+                  "plugins/lemlist/overview",
+                  "plugins/lemlist/api",
+                  "plugins/lemlist/database"
                 ]
               },
               {
@@ -3671,6 +3727,14 @@
                   "plugins/modelry/overview",
                   "plugins/modelry/api",
                   "plugins/modelry/database"
+                ]
+              },
+              {
+                "group": "Monday MCP",
+                "pages": [
+                  "plugins/mondaymcp/overview",
+                  "plugins/mondaymcp/api",
+                  "plugins/mondaymcp/database"
                 ]
               },
               {
@@ -3952,6 +4016,14 @@
                 ]
               },
               {
+                "group": "OpenSEO",
+                "pages": [
+                  "plugins/openseo/overview",
+                  "plugins/openseo/api",
+                  "plugins/openseo/database"
+                ]
+              },
+              {
                 "group": "OpenWeatherMap",
                 "pages": [
                   "plugins/openweathermap/overview",
@@ -4011,7 +4083,8 @@
                 "pages": [
                   "plugins/parallel/overview",
                   "plugins/parallel/api",
-                  "plugins/parallel/database"
+                  "plugins/parallel/database",
+                  "plugins/parallel/webhooks"
                 ]
               },
               {
@@ -5043,6 +5116,14 @@
                 ]
               },
               {
+                "group": "SSLMate Cert Spotter",
+                "pages": [
+                  "plugins/certspotter/overview",
+                  "plugins/certspotter/api",
+                  "plugins/certspotter/database"
+                ]
+              },
+              {
                 "group": "Stack Exchange",
                 "pages": [
                   "plugins/stackexchange/overview",
@@ -5059,11 +5140,53 @@
                 ]
               },
               {
+                "group": "Stannp",
+                "pages": [
+                  "plugins/stannp/overview",
+                  "plugins/stannp/api",
+                  "plugins/stannp/database",
+                  "plugins/stannp/webhooks"
+                ]
+              },
+              {
                 "group": "Starton",
                 "pages": [
                   "plugins/starton/overview",
                   "plugins/starton/api",
                   "plugins/starton/database"
+                ]
+              },
+              {
+                "group": "StatusCake",
+                "pages": [
+                  "plugins/statuscake/overview",
+                  "plugins/statuscake/api",
+                  "plugins/statuscake/database"
+                ]
+              },
+              {
+                "group": "Storeganise",
+                "pages": [
+                  "plugins/storeganise/overview",
+                  "plugins/storeganise/api",
+                  "plugins/storeganise/database",
+                  "plugins/storeganise/webhooks"
+                ]
+              },
+              {
+                "group": "Storerocket",
+                "pages": [
+                  "plugins/storerocket/overview",
+                  "plugins/storerocket/api",
+                  "plugins/storerocket/database"
+                ]
+              },
+              {
+                "group": "Stormboard",
+                "pages": [
+                  "plugins/stormboard/overview",
+                  "plugins/stormboard/api",
+                  "plugins/stormboard/database"
                 ]
               },
               {
@@ -5220,6 +5343,14 @@
                   "plugins/taggun/overview",
                   "plugins/taggun/api",
                   "plugins/taggun/database"
+                ]
+              },
+              {
+                "group": "Tailscale",
+                "pages": [
+                  "plugins/tailscale/overview",
+                  "plugins/tailscale/api",
+                  "plugins/tailscale/database"
                 ]
               },
               {

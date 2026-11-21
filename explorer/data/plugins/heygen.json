@@ -23,6 +23,16 @@
       "shortPath": "aiClipping.create",
       "description": "Create an AI clipping job that turns a long video into short highlight clips",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.ai_clipping_id",
+        "status": {
+          "op": "aiClipping.get",
+          "idArg": "job_id",
+          "statusPath": "data.status",
+          "done": ["completed"],
+          "failed": ["failed", "cancelled"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -1834,6 +1844,16 @@
       "shortPath": "hyperframes.create",
       "description": "Create a HyperFrames cloud render from an HTML/motion-graphics project",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.render_id",
+        "status": {
+          "op": "hyperframes.get",
+          "idArg": "render_id",
+          "statusPath": "data.status",
+          "done": ["completed"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -2148,6 +2168,16 @@
       "shortPath": "lipsync.create",
       "description": "Create a lipsync job that syncs a video to a separate audio track",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.lipsync_id",
+        "status": {
+          "op": "lipsync.get",
+          "idArg": "lipsync_id",
+          "statusPath": "data.status",
+          "done": ["completed"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -2486,6 +2516,16 @@
       "shortPath": "proofread.generateVideo",
       "description": "Render the final translated video from a completed proofread session",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.video_translation_id",
+        "status": {
+          "op": "videos.translateStatus",
+          "idArg": "video_translate_id",
+          "statusPath": "data.status",
+          "done": ["completed"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -3321,6 +3361,16 @@
       "shortPath": "videos.createWebm",
       "description": "Create a WebM format video with transparent background featuring studio avatars",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.video_id",
+        "status": {
+          "op": "videos.getStatus",
+          "idArg": "video_id",
+          "statusPath": "data.status",
+          "done": ["completed"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -3446,6 +3496,16 @@
       "shortPath": "videos.generate",
       "description": "Generate a customized avatar video with voices and character configs",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.video_id",
+        "status": {
+          "op": "videos.getStatus",
+          "idArg": "video_id",
+          "statusPath": "data.status",
+          "done": ["completed"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -3713,6 +3773,16 @@
       "shortPath": "videos.templateGenerate",
       "description": "Generate a customized video from a pre-existing template using variable definitions",
       "riskLevel": "write",
+      "job": {
+        "idPath": "data.video_id",
+        "status": {
+          "op": "videos.getStatus",
+          "idArg": "video_id",
+          "statusPath": "data.status",
+          "done": ["completed"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [

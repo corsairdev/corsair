@@ -9,7 +9,7 @@ overviewNote: |
   - Campaign, campaign event and field updates replace the record, so they need the same fields as a create (TextIt answers 400 otherwise). A group used by a campaign can't be deleted until the campaign is archived in TextIt.
   - Message actions apply only to incoming messages and take the integer `id` that `messages.list` returns.
   - Updating a contact by URN creates it if the URN is unknown. `messageActions.apply` returns `undefined` on complete success or an object `{ failures: [...] }` when some messages could not be updated; access the failed IDs through `result.failures`.
-  - Upload media with a `Blob` using `media.upload`; its UUID can be used in message attachments.
+  - Upload media with `media.upload`, passing the file as a public link, `{ base64, filename, contentType }` or a `Blob`; on Corsair, pass a Files id. Its UUID can be used in message attachments.
   - Rate-limited requests are retried up to three times, waiting for TextIt's `Retry-After`. Other failures throw Corsair's `ApiError` with the HTTP `status` and TextIt's error body; the default handlers do not replay writes.
   - Outbound resthook subscription management is supported; inbound webhook verification is not included.
   - The provider's globals create example uses `/global.json`, which currently returns 404; the indexed plural `/globals.json` route is used. Its subscriber ID prose says integer while examples show strings, so both are accepted.
@@ -73,4 +73,4 @@ apiExamples:
   topics.create:
     args: { name: Support }
   media.upload:
-    call: "{ file: new Blob(['example'], { type: 'text/plain' }) }"
+    args: { file: https://example.com/photo.jpg }

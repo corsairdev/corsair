@@ -2,6 +2,7 @@ import type {
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
+	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
 	CorsairWebhook,
@@ -28,6 +29,7 @@ import {
 	GoogleDriveEndpointInputSchemas,
 	GoogleDriveEndpointOutputSchemas,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { GoogleDriveSchema } from './schema';
 import { googledriveSubscribe } from './subscribe';
 import type {
@@ -66,7 +68,9 @@ export type GoogleDriveEndpoints = {
 	filesCopy: GoogleDriveEndpoint<'filesCopy'>;
 	filesMove: GoogleDriveEndpoint<'filesMove'>;
 	filesDownload: GoogleDriveEndpoint<'filesDownload'>;
+	filesExport: GoogleDriveEndpoint<'filesExport'>;
 	filesShare: GoogleDriveEndpoint<'filesShare'>;
+	filesExportText: GoogleDriveEndpoint<'filesExportText'>;
 	foldersCreate: GoogleDriveEndpoint<'foldersCreate'>;
 	foldersGet: GoogleDriveEndpoint<'foldersGet'>;
 	foldersList: GoogleDriveEndpoint<'foldersList'>;
@@ -113,7 +117,9 @@ const googleDriveEndpointsNested = {
 		copy: FilesEndpoints.copy,
 		move: FilesEndpoints.move,
 		download: FilesEndpoints.download,
+		export: FilesEndpoints.export,
 		share: FilesEndpoints.share,
+		exportText: FilesEndpoints.exportText,
 	},
 	folders: {
 		create: FoldersEndpoints.create,
@@ -174,9 +180,17 @@ export const googledriveEndpointSchemas = {
 		input: GoogleDriveEndpointInputSchemas.filesDownload,
 		output: GoogleDriveEndpointOutputSchemas.filesDownload,
 	},
+	'files.export': {
+		input: GoogleDriveEndpointInputSchemas.filesExport,
+		output: GoogleDriveEndpointOutputSchemas.filesExport,
+	},
 	'files.share': {
 		input: GoogleDriveEndpointInputSchemas.filesShare,
 		output: GoogleDriveEndpointOutputSchemas.filesShare,
+	},
+	'files.exportText': {
+		input: GoogleDriveEndpointInputSchemas.filesExportText,
+		output: GoogleDriveEndpointOutputSchemas.filesExportText,
 	},
 	'folders.create': {
 		input: GoogleDriveEndpointInputSchemas.foldersCreate,
@@ -243,6 +257,7 @@ export type GoogleDrivePluginOptions = {
 	 * Overrides use dot-notation paths from the Google Drive endpoint tree — invalid paths are type errors.
 	 */
 	permissions?: PluginPermissionsConfig<typeof googleDriveEndpointsNested>;
+	errorHandlers?: CorsairErrorHandler;
 };
 
 export type GoogleDriveKeyBuilderContext =
@@ -300,11 +315,21 @@ const googleDriveEndpointMeta = {
 	'files.download': {
 		riskLevel: 'read',
 		description:
-			'Download a file. A text file comes back as text, any other file as base64, up to about 700 KB; size and type are always returned. Google Docs, Sheets and Slides cannot be downloaded this way.',
+			"Download a file with its name, type and size. Up to about 700 KB the content comes back inline: a text file as text, any other file as base64. A larger file comes back with fileId, where the host saved it (on Corsair, a Files id to pass to another app or read with files.read_text), or with contentOmitted when the host keeps no files. Google Docs, Sheets and Slides can't be downloaded; use files.export.",
+	},
+	'files.export': {
+		riskLevel: 'read',
+		description:
+			'Export a Google Docs, Sheets, Slides or Drawings file to a regular format: Markdown for Docs, CSV (first sheet only) for Sheets, PDF for Slides and PNG for Drawings unless mimeType names another, such as docx, xlsx or pptx. Drive exports up to 10 MB. The result comes back like files.download: inline up to about 700 KB, otherwise as fileId where the host saved it, or with contentOmitted.',
 	},
 	'files.share': {
 		riskLevel: 'write',
 		description: 'Share a file by granting permissions to users',
+	},
+	'files.exportText': {
+		riskLevel: 'read',
+		description:
+			'Get the plain text of a Google Doc across all of its tabs and store it',
 	},
 	'folders.create': { riskLevel: 'write', description: 'Create a new folder' },
 	'folders.get': {
@@ -403,6 +428,10 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 		endpointMeta: googleDriveEndpointMeta,
 		endpointSchemas: googledriveEndpointSchemas,
 		webhookSchemas: googledriveWebhookSchemas,
+		errorHandlers: {
+			...errorHandlers,
+			...options.errorHandlers,
+		},
 		keyBuilder: async (ctx: GoogleDriveKeyBuilderContext) => {
 			const authType = ctx.authType;
 

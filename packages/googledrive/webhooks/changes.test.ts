@@ -310,6 +310,11 @@ describe('driveChanged pagination', () => {
 							deleted.push(`folder:${id}`);
 						},
 					},
+					fileContents: {
+						deleteByEntityId: async (id: string) => {
+							deleted.push(`contents:${id}`);
+						},
+					},
 				},
 			},
 			makeRequest('77'),
@@ -317,6 +322,7 @@ describe('driveChanged pagination', () => {
 
 		expect(result.success).toBe(true);
 		expect(deleted).toContain('gone-file');
+		expect(deleted).toContain('contents:gone-file');
 		expect(result.data?.allFiles[0]?.changeType).toBe('deleted');
 		expect(result.data?.allFiles[0]?.file.id).toBe('gone-file');
 	});

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { openaiFileInput } from './file-input';
 
 const ImageObjectSchema = z.object({
 	url: z.string().optional(),
@@ -31,9 +32,9 @@ export type ImagesCreateResponse = z.infer<typeof ImagesCreateResponseSchema>;
 
 export const ImagesCreateEditInputSchema = z
 	.object({
-		image: z.union([z.instanceof(Blob), z.string()]),
+		image: openaiFileInput('The image to edit, under 50 MB'),
 		imageFileName: z.string(),
-		mask: z.union([z.instanceof(Blob), z.string()]).optional(),
+		mask: openaiFileInput('A PNG mask under 4 MB').optional(),
 		maskFileName: z.string().optional(),
 		prompt: z.string(),
 		model: z.string().optional(),
@@ -63,7 +64,7 @@ export type ImagesCreateEditResponse = z.infer<
 >;
 
 export const ImagesCreateVariationInputSchema = z.object({
-	image: z.union([z.instanceof(Blob), z.string()]),
+	image: openaiFileInput('A square PNG under 4 MB'),
 	imageFileName: z.string(),
 	model: z.string().optional(),
 	n: z.number().optional(),

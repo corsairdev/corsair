@@ -442,7 +442,7 @@ await corsair.openai.api.assistants.retrieve({});
 
 `audio.createSpeech`
 
-Generate spoken audio from text
+Generate spoken audio from text. On Corsair the audio comes back as audioBase64 up to about 700 KB and a longer clip comes back as fileId, a Files id; without a host that keeps files audioBase64 holds up to 100 MB, or contentOmitted is set.
 
 **Risk:** `write`
 
@@ -467,7 +467,12 @@ await corsair.openai.api.audio.createSpeech({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `audioBase64` | `string` | Yes | — |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+| `audioBase64` | `string` | No | The audio, base64-encoded. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId). |
 | `format` | `string` | Yes | — |
 
 
@@ -478,7 +483,7 @@ await corsair.openai.api.audio.createSpeech({});
 
 `audio.createTranscription`
 
-Transcribe audio into text
+Transcribe audio into text. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -490,7 +495,7 @@ await corsair.openai.api.audio.createTranscription({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `custom \| string` | Yes | — |
+| `file` | `string \| object \| custom` | Yes | The audio file, up to 25 MB: a public http(s) or data: URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…). |
 | `fileName` | `string` | Yes | — |
 | `model` | `string` | Yes | — |
 | `language` | `string` | No | — |
@@ -498,6 +503,23 @@ await corsair.openai.api.audio.createTranscription({});
 | `responseFormat` | `json \| text \| srt \| verbose_json \| vtt` | No | — |
 | `temperature` | `number` | No | — |
 | `timestampGranularities` | `(word \| segment)[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -515,7 +537,7 @@ await corsair.openai.api.audio.createTranscription({});
 
 `audio.createTranslation`
 
-Translate audio into English text
+Translate audio into English text. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -527,12 +549,29 @@ await corsair.openai.api.audio.createTranslation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `custom \| string` | Yes | — |
+| `file` | `string \| object \| custom` | Yes | The audio file, up to 25 MB: a public http(s) or data: URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…). |
 | `fileName` | `string` | Yes | — |
 | `model` | `string` | Yes | — |
 | `prompt` | `string` | No | — |
 | `responseFormat` | `json \| text \| srt \| verbose_json \| vtt` | No | — |
 | `temperature` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1428,7 +1467,7 @@ await corsair.openai.api.completions.create({});
 
 `containerFiles.create`
 
-Add a file to a container
+Add a file to a container, by fileId or as a new upload. Takes the upload as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -1441,9 +1480,26 @@ await corsair.openai.api.containerFiles.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `containerId` | `string` | Yes | — |
-| `file` | `custom \| string` | No | — |
+| `file` | `string \| object \| custom` | No | The file to add to the container: a public http(s) or data: URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…). |
 | `fileName` | `string` | No | — |
 | `fileId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1591,7 +1647,7 @@ await corsair.openai.api.containerFiles.retrieve({});
 
 `containerFiles.retrieveContent`
 
-Download the contents of a container file
+Download the contents of a container file. On Corsair up to about 700 KB comes back inline and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline up to 100 MB, or contentOmitted.
 
 **Risk:** `read`
 
@@ -1612,9 +1668,14 @@ await corsair.openai.api.containerFiles.retrieveContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
 | `containerId` | `string` | Yes | — |
-| `fileId` | `string` | Yes | — |
-| `contentBase64` | `string` | Yes | — |
 
 
 
@@ -2726,7 +2787,7 @@ await corsair.openai.api.files.delete({});
 
 `files.downloadContent`
 
-Download the contents of a file
+Download the contents of a file. On Corsair up to about 700 KB comes back inline and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline up to 100 MB, or contentOmitted.
 
 **Risk:** `read`
 
@@ -2746,8 +2807,13 @@ await corsair.openai.api.files.downloadContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `fileId` | `string` | Yes | — |
-| `contentBase64` | `string` | Yes | — |
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
 
 
 
@@ -2847,7 +2913,7 @@ await corsair.openai.api.files.retrieve({});
 
 `files.upload`
 
-Upload a file to OpenAI
+Upload a file to OpenAI. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -2859,9 +2925,26 @@ await corsair.openai.api.files.upload({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `custom \| string` | Yes | — |
+| `file` | `string \| object \| custom` | Yes | The file to upload, up to 512 MB: a public http(s) or data: URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…). |
 | `fileName` | `string` | Yes | — |
 | `purpose` | `assistants \| assistants_output \| batch \| batch_output \| fine-tune \| fine-tune-results \| vision \| user_data \| evals` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3337,7 +3420,7 @@ await corsair.openai.api.images.create({});
 
 `images.createEdit`
 
-Edit an image given a prompt and mask
+Edit an image given a prompt and mask. Takes the image and mask as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -3349,15 +3432,47 @@ await corsair.openai.api.images.createEdit({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `image` | `custom \| string` | Yes | — |
+| `image` | `string \| object \| custom` | Yes | The image to edit, under 50 MB: a public http(s) or data: URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…). |
 | `imageFileName` | `string` | Yes | — |
-| `mask` | `custom \| string` | No | — |
+| `mask` | `string \| object \| custom` | No | A PNG mask under 4 MB: a public http(s) or data: URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…). |
 | `maskFileName` | `string` | No | — |
 | `prompt` | `string` | Yes | — |
 | `model` | `string` | No | — |
 | `n` | `number` | No | — |
 | `size` | `string` | No | — |
 | `responseFormat` | `url \| b64_json` | No | — |
+
+<AccordionGroup>
+<Accordion title="image full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+
+<Accordion title="mask full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3389,7 +3504,7 @@ await corsair.openai.api.images.createEdit({});
 
 `images.createVariation`
 
-Create variations of an image
+Create variations of an image. Takes the image as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -3401,12 +3516,29 @@ await corsair.openai.api.images.createVariation({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `image` | `custom \| string` | Yes | — |
+| `image` | `string \| object \| custom` | Yes | A square PNG under 4 MB: a public http(s) or data: URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…). |
 | `imageFileName` | `string` | Yes | — |
 | `model` | `string` | No | — |
 | `n` | `number` | No | — |
 | `size` | `string` | No | — |
 | `responseFormat` | `url \| b64_json` | No | — |
+
+<AccordionGroup>
+<Accordion title="image full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -5205,7 +5337,7 @@ await corsair.openai.api.runSteps.retrieve({});
 
 `skills.create`
 
-Upload a skill
+Upload a skill. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -5217,8 +5349,25 @@ await corsair.openai.api.skills.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `custom \| string` | Yes | — |
+| `file` | `string \| object \| custom` | Yes | The skill file: a public http(s) or data: URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…). |
 | `fileName` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -5728,7 +5877,7 @@ await corsair.openai.api.tokens.countInput({});
 
 `uploads.addPart`
 
-Add a part of file data to an upload
+Add a part of file data to an upload. Takes the part as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -5741,8 +5890,25 @@ await corsair.openai.api.uploads.addPart({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `uploadId` | `string` | Yes | — |
-| `data` | `custom \| string` | Yes | — |
+| `data` | `string \| object \| custom` | Yes | This part of the file, up to 64 MB: a public http(s) or data: URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…). |
 | `fileName` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -6838,7 +7004,7 @@ await corsair.openai.api.vectorStores.search({});
 
 `videos.create`
 
-Generate a video from a prompt
+Generate a video from a prompt. Takes an optional inputReference image or video as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -6854,8 +7020,25 @@ await corsair.openai.api.videos.create({});
 | `model` | `string` | No | — |
 | `size` | `string` | No | — |
 | `seconds` | `string` | No | — |
-| `inputReference` | `custom \| string` | No | — |
+| `inputReference` | `string \| object \| custom` | No | An image or video to start the video from: a public http(s) or data: URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. Any other string is sent as the file's text. On Corsair, pass a Files id (fil_…). |
 | `inputReferenceFileName` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="inputReference full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -6978,7 +7161,7 @@ await corsair.openai.api.videos.delete({});
 
 `videos.download`
 
-Download the rendered content of a video
+Download the rendered content of a video. On Corsair up to about 700 KB comes back inline and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline up to 100 MB, or contentOmitted.
 
 **Risk:** `read`
 
@@ -6998,8 +7181,14 @@ await corsair.openai.api.videos.download({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
 | `videoId` | `string` | Yes | — |
-| `contentBase64` | `string` | Yes | — |
 
 
 

@@ -12,15 +12,12 @@ describe('TextIt documentation examples', () => {
 		expect(docs.overviewNote).toContain('result.failures');
 		for (const [operation, schemas] of Object.entries(textItEndpointSchemas)) {
 			const example = docs.apiExamples[operation];
-			// Blob cannot be represented as YAML data; the raw documented call constructs one.
-			const args =
-				operation === 'media.upload'
-					? { file: new Blob(['example'], { type: 'text/plain' }) }
-					: example?.call
-						? JSON.parse(example.call)
-						: (example?.args ?? {});
+			// media.upload takes a link to the file, so its example is plain YAML data too.
+			const args = example?.call
+				? JSON.parse(example.call)
+				: (example?.args ?? {});
 			if (operation === 'media.upload')
-				expect(example?.call).toContain('new Blob');
+				expect(args).toEqual({ file: 'https://example.com/photo.jpg' });
 			expect({
 				operation,
 				valid: schemas.input.safeParse(args).success,

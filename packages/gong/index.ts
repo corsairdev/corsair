@@ -677,7 +677,8 @@ const gongEndpointMeta = {
 	},
 	'calls.addRecording': {
 		riskLevel: 'write',
-		description: 'Upload media for a previously created Gong call.',
+		description:
+			'Upload media for a previously created Gong call. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'calls.list': {
 		riskLevel: 'read',
@@ -828,7 +829,8 @@ const gongEndpointMeta = {
 	},
 	'crm.uploadObjects': {
 		riskLevel: 'write',
-		description: 'Upload CRM objects from a data file.',
+		description:
+			'Upload CRM objects from a data file. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'crm.getRequestStatus': {
 		riskLevel: 'read',
@@ -912,7 +914,8 @@ const gongEndpointMeta = {
 	},
 	'targets.uploadAssignments': {
 		riskLevel: 'write',
-		description: 'Upload target assignments.',
+		description:
+			'Upload target assignments. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'library.folders': {
 		riskLevel: 'read',

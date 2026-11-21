@@ -424,7 +424,7 @@ await corsair.conversiontools.api.files.getInfo({ file_id: '0123456789abcdef0123
 
 `files.upload`
 
-Upload a file as multipart form data. https://conversiontools.io/api-documentation#upload-file-to-server
+Upload a file as multipart form data. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id. https://conversiontools.io/api-documentation#upload-file-to-server
 
 **Risk:** `write`
 
@@ -436,7 +436,24 @@ await corsair.conversiontools.api.files.upload({ file: new Blob(['<root />'], { 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `custom` | Yes | — |
+| `file` | `string \| object \| custom` | Yes | The file: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -455,7 +472,7 @@ await corsair.conversiontools.api.files.upload({ file: new Blob(['<root />'], { 
 
 `files.uploadToSession`
 
-Upload raw file bytes to a one-time session URL. https://conversiontools.io/llms-full.txt
+Upload raw file bytes to a one-time session URL. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id. https://conversiontools.io/llms-full.txt
 
 **Risk:** `write`
 
@@ -468,7 +485,24 @@ await corsair.conversiontools.api.files.uploadToSession({ upload_url: 'https://a
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `upload_url` | `string` | Yes | — |
-| `file` | `custom` | Yes | — |
+| `file` | `string \| object \| custom` | Yes | The file: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 

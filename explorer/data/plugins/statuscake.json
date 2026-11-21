@@ -1,0 +1,2041 @@
+{
+  "id": "statuscake",
+  "displayName": "StatusCake",
+  "description": "Uptime monitoring with StatusCake - manage uptime, heartbeat, SSL, pagespeed and maintenance-window monitoring, contact groups and alert history. Read-only alerts, history and periods come back with their pagination links.",
+  "npmPackageName": "@corsair-dev/statuscake",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 36,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "statuscake.api.contactGroups.create",
+      "shortPath": "contactGroups.create",
+      "description": "Create a contact group to alert when a check fails",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the contact group."
+          },
+          {
+            "key": "email_addresses",
+            "optional": true,
+            "type": "string[]",
+            "description": "List of email addresses. Sending an empty array clears them."
+          },
+          {
+            "key": "mobile_numbers",
+            "optional": true,
+            "type": "string[]",
+            "description": "International format mobile numbers. Sending an empty array clears them."
+          },
+          {
+            "key": "integrations",
+            "optional": true,
+            "type": "string[]",
+            "description": "Integration IDs. Sending an empty array clears them."
+          },
+          {
+            "key": "ping_url",
+            "optional": true,
+            "type": "string",
+            "description": "HTTP GET endpoint pushed with uptime events."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ new_id?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.contactGroups.delete",
+      "shortPath": "contactGroups.delete",
+      "description": "Permanently delete a contact group; checks using it keep running but no longer alert it",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string",
+            "description": "The contact group ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.contactGroups.get",
+      "shortPath": "contactGroups.get",
+      "description": "Get one contact group by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string",
+            "description": "The contact group ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, email_addresses?: string[] | null, mobile_numbers?: string[] | null, integrations?: string[] | null, ping_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.contactGroups.list",
+      "shortPath": "contactGroups.list",
+      "description": "List contact groups with their email addresses, mobile numbers and integrations, paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The page to return, starting at 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of results per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, email_addresses?: string[] | null, mobile_numbers?: string[] | null, integrations?: string[] | null, ping_url?: string | null }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ page?: number | null, per_page?: number | null, page_count?: number | null, total_count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.contactGroups.update",
+      "shortPath": "contactGroups.update",
+      "description": "Change a contact group's name, addresses, numbers, integrations or ping URL; only the fields passed change",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "string",
+            "description": "The contact group ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the contact group."
+          },
+          {
+            "key": "email_addresses",
+            "optional": true,
+            "type": "string[]",
+            "description": "List of email addresses. Sending an empty array clears them."
+          },
+          {
+            "key": "mobile_numbers",
+            "optional": true,
+            "type": "string[]",
+            "description": "International format mobile numbers. Sending an empty array clears them."
+          },
+          {
+            "key": "integrations",
+            "optional": true,
+            "type": "string[]",
+            "description": "Integration IDs. Sending an empty array clears them."
+          },
+          {
+            "key": "ping_url",
+            "optional": true,
+            "type": "string",
+            "description": "HTTP GET endpoint pushed with uptime events."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.heartbeat.create",
+      "shortPath": "heartbeat.create",
+      "description": "Create a heartbeat check that alerts when a job stops pinging its URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the check."
+          },
+          {
+            "key": "period",
+            "optional": false,
+            "type": "number",
+            "description": "Seconds since the last ping before the check is considered down. Defaults to 1800."
+          },
+          {
+            "key": "contact_groups",
+            "optional": true,
+            "type": "string[]",
+            "description": "Contact groups alerted by this check."
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the hosting provider."
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the check should be run. Defaults to false."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "List of tags. Sending an empty array clears every tag on an update."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ new_id?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.heartbeat.delete",
+      "shortPath": "heartbeat.delete",
+      "description": "Permanently delete a heartbeat check; this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "string",
+            "description": "The heartbeat check ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.heartbeat.get",
+      "shortPath": "heartbeat.get",
+      "description": "Get one heartbeat check with its last tested time and uptime",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "string",
+            "description": "The heartbeat check ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, url?: string | null, period?: number | null, contact_groups?: string[] | null, host?: string | null, last_tested_at?: string | null, paused?: boolean | null, status?: up | down | null, tags?: string[] | null, uptime?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.heartbeat.list",
+      "shortPath": "heartbeat.list",
+      "description": "List heartbeat (cron monitoring) checks with their status and uptime, filtered by state or tags and paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The page to return, starting at 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of results per page."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "up | down",
+            "description": "Only checks in this state."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only checks carrying these tags."
+          },
+          {
+            "key": "matchany",
+            "optional": true,
+            "type": "boolean",
+            "description": "True matches checks carrying any one of the tags rather than all of them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, url?: string | null, period?: number | null, contact_groups?: string[] | null, paused?: boolean | null, status?: up | down | null, tags?: string[] | null, uptime?: number | null }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ page?: number | null, per_page?: number | null, page_count?: number | null, total_count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.heartbeat.update",
+      "shortPath": "heartbeat.update",
+      "description": "Change a heartbeat check's name, period, contact groups, host, paused state or tags; only the fields passed change",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "string",
+            "description": "The heartbeat check ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the check."
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds since the last ping before the check is considered down. Defaults to 1800."
+          },
+          {
+            "key": "contact_groups",
+            "optional": true,
+            "type": "string[]",
+            "description": "Contact groups alerted by this check."
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the hosting provider."
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the check should be run. Defaults to false."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "List of tags. Sending an empty array clears every tag on an update."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.locations.pagespeed",
+      "shortPath": "locations.pagespeed",
+      "description": "List monitoring locations pagespeed checks can run from",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Only the location matching this value."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ description?: string | null, ipv4?: string | null, ipv6?: string | null, region?: string | null, region_code?: string | null, status?: up | down | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.locations.uptime",
+      "shortPath": "locations.uptime",
+      "description": "List monitoring locations uptime checks can run from, with their current status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region_code",
+            "optional": true,
+            "type": "string",
+            "description": "Only the location with this region code."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ description?: string | null, ipv4?: string | null, ipv6?: string | null, region?: string | null, region_code?: string | null, status?: up | down | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.maintenanceWindows.create",
+      "shortPath": "maintenanceWindows.create",
+      "description": "Create a maintenance window that silences chosen uptime checks, by ID or by tags, for a time period",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the maintenance window."
+          },
+          {
+            "key": "start_at",
+            "optional": false,
+            "type": "string",
+            "description": "Start of the window in RFC3339 format; the UTC offset is ignored."
+          },
+          {
+            "key": "end_at",
+            "optional": false,
+            "type": "string",
+            "description": "End of the window in RFC3339 format; the UTC offset is ignored."
+          },
+          {
+            "key": "timezone",
+            "optional": false,
+            "type": "string",
+            "description": "Timezone of the window, from the tz database (such as Europe/London)."
+          },
+          {
+            "key": "repeat_interval",
+            "optional": true,
+            "type": "never | 1d | 1w | 2w | 1m",
+            "description": "How often the window repeats. Defaults to never."
+          },
+          {
+            "key": "tests",
+            "optional": true,
+            "type": "string[]",
+            "description": "Uptime checks the window covers. At least one of tests and tags is required on create."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "List of tags. Sending an empty array clears every tag on an update."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ new_id?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.maintenanceWindows.delete",
+      "shortPath": "maintenanceWindows.delete",
+      "description": "Permanently delete a maintenance window; alerts resume immediately",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "window_id",
+            "optional": false,
+            "type": "string",
+            "description": "The maintenance window ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.maintenanceWindows.get",
+      "shortPath": "maintenanceWindows.get",
+      "description": "Get one maintenance window by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "window_id",
+            "optional": false,
+            "type": "string",
+            "description": "The maintenance window ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, start_at?: string | null, end_at?: string | null, timezone?: string | null, repeat_interval?: never | 1d | 1w | 2w | 1m | null, state?: active | paused | pending | null, tags?: string[] | null, tests?: string[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.maintenanceWindows.list",
+      "shortPath": "maintenanceWindows.list",
+      "description": "List maintenance windows with their state and schedule, paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The page to return, starting at 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of results per page."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "active | paused | pending",
+            "description": "Only windows in this state."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, start_at?: string | null, end_at?: string | null, timezone?: string | null, repeat_interval?: never | 1d | 1w | 2w | 1m | null, state?: active | paused | pending | null, tags?: string[] | null, tests?: string[] | null }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ page?: number | null, per_page?: number | null, page_count?: number | null, total_count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.maintenanceWindows.update",
+      "shortPath": "maintenanceWindows.update",
+      "description": "Change a maintenance window's schedule, timezone, repeat interval, covered checks or tags; only the fields passed change",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "window_id",
+            "optional": false,
+            "type": "string",
+            "description": "The maintenance window ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the maintenance window."
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "string",
+            "description": "Start of the window in RFC3339 format; the UTC offset is ignored."
+          },
+          {
+            "key": "end_at",
+            "optional": true,
+            "type": "string",
+            "description": "End of the window in RFC3339 format; the UTC offset is ignored."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "Timezone of the window, from the tz database (such as Europe/London)."
+          },
+          {
+            "key": "repeat_interval",
+            "optional": true,
+            "type": "never | 1d | 1w | 2w | 1m",
+            "description": "How often the window repeats. Defaults to never."
+          },
+          {
+            "key": "tests",
+            "optional": true,
+            "type": "string[]",
+            "description": "Uptime checks the window covers. At least one of tests and tags is required on create."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "List of tags. Sending an empty array clears every tag on an update."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.pagespeed.create",
+      "shortPath": "pagespeed.create",
+      "description": "Create a pagespeed check that runs from a chosen region and can alert on page size or load time",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the check."
+          },
+          {
+            "key": "website_url",
+            "optional": false,
+            "type": "string",
+            "description": "URL, FQDN, or IP address of the website under test."
+          },
+          {
+            "key": "check_rate",
+            "optional": false,
+            "type": "number | string",
+            "description": "Seconds between checks, one of 60, 300, 600, 900, 1800, 3600, 86400. Defaults to 300 (5 minutes)."
+          },
+          {
+            "key": "region",
+            "optional": false,
+            "type": "AU | CA | DE | FR | IN | JP | NL | SG | UK | US | USW",
+            "description": "Region to run the check from, from the pagespeed locations list."
+          },
+          {
+            "key": "alert_bigger",
+            "optional": true,
+            "type": "number",
+            "description": "Alert when the page is larger than this many kb. Defaults to 0 (disabled)."
+          },
+          {
+            "key": "alert_slower",
+            "optional": true,
+            "type": "number",
+            "description": "Alert when the page loads slower than this many ms. Defaults to 0 (disabled)."
+          },
+          {
+            "key": "alert_smaller",
+            "optional": true,
+            "type": "number",
+            "description": "Alert when the page is smaller than this many kb. Defaults to 0 (disabled)."
+          },
+          {
+            "key": "contact_groups",
+            "optional": true,
+            "type": "string[]",
+            "description": "Contact groups alerted by this check."
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the check should be run. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ new_id?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.pagespeed.delete",
+      "shortPath": "pagespeed.delete",
+      "description": "Permanently delete a pagespeed check; this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "string",
+            "description": "The pagespeed check ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.pagespeed.get",
+      "shortPath": "pagespeed.get",
+      "description": "Get one pagespeed check with its latest stats",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "string",
+            "description": "The pagespeed check ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, website_url?: string | null, check_rate?: number | null, alert_bigger?: number | null, alert_slower?: number | null, alert_smaller?: number | null, contact_groups?: string[] | null, location?: string | null, paused?: boolean | null, latest_stats?: { filesize?: number | null, has_issue?: boolean | null, loadtime?: number | null, latest_issue?: string | null, requests?: number | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.pagespeed.history",
+      "shortPath": "pagespeed.history",
+      "description": "Read recorded pagespeed results (loadtime, filesize, requests) newest first, in a time window with a next link for paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "string",
+            "description": "The pagespeed check ID."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results; newest first."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "number",
+            "description": "Only results before this Unix timestamp (seconds)."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number",
+            "description": "Only results after this Unix timestamp (seconds)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ created_at?: string | null, filesize?: number | null, har_location?: string | null, loadtime?: number | null, requests?: number | null, throttling?: NONE | 3G_FAST | 3G_SLOW | 4G | EDGE | GPRS | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ self?: string | null, next?: string | null }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ aggregates?: Record<string, Record<string, any>> | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.pagespeed.list",
+      "shortPath": "pagespeed.list",
+      "description": "List pagespeed checks with their latest stats, paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The page to return, starting at 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of results per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, website_url?: string | null, check_rate?: number | null, alert_bigger?: number | null, alert_slower?: number | null, alert_smaller?: number | null, contact_groups?: string[] | null, location?: string | null, paused?: boolean | null, latest_stats?: { filesize?: number | null, has_issue?: boolean | null, loadtime?: number | null, latest_issue?: string | null, requests?: number | null } | null }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ page?: number | null, per_page?: number | null, page_count?: number | null, total_count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.pagespeed.update",
+      "shortPath": "pagespeed.update",
+      "description": "Change a pagespeed check's target, rate, region, alert thresholds or paused state; only the fields passed change",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "string",
+            "description": "The pagespeed check ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the check."
+          },
+          {
+            "key": "website_url",
+            "optional": true,
+            "type": "string",
+            "description": "URL, FQDN, or IP address of the website under test."
+          },
+          {
+            "key": "check_rate",
+            "optional": true,
+            "type": "number | string",
+            "description": "Seconds between checks, one of 60, 300, 600, 900, 1800, 3600, 86400. Defaults to 300 (5 minutes)."
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "AU | CA | DE | FR | IN | JP | NL | SG | UK | US | USW",
+            "description": "Region to run the check from, from the pagespeed locations list."
+          },
+          {
+            "key": "alert_bigger",
+            "optional": true,
+            "type": "number",
+            "description": "Alert when the page is larger than this many kb. Defaults to 0 (disabled)."
+          },
+          {
+            "key": "alert_slower",
+            "optional": true,
+            "type": "number",
+            "description": "Alert when the page loads slower than this many ms. Defaults to 0 (disabled)."
+          },
+          {
+            "key": "alert_smaller",
+            "optional": true,
+            "type": "number",
+            "description": "Alert when the page is smaller than this many kb. Defaults to 0 (disabled)."
+          },
+          {
+            "key": "contact_groups",
+            "optional": true,
+            "type": "string[]",
+            "description": "Contact groups alerted by this check."
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the check should be run. Defaults to false."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.ssl.create",
+      "shortPath": "ssl.create",
+      "description": "Create an SSL check that alerts before a certificate expires",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "website_url",
+            "optional": false,
+            "type": "string",
+            "description": "URL of the server under test. Must begin with https://."
+          },
+          {
+            "key": "check_rate",
+            "optional": false,
+            "type": "number | string",
+            "description": "Seconds between checks, one of 300, 600, 1800, 3600, 86400, 2073600. Defaults to 86400 (daily)."
+          },
+          {
+            "key": "alert_at",
+            "optional": false,
+            "type": "number[]",
+            "description": "Exactly 3 numbers: the days before expiry when alerts are sent, such as [30, 14, 7]."
+          },
+          {
+            "key": "alert_broken",
+            "optional": true,
+            "type": "boolean",
+            "description": "Alert when certificate issues are found. Defaults to false."
+          },
+          {
+            "key": "alert_expiry",
+            "optional": true,
+            "type": "boolean",
+            "description": "Alert when the certificate is to expire. Defaults to false."
+          },
+          {
+            "key": "alert_mixed",
+            "optional": true,
+            "type": "boolean",
+            "description": "Alert when mixed content is found. Defaults to false."
+          },
+          {
+            "key": "alert_reminder",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send alert reminders. Defaults to false."
+          },
+          {
+            "key": "contact_groups",
+            "optional": true,
+            "type": "string[]",
+            "description": "Contact groups alerted by this check."
+          },
+          {
+            "key": "follow_redirects",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false."
+          },
+          {
+            "key": "hostname",
+            "optional": true,
+            "type": "string",
+            "description": "Hostname of the server under test."
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the check should be run. Defaults to false."
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string",
+            "description": "Custom user agent used when testing."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ new_id?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.ssl.delete",
+      "shortPath": "ssl.delete",
+      "description": "Permanently delete an SSL check; this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "string",
+            "description": "The SSL check ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.ssl.get",
+      "shortPath": "ssl.get",
+      "description": "Get one SSL check with certificate dates, issuer, scores and mixed content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "string",
+            "description": "The SSL check ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, website_url?: string | null, check_rate?: number | null, alert_at?: (number | null)[] | null, alert_broken?: boolean | null, alert_expiry?: boolean | null, alert_mixed?: boolean | null, alert_reminder?: boolean | null, certificate_score?: number | null, certificate_status?: string | null, cipher?: string | null, cipher_score?: number | null, contact_groups?: string[] | null, flags?: { follow_redirects?: boolean | null, has_mixed?: boolean | null, has_pfs?: boolean | null, is_broken?: boolean | null, is_expired?: boolean | null, is_extended?: boolean | null, is_missing?: boolean | null, is_revoked?: boolean | null } | null, follow_redirects?: boolean | null, hostname?: string | null, last_reminder?: number | null, mixed_content?: { src?: string | null, type?: string | null }[] | null, paused?: boolean | null, updated_at?: string | null, user_agent?: string | null, valid_from?: string | null, valid_until?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.ssl.list",
+      "shortPath": "ssl.list",
+      "description": "List SSL checks with certificate validity, scores and flags, paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The page to return, starting at 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of results per page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, website_url?: string | null, check_rate?: number | null, alert_at?: (number | null)[] | null, alert_broken?: boolean | null, alert_expiry?: boolean | null, alert_mixed?: boolean | null, alert_reminder?: boolean | null, certificate_score?: number | null, certificate_status?: string | null, cipher?: string | null, cipher_score?: number | null, contact_groups?: string[] | null, flags?: { follow_redirects?: boolean | null, has_mixed?: boolean | null, has_pfs?: boolean | null, is_broken?: boolean | null, is_expired?: boolean | null, is_extended?: boolean | null, is_missing?: boolean | null, is_revoked?: boolean | null } | null, follow_redirects?: boolean | null, hostname?: string | null, last_reminder?: number | null, mixed_content?: { src?: string | null, type?: string | null }[] | null, paused?: boolean | null, updated_at?: string | null, user_agent?: string | null, valid_from?: string | null, valid_until?: string | null }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ page?: number | null, per_page?: number | null, page_count?: number | null, total_count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.ssl.update",
+      "shortPath": "ssl.update",
+      "description": "Change an SSL check's target, rate, alerting or paused state; only the fields passed change",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "string",
+            "description": "The SSL check ID."
+          },
+          {
+            "key": "website_url",
+            "optional": true,
+            "type": "string",
+            "description": "URL of the server under test. Must begin with https://."
+          },
+          {
+            "key": "check_rate",
+            "optional": true,
+            "type": "number | string",
+            "description": "Seconds between checks, one of 300, 600, 1800, 3600, 86400, 2073600. Defaults to 86400 (daily)."
+          },
+          {
+            "key": "alert_at",
+            "optional": true,
+            "type": "number[]",
+            "description": "Exactly 3 numbers: the days before expiry when alerts are sent, such as [30, 14, 7]."
+          },
+          {
+            "key": "alert_broken",
+            "optional": true,
+            "type": "boolean",
+            "description": "Alert when certificate issues are found. Defaults to false."
+          },
+          {
+            "key": "alert_expiry",
+            "optional": true,
+            "type": "boolean",
+            "description": "Alert when the certificate is to expire. Defaults to false."
+          },
+          {
+            "key": "alert_mixed",
+            "optional": true,
+            "type": "boolean",
+            "description": "Alert when mixed content is found. Defaults to false."
+          },
+          {
+            "key": "alert_reminder",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send alert reminders. Defaults to false."
+          },
+          {
+            "key": "contact_groups",
+            "optional": true,
+            "type": "string[]",
+            "description": "Contact groups alerted by this check."
+          },
+          {
+            "key": "follow_redirects",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false."
+          },
+          {
+            "key": "hostname",
+            "optional": true,
+            "type": "string",
+            "description": "Hostname of the server under test."
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the check should be run. Defaults to false."
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string",
+            "description": "Custom user agent used when testing."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.uptime.alerts",
+      "shortPath": "uptime.alerts",
+      "description": "Read the alerts a check sent, newest first, in a time window with a next link for paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "string",
+            "description": "The uptime check ID."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results; newest first."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "number",
+            "description": "Only results before this Unix timestamp (seconds)."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number",
+            "description": "Only results after this Unix timestamp (seconds)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, status?: up | down | null, status_code?: number | null, triggered_at?: string | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ self?: string | null, next?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.uptime.create",
+      "shortPath": "uptime.create",
+      "description": "Create an uptime check for a URL, domain or port, with content checks, basic auth, regions and alert settings",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the check."
+          },
+          {
+            "key": "test_type",
+            "optional": false,
+            "type": "DNS | HEAD | HTTP | PING | SMTP | SSH | TCP",
+            "description": "Kind of check. Required on create."
+          },
+          {
+            "key": "website_url",
+            "optional": false,
+            "type": "string",
+            "description": "URL, FQDN, or IP address of the server under test."
+          },
+          {
+            "key": "check_rate",
+            "optional": false,
+            "type": "number | string",
+            "description": "Seconds between checks, one of 0, 30, 60, 300, 900, 1800, 3600, 86400. 0 runs the check only from the regions set in regions."
+          },
+          {
+            "key": "basic_username",
+            "optional": true,
+            "type": "string",
+            "description": "Basic authentication username."
+          },
+          {
+            "key": "basic_password",
+            "optional": true,
+            "type": "string",
+            "description": "Basic authentication password."
+          },
+          {
+            "key": "confirmation",
+            "optional": true,
+            "type": "number",
+            "description": "Confirmation servers that must agree on downtime. Defaults to 2."
+          },
+          {
+            "key": "contact_groups",
+            "optional": true,
+            "type": "string[]",
+            "description": "Contact groups alerted by this check."
+          },
+          {
+            "key": "custom_header",
+            "optional": true,
+            "type": "string",
+            "description": "JSON object of headers to send with requests."
+          },
+          {
+            "key": "do_not_find",
+            "optional": true,
+            "type": "boolean",
+            "description": "Consider the check down when find_string IS present. Defaults to false."
+          },
+          {
+            "key": "dns_ips",
+            "optional": true,
+            "type": "string[]",
+            "description": "IP addresses compared against returned DNS records."
+          },
+          {
+            "key": "dns_server",
+            "optional": true,
+            "type": "string",
+            "description": "Nameserver to query for DNS checks."
+          },
+          {
+            "key": "enable_ssl_alert",
+            "optional": true,
+            "type": "boolean",
+            "description": "Alert when the SSL certificate is soon to expire. Defaults to false."
+          },
+          {
+            "key": "final_endpoint",
+            "optional": true,
+            "type": "string",
+            "description": "Where the redirect chain should end."
+          },
+          {
+            "key": "find_string",
+            "optional": true,
+            "type": "string",
+            "description": "String to look for in the response; the check is down when absent."
+          },
+          {
+            "key": "follow_redirects",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false."
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the hosting provider."
+          },
+          {
+            "key": "include_header",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include header content in the string match. Defaults to false."
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number",
+            "description": "Destination port for TCP checks."
+          },
+          {
+            "key": "post_body",
+            "optional": true,
+            "type": "string",
+            "description": "JSON payload; setting it switches the check to POST."
+          },
+          {
+            "key": "post_raw",
+            "optional": true,
+            "type": "string",
+            "description": "Raw HTTP POST string to send."
+          },
+          {
+            "key": "regions",
+            "optional": true,
+            "type": "string[]",
+            "description": "Region codes to run the check from, from the uptime locations list."
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the check should be run. Defaults to false."
+          },
+          {
+            "key": "status_codes_csv",
+            "optional": true,
+            "type": "string",
+            "description": "Comma separated status codes that trigger an alert, such as \"200,301\"."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "List of tags. Sending an empty array clears every tag on an update."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds to wait for the first byte. Defaults to 15."
+          },
+          {
+            "key": "trigger_rate",
+            "optional": true,
+            "type": "number",
+            "description": "Minutes to wait before sending an alert. Defaults to 0."
+          },
+          {
+            "key": "use_jar",
+            "optional": true,
+            "type": "boolean",
+            "description": "Enable cookie storage. Defaults to false."
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string",
+            "description": "Custom user agent used when testing."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ new_id?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.uptime.delete",
+      "shortPath": "uptime.delete",
+      "description": "Permanently delete an uptime check; this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "string",
+            "description": "The uptime check ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.uptime.get",
+      "shortPath": "uptime.get",
+      "description": "Get one uptime check with its full configuration and status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "string",
+            "description": "The uptime check ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, test_type?: DNS | HEAD | HTTP | PING | SMTP | SSH | TCP | null, website_url?: string | null, check_rate?: number | null, confirmation?: number | null, contact_groups?: string[] | null, custom_header?: string | null, dns_ips?: string[] | null, dns_server?: string | null, do_not_find?: boolean | null, enable_ssl_alert?: boolean | null, final_endpoint?: string | null, find_string?: string | null, follow_redirects?: boolean | null, host?: string | null, include_header?: boolean | null, last_tested_at?: string | null, next_location?: string | null, paused?: boolean | null, port?: number | null, post_body?: string | null, post_raw?: string | null, processing?: boolean | null, processing_on?: string | null, processing_state?: complete | pretest | retest | up_retest | null, servers?: { description?: string | null, ipv4?: string | null, ipv6?: string | null, region?: string | null, region_code?: string | null, status?: up | down | null }[] | null, status?: up | down | null, status_codes?: string[] | null, tags?: string[] | null, timeout?: number | null, trigger_rate?: number | null, uptime?: number | null, use_jar?: boolean | null, user_agent?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.uptime.history",
+      "shortPath": "uptime.history",
+      "description": "Read recorded check results (loadtime, status code) newest first, in a time window with a next link for paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "string",
+            "description": "The uptime check ID."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results; newest first."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "number",
+            "description": "Only results before this Unix timestamp (seconds)."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number",
+            "description": "Only results after this Unix timestamp (seconds)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ created_at?: string | null, location?: string | null, performance?: number | null, status_code?: number | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ self?: string | null, next?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.uptime.list",
+      "shortPath": "uptime.list",
+      "description": "List uptime checks with type, status and uptime percentage, filtered by state or tags and paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "The page to return, starting at 1."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "The number of results per page."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "up | down",
+            "description": "Only checks in this state."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only checks carrying these tags."
+          },
+          {
+            "key": "matchany",
+            "optional": true,
+            "type": "boolean",
+            "description": "True matches checks carrying any one of the tags rather than all of them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, website_url?: string | null, test_type?: DNS | HEAD | HTTP | PING | SMTP | SSH | TCP | null, check_rate?: number | null, contact_groups?: string[] | null, paused?: boolean | null, status?: up | down | null, tags?: string[] | null, uptime?: number | null }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ page?: number | null, per_page?: number | null, page_count?: number | null, total_count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.uptime.periods",
+      "shortPath": "uptime.periods",
+      "description": "Read the check up/down periods, newest first, in a time window with a next link for paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "string",
+            "description": "The uptime check ID."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of results; newest first."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "number",
+            "description": "Only results before this Unix timestamp (seconds)."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "number",
+            "description": "Only results after this Unix timestamp (seconds)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ created_at?: string | null, duration?: number | null, ended_at?: string | null, status?: up | down | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": false,
+            "type": "{ self?: string | null, next?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "statuscake.api.uptime.update",
+      "shortPath": "uptime.update",
+      "description": "Change an uptime check's configuration; only the fields passed change. Sending a field empty clears it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test_id",
+            "optional": false,
+            "type": "string",
+            "description": "The uptime check ID."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the check."
+          },
+          {
+            "key": "website_url",
+            "optional": true,
+            "type": "string",
+            "description": "URL, FQDN, or IP address of the server under test."
+          },
+          {
+            "key": "check_rate",
+            "optional": true,
+            "type": "number | string",
+            "description": "Seconds between checks, one of 0, 30, 60, 300, 900, 1800, 3600, 86400. 0 runs the check only from the regions set in regions."
+          },
+          {
+            "key": "basic_username",
+            "optional": true,
+            "type": "string",
+            "description": "Basic authentication username."
+          },
+          {
+            "key": "basic_password",
+            "optional": true,
+            "type": "string",
+            "description": "Basic authentication password."
+          },
+          {
+            "key": "confirmation",
+            "optional": true,
+            "type": "number",
+            "description": "Confirmation servers that must agree on downtime. Defaults to 2."
+          },
+          {
+            "key": "contact_groups",
+            "optional": true,
+            "type": "string[]",
+            "description": "Contact groups alerted by this check."
+          },
+          {
+            "key": "custom_header",
+            "optional": true,
+            "type": "string",
+            "description": "JSON object of headers to send with requests."
+          },
+          {
+            "key": "do_not_find",
+            "optional": true,
+            "type": "boolean",
+            "description": "Consider the check down when find_string IS present. Defaults to false."
+          },
+          {
+            "key": "dns_ips",
+            "optional": true,
+            "type": "string[]",
+            "description": "IP addresses compared against returned DNS records."
+          },
+          {
+            "key": "dns_server",
+            "optional": true,
+            "type": "string",
+            "description": "Nameserver to query for DNS checks."
+          },
+          {
+            "key": "enable_ssl_alert",
+            "optional": true,
+            "type": "boolean",
+            "description": "Alert when the SSL certificate is soon to expire. Defaults to false."
+          },
+          {
+            "key": "final_endpoint",
+            "optional": true,
+            "type": "string",
+            "description": "Where the redirect chain should end."
+          },
+          {
+            "key": "find_string",
+            "optional": true,
+            "type": "string",
+            "description": "String to look for in the response; the check is down when absent."
+          },
+          {
+            "key": "follow_redirects",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false."
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the hosting provider."
+          },
+          {
+            "key": "include_header",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include header content in the string match. Defaults to false."
+          },
+          {
+            "key": "port",
+            "optional": true,
+            "type": "number",
+            "description": "Destination port for TCP checks."
+          },
+          {
+            "key": "post_body",
+            "optional": true,
+            "type": "string",
+            "description": "JSON payload; setting it switches the check to POST."
+          },
+          {
+            "key": "post_raw",
+            "optional": true,
+            "type": "string",
+            "description": "Raw HTTP POST string to send."
+          },
+          {
+            "key": "regions",
+            "optional": true,
+            "type": "string[]",
+            "description": "Region codes to run the check from, from the uptime locations list."
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the check should be run. Defaults to false."
+          },
+          {
+            "key": "status_codes_csv",
+            "optional": true,
+            "type": "string",
+            "description": "Comma separated status codes that trigger an alert, such as \"200,301\"."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "List of tags. Sending an empty array clears every tag on an update."
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds to wait for the first byte. Defaults to 15."
+          },
+          {
+            "key": "trigger_rate",
+            "optional": true,
+            "type": "number",
+            "description": "Minutes to wait before sending an alert. Defaults to 0."
+          },
+          {
+            "key": "use_jar",
+            "optional": true,
+            "type": "boolean",
+            "description": "Enable cookie storage. Defaults to false."
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string",
+            "description": "Custom user agent used when testing."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

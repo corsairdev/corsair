@@ -103,7 +103,7 @@ await corsair.ocrwebservice.api.account.log({});
 
 `ocr.recognize`
 
-OCR an image or document via REST processDocument
+OCR an image or document via REST processDocument. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -115,7 +115,7 @@ await corsair.ocrwebservice.api.ocr.recognize({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `custom` | Yes | — |
+| `file` | `string \| object \| custom` | Yes | The image or document to OCR: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). |
 | `language` | `string` | No | Defaults to "english". |
 | `pagerange` | `string` | No | — |
 | `tobw` | `boolean` | No | — |
@@ -125,6 +125,23 @@ await corsair.ocrwebservice.api.ocr.recognize({});
 | `getwords` | `boolean` | No | — |
 | `newline` | `boolean` | No | — |
 | `description` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 

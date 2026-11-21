@@ -1,5 +1,5 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import type { ApiRequestOptions, FileInput, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request, resolveFileInput } from 'corsair/http';
 
 export class OpenaiAPIError extends Error {
 	constructor(
@@ -114,6 +114,51 @@ const buildUrl = (endpoint: string): string => {
 };
 
 /**
+ * OpenAI's documented upload limits. A link or base64 is held to them when it is
+ * turned into bytes, so an oversized file fails here instead of at OpenAI.
+ */
+export const OPENAI_UPLOAD_MAX_BYTES = {
+	/** Files API: "Individual files can be up to 512 MB". */
+	file: 512 * 1024 * 1024,
+	/** Audio transcriptions and translations: "File uploads are currently limited to 25 MB". */
+	audio: 25 * 1024 * 1024,
+	/** Image edits: gpt-image-1 takes "a png, webp, or jpg file less than 50MB". */
+	imageEdit: 50 * 1024 * 1024,
+	/** Image variations and edit masks: "a valid PNG file, less than 4MB". */
+	imagePng: 4 * 1024 * 1024,
+	/** Upload parts: "Each Part can be at most 64 MB". */
+	uploadPart: 64 * 1024 * 1024,
+} as const;
+
+// A string that starts like this is a link to the file. Any other string is the
+// file's own text (a JSONL batch, say), which is what a string meant before.
+const LINK = /^(https?:|data:)/i;
+
+/**
+ * The bytes to send for a file part. A Blob goes as it was given and a plain
+ * string as its text. A link, `{ url }` or `{ base64 }` becomes a File through
+ * core's guarded download, held to `maxBytes`: 25 MB when the endpoint names no
+ * limit, passed explicitly because core caps base64 and data: inputs only when asked.
+ */
+export async function toOpenaiBlob(
+	file: FileInput,
+	maxBytes: number = 25 * 1024 * 1024,
+): Promise<Blob> {
+	if (file instanceof Blob) return file;
+	if (typeof file === 'string' && !LINK.test(file)) return new Blob([file]);
+	return (await resolveFileInput(file, { maxBytes, fallbackName: 'file' }))
+		.file;
+}
+
+/** One file in a multipart request; `fileName` is the part's name either way. */
+export type OpenaiFilePart = {
+	field: string;
+	file: FileInput;
+	fileName: string;
+	maxBytes?: number;
+};
+
+/**
  * OpenAI's multipart endpoints (e.g. POST /files) need an explicit filename on the
  * uploaded blob part — corsair/http's shared formData builder doesn't pass one through
  * to FormData.append, so this bypasses it with a direct fetch, mirroring
@@ -123,13 +168,14 @@ export async function uploadOpenaiFile<T>(
 	endpoint: string,
 	apiKey: string,
 	options: {
-		file: Blob | string;
+		file: FileInput;
 		fileName: string;
 		fields: Record<string, string | undefined>;
+		maxBytes?: number;
 	},
 ): Promise<T> {
-	const { file, fileName, fields } = options;
-	const blob = typeof file === 'string' ? new Blob([file]) : file;
+	const { file, fileName, fields, maxBytes } = options;
+	const blob = await toOpenaiBlob(file, maxBytes);
 
 	const formData = new FormData();
 	formData.append('file', blob, fileName);
@@ -156,10 +202,42 @@ export async function uploadOpenaiFile<T>(
  * File content downloads (e.g. GET /files/{id}/content) return raw bytes, not JSON —
  * fetch directly instead of going through the JSON-oriented request() helper.
  */
+/**
+ * Most bytes a download returns inline to a caller without a host. A host that
+ * keeps files (setFileSink) caps it at its own limit and gets a `fileId` instead.
+ */
+export const DOWNLOAD_MAX_BYTES = 100_000_000;
+
+export type OpenaiDownload = {
+	bytes: Uint8Array;
+	contentType: string | null;
+	filename?: string;
+};
+
+/**
+ * The file name a Content-Disposition header offers, if any (RFC 6266):
+ * `filename*=UTF-8''…` first, then a quoted `filename="…"`, then a bare token.
+ */
+export function dispositionFilename(header: string | null): string | undefined {
+	if (!header) return undefined;
+	const extended = /filename\*\s*=\s*[^']*'[^']*'([^;\s]+)/i.exec(header);
+	if (extended?.[1]) {
+		try {
+			const name = decodeURIComponent(extended[1]);
+			if (name) return name;
+		} catch {
+			// A malformed percent-escape: fall back to the plain parameter.
+		}
+	}
+	const quoted = /filename\s*=\s*"((?:[^"\\]|\\.)*)"/i.exec(header);
+	if (quoted) return quoted[1]?.replace(/\\(.)/g, '$1') || undefined;
+	return /filename\s*=\s*([^;\s]+)/i.exec(header)?.[1] || undefined;
+}
+
 export async function downloadOpenaiFile(
 	endpoint: string,
 	apiKey: string,
-): Promise<ArrayBuffer> {
+): Promise<OpenaiDownload> {
 	const response = await fetch(buildUrl(endpoint), {
 		method: 'GET',
 		headers: { Authorization: `Bearer ${apiKey}` },
@@ -170,7 +248,14 @@ export async function downloadOpenaiFile(
 		throwFromFetchResponse(response, text);
 	}
 
-	return response.arrayBuffer();
+	const filename = dispositionFilename(
+		response.headers.get('content-disposition'),
+	);
+	return {
+		bytes: new Uint8Array(await response.arrayBuffer()),
+		contentType: response.headers.get('content-type'),
+		...(filename ? { filename } : {}),
+	};
 }
 
 /**
@@ -224,15 +309,22 @@ export async function multipartOpenaiRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: {
-		files: Array<{ field: string; file: Blob | string; fileName: string }>;
+		files: OpenaiFilePart[];
 		fields?: Record<string, OpenaiMultipartFieldValue>;
 	},
 ): Promise<T> {
 	const { files, fields = {} } = options;
 
+	// Every file is fetched or decoded before anything is sent to OpenAI.
+	const parts = await Promise.all(
+		files.map(async ({ field, file, fileName, maxBytes }) => ({
+			field,
+			fileName,
+			blob: await toOpenaiBlob(file, maxBytes),
+		})),
+	);
 	const formData = new FormData();
-	for (const { field, file, fileName } of files) {
-		const blob = typeof file === 'string' ? new Blob([file]) : file;
+	for (const { field, blob, fileName } of parts) {
 		formData.append(field, blob, fileName);
 	}
 	for (const [key, value] of Object.entries(fields)) {
