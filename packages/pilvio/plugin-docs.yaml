@@ -1,0 +1,133 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Pilvio"
+description: "Pilvio is an Estonian cloud IaaS for compute and storage. This plugin manages the user profile, API tokens and SSH keys, creates and controls virtual machines, provisions block storage disks and S3 buckets, and manages private networks and firewalls across Pilvio locations."
+domain: pilvio.com
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with an API token created in the Pilvio user interface; the
+  plugin sends it in the apikey header. Every call goes against
+  https://api.pilvio.com/v1. Most write endpoints take form-encoded bodies;
+  SSH keys and firewalls take JSON, and the plugin handles both. Answers
+  are bare JSON objects or arrays; business errors carry
+  {"errors": {"Error": …}}, and authentication failures answer 403.
+
+  Location-scoped resources live under /v1/{slug}/… with the slug from
+  config.listLocations (cyc01, bus02, …); without a slug the API serves the
+  default location. Lists answer whole arrays with no pagination.
+
+  Deletes and reinstalls are destructive: vm.reinstall replaces the VM's
+  operating system and storage.disks.delete / storage.buckets.delete /
+  network.*.delete remove the resource. Networks can only be deleted when
+  empty and not the default.
+
+  The API documents more resources than this plugin covers (VM replicas,
+  clones and backups, disk attach, floating IPs, load balancers, payments
+  and invoices), all on the same shapes. Every operation is described in
+  the official docs served at https://api.pilvio.com.
+examples:
+  read:
+    path: config.listLocations
+    title: List locations
+    args: {}
+  write:
+    path: vm.create
+    title: Create a VM
+    args:
+      name: web-1
+      osName: ubuntu
+      osVersion: "22.04-lts"
+      disks: 20
+      vcpu: 2
+      ram: 2048
+apiExamples:
+  account.getUser:
+    call: '{}'
+  account.updateProfile:
+    call: '{ firstName: "Cloudia", phoneNumber: "+372…" }'
+  account.tokens.list:
+    call: '{}'
+  account.tokens.create:
+    call: '{ description: "ci token", billingAccountId: 6, restricted: true }'
+  account.tokens.update:
+    call: '{ tokenId: 3, description: "rotated" }'
+  account.tokens.delete:
+    call: '{ tokenId: 3 }'
+  account.sshKeys.list:
+    call: '{}'
+  account.sshKeys.create:
+    call: '{ name: "laptop-mbp", publicKey: "ssh-ed25519 AAAA…" }'
+  account.sshKeys.rename:
+    call: '{ uuid: "3f8f4c5a-…", name: "personal-laptop" }'
+  account.sshKeys.delete:
+    call: '{ uuid: "3f8f4c5a-…" }'
+  config.listLocations:
+    call: '{}'
+  config.listVmImages:
+    call: '{}'
+  config.listPlainOsImages:
+    call: '{}'
+  config.listAppCatalogImages:
+    call: '{}'
+  config.listBootImages:
+    call: '{}'
+  config.listResourcePools:
+    call: '{}'
+  config.getPricingPolicy:
+    call: '{}'
+  vm.list:
+    call: '{}'
+  vm.get:
+    call: '{ uuid: "fc880f74-cf03-4a7a-93da-74c506157023" }'
+  vm.create:
+    call: '{ name: "Ubuntu-22-04", osName: "ubuntu", osVersion: "22.04-lts", disks: 20, vcpu: 2, ram: 2048 }'
+  vm.start:
+    call: '{ uuid: "fc880f74-cf03-4a7a-93da-74c506157023" }'
+  vm.stop:
+    call: '{ uuid: "fc880f74-cf03-4a7a-93da-74c506157023" }'
+  vm.reinstall:
+    call: '{ uuid: "fc880f74-…", osName: "ubuntu", osVersion: "22.04-lts" }'
+  vm.delete:
+    call: '{ uuid: "fc880f74-cf03-4a7a-93da-74c506157023" }'
+  storage.disks.list:
+    call: '{}'
+  storage.disks.create:
+    call: '{ sizeGb: 50, sourceImageType: "EMPTY", displayName: "DB data" }'
+  storage.disks.get:
+    call: '{ name: "05a61876-86f3-4b05-b0ec-53ee6fa03ced" }'
+  storage.disks.update:
+    call: '{ uuid: "05a61876-…", displayName: "Web server backup" }'
+  storage.disks.delete:
+    call: '{ uuid: "05a61876-86f3-4b05-b0ec-53ee6fa03ced" }'
+  storage.buckets.list:
+    call: '{}'
+  storage.buckets.create:
+    call: '{ name: "pang1", billingAccountId: 129093 }'
+  storage.buckets.get:
+    call: '{ name: "pang1" }'
+  storage.buckets.update:
+    call: '{ name: "pang1", billingAccountId: 129072 }'
+  storage.buckets.delete:
+    call: '{ name: "pang1" }'
+  network.networks.list:
+    call: '{}'
+  network.networks.get:
+    call: '{ uuid: "2e8cd389-27fe-45ce-a63d-d536068659e5" }'
+  network.networks.create:
+    call: '{ name: "network3" }'
+  network.networks.delete:
+    call: '{ uuid: "2e8cd389-27fe-45ce-a63d-d536068659e5" }'
+  network.firewalls.list:
+    call: '{}'
+  network.firewalls.create:
+    call: '{ displayName: "Database Firewall", rules: [{ protocol: "tcp", direction: "inbound", portStart: 3306, portEnd: 3306, endpointSpecType: "ip_prefixes", endpointSpec: ["10.0.0.0/24"] }] }'
+  network.firewalls.delete:
+    call: '{ uuid: "2a874f44-310f-4df8-9340-1dc274c2bd51" }'
+apiNotes:
+  account.tokens.create: 'Set restricted with billingAccountId to bind the token to one billing account; the token value is answered once and never logged by the plugin.'
+  vm.create: 'osName/osVersion come from config.listVmImages; use osName "_custom" and osVersion "_" for an empty disk booted from an ISO. cloudInit takes a YAML or JSON object as a string and overrides username/password.'
+  vm.reinstall: 'Destructive: the VM is reinstalled with the new OS and existing data is replaced.'
+  storage.disks.create: 'source_image_type EMPTY needs no source; OS_BASE takes e.g. ubuntu_20.04, DISK and SNAPSHOT take a UUID. sizeGb is required when the size is not apparent from the source image.'
+  storage.buckets.create: 'Bucket names follow S3 naming rules and are globally unique across all Pilvio users.'
+  network.networks.delete: 'Only works when the network holds no resources and is not the user default.'
+  network.firewalls.create: 'Rules take protocol tcp/udp/icmp, direction inbound/outbound, a port range and endpointSpecType ip_prefixes (with CIDR list) or any.'
