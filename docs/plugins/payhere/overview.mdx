@@ -8,7 +8,7 @@ Use **Payhere** through Corsair: one client, typed API calls, and incoming webho
 
 Authenticate with the API key from the integrations section of the merchants admin; the plugin sends it as an Authorization Bearer token. Every list endpoint pages with page and per_page (default 20, maximum 100) and answers &#123; data, meta &#125; where meta.next_page is the next page number.
 Webhook deliveries are signed in the X-Signature header: HMAC-SHA1 hex of the raw body with the shared secret from the merchants admin. Store that secret with keys.set_webhook_signature (or set webhookSecret on the plugin) so deliveries can be verified. Events include payment.success, payment.failed and subscription.cancelled.
-This is the complete documented REST API of Payhere. Payment links, embeds and the MCP server are client-side integrations, not REST resources.
+The plugin covers nine read and refund operations. Creating plans and cancelling subscriptions (POST /api/v1/plans, DELETE /api/v1/subscriptions/:id) are not wrapped yet.
 Every operation is described in the official docs: https://developers.payhere.co/docs/api-auth
 
 **What you get:**
