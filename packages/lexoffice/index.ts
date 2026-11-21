@@ -16,8 +16,13 @@ import { AuthMissingError } from 'corsair/core';
 import {
 	Contacts,
 	CreditNotes,
+	DownPaymentInvoices,
+	Files,
 	Invoices,
+	Payments,
+	PostingCategories,
 	Profile,
+	Voucherlist,
 	Vouchers,
 } from './endpoints';
 import type {
@@ -63,16 +68,29 @@ export type LexofficeEndpoints = {
 	contactsGet: LexofficeEndpoint<'contactsGet'>;
 	contactsCreate: LexofficeEndpoint<'contactsCreate'>;
 	contactsUpdate: LexofficeEndpoint<'contactsUpdate'>;
+	voucherListList: LexofficeEndpoint<'voucherListList'>;
 	invoicesList: LexofficeEndpoint<'invoicesList'>;
 	invoicesGet: LexofficeEndpoint<'invoicesGet'>;
 	invoicesCreate: LexofficeEndpoint<'invoicesCreate'>;
 	invoicesRender: LexofficeEndpoint<'invoicesRender'>;
+	invoicesDownload: LexofficeEndpoint<'invoicesDownload'>;
 	vouchersList: LexofficeEndpoint<'vouchersList'>;
 	vouchersGet: LexofficeEndpoint<'vouchersGet'>;
 	vouchersCreate: LexofficeEndpoint<'vouchersCreate'>;
+	vouchersUpdate: LexofficeEndpoint<'vouchersUpdate'>;
+	vouchersAttachFile: LexofficeEndpoint<'vouchersAttachFile'>;
 	profileGet: LexofficeEndpoint<'profileGet'>;
 	creditNotesList: LexofficeEndpoint<'creditNotesList'>;
 	creditNotesGet: LexofficeEndpoint<'creditNotesGet'>;
+	creditNotesCreate: LexofficeEndpoint<'creditNotesCreate'>;
+	creditNotesRender: LexofficeEndpoint<'creditNotesRender'>;
+	creditNotesDownload: LexofficeEndpoint<'creditNotesDownload'>;
+	downPaymentInvoicesGet: LexofficeEndpoint<'downPaymentInvoicesGet'>;
+	downPaymentInvoicesDownload: LexofficeEndpoint<'downPaymentInvoicesDownload'>;
+	paymentsGet: LexofficeEndpoint<'paymentsGet'>;
+	postingCategoriesList: LexofficeEndpoint<'postingCategoriesList'>;
+	filesUpload: LexofficeEndpoint<'filesUpload'>;
+	filesDownload: LexofficeEndpoint<'filesDownload'>;
 };
 
 const lexofficeEndpointsNested = {
@@ -82,16 +100,22 @@ const lexofficeEndpointsNested = {
 		create: Contacts.create,
 		update: Contacts.update,
 	},
+	voucherlist: {
+		list: Voucherlist.list,
+	},
 	invoices: {
 		list: Invoices.list,
 		get: Invoices.get,
 		create: Invoices.create,
 		render: Invoices.render,
+		download: Invoices.download,
 	},
 	vouchers: {
 		list: Vouchers.list,
 		get: Vouchers.get,
 		create: Vouchers.create,
+		update: Vouchers.update,
+		attachFile: Vouchers.attachFile,
 	},
 	profile: {
 		get: Profile.get,
@@ -99,6 +123,23 @@ const lexofficeEndpointsNested = {
 	creditNotes: {
 		list: CreditNotes.list,
 		get: CreditNotes.get,
+		create: CreditNotes.create,
+		render: CreditNotes.render,
+		download: CreditNotes.download,
+	},
+	downPaymentInvoices: {
+		get: DownPaymentInvoices.get,
+		download: DownPaymentInvoices.download,
+	},
+	payments: {
+		get: Payments.get,
+	},
+	postingCategories: {
+		list: PostingCategories.list,
+	},
+	files: {
+		upload: Files.upload,
+		download: Files.download,
 	},
 } as const;
 
@@ -119,6 +160,10 @@ export const lexofficeEndpointSchemas = {
 		input: LexofficeEndpointInputSchemas.contactsUpdate,
 		output: LexofficeEndpointOutputSchemas.contactsUpdate,
 	},
+	'voucherlist.list': {
+		input: LexofficeEndpointInputSchemas.voucherListList,
+		output: LexofficeEndpointOutputSchemas.voucherListList,
+	},
 	'invoices.list': {
 		input: LexofficeEndpointInputSchemas.invoicesList,
 		output: LexofficeEndpointOutputSchemas.invoicesList,
@@ -135,6 +180,10 @@ export const lexofficeEndpointSchemas = {
 		input: LexofficeEndpointInputSchemas.invoicesRender,
 		output: LexofficeEndpointOutputSchemas.invoicesRender,
 	},
+	'invoices.download': {
+		input: LexofficeEndpointInputSchemas.invoicesDownload,
+		output: LexofficeEndpointOutputSchemas.invoicesDownload,
+	},
 	'vouchers.list': {
 		input: LexofficeEndpointInputSchemas.vouchersList,
 		output: LexofficeEndpointOutputSchemas.vouchersList,
@@ -147,6 +196,14 @@ export const lexofficeEndpointSchemas = {
 		input: LexofficeEndpointInputSchemas.vouchersCreate,
 		output: LexofficeEndpointOutputSchemas.vouchersCreate,
 	},
+	'vouchers.update': {
+		input: LexofficeEndpointInputSchemas.vouchersUpdate,
+		output: LexofficeEndpointOutputSchemas.vouchersUpdate,
+	},
+	'vouchers.attachFile': {
+		input: LexofficeEndpointInputSchemas.vouchersAttachFile,
+		output: LexofficeEndpointOutputSchemas.vouchersAttachFile,
+	},
 	'profile.get': {
 		input: LexofficeEndpointInputSchemas.profileGet,
 		output: LexofficeEndpointOutputSchemas.profileGet,
@@ -158,6 +215,42 @@ export const lexofficeEndpointSchemas = {
 	'creditNotes.get': {
 		input: LexofficeEndpointInputSchemas.creditNotesGet,
 		output: LexofficeEndpointOutputSchemas.creditNotesGet,
+	},
+	'creditNotes.create': {
+		input: LexofficeEndpointInputSchemas.creditNotesCreate,
+		output: LexofficeEndpointOutputSchemas.creditNotesCreate,
+	},
+	'creditNotes.render': {
+		input: LexofficeEndpointInputSchemas.creditNotesRender,
+		output: LexofficeEndpointOutputSchemas.creditNotesRender,
+	},
+	'creditNotes.download': {
+		input: LexofficeEndpointInputSchemas.creditNotesDownload,
+		output: LexofficeEndpointOutputSchemas.creditNotesDownload,
+	},
+	'downPaymentInvoices.get': {
+		input: LexofficeEndpointInputSchemas.downPaymentInvoicesGet,
+		output: LexofficeEndpointOutputSchemas.downPaymentInvoicesGet,
+	},
+	'downPaymentInvoices.download': {
+		input: LexofficeEndpointInputSchemas.downPaymentInvoicesDownload,
+		output: LexofficeEndpointOutputSchemas.downPaymentInvoicesDownload,
+	},
+	'payments.get': {
+		input: LexofficeEndpointInputSchemas.paymentsGet,
+		output: LexofficeEndpointOutputSchemas.paymentsGet,
+	},
+	'postingCategories.list': {
+		input: LexofficeEndpointInputSchemas.postingCategoriesList,
+		output: LexofficeEndpointOutputSchemas.postingCategoriesList,
+	},
+	'files.upload': {
+		input: LexofficeEndpointInputSchemas.filesUpload,
+		output: LexofficeEndpointOutputSchemas.filesUpload,
+	},
+	'files.download': {
+		input: LexofficeEndpointInputSchemas.filesDownload,
+		output: LexofficeEndpointOutputSchemas.filesDownload,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof lexofficeEndpointsNested
@@ -182,6 +275,10 @@ const lexofficeEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Update an existing contact in Lexoffice',
 	},
+	'voucherlist.list': {
+		riskLevel: 'read',
+		description: 'Search all documented Lexware voucher types with paging',
+	},
 	'invoices.list': {
 		riskLevel: 'read',
 		description: 'List outgoing invoices with pagination',
@@ -196,7 +293,12 @@ const lexofficeEndpointMeta = {
 	},
 	'invoices.render': {
 		riskLevel: 'read',
-		description: 'Render an invoice PDF and retrieve its document file ID',
+		description:
+			'Use the deprecated invoice document endpoint to retrieve a file ID',
+	},
+	'invoices.download': {
+		riskLevel: 'read',
+		description: 'Download an invoice document as base64-encoded binary data',
 	},
 	'vouchers.list': {
 		riskLevel: 'read',
@@ -208,8 +310,16 @@ const lexofficeEndpointMeta = {
 		description: 'Retrieve voucher details by ID',
 	},
 	'vouchers.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a new bookkeeping voucher',
+	},
+	'vouchers.update': {
+		riskLevel: 'destructive',
+		description: 'Update a bookkeeping voucher including its assigned files',
+	},
+	'vouchers.attachFile': {
+		riskLevel: 'destructive',
+		description: 'Upload a bookkeeping document to an existing voucher',
 	},
 	'profile.get': {
 		riskLevel: 'read',
@@ -222,6 +332,44 @@ const lexofficeEndpointMeta = {
 	'creditNotes.get': {
 		riskLevel: 'read',
 		description: 'Retrieve credit note details by ID',
+	},
+	'creditNotes.create': {
+		riskLevel: 'destructive',
+		description: 'Create a credit note, optionally finalizing or pursuing it',
+	},
+	'creditNotes.render': {
+		riskLevel: 'read',
+		description:
+			'Use the deprecated credit-note document endpoint to retrieve a file ID',
+	},
+	'creditNotes.download': {
+		riskLevel: 'read',
+		description:
+			'Download a credit note document as base64-encoded binary data',
+	},
+	'downPaymentInvoices.get': {
+		riskLevel: 'read',
+		description: 'Retrieve a down-payment invoice by ID',
+	},
+	'downPaymentInvoices.download': {
+		riskLevel: 'read',
+		description: 'Download a down-payment invoice document as base64 data',
+	},
+	'payments.get': {
+		riskLevel: 'read',
+		description: 'Retrieve payment status and payment entries for a voucher',
+	},
+	'postingCategories.list': {
+		riskLevel: 'read',
+		description: 'List the available bookkeeping posting categories',
+	},
+	'files.upload': {
+		riskLevel: 'destructive',
+		description: 'Upload a voucher file, which creates a bookkeeping voucher',
+	},
+	'files.download': {
+		riskLevel: 'read',
+		description: 'Download a bookkeeping file as base64-encoded binary data',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof lexofficeEndpointsNested
@@ -301,14 +449,24 @@ export type {
 	ContactsListInput,
 	ContactsListResponse,
 	ContactUpdateInput,
+	CreditNoteCreateInput,
 	CreditNoteDetails,
 	CreditNoteSummary,
+	CreditNotesDownloadInput,
 	CreditNotesGetInput,
 	CreditNotesListInput,
 	CreditNotesListResponse,
+	DownPaymentInvoiceDetails,
+	DownPaymentInvoicesDownloadInput,
+	DownPaymentInvoicesGetInput,
+	FileDownloadInput,
+	FileDownloadResponse,
+	FilesUploadInput,
+	FilesUploadResponse,
 	InvoiceCreateInput,
 	InvoiceDetails,
 	InvoiceSummary,
+	InvoicesDownloadInput,
 	InvoicesGetInput,
 	InvoicesListInput,
 	InvoicesListResponse,
@@ -317,14 +475,23 @@ export type {
 	LexofficeEndpointInputs,
 	LexofficeEndpointOutputs,
 	LineItem,
+	PaymentInformation,
+	PaymentsGetInput,
+	PostingCategoriesListInput,
+	PostingCategory,
 	ProfileGetInput,
 	ProfileGetResponse,
 	ResourceMutationResponse,
 	VoucherCreateInput,
 	VoucherDetails,
 	VoucherItem,
+	VoucherListInput,
+	VoucherListResponse,
 	VoucherSummary,
+	VouchersAttachFileInput,
+	VouchersAttachFileResponse,
 	VouchersGetInput,
 	VouchersListInput,
 	VouchersListResponse,
+	VoucherUpdateInput,
 } from './endpoints/types';

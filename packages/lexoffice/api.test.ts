@@ -10,14 +10,14 @@ import type {
 	CreditNotesListResponse,
 	InvoicesListResponse,
 	ProfileGetResponse,
-	VouchersListResponse,
+	VoucherListResponse,
 } from './endpoints/types';
 import {
 	ContactsListResponseSchema,
 	CreditNotesListResponseSchema,
 	InvoicesListResponseSchema,
 	ProfileGetResponseSchema,
-	VouchersListResponseSchema,
+	VoucherListResponseSchema,
 } from './endpoints/types';
 
 const LIVE_KEY = process.env.LEXOFFICE_API_KEY ?? '';
@@ -56,13 +56,18 @@ describeLive('lexoffice live API (env-gated)', () => {
 		expect(Array.isArray(parsed.content)).toBe(true);
 	});
 
-	it('GET /invoices returns paginated invoices list', async () => {
+	it('GET /voucherlist returns paginated invoices list', async () => {
 		const res = await makeLexofficeRequest<InvoicesListResponse>(
-			'/invoices',
+			'/voucherlist',
 			LIVE_KEY,
 			{
 				method: 'GET',
-				query: { page: 0, size: 5 },
+				query: {
+					voucherType: 'invoice',
+					voucherStatus: 'any',
+					page: 0,
+					size: 5,
+				},
 			},
 		);
 
@@ -72,29 +77,40 @@ describeLive('lexoffice live API (env-gated)', () => {
 		expect(Array.isArray(parsed.content)).toBe(true);
 	});
 
-	it('GET /vouchers returns paginated vouchers list', async () => {
-		const res = await makeLexofficeRequest<VouchersListResponse>(
-			'/vouchers',
+	it('GET /voucherlist returns paginated bookkeeping vouchers', async () => {
+		const res = await makeLexofficeRequest<VoucherListResponse>(
+			'/voucherlist',
 			LIVE_KEY,
 			{
 				method: 'GET',
-				query: { page: 0, size: 5 },
+				query: {
+					voucherType:
+						'salesinvoice,salescreditnote,purchaseinvoice,purchasecreditnote',
+					voucherStatus: 'any',
+					page: 0,
+					size: 5,
+				},
 			},
 		);
 
-		const parsed = VouchersListResponseSchema.parse(res);
+		const parsed = VoucherListResponseSchema.parse(res);
 		expect(typeof parsed.totalPages).toBe('number');
 		expect(typeof parsed.totalElements).toBe('number');
 		expect(Array.isArray(parsed.content)).toBe(true);
 	});
 
-	it('GET /credit-notes returns paginated credit notes list', async () => {
+	it('GET /voucherlist returns paginated credit notes list', async () => {
 		const res = await makeLexofficeRequest<CreditNotesListResponse>(
-			'/credit-notes',
+			'/voucherlist',
 			LIVE_KEY,
 			{
 				method: 'GET',
-				query: { page: 0, size: 5 },
+				query: {
+					voucherType: 'creditnote',
+					voucherStatus: 'any',
+					page: 0,
+					size: 5,
+				},
 			},
 		);
 

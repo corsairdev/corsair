@@ -14,11 +14,16 @@ import {
 export const list: LexofficeEndpoints['vouchersList'] = async (ctx, input) => {
 	const parsedInput = LexofficeEndpointInputSchemas.vouchersList.parse(input);
 	const response = await makeLexofficeRequest<VouchersListResponse>(
-		'/vouchers',
+		'/voucherlist',
 		ctx.key,
 		{
 			method: 'GET',
-			query: parsedInput,
+			query: {
+				voucherType:
+					'salesinvoice,salescreditnote,purchaseinvoice,purchasecreditnote',
+				voucherStatus: 'any',
+				...parsedInput,
+			},
 		},
 	);
 	const parsed = LexofficeEndpointOutputSchemas.vouchersList.parse(response);
@@ -66,6 +71,54 @@ export const create: LexofficeEndpoints['vouchersCreate'] = async (
 		ctx,
 		'lexoffice.vouchers.create',
 		{ voucherId: parsed.id },
+		'completed',
+	);
+	return parsed;
+};
+
+export const update: LexofficeEndpoints['vouchersUpdate'] = async (
+	ctx,
+	input,
+) => {
+	const parsedInput = LexofficeEndpointInputSchemas.vouchersUpdate.parse(input);
+	const { id, ...body } = parsedInput;
+	const response = await makeLexofficeRequest<ResourceMutationResponse>(
+		`/vouchers/${encodeURIComponent(id)}`,
+		ctx.key,
+		{ method: 'PUT', body },
+	);
+	const parsed = LexofficeEndpointOutputSchemas.vouchersUpdate.parse(response);
+	await logEventFromContext(
+		ctx,
+		'lexoffice.vouchers.update',
+		{ voucherId: id },
+		'completed',
+	);
+	return parsed;
+};
+
+export const attachFile: LexofficeEndpoints['vouchersAttachFile'] = async (
+	ctx,
+	input,
+) => {
+	const parsedInput =
+		LexofficeEndpointInputSchemas.vouchersAttachFile.parse(input);
+	const file = new File(
+		[Buffer.from(parsedInput.file, 'base64')],
+		parsedInput.fileName,
+		{ type: parsedInput.contentType },
+	);
+	const response = await makeLexofficeRequest<{ id: string }>(
+		`/vouchers/${encodeURIComponent(parsedInput.id)}/files`,
+		ctx.key,
+		{ method: 'POST', formData: { file } },
+	);
+	const parsed =
+		LexofficeEndpointOutputSchemas.vouchersAttachFile.parse(response);
+	await logEventFromContext(
+		ctx,
+		'lexoffice.vouchers.attachFile',
+		{ voucherId: parsedInput.id, fileId: parsed.id },
 		'completed',
 	);
 	return parsed;

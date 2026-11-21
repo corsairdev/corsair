@@ -1,6 +1,7 @@
 import { AuthMissingError } from 'corsair/core';
 import type {
 	ApiRequestOptions,
+	BinaryResponse,
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
@@ -16,7 +17,7 @@ export class LexofficeAPIError extends Error {
 	}
 }
 
-export const LEXOFFICE_API_BASE = 'https://api.lexoffice.io/v1';
+export const LEXOFFICE_API_BASE = 'https://api.lexware.io/v1';
 
 /**
  * Transport-level retries are disabled so Corsair's endpoint error handlers
@@ -52,79 +53,28 @@ export function compactQuery(
 	return defined;
 }
 
-const SENSITIVE_FIELD_NAMES = new Set([
-	'accesskeyid',
-	'secretaccesskey',
-	'sessiontoken',
-	'privatekey',
-	'clientemail',
-	'projectid',
-	'password',
-	'authorization',
-	'storageaccesskey',
-	'sastoken',
-	'apikey',
-	'token',
-	'secret',
-]);
-
-function isSensitiveField(name: string): boolean {
-	const normalized = name.toLowerCase().replace(/[-_]/g, '');
-	return SENSITIVE_FIELD_NAMES.has(normalized);
-}
-
-// `unknown` because untrusted JSON or object is inspected here
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === 'object' && value !== null && !Array.isArray(value);
-}
-
-// `unknown` because request and response bodies contain untrusted data
-export function redactSensitiveData(value: unknown): unknown {
-	if (typeof value === 'string') {
-		return value;
-	}
-	if (Array.isArray(value)) {
-		return value.map((item) => redactSensitiveData(item));
-	}
-	if (isRecord(value)) {
-		const out: Record<string, unknown> = {};
-		for (const [key, val] of Object.entries(value)) {
-			if (isSensitiveField(key)) {
-				out[key] = '[redacted]';
-			} else {
-				out[key] = redactSensitiveData(val);
-			}
-		}
-		return out;
-	}
-	return value;
-}
-
-// `unknown` because untrusted error is checked at runtime
 export function sanitizeApiError<T>(error: T): T {
 	if (!(error instanceof ApiError)) return error;
 
 	if (error.request) {
-		const requestUpdates: {
-			headers?: unknown;
-			query?: unknown;
-			body?: unknown;
-		} = {};
-		if (error.request.headers) {
-			requestUpdates.headers = redactSensitiveData(error.request.headers);
-		}
-		if (error.request.query) {
-			requestUpdates.query = redactSensitiveData(error.request.query);
-		}
-		if (error.request.body) {
-			requestUpdates.body = redactSensitiveData(error.request.body);
-		}
-		Object.assign(error.request, requestUpdates);
+		Object.assign(error.request, {
+			url: LEXOFFICE_API_BASE,
+			headers: undefined,
+			query: undefined,
+			body: undefined,
+			formData: undefined,
+		});
 	}
 
-	if (error.body) {
-		Object.assign(error, { body: redactSensitiveData(error.body) });
-	}
+	// Keep the shared ApiError instance and retry metadata but discard provider
+	// text and request/response payloads that may contain customer data.
+	error.message = 'Lexware API request failed';
+	Object.assign(error, {
+		url: LEXOFFICE_API_BASE,
+		statusText: 'Lexware API Error',
+		stack: 'ApiError: Lexware API request failed',
+		body: { message: 'Lexware API request failed' },
+	});
 
 	return error;
 }
@@ -134,6 +84,9 @@ export type LexofficeRequestOptions = {
 	// `unknown` because request bodies are verified by Zod before transmission
 	body?: Record<string, unknown> | object;
 	query?: Record<string, LexofficeQueryValue>;
+	headers?: Record<string, string>;
+	formData?: Record<string, string | Blob>;
+	responseType?: 'binary';
 };
 
 export async function makeLexofficeRequest<T>(
@@ -141,7 +94,14 @@ export async function makeLexofficeRequest<T>(
 	apiKey?: string,
 	options: LexofficeRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const {
+		method = 'GET',
+		body,
+		query,
+		headers,
+		formData,
+		responseType,
+	} = options;
 
 	if (apiKey !== undefined && apiKey.length === 0) {
 		throw new AuthMissingError('lexoffice', 'api_key');
@@ -156,35 +116,49 @@ export async function makeLexofficeRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		HEADERS: {
-			'Content-Type': 'application/json',
-			Accept: 'application/json',
-			...authHeaders,
-		},
+		HEADERS: authHeaders,
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
 		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
+			!formData && (method === 'POST' || method === 'PUT' || method === 'PATCH')
 				? body
 				: undefined,
-		mediaType: 'application/json; charset=utf-8',
+		formData,
+		mediaType: formData ? undefined : 'application/json; charset=utf-8',
 		query: query ? compactQuery(query) : undefined,
+		headers,
+		responseType,
 	};
 
 	try {
 		return await request<T>(config, requestOptions, {
 			rateLimitConfig: LEXOFFICE_NO_TRANSPORT_RETRIES,
 		});
+		// `error` is unknown because the shared transport may reject any value.
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw sanitizeApiError(error);
 		}
 		if (error instanceof Error) {
-			throw new LexofficeAPIError(error.message);
+			throw new LexofficeAPIError('Lexware API request failed');
 		}
-		throw new LexofficeAPIError('Unknown error');
+		throw new LexofficeAPIError('Lexware API request failed');
 	}
+}
+
+export function toLexofficeFileResponse(response: BinaryResponse): {
+	kind: 'binary';
+	contentType: string;
+	base64: string;
+	sizeBytes: number;
+} {
+	return {
+		kind: 'binary',
+		contentType: response.contentType ?? '',
+		base64: Buffer.from(response.bytes).toString('base64'),
+		sizeBytes: response.bytes.byteLength,
+	};
 }

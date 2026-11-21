@@ -6,7 +6,7 @@ function apiError(status: number, message: string, retryAfter?: number) {
 	return new ApiError(
 		{ method: 'GET', url: '/profile' },
 		{
-			url: 'https://api.lexoffice.io/v1/profile',
+			url: 'https://api.lexware.io/v1/profile',
 			ok: false,
 			status,
 			statusText: message,

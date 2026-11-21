@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
+import type { BinaryResponse } from 'corsair/http';
 import type { LexofficeEndpoints } from '..';
-import { makeLexofficeRequest } from '../client';
+import { makeLexofficeRequest, toLexofficeFileResponse } from '../client';
 import type {
 	InvoiceDetails,
 	InvoicesListResponse,
@@ -15,11 +16,15 @@ import {
 export const list: LexofficeEndpoints['invoicesList'] = async (ctx, input) => {
 	const parsedInput = LexofficeEndpointInputSchemas.invoicesList.parse(input);
 	const response = await makeLexofficeRequest<InvoicesListResponse>(
-		'/invoices',
+		'/voucherlist',
 		ctx.key,
 		{
 			method: 'GET',
-			query: parsedInput,
+			query: {
+				...parsedInput,
+				voucherType: 'invoice',
+				voucherStatus: parsedInput.voucherStatus ?? 'any',
+			},
 		},
 	);
 	const parsed = LexofficeEndpointOutputSchemas.invoicesList.parse(response);
@@ -54,18 +59,20 @@ export const create: LexofficeEndpoints['invoicesCreate'] = async (
 	input,
 ) => {
 	const parsedInput = LexofficeEndpointInputSchemas.invoicesCreate.parse(input);
-	const { finalize, ...body } = parsedInput;
-	const query =
-		finalize !== undefined
-			? { finalize: finalize ? 'true' : 'false' }
-			: undefined;
+	const { finalize, precedingSalesVoucherId, ...body } = parsedInput;
+	const query = {
+		...(finalize === undefined ? {} : { finalize: String(finalize) }),
+		...(precedingSalesVoucherId === undefined
+			? {}
+			: { precedingSalesVoucherId }),
+	};
 	const response = await makeLexofficeRequest<ResourceMutationResponse>(
 		'/invoices',
 		ctx.key,
 		{
 			method: 'POST',
 			body,
-			query,
+			query: Object.keys(query).length > 0 ? query : undefined,
 		},
 	);
 	const parsed = LexofficeEndpointOutputSchemas.invoicesCreate.parse(response);
@@ -73,6 +80,33 @@ export const create: LexofficeEndpoints['invoicesCreate'] = async (
 		ctx,
 		'lexoffice.invoices.create',
 		{ invoiceId: parsed.id },
+		'completed',
+	);
+	return parsed;
+};
+
+export const download: LexofficeEndpoints['invoicesDownload'] = async (
+	ctx,
+	input,
+) => {
+	const parsedInput =
+		LexofficeEndpointInputSchemas.invoicesDownload.parse(input);
+	const response = await makeLexofficeRequest<BinaryResponse>(
+		`/invoices/${encodeURIComponent(parsedInput.id)}/file`,
+		ctx.key,
+		{
+			method: 'GET',
+			headers: { Accept: parsedInput.accept ?? '*/*' },
+			responseType: 'binary',
+		},
+	);
+	const parsed = LexofficeEndpointOutputSchemas.invoicesDownload.parse(
+		toLexofficeFileResponse(response),
+	);
+	await logEventFromContext(
+		ctx,
+		'lexoffice.invoices.download',
+		{ invoiceId: parsedInput.id, sizeBytes: parsed.sizeBytes },
 		'completed',
 	);
 	return parsed;

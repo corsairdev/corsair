@@ -1,11 +1,11 @@
 import { AuthMissingError } from 'corsair/core';
+import type { BinaryResponse } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import {
 	compactQuery,
 	LEXOFFICE_API_BASE,
 	LEXOFFICE_NO_TRANSPORT_RETRIES,
 	makeLexofficeRequest,
-	redactSensitiveData,
 	sanitizeApiError,
 } from './client';
 import { errorHandlers } from './error-handlers';
@@ -21,7 +21,7 @@ function apiError(status: number, message: string, retryAfter?: number) {
 	return new ApiError(
 		{ method: 'GET', url: '/profile' },
 		{
-			url: 'https://api.lexoffice.io/v1/profile',
+			url: 'https://api.lexware.io/v1/profile',
 			ok: false,
 			status,
 			statusText: message,
@@ -50,8 +50,6 @@ describe('makeLexofficeRequest', () => {
 			VERSION: '1.0.0',
 			HEADERS: {
 				Authorization: 'Bearer test-api-key',
-				'Content-Type': 'application/json',
-				Accept: 'application/json',
 			},
 		});
 		expect(mockedRequest.mock.calls[0]?.[0]).not.toHaveProperty('TOKEN');
@@ -84,6 +82,100 @@ describe('makeLexofficeRequest', () => {
 				query: { page: 1 },
 			}),
 		);
+	});
+
+	it('uses multipart form data without forcing a JSON content type', async () => {
+		mockedRequest.mockResolvedValue({ id: 'file-1', voucherId: 'v-1' });
+		const file = new File(['%PDF-1.4'], 'receipt.pdf', {
+			type: 'application/pdf',
+		});
+
+		await makeLexofficeRequest('/files', 'test-api-key', {
+			method: 'POST',
+			formData: { file, type: 'voucher' },
+		});
+
+		expect(mockedRequest.mock.calls[0]?.[0].HEADERS).not.toHaveProperty(
+			'Content-Type',
+		);
+		expect(mockedRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'POST',
+			url: '/files',
+			formData: { file, type: 'voucher' },
+			mediaType: undefined,
+		});
+	});
+
+	it('real transport keeps upload multipart and file downloads byte-exact', async () => {
+		const actualHttp = jest.requireActual<{ request: typeof request }>(
+			'corsair/http',
+		);
+		const originalFetch = global.fetch;
+		let observedHeaders: Headers | undefined;
+		let observedBody: FormData | undefined;
+		const mockFetch = jest.fn(
+			async (_input: Request | URL | string, init?: RequestInit) => {
+				observedHeaders = new Headers(init?.headers);
+				if (init?.body instanceof FormData) observedBody = init.body;
+				return new Response(JSON.stringify({ id: 'file-1' }), {
+					status: 202,
+					headers: { 'Content-Type': 'application/json' },
+				});
+			},
+		);
+		global.fetch = mockFetch;
+
+		try {
+			const config = {
+				BASE: LEXOFFICE_API_BASE,
+				VERSION: '1',
+				HEADERS: { Authorization: 'Bearer test-api-key' },
+				WITH_CREDENTIALS: false,
+				CREDENTIALS: 'omit' as const,
+			};
+			await actualHttp.request<{ id: string }>(
+				config,
+				{
+					method: 'POST',
+					url: '/files',
+					formData: {
+						file: new File(['%PDF-1.4'], 'receipt.pdf', {
+							type: 'application/pdf',
+						}),
+						type: 'voucher',
+					},
+				},
+				{ rateLimitConfig: LEXOFFICE_NO_TRANSPORT_RETRIES },
+			);
+			expect(observedHeaders?.get('Content-Type')).not.toBe(
+				'application/json; charset=utf-8',
+			);
+			expect(observedBody).toBeInstanceOf(FormData);
+			expect(observedBody?.get('type')).toBe('voucher');
+			expect(observedBody?.get('file')).toBeInstanceOf(Blob);
+
+			const bytes = new Uint8Array([0, 255, 17]);
+			mockFetch.mockResolvedValueOnce(
+				new Response(bytes, {
+					status: 200,
+					headers: { 'Content-Type': 'application/pdf' },
+				}),
+			);
+			const downloaded = await actualHttp.request<BinaryResponse>(
+				config,
+				{
+					method: 'GET',
+					url: '/files/file-1',
+					responseType: 'binary',
+					headers: { Accept: '*/*' },
+				},
+				{ rateLimitConfig: LEXOFFICE_NO_TRANSPORT_RETRIES },
+			);
+			expect(Array.from(downloaded.bytes)).toEqual([0, 255, 17]);
+			expect(downloaded.contentType).toBe('application/pdf');
+		} finally {
+			global.fetch = originalFetch;
+		}
 	});
 
 	it('omits undefined query values via compactQuery', () => {
@@ -129,63 +221,41 @@ describe('makeLexofficeRequest', () => {
 		}
 	});
 
-	it('redacts sensitive fields in sanitizeApiError and redactSensitiveData', () => {
-		const sensitiveData = {
-			apiKey: 'secret-key-123',
-			password: 'my-password',
-			nested: {
-				token: 'bearer-token',
-				regular: 'safe-value',
-			},
-			list: [{ clientEmail: 'bot@example.com' }, 'text'],
-		};
-
-		// `unknown` because redactSensitiveData accepts untyped data structures
-		const redacted: unknown = redactSensitiveData(sensitiveData);
-		expect(redacted).toEqual({
-			apiKey: '[redacted]',
-			password: '[redacted]',
-			nested: {
-				token: '[redacted]',
-				regular: 'safe-value',
-			},
-			list: [{ clientEmail: '[redacted]' }, 'text'],
-		});
-
+	it('sanitizes ApiError payloads without losing status or retry metadata', () => {
 		const err = new ApiError(
 			{
 				method: 'POST',
 				url: '/contacts',
 				headers: { authorization: 'Bearer secret-token' },
 				query: { apikey: 'secret-key' },
-				body: { apiKey: 'secret', name: 'Acme' },
+				body: {
+					apiKey: 'secret',
+					name: 'Acme',
+					email: 'customer@example.com',
+				},
 			},
 			{
-				url: 'https://api.lexoffice.io/v1/contacts',
+				url: 'https://api.lexware.io/v1/contacts',
 				ok: false,
 				status: 400,
 				statusText: 'Bad Request',
 				body: { token: 'echoed-token', message: 'invalid' },
 			},
-			'Bad Request',
+			'provider echoed customer@example.com and secret-token',
 		);
 
 		const sanitized = sanitizeApiError(err);
 		expect(sanitized).toBe(err);
-		expect(err.request.headers).toEqual({
-			authorization: '[redacted]',
-		});
-		expect(err.request.query).toEqual({
-			apikey: '[redacted]',
-		});
-		expect(err.request.body).toEqual({
-			apiKey: '[redacted]',
-			name: 'Acme',
-		});
-		expect(err.body).toEqual({
-			token: '[redacted]',
-			message: 'invalid',
-		});
+		expect(err.message).toBe('Lexware API request failed');
+		expect(err.stack).not.toContain('customer@example.com');
+		expect(err.stack).not.toContain('secret-token');
+		expect(err.url).toBe(LEXOFFICE_API_BASE);
+		expect(err.status).toBe(400);
+		expect(err.request.url).toBe(LEXOFFICE_API_BASE);
+		expect(err.request.headers).toBeUndefined();
+		expect(err.request.query).toBeUndefined();
+		expect(err.request.body).toBeUndefined();
+		expect(err.body).toEqual({ message: 'Lexware API request failed' });
 
 		const plainError = new Error('regular error');
 		expect(sanitizeApiError(plainError)).toBe(plainError);
@@ -213,7 +283,7 @@ describe('makeLexofficeRequest', () => {
 			try {
 				await actualHttp.request(
 					{
-						BASE: 'https://api.lexoffice.io/v1',
+						BASE: 'https://api.lexware.io/v1',
 						VERSION: '1.0.0',
 						HEADERS: {},
 						WITH_CREDENTIALS: false,

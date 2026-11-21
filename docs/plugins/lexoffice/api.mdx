@@ -39,8 +39,10 @@ await corsair.lexoffice.api.contacts.create({
 | `addresses` | `object` | No | — |
 | `emailAddresses` | `object` | No | — |
 | `phoneNumbers` | `object` | No | — |
+| `xRechnung` | `object` | No | — |
 | `note` | `string` | No | — |
-| `archived` | `boolean` | No | — |
+
+New contacts are created with version 0 when omitted and must have exactly one of person or company plus at least one role. Only one entry per address/contact list and one company contact person can be written. XRechnung contacts require both buyerReference and vendorNumberAtCustomer. Personal contact fields are never included in plugin event logs or propagated provider error details.
 
 <AccordionGroup>
 <Accordion title="roles full type">
@@ -48,10 +50,8 @@ await corsair.lexoffice.api.contacts.create({
 ```ts
 {
   customer?: {
-    number?: number
   },
   vendor?: {
-    number?: number
   }
 }
 ```
@@ -93,7 +93,6 @@ await corsair.lexoffice.api.contacts.create({
 ```ts
 {
   billing?: {
-    name?: string,
     supplement?: string,
     street?: string,
     city?: string,
@@ -101,7 +100,6 @@ await corsair.lexoffice.api.contacts.create({
     countryCode: string
   }[],
   shipping?: {
-    name?: string,
     supplement?: string,
     street?: string,
     city?: string,
@@ -134,6 +132,16 @@ await corsair.lexoffice.api.contacts.create({
   private?: string[],
   fax?: string[],
   other?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="xRechnung full type">
+
+```ts
+{
+  buyerReference?: string,
+  vendorNumberAtCustomer?: string
 }
 ```
 </Accordion>
@@ -185,6 +193,7 @@ await corsair.lexoffice.api.contacts.get({ id: 'c-00000000-0000-4000-8000-000000
 | `roles` | `object` | No | — |
 | `person` | `object` | No | — |
 | `company` | `object` | No | — |
+| `xRechnung` | `object` | No | — |
 | `addresses` | `object` | No | — |
 | `emailAddresses` | `object` | No | — |
 | `phoneNumbers` | `object` | No | — |
@@ -237,12 +246,21 @@ await corsair.lexoffice.api.contacts.get({ id: 'c-00000000-0000-4000-8000-000000
 ```
 </Accordion>
 
+<Accordion title="xRechnung full type">
+
+```ts
+{
+  buyerReference?: string,
+  vendorNumberAtCustomer?: string
+}
+```
+</Accordion>
+
 <Accordion title="addresses full type">
 
 ```ts
 {
   billing?: {
-    name?: string,
     supplement?: string,
     street?: string,
     city?: string,
@@ -250,7 +268,6 @@ await corsair.lexoffice.api.contacts.get({ id: 'c-00000000-0000-4000-8000-000000
     countryCode: string
   }[],
   shipping?: {
-    name?: string,
     supplement?: string,
     street?: string,
     city?: string,
@@ -367,9 +384,12 @@ await corsair.lexoffice.api.contacts.list({ page: 0, size: 25 });
       phoneNumber?: string
     }[]
   },
+  xRechnung?: {
+    buyerReference?: string,
+    vendorNumberAtCustomer?: string
+  },
   addresses?: {
     billing?: {
-      name?: string,
       supplement?: string,
       street?: string,
       city?: string,
@@ -377,7 +397,6 @@ await corsair.lexoffice.api.contacts.list({ page: 0, size: 25 });
       countryCode: string
     }[],
     shipping?: {
-      name?: string,
       supplement?: string,
       street?: string,
       city?: string,
@@ -454,8 +473,10 @@ await corsair.lexoffice.api.contacts.update({
 | `addresses` | `object` | No | — |
 | `emailAddresses` | `object` | No | — |
 | `phoneNumbers` | `object` | No | — |
+| `xRechnung` | `object` | No | — |
 | `note` | `string` | No | — |
-| `archived` | `boolean` | No | — |
+
+Updates require the current contact version. Personal contact fields are never included in plugin event logs or propagated provider error details.
 
 <AccordionGroup>
 <Accordion title="roles full type">
@@ -463,10 +484,8 @@ await corsair.lexoffice.api.contacts.update({
 ```ts
 {
   customer?: {
-    number?: number
   },
   vendor?: {
-    number?: number
   }
 }
 ```
@@ -508,7 +527,6 @@ await corsair.lexoffice.api.contacts.update({
 ```ts
 {
   billing?: {
-    name?: string,
     supplement?: string,
     street?: string,
     city?: string,
@@ -516,7 +534,6 @@ await corsair.lexoffice.api.contacts.update({
     countryCode: string
   }[],
   shipping?: {
-    name?: string,
     supplement?: string,
     street?: string,
     city?: string,
@@ -552,6 +569,16 @@ await corsair.lexoffice.api.contacts.update({
 }
 ```
 </Accordion>
+
+<Accordion title="xRechnung full type">
+
+```ts
+{
+  buyerReference?: string,
+  vendorNumberAtCustomer?: string
+}
+```
+</Accordion>
 </AccordionGroup>
 
 
@@ -571,6 +598,148 @@ await corsair.lexoffice.api.contacts.update({
 ---
 
 ## Credit Notes
+
+### create
+
+`creditNotes.create`
+
+Create a credit note, optionally finalizing or pursuing it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lexoffice.api.creditNotes.create({ voucherDate: '2026-01-01', address: { name: 'Acme Corp', countryCode: 'DE' }, lineItems: [{ type: 'custom', name: 'Credit', quantity: 1, unitName: 'piece', unitPrice: { currency: 'EUR', netAmount: 50, taxRatePercentage: 19 } }], totalPrice: { currency: 'EUR' }, taxConditions: { taxType: 'net' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `finalize` | `boolean` | No | — |
+| `precedingSalesVoucherId` | `string` | No | — |
+| `voucherDate` | `string` | Yes | — |
+| `language` | `de \| en` | No | — |
+| `printLayoutId` | `string` | No | — |
+| `address` | `object` | Yes | — |
+| `lineItems` | `object[]` | Yes | — |
+| `totalPrice` | `object` | Yes | — |
+| `taxConditions` | `object` | Yes | — |
+| `title` | `string` | No | — |
+| `introduction` | `string` | No | — |
+| `remark` | `string` | No | — |
+
+Credit notes can be finalized or pursued from an existing sales voucher; finalize and precedingSalesVoucherId are query parameters. A finalized credit note related to an invoice is immediately paid off and reduces the invoice's open amount. Credit notes do not support payment conditions, shipping conditions, or per-line discounts. For custom, material, and service lines, name, quantity, unitName, and unitPrice are required; material/service lines also require id.
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  contactId?: string,
+  name?: string,
+  supplement?: string,
+  street?: string,
+  city?: string,
+  zip?: string,
+  countryCode?: string
+}
+```
+</Accordion>
+
+<Accordion title="lineItems full type">
+
+```ts
+{
+  type: custom | material | service | text,
+  id?: string,
+  name?: string,
+  description?: string,
+  quantity?: number,
+  unitName?: string,
+  unitPrice?: {
+    currency: EUR,
+    netAmount?: number,
+    grossAmount?: number,
+    taxRatePercentage: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="totalPrice full type">
+
+```ts
+{
+  currency: EUR,
+  totalDiscountAbsolute?: number,
+  totalDiscountPercentage?: number
+}
+```
+</Accordion>
+
+<Accordion title="taxConditions full type">
+
+```ts
+{
+  taxType: net | gross | vatfree | intraCommunitySupply | constructionService13b | externalService13b | thirdPartyCountryService | thirdPartyCountryDelivery | photovoltaicEquipment,
+  taxTypeNote?: string,
+  taxSubType?: distanceSales | electronicServices | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `resourceUri` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `version` | `number` | No | — |
+
+
+
+---
+
+### download
+
+`creditNotes.download`
+
+Download a credit note document as base64-encoded binary data
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.creditNotes.download({ id: 'cn-00000000-0000-4000-8000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `accept` | `*/* \| application/pdf \| application/xml` | No | — |
+
+Returns the file bytes in base64 form. Lexware supports */*, application/pdf, and application/xml for sales credit notes.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+| `sizeBytes` | `number` | Yes | — |
+
+
+
+---
 
 ### get
 
@@ -604,31 +773,35 @@ await corsair.lexoffice.api.creditNotes.get({ id: 'cn-00000000-0000-4000-8000-00
 | `language` | `string` | No | — |
 | `archived` | `boolean` | No | — |
 | `voucherStatus` | `string` | Yes | — |
-| `voucherNumber` | `string` | No | — |
+| `voucherNumber` | `string \| null` | No | — |
 | `voucherDate` | `string` | Yes | — |
-| `address` | `object` | No | — |
+| `address` | `object \| null` | No | — |
+| `electronicDocumentProfile` | `string` | No | — |
 | `lineItems` | `object[]` | No | — |
 | `totalPrice` | `object` | Yes | — |
 | `taxAmounts` | `object[]` | No | — |
 | `taxConditions` | `object` | No | — |
-| `title` | `string` | No | — |
-| `introduction` | `string` | No | — |
-| `remark` | `string` | No | — |
-| `files` | `object` | No | — |
+| `relatedVouchers` | `object[]` | No | — |
+| `printLayoutId` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `introduction` | `string \| null` | No | — |
+| `remark` | `string \| null` | No | — |
+| `files` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="address full type">
 
 ```ts
 {
-  contactId?: string,
-  name?: string,
-  supplement?: string,
-  street?: string,
-  city?: string,
-  zip?: string,
-  countryCode?: string
-}
+  contactId?: string | null,
+  name?: string | null,
+  supplement?: string | null,
+  street?: string | null,
+  city?: string | null,
+  zip?: string | null,
+  countryCode?: string | null,
+  contactPerson?: string | null
+} | null
 ```
 </Accordion>
 
@@ -636,20 +809,20 @@ await corsair.lexoffice.api.creditNotes.get({ id: 'cn-00000000-0000-4000-8000-00
 
 ```ts
 {
-  id?: string,
+  id?: string | null,
   type: string,
-  name: string,
-  description?: string,
-  quantity?: number,
-  unitName?: string,
+  name?: string | null,
+  description?: string | null,
+  quantity?: number | null,
+  unitName?: string | null,
   unitPrice?: {
     currency: string,
-    netAmount: number,
-    grossAmount?: number,
+    netAmount?: number | null,
+    grossAmount?: number | null,
     taxRatePercentage: number
-  },
-  discountPercentage?: number,
-  lineItemAmount?: number
+  } | null,
+  discountPercentage?: number | null,
+  lineItemAmount?: number | null
 }[]
 ```
 </Accordion>
@@ -659,9 +832,11 @@ await corsair.lexoffice.api.creditNotes.get({ id: 'cn-00000000-0000-4000-8000-00
 ```ts
 {
   currency: string,
-  totalNetAmount?: number,
-  totalGrossAmount?: number,
-  totalTaxAmount?: number
+  totalNetAmount?: number | null,
+  totalGrossAmount?: number | null,
+  totalTaxAmount?: number | null,
+  totalDiscountAbsolute?: number | null,
+  totalDiscountPercentage?: number | null
 }
 ```
 </Accordion>
@@ -682,8 +857,20 @@ await corsair.lexoffice.api.creditNotes.get({ id: 'cn-00000000-0000-4000-8000-00
 ```ts
 {
   taxType: string,
-  taxTypeNote?: string
+  taxTypeNote?: string | null,
+  taxSubType?: string | null
 }
+```
+</Accordion>
+
+<Accordion title="relatedVouchers full type">
+
+```ts
+{
+  id: string,
+  voucherNumber?: string | null,
+  voucherType: string
+}[]
 ```
 </Accordion>
 
@@ -691,8 +878,8 @@ await corsair.lexoffice.api.creditNotes.get({ id: 'cn-00000000-0000-4000-8000-00
 
 ```ts
 {
-  documentFileId?: string
-}
+  documentFileId?: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -710,15 +897,26 @@ List credit notes with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.lexoffice.api.creditNotes.list({ page: 0, size: 25 });
+await corsair.lexoffice.api.creditNotes.list({ page: 0, size: 25, voucherStatus: 'open' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `voucherStatus` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `contactId` | `string` | No | — |
+| `voucherDateFrom` | `string` | No | — |
+| `voucherDateTo` | `string` | No | — |
+| `createdDateFrom` | `string` | No | — |
+| `createdDateTo` | `string` | No | — |
+| `updatedDateFrom` | `string` | No | — |
+| `updatedDateTo` | `string` | No | — |
+| `voucherNumber` | `string` | No | — |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
+| `sort` | `string` | No | — |
 
 
 
@@ -742,23 +940,19 @@ await corsair.lexoffice.api.creditNotes.list({ page: 0, size: 25 });
 ```ts
 {
   id: string,
+  voucherType: string,
   voucherStatus: string,
-  voucherNumber?: string,
+  voucherNumber?: string | null,
   voucherDate: string,
   createdDate?: string,
   updatedDate?: string,
-  address?: {
-    name?: string,
-    city?: string,
-    countryCode?: string,
-    contactId?: string
-  },
-  totalPrice?: {
-    currency: string,
-    totalNetAmount?: number,
-    totalGrossAmount?: number,
-    totalTaxAmount?: number
-  }
+  dueDate?: string | null,
+  contactId?: string | null,
+  contactName?: string | null,
+  totalAmount?: number,
+  openAmount?: number | null,
+  currency?: string,
+  archived?: boolean
 }[]
 ```
 </Accordion>
@@ -781,6 +975,359 @@ await corsair.lexoffice.api.creditNotes.list({ page: 0, size: 25 });
 
 ---
 
+### render
+
+`creditNotes.render`
+
+Use the deprecated credit-note document endpoint to retrieve a file ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.creditNotes.render({ id: 'cn-00000000-0000-4000-8000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+Lexware marks this document-ID route deprecated. Prefer creditNotes.download. Finalizing a credit note pursued from an invoice immediately reduces that invoice's open amount.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `documentFileId` | `string` | Yes | — |
+
+
+
+---
+
+## Down Payment Invoices
+
+### download
+
+`downPaymentInvoices.download`
+
+Download a down-payment invoice document as base64 data
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.downPaymentInvoices.download({ id: 'dp-00000000-0000-4000-8000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `accept` | `*/* \| application/pdf \| application/xml` | No | — |
+
+Returns document bytes as base64. Draft down-payment invoices do not have a downloadable document.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+| `sizeBytes` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`downPaymentInvoices.get`
+
+Retrieve a down-payment invoice by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.downPaymentInvoices.get({ id: 'dp-00000000-0000-4000-8000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+Down-payment invoices are read-only through this API. Their list metadata is available through voucherlist.list using voucherType=downpaymentinvoice.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `organizationId` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `version` | `number` | Yes | — |
+| `language` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `voucherStatus` | `string` | Yes | — |
+| `voucherNumber` | `string \| null` | No | — |
+| `voucherDate` | `string` | Yes | — |
+| `dueDate` | `string \| null` | No | — |
+| `address` | `object \| null` | No | — |
+| `xRechnung` | `object \| null` | No | — |
+| `electronicDocumentProfile` | `string` | No | — |
+| `lineItems` | `object[]` | No | — |
+| `totalPrice` | `object` | Yes | — |
+| `taxAmounts` | `object[]` | No | — |
+| `taxConditions` | `object` | No | — |
+| `paymentConditions` | `object \| null` | No | — |
+| `closingInvoice` | `boolean \| null` | No | — |
+| `claimedGrossAmount` | `number \| null` | No | — |
+| `downPaymentDeductions` | `object[] \| null` | No | — |
+| `recurringTemplateId` | `string \| null` | No | — |
+| `relatedVouchers` | `object[]` | No | — |
+| `printLayoutId` | `string \| null` | No | — |
+| `shippingConditions` | `object \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `introduction` | `string \| null` | No | — |
+| `remark` | `string \| null` | No | — |
+| `files` | `object \| null` | No | — |
+| `closingInvoiceId` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="address full type">
+
+```ts
+{
+  contactId?: string | null,
+  name?: string | null,
+  supplement?: string | null,
+  street?: string | null,
+  city?: string | null,
+  zip?: string | null,
+  countryCode?: string | null,
+  contactPerson?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="xRechnung full type">
+
+```ts
+{
+  buyerReference?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="lineItems full type">
+
+```ts
+{
+  id?: string | null,
+  type: string,
+  name?: string | null,
+  description?: string | null,
+  quantity?: number | null,
+  unitName?: string | null,
+  unitPrice?: {
+    currency: string,
+    netAmount?: number | null,
+    grossAmount?: number | null,
+    taxRatePercentage: number
+  } | null,
+  discountPercentage?: number | null,
+  lineItemAmount?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="totalPrice full type">
+
+```ts
+{
+  currency: string,
+  totalNetAmount?: number | null,
+  totalGrossAmount?: number | null,
+  totalTaxAmount?: number | null,
+  totalDiscountAbsolute?: number | null,
+  totalDiscountPercentage?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="taxAmounts full type">
+
+```ts
+{
+  taxRatePercentage: number,
+  taxAmount: number,
+  netAmount: number
+}[]
+```
+</Accordion>
+
+<Accordion title="taxConditions full type">
+
+```ts
+{
+  taxType: string,
+  taxTypeNote?: string | null,
+  taxSubType?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="paymentConditions full type">
+
+```ts
+{
+  paymentTermLabel?: string | null,
+  paymentTermLabelTemplate?: string | null,
+  paymentTermDuration?: number | null,
+  paymentDiscountConditions?: {
+    discountPercentage: number,
+    discountRange: number
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="downPaymentDeductions full type">
+
+```ts
+{
+  id: string,
+  voucherType: string,
+  title: string,
+  voucherNumber: string,
+  voucherDate: string,
+  receivedGrossAmount: number,
+  receivedNetAmount: number,
+  receivedTaxAmount: number,
+  taxRatePercentage: number
+}[] | null
+```
+</Accordion>
+
+<Accordion title="relatedVouchers full type">
+
+```ts
+{
+  id: string,
+  voucherNumber?: string | null,
+  voucherType: string
+}[]
+```
+</Accordion>
+
+<Accordion title="shippingConditions full type">
+
+```ts
+{
+  shippingDate?: string | null,
+  shippingEndDate?: string | null,
+  shippingType?: string
+} | null
+```
+</Accordion>
+
+<Accordion title="files full type">
+
+```ts
+{
+  documentFileId?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### download
+
+`files.download`
+
+Download a bookkeeping file as base64-encoded binary data
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.files.download({ id: 'file-00000000-0000-4000-8000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `accept` | `*/* \| application/pdf \| application/xml \| image/jpeg \| image/png` | No | — |
+
+Returns binary bytes as base64. This generic endpoint is intended for bookkeeping voucher files; use the sales-document file routes for invoices, credit notes, and down-payment invoices.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+| `sizeBytes` | `number` | Yes | — |
+
+
+
+---
+
+### upload
+
+`files.upload`
+
+Upload a voucher file, which creates a bookkeeping voucher
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lexoffice.api.files.upload({ file: 'JVBERi0xLjQK', fileName: 'receipt.pdf', contentType: 'application/pdf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | Yes | — |
+| `fileName` | `string` | Yes | — |
+| `contentType` | `application/pdf \| image/jpeg \| image/png \| application/xml \| text/xml` | Yes | — |
+
+Uses multipart form data with a file part and type=voucher. PDF, JPG, PNG, and XML are documented formats, with a 5 MB maximum. Upload creates a voucher whose OCR processing completes asynchronously. The official reference links to files/&#123;id&#125;/status but does not publish that route's contract, so status polling is excluded as undocumented.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `voucherId` | `string` | Yes | — |
+
+
+
+---
+
 ## Invoices
 
 ### create
@@ -792,7 +1339,7 @@ Create an invoice in draft or finalized state
 **Risk:** `destructive`
 
 ```ts
-await corsair.lexoffice.api.invoices.create({ voucherDate: '2026-01-01', address: { name: 'Acme Corp' }, lineItems: [{ type: 'custom', name: 'Consulting', unitPrice: { currency: 'EUR', netAmount: 100, taxRatePercentage: 19 } }], totalPrice: { currency: 'EUR' }, taxConditions: { taxType: 'net' } });
+await corsair.lexoffice.api.invoices.create({ voucherDate: '2026-01-01', address: { name: 'Acme Corp', countryCode: 'DE' }, lineItems: [{ type: 'custom', name: 'Consulting', quantity: 1, unitName: 'hour', unitPrice: { currency: 'EUR', netAmount: 100, taxRatePercentage: 19 } }], totalPrice: { currency: 'EUR' }, taxConditions: { taxType: 'net' }, shippingConditions: { shippingType: 'service', shippingDate: '2026-01-01' } });
 ```
 
 **Input**
@@ -800,17 +1347,22 @@ await corsair.lexoffice.api.invoices.create({ voucherDate: '2026-01-01', address
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `finalize` | `boolean` | No | — |
+| `precedingSalesVoucherId` | `string` | No | — |
 | `voucherDate` | `string` | Yes | — |
+| `language` | `de \| en` | No | — |
+| `printLayoutId` | `string` | No | — |
 | `address` | `object` | Yes | — |
 | `lineItems` | `object[]` | Yes | — |
 | `totalPrice` | `object` | Yes | — |
 | `taxConditions` | `object` | Yes | — |
+| `paymentConditions` | `object` | No | — |
+| `xRechnung` | `object` | No | — |
 | `title` | `string` | No | — |
 | `introduction` | `string` | No | — |
 | `remark` | `string` | No | — |
-| `shippingConditions` | `object` | No | — |
+| `shippingConditions` | `object` | Yes | — |
 
-Invoices cannot be updated or deleted once created via the API due to accounting compliance regulations (GoBD).
+The operation can finalize a new invoice or pursue a preceding sales voucher; finalize and precedingSalesVoucherId are query parameters. Finalized invoices cannot be edited or deleted via the API. For custom, material, and service lines, name, quantity, unitName, and unitPrice are required; material/service lines also require id. Text lines accept only name and/or description. Net tax conditions require netAmount; gross tax conditions require grossAmount. Shipping conditions and their required dates are validated before sending.
 
 <AccordionGroup>
 <Accordion title="address full type">
@@ -832,14 +1384,15 @@ Invoices cannot be updated or deleted once created via the API due to accounting
 
 ```ts
 {
-  type: custom | text,
-  name: string,
+  type: custom | material | service | text,
+  id?: string,
+  name?: string,
   description?: string,
   quantity?: number,
   unitName?: string,
   unitPrice?: {
-    currency: string,
-    netAmount: number,
+    currency: EUR,
+    netAmount?: number,
     grossAmount?: number,
     taxRatePercentage: number
   },
@@ -852,7 +1405,9 @@ Invoices cannot be updated or deleted once created via the API due to accounting
 
 ```ts
 {
-  currency: string
+  currency: EUR,
+  totalDiscountAbsolute?: number,
+  totalDiscountPercentage?: number
 }
 ```
 </Accordion>
@@ -861,8 +1416,32 @@ Invoices cannot be updated or deleted once created via the API due to accounting
 
 ```ts
 {
-  taxType: net | gross | vatfree,
-  taxTypeNote?: string
+  taxType: net | gross | vatfree | intraCommunitySupply | constructionService13b | externalService13b | thirdPartyCountryService | thirdPartyCountryDelivery | photovoltaicEquipment,
+  taxTypeNote?: string,
+  taxSubType?: distanceSales | electronicServices | null
+}
+```
+</Accordion>
+
+<Accordion title="paymentConditions full type">
+
+```ts
+{
+  paymentTermLabel?: string,
+  paymentTermDuration?: number,
+  paymentDiscountConditions?: {
+    discountPercentage: number,
+    discountRange: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="xRechnung full type">
+
+```ts
+{
+  buyerReference: string
 }
 ```
 </Accordion>
@@ -872,7 +1451,8 @@ Invoices cannot be updated or deleted once created via the API due to accounting
 ```ts
 {
   shippingDate?: string,
-  shippingType?: service | delivery
+  shippingEndDate?: string,
+  shippingType: service | serviceperiod | delivery | deliveryperiod | none
 }
 ```
 </Accordion>
@@ -889,6 +1469,42 @@ Invoices cannot be updated or deleted once created via the API due to accounting
 | `createdDate` | `string` | No | — |
 | `updatedDate` | `string` | No | — |
 | `version` | `number` | No | — |
+
+
+
+---
+
+### download
+
+`invoices.download`
+
+Download an invoice document as base64-encoded binary data
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.invoices.download({ id: 'i-00000000-0000-4000-8000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `accept` | `*/* \| application/pdf \| application/xml` | No | — |
+
+Returns the file bytes in base64 form. Lexware supports */*, application/pdf, and application/xml for sales invoices; XRechnung PDF output is a preview only.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `binary` | Yes | — |
+| `contentType` | `string` | Yes | — |
+| `base64` | `string` | Yes | — |
+| `sizeBytes` | `number` | Yes | — |
 
 
 
@@ -926,32 +1542,52 @@ await corsair.lexoffice.api.invoices.get({ id: 'i-00000000-0000-4000-8000-000000
 | `language` | `string` | No | — |
 | `archived` | `boolean` | No | — |
 | `voucherStatus` | `string` | Yes | — |
-| `voucherNumber` | `string` | No | — |
+| `voucherNumber` | `string \| null` | No | — |
 | `voucherDate` | `string` | Yes | — |
 | `dueDate` | `string \| null` | No | — |
-| `address` | `object` | No | — |
+| `address` | `object \| null` | No | — |
+| `xRechnung` | `object \| null` | No | — |
+| `electronicDocumentProfile` | `string` | No | — |
 | `lineItems` | `object[]` | No | — |
 | `totalPrice` | `object` | Yes | — |
 | `taxAmounts` | `object[]` | No | — |
 | `taxConditions` | `object` | No | — |
-| `title` | `string` | No | — |
-| `introduction` | `string` | No | — |
-| `remark` | `string` | No | — |
-| `files` | `object` | No | — |
+| `paymentConditions` | `object \| null` | No | — |
+| `closingInvoice` | `boolean \| null` | No | — |
+| `claimedGrossAmount` | `number \| null` | No | — |
+| `downPaymentDeductions` | `object[] \| null` | No | — |
+| `recurringTemplateId` | `string \| null` | No | — |
+| `relatedVouchers` | `object[]` | No | — |
+| `printLayoutId` | `string \| null` | No | — |
+| `shippingConditions` | `object \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `introduction` | `string \| null` | No | — |
+| `remark` | `string \| null` | No | — |
+| `files` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="address full type">
 
 ```ts
 {
-  contactId?: string,
-  name?: string,
-  supplement?: string,
-  street?: string,
-  city?: string,
-  zip?: string,
-  countryCode?: string
-}
+  contactId?: string | null,
+  name?: string | null,
+  supplement?: string | null,
+  street?: string | null,
+  city?: string | null,
+  zip?: string | null,
+  countryCode?: string | null,
+  contactPerson?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="xRechnung full type">
+
+```ts
+{
+  buyerReference?: string | null
+} | null
 ```
 </Accordion>
 
@@ -959,20 +1595,20 @@ await corsair.lexoffice.api.invoices.get({ id: 'i-00000000-0000-4000-8000-000000
 
 ```ts
 {
-  id?: string,
+  id?: string | null,
   type: string,
-  name: string,
-  description?: string,
-  quantity?: number,
-  unitName?: string,
+  name?: string | null,
+  description?: string | null,
+  quantity?: number | null,
+  unitName?: string | null,
   unitPrice?: {
     currency: string,
-    netAmount: number,
-    grossAmount?: number,
+    netAmount?: number | null,
+    grossAmount?: number | null,
     taxRatePercentage: number
-  },
-  discountPercentage?: number,
-  lineItemAmount?: number
+  } | null,
+  discountPercentage?: number | null,
+  lineItemAmount?: number | null
 }[]
 ```
 </Accordion>
@@ -982,9 +1618,11 @@ await corsair.lexoffice.api.invoices.get({ id: 'i-00000000-0000-4000-8000-000000
 ```ts
 {
   currency: string,
-  totalNetAmount?: number,
-  totalGrossAmount?: number,
-  totalTaxAmount?: number
+  totalNetAmount?: number | null,
+  totalGrossAmount?: number | null,
+  totalTaxAmount?: number | null,
+  totalDiscountAbsolute?: number | null,
+  totalDiscountPercentage?: number | null
 }
 ```
 </Accordion>
@@ -1005,8 +1643,63 @@ await corsair.lexoffice.api.invoices.get({ id: 'i-00000000-0000-4000-8000-000000
 ```ts
 {
   taxType: string,
-  taxTypeNote?: string
+  taxTypeNote?: string | null,
+  taxSubType?: string | null
 }
+```
+</Accordion>
+
+<Accordion title="paymentConditions full type">
+
+```ts
+{
+  paymentTermLabel?: string | null,
+  paymentTermLabelTemplate?: string | null,
+  paymentTermDuration?: number | null,
+  paymentDiscountConditions?: {
+    discountPercentage: number,
+    discountRange: number
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="downPaymentDeductions full type">
+
+```ts
+{
+  id: string,
+  voucherType: string,
+  title: string,
+  voucherNumber: string,
+  voucherDate: string,
+  receivedGrossAmount: number,
+  receivedNetAmount: number,
+  receivedTaxAmount: number,
+  taxRatePercentage: number
+}[] | null
+```
+</Accordion>
+
+<Accordion title="relatedVouchers full type">
+
+```ts
+{
+  id: string,
+  voucherNumber?: string | null,
+  voucherType: string
+}[]
+```
+</Accordion>
+
+<Accordion title="shippingConditions full type">
+
+```ts
+{
+  shippingDate?: string | null,
+  shippingEndDate?: string | null,
+  shippingType?: string
+} | null
 ```
 </Accordion>
 
@@ -1014,8 +1707,8 @@ await corsair.lexoffice.api.invoices.get({ id: 'i-00000000-0000-4000-8000-000000
 
 ```ts
 {
-  documentFileId?: string
-}
+  documentFileId?: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1033,15 +1726,26 @@ List outgoing invoices with pagination
 **Risk:** `read`
 
 ```ts
-await corsair.lexoffice.api.invoices.list({ page: 0, size: 25 });
+await corsair.lexoffice.api.invoices.list({ page: 0, size: 25, voucherStatus: 'open' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `voucherStatus` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+| `contactId` | `string` | No | — |
+| `voucherDateFrom` | `string` | No | — |
+| `voucherDateTo` | `string` | No | — |
+| `createdDateFrom` | `string` | No | — |
+| `createdDateTo` | `string` | No | — |
+| `updatedDateFrom` | `string` | No | — |
+| `updatedDateTo` | `string` | No | — |
+| `voucherNumber` | `string` | No | — |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
+| `sort` | `string` | No | — |
 
 
 
@@ -1065,24 +1769,19 @@ await corsair.lexoffice.api.invoices.list({ page: 0, size: 25 });
 ```ts
 {
   id: string,
+  voucherType: string,
   voucherStatus: string,
-  voucherNumber?: string,
+  voucherNumber?: string | null,
   voucherDate: string,
   createdDate?: string,
   updatedDate?: string,
   dueDate?: string | null,
-  address?: {
-    name?: string,
-    city?: string,
-    countryCode?: string,
-    contactId?: string
-  },
-  totalPrice?: {
-    currency: string,
-    totalNetAmount?: number,
-    totalGrossAmount?: number,
-    totalTaxAmount?: number
-  }
+  contactId?: string | null,
+  contactName?: string | null,
+  totalAmount?: number,
+  openAmount?: number | null,
+  currency?: string,
+  archived?: boolean
 }[]
 ```
 </Accordion>
@@ -1109,7 +1808,7 @@ await corsair.lexoffice.api.invoices.list({ page: 0, size: 25 });
 
 `invoices.render`
 
-Render an invoice PDF and retrieve its document file ID
+Use the deprecated invoice document endpoint to retrieve a file ID
 
 **Risk:** `read`
 
@@ -1123,7 +1822,7 @@ await corsair.lexoffice.api.invoices.render({ id: 'i-00000000-0000-4000-8000-000
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 
-Document rendering returns a documentFileId for finalized (open) invoices. For draft invoices, Lexoffice returns HTTP 406 Not Acceptable.
+Lexware marks this document-ID route deprecated. Prefer invoices.download, which returns the document bytes directly. Draft invoices have no downloadable document.
 
 
 
@@ -1133,6 +1832,97 @@ Document rendering returns a documentFileId for finalized (open) invoices. For d
 |------|------|----------|-------------|
 | `documentFileId` | `string` | Yes | — |
 
+
+
+---
+
+## Payments
+
+### get
+
+`payments.get`
+
+Retrieve payment status and payment entries for a voucher
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.payments.get({ voucherId: 'i-00000000-0000-4000-8000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voucherId` | `string` | Yes | — |
+
+Retrieves payment status for a voucher ID; the API documents this operation as read-only.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `openAmount` | `string` | Yes | — |
+| `currency` | `string` | Yes | — |
+| `paymentStatus` | `string` | Yes | — |
+| `voucherType` | `string` | Yes | — |
+| `voucherStatus` | `string` | Yes | — |
+| `paymentItems` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="paymentItems full type">
+
+```ts
+{
+  paymentItemType: string,
+  postingDate: string,
+  amount: number,
+  currency: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Posting Categories
+
+### list
+
+`postingCategories.list`
+
+List the available bookkeeping posting categories
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.postingCategories.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: income | outgo,
+  contactRequired: boolean,
+  splitAllowed: boolean,
+  groupName: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -1153,6 +1943,8 @@ await corsair.lexoffice.api.profile.get({});
 
 **Input:** _empty object_
 
+The response includes organization/account profile details and may include the account user's email as returned by the provider. The plugin does not log the response.
+
 
 **Output**
 
@@ -1162,6 +1954,10 @@ await corsair.lexoffice.api.profile.get({});
 | `companyName` | `string` | No | — |
 | `created` | `object` | No | — |
 | `connectionId` | `string` | No | — |
+| `taxType` | `net \| gross \| vatfree` | No | — |
+| `distanceSalesPrinciple` | `ORIGIN \| DESTINATION` | No | — |
+| `businessFeatures` | `string[]` | No | — |
+| `smallBusiness` | `boolean` | No | — |
 
 <AccordionGroup>
 <Accordion title="created full type">
@@ -1170,8 +1966,101 @@ await corsair.lexoffice.api.profile.get({});
 {
   userId?: string,
   userName?: string,
-  userEmail?: string
+  userEmail?: string,
+  date?: string
 }
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Voucherlist
+
+### list
+
+`voucherlist.list`
+
+Search all documented Lexware voucher types with paging
+
+**Risk:** `read`
+
+```ts
+await corsair.lexoffice.api.voucherlist.list({ voucherType: 'invoice,creditnote', voucherStatus: 'any', page: 0, size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voucherType` | `string` | Yes | — |
+| `voucherStatus` | `string` | Yes | — |
+| `archived` | `boolean` | No | — |
+| `contactId` | `string` | No | — |
+| `voucherDateFrom` | `string` | No | — |
+| `voucherDateTo` | `string` | No | — |
+| `createdDateFrom` | `string` | No | — |
+| `createdDateTo` | `string` | No | — |
+| `updatedDateFrom` | `string` | No | — |
+| `updatedDateTo` | `string` | No | — |
+| `voucherNumber` | `string` | No | — |
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `sort` | `string` | No | — |
+
+voucherType and voucherStatus are required; use any or documented comma-separated values. Pagination is zero-based with a maximum size of 250. Invoice, credit-note, and down-payment invoice list operations use this route.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `content` | `object[]` | Yes | — |
+| `first` | `boolean` | Yes | — |
+| `last` | `boolean` | Yes | — |
+| `totalPages` | `number` | Yes | — |
+| `totalElements` | `number` | Yes | — |
+| `numberOfElements` | `number` | Yes | — |
+| `size` | `number` | Yes | — |
+| `number` | `number` | Yes | — |
+| `sort` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  id: string,
+  voucherType: string,
+  voucherStatus: string,
+  voucherNumber?: string | null,
+  voucherDate: string,
+  createdDate?: string,
+  updatedDate?: string,
+  dueDate?: string | null,
+  contactId?: string | null,
+  contactName?: string | null,
+  totalAmount?: number,
+  openAmount?: number | null,
+  currency?: string,
+  archived?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="sort full type">
+
+```ts
+{
+  property?: string,
+  direction?: string,
+  ignoreCase?: boolean,
+  nullHandling?: string,
+  ascending?: boolean
+}[]
 ```
 </Accordion>
 </AccordionGroup>
@@ -1182,16 +2071,51 @@ await corsair.lexoffice.api.profile.get({});
 
 ## Vouchers
 
+### attachFile
+
+`vouchers.attachFile`
+
+Upload a bookkeeping document to an existing voucher
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lexoffice.api.vouchers.attachFile({ id: 'v-00000000-0000-4000-8000-000000000001', file: 'JVBERi0xLjQK', fileName: 'receipt.pdf', contentType: 'application/pdf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `file` | `string` | Yes | — |
+| `fileName` | `string` | Yes | — |
+| `contentType` | `application/pdf \| image/jpeg \| image/png \| application/xml \| text/xml` | Yes | — |
+
+Uploads a file to an existing voucher. This request has no type form field; use files.upload to create a voucher from an uploaded receipt.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+---
+
 ### create
 
 `vouchers.create`
 
 Create a new bookkeeping voucher
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.lexoffice.api.vouchers.create({ type: 'purchaseinvoice', voucherDate: '2026-01-01', totalNetAmount: 100, totalGrossAmount: 119, taxType: 'net', voucherItems: [{ amount: 100, taxRatePercent: 19, categoryId: 'cat-00000000-0000-4000-8000-000000000001' }] });
+await corsair.lexoffice.api.vouchers.create({ type: 'purchaseinvoice', voucherNumber: 'PUR-2026-001', voucherDate: '2026-01-01', totalGrossAmount: 119, totalTaxAmount: 19, taxType: 'net', useCollectiveContact: true, voucherItems: [{ amount: 100, taxAmount: 19, taxRatePercent: 19, categoryId: '8f8664a8-fd86-11e1-a21f-0800200c9a66' }] });
 ```
 
 **Input**
@@ -1199,17 +2123,23 @@ await corsair.lexoffice.api.vouchers.create({ type: 'purchaseinvoice', voucherDa
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `type` | `salesinvoice \| salescreditnote \| purchaseinvoice \| purchasecreditnote` | Yes | — |
+| `voucherStatus` | `open \| unchecked` | No | — |
 | `voucherNumber` | `string` | No | — |
-| `voucherDate` | `string` | Yes | — |
+| `voucherDate` | `string` | No | — |
+| `shippingDate` | `string` | No | — |
 | `dueDate` | `string` | No | — |
-| `totalNetAmount` | `number` | Yes | — |
-| `totalGrossAmount` | `number` | Yes | — |
+| `totalGrossAmount` | `number` | No | — |
+| `totalTaxAmount` | `number` | No | — |
 | `taxType` | `net \| gross \| vatfree` | Yes | — |
 | `useCollectiveContact` | `boolean` | No | — |
 | `contactId` | `string` | No | — |
+| `contactName` | `string` | No | — |
 | `remark` | `string` | No | — |
-| `voucherItems` | `object[]` | Yes | — |
-| `version` | `number` | No | Defaults to 0. |
+| `voucherItems` | `object[]` | No | — |
+| `files` | `string[]` | No | — |
+| `version` | `number` | No | — |
+
+For an open voucher, supply voucherNumber, totalGrossAmount, totalTaxAmount, each item's taxAmount, and either contactId or useCollectiveContact: true. If both contact fields are supplied, Lexware ignores contactId when useCollectiveContact is true. Version is omitted unless explicitly provided because the provider's create documentation conflicts about its initial value.
 
 <AccordionGroup>
 <Accordion title="voucherItems full type">
@@ -1217,7 +2147,7 @@ await corsair.lexoffice.api.vouchers.create({ type: 'purchaseinvoice', voucherDa
 ```ts
 {
   amount: number,
-  taxAmount?: number,
+  taxAmount: number,
   taxRatePercent: number,
   categoryId: string
 }[]
@@ -1267,21 +2197,23 @@ await corsair.lexoffice.api.vouchers.get({ id: 'v-00000000-0000-4000-8000-000000
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `organizationId` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
 | `type` | `string` | Yes | — |
 | `voucherStatus` | `string` | Yes | — |
-| `voucherNumber` | `string` | No | — |
+| `voucherNumber` | `string \| null` | No | — |
 | `voucherDate` | `string` | Yes | — |
+| `shippingDate` | `string \| null` | No | — |
 | `dueDate` | `string \| null` | No | — |
-| `totalNetAmount` | `number` | No | — |
-| `totalGrossAmount` | `number` | No | — |
-| `totalTaxAmount` | `number` | No | — |
-| `taxType` | `string` | No | — |
+| `totalGrossAmount` | `number \| null` | No | — |
+| `totalTaxAmount` | `number \| null` | No | — |
+| `taxType` | `string \| null` | No | — |
 | `useCollectiveContact` | `boolean` | No | — |
-| `contactId` | `string` | No | — |
-| `contactName` | `string` | No | — |
-| `remark` | `string` | No | — |
+| `contactId` | `string \| null` | No | — |
+| `contactName` | `string \| null` | No | — |
+| `remark` | `string \| null` | No | — |
 | `voucherItems` | `object[]` | Yes | — |
-| `files` | `object[]` | No | — |
+| `files` | `string[]` | No | — |
 | `version` | `number` | Yes | — |
 
 <AccordionGroup>
@@ -1293,15 +2225,6 @@ await corsair.lexoffice.api.vouchers.get({ id: 'v-00000000-0000-4000-8000-000000
   taxAmount?: number,
   taxRatePercent: number,
   categoryId: string
-}[]
-```
-</Accordion>
-
-<Accordion title="files full type">
-
-```ts
-{
-  id?: string
 }[]
 ```
 </Accordion>
@@ -1320,7 +2243,7 @@ List bookkeeping vouchers with optional voucher number filter
 **Risk:** `read`
 
 ```ts
-await corsair.lexoffice.api.vouchers.list({ page: 0, size: 25 });
+await corsair.lexoffice.api.vouchers.list({ voucherNumber: 'PUR-2026-001', page: 0, size: 25 });
 ```
 
 **Input**
@@ -1330,6 +2253,8 @@ await corsair.lexoffice.api.vouchers.list({ page: 0, size: 25 });
 | `voucherNumber` | `string` | No | — |
 | `page` | `number` | No | — |
 | `size` | `number` | No | — |
+
+This convenience operation filters bookkeeping voucher types and voucherStatus=any through the current /voucherlist route. Lexware's older /vouchers?voucherNumber filter is deprecated.
 
 
 
@@ -1353,14 +2278,19 @@ await corsair.lexoffice.api.vouchers.list({ page: 0, size: 25 });
 ```ts
 {
   id: string,
-  voucherType?: string,
-  voucherStatus?: string,
-  voucherNumber?: string,
+  voucherType: string,
+  voucherStatus: string,
+  voucherNumber?: string | null,
   voucherDate: string,
-  totalAmount?: number,
-  currency?: string,
   createdDate?: string,
-  updatedDate?: string
+  updatedDate?: string,
+  dueDate?: string | null,
+  contactId?: string | null,
+  contactName?: string | null,
+  totalAmount?: number,
+  openAmount?: number | null,
+  currency?: string,
+  archived?: boolean
 }[]
 ```
 </Accordion>
@@ -1378,6 +2308,72 @@ await corsair.lexoffice.api.vouchers.list({ page: 0, size: 25 });
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+### update
+
+`vouchers.update`
+
+Update a bookkeeping voucher including its assigned files
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lexoffice.api.vouchers.update({ id: 'v-00000000-0000-4000-8000-000000000001', version: 1, files: [], type: 'purchaseinvoice', voucherNumber: 'PUR-2026-001', voucherDate: '2026-01-01', totalGrossAmount: 119, totalTaxAmount: 19, taxType: 'net', useCollectiveContact: true, voucherItems: [{ amount: 100, taxAmount: 19, taxRatePercent: 19, categoryId: '8f8664a8-fd86-11e1-a21f-0800200c9a66' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `version` | `number` | Yes | — |
+| `type` | `salesinvoice \| salescreditnote \| purchaseinvoice \| purchasecreditnote` | Yes | — |
+| `voucherStatus` | `open \| unchecked` | No | — |
+| `voucherNumber` | `string` | Yes | — |
+| `voucherDate` | `string` | Yes | — |
+| `shippingDate` | `string` | No | — |
+| `dueDate` | `string` | No | — |
+| `totalGrossAmount` | `number` | Yes | — |
+| `totalTaxAmount` | `number` | Yes | — |
+| `taxType` | `net \| gross \| vatfree` | Yes | — |
+| `useCollectiveContact` | `boolean` | No | — |
+| `contactId` | `string` | No | — |
+| `contactName` | `string` | No | — |
+| `remark` | `string` | No | — |
+| `voucherItems` | `object[]` | Yes | — |
+| `files` | `string[]` | Yes | — |
+
+Updates require the latest version and the existing files array. Lexware warns that omitting existing file IDs permanently deletes those files. voucherStatus can only be changed from unchecked to open; this operation is classified destructive.
+
+<AccordionGroup>
+<Accordion title="voucherItems full type">
+
+```ts
+{
+  amount: number,
+  taxAmount: number,
+  taxRatePercent: number,
+  categoryId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `resourceUri` | `string` | No | — |
+| `createdDate` | `string` | No | — |
+| `updatedDate` | `string` | No | — |
+| `version` | `number` | No | — |
 
 
 
