@@ -5,6 +5,7 @@ import type {
 	PandadocKeyBuilderContext,
 } from './index';
 import { pandadoc, pandadocEndpointSchemas } from './index';
+import { webhookEvent } from './test-fixtures';
 
 function fixture(
 	key?: string | null,
@@ -104,6 +105,16 @@ describe('pandadoc plugin', () => {
 		const instance = plugin();
 		expect(instance.pluginWebhookMatcher).toBeDefined();
 		expect(Object.keys(instance.webhooks ?? {})).toEqual(['pandadoc']);
+	});
+
+	it('registers the delivery array as the webhook payload and response', () => {
+		const schemas = pandadoc().webhookSchemas?.['pandadoc.event'];
+		if (!schemas?.payload || !schemas.response)
+			throw new Error('webhook schemas missing');
+		const delivery = [webhookEvent, webhookEvent];
+		expect(schemas.payload.safeParse(delivery).success).toBe(true);
+		expect(schemas.response.safeParse(delivery).success).toBe(true);
+		expect(schemas.payload.safeParse(webhookEvent).success).toBe(false);
 	});
 
 	it('declares an input schema for every operation key', () => {

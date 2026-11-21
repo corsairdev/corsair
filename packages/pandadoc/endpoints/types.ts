@@ -14,7 +14,13 @@ const isoDatetime = z
 /** A recipient of a document: who signs or is copied, and in which order. */
 export const RecipientSchema = z
 	.object({
-		email: z.string().min(1).describe('Recipient email address'),
+		email: z
+			.string()
+			.min(1)
+			.nullish()
+			.describe(
+				'Recipient email address; a recipient needs an email or a phone number',
+			),
 		first_name: z.string().nullish().describe('Recipient first name'),
 		last_name: z.string().nullish().describe('Recipient last name'),
 		phone: z.string().nullish().describe('Recipient phone number'),
@@ -32,10 +38,30 @@ export const RecipientSchema = z
 	.describe('A document recipient');
 export type Recipient = z.infer<typeof RecipientSchema>;
 
+/** A recipient as the API returns it: any field can be null or missing. */
+const RecipientResponseSchema = z
+	.object({
+		id: z.string().nullish().describe('Recipient id'),
+		email: z.string().nullish().describe('Recipient email address'),
+		first_name: z.string().nullish().describe('Recipient first name'),
+		last_name: z.string().nullish().describe('Recipient last name'),
+		phone: z.string().nullish().describe('Recipient phone number'),
+		role: z.string().nullish().describe('Role name from the template'),
+		signing_order: z
+			.number()
+			.nullish()
+			.describe('Position of the recipient in the signing order'),
+	})
+	.loose()
+	.describe('A document recipient as stored');
+
 /** A template token to replace, e.g. "cosigner". */
 export const TokenSchema = z
 	.object({
-		token: z.string().min(1).describe('The token name, without brackets'),
+		name: z
+			.string()
+			.min(1)
+			.describe('The token (variable) name, e.g. Client.CompanyName'),
 		value: z.string().describe('Value the token is replaced with'),
 	})
 	.loose()
@@ -165,7 +191,9 @@ export const ListDocumentsInputSchema = z
 		if (
 			input.createdFrom &&
 			input.createdTo &&
-			input.createdFrom > input.createdTo
+			// Date.parse, not string order: fractional seconds of different
+			// precision sort wrongly as strings ("...35Z" > "...35.1Z").
+			Date.parse(input.createdFrom) > Date.parse(input.createdTo)
 		) {
 			ctx.addIssue({
 				code: 'custom',
@@ -217,9 +245,29 @@ export const GetDocumentInputSchema = z
 	.describe('Input for reading one document');
 export type GetDocumentInput = z.infer<typeof GetDocumentInputSchema>;
 
-export const GetDocumentOutputSchema = DocumentSchema.describe(
-	'Full document details',
-);
+export const GetDocumentOutputSchema = DocumentSchema.extend({
+	recipients: z
+		.array(RecipientResponseSchema)
+		.nullish()
+		.describe('Recipients with their roles and signing order'),
+	tokens: z
+		.array(
+			z
+				.object({
+					name: z.string().nullish().describe('Token name'),
+					value: z.string().nullish().describe('Token value'),
+				})
+				.loose(),
+		)
+		.nullish()
+		.describe('Template tokens (variables) and their values'),
+	// unknown: metadata values are whatever the caller stored on the document.
+	metadata: z
+		.record(z.string(), z.unknown())
+		.nullish()
+		.describe('Metadata stored on the document'),
+	tags: z.array(z.string()).nullish().describe('Tags on the document'),
+}).describe('Full document details');
 export type GetDocumentOutput = z.infer<typeof GetDocumentOutputSchema>;
 
 const OwnerSchema = z
@@ -291,6 +339,15 @@ export const CreateDocumentInputSchema = z
 	.superRefine((input, ctx) => {
 		// The API documents two creation bodies: from a template
 		// (template_uuid + recipients) and from a PDF URL (url + name).
+		for (const [index, recipient] of (input.recipients ?? []).entries()) {
+			if (!recipient.email && !recipient.phone) {
+				ctx.addIssue({
+					code: 'custom',
+					path: ['recipients', index, 'email'],
+					message: 'Each recipient needs an email or a phone number',
+				});
+			}
+		}
 		if (input.template_uuid && input.url) {
 			ctx.addIssue({
 				code: 'custom',
@@ -338,7 +395,7 @@ export const CreateDocumentOutputSchema = z
 		version: z.string().nullish().describe('Document version'),
 		date_created: isoDatetime.nullish().describe('Creation timestamp'),
 		recipients: z
-			.array(RecipientSchema)
+			.array(RecipientResponseSchema)
 			.nullish()
 			.describe('Recipients as stored'),
 	})
@@ -357,27 +414,36 @@ export const SendDocumentInputSchema = z
 			.boolean()
 			.optional()
 			.describe(
-				'Send the email silently, without notifications to the account owner',
+				'Send without email notifications to the recipients and the sender, and without scheduled reminders; leave false for recipients to get the signing email',
 			),
 		reply_to: z.string().email().optional().describe('Reply-to email address'),
 		sender: z
 			.object({
-				name: z.string().nullish().describe('Sender display name'),
-				email: z.string().email().nullish().describe('Sender email address'),
+				membership_id: z
+					.string()
+					.optional()
+					.describe('Workspace membership id of the sender'),
+				email: z
+					.string()
+					.email()
+					.optional()
+					.describe('Email of a workspace member to send as'),
 			})
 			.loose()
 			.optional()
-			.describe('Override the sender identity'),
+			.describe('Send as another workspace member, by email or membership_id'),
 		forwarding_settings: z
 			.object({
-				enabled: z
+				forwarding_allowed: z
 					.boolean()
-					.nullish()
-					.describe('Allow recipients to forward the document'),
-				forward_once: z
+					.optional()
+					.describe('Let recipients forward the document to another address'),
+				forwarding_with_reassigning_allowed: z
 					.boolean()
-					.nullish()
-					.describe('Allow forwarding to one recipient only'),
+					.optional()
+					.describe(
+						'Let recipients hand their fields (signature included) to someone else',
+					),
 			})
 			.loose()
 			.optional()
@@ -394,7 +460,7 @@ export const SendDocumentOutputSchema = z
 		uuid: z.string().nullish().describe('Document uuid'),
 		version: z.string().nullish().describe('Document version'),
 		recipients: z
-			.array(RecipientSchema)
+			.array(RecipientResponseSchema)
 			.nullish()
 			.describe('Recipients the document was sent to'),
 	})
@@ -428,12 +494,10 @@ export type UpdateDocumentInput = z.infer<typeof UpdateDocumentInputSchema>;
 
 export const UpdateDocumentOutputSchema = z
 	.object({
-		id: z.string().min(1).describe('Document id'),
-		name: z.string().nullish().describe('Document name'),
-		status: DocumentStatusSchema.nullish(),
+		id: z.string().describe('Updated document id'),
+		success: z.boolean().describe('Whether the update succeeded'),
 	})
-	.loose()
-	.describe('The updated document');
+	.describe('The document was updated (the API answers 204 with no body)');
 export type UpdateDocumentOutput = z.infer<typeof UpdateDocumentOutputSchema>;
 
 export const DeleteDocumentInputSchema = z
@@ -471,9 +535,9 @@ export const DownloadDocumentInputSchema = z
 		watermark_opacity: z
 			.number()
 			.min(0)
-			.max(100)
+			.max(1)
 			.optional()
-			.describe('Watermark opacity, 0-100'),
+			.describe('Watermark opacity, 0.0-1.0'),
 		watermark_text: z.string().optional().describe('Watermark text'),
 		separate_files: z
 			.boolean()
@@ -568,17 +632,7 @@ const FieldLayoutSchema = z
 				offset_x: z.number().min(0).describe('X offset in percentage points'),
 				offset_y: z.number().min(0).describe('Y offset in percentage points'),
 				anchor_point: z
-					.enum([
-						'top_left',
-						'top_center',
-						'top_right',
-						'middle_left',
-						'middle_center',
-						'middle_right',
-						'bottom_left',
-						'bottom_center',
-						'bottom_right',
-					])
+					.enum(['topleft', 'topright', 'bottomleft', 'bottomright'])
 					.describe('Which point of the field the offsets measure from'),
 			})
 			.loose()

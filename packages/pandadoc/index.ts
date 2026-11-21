@@ -29,7 +29,7 @@ import { PandadocSchema } from './schema';
 import { event } from './webhooks';
 import {
 	matchPandadocWebhook,
-	PandadocWebhookEventSchema,
+	PandadocWebhookPayloadSchema,
 } from './webhooks/types';
 
 export type PandadocPluginOptions = {
@@ -228,8 +228,8 @@ export const pandadocEndpointSchemas = {
 const pandadocWebhookSchemas = {
 	'pandadoc.event': {
 		description: 'A PandaDoc event delivery: an array of event objects',
-		payload: PandadocWebhookEventSchema,
-		response: PandadocWebhookEventSchema,
+		payload: PandadocWebhookPayloadSchema,
+		response: PandadocWebhookPayloadSchema,
 	},
 } as const satisfies RequiredPluginWebhookSchemas<
 	typeof pandadocWebhooksNested

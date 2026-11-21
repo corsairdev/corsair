@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { Contacts, Documents, Folders, Templates, Webhooks } from './endpoints';
+import { PandadocEndpointInputSchemas } from './endpoints/types';
 import {
 	contact,
 	createdDocument,
@@ -171,12 +172,67 @@ describe('document input validation', () => {
 		await rejects(Documents.list, { count: 101 }, '100');
 	});
 
-	it('rejects a download watermark opacity outside 0-100', async () => {
-		await rejects(
-			Documents.download,
-			{ id: 'x', watermark_opacity: 150 },
-			'100',
-		);
+	it('rejects a download watermark opacity outside 0.0-1.0', async () => {
+		await rejects(Documents.download, { id: 'x', watermark_opacity: 1.1 }, '1');
+	});
+
+	it('accepts a fractional watermark opacity', () => {
+		expect(
+			PandadocEndpointInputSchemas.documentsDownload.safeParse({
+				id: 'x',
+				watermark_opacity: 0.5,
+			}).success,
+		).toBe(true);
+	});
+
+	it('accepts a forward date range with mixed fractional precision', () => {
+		expect(
+			PandadocEndpointInputSchemas.documentsList.safeParse({
+				createdFrom: '2024-07-02T16:21:35Z',
+				createdTo: '2024-07-02T16:21:35.1Z',
+			}).success,
+		).toBe(true);
+		expect(
+			PandadocEndpointInputSchemas.documentsList.safeParse({
+				createdFrom: '2024-07-02T16:21:35.1Z',
+				createdTo: '2024-07-02T16:21:35Z',
+			}).success,
+		).toBe(false);
+	});
+
+	it('accepts a template recipient identified by phone, not one with neither', () => {
+		const base = { template_uuid: 't', name: 'Doc' };
+		expect(
+			PandadocEndpointInputSchemas.documentsCreate.safeParse({
+				...base,
+				recipients: [{ phone: '+15555550100', role: 'Client' }],
+			}).success,
+		).toBe(true);
+		expect(
+			PandadocEndpointInputSchemas.documentsCreate.safeParse({
+				...base,
+				recipients: [{ first_name: 'Mia', role: 'Client' }],
+			}).success,
+		).toBe(false);
+	});
+
+	it('accepts the documented anchor points only', () => {
+		const field = (anchor_point: string) => ({
+			id: 'x',
+			fields: [
+				{
+					type: 'text',
+					layout: {
+						page: 1,
+						position: { offset_x: 1, offset_y: 1, anchor_point },
+						style: { width: 2, height: 2 },
+					},
+				},
+			],
+		});
+		const schema = PandadocEndpointInputSchemas.documentsCreateFields;
+		expect(schema.safeParse(field('bottomright')).success).toBe(true);
+		expect(schema.safeParse(field('top_left')).success).toBe(false);
 	});
 
 	it('rejects a field whose type the API does not document', async () => {
@@ -189,7 +245,7 @@ describe('document input validation', () => {
 						type: 'stamp_plus',
 						layout: {
 							page: 1,
-							position: { offset_x: 1, offset_y: 1, anchor_point: 'top_left' },
+							position: { offset_x: 1, offset_y: 1, anchor_point: 'topleft' },
 							style: { width: 2, height: 2 },
 						},
 					},
@@ -280,7 +336,7 @@ describe('webhook endpoint output parsing', () => {
 describe('204 responses', () => {
 	it('rejects a delete that answers a body instead of the documented 204', async () => {
 		respond({ message: 'not really deleted' });
-		await rejects(Documents.remove, { id: 'x' }, 'unexpected body');
+		await rejects(Documents.remove, { id: 'x' }, 'unexpected response body');
 	});
 
 	it('rejects a move that answers a body', async () => {
@@ -288,8 +344,17 @@ describe('204 responses', () => {
 		await rejects(
 			Documents.move,
 			{ id: 'x', folderId: 'f' },
-			'unexpected body',
+			'unexpected response body',
 		);
+	});
+
+	it('rejects an update that answers a body, without echoing it', async () => {
+		respond({ email: 'jane@example.com' });
+		const error = await invoke(Documents.update, { id: 'x', name: 'n' }).catch(
+			(caught: unknown) => caught,
+		);
+		expect(String(error)).toContain('unexpected response body');
+		expect(String(error)).not.toContain('jane@example.com');
 	});
 
 	it('accepts an empty 204 for a delete', async () => {

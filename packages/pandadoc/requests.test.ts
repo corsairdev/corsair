@@ -156,7 +156,7 @@ describe('documents', () => {
 			template_uuid: 'ustHNnVaPCD6MzuoNBbZ8L',
 			name: 'Contract for Acme Corp',
 			recipients: [{ email: 'jane@example.com', role: 'Signer' }],
-			tokens: [{ token: 'cosigner', value: 'Mia' }],
+			tokens: [{ name: 'cosigner', value: 'Mia' }],
 			metadata: { opportunity_id: '2181432' },
 		});
 
@@ -196,7 +196,7 @@ describe('documents', () => {
 			subject: 'Contract',
 			silent: true,
 			reply_to: 'sales@example.com',
-			forwarding_settings: { enabled: false },
+			forwarding_settings: { forwarding_allowed: false },
 		});
 
 		const sent = lastRequest();
@@ -206,18 +206,19 @@ describe('documents', () => {
 		const body = JSON.parse(sent.body as string) as Record<string, unknown>;
 		expect(body['message']).toBe('Please sign');
 		expect(body['silent']).toBe(true);
-		expect(body['forwarding_settings']).toEqual({ enabled: false });
+		expect(body['forwarding_settings']).toEqual({ forwarding_allowed: false });
 		// The id must not leak into the body.
 		expect(body['id']).toBeUndefined();
 	});
 
-	it('update PATCHes the document', async () => {
-		respond(document);
-		await invoke(Documents.update, {
+	it('update PATCHes the document and accepts the documented empty 204', async () => {
+		respond(undefined, 204);
+		const result = await invoke(Documents.update, {
 			id: 'RsXrKarV524iCpjci9CMGa',
 			name: 'Renamed',
 			tags: ['legal'],
 		});
+		expect(result).toEqual({ id: 'RsXrKarV524iCpjci9CMGa', success: true });
 		const sent = lastRequest();
 		expect(sent.method).toBe('PATCH');
 		expect(sent.path).toBe('/public/v1/documents/RsXrKarV524iCpjci9CMGa');
@@ -280,6 +281,13 @@ describe('documents', () => {
 		expect(file.contentBase64).toBeUndefined();
 	});
 
+	it('download refuses a non-PDF body instead of returning it as the file', async () => {
+		respondBinary(new TextEncoder().encode('<html>oops</html>'), 'text/html');
+		await expect(
+			invoke(Documents.download, { id: 'RsXrKarV524iCpjci9CMGa' }),
+		).rejects.toThrow('unexpected text/html');
+	});
+
 	it('downloadProtected requests the protected PDF', async () => {
 		respondBinary(new Uint8Array([1, 2, 3]), 'application/pdf');
 		const file = (await invoke(Documents.downloadProtected, {
@@ -316,7 +324,7 @@ describe('documents', () => {
 					type: 'signature',
 					layout: {
 						page: 1,
-						position: { offset_x: 10, offset_y: 20, anchor_point: 'top_left' },
+						position: { offset_x: 10, offset_y: 20, anchor_point: 'topleft' },
 						style: { width: 10, height: 5 },
 					},
 				},

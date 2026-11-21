@@ -9,6 +9,13 @@ import {
 // shape; the endpoint narrows it and hands the rest to the output schema.
 type BinaryFile = { bytes?: Uint8Array; contentType?: string | null };
 
+const FILE_TYPES = new Set([
+	'application/pdf',
+	'application/zip',
+	'application/x-zip-compressed',
+	'application/octet-stream',
+]);
+
 /**
  * Shapes a document download. PandaDoc answers 202 while it renders, with a
  * body that is not a PDF, so the endpoint reports pending instead of
@@ -19,15 +26,25 @@ type BinaryFile = { bytes?: Uint8Array; contentType?: string | null };
 function shapeDownload(raw: unknown): unknown {
 	const file = (raw ?? {}) as BinaryFile;
 	const bytes = file.bytes ?? new Uint8Array(0);
-	const rawType = file.contentType?.split(';')[0]?.trim();
+	const rawType = file.contentType?.split(';')[0]?.trim().toLowerCase();
 	const contentType =
 		rawType !== undefined && rawType.length > 0 ? rawType : 'application/pdf';
-	const isFile = bytes.byteLength > 0 && !contentType.includes('json');
+	// The documented 202 while rendering has no file body.
+	if (bytes.byteLength === 0) {
+		return { contentType, byteLength: 0, pending: true };
+	}
+	// A PDF, or a zip when separate_files is set. Anything else (an HTML
+	// error page, a JSON body) is not the document.
+	if (!FILE_TYPES.has(contentType)) {
+		throw new Error(
+			`PandaDoc download: unexpected ${contentType} response instead of a PDF`,
+		);
+	}
 	return {
 		contentType,
 		byteLength: bytes.byteLength,
-		...(isFile ? { contentBase64: Buffer.from(bytes).toString('base64') } : {}),
-		pending: !isFile,
+		contentBase64: Buffer.from(bytes).toString('base64'),
+		pending: false,
 	};
 }
 
@@ -142,7 +159,14 @@ export const update: PandadocEndpoints['documentsUpdate'] = (ctx, input) =>
 			path: `/public/v1/documents/${encodeURIComponent(id)}`,
 			body,
 		}),
-		{ log: (_, doc) => ({ documentId: doc.id }) },
+		{
+			// PandaDoc answers 204 with no body.
+			shape: (raw, { id }) => {
+				expectEmptyBody(raw, 'documents.update');
+				return { id, success: true };
+			},
+			log: (_, result) => ({ documentId: result.id }),
+		},
 	);
 
 export const remove: PandadocEndpoints['documentsDelete'] = (ctx, input) =>

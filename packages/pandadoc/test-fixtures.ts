@@ -48,7 +48,7 @@ export const document = {
 		},
 	],
 	metadata: { opportunity_id: '2181432' },
-	tokens: [{ token: 'cosigner', value: 'Mia' }],
+	tokens: [{ name: 'cosigner', value: 'Mia' }],
 	created_by: { email: 'owner@example.com' },
 };
 
@@ -92,7 +92,7 @@ export const documentFields = {
 			name: 'Signature',
 			type: 'signature',
 			page: 1,
-			position: { offset_x: 10, offset_y: 20, anchor_point: 'top_left' },
+			position: { offset_x: 10, offset_y: 20, anchor_point: 'topleft' },
 			style: { width: 10, height: 5 },
 		},
 		{
