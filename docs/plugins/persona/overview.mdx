@@ -6,11 +6,11 @@ description: "Persona is an identity verification and KYC platform. This plugin 
 
 Use **Persona** through Corsair: one client, typed API calls, and incoming webhooks.
 
-Authenticate with the environment API key from the Persona dashboard (sandbox or production); the plugin sends it as an Authorization Bearer token. Persona requires a dated version header (the plugin sends Persona-Version: 2023-01-18) — without it the API answers 400.
-Every operation is a JSON:API call: bodies wrap attributes in a data.attributes object, and answers carry data plus optional included resources. Redactions, approvals and declines are final. One-time links let a holder resume an inquiry or session; anyone with the link can use it, so share it only with the intended holder.
-Webhook deliveries are HMAC-SHA256 signed over the raw body with the webhook's signing secret in the Persona-Signature header. Rotate the secret with webhooks.rotateSecret and store the new value with keys.set_webhook_signature (or set webhookSecret on the plugin).
+Authenticate with the environment API key from the Persona dashboard (sandbox or production); the plugin sends it as an Authorization Bearer token and pins Persona-Version: 2023-01-05, the version its schemas follow (override with the apiVersion option).
+Every operation is a JSON:API call. Create and update bodies wrap fields in data.attributes; tag, decision and link options go in meta. Answers carry data (attribute keys in kebab-case, e.g. reference-id, created-at), plus included resources, and lists carry links.next: pass its page[after] value as pageAfter for the next page. Redactions, approvals and declines are final. One-time links let a holder resume an inquiry or session; anyone with the link can use it, so share it only with the intended holder.
+Webhook deliveries carry a Persona-Signature header of t=&lt;unix time&gt;,v1=&lt;hex&gt; sets: HMAC-SHA256 over "&lt;t&gt;.&lt;raw body&gt;" with the webhook's secret, one set per active secret while it rotates. webhooks.create and webhooks.rotateSecret return the secret; store it with keys.set_webhook_signature (or set webhookSecret on the plugin). The delivery body is &#123; data: &#123; type: "event", attributes: &#123; name, payload &#125; &#125; &#125;.
 The Persona API has 200+ operations; this plugin covers accounts, inquiries, inquiry sessions, inquiry templates, and webhook management. The verification sub-types (AAMVA, database businesses, government IDs), lists, reports, transactions and devices are documented by Persona but not part of this plugin.
-Every operation is described in the official reference: https://docs.withpersona.com/api-reference
+Every operation is described in the official reference: https://docs.withpersona.com/2023-01-05/api-reference
 
 **What you get:**
 
@@ -105,7 +105,7 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.persona.api.inquiries.get({ inquiryId: 'af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c71' });
+await tenant.persona.api.inquiries.get({ inquiryId: 'inq_ABC123' });
 ```
 
 
@@ -114,7 +114,7 @@ await tenant.persona.api.inquiries.get({ inquiryId: 'af2a1c3d-4e5f-6a7b-8c9d-0e1
 ```ts
 const tenant = corsair.withTenant('acme');
 await tenant.persona.api.inquiries.create({
-	attributes: { inquiry-template-id: 'af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c74', reference-id: 'user-42' },
+	attributes: { inquiry-template-id: 'itmpl_ABC123', reference-id: 'user-42' },
 });
 ```
 

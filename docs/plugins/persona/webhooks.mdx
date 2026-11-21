@@ -57,17 +57,24 @@ A Persona webhook delivery: an inquiry or verification event
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `type` | `string` | Yes | — |
-| `data` | `object \| null` | No | The event payload |
+| `data` | `object` | Yes | The event |
 
 <AccordionGroup>
 <Accordion title="data full type">
 
 ```ts
 {
-  attributes?: Record<string, any> | null,
-  id?: string | null
-} | null
+  type?: string | null,
+  id: string,
+  attributes: {
+    name: string,
+    payload?: {
+      data: any,
+      included?: any[] | null
+    } | null,
+    created-at?: string | null
+  }
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -79,11 +86,18 @@ A Persona webhook delivery: an inquiry or verification event
 
 ```ts
 {
-  type: string,
-  data?: {
-    attributes?: Record<string, any> | null,
-    id?: string | null
-  } | null
+  data: {
+    type?: string | null,
+    id: string,
+    attributes: {
+      name: string,
+      payload?: {
+        data: any,
+        included?: any[] | null
+      } | null,
+      created-at?: string | null
+    }
+  }
 }
 ```
 </Accordion>
