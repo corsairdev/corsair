@@ -1,13 +1,22 @@
 import type { ErrorContext } from 'corsair/core';
-import { PilvioAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-function pilvioError(method: string, status: number): PilvioAPIError {
-	return new PilvioAPIError(`Pilvio ${status}`, {
-		method,
-		path: '/v1/user-resource/user',
-		status,
-	});
+function pilvioError(
+	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+	status: number,
+): ApiError {
+	return new ApiError(
+		{ method, url: '/v1/user-resource/user' },
+		{
+			url: '/v1/user-resource/user',
+			ok: false,
+			status,
+			statusText: '',
+			body: null,
+		},
+		`Pilvio ${status}`,
+	);
 }
 
 function contextFor(error: Error): ErrorContext {
@@ -45,6 +54,10 @@ async function retriesFor(error: Error): Promise<number> {
 }
 
 describe('errorHandlers', () => {
+	it("does not retry a 429 again after core's own three retries", async () => {
+		expect(await retriesFor(pilvioError('GET', 429))).toBe(0);
+	});
+
 	it('does not retry auth errors', async () => {
 		expect(await retriesFor(pilvioError('GET', 401))).toBe(0);
 		expect(await retriesFor(pilvioError('GET', 403))).toBe(0);
@@ -74,8 +87,7 @@ describe('mergeErrorHandlers', () => {
 	it('lets a caller handler run before the builtins it does not name', async () => {
 		const merged = mergeErrorHandlers(errorHandlers, {
 			TOO_MANY_REQUESTS: {
-				match: (error) =>
-					error instanceof PilvioAPIError && error.status === 429,
+				match: (error) => error instanceof ApiError && error.status === 429,
 				handler: async () => ({ maxRetries: 5 }),
 			},
 		});

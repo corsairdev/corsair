@@ -47,8 +47,6 @@ apiExamples:
     call: '{ firstName: "Cloudia", phoneNumber: "+372…" }'
   account.tokens.list:
     call: '{}'
-  account.tokens.create:
-    call: '{ description: "ci token", billingAccountId: 6, restricted: true }'
   account.tokens.update:
     call: '{ tokenId: 3, description: "rotated" }'
   account.tokens.delete:
@@ -124,7 +122,6 @@ apiExamples:
   network.firewalls.delete:
     call: '{ uuid: "2a874f44-310f-4df8-9340-1dc274c2bd51" }'
 apiNotes:
-  account.tokens.create: 'Set restricted with billingAccountId to bind the token to one billing account; the token value is answered once and never logged by the plugin.'
   vm.create: 'osName/osVersion come from config.listVmImages; use osName "_custom" and osVersion "_" for an empty disk booted from an ISO. cloudInit takes a YAML or JSON object as a string and overrides username/password.'
   vm.reinstall: 'Destructive: the VM is reinstalled with the new OS and existing data is replaced.'
   storage.disks.create: 'source_image_type EMPTY needs no source; OS_BASE takes e.g. ubuntu_20.04, DISK and SNAPSHOT take a UUID. sizeGb is required when the size is not apparent from the source image.'

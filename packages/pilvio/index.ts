@@ -63,7 +63,6 @@ const pilvioEndpointsNested = {
 		updateProfile: Account.updateProfile,
 		tokens: {
 			list: Account.listTokens,
-			create: Account.createToken,
 			update: Account.updateToken,
 			delete: Account.deleteToken,
 		},
@@ -135,10 +134,6 @@ export const pilvioEndpointSchemas = {
 	'account.tokens.list': {
 		input: PilvioEndpointInputSchemas.tokensList,
 		output: PilvioEndpointOutputSchemas.tokensList,
-	},
-	'account.tokens.create': {
-		input: PilvioEndpointInputSchemas.tokensCreate,
-		output: PilvioEndpointOutputSchemas.tokensCreate,
 	},
 	'account.tokens.update': {
 		input: PilvioEndpointInputSchemas.tokensUpdate,
@@ -305,11 +300,6 @@ export const pilvioEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List the API tokens of the user',
 	},
-	'account.tokens.create': {
-		riskLevel: 'write',
-		description:
-			'Create an API token, optionally restricted to one billing account',
-	},
 	'account.tokens.update': {
 		riskLevel: 'write',
 		description: 'Update a token description or restriction',
@@ -371,12 +361,12 @@ export const pilvioEndpointMeta = {
 		description: 'Read one VM by UUID',
 	},
 	'vm.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a virtual machine from an image or source',
 	},
 	'vm.start': {
-		riskLevel: 'write',
-		description: 'Start a stopped VM',
+		riskLevel: 'destructive',
+		description: 'Start a stopped VM; billing for it resumes',
 	},
 	'vm.stop': {
 		riskLevel: 'write',
@@ -395,7 +385,7 @@ export const pilvioEndpointMeta = {
 		description: 'List the block storage disks',
 	},
 	'storage.disks.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a disk from empty, an OS image, a disk or a snapshot',
 	},
 	'storage.disks.get': {
@@ -415,7 +405,7 @@ export const pilvioEndpointMeta = {
 		description: 'List the object storage buckets',
 	},
 	'storage.buckets.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create an S3 bucket with a globally unique name',
 	},
 	'storage.buckets.get': {
@@ -518,8 +508,6 @@ export function pilvio<const T extends PilvioPluginOptions>(
 		},
 	} satisfies InternalPilvioPlugin;
 }
-
-export { PilvioAPIError } from './client';
 
 export type {
 	Bucket,

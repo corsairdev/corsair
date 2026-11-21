@@ -324,22 +324,6 @@ export const TokensListOutputSchema = z
 	.array(TokenSchema)
 	.describe('The user API tokens');
 
-export const TokensCreateInputSchema = z
-	.object({
-		description: z.string().optional().describe('Token description'),
-		billingAccountId: z
-			.number()
-			.int()
-			.optional()
-			.describe('Binds the token to one billing account (restricted)'),
-		restricted: z
-			.boolean()
-			.optional()
-			.describe('Restrict the token to billingAccountId'),
-	})
-	.describe('Input for creating an API token');
-export type TokensCreateInput = z.infer<typeof TokensCreateInputSchema>;
-
 export const TokensUpdateInputSchema = z
 	.object({
 		tokenId: z.number().int().describe('Id of the token to update'),
@@ -701,7 +685,6 @@ export const PilvioEndpointInputSchemas = {
 	userGet: UserGetInputSchema,
 	userUpdateProfile: UserUpdateProfileInputSchema,
 	tokensList: EmptyInputSchema,
-	tokensCreate: TokensCreateInputSchema,
 	tokensUpdate: TokensUpdateInputSchema,
 	tokensDelete: TokensDeleteInputSchema,
 	sshKeysList: EmptyInputSchema,
@@ -745,7 +728,6 @@ export const PilvioEndpointOutputSchemas = {
 	userGet: UserOutputSchema,
 	userUpdateProfile: UserUpdateProfileOutputSchema,
 	tokensList: TokensListOutputSchema,
-	tokensCreate: TokenSchema,
 	tokensUpdate: TokenSchema,
 	tokensDelete: VmDeletedOutputSchema,
 	sshKeysList: SshKeysListOutputSchema,

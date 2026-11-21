@@ -11,7 +11,6 @@ import {
 	pricingPolicy,
 	sshKey,
 	stoppedVm,
-	token,
 	user,
 	vm,
 	vmNotFound,
@@ -106,22 +105,6 @@ describe('account', () => {
 			method: 'PATCH',
 			body: { first_name: 'New', phone_number: '+372' },
 		});
-	});
-
-	it('token create sends the restriction fields and never logs the value', async () => {
-		respond(token);
-		await invoke(Account.createToken, {
-			description: 'ci',
-			billingAccountId: 6,
-			restricted: true,
-		});
-		expectCall({
-			path: '/v1/user-resource/token',
-			method: 'POST',
-			body: { description: 'ci', billing_account_id: '6', restricted: 'true' },
-		});
-		const logged = JSON.stringify(mockLog.mock.calls);
-		expect(logged).not.toContain(token.token);
 	});
 
 	it('ssh key create sends JSON', async () => {

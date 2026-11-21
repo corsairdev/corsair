@@ -57,28 +57,6 @@ export const listTokens: PilvioEndpoints['tokensList'] = (ctx, input) =>
 		{ log: (_, tokens) => ({ count: tokens.length }) },
 	);
 
-export const createToken: PilvioEndpoints['tokensCreate'] = (ctx, input) =>
-	call(
-		ctx,
-		{
-			event: 'tokens.create',
-			input: Inputs.tokensCreate,
-			output: Outputs.tokensCreate,
-		},
-		input,
-		({ description, billingAccountId, restricted }) => ({
-			method: 'POST',
-			path: `${USER_RESOURCE}/token`,
-			body: {
-				description,
-				billing_account_id: billingAccountId,
-				restricted,
-			},
-		}),
-		// The token value is not logged.
-		{ log: (_, token) => ({ tokenId: token.id ?? undefined }) },
-	);
-
 export const updateToken: PilvioEndpoints['tokensUpdate'] = (ctx, input) =>
 	call(
 		ctx,

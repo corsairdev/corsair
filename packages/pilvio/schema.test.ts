@@ -17,7 +17,9 @@ describe('PilvioSchema', () => {
 describe('plugin registration', () => {
 	it('declares schemas for every implemented endpoint', () => {
 		const keys = Object.keys(pilvioEndpointSchemas);
-		expect(keys).toHaveLength(41);
+		// account.tokens.create was removed: it put a new live token in the output.
+		expect(keys).toHaveLength(40);
+		expect(keys).not.toContain('account.tokens.create');
 		expect(keys).toContain('account.getUser');
 		expect(keys).toContain('account.sshKeys.delete');
 		expect(keys).toContain('config.listLocations');
@@ -34,7 +36,7 @@ describe('plugin registration', () => {
 		);
 	});
 
-	it('marks only deletions and reinstalls as destructive', () => {
+	it('marks deletions, reinstalls and billed resource starts destructive', () => {
 		const destructive = Object.entries(
 			pilvioEndpointMeta as Record<string, { riskLevel: string }>,
 		)
@@ -45,10 +47,14 @@ describe('plugin registration', () => {
 			'account.tokens.delete',
 			'network.firewalls.delete',
 			'network.networks.delete',
+			'storage.buckets.create',
 			'storage.buckets.delete',
+			'storage.disks.create',
 			'storage.disks.delete',
+			'vm.create',
 			'vm.delete',
 			'vm.reinstall',
+			'vm.start',
 		]);
 	});
 });

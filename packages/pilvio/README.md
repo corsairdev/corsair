@@ -17,7 +17,6 @@ pnpm add @corsair-dev/pilvio
 | `account.sshKeys.delete` | `pilvio.api.account.sshKeys.delete` | `destructive` | Delete an SSH key |
 | `account.sshKeys.list` | `pilvio.api.account.sshKeys.list` | `read` | List the SSH public keys of the user |
 | `account.sshKeys.rename` | `pilvio.api.account.sshKeys.rename` | `write` | Rename an SSH key |
-| `account.tokens.create` | `pilvio.api.account.tokens.create` | `write` | Create an API token, optionally restricted to one billing account |
 | `account.tokens.delete` | `pilvio.api.account.tokens.delete` | `destructive` | Delete an API token |
 | `account.tokens.list` | `pilvio.api.account.tokens.list` | `read` | List the API tokens of the user |
 | `account.tokens.update` | `pilvio.api.account.tokens.update` | `write` | Update a token description or restriction |

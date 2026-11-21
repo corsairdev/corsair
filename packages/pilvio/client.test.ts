@@ -1,8 +1,5 @@
-import {
-	describePilvioError,
-	makePilvioRequest,
-	PilvioAPIError,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describePilvioError, makePilvioRequest } from './client';
 import { invalidCredentials, vmNotFound } from './test-fixtures';
 
 const KEY = 'pv-test-key';
@@ -20,10 +17,10 @@ function respond(body: unknown, status: number) {
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<PilvioAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(PilvioAPIError);
-	if (!(error instanceof PilvioAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -103,7 +100,7 @@ describe('makePilvioRequest', () => {
 		expect(error.message).toBe(
 			'Pilvio 403: Invalid authentication credentials',
 		);
-		expect(error.method).toBe('GET');
+		expect(error.request.method).toBe('GET');
 	});
 
 	it('extracts the business error message from the errors envelope', async () => {

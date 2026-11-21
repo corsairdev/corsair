@@ -20,48 +20,28 @@ const RATE_LIMIT_CONFIG: RateLimitConfig = {
 };
 
 /**
- * A failed call throws this: core's `ApiError` (R8: core and the handlers
- * read `status` and `retryAfter` from it), rebuilt without the request
- * body and query. Resource names and credentials ride through the request,
- * which core's own ApiError keeps on the request.
+ * A failed call throws core's `ApiError` (R8: core and the handlers read
+ * `status` and `retryAfter` from it), rebuilt with only the method and the
+ * path so request bodies and queries stay out of it.
  */
-export class PilvioAPIError extends ApiError {
-	/** The HTTP method of the failed request, for replay-safety decisions. */
-	readonly method: string;
-
-	constructor(
-		message: string,
-		options: {
-			method: string;
-			/** Request path, without query. */
-			path: string;
-			status: number;
-			statusText?: string;
-			// unknown: error bodies can be the {"message": …} envelope, the
-			// {"errors": {"Error": …}} business envelope, or non-JSON from
-			// the edge.
-			body?: unknown;
-			retryAfter?: number;
+function strippedApiError(
+	error: ApiError,
+	method: ApiRequestOptions['method'],
+	path: string,
+	message: string,
+): ApiError {
+	return new ApiError(
+		{ method, url: path },
+		{
+			url: path,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
 		},
-	) {
-		super(
-			{
-				method: options.method as ApiRequestOptions['method'],
-				url: options.path,
-			},
-			{
-				url: options.path,
-				ok: false,
-				status: options.status,
-				statusText: options.statusText ?? '',
-				body: options.body,
-			},
-			message,
-			{ retryAfter: options.retryAfter },
-		);
-		this.name = 'PilvioAPIError';
-		this.method = options.method;
-	}
+		message,
+		{ retryAfter: error.retryAfter },
+	);
 }
 
 /**
@@ -177,14 +157,12 @@ export async function makePilvioRequest(
 				error.body,
 				error.statusText || 'request failed',
 			);
-			throw new PilvioAPIError(`Pilvio ${error.status}: ${detail}`, {
+			throw strippedApiError(
+				error,
 				method,
 				path,
-				status: error.status,
-				statusText: error.statusText,
-				body: error.body,
-				retryAfter: error.retryAfter,
-			});
+				`Pilvio ${error.status}: ${detail}`,
+			);
 		}
 		// Timeouts and network failures carry no request data; let them through.
 		throw error;
