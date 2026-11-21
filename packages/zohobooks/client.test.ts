@@ -22,7 +22,6 @@ const regions: ZohoBooksRegion[] = [
 	'au',
 	'jp',
 	'ca',
-	'cn',
 	'sa',
 	'ae',
 ];
@@ -33,7 +32,6 @@ const domains: Record<ZohoBooksRegion, string> = {
 	au: 'com.au',
 	jp: 'jp',
 	ca: 'ca',
-	cn: 'com.cn',
 	sa: 'sa',
 	ae: 'ae',
 };
@@ -44,7 +42,6 @@ const accountsDomains: Record<ZohoBooksRegion, string> = {
 	au: 'accounts.zoho.com.au',
 	jp: 'accounts.zoho.jp',
 	ca: 'accounts.zohocloud.ca',
-	cn: 'accounts.zoho.com.cn',
 	sa: 'accounts.zoho.sa',
 	ae: 'accounts.zoho.ae',
 };
@@ -252,6 +249,11 @@ describe('Zoho Books HTTP client', () => {
 
 	afterEach(() => {
 		fetchSpy.mockRestore();
+	});
+
+	it('excludes China until Zoho documents a Books OAuth Accounts host', () => {
+		// Zoho publishes the China Books API domain, but no Books-specific OAuth host.
+		expect(regions.map(String)).not.toContain('cn');
 	});
 
 	it('uses the documented API and OAuth hosts for every data center', () => {

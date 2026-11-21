@@ -26,7 +26,6 @@ const REGION_DOMAIN: Record<ZohoBooksRegion, string> = {
 	au: 'com.au',
 	jp: 'jp',
 	ca: 'ca',
-	cn: 'com.cn',
 	sa: 'sa',
 	ae: 'ae',
 };
@@ -38,7 +37,6 @@ const REGION_ACCOUNTS_DOMAIN: Record<ZohoBooksRegion, string> = {
 	au: 'accounts.zoho.com.au',
 	jp: 'accounts.zoho.jp',
 	ca: 'accounts.zohocloud.ca',
-	cn: 'accounts.zoho.com.cn',
 	sa: 'accounts.zoho.sa',
 	ae: 'accounts.zoho.ae',
 };

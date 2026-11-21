@@ -3,14 +3,16 @@ description: Manage organizations, contacts, invoices, bills, banking, projects,
 domain: zoho.com
 recommendedAuth: oauth_2
 overviewNote: >-
-  Zoho Books uses regional data centers. Set region to match the organization: us (default), eu, in, au, jp, ca, cn, sa,
-  or ae. The Books introduction lists the API domains. OAuth uses the corresponding Zoho Accounts server; Canada uses
-  accounts.zohocloud.ca. Zoho Books OAuth docs do not enumerate every Accounts host; the China Accounts mapping comes
-  from Zoho's official regional API documentation for Zoho Forms and is called out in the package README. Each plugin
-  instance has one region, so configure the Zoho OAuth client for that data center or use shared client credentials with
-  Zoho multi-DC enabled. Access tokens use Authorization: Zoho-oauthtoken <token>, expire after one hour, and offline
-  consent provides a refresh token. The plugin requests all 81 OAuth scopes present in the included operation contracts.
-  A connection granted only a subset may receive 403 responses for operations outside those scopes.
+  Zoho Books uses regional data centers. Supported region values are us (default), eu, in, au, jp, ca, sa, and ae. The
+  Books introduction lists the API domains. Zoho's Finance API-domain announcement lists the China Books API host
+  (www.zohoapis.com.cn/books/v3), but the Books OAuth guide's China multi-DC entry lists a Billing API base URI, not a
+  Books Accounts OAuth URL. The Books guide and official Books OpenAPI bundle do not identify a China Accounts OAuth
+  host. China is therefore excluded rather than inferring an OAuth host from another Zoho product.
+  Each plugin instance has one supported region, so configure the Zoho OAuth client for that data center or use shared
+  client credentials with Zoho multi-DC enabled. Access tokens use Authorization: Zoho-oauthtoken <token>, expire after
+  one hour, and offline consent provides a refresh token. The plugin requests all 81 OAuth scopes present in the
+  included operation contracts. A connection granted only a subset may receive 403 responses for operations outside
+  those scopes.
 
 
   Most resource operations require query.organization_id; discover IDs with organizations.listOrganizations. Operations
@@ -42,8 +44,8 @@ references:
     url: https://www.zoho.com/books/api/v3/pagination/
   - title: Zoho OAuth data-center server information
     url: https://accounts.zoho.com/oauth/serverinfo
-  - title: Zoho official regional API and Accounts host mapping (China)
-    url: https://www.zoho.com/forms/help/restapi/v1/introduction/
+  - title: Zoho Finance API domains, including the China Books API host
+    url: https://help.zoho.com/portal/en/community/topic/update-regarding-zoho-finance-applications-domain-for-api-users-2-2-2024
 apiNotes:
   bills.getBillAttachment: Zoho documents this as returning the attached file; JSON metadata responses are also accepted. Binary files are returned with their response content type and are limited to 10 MiB.
   creditNotes.printCreditNotes: File responses use the response Content-Type supplied by Zoho and are returned base64-encoded.

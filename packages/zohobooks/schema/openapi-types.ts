@@ -11,6 +11,7 @@ export type ZohoBooksBinaryFile = {
 	base64: string;
 };
 
+// China has a documented Books API host but no verified Books OAuth Accounts host.
 export type ZohoBooksRegion =
 	| 'us'
 	| 'eu'
@@ -18,7 +19,6 @@ export type ZohoBooksRegion =
 	| 'au'
 	| 'jp'
 	| 'ca'
-	| 'cn'
 	| 'sa'
 	| 'ae';
 

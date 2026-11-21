@@ -6,7 +6,7 @@ Zoho Books API v3 integration for Corsair. The package implements 884 of the 885
 
 Install with pnpm add @corsair-dev/zohobooks. Zoho Books uses OAuth 2.0. The plugin requests all 81 distinct OAuth scopes referenced by the included operation contracts, with offline consent so Corsair can refresh access tokens. This is a broad grant covering the catalog; Zoho administrators may constrain the granted scopes. API calls send Authorization: Zoho-oauthtoken <access_token>.
 
-Set region to the data center where the organization is hosted. Valid values are us (default), eu, in, au, jp, ca, cn, sa, and ae. Zoho's Books introduction publishes the API hosts; OAuth account hosts follow Zoho's official regional mapping, including accounts.zohocloud.ca for Canada and accounts.zoho.com.cn for China. The Books OAuth page does not enumerate every regional Accounts host, so the China mapping is referenced from Zoho's official regional API documentation for another Zoho product. Each Corsair plugin instance uses one region; configure the Zoho OAuth client for that data center, or use shared client credentials if you enabled Zoho multi-DC support.
+Set region to the data center where the organization is hosted. Supported values are us (default), eu, in, au, jp, ca, sa, and ae. China is not currently supported: Zoho's first-party Finance API-domain announcement documents the China Books API at `www.zohoapis.com.cn/books/v3`, but the Books OAuth guide's China multi-DC entry lists a Billing API base URI, not a Books Accounts OAuth URL. The Books guide and official Books OpenAPI bundle do not identify a China Accounts OAuth host. This plugin therefore does not infer or use `accounts.zoho.com.cn`; support can be added when Zoho documents the Books-specific OAuth host. Each Corsair plugin instance uses one supported region; configure the Zoho OAuth client for that data center, or use shared client credentials if you enabled Zoho multi-DC support.
 
 ## Request shape
 
@@ -925,4 +925,4 @@ Each route links to its official resource reference. Paths are relative to the r
 - [Official OpenAPI bundle](https://www.zoho.com/books/api/v3/openapi-all.zip)
 - [Pagination](https://www.zoho.com/books/api/v3/pagination/)
 - [Zoho Accounts server information](https://accounts.zoho.com/oauth/serverinfo)
-- [Zoho's official regional API and Accounts host mapping (China)](https://www.zoho.com/forms/help/restapi/v1/introduction/)
+- [Zoho Finance API domains, including the China Books API host](https://help.zoho.com/portal/en/community/topic/update-regarding-zoho-finance-applications-domain-for-api-users-2-2-2024)

@@ -15,7 +15,6 @@ const supportedRegions: readonly string[] = [
 	'au',
 	'jp',
 	'ca',
-	'cn',
 	'sa',
 	'ae',
 ];
