@@ -1,7 +1,6 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
@@ -15,10 +14,11 @@ import type {
 import { AuthMissingError } from 'corsair/core';
 import { normalizeMetabaseBaseUrl } from './client';
 import { CollectionPermissions, Collections } from './endpoints';
-import type {
-	MetabaseEndpointInputs,
-	MetabaseEndpointOutputs,
-} from './endpoints/types';
+import {
+	MetabaseOpenApiEndpointMeta,
+	MetabaseOpenApiEndpointSchemas,
+	MetabaseOpenApiEndpoints,
+} from './endpoints/openapi-endpoints';
 import {
 	MetabaseEndpointInputSchemas,
 	MetabaseEndpointOutputSchemas,
@@ -28,6 +28,9 @@ import { MetabaseSchema } from './schema';
 
 export type MetabasePluginOptions = {
 	baseUrl?: string;
+	requestTimeoutMs?: number;
+	maxResponseBytes?: number;
+	maxUploadBytes?: number;
 	authType?: PickAuth<'api_key'>;
 	key?: string;
 	hooks?: InternalMetabasePlugin['hooks'];
@@ -46,54 +49,13 @@ export type MetabaseBoundEndpoints = BindEndpoints<
 	typeof metabaseEndpointsNested
 >;
 
-type MetabaseEndpoint<K extends keyof MetabaseEndpointOutputs> =
-	CorsairEndpoint<
-		MetabaseContext,
-		MetabaseEndpointInputs[K],
-		MetabaseEndpointOutputs[K]
-	>;
-
-export type MetabaseEndpoints = {
-	collections: {
-		list: MetabaseEndpoint<'collectionList'>;
-		create: MetabaseEndpoint<'collectionCreate'>;
-		get: MetabaseEndpoint<'collectionGet'>;
-		update: MetabaseEndpoint<'collectionUpdate'>;
-		delete: MetabaseEndpoint<'collectionDelete'>;
-		tree: MetabaseEndpoint<'collectionTree'>;
-		root: {
-			get: MetabaseEndpoint<'collectionRootGet'>;
-			items: {
-				list: MetabaseEndpoint<'collectionRootItems'>;
-				metadata: MetabaseEndpoint<'collectionRootItemsMetadata'>;
-			};
-			candidates: {
-				list: MetabaseEndpoint<'collectionRootCandidates'>;
-				move: MetabaseEndpoint<'collectionRootMoveCandidates'>;
-			};
-		};
-		trash: { get: MetabaseEndpoint<'collectionTrashGet'> };
-		items: {
-			list: MetabaseEndpoint<'collectionItems'>;
-			metadata: MetabaseEndpoint<'collectionItemsMetadata'>;
-		};
-		candidates: {
-			list: MetabaseEndpoint<'collectionCandidates'>;
-			move: MetabaseEndpoint<'collectionMoveCandidates'>;
-		};
-	};
-	collectionPermissions: {
-		graph: {
-			get: MetabaseEndpoint<'collectionGraphGet'>;
-			update: MetabaseEndpoint<'collectionGraphUpdate'>;
-		};
-	};
-};
-
 const metabaseEndpointsNested = {
 	collections: Collections,
 	collectionPermissions: CollectionPermissions,
+	...MetabaseOpenApiEndpoints,
 } as const;
+
+export type MetabaseEndpoints = typeof metabaseEndpointsNested;
 
 export const metabaseEndpointSchemas = {
 	'collections.list': {
@@ -168,6 +130,7 @@ export const metabaseEndpointSchemas = {
 		input: MetabaseEndpointInputSchemas.collectionGraphUpdate,
 		output: MetabaseEndpointOutputSchemas.collectionGraphUpdate,
 	},
+	...MetabaseOpenApiEndpointSchemas,
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof metabaseEndpointsNested
 >;
@@ -247,6 +210,7 @@ const metabaseEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Replace collection permission graph entries',
 	},
+	...MetabaseOpenApiEndpointMeta,
 } as const satisfies RequiredPluginEndpointMeta<typeof metabaseEndpointsNested>;
 
 export const metabaseAuthConfig = {
@@ -313,6 +277,10 @@ export function metabase<const T extends MetabasePluginOptions>(
 	} satisfies InternalMetabasePlugin;
 }
 
+export type {
+	MetabaseOpenApiEndpointInputs,
+	MetabaseOpenApiEndpointOutputs,
+} from './endpoints/openapi-endpoints';
 export type {
 	CollectionTreeNode,
 	MetabaseEndpointInputs,

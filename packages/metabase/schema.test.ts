@@ -1,5 +1,6 @@
 import type { z } from 'zod';
 import type { JsonValue } from './client';
+import { MetabaseOpenApiTestCases } from './endpoints/openapi-endpoints';
 import {
 	CollectionDeleteResponseSchema,
 	CollectionGraphSchema,
@@ -11,6 +12,7 @@ import {
 	MetabaseEndpointOutputSchemas,
 	MoveCandidatesResponseSchema,
 } from './endpoints/types';
+import { metabaseEndpointSchemas } from './index';
 import { MetabaseSchema } from './schema';
 import { metabaseEntities } from './schema/database';
 
@@ -199,6 +201,23 @@ describe('Metabase schema', () => {
 		const outputKeys = Object.keys(MetabaseEndpointOutputSchemas).sort();
 		expect(inputKeys).toEqual(outputKeys);
 		expect(inputKeys).toHaveLength(18);
+		expect(Object.keys(metabaseEndpointSchemas)).toHaveLength(309);
+		expect(MetabaseOpenApiTestCases).toHaveLength(291);
+	});
+
+	it('validates generated request and response fixtures for all additional routes', () => {
+		for (const route of MetabaseOpenApiTestCases) {
+			if (!route.isInputValid(route.input)) {
+				throw new Error(
+					`Invalid generated input fixture for ${route.shortPath}`,
+				);
+			}
+			if (!route.isOutputValid(route.output)) {
+				throw new Error(
+					`Invalid generated output fixture for ${route.shortPath}`,
+				);
+			}
+		}
 	});
 
 	it.each(validInputs)('validates input schema %s', (_name, schema, value) => {

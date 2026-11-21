@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { z } from 'zod';
 import * as client from './client';
 import { CollectionPermissions, Collections } from './endpoints';
+import { MetabaseOpenApiTestCases } from './endpoints/openapi-endpoints';
 import type { MetabaseContext } from './index';
 import { metabase, metabaseEndpointSchemas } from './index';
 
@@ -18,6 +19,20 @@ jest.mock('./client', () => {
 const mockedRequest = jest.mocked(client.makeMetabaseRequest);
 const mockedLogEvent = jest.mocked(logEventFromContext);
 type EndpointContext = Parameters<typeof Collections.list>[0];
+
+function addUndocumentedInputField(
+	input: (typeof MetabaseOpenApiTestCases)[number]['input'],
+): (typeof MetabaseOpenApiTestCases)[number]['input'] {
+	if (
+		input === null ||
+		typeof input !== 'object' ||
+		Array.isArray(input) ||
+		input instanceof Blob
+	) {
+		return { undocumented: true };
+	}
+	return { ...input, undocumented: true };
+}
 
 function buildContext(): EndpointContext {
 	const context: MetabaseContext = {
@@ -303,9 +318,111 @@ describe('Metabase collection operations', () => {
 
 	it('registers matching schemas and declares no webhooks', () => {
 		const plugin = metabase({ baseUrl: 'https://metabase.test' });
-		expect(Object.keys(metabaseEndpointSchemas)).toHaveLength(18);
+		expect(Object.keys(metabaseEndpointSchemas)).toHaveLength(309);
 		expect(plugin.endpoints?.collections.list).toBeDefined();
 		expect(plugin.endpoints?.collectionPermissions.graph.update).toBeDefined();
 		expect(plugin.webhooks).toEqual({});
+	});
+
+	describe('OpenAPI-declared operations', () => {
+		it('sends and validates a documented request for every generated route', async () => {
+			expect(MetabaseOpenApiTestCases).toHaveLength(291);
+			for (const route of MetabaseOpenApiTestCases) {
+				mockedRequest.mockReset();
+				mockedLogEvent.mockReset();
+				mockedRequest.mockResolvedValue(route.output);
+
+				const result = await route.invoke(context, route.input).catch(() => {
+					throw new Error(
+						`Generated response fixture failed for ${route.shortPath}`,
+					);
+				});
+
+				expect(result).toEqual(route.output);
+				expect(mockedRequest).toHaveBeenCalledTimes(1);
+				const call = mockedRequest.mock.calls[0];
+				expect(call?.[0]).toBe(route.path);
+				expect(call?.[1]).toBe('metabase-test-key');
+				expect(call?.[2]).toBe('https://metabase.test');
+				expect(call?.[3]?.method).toBe(route.method);
+				if (route.multipart) {
+					expect(call?.[3]).toMatchObject(route.expectedOptions);
+					const formData = call?.[3]?.formData;
+					expect(formData).toBeInstanceOf(FormData);
+					const file = formData?.get('file');
+					expect(file).toBeInstanceOf(Blob);
+				} else {
+					expect(call?.[3]).toEqual(route.expectedOptions);
+				}
+				expect(mockedLogEvent).toHaveBeenCalledWith(
+					context,
+					`metabase.${route.shortPath}`,
+					{},
+					'completed',
+				);
+			}
+		});
+
+		it('rejects unknown top-level arguments before network I/O for every route', async () => {
+			for (const route of MetabaseOpenApiTestCases) {
+				mockedRequest.mockReset();
+				mockedLogEvent.mockReset();
+				await expect(
+					route.invoke(context, addUndocumentedInputField(route.input)),
+				).rejects.toThrow();
+				expect(mockedRequest).not.toHaveBeenCalled();
+				expect(mockedLogEvent).not.toHaveBeenCalled();
+			}
+		});
+
+		it('rejects malformed generated responses before logging completion', async () => {
+			const route = MetabaseOpenApiTestCases.find(
+				(candidateRoute) =>
+					candidateRoute.shortPath === 'apiKey.putByIdRegenerate',
+			);
+			if (!route) throw new Error('API-key regeneration is not registered');
+			mockedRequest.mockResolvedValue({});
+
+			await expect(route.invoke(context, route.input)).rejects.toThrow(
+				'Metabase response failed validation',
+			);
+			expect(mockedRequest).toHaveBeenCalledTimes(1);
+			expect(mockedLogEvent).not.toHaveBeenCalled();
+		});
+
+		it('returns binary output for documented CSV exploration queries', async () => {
+			const route = MetabaseOpenApiTestCases.find(
+				(candidateRoute) =>
+					candidateRoute.shortPath === 'exploration.getQueryById',
+			);
+			if (!route)
+				throw new Error('Exploration query operation is not registered');
+			const artifact = {
+				kind: 'binary' as const,
+				contentType: 'text/csv',
+				base64: 'YSxiCg==',
+				size: 4,
+				headers: {},
+			};
+			mockedRequest.mockResolvedValue(artifact);
+
+			const result = await route.invoke(context, {
+				path: { id: 8 },
+				query: { format: 'csv' },
+			});
+
+			expect(result).toEqual(artifact);
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'/api/exploration/query/8',
+				'metabase-test-key',
+				'https://metabase.test',
+				{
+					method: 'GET',
+					query: { format: 'csv' },
+					responseType: 'binary',
+					requestTimeoutMs: 120000,
+				},
+			);
+		});
 	});
 });
