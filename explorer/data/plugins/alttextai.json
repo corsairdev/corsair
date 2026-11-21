@@ -197,7 +197,7 @@
     {
       "path": "alttextai.api.images.bulkCreate",
       "shortPath": "images.bulkCreate",
-      "description": "Upload a CSV of image URLs for batch alt text generation",
+      "description": "Upload a CSV of image URLs for batch alt text generation. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -205,8 +205,8 @@
           {
             "key": "file",
             "optional": false,
-            "type": "custom",
-            "description": "CSV file with image URLs to process"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The CSV of image URLs to process: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…)."
           },
           {
             "key": "email",

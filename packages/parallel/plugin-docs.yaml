@@ -1,3 +1,14 @@
 displayName: Parallel
-description: Search, extract, run research tasks, monitor changes, and generate grounded responses with Parallel.
+description: Search the web, images, places, flights, hotels and products, extract pages, run research tasks and FindAll lists, monitor changes, and generate grounded responses with Parallel.
 domain: parallel.ai
+recommendedAuth: api_key
+overviewNote: |
+  Create a key in the Parallel console (https://platform.parallel.ai) and send it as the `x-api-key` header.
+
+  Things to know before you send:
+
+  - **Search APIs.** `search.search` (web pages and excerpts), `images.search`, `places.search`, `flights.search`, `hotels.search` and `shopping.search` are synchronous and priced per request. `flights.search` takes IATA codes (`SFO`, `NYC`) and returns itineraries linked to the airline's booking page; `hotels.search` returns properties with each seller's offers; `shopping.search` returns products linked to store pages, with the market set by `advanced_settings.location` (`us` by default).
+  - **`fetch_policy.as_of`** asks for results as the web stood on a date. Parallel enables it per account: without access it answers 422 "as_of is not enabled".
+  - **Tasks, FindAll and Monitors run in the background.** `tasks.createRun`, `findall.createRun` and `monitors.create` return an id at once; read the result later or pass a `webhook`. A monitor keeps running on its schedule, and billing, until `monitors.cancel`.
+  - **Managed pricing.** With `authType: 'managed_pricing'` the calls run on Corsair's Parallel account and are billed in Corsair credits. Only the operations Corsair prices run that way; the rest (background runs, monitors, memory) are refused and nothing is charged.
+  - **Inbound webhooks.** Parallel signs every delivery the Standard Webhooks way (`webhook-id`, `webhook-timestamp`, `webhook-signature: v1,<base64>`) with your account's webhook secret from Settings → Webhooks. Set `webhookSecret`, or store it with `keys.set_webhook_signature`. Verification needs the untouched request body, and deliveries more than five minutes old are refused. Events: `taskRun.status`, `findall.candidateGenerated`, `findall.candidateMatched`, `findall.candidateEnriched`, `findall.runCompleted`, `findall.runCancelled`, `findall.runFailed`, `monitor.eventDetected`, `monitor.executionCompleted` and `monitor.executionFailed`. Subscribe a FindAll run with the `findall.*` event names, not `task_run.status`.
