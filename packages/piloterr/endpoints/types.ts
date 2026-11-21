@@ -865,10 +865,11 @@ export type EmailVerifyInput = z.infer<typeof EmailVerifyInputSchema>;
 export const EmailVerifyOutputSchema = z
 	.object({
 		email: z.string().nullish().describe('The verified email address'),
+		// Open on output: the live API also answers catch_all (2026-11-21).
 		status: z
-			.enum(['valid', 'invalid', 'unknown'])
+			.union([z.enum(['valid', 'invalid', 'unknown', 'catch_all']), z.string()])
 			.nullish()
-			.describe('Deliverability verdict'),
+			.describe('Deliverability verdict: valid, invalid, unknown, catch_all'),
 	})
 	.loose()
 	.describe('An email verification');
@@ -982,14 +983,18 @@ export const JobStatusSchema = z
 	.object({
 		id: z.string().nullish().describe('Job ID'),
 		success: z.boolean().nullish().describe('Whether the job succeeded'),
+		// Open on output so a state Piloterr adds later does not fail the read.
 		status: z
-			.enum([
-				'Queued',
-				'Running',
-				'CompletedJob',
-				'Error',
-				'NotFound',
-				'BadRequest',
+			.union([
+				z.enum([
+					'Queued',
+					'Running',
+					'CompletedJob',
+					'Error',
+					'NotFound',
+					'BadRequest',
+				]),
+				z.string(),
 			])
 			.nullish()
 			.describe(

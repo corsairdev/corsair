@@ -104,7 +104,12 @@ export const jobSearch: PiloterrEndpoints['linkedinJobSearch'] = (ctx, input) =>
 				fields,
 			},
 		}),
-		{ log: (_, page) => ({ results: page.results.length }) },
+		{
+			// The live API answers a bare array of jobs (2026-11-21); the
+			// documented { results, pagination } envelope is kept as is.
+			shape: (raw) => (Array.isArray(raw) ? { results: raw } : raw),
+			log: (_, page) => ({ results: page.results.length }),
+		},
 	);
 
 export const postInfo: PiloterrEndpoints['linkedinPostInfo'] = (ctx, input) =>

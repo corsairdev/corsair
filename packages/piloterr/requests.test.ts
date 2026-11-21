@@ -264,6 +264,30 @@ describe('linkedin', () => {
 		});
 	});
 
+	it('job search accepts the bare array the live API answers', async () => {
+		respond([
+			{
+				id: 4464364707,
+				url: 'https://www.linkedin.com/jobs/view/4464364707',
+				title: 'Software Engineer - DevRel',
+				location: 'London Area, United Kingdom',
+			},
+		]);
+		const page = (await invoke(LinkedIn.jobSearch, {
+			keyword: 'developer relations',
+		})) as { results: { id?: number }[] };
+		expect(page.results).toHaveLength(1);
+		expect(page.results[0]?.id).toBe(4464364707);
+	});
+
+	it('email verify accepts catch_all, which the live API answers', async () => {
+		respond({ email: 'alex.martin@example.com', status: 'catch_all' });
+		const result = (await invoke(Email.verify, {
+			query: 'alex.martin@example.com',
+		})) as { status?: string };
+		expect(result.status).toBe('catch_all');
+	});
+
 	it('profile, job and post info send the query', async () => {
 		respond(linkedinProfile);
 		await invoke(LinkedIn.profileInfo, {
