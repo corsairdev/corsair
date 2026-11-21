@@ -363,7 +363,13 @@ export type SearchEpisodeTitlesInput = z.infer<
 >;
 
 export const SearchEpisodeTitlesResponseSchema = z.object({
-	next_offset: z.number().int().optional(),
+	next_offset: z
+		.number()
+		.int()
+		.optional()
+		.describe(
+			'Returned by the provider, but this operation does not document an offset request parameter.',
+		),
 	took: z.number().optional(),
 	total: z.number().int().optional(),
 	count: z.number().int().optional(),

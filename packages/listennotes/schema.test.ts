@@ -154,6 +154,12 @@ describe('Listen Notes endpoint schemas', () => {
 			}).success,
 		).toBe(false);
 		expect(
+			SearchEpisodeTitlesInputSchema.safeParse({
+				q: 'Episode title',
+				offset: 10,
+			}).success,
+		).toBe(false);
+		expect(
 			SearchEpisodeTitlesResponseSchema.safeParse({
 				count: 1,
 				results: [{ id: 'episode1' }],

@@ -1985,13 +1985,15 @@ await corsair.listennotes.api.search.searchEpisodeTitles({ q: 'Episode title' })
 | `podcast_id` | `string` | No | Optional podcast identifier |
 | `podcast_id_type` | `listennotes_id \| itunes_id \| spotify_id \| rss` | No | Identifier format used by podcast_id |
 
+The response may contain `next_offset`, but the official OpenAPI request parameter list for this operation includes only `q`, `podcast_id`, and `podcast_id_type`; it does not document `offset`. The field is returned as provider metadata, not as a supported pagination cursor. Source: https://listen-api.listennotes.com/api/v2/openapi.json#/paths/~1search_episode_titles/get.
+
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `next_offset` | `number` | No | — |
+| `next_offset` | `number` | No | Returned by the provider, but this operation does not document an offset request parameter. |
 | `took` | `number` | No | — |
 | `total` | `number` | No | — |
 | `count` | `number` | No | — |

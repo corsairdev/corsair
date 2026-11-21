@@ -159,22 +159,28 @@ describe('makeListennotesRequest', () => {
 		const raw = new ApiError(
 			{
 				method: 'POST',
-				url: '/test',
+				url: '/search_episode_titles',
 				headers: { 'x-listenapi-key': 'super-secret-key' },
-				query: { q: 'listener@example.com', genre_ids: '68' },
+				query: {
+					q: 'listener@example.com',
+					podcast_id: 'https://owner@example.com/feed?token=private',
+					genre_ids: '68',
+				},
 				body: { apiKey: 'secret', safe: 'value' },
 			},
 			{
-				url: 'https://listen-api.listennotes.com/api/v2/search?q=listener%40example.com',
+				url: 'https://listen-api.listennotes.com/api/v2/search_episode_titles?q=listener%40example.com&podcast_id=https%3A%2F%2Fowner%40example.com%2Ffeed%3Ftoken%3Dprivate',
 				ok: false,
-				status: 400,
-				statusText: 'Bad Request',
+				status: 429,
+				statusText: 'Too Many Requests',
 				body: {
 					token: 'secret-token',
-					message: 'Invalid query listener@example.com',
+					message:
+						'Invalid query listener@example.com for https://owner@example.com/feed?token=private',
 				},
 			},
-			'Bad Request for listener@example.com',
+			'Too Many Requests for listener@example.com and https://owner@example.com/feed?token=private',
+			{ retryAfter: 2500 },
 		);
 
 		// `unknown` because sanitizeApiError accepts and returns unknown for non-ApiError fallback.
@@ -183,24 +189,31 @@ describe('makeListennotesRequest', () => {
 		if (!(sanitized instanceof ApiError)) throw new Error('Expected ApiError');
 		expect(sanitized.request.headers?.['x-listenapi-key']).toBe('[REDACTED]');
 		expect(sanitized.request.query?.q).toBe('[REDACTED]');
+		expect(sanitized.request.query?.podcast_id).toBe('[REDACTED]');
 		expect(sanitized.request.query?.genre_ids).toBe('68');
 		expect(sanitized.request.body).toBe('[REDACTED]');
 		expect(sanitized.url).toContain('q=%5BREDACTED%5D');
+		expect(sanitized.url).toContain('podcast_id=%5BREDACTED%5D');
 		expect(sanitized.message).not.toContain('listener@example.com');
+		expect(sanitized.message).not.toContain('owner@example.com');
+		expect(sanitized.status).toBe(429);
+		expect(sanitized.retryAfter).toBe(2500);
 		expect(sanitized.body).toEqual({
 			token: '[REDACTED]',
-			message: 'Invalid query [REDACTED]',
+			message: 'Invalid query [REDACTED] for [REDACTED]',
 		});
 	});
 
 	it('keeps the original request query while redacting sensitive diagnostics', async () => {
 		mockedRequest.mockResolvedValue({ terms: [] });
-		await makeListennotesRequest('/search', 'test-api-key', {
+		const podcastId = 'https://owner@example.com/feed?token=private';
+		await makeListennotesRequest('/search_episode_titles', 'test-api-key', {
 			method: 'GET',
-			query: { q: 'listener@example.com' },
+			query: { q: 'listener@example.com', podcast_id: podcastId },
 		});
 		expect(mockedRequest.mock.calls[0]?.[1]?.query).toEqual({
 			q: 'listener@example.com',
+			podcast_id: podcastId,
 		});
 	});
 

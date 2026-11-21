@@ -82,6 +82,8 @@ overviewNote: >-
 apiNotes:
   search.search: >-
     Pass `next_offset` from a response as `offset` for pagination. Search results are limited by plan: FREE up to offset 30, PRO up to 300, and ENTERPRISE up to 10,000. `interviews_only` and `sponsored_only` are PRO/ENTERPRISE filters.
+  search.searchEpisodeTitles: >-
+    The response may contain `next_offset`, but the official OpenAPI request parameter list for this operation includes only `q`, `podcast_id`, and `podcast_id_type`; it does not document `offset`. The field is returned as provider metadata, not as a supported pagination cursor. Source: https://listen-api.listennotes.com/api/v2/openapi.json#/paths/~1search_episode_titles/get.
   search.relatedSearches: >-
     This endpoint is available only on Listen Notes PRO and ENTERPRISE plans.
   search.spellcheck: >-
