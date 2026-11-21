@@ -418,6 +418,7 @@ export const BaseProviders = [
 	'lemlist',
 	'lemonsqueezy',
 	'lever',
+	'lexoffice',
 	'linear',
 	'linguapop',
 	'linkedin',
@@ -1167,6 +1168,7 @@ export const ProviderDisplayNames = {
 	lemlist: 'Lemlist',
 	lemonsqueezy: 'Lemon Squeezy',
 	lever: 'Lever',
+	lexoffice: 'Lexoffice',
 	linear: 'Linear',
 	linguapop: 'Linguapop',
 	linkedin: 'LinkedIn',
@@ -1923,6 +1925,7 @@ export type AllProviders =
 	| 'lemlist'
 	| 'lemonsqueezy'
 	| 'lever'
+	| 'lexoffice'
 	| 'linear'
 	| 'linguapop'
 	| 'linkedin'
