@@ -26,9 +26,94 @@ describe('Meta Ads schemas and registry', () => {
 		expect(outputKeys).toEqual(inputKeys);
 		expect(registeredKeys).toHaveLength(133);
 		expect(registeredKeys).toEqual(inputKeys);
-		for (const schema of Object.values(MetaAdsEndpointInputSchemas)) {
-			expect(schema.safeParse({ undocumented: true }).success).toBe(false);
-		}
+	});
+
+	it('rejects unknown keys after parsing a valid strict input', () => {
+		const validInput = { campaignId: 'campaign-1' };
+		expect(
+			MetaAdsEndpointInputSchemas.campaignsGet.safeParse(validInput).success,
+		).toBe(true);
+		expect(
+			MetaAdsEndpointInputSchemas.campaignsGet.safeParse({
+				...validInput,
+				undocumented: true,
+			}).success,
+		).toBe(false);
+	});
+
+	it('accepts numeric provider IDs for async and Insights follow-up calls', () => {
+		expect(
+			MetaAdsEndpointOutputSchemas.asyncRequestSetsCreate.parse({ id: 123 }),
+		).toEqual({ id: 123 });
+		expect(
+			MetaAdsEndpointOutputSchemas.asyncRequestSetsList.parse({
+				data: [{ id: 123 }],
+			}),
+		).toMatchObject({ data: [{ id: 123 }] });
+		expect(
+			MetaAdsEndpointOutputSchemas.asyncRequestsListForSet.parse({
+				data: [{ id: 456, scope_object_id: 789 }],
+			}),
+		).toMatchObject({ data: [{ id: 456, scope_object_id: 789 }] });
+		expect(
+			MetaAdsEndpointOutputSchemas.insightsCreateAsync.parse({
+				report_run_id: 6023920149050,
+			}),
+		).toEqual({ report_run_id: 6023920149050 });
+		expect(
+			MetaAdsEndpointInputSchemas.asyncRequestSetsGet.safeParse({
+				requestSetId: 123,
+			}).success,
+		).toBe(true);
+		expect(
+			MetaAdsEndpointInputSchemas.asyncRequestsCancel.safeParse({
+				requestId: 456,
+			}).success,
+		).toBe(true);
+		expect(
+			MetaAdsEndpointInputSchemas.insightsGetAsyncReport.safeParse({
+				reportRunId: 6023920149050,
+			}).success,
+		).toBe(true);
+	});
+
+	it('rejects undefined-only updates while preserving false and zero values', () => {
+		expect(
+			MetaAdsEndpointInputSchemas.campaignsUpdate.safeParse({
+				campaignId: 'campaign-1',
+				dailyBudget: undefined,
+			}).success,
+		).toBe(false);
+		expect(
+			MetaAdsEndpointInputSchemas.campaignsUpdate.safeParse({
+				campaignId: 'campaign-1',
+				dailyBudget: 0,
+			}).success,
+		).toBe(true);
+		expect(
+			MetaAdsEndpointInputSchemas.adSetsUpdate.safeParse({
+				adSetId: 'adset-1',
+				status: undefined,
+			}).success,
+		).toBe(false);
+		expect(
+			MetaAdsEndpointInputSchemas.adSetsUpdate.safeParse({
+				adSetId: 'adset-1',
+				dailyBudget: 0,
+			}).success,
+		).toBe(true);
+		expect(
+			MetaAdsEndpointInputSchemas.pixelsUpdate.safeParse({
+				pixelId: 'pixel-1',
+				name: undefined,
+			}).success,
+		).toBe(false);
+		expect(
+			MetaAdsEndpointInputSchemas.pixelsUpdate.safeParse({
+				pixelId: 'pixel-1',
+				enableAutomaticMatching: false,
+			}).success,
+		).toBe(true);
 	});
 
 	it('validates base64 image upload and documented image response shapes', () => {
@@ -78,6 +163,24 @@ describe('Meta Ads schemas and registry', () => {
 				creativeSpec: { name: 'Link creative', objectStorySpec },
 			}).success,
 		).toBe(true);
+		expect(
+			MetaAdsEndpointInputSchemas.adsCreate.safeParse({
+				accountId: '123',
+				adSetId: 'adset-1',
+				name: 'Pixel-sharing ad',
+				creativeId: 'creative-1',
+				conversionDomain: 'shop.example',
+			}).success,
+		).toBe(true);
+		expect(
+			MetaAdsEndpointInputSchemas.adsCreate.safeParse({
+				accountId: '123',
+				adSetId: 'adset-1',
+				name: 'Pixel-sharing ad',
+				creativeId: 'creative-1',
+				conversionDomain: 'https://shop.example/path',
+			}).success,
+		).toBe(false);
 	});
 
 	it('accepts only documented SHA-256 member batches and omits provider samples', () => {

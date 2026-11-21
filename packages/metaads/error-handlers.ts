@@ -1,35 +1,38 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
-function graphErrorCode(error: Error): number | undefined {
-	if (!(error instanceof ApiError)) return undefined;
-	// `unknown` because Graph error bodies differ by error family and are untrusted JSON.
-	const body: unknown = error.body;
+// `unknown` because Graph error bodies differ by family and are untrusted JSON.
+function graphErrorCodeFromBody(body: unknown): number | undefined {
 	if (typeof body !== 'object' || body === null || !('error' in body))
 		return undefined;
 	const detail = body.error;
 	if (typeof detail !== 'object' || detail === null || !('code' in detail))
 		return undefined;
 	const code = detail.code;
-	return typeof code === 'number' ? code : undefined;
+	return typeof code === 'number' && Number.isInteger(code) ? code : undefined;
+}
+
+const graphRateLimitCodes = new Set([4, 17, 613, 80000, 80003, 80004, 80014]);
+
+// `unknown` because the shared transport passes untrusted provider error JSON to this matcher.
+export function isMetaGraphRateLimitResponse(
+	status: number,
+	body: unknown,
+): boolean {
+	if (status === 429) return true;
+	const code = graphErrorCodeFromBody(body);
+	return code !== undefined && graphRateLimitCodes.has(code);
 }
 
 function isRateLimitError(error: Error): boolean {
-	if (error instanceof ApiError && error.status === 429) return true;
-	const code = graphErrorCode(error);
-	return (
-		code !== undefined &&
-		[4, 17, 613, 80000, 80003, 80004, 80014].includes(code)
-	);
+	if (!(error instanceof ApiError)) return false;
+	return isMetaGraphRateLimitResponse(error.status, error.body);
 }
 
 function isAuthError(error: Error): boolean {
-	if (
-		error instanceof ApiError &&
-		(error.status === 401 || error.status === 403)
-	)
-		return true;
-	const code = graphErrorCode(error);
+	if (!(error instanceof ApiError)) return false;
+	if (error.status === 401 || error.status === 403) return true;
+	const code = graphErrorCodeFromBody(error.body);
 	return code === 10 || code === 190 || code === 200 || code === 294;
 }
 

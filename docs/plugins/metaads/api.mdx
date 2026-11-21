@@ -1828,12 +1828,13 @@ await corsair.metaads.api.ads.create({
 | `accountId` | `string` | Yes | — |
 | `adSetId` | `string` | Yes | — |
 | `name` | `string` | Yes | — |
+| `conversionDomain` | `string` | No | — |
 | `creativeId` | `string` | No | — |
 | `creativeSpec` | `object` | No | — |
 | `status` | `ACTIVE \| PAUSED` | No | — |
 | `idempotencyKey` | `string` | No | — |
 
-Use an existing creative ID or the documented inline AdCreative envelope: the creative form field contains a nested creative object with name and object_story_spec. New ads enter review and can deliver after approval; this consequential write isn't automatically retried.
+Use an existing creative ID or the documented inline AdCreative envelope: the creative form field contains a nested creative object with name and object_story_spec. Optionally pass a bare conversionDomain for campaigns that share data with a pixel; Meta requires it only for those campaigns. New ads enter review and can deliver after approval; this consequential write isn't automatically retried.
 
 <AccordionGroup>
 <Accordion title="creativeSpec full type">
@@ -3107,9 +3108,9 @@ await corsair.metaads.api.asyncRequests.cancel({ requestId: '1234567899' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `requestId` | `string` | Yes | — |
+| `requestId` | `string \| number` | Yes | — |
 
-Cancels one request only while it remains unprocessed; cancellation is marked destructive.
+Cancels one request only while it remains unprocessed and returns literal true; numeric or string request IDs are accepted and cancellation is marked destructive.
 
 
 
@@ -3206,14 +3207,14 @@ await corsair.metaads.api.asyncRequests.listForSet({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `requestSetId` | `string` | Yes | — |
+| `requestSetId` | `string \| number` | Yes | — |
 | `status` | `(INITIAL \| IN_PROGRESS \| SUCCESS \| ERROR \| CANCELED \| PENDING_DEPENDENCY \| CANCELED_DEPENDENCY \| ERROR_DEPENDENCY \| ERROR_CONFLICTS \| USER_CANCELED \| USER_CANCELED_DEPENDENCY \| PROCESS_BY_EVENT_PROCESSOR \| PROCESS_BY_AD_ASYNC_ENGINE \| Initial \| In_progress \| Success \| Error \| Canceled)[]` | No | — |
 | `fields` | `(id \| scope_object_id \| status)[]` | No | — |
 | `limit` | `number` | No | — |
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
 
-Only request IDs, parent IDs and statuses can be selected; raw request input and result/error content are excluded.
+Accepts numeric or string requestSetId values and stringifies the Graph path. Only request IDs, parent IDs and statuses can be selected; raw request input and result/error content are excluded.
 
 
 
@@ -3272,9 +3273,9 @@ await corsair.metaads.api.asyncRequestSets.cancel({ requestSetId: '1234567898' }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `requestSetId` | `string` | Yes | — |
+| `requestSetId` | `string \| number` | Yes | — |
 
-Cancels a request set only while it remains unprocessed; cancellation is marked destructive.
+Cancels a request set only while it remains unprocessed and returns literal true; numeric or string IDs are accepted and cancellation is marked destructive.
 
 
 
@@ -3340,10 +3341,10 @@ await corsair.metaads.api.asyncRequestSets.get({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `requestSetId` | `string` | Yes | — |
+| `requestSetId` | `string \| number` | Yes | — |
 | `fields` | `(id \| owner_id \| name \| is_completed \| total_count \| initial_count \| in_progress_count \| success_count \| error_count \| canceled_count \| notification_mode)[]` | No | — |
 
-Only documented status/count fields are selectable; notification_uri is omitted to avoid exposing callback URLs.
+Accepts numeric or string requestSetId values and stringifies the Graph path. Only documented status/count fields are selectable; notification_uri is omitted to avoid exposing callback URLs.
 
 
 
@@ -3454,10 +3455,10 @@ await corsair.metaads.api.asyncRequestSets.update({ requestSetId: '1234567898', 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `requestSetId` | `string` | Yes | — |
+| `requestSetId` | `string \| number` | Yes | — |
 | `name` | `string` | Yes | — |
 
-Renames a request set. notification_uri and notification_mode are omitted because outbound callback handling is outside this plugin.
+Renames a request set and returns literal true on success. Numeric or string IDs are accepted; notification_uri and notification_mode are omitted because outbound callback handling is outside this plugin.
 
 
 
@@ -5698,10 +5699,10 @@ await corsair.metaads.api.insights.getAsyncReport({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `reportRunId` | `string` | Yes | — |
+| `reportRunId` | `string \| number` | Yes | — |
 | `fields` | `(id \| account_id \| time_ref \| time_completed \| async_status \| async_percent_completion \| error_code \| error_message \| error_subcode \| error_user_title \| error_user_msg)[]` | No | — |
 
-Poll async_status and async_percent_completion. Failed jobs include documented error details on v25 and later.
+Accept numeric or string reportRunId values, including report_run_id returned by createAsync, and poll async_status and async_percent_completion. Failed jobs include documented error details on v25 and later.
 
 
 
@@ -5709,7 +5710,7 @@ Poll async_status and async_percent_completion. Failed jobs include documented e
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | No | — |
+| `id` | `string \| number` | No | — |
 | `account_id` | `string` | No | — |
 | `time_ref` | `number` | No | — |
 | `time_completed` | `number` | No | — |
@@ -5741,12 +5742,12 @@ await corsair.metaads.api.insights.getAsyncResults({ reportRunId: '1234567890123
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `reportRunId` | `string` | Yes | — |
+| `reportRunId` | `string \| number` | Yes | — |
 | `limit` | `number` | No | — |
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
 
-Fetch cursor-paginated results only after the report job completes.
+Accept numeric or string reportRunId values, including report_run_id returned by createAsync, and fetch cursor-paginated results only after the report job completes.
 
 
 

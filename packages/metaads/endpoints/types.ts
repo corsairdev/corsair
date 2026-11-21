@@ -1,7 +1,10 @@
 import { z } from 'zod';
 
 const id = z.string().min(1);
-const numericId = z.union([id, z.number().int().positive()]);
+const numericId = z.union([
+	id,
+	z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+]);
 const fields = z.string().min(1).optional();
 const cursor = z.string().min(1).optional();
 const pageSize = z.number().int().positive().optional();
@@ -470,7 +473,11 @@ const pixelUpdateInput = z
 		serverEventsBusinessIdsRemove: z.array(id).optional(),
 	})
 	.strict()
-	.refine((value) => Object.keys(value).some((key) => key !== 'pixelId'));
+	.refine((value) =>
+		Object.entries(value).some(
+			([key, fieldValue]) => key !== 'pixelId' && fieldValue !== undefined,
+		),
+	);
 const pixelUpdateOutput = z.object({ success: z.boolean() });
 const publisherBlockListCreateInput = z
 	.object({ accountId: id, name: z.string().min(1).optional() })
@@ -660,17 +667,17 @@ const asyncRequestSetCreateInput = z
 	.strict();
 const asyncSetGetInput = z
 	.object({
-		requestSetId: id,
+		requestSetId: numericId,
 		fields: z.array(asyncSetFields).min(1).optional(),
 	})
 	.strict();
 const asyncSetUpdateInput = z
-	.object({ requestSetId: id, name: z.string().min(1) })
+	.object({ requestSetId: numericId, name: z.string().min(1) })
 	.strict();
-const asyncSetCancelInput = z.object({ requestSetId: id }).strict();
+const asyncSetCancelInput = z.object({ requestSetId: numericId }).strict();
 const asyncRequestListInput = z
 	.object({
-		requestSetId: id,
+		requestSetId: numericId,
 		status: z.array(asyncRequestStatus).min(1).optional(),
 		fields: z.array(asyncRequestFields).min(1).optional(),
 		...cursorOptions,
@@ -684,12 +691,12 @@ const asyncRequestsForAdSetListInput = z
 		...cursorOptions,
 	})
 	.strict();
-const asyncRequestCancelInput = z.object({ requestId: id }).strict();
+const asyncRequestCancelInput = z.object({ requestId: numericId }).strict();
 
 const AsyncRequestSetSchema = z
 	.object({
-		id: z.union([z.string(), z.number().int()]),
-		owner_id: z.union([z.string(), z.number().int()]).optional(),
+		id: numericId,
+		owner_id: numericId.optional(),
 		name: z.string().optional(),
 		is_completed: z.boolean().optional(),
 		total_count: z.number().int().optional(),
@@ -703,8 +710,8 @@ const AsyncRequestSetSchema = z
 	.strict();
 const AsyncRequestSchema = z
 	.object({
-		id: z.union([z.string(), z.number().int()]),
-		scope_object_id: z.union([z.string(), z.number().int()]).optional(),
+		id: numericId,
+		scope_object_id: numericId.optional(),
 		status: asyncRequestStatus.optional(),
 	})
 	.strict();
@@ -717,7 +724,7 @@ const AsyncRequestsListSchema = z.object({
 	paging: MetaAdsListSchema.shape.paging.optional(),
 });
 const AsyncRequestSetCreateSchema = z.object({
-	id: z.union([id, z.number().int()]),
+	id: numericId,
 });
 const AsyncRequestSetUpdateSchema = z.literal(true);
 
@@ -1475,7 +1482,11 @@ const campaignUpdateInput = z
 		spendCap: budget.optional(),
 	})
 	.strict()
-	.refine((value) => Object.keys(value).some((key) => key !== 'campaignId'));
+	.refine((value) =>
+		Object.entries(value).some(
+			([key, fieldValue]) => key !== 'campaignId' && fieldValue !== undefined,
+		),
+	);
 
 const adSetListInput = z.object({ accountId: id, ...listOptions }).strict();
 const adSetAdsListInput = z.object({ adSetId: id, ...listOptions }).strict();
@@ -1626,7 +1637,11 @@ const adSetUpdateInput = z
 		endTime: z.string().optional(),
 	})
 	.strict()
-	.refine((value) => Object.keys(value).some((key) => key !== 'adSetId'));
+	.refine((value) =>
+		Object.entries(value).some(
+			([key, fieldValue]) => key !== 'adSetId' && fieldValue !== undefined,
+		),
+	);
 
 const adListInput = z.object({ accountId: id, ...listOptions }).strict();
 const adAdCreativesListInput = z
@@ -1700,6 +1715,14 @@ const adCreateInput = z
 		accountId: id,
 		adSetId: id,
 		name: z.string().min(1),
+		conversionDomain: z
+			.string()
+			.min(3)
+			.max(253)
+			.regex(
+				/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)(?:\.(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?))+$/i,
+			)
+			.optional(),
 		creativeId: id.optional(),
 		creativeSpec: z
 			.object({
@@ -2236,7 +2259,7 @@ const insightsAsyncCreateInput = validateInsightsParameters(
 );
 const insightsAsyncReportInput = z
 	.object({
-		reportRunId: id,
+		reportRunId: numericId,
 		fields: z
 			.array(
 				z.enum([
@@ -2258,12 +2281,17 @@ const insightsAsyncReportInput = z
 	})
 	.strict();
 const insightsAsyncResultsInput = z
-	.object({ reportRunId: id, limit: pageSize, after: cursor, before: cursor })
+	.object({
+		reportRunId: numericId,
+		limit: pageSize,
+		after: cursor,
+		before: cursor,
+	})
 	.strict();
 // Ad report-run nodes expose additional provider-documented status fields not selected by this schema.
 const AsyncReportSchema = z
 	.object({
-		id: z.string().optional(),
+		id: numericId.optional(),
 		account_id: z.string().optional(),
 		time_ref: z.number().optional(),
 		time_completed: z.number().optional(),
@@ -2277,7 +2305,7 @@ const AsyncReportSchema = z
 	})
 	.passthrough();
 const InsightsAsyncCreateSchema = z.object({
-	report_run_id: z.union([z.string().min(1), z.number().int().positive()]),
+	report_run_id: numericId,
 });
 const copiedObjectIdsSchema = z.array(
 	z.object({

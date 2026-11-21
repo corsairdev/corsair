@@ -64,7 +64,8 @@ function operation<Input, ParsedInput, Output>(config: {
 const emptyRequest = (): RequestShape => ({});
 const accountPath = (accountId: string): string =>
 	`/act_${encodeURIComponent(accountId.replace(/^act_/, ''))}`;
-const idPath = (id: string): string => `/${encodeURIComponent(id)}`;
+const idPath = (id: string | number): string =>
+	`/${encodeURIComponent(String(id))}`;
 const pageParams = (input: {
 	fields?: string;
 	limit?: number;
@@ -1353,6 +1354,7 @@ export const adsCreate = operation({
 			{
 				name: input.name,
 				adset_id: input.adSetId,
+				conversion_domain: input.conversionDomain,
 				// Meta's Ad Account ads edge requires this AdCreative envelope for inline specs.
 				creative:
 					input.creativeId !== undefined

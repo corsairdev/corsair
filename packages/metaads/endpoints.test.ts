@@ -1229,6 +1229,7 @@ const cases: Case[] = [
 		body: {
 			name: 'Test ad',
 			adset_id: 'adset-1',
+			conversion_domain: 'shop.example',
 			creative: { creative_id: 'creative-1' },
 			status: 'PAUSED',
 		},
@@ -1237,6 +1238,7 @@ const cases: Case[] = [
 				accountId: '123',
 				adSetId: 'adset-1',
 				name: 'Test ad',
+				conversionDomain: 'shop.example',
 				creativeId: 'creative-1',
 				status: 'PAUSED',
 			});
@@ -1802,6 +1804,18 @@ const cases: Case[] = [
 		},
 	},
 	{
+		name: 'asyncRequestSets.get',
+		path: '/1234567890123',
+		method: 'GET',
+		query: { fields: 'id,name' },
+		call: async () => {
+			await AsyncRequestSets.get(ctx, {
+				requestSetId: 1_234_567_890_123,
+				fields: ['id', 'name'],
+			});
+		},
+	},
+	{
 		name: 'asyncRequestSets.update',
 		path: '/request-set-1',
 		method: 'POST',
@@ -1814,11 +1828,33 @@ const cases: Case[] = [
 		},
 	},
 	{
+		name: 'asyncRequestSets.update',
+		path: '/1234567890123',
+		method: 'POST',
+		body: { name: 'Renamed numeric request job' },
+		call: async () => {
+			await AsyncRequestSets.update(ctx, {
+				requestSetId: 1_234_567_890_123,
+				name: 'Renamed numeric request job',
+			});
+		},
+	},
+	{
 		name: 'asyncRequestSets.cancel',
 		path: '/request-set-1',
 		method: 'DELETE',
 		call: async () => {
 			await AsyncRequestSets.cancel(ctx, { requestSetId: 'request-set-1' });
+		},
+	},
+	{
+		name: 'asyncRequestSets.cancel',
+		path: '/1234567890123',
+		method: 'DELETE',
+		call: async () => {
+			await AsyncRequestSets.cancel(ctx, {
+				requestSetId: 1_234_567_890_123,
+			});
 		},
 	},
 	{
@@ -1842,6 +1878,19 @@ const cases: Case[] = [
 		},
 	},
 	{
+		name: 'asyncRequests.listForSet',
+		path: '/1234567890123/requests',
+		method: 'GET',
+		query: { fields: 'id,status', limit: 5 },
+		call: async () => {
+			await AsyncRequests.listForSet(ctx, {
+				requestSetId: 1_234_567_890_123,
+				fields: ['id', 'status'],
+				limit: 5,
+			});
+		},
+	},
+	{
 		name: 'asyncRequests.listForAdSet',
 		path: '/adset-1/asyncadrequests',
 		method: 'GET',
@@ -1860,6 +1909,14 @@ const cases: Case[] = [
 		method: 'DELETE',
 		call: async () => {
 			await AsyncRequests.cancel(ctx, { requestId: 'request-1' });
+		},
+	},
+	{
+		name: 'asyncRequests.cancel',
+		path: '/9876543210987',
+		method: 'DELETE',
+		call: async () => {
+			await AsyncRequests.cancel(ctx, { requestId: 9_876_543_210_987 });
 		},
 	},
 	{
@@ -2060,6 +2117,18 @@ const cases: Case[] = [
 		},
 	},
 	{
+		name: 'insights.getAsyncReport',
+		path: '/6023920149050',
+		method: 'GET',
+		query: { fields: 'id,async_status' },
+		call: async () => {
+			await Insights.getAsyncReport(ctx, {
+				reportRunId: 6_023_920_149_050,
+				fields: ['id', 'async_status'],
+			});
+		},
+	},
+	{
 		name: 'insights.getAsyncResults',
 		path: '/report-1/insights',
 		method: 'GET',
@@ -2069,6 +2138,18 @@ const cases: Case[] = [
 				reportRunId: 'report-1',
 				limit: 10,
 				after: 'report-cursor',
+			});
+		},
+	},
+	{
+		name: 'insights.getAsyncResults',
+		path: '/6023920149050/insights',
+		method: 'GET',
+		query: { limit: 5 },
+		call: async () => {
+			await Insights.getAsyncResults(ctx, {
+				reportRunId: 6_023_920_149_050,
+				limit: 5,
 			});
 		},
 	},

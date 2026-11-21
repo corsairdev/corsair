@@ -6,6 +6,7 @@ import {
 	METAADS_API_VERSION,
 	makeMetaAdsRequest,
 } from './client';
+import { isMetaGraphRateLimitResponse } from './error-handlers';
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
@@ -38,7 +39,11 @@ describe('Meta Ads Graph API client', () => {
 		});
 		expect(JSON.stringify(config)).not.toContain('safe-test-token');
 		expect(retryOptions).toMatchObject({
-			rateLimitConfig: { enabled: true, maxRetries: 0 },
+			rateLimitConfig: {
+				enabled: true,
+				maxRetries: 0,
+				isRateLimitError: isMetaGraphRateLimitResponse,
+			},
 		});
 	});
 
@@ -118,9 +123,20 @@ describe('Meta Ads Graph API client', () => {
 				ok: false,
 				status: 403,
 				statusText: 'Forbidden',
-				body: { error: { message: `Denied ${token}` } },
+				body: {
+					error: {
+						code: 100,
+						error_subcode: 1815001,
+						is_transient: false,
+						message: `Denied ${token} near 37.7749,-122.4194`,
+						targeting_spec: {
+							latitude: 37.7749,
+							longitude: -122.4194,
+						},
+					},
+				},
 			},
-			`Denied ${token}`,
+			`Denied ${token} near 37.7749,-122.4194`,
 		);
 		mockedRequest.mockRejectedValue(providerError);
 
@@ -137,8 +153,22 @@ describe('Meta Ads Graph API client', () => {
 		expect(result).not.toBe(providerError);
 		expect(result.request.query).toBeUndefined();
 		expect(result.url).toBe('https://graph.facebook.com/v27.0/me/adaccounts');
+		expect(result.body).toEqual({
+			error: {
+				code: 100,
+				error_subcode: 1815001,
+				is_transient: false,
+				message:
+					'Meta Ads request failed; sensitive request details were redacted.',
+			},
+		});
+		expect(result.message).toBe(
+			'Meta Ads request failed; sensitive request details were redacted.',
+		);
 		expect(JSON.stringify(result)).not.toContain(token);
 		expect(JSON.stringify(result)).not.toContain('sensitive-targeting');
+		expect(JSON.stringify(result)).not.toContain('37.7749');
+		expect(JSON.stringify(result)).not.toContain('-122.4194');
 		expect(result.status).toBe(403);
 	});
 
@@ -271,6 +301,55 @@ describe('Meta Ads Graph API client', () => {
 		if (!(result instanceof ApiError))
 			throw new Error('Expected ApiError from the real transport');
 		expect(result.status).toBe(429);
+		expect(result.retryAfter).toBe(4000);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		fetchMock.mockRestore();
+	});
+
+	it('extracts Retry-After from a Graph 80003 throttle without retrying', async () => {
+		const actualHttp =
+			jest.requireActual<typeof import('corsair/http')>('corsair/http');
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(
+				JSON.stringify({ error: { code: 80003, message: 'Throttled' } }),
+				{
+					status: 400,
+					headers: { 'content-type': 'application/json', 'retry-after': '4' },
+				},
+			),
+		);
+		const config: OpenAPIConfig = {
+			BASE: METAADS_API_BASE,
+			VERSION: METAADS_API_VERSION,
+			WITH_CREDENTIALS: false,
+			CREDENTIALS: 'omit',
+		};
+		// `unknown` because rejected transport values are untyped until checked as ApiError.
+		const result = await actualHttp
+			.request(
+				config,
+				{
+					method: 'GET',
+					url: '/v27.0/act_1/campaigns',
+					query: { access_token: 'safe-test-token' },
+				},
+				{
+					rateLimitConfig: {
+						enabled: true,
+						maxRetries: 0,
+						initialRetryDelay: 0,
+						backoffMultiplier: 1,
+						headerNames: { retryAfter: 'retry-after' },
+						isRateLimitError: isMetaGraphRateLimitResponse,
+					},
+				},
+			)
+			.catch((caught: unknown) => caught);
+
+		expect(result).toBeInstanceOf(ApiError);
+		if (!(result instanceof ApiError))
+			throw new Error('Expected ApiError from the real transport');
+		expect(result.status).toBe(400);
 		expect(result.retryAfter).toBe(4000);
 		expect(fetchMock).toHaveBeenCalledTimes(1);
 		fetchMock.mockRestore();

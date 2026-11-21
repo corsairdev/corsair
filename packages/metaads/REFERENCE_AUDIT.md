@@ -1,11 +1,11 @@
 # Meta Marketing API reference audit
 
-Audit date: 2026-11-19. Source index: [official `reference/llms.txt`](https://developers.facebook.com/documentation/ads-commerce/marketing-api/reference/llms.txt). The index had 26 headings and 385 linked references. This audit covers the core ad-object families and closely related Marketing API references, not every separate product listed by the umbrella index.
+Audit date: 2026-11-19; disposition reconciliation: 2026-11-21. Source index: [official `reference/llms.txt`](https://developers.facebook.com/documentation/ads-commerce/marketing-api/reference/llms.txt). The index had 26 headings and 385 linked references. This audit covers the core ad-object families and closely related Marketing API references, not every separate product listed by the umbrella index.
 
 ## Counts and units
 
 - **133 implemented operations** are registered with typed input/output schemas, risk metadata, and mocked request/response coverage. The operation count is from the Corsair endpoint registry.
-- **159 core reference pages** were audited across the 18 headings below. At the reference-page level: 73 are fully covered, 10 are partially covered, 63 have verified documented operations or fields still pending, 2 are unverifiable, and 11 are static/type/guide entries without a standalone operation. A page may document multiple HTTP methods; page counts are not route-method counts.
+- **159 core reference pages** were audited across the 18 headings below. At the reference-page level: 73 are fully covered, 11 are partially covered, 62 have verified documented operations or fields still pending, 2 are unverifiable, and 11 are static/type/guide entries without a standalone operation. A page may document multiple HTTP methods; page counts are not route-method counts.
 - **One additional unverified route** is the Ad Set `/{adset_id}/adlabels` association operation. Its route-specific reference could not be retrieved, so it remains pending rather than inferred from the Campaign, Ad, or Creative association contracts.
 - **226 adjacent index links** are outside the 159-page core ad-object table under Ads Pixel, Business, Business Role Request, Business User, Product Catalog, Product Extensions Catalog Suggestion, Integrity Appeals API, and System User headings. The Ads Pixel object reference contributes `GET /{pixel_id}` and `POST /{pixel_id}` operations to this plugin, but its nested creator/business/usage fields and other pixel edges are not complete; the other 225 linked pages are not claimed as covered.
 
@@ -14,7 +14,7 @@ Audit date: 2026-11-19. Source index: [official `reference/llms.txt`](https://de
 | Official index heading | Linked references | Fully covered | Partial | Verified pending | Unverifiable | Static / guide |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | Ad | 12 | 8 | 0 | 4 | 0 | 0 |
-| Ad Account | 79 | 23 | 9 | 40 | 1 | 6 |
+| Ad Account | 79 | 23 | 10 | 39 | 1 | 6 |
 | Ad Account User | 1 | 1 | 0 | 0 | 0 | 0 |
 | Ad Activity | 1 | 1 | 0 | 0 | 0 | 0 |
 | Ad Campaign | 11 | 9 | 0 | 2 | 0 | 0 |
@@ -31,9 +31,9 @@ Audit date: 2026-11-19. Source index: [official `reference/llms.txt`](https://de
 | High Demand Period | 1 | 1 | 0 | 0 | 0 | 0 |
 | Image Crop | 1 | 0 | 0 | 0 | 0 | 1 |
 | Reach and Frequency Prediction | 1 | 0 | 1 | 0 | 0 | 0 |
-| **Total** | **159** | **73** | **10** | **63** | **2** | **11** |
+| **Total** | **159** | **73** | **11** | **62** | **2** | **11** |
 
-“Fully covered” means the documented methods selected for the scoped surface are represented; it does not imply every optional provider parameter or every neighboring product API is implemented. Ad Account `advideos` is partial: dissociation is implemented, while listing and upload remain unsupported for the exact Video-node and binary/chunked-transport reasons below. Ad Account `adrules_library` is partial: list and create are implemented, but two callback execution types are intentionally omitted because Corsair has no requested outbound-callback lifecycle. Reach/Frequency Prediction list/get/create are implemented; the optional `pause_periods` field is omitted because Meta lists its keys but not their value types. “Static / guide” entries include documentation types and UI guides; Graph routes linked by the Ad Previews guide are tracked under their respective Ad Account, Ad, and Ad Creative edges.
+“Fully covered” means the documented methods selected for the scoped surface are represented; it does not imply every optional provider parameter or every neighboring product API is implemented. Ad Account `advideos` is partial: dissociation is implemented, while listing and upload remain unsupported for the exact Video-node and binary/chunked-transport reasons below. Ad Account `adrules_library` is partial: list and create are implemented, but two callback execution types are intentionally omitted because Corsair has no requested outbound-callback lifecycle. The Ad Account `reachfrequencypredictions` edge and the separate Reach and Frequency Prediction object page are partial because `pause_periods` is omitted when its item field types are not specified. “Static / guide” entries include documentation types and UI guides; Graph routes linked by the Ad Previews guide are tracked under their respective Ad Account, Ad, and Ad Creative edges.
 
 ## Verified-pending references
 
@@ -67,6 +67,7 @@ These are verified indexed references with at least one operation or response fi
 | Ad Account | `GET /act_{ad_account_id}/customconversions`; `offline_conversion_data_sets`, `mcmeconversions` | Custom conversion creation is included because its Ad Account route and create response are fully contracted; list responses need the missing `CustomConversion` node fields. Offline conversion data sets and MCME routes are separate conversion/measurement surfaces, with unavailable node contracts. No Conversions API event-sending endpoint is exposed. |
 | Ad Account | `connected_instagram_accounts`, `instagram_accounts` | Instagram account operations have separate Graph product/permission requirements. |
 | Ad Account | `GET /act_{ad_account_id}/customaudiencestos`; `product_audiences`, `collaborative_ads_partner_businesses` | Terms acceptance is implemented with the documented `tos_id`/success contract. The read edge's `CustomAudiencesTOS` fields are unavailable; product and partner audiences have distinct catalog/data-sharing contracts. |
+| Ad Account | `reachfrequencypredictions` | The account listing/create edge is implemented, but its prediction result omits the optional `pause_periods` field because the linked references do not provide item value types. The object reference is separately counted under Reach and Frequency Prediction. |
 | Ad Account | `GET /act_{ad_account_id}/publisher_block_lists`; `GET /act_{ad_account_id}/tracking`; `GET /act_{ad_account_id}/subscribed_apps` | Their POST/DELETE mutations are implemented where documented. These list edges still need `PublisherBlockList`, `AdAccountTrackingData`, and `Application` node fields, respectively; the plugin does not accept those untyped records. |
 | Ad Account | `proposals` | The GET edge returns `AdProposal` nodes, but the linked node field contract is inaccessible; financial subject matter alone is not the exclusion reason. |
 | Campaign | `addrafts`, `video_groups` | `AdDraft` and `VideoGroup` response-node schemas are unavailable in the linked references. |

@@ -1,6 +1,7 @@
 import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import { isMetaGraphRateLimitResponse } from './error-handlers';
 
 export const METAADS_API_BASE = 'https://graph.facebook.com';
 export const METAADS_API_VERSION = 'v27.0';
@@ -43,6 +44,36 @@ function redactErrorValue(value: unknown, sensitiveValues: string[]): unknown {
 function redactUrlQuery(url: string): string {
 	const queryStart = url.indexOf('?');
 	return queryStart < 0 ? url : url.slice(0, queryStart);
+}
+
+const SAFE_REDACTED_ERROR_MESSAGE =
+	'Meta Ads request failed; sensitive request details were redacted.';
+
+// `unknown` because a sensitive provider error may echo arbitrary request JSON, including numeric coordinates.
+function sanitizeSensitiveErrorBody(body: unknown): Record<string, unknown> {
+	const graphError =
+		isUnknownRecord(body) && isUnknownRecord(body.error)
+			? body.error
+			: undefined;
+	const safeError: Record<string, unknown> = {
+		message: SAFE_REDACTED_ERROR_MESSAGE,
+	};
+	if (
+		typeof graphError?.code === 'number' &&
+		Number.isFinite(graphError.code)
+	) {
+		safeError.code = graphError.code;
+	}
+	if (
+		typeof graphError?.error_subcode === 'number' &&
+		Number.isFinite(graphError.error_subcode)
+	) {
+		safeError.error_subcode = graphError.error_subcode;
+	}
+	if (typeof graphError?.is_transient === 'boolean') {
+		safeError.is_transient = graphError.is_transient;
+	}
+	return { error: safeError };
 }
 
 // Request payloads stay generic because each strict endpoint schema defines its own JSON/form fields.
@@ -102,6 +133,7 @@ export async function makeMetaAdsRequest(
 				initialRetryDelay: 0,
 				backoffMultiplier: 1,
 				headerNames: { retryAfter: 'retry-after' },
+				isRateLimitError: isMetaGraphRateLimitResponse,
 			},
 		});
 	} catch (error: unknown) {
@@ -114,6 +146,8 @@ export async function makeMetaAdsRequest(
 		const sensitiveValues = [apiKey, ...(options.sensitiveValues ?? [])].filter(
 			(value): value is string => typeof value === 'string' && value.length > 0,
 		);
+		const sanitizeSensitiveDetails =
+			options.redactBodyOnError === true || options.redactQueryOnError === true;
 		if (
 			!options.redactBodyOnError &&
 			!options.redactQueryOnError &&
@@ -140,9 +174,13 @@ export async function makeMetaAdsRequest(
 				ok: false,
 				status: error.status,
 				statusText: error.statusText,
-				body: redactErrorValue(error.body, sensitiveValues),
+				body: sanitizeSensitiveDetails
+					? sanitizeSensitiveErrorBody(error.body)
+					: redactErrorValue(error.body, sensitiveValues),
 			},
-			String(redactErrorValue(error.message, sensitiveValues)),
+			sanitizeSensitiveDetails
+				? SAFE_REDACTED_ERROR_MESSAGE
+				: String(redactErrorValue(error.message, sensitiveValues)),
 			{
 				retryAfter: error.retryAfter,
 				rateLimitReset: error.rateLimitReset,
