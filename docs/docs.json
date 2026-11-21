@@ -3569,6 +3569,14 @@
                 ]
               },
               {
+                "group": "Mailcoach",
+                "pages": [
+                  "plugins/mailcoach/overview",
+                  "plugins/mailcoach/api",
+                  "plugins/mailcoach/database"
+                ]
+              },
+              {
                 "group": "Mails.so",
                 "pages": [
                   "plugins/mailsso/overview",

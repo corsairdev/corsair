@@ -1,9 +1,1 @@
-import { z } from 'zod';
-
-// TODO: Define your database entities here
-// export const MailcoachExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type MailcoachExample = z.infer<typeof MailcoachExample>;
+// Mailcoach resources are fetched from the API and are not persisted locally.
