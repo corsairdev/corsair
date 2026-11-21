@@ -6,8 +6,8 @@ description: "PersistIQ is an outbound sales automation platform. This plugin ma
 
 Use **PersistIQ** through Corsair: one client, typed API calls.
 
-Authenticate with the API key from the PersistIQ integrations settings; the plugin sends it in the x-api-key header. List operations answer &#123; status, data, page &#125; where page.has_more and page.next_page drive cursor pagination — pass page.next_page back as next_page.
-Lead attributes live in a `data` map keyed by the account's lead fields (read them with leadFields.list). Campaign emails are automated by default; campaigns.create with do_not_automate: true drafts them instead.
+Authenticate with the API key from the PersistIQ integrations settings (Settings &gt; Integrations &gt; API Key); the plugin sends it in the x-api-key header. List operations answer &#123; status, errors, has_more, next_page &#125; plus a named array (leads, campaigns, campaign_leads, replies, events, ...). Pages are numbered: pass page: 2, 3, ... while has_more is true.
+Lead attributes live in a `data` map keyed by the account's lead fields (read them with leadFields.list); leads.create takes them in `lead`. Adding a lead to a campaign (campaigns.addLead) starts the campaign's automated emails to that lead, so it asks for approval like a send.
 PersistIQ delivers outbound webhooks through its webhook plugin; the plugin reads and updates those settings (webhooks.getSettings and webhooks.updateSettings). The delivery signature scheme is not documented, so this plugin does not receive the deliveries.
 Every operation is described in the official OpenAPI spec: https://persistiq.com/api-docs/v1/swagger.json
 
@@ -112,8 +112,7 @@ await tenant.persistiq.api.leads.get({ id: 'l_1' });
 ```ts
 const tenant = corsair.withTenant('acme');
 await tenant.persistiq.api.leads.create({
-	email: 'john@example.com',
-	data: { first_name: 'John' },
+	lead: { email: 'john@example.com', first_name: 'John' },
 });
 ```
 

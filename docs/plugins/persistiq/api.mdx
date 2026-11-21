@@ -14,9 +14,9 @@ description: "API reference for the PersistIQ plugin in Corsair: every `persisti
 
 `campaigns.addLead`
 
-Add a lead to a campaign
+Add leads to a campaign; the campaign's automated emails start going to them
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.persistiq.api.campaigns.addLead({ campaignId: "c_1", lead_id: "l_1" });
@@ -27,7 +27,13 @@ await corsair.persistiq.api.campaigns.addLead({ campaignId: "c_1", lead_id: "l_1
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `campaignId` | `string` | Yes | Campaign id |
-| `lead_id` | `string` | Yes | Lead id to add |
+| `lead_id` | `string` | No | Lead id to add |
+| `leads` | `string[]` | No | Bulk add: up to 100 lead ids |
+| `mailbox_id` | `string` | No | Mailbox to send from; defaults to the campaign owner's |
+| `skip_if_exists` | `boolean` | No | Return the existing membership instead of an error |
+| `override_lead_limit` | `boolean` | No | Add past the campaign's lead limit |
+
+Starts the campaign's automated emails to the lead. Give lead_id, or up to 100 ids in leads.
 
 
 
@@ -35,7 +41,34 @@ await corsair.persistiq.api.campaigns.addLead({ campaignId: "c_1", lead_id: "l_1
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
+| `status` | `string \| null` | No | success or error |
+| `error` | `any \| null` | No | Error details, null on success |
+| `campaign_lead` | `object \| null` | No | The membership created (single add) |
+
+<AccordionGroup>
+<Accordion title="campaign_lead full type">
+
+```ts
+{
+  id: string,
+  campaign_id?: string | null,
+  mailbox_id?: string | null,
+  lead?: {
+    id: string,
+    status?: string | null,
+    data?: Record<string, any> | null,
+    creator_id?: string | null,
+    owner_id?: string | null,
+    bounced?: boolean | null,
+    optedout?: boolean | null,
+    sent_count?: number | null,
+    replied_count?: number | null,
+    last_sent_at?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -50,17 +83,17 @@ Create a campaign
 **Risk:** `write`
 
 ```ts
-await corsair.persistiq.api.campaigns.create({ name: "Q4 outbound", do_not_automate: true });
+await corsair.persistiq.api.campaigns.create({ campaign_name: "Q4 outbound", owner_id: "u_1" });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `name` | `string` | Yes | Campaign name |
-| `do_not_automate` | `boolean` | No | Draft the emails instead of automating sends |
+| `campaign_name` | `string` | Yes | Campaign name |
+| `owner_id` | `string` | Yes | User id of the campaign owner; see users.list |
 
-do_not_automate: true drafts emails instead of automating sends.
+campaign_name and owner_id (a user id from users.list) are required. The answer is the campaign itself.
 
 
 
@@ -68,28 +101,35 @@ do_not_automate: true drafts emails instead of automating sends.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | The campaign as created |
-| `page` | `object` | Yes | PersistIQ pagination |
+| `id` | `string` | Yes | Campaign id |
+| `name` | `string \| null` | No | Campaign name |
+| `creator` | `object \| null` | No | The user who created the campaign |
+| `stats` | `object \| null` | No | Campaign counters |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="creator full type">
 
 ```ts
 {
-  id: string,
-  name?: string | null
-}[]
+  id?: string | null,
+  name?: string | null,
+  email?: string | null
+} | null
 ```
 </Accordion>
 
-<Accordion title="page full type">
+<Accordion title="stats full type">
 
 ```ts
 {
-  has_more: boolean,
-  next_page?: string | null
-}
+  prospects_contacted?: number | null,
+  prospects_reached?: number | null,
+  prospects_opened?: number | null,
+  prospects_replied?: number | null,
+  prospects_bounced?: number | null,
+  prospects_optedout?: number | null,
+  total_prospects?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -102,12 +142,12 @@ do_not_automate: true drafts emails instead of automating sends.
 
 `campaigns.duplicate`
 
-Duplicate a campaign
+Copy a campaign to a new owner
 
 **Risk:** `write`
 
 ```ts
-await corsair.persistiq.api.campaigns.duplicate({ campaign_id: "c_1", num_duplicates: 2 });
+await corsair.persistiq.api.campaigns.duplicate({ campaign_id: "c_1", owner_id: "u_1", name: "Q4 outbound copy" });
 ```
 
 **Input**
@@ -115,7 +155,8 @@ await corsair.persistiq.api.campaigns.duplicate({ campaign_id: "c_1", num_duplic
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `campaign_id` | `string` | Yes | Campaign id to duplicate |
-| `num_duplicates` | `number` | No | How many copies to make |
+| `owner_id` | `string` | Yes | User id that owns the copy |
+| `name` | `string` | No | Name of the copy; PersistIQ picks one when omitted |
 
 
 
@@ -123,28 +164,35 @@ await corsair.persistiq.api.campaigns.duplicate({ campaign_id: "c_1", num_duplic
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | The duplicated campaigns |
-| `page` | `object` | Yes | PersistIQ pagination |
+| `id` | `string` | Yes | Campaign id |
+| `name` | `string \| null` | No | Campaign name |
+| `creator` | `object \| null` | No | The user who created the campaign |
+| `stats` | `object \| null` | No | Campaign counters |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="creator full type">
 
 ```ts
 {
-  id: string,
-  name?: string | null
-}[]
+  id?: string | null,
+  name?: string | null,
+  email?: string | null
+} | null
 ```
 </Accordion>
 
-<Accordion title="page full type">
+<Accordion title="stats full type">
 
 ```ts
 {
-  has_more: boolean,
-  next_page?: string | null
-}
+  prospects_contacted?: number | null,
+  prospects_reached?: number | null,
+  prospects_opened?: number | null,
+  prospects_replied?: number | null,
+  prospects_bounced?: number | null,
+  prospects_optedout?: number | null,
+  total_prospects?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -165,35 +213,49 @@ List the campaigns
 await corsair.persistiq.api.campaigns.list({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1; ask for the next one while has_more is true |
+| `name` | `string` | No | Only campaigns with this name |
+| `owner_id` | `string` | No | Only campaigns owned by this user id |
+| `lead_id` | `string` | No | Only campaigns this lead is in |
+
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | Campaigns |
-| `page` | `object` | Yes | PersistIQ pagination |
+| `status` | `string \| null` | No | success or error |
+| `errors` | `string[] \| null` | No | Problems PersistIQ reports with the request |
+| `has_more` | `boolean \| null` | No | Whether more pages exist |
+| `next_page` | `string \| null` | No | Link to the next page; pass page + 1 to fetch it |
+| `campaigns` | `object[]` | Yes | Campaigns |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="campaigns full type">
 
 ```ts
 {
   id: string,
-  name?: string | null
+  name?: string | null,
+  creator?: {
+    id?: string | null,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  stats?: {
+    prospects_contacted?: number | null,
+    prospects_reached?: number | null,
+    prospects_opened?: number | null,
+    prospects_replied?: number | null,
+    prospects_bounced?: number | null,
+    prospects_optedout?: number | null,
+    total_prospects?: number | null
+  } | null
 }[]
-```
-</Accordion>
-
-<Accordion title="page full type">
-
-```ts
-{
-  has_more: boolean,
-  next_page?: string | null
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -219,6 +281,7 @@ await corsair.persistiq.api.campaigns.listLeads({ campaignId: "c_1" });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `campaignId` | `string` | Yes | Campaign id |
+| `page` | `number` | No | Page number, from 1; ask for the next one while has_more is true |
 
 
 
@@ -226,36 +289,33 @@ await corsair.persistiq.api.campaigns.listLeads({ campaignId: "c_1" });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | Leads in the campaign |
-| `page` | `object` | Yes | PersistIQ pagination |
+| `status` | `string \| null` | No | success or error |
+| `errors` | `string[] \| null` | No | Problems PersistIQ reports with the request |
+| `has_more` | `boolean \| null` | No | Whether more pages exist |
+| `next_page` | `string \| null` | No | Link to the next page; pass page + 1 to fetch it |
+| `campaign_leads` | `object[]` | Yes | Leads in the campaign |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="campaign_leads full type">
 
 ```ts
 {
   id: string,
-  status?: string | null,
-  data?: Record<string, unknown> | null,
-  creator_id?: string | null,
-  owner_id?: string | null,
-  bounced?: boolean | null,
-  optedout?: boolean | null,
-  sent_count?: number | null,
-  replied_count?: number | null,
-  last_sent_at?: string | null
+  campaign_id?: string | null,
+  mailbox_id?: string | null,
+  lead?: {
+    id: string,
+    status?: string | null,
+    data?: Record<string, any> | null,
+    creator_id?: string | null,
+    owner_id?: string | null,
+    bounced?: boolean | null,
+    optedout?: boolean | null,
+    sent_count?: number | null,
+    replied_count?: number | null,
+    last_sent_at?: string | null
+  } | null
 }[]
-```
-</Accordion>
-
-<Accordion title="page full type">
-
-```ts
-{
-  has_more: boolean,
-  next_page?: string | null
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -281,6 +341,10 @@ await corsair.persistiq.api.campaigns.listReplies({ campaignId: "c_1" });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `campaignId` | `string` | Yes | Campaign id |
+| `page` | `number` | No | Page number, from 1; ask for the next one while has_more is true |
+| `lead_id` | `string` | No | Only replies from this lead |
+| `start_at` | `string` | No | Only replies after this ISO 8601 time |
+| `end_at` | `string` | No | Only replies before this ISO 8601 time |
 
 
 
@@ -288,27 +352,31 @@ await corsair.persistiq.api.campaigns.listReplies({ campaignId: "c_1" });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | Replies |
-| `page` | `object` | Yes | PersistIQ pagination |
+| `status` | `string \| null` | No | success or error |
+| `errors` | `string[] \| null` | No | Problems PersistIQ reports with the request |
+| `has_more` | `boolean \| null` | No | Whether more pages exist |
+| `next_page` | `string \| null` | No | Link to the next page; pass page + 1 to fetch it |
+| `replies` | `object[]` | Yes | Replies |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="replies full type">
 
 ```ts
 {
-  id: string
+  id: string,
+  from_email?: string | null,
+  to_emails?: string[] | null,
+  cc_emails?: string[] | null,
+  subject?: string | null,
+  body?: string | null,
+  preview?: string | null,
+  sent_at?: string | null,
+  sentiment?: string | null,
+  kind?: string | null,
+  lead_id?: string | null,
+  campaign_id?: string | null,
+  step_message_id?: string | null
 }[]
-```
-</Accordion>
-
-<Accordion title="page full type">
-
-```ts
-{
-  has_more: boolean,
-  next_page?: string | null
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -334,9 +402,9 @@ await corsair.persistiq.api.campaigns.removeLead({ campaignId: "c_1", leadId: "l
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `campaignId` | `string` | Yes | Campaign id |
-| `leadId` | `string` | Yes | Lead id to remove |
+| `leadId` | `string` | Yes | Lead id to remove (the id of the lead, as the spec names it) |
 
-Answers &#123; status: "success" &#125;; the operation echoes the removed lead id.
+PersistIQ answers 200 with no body; the operation echoes the removed lead id.
 
 
 
@@ -344,7 +412,8 @@ Answers &#123; status: "success" &#125;; the operation echoes the removed lead i
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
+| `status` | `success` | Yes | success |
+| `leadId` | `string` | Yes | The lead removed |
 
 
 
@@ -354,12 +423,12 @@ Answers &#123; status: "success" &#125;; the operation echoes the removed lead i
 
 `campaigns.replyToMessage`
 
-Reply to an inbox message; the email goes out and cannot be recalled
+Reply to a message received in a campaign; the email goes out and cannot be recalled
 
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.persistiq.api.campaigns.replyToMessage({ campaignId: "c_1", lead_id: "l_1", message_id: "m_1", reply_message: "Thanks for the reply!" });
+await corsair.persistiq.api.campaigns.replyToMessage({ campaignId: "c_1", inbox_message_id: "r_1", body: "<p>Thanks for the reply!</p>" });
 ```
 
 **Input**
@@ -367,11 +436,10 @@ await corsair.persistiq.api.campaigns.replyToMessage({ campaignId: "c_1", lead_i
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `campaignId` | `string` | Yes | Campaign id |
-| `lead_id` | `string` | Yes | Lead id the message belongs to |
-| `message_id` | `string` | Yes | Inbox message id to reply to |
-| `reply_message` | `string` | Yes | Reply body |
+| `inbox_message_id` | `string` | Yes | Inbox message id to reply to (a reply id from listReplies) |
+| `body` | `string` | Yes | HTML body of the reply |
 
-Sends the reply immediately; it cannot be recalled.
+Queues the reply email at once; it cannot be recalled. inbox_message_id is a reply id from listReplies.
 
 
 
@@ -379,30 +447,8 @@ Sends the reply immediately; it cannot be recalled.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | The reply as sent |
-| `page` | `object` | Yes | PersistIQ pagination |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: string
-}[]
-```
-</Accordion>
-
-<Accordion title="page full type">
-
-```ts
-{
-  has_more: boolean,
-  next_page?: string | null
-}
-```
-</Accordion>
-</AccordionGroup>
+| `status` | `string \| null` | No | queued once accepted |
+| `message` | `string \| null` | No | What PersistIQ did |
 
 
 
@@ -419,16 +465,16 @@ Add a domain to the do-not-contact list; emails to it stop
 **Risk:** `write`
 
 ```ts
-await corsair.persistiq.api.dncDomains.create({ domain: "example.com" });
+await corsair.persistiq.api.dncDomains.create({ name: "example.com" });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `domain` | `string` | Yes | Domain to add to the do-not-contact list |
+| `name` | `string` | Yes | Domain to add to the do-not-contact list, e.g. example.com |
 
-Adds the domain to the do-not-contact list; emails to it stop.
+Adds the domain to the do-not-contact list; emails to it stop. The API has no route to remove one.
 
 
 
@@ -436,7 +482,21 @@ Adds the domain to the do-not-contact list; emails to it stop.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
+| `status` | `success` | Yes | success |
+| `error` | `any \| null` | No | Error details, null on success |
+| `dnc_domain` | `object \| null` | No | The domain added |
+
+<AccordionGroup>
+<Accordion title="dnc_domain full type">
+
+```ts
+{
+  id: string,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -454,35 +514,32 @@ List the do-not-contact domains
 await corsair.persistiq.api.dncDomains.list({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1; ask for the next one while has_more is true |
+
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | Do-not-contact domains |
-| `page` | `object` | Yes | PersistIQ pagination |
+| `status` | `string \| null` | No | success or error |
+| `errors` | `string[] \| null` | No | Problems PersistIQ reports with the request |
+| `has_more` | `boolean \| null` | No | Whether more pages exist |
+| `next_page` | `string \| null` | No | Link to the next page; pass page + 1 to fetch it |
+| `dnc_domains` | `object[]` | Yes | Do-not-contact domains |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="dnc_domains full type">
 
 ```ts
 {
   id: string,
-  domain?: string | null
+  name?: string | null
 }[]
-```
-</Accordion>
-
-<Accordion title="page full type">
-
-```ts
-{
-  has_more: boolean,
-  next_page?: string | null
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -497,7 +554,7 @@ await corsair.persistiq.api.dncDomains.list({});
 
 `events.list`
 
-List activity events, paged by cursor
+List activity events, with filters, page by page
 
 **Risk:** `read`
 
@@ -509,7 +566,13 @@ await corsair.persistiq.api.events.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `next_page` | `string` | No | Cursor of the next page |
+| `page` | `number` | No | Page number, from 1; ask for the next one while has_more is true |
+| `group` | `string` | No | Only events of this group |
+| `campaign` | `string` | No | Only events of this campaign id |
+| `lead` | `string` | No | Only events of this lead id |
+| `user` | `string` | No | Only events of this user id |
+| `start_at` | `string` | No | Only events after this ISO 8601 time |
+| `end_at` | `string` | No | Only events before this ISO 8601 time |
 
 
 
@@ -517,30 +580,22 @@ await corsair.persistiq.api.events.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | Events on this page |
-| `page` | `object` | Yes | PersistIQ pagination |
+| `status` | `string \| null` | No | success or error |
+| `errors` | `string[] \| null` | No | Problems PersistIQ reports with the request |
+| `has_more` | `boolean \| null` | No | Whether more pages exist |
+| `next_page` | `string \| null` | No | Link to the next page; pass page + 1 to fetch it |
+| `events` | `object[]` | Yes | Events on this page |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="events full type">
 
 ```ts
 {
   id: string,
   event_type?: string | null,
-  data?: Record<string, unknown> | null,
+  data?: Record<string, any> | null,
   created_at?: string | null
 }[]
-```
-</Accordion>
-
-<Accordion title="page full type">
-
-```ts
-{
-  has_more: boolean,
-  next_page?: string | null
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -570,28 +625,21 @@ await corsair.persistiq.api.leadFields.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | Lead field definitions |
-| `page` | `object` | Yes | PersistIQ pagination |
+| `status` | `string \| null` | No | success or error |
+| `errors` | `string[] \| null` | No | Problems PersistIQ reports with the request |
+| `has_more` | `boolean \| null` | No | Whether more pages exist |
+| `next_page` | `string \| null` | No | Link to the next page; pass page + 1 to fetch it |
+| `lead_fields` | `object[]` | Yes | Lead field definitions |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="lead_fields full type">
 
 ```ts
 {
   id: string,
+  name?: string | null,
   label?: string | null
 }[]
-```
-</Accordion>
-
-<Accordion title="page full type">
-
-```ts
-{
-  has_more: boolean,
-  next_page?: string | null
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -611,17 +659,18 @@ Create a lead with its attributes
 **Risk:** `write`
 
 ```ts
-await corsair.persistiq.api.leads.create({ email: "john@example.com", data: { first_name: "John" } });
+await corsair.persistiq.api.leads.create({ lead: { email: "john@example.com", first_name: "John" }, dup: "skip" });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `email` | `string` | Yes | Lead email address |
-| `data` | `Record<string, unknown>` | No | Lead attributes keyed by field name |
+| `lead` | `Record<string, any>` | Yes | Lead data keyed by field name (email, first_name, last_name, company_name, ...); see leadFields.list |
+| `dup` | `update \| skip` | No | What to do when a lead with the same email exists |
+| `creator_id` | `string` | No | User id recorded as the creator |
 
-The answer wraps the created lead in the data array.
+The lead fields go in `lead`; dup "skip" or "update" handles an existing email. The answer is &#123; status, error, lead &#125;.
 
 
 
@@ -629,18 +678,18 @@ The answer wraps the created lead in the data array.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | The lead as created |
-| `page` | `object` | Yes | PersistIQ pagination |
+| `status` | `string \| null` | No | success or error |
+| `error` | `any \| null` | No | Error details, null on success |
+| `lead` | `object` | Yes | The lead |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="lead full type">
 
 ```ts
 {
   id: string,
   status?: string | null,
-  data?: Record<string, unknown> | null,
+  data?: Record<string, any> | null,
   creator_id?: string | null,
   owner_id?: string | null,
   bounced?: boolean | null,
@@ -648,16 +697,6 @@ The answer wraps the created lead in the data array.
   sent_count?: number | null,
   replied_count?: number | null,
   last_sent_at?: string | null
-}[]
-```
-</Accordion>
-
-<Accordion title="page full type">
-
-```ts
-{
-  has_more: boolean,
-  next_page?: string | null
 }
 ```
 </Accordion>
@@ -691,18 +730,18 @@ await corsair.persistiq.api.leads.get({ id: "l_1" });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | The lead |
-| `page` | `object` | Yes | PersistIQ pagination |
+| `status` | `string \| null` | No | success or error |
+| `error` | `any \| null` | No | Error details, null on success |
+| `lead` | `object` | Yes | The lead |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="lead full type">
 
 ```ts
 {
   id: string,
   status?: string | null,
-  data?: Record<string, unknown> | null,
+  data?: Record<string, any> | null,
   creator_id?: string | null,
   owner_id?: string | null,
   bounced?: boolean | null,
@@ -710,16 +749,6 @@ await corsair.persistiq.api.leads.get({ id: "l_1" });
   sent_count?: number | null,
   replied_count?: number | null,
   last_sent_at?: string | null
-}[]
-```
-</Accordion>
-
-<Accordion title="page full type">
-
-```ts
-{
-  has_more: boolean,
-  next_page?: string | null
 }
 ```
 </Accordion>
@@ -733,21 +762,26 @@ await corsair.persistiq.api.leads.get({ id: "l_1" });
 
 `leads.list`
 
-List leads, paged by cursor
+List leads, with filters, page by page
 
 **Risk:** `read`
 
 ```ts
-await corsair.persistiq.api.leads.list({});
+await corsair.persistiq.api.leads.list({ page: 1, updated_after: "2025-11-01T00:00:00Z" });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `next_page` | `string` | No | Cursor of the next page; take it from page.next_page of the prior answer |
+| `page` | `number` | No | Page number, from 1; ask for the next one while has_more is true |
+| `status` | `string` | No | Only leads with this status name |
+| `status_id` | `string` | No | Only leads with this status id |
+| `updated_after` | `string` | No | Only leads updated after this ISO 8601 time |
+| `created_after` | `string` | No | Only leads created after this ISO 8601 time |
+| `email` | `string` | No | Only the lead with this email |
 
-Paged by cursor: pass page.next_page from the prior answer back as next_page.
+Numbered pages: pass page 2, 3, ... while has_more is true. Filters: status, status_id, updated_after, created_after, email.
 
 
 
@@ -755,18 +789,20 @@ Paged by cursor: pass page.next_page from the prior answer back as next_page.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | Leads on this page |
-| `page` | `object` | Yes | PersistIQ pagination |
+| `status` | `string \| null` | No | success or error |
+| `errors` | `string[] \| null` | No | Problems PersistIQ reports with the request |
+| `has_more` | `boolean \| null` | No | Whether more pages exist |
+| `next_page` | `string \| null` | No | Link to the next page; pass page + 1 to fetch it |
+| `leads` | `object[]` | Yes | Leads on this page |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="leads full type">
 
 ```ts
 {
   id: string,
   status?: string | null,
-  data?: Record<string, unknown> | null,
+  data?: Record<string, any> | null,
   creator_id?: string | null,
   owner_id?: string | null,
   bounced?: boolean | null,
@@ -775,16 +811,6 @@ Paged by cursor: pass page.next_page from the prior answer back as next_page.
   replied_count?: number | null,
   last_sent_at?: string | null
 }[]
-```
-</Accordion>
-
-<Accordion title="page full type">
-
-```ts
-{
-  has_more: boolean,
-  next_page?: string | null
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -797,12 +823,12 @@ Paged by cursor: pass page.next_page from the prior answer back as next_page.
 
 `leads.update`
 
-Update a lead attributes map
+Update a lead's status, owner, flags or attributes
 
 **Risk:** `write`
 
 ```ts
-await corsair.persistiq.api.leads.update({ id: "l_1", data: { first_name: "Jane" } });
+await corsair.persistiq.api.leads.update({ id: "l_1", status: "Replied", data: { first_name: "Jane" } });
 ```
 
 **Input**
@@ -810,9 +836,14 @@ await corsair.persistiq.api.leads.update({ id: "l_1", data: { first_name: "Jane"
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | Lead id |
-| `data` | `Record<string, unknown>` | Yes | Lead attributes to update |
+| `status` | `string` | No | New status name |
+| `status_id` | `string` | No | New status id |
+| `owner_id` | `string` | No | New owner user id |
+| `bounced` | `boolean` | No | Mark the lead bounced |
+| `optedout` | `boolean` | No | Mark the lead opted out |
+| `data` | `Record<string, any>` | No | Lead attributes to update, keyed by field name |
 
-The data map replaces the given attribute values; keys come from leadFields.list.
+Changes status, owner, bounced/optedout flags and the data attributes; keys come from leadFields.list.
 
 
 
@@ -820,18 +851,18 @@ The data map replaces the given attribute values; keys come from leadFields.list
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | The lead as updated |
-| `page` | `object` | Yes | PersistIQ pagination |
+| `status` | `string \| null` | No | success or error |
+| `error` | `any \| null` | No | Error details, null on success |
+| `lead` | `object` | Yes | The lead |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="lead full type">
 
 ```ts
 {
   id: string,
   status?: string | null,
-  data?: Record<string, unknown> | null,
+  data?: Record<string, any> | null,
   creator_id?: string | null,
   owner_id?: string | null,
   bounced?: boolean | null,
@@ -839,16 +870,6 @@ The data map replaces the given attribute values; keys come from leadFields.list
   sent_count?: number | null,
   replied_count?: number | null,
   last_sent_at?: string | null
-}[]
-```
-</Accordion>
-
-<Accordion title="page full type">
-
-```ts
-{
-  has_more: boolean,
-  next_page?: string | null
 }
 ```
 </Accordion>
@@ -879,28 +900,20 @@ await corsair.persistiq.api.leadStatuses.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | Lead statuses |
-| `page` | `object` | Yes | PersistIQ pagination |
+| `status` | `string \| null` | No | success or error |
+| `errors` | `string[] \| null` | No | Problems PersistIQ reports with the request |
+| `has_more` | `boolean \| null` | No | Whether more pages exist |
+| `next_page` | `string \| null` | No | Link to the next page; pass page + 1 to fetch it |
+| `lead_statuses` | `object[]` | Yes | Lead statuses |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="lead_statuses full type">
 
 ```ts
 {
   id: string,
   name?: string | null
 }[]
-```
-</Accordion>
-
-<Accordion title="page full type">
-
-```ts
-{
-  has_more: boolean,
-  next_page?: string | null
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -923,35 +936,32 @@ List the tags
 await corsair.persistiq.api.tags.list({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1; ask for the next one while has_more is true |
+
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | Tags |
-| `page` | `object` | Yes | PersistIQ pagination |
+| `status` | `string \| null` | No | success or error |
+| `errors` | `string[] \| null` | No | Problems PersistIQ reports with the request |
+| `has_more` | `boolean \| null` | No | Whether more pages exist |
+| `next_page` | `string \| null` | No | Link to the next page; pass page + 1 to fetch it |
+| `tags` | `object[]` | Yes | Tags |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="tags full type">
 
 ```ts
 {
   id: string,
   name?: string | null
 }[]
-```
-</Accordion>
-
-<Accordion title="page full type">
-
-```ts
-{
-  has_more: boolean,
-  next_page?: string | null
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -974,36 +984,41 @@ List the team members
 await corsair.persistiq.api.users.list({});
 ```
 
-**Input:** _empty object_
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, from 1; ask for the next one while has_more is true |
+
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | Team members |
-| `page` | `object` | Yes | PersistIQ pagination |
+| `status` | `string \| null` | No | success or error |
+| `errors` | `string[] \| null` | No | Problems PersistIQ reports with the request |
+| `has_more` | `boolean \| null` | No | Whether more pages exist |
+| `next_page` | `string \| null` | No | Link to the next page; pass page + 1 to fetch it |
+| `users` | `object[]` | Yes | Team members |
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="users full type">
 
 ```ts
 {
   id: string,
   name?: string | null,
-  email?: string | null
+  email?: string | null,
+  activated?: boolean | null,
+  salesforce_id?: string | null,
+  default_mailbox_id?: string | null,
+  mailboxes?: {
+    id?: string | null,
+    email?: string | null,
+    campaign_ids?: string[] | null
+  }[] | null
 }[]
-```
-</Accordion>
-
-<Accordion title="page full type">
-
-```ts
-{
-  has_more: boolean,
-  next_page?: string | null
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1033,31 +1048,16 @@ await corsair.persistiq.api.webhooks.getSettings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | The webhook plugin settings |
-| `page` | `object` | Yes | PersistIQ pagination |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  url?: string | null,
-  enabled?: boolean | null
-}[]
-```
-</Accordion>
-
-<Accordion title="page full type">
-
-```ts
-{
-  has_more: boolean,
-  next_page?: string | null
-}
-```
-</Accordion>
-</AccordionGroup>
+| `post_new_prospect` | `boolean \| null` | No | Whether new-lead deliveries are on |
+| `post_new_prospect_url` | `string \| null` | No | Endpoint new-lead deliveries are posted to |
+| `post_updated_prospect` | `boolean \| null` | No | Whether updated-lead deliveries are on |
+| `post_updated_prospect_url` | `string \| null` | No | Endpoint updated-lead deliveries are posted to |
+| `raw_events` | `boolean \| null` | No | Whether raw-event deliveries are on |
+| `raw_events_url` | `string \| null` | No | Endpoint raw-event deliveries are posted to |
+| `post_email_reply` | `boolean \| null` | No | Whether email-reply deliveries are on |
+| `post_email_reply_url` | `string \| null` | No | Endpoint email-reply deliveries are posted to |
+| `post_email_opened` | `boolean \| null` | No | Whether email-opened deliveries are on |
+| `post_email_opened_url` | `string \| null` | No | Endpoint email-opened deliveries are posted to |
 
 
 
@@ -1067,22 +1067,30 @@ await corsair.persistiq.api.webhooks.getSettings({});
 
 `webhooks.updateSettings`
 
-Update the webhook plugin delivery URL and active state
+Turn webhook deliveries on or off and set the URL each one posts to
 
 **Risk:** `write`
 
 ```ts
-await corsair.persistiq.api.webhooks.updateSettings({ url: "https://example.com/webhooks/persistiq", enabled: true });
+await corsair.persistiq.api.webhooks.updateSettings({ post_new_prospect: true, post_new_prospect_url: "https://example.com/webhooks/persistiq" });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `url` | `string` | Yes | Endpoint deliveries are posted to |
-| `enabled` | `boolean` | No | Whether deliveries are active |
+| `post_new_prospect` | `boolean` | No | Turn new-lead deliveries on or off |
+| `post_new_prospect_url` | `string` | No | Endpoint new-lead deliveries are posted to |
+| `post_updated_prospect` | `boolean` | No | Turn updated-lead deliveries on or off |
+| `post_updated_prospect_url` | `string` | No | Endpoint updated-lead deliveries are posted to |
+| `raw_events` | `boolean` | No | Turn raw-event deliveries on or off |
+| `raw_events_url` | `string` | No | Endpoint raw-event deliveries are posted to |
+| `post_email_reply` | `boolean` | No | Turn email-reply deliveries on or off |
+| `post_email_reply_url` | `string` | No | Endpoint email-reply deliveries are posted to |
+| `post_email_opened` | `boolean` | No | Turn email-opened deliveries on or off |
+| `post_email_opened_url` | `string` | No | Endpoint email-opened deliveries are posted to |
 
-Configures the outbound webhook plugin delivery URL.
+Each delivery type (new lead, updated lead, raw events, email reply, email opened) has its own on/off flag and URL.
 
 
 
@@ -1090,31 +1098,16 @@ Configures the outbound webhook plugin delivery URL.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `string` | Yes | success |
-| `data` | `object[]` | Yes | The webhook plugin settings as updated |
-| `page` | `object` | Yes | PersistIQ pagination |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  url?: string | null,
-  enabled?: boolean | null
-}[]
-```
-</Accordion>
-
-<Accordion title="page full type">
-
-```ts
-{
-  has_more: boolean,
-  next_page?: string | null
-}
-```
-</Accordion>
-</AccordionGroup>
+| `post_new_prospect` | `boolean \| null` | No | Whether new-lead deliveries are on |
+| `post_new_prospect_url` | `string \| null` | No | Endpoint new-lead deliveries are posted to |
+| `post_updated_prospect` | `boolean \| null` | No | Whether updated-lead deliveries are on |
+| `post_updated_prospect_url` | `string \| null` | No | Endpoint updated-lead deliveries are posted to |
+| `raw_events` | `boolean \| null` | No | Whether raw-event deliveries are on |
+| `raw_events_url` | `string \| null` | No | Endpoint raw-event deliveries are posted to |
+| `post_email_reply` | `boolean \| null` | No | Whether email-reply deliveries are on |
+| `post_email_reply_url` | `string \| null` | No | Endpoint email-reply deliveries are posted to |
+| `post_email_opened` | `boolean \| null` | No | Whether email-opened deliveries are on |
+| `post_email_opened_url` | `string \| null` | No | Endpoint email-opened deliveries are posted to |
 
 
 
