@@ -1,0 +1,109 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Pipeline CRM"
+description: "Pipeline CRM is a sales CRM for deals, people and companies. This plugin manages deals with stages and values, people and companies with their associations, records activities (notes) on any record, and reads the visible users."
+domain: pipelinecrm.com
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with an API token from the Pipeline CRM profile (tokens
+  begin pcrm_live_ in production); the plugin sends it as an Authorization
+  Bearer token. Every call goes against https://api.pipelinecrm.com/api/v3.
+  Lists answer { entries, pagination } with page and per_page (at most 200)
+  paging; every write wraps its fields in the record name
+  ({ deal: {...} }, { person: {...} }).
+
+  Filtering uses bracketed conditions parameters: pass conditions as a map
+  of full bracketed keys to values, e.g. "conditions[deal_stage][]": 3 or
+  "conditions[deal_created][selection]": "last_30" — each list page
+  documents its keys, and the API ignores unknown keys rather than
+  rejecting them. Sorting uses sort=-field. Money fields such as a deal's
+  value serialize as decimal strings ("12000.0"); send numbers or numeric
+  strings.
+
+  Tokens are rate limited to 10 requests per second per user; exceeding
+  answers 429 {"error":"Rate limit exceeded"} and the plugin retries with
+  backoff. Deleting a deal, person, company or activity cannot be undone.
+
+  The API documents far more than this plugin covers (CSV exports, calendar
+  entries, call and SMS logs, comments, files, projects, saved searches,
+  admin custom fields, pipelines, JWT auth for interactive clients, …),
+  all on the same shapes. Every operation is described in the official
+  reference: https://app.pipelinecrm.com/api/docs
+examples:
+  read:
+    path: deals.get
+    title: Read a deal
+    args:
+      id: 4521
+  write:
+    path: deals.create
+    title: Create a deal
+    args:
+      name: Acme renewal
+      value: 12000
+apiExamples:
+  deals.list:
+    call: '{ conditions: { "conditions[deal_stage][]": 3 }, sort: "-deal_value", perPage: 50 }'
+  deals.create:
+    call: '{ name: "Acme renewal", value: 12000, dealStageId: 3, companyName: "Acme Corporation" }'
+  deals.get:
+    call: '{ id: 4521 }'
+  deals.update:
+    call: '{ id: 4521, name: "Renamed" }'
+  deals.delete:
+    call: '{ id: 4521 }'
+  deals.totalsByStage:
+    call: '{}'
+  deals.listNotes:
+    call: '{ id: 4521 }'
+  people.list:
+    call: '{ conditions: { "conditions[lead_status_id]": 1 }, perPage: 25 }'
+  people.create:
+    call: '{ fullName: "John Doe", email: "john@acme.com", companyName: "Acme Corporation" }'
+  people.get:
+    call: '{ id: 900 }'
+  people.update:
+    call: '{ id: 900, position: "CTO" }'
+  people.delete:
+    call: '{ id: 900 }'
+  people.autocomplete:
+    call: '{ q: "john" }'
+  people.listDeals:
+    call: '{ id: 900 }'
+  people.listNotes:
+    call: '{ id: 900 }'
+  companies.list:
+    call: '{}'
+  companies.create:
+    call: '{ name: "Acme Corporation", web: "https://acme.com", checkForDuplicates: true }'
+  companies.get:
+    call: '{ id: 77 }'
+  companies.update:
+    call: '{ id: 77, phone1: "+1 555 0111" }'
+  companies.delete:
+    call: '{ id: 77 }'
+  companies.autocomplete:
+    call: '{ q: "acme" }'
+  companies.listPeople:
+    call: '{ id: 77 }'
+  notes.list:
+    call: '{ conditions: { "conditions[deal_id]": 4521 } }'
+  notes.create:
+    call: '{ content: "Discussed renewal terms.", dealId: 4521 }'
+  notes.get:
+    call: '{ id: 5001 }'
+  notes.update:
+    call: '{ id: 5001, title: "New title" }'
+  notes.delete:
+    call: '{ id: 5001 }'
+  users.list:
+    call: '{ conditions: { "conditions[admin]": "true" } }'
+  users.get:
+    call: '{ id: 13 }'
+apiNotes:
+  deals.create: 'probability 0 or 100 closes the deal; setting 1-99 on a closed deal reopens it. companyName creates and links a company when no id matches.'
+  deals.list: 'conditions keys are the documented DealConditions (deal_stage, deal_owner, deal_value ranges, date selections); the API ignores unknown keys.'
+  people.create: 'fullName splits on whitespace into first_name and last_name; companyName creates and links a company when none matches.'
+  companies.create: 'checkForDuplicates asks the API to detect and report possible duplicates.'
+  notes.list: 'conditions must carry one of conditions[deal_id], conditions[company_id] or conditions[person_id].'
+  users.list: 'Returns the users this credential can see; admin-only views live under /admin/users.'

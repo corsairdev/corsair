@@ -1,0 +1,1710 @@
+---
+title: "Pipeline CRM API reference"
+sidebarTitle: "API"
+description: "API reference for the Pipeline CRM plugin in Corsair: every `pipelinecrm.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Companies
+
+### autocomplete
+
+`companies.autocomplete`
+
+Search companies by text for autocomplete
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.companies.autocomplete({ q: "acme" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Search text |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  email?: string | null,
+  web?: string | null,
+  address_1?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  phone1?: string | null,
+  facebook_url?: string | null,
+  linked_in_url?: string | null,
+  twitter?: string | null,
+  custom_fields?: Record<string, any> | null,
+  user_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`companies.create`
+
+Create a company
+
+**Risk:** `write`
+
+```ts
+await corsair.pipelinecrm.api.companies.create({ name: "Acme Corporation", web: "https://acme.com", checkForDuplicates: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Company name |
+| `description` | `string` | No | Description |
+| `email` | `string` | No | Email |
+| `web` | `string` | No | Website |
+| `address1` | `string` | No | Address line 1 |
+| `address2` | `string` | No | Address line 2 |
+| `city` | `string` | No | City |
+| `state` | `string` | No | State |
+| `postalCode` | `string` | No | Postal code |
+| `country` | `string` | No | Country |
+| `phone1` | `string` | No | Primary phone |
+| `phone2` | `string` | No | Secondary phone |
+| `facebookUrl` | `string` | No | Facebook URL |
+| `linkedInUrl` | `string` | No | LinkedIn URL |
+| `twitter` | `string` | No | Twitter username |
+| `userId` | `number` | No | Owning user id |
+| `customFields` | `Record<string, any>` | No | Custom field values keyed by custom_label_&lt;id&gt; |
+| `checkForDuplicates` | `boolean` | No | Let the API detect and report possible duplicates |
+
+checkForDuplicates asks the API to detect and report possible duplicates.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | Company id |
+| `name` | `string \| null` | No | Company name |
+| `description` | `string \| null` | No | Description |
+| `email` | `string \| null` | No | Email |
+| `web` | `string \| null` | No | Website |
+| `address_1` | `string \| null` | No | Address line 1 |
+| `city` | `string \| null` | No | City |
+| `state` | `string \| null` | No | State |
+| `postal_code` | `string \| null` | No | Postal code |
+| `country` | `string \| null` | No | Country |
+| `phone1` | `string \| null` | No | Primary phone |
+| `facebook_url` | `string \| null` | No | Facebook URL |
+| `linked_in_url` | `string \| null` | No | LinkedIn URL |
+| `twitter` | `string \| null` | No | Twitter username |
+| `custom_fields` | `Record<string, any> \| null` | No | Custom field values |
+| `user_id` | `number \| null` | No | Owning user id |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+
+
+---
+
+### delete
+
+`companies.delete`
+
+Delete a company
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pipelinecrm.api.companies.delete({ id: 77 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record id |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`companies.get`
+
+Read one company
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.companies.get({ id: 77 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | Company id |
+| `name` | `string \| null` | No | Company name |
+| `description` | `string \| null` | No | Description |
+| `email` | `string \| null` | No | Email |
+| `web` | `string \| null` | No | Website |
+| `address_1` | `string \| null` | No | Address line 1 |
+| `city` | `string \| null` | No | City |
+| `state` | `string \| null` | No | State |
+| `postal_code` | `string \| null` | No | Postal code |
+| `country` | `string \| null` | No | Country |
+| `phone1` | `string \| null` | No | Primary phone |
+| `facebook_url` | `string \| null` | No | Facebook URL |
+| `linked_in_url` | `string \| null` | No | LinkedIn URL |
+| `twitter` | `string \| null` | No | Twitter username |
+| `custom_fields` | `Record<string, any> \| null` | No | Custom field values |
+| `user_id` | `number \| null` | No | Owning user id |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+
+
+---
+
+### list
+
+`companies.list`
+
+List companies with conditions filters and paging
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.companies.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conditions` | `Record<string, string \| number \| boolean>` | No | Filter conditions as Pipeline CRM query parameters: each key is the full bracketed key (e.g. "conditions[deal_stage][]" or "conditions[deal_created][selection]") with its value; unknown keys are ignored by the API |
+| `sort` | `string` | No | Sort field; prefix - for descending |
+| `page` | `number` | No | Page number |
+| `perPage` | `number` | No | Records per page, at most 200 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | The records on this page |
+| `pagination` | `object` | Yes | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  email?: string | null,
+  web?: string | null,
+  address_1?: string | null,
+  city?: string | null,
+  state?: string | null,
+  postal_code?: string | null,
+  country?: string | null,
+  phone1?: string | null,
+  facebook_url?: string | null,
+  linked_in_url?: string | null,
+  twitter?: string | null,
+  custom_fields?: Record<string, any> | null,
+  user_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number | null,
+  per_page: number | null,
+  total: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPeople
+
+`companies.listPeople`
+
+List the people of a company
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.companies.listPeople({ id: 77 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | The records on this page |
+| `pagination` | `object` | Yes | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  id?: number | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  summary?: string | null,
+  phone?: string | null,
+  email?: string | null,
+  position?: string | null,
+  website?: string | null,
+  company_id?: number | null,
+  company_name?: string | null,
+  user_id?: number | null,
+  lead_status_id?: number | null,
+  lead_source_id?: number | null,
+  image_thumb_url?: string | null,
+  custom_fields?: Record<string, any> | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number | null,
+  per_page: number | null,
+  total: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`companies.update`
+
+Update a company
+
+**Risk:** `write`
+
+```ts
+await corsair.pipelinecrm.api.companies.update({ id: 77, phone1: "+1 555 0111" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Company id |
+| `name` | `string` | No | Company name |
+| `description` | `string` | No | Description |
+| `email` | `string` | No | Email |
+| `web` | `string` | No | Website |
+| `address1` | `string` | No | Address line 1 |
+| `address2` | `string` | No | Address line 2 |
+| `city` | `string` | No | City |
+| `state` | `string` | No | State |
+| `postalCode` | `string` | No | Postal code |
+| `country` | `string` | No | Country |
+| `phone1` | `string` | No | Primary phone |
+| `phone2` | `string` | No | Secondary phone |
+| `facebookUrl` | `string` | No | Facebook URL |
+| `linkedInUrl` | `string` | No | LinkedIn URL |
+| `twitter` | `string` | No | Twitter username |
+| `customFields` | `Record<string, any>` | No | Custom field values keyed by custom_label_&lt;id&gt; |
+| `deliverReassignmentEmail` | `boolean` | No | Email the new owner on reassignment |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | Company id |
+| `name` | `string \| null` | No | Company name |
+| `description` | `string \| null` | No | Description |
+| `email` | `string \| null` | No | Email |
+| `web` | `string \| null` | No | Website |
+| `address_1` | `string \| null` | No | Address line 1 |
+| `city` | `string \| null` | No | City |
+| `state` | `string \| null` | No | State |
+| `postal_code` | `string \| null` | No | Postal code |
+| `country` | `string \| null` | No | Country |
+| `phone1` | `string \| null` | No | Primary phone |
+| `facebook_url` | `string \| null` | No | Facebook URL |
+| `linked_in_url` | `string \| null` | No | LinkedIn URL |
+| `twitter` | `string \| null` | No | Twitter username |
+| `custom_fields` | `Record<string, any> \| null` | No | Custom field values |
+| `user_id` | `number \| null` | No | Owning user id |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+
+
+---
+
+## Deals
+
+### create
+
+`deals.create`
+
+Create a deal
+
+**Risk:** `write`
+
+```ts
+await corsair.pipelinecrm.api.deals.create({ name: "Acme renewal", value: 12000, dealStageId: 3, companyName: "Acme Corporation" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Deal name |
+| `summary` | `string` | No | Deal description |
+| `userId` | `number` | No | Owning user id |
+| `status` | `number` | No | Deal status id |
+| `expectedCloseDate` | `string` | No | Expected close date, YYYY-MM-DD |
+| `value` | `number \| string` | No | Deal value; a number or numeric string |
+| `primaryContactId` | `number` | No | Primary contact person id |
+| `personIds` | `number[]` | No | Associated person ids |
+| `sharedUserIds` | `number[]` | No | Collaborator user ids |
+| `companyId` | `number` | No | Company id |
+| `companyName` | `string` | No | Creates and links a company of this name when no id matches |
+| `probability` | `number` | No | Win probability 0-100; 0 or 100 closes the deal |
+| `dealStageId` | `number` | No | Deal stage id |
+| `dealLossReasonId` | `number` | No | Loss reason id |
+| `dealLossReasonNotes` | `string` | No | Loss reason notes |
+| `dealWonReasonId` | `number` | No | Won reason id |
+| `dealWonReasonNotes` | `string` | No | Won reason notes |
+| `dealSource` | `number` | No | Lead source id |
+| `tagIds` | `number[]` | No | Tag ids |
+| `customFields` | `Record<string, any>` | No | Custom field values keyed by custom_label_&lt;id&gt; |
+| `deliverAssignmentEmail` | `boolean` | No | Email the new owner when the deal is assigned to another user |
+
+probability 0 or 100 closes the deal; setting 1-99 on a closed deal reopens it. companyName creates and links a company when no id matches.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | Deal id |
+| `name` | `string \| null` | No | Deal name |
+| `summary` | `string \| null` | No | Deal description |
+| `user_id` | `number \| null` | No | Owning user id |
+| `status` | `number \| null` | No | Deal status id |
+| `expected_close_date` | `string \| null` | No | Expected close, YYYY-MM-DD |
+| `closed_time` | `string \| null` | No | Actual close date |
+| `is_archived` | `boolean \| null` | No | Archived flag |
+| `value` | `string \| null` | No | Deal value as a decimal string |
+| `primary_contact_id` | `number \| null` | No | Primary contact person id |
+| `person_ids` | `number[] \| null` | No | Associated person ids |
+| `shared_user_ids` | `number[] \| null` | No | Collaborator user ids |
+| `company_id` | `number \| null` | No | Company id |
+| `company_name` | `string \| null` | No | Company name |
+| `probability` | `number \| null` | No | Win probability, 0-100 |
+| `deal_stage_id` | `number \| null` | No | Deal stage id |
+| `deal_stage_name` | `string \| null` | No | Deal stage name |
+| `deal_loss_reason_id` | `number \| null` | No | Loss reason id |
+| `deal_loss_reason_notes` | `string \| null` | No | Loss reason notes |
+| `deal_won_reason_id` | `number \| null` | No | Won reason id |
+| `deal_won_reason_notes` | `string \| null` | No | Won reason notes |
+| `deal_source` | `number \| null` | No | Lead source id |
+| `currency` | `any \| null` | No | Currency record |
+| `custom_fields` | `Record<string, any> \| null` | No | Custom field values |
+| `tag_ids` | `number[] \| null` | No | Tag ids |
+| `owner` | `object \| null` | No | The owning user |
+| `next_task_name` | `string \| null` | No | Next task name |
+| `next_task_due` | `string \| null` | No | Next task due date |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`deals.delete`
+
+Delete a deal
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pipelinecrm.api.deals.delete({ id: 4521 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record id |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`deals.get`
+
+Read one deal
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.deals.get({ id: 4521 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | Deal id |
+| `name` | `string \| null` | No | Deal name |
+| `summary` | `string \| null` | No | Deal description |
+| `user_id` | `number \| null` | No | Owning user id |
+| `status` | `number \| null` | No | Deal status id |
+| `expected_close_date` | `string \| null` | No | Expected close, YYYY-MM-DD |
+| `closed_time` | `string \| null` | No | Actual close date |
+| `is_archived` | `boolean \| null` | No | Archived flag |
+| `value` | `string \| null` | No | Deal value as a decimal string |
+| `primary_contact_id` | `number \| null` | No | Primary contact person id |
+| `person_ids` | `number[] \| null` | No | Associated person ids |
+| `shared_user_ids` | `number[] \| null` | No | Collaborator user ids |
+| `company_id` | `number \| null` | No | Company id |
+| `company_name` | `string \| null` | No | Company name |
+| `probability` | `number \| null` | No | Win probability, 0-100 |
+| `deal_stage_id` | `number \| null` | No | Deal stage id |
+| `deal_stage_name` | `string \| null` | No | Deal stage name |
+| `deal_loss_reason_id` | `number \| null` | No | Loss reason id |
+| `deal_loss_reason_notes` | `string \| null` | No | Loss reason notes |
+| `deal_won_reason_id` | `number \| null` | No | Won reason id |
+| `deal_won_reason_notes` | `string \| null` | No | Won reason notes |
+| `deal_source` | `number \| null` | No | Lead source id |
+| `currency` | `any \| null` | No | Currency record |
+| `custom_fields` | `Record<string, any> \| null` | No | Custom field values |
+| `tag_ids` | `number[] \| null` | No | Tag ids |
+| `owner` | `object \| null` | No | The owning user |
+| `next_task_name` | `string \| null` | No | Next task name |
+| `next_task_due` | `string \| null` | No | Next task due date |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`deals.list`
+
+List deals with conditions filters and paging
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.deals.list({ conditions: { "conditions[deal_stage][]": 3 }, sort: "-deal_value", perPage: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conditions` | `Record<string, string \| number \| boolean>` | No | Filter conditions as Pipeline CRM query parameters: each key is the full bracketed key (e.g. "conditions[deal_stage][]" or "conditions[deal_created][selection]") with its value; unknown keys are ignored by the API |
+| `sort` | `string` | No | Sort field; prefix - for descending |
+| `page` | `number` | No | Page number |
+| `perPage` | `number` | No | Records per page, at most 200 |
+
+conditions keys are the documented DealConditions (deal_stage, deal_owner, deal_value ranges, date selections); the API ignores unknown keys.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | The records on this page |
+| `pagination` | `object` | Yes | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  summary?: string | null,
+  user_id?: number | null,
+  status?: number | null,
+  expected_close_date?: string | null,
+  closed_time?: string | null,
+  is_archived?: boolean | null,
+  value?: string | null,
+  primary_contact_id?: number | null,
+  person_ids?: number[] | null,
+  shared_user_ids?: number[] | null,
+  company_id?: number | null,
+  company_name?: string | null,
+  probability?: number | null,
+  deal_stage_id?: number | null,
+  deal_stage_name?: string | null,
+  deal_loss_reason_id?: number | null,
+  deal_loss_reason_notes?: string | null,
+  deal_won_reason_id?: number | null,
+  deal_won_reason_notes?: string | null,
+  deal_source?: number | null,
+  currency?: any | null,
+  custom_fields?: Record<string, any> | null,
+  tag_ids?: number[] | null,
+  owner?: {
+    id?: number | null,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  next_task_name?: string | null,
+  next_task_due?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number | null,
+  per_page: number | null,
+  total: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listNotes
+
+`deals.listNotes`
+
+List the activities of a deal
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.deals.listNotes({ id: 4521 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | The records on this page |
+| `pagination` | `object` | Yes | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  content?: string | null,
+  user_id?: number | null,
+  deal_id?: number | null,
+  company_id?: number | null,
+  person_id?: number | null,
+  milestone_id?: number | null,
+  note_category_id?: number | null,
+  notify_user_ids?: number[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number | null,
+  per_page: number | null,
+  total: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### totalsByStage
+
+`deals.totalsByStage`
+
+Deal count and value per stage
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.deals.totalsByStage({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  deal_stage_id?: number | null,
+  deal_stage_name?: string | null,
+  count?: number | null,
+  total?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`deals.update`
+
+Update a deal
+
+**Risk:** `write`
+
+```ts
+await corsair.pipelinecrm.api.deals.update({ id: 4521, name: "Renamed" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Deal id |
+| `name` | `string` | No | New deal name |
+| `summary` | `string` | No | New description |
+| `userId` | `number` | No | New owning user id |
+| `status` | `number` | No | New deal status id |
+| `expectedCloseDate` | `string` | No | New expected close date, YYYY-MM-DD |
+| `closedTime` | `string` | No | Actual close date, YYYY-MM-DD |
+| `isArchived` | `boolean` | No | Archived flag |
+| `value` | `number \| string` | No | Deal value; a number or numeric string |
+| `primaryContactId` | `number` | No | Primary contact person id |
+| `personIds` | `number[]` | No | Associated person ids |
+| `sharedUserIds` | `number[]` | No | Collaborator user ids |
+| `companyId` | `number` | No | Company id |
+| `companyName` | `string` | No | Creates and links a company of this name |
+| `probability` | `number` | No | Win probability; 0 or 100 closes, 1-99 reopens |
+| `dealStageId` | `number` | No | Deal stage id |
+| `dealLossReasonId` | `number` | No | Loss reason id |
+| `dealLossReasonNotes` | `string` | No | Loss reason notes |
+| `dealWonReasonId` | `number` | No | Won reason id |
+| `dealWonReasonNotes` | `string` | No | Won reason notes |
+| `dealSource` | `number` | No | Lead source id |
+| `tagIds` | `number[]` | No | Tag ids |
+| `customFields` | `Record<string, any>` | No | Custom field values keyed by custom_label_&lt;id&gt; |
+| `deliverReassignmentEmail` | `boolean` | No | Email the new owner on reassignment |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | Deal id |
+| `name` | `string \| null` | No | Deal name |
+| `summary` | `string \| null` | No | Deal description |
+| `user_id` | `number \| null` | No | Owning user id |
+| `status` | `number \| null` | No | Deal status id |
+| `expected_close_date` | `string \| null` | No | Expected close, YYYY-MM-DD |
+| `closed_time` | `string \| null` | No | Actual close date |
+| `is_archived` | `boolean \| null` | No | Archived flag |
+| `value` | `string \| null` | No | Deal value as a decimal string |
+| `primary_contact_id` | `number \| null` | No | Primary contact person id |
+| `person_ids` | `number[] \| null` | No | Associated person ids |
+| `shared_user_ids` | `number[] \| null` | No | Collaborator user ids |
+| `company_id` | `number \| null` | No | Company id |
+| `company_name` | `string \| null` | No | Company name |
+| `probability` | `number \| null` | No | Win probability, 0-100 |
+| `deal_stage_id` | `number \| null` | No | Deal stage id |
+| `deal_stage_name` | `string \| null` | No | Deal stage name |
+| `deal_loss_reason_id` | `number \| null` | No | Loss reason id |
+| `deal_loss_reason_notes` | `string \| null` | No | Loss reason notes |
+| `deal_won_reason_id` | `number \| null` | No | Won reason id |
+| `deal_won_reason_notes` | `string \| null` | No | Won reason notes |
+| `deal_source` | `number \| null` | No | Lead source id |
+| `currency` | `any \| null` | No | Currency record |
+| `custom_fields` | `Record<string, any> \| null` | No | Custom field values |
+| `tag_ids` | `number[] \| null` | No | Tag ids |
+| `owner` | `object \| null` | No | The owning user |
+| `next_task_name` | `string \| null` | No | Next task name |
+| `next_task_due` | `string \| null` | No | Next task due date |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+<AccordionGroup>
+<Accordion title="owner full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  email?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Notes
+
+### create
+
+`notes.create`
+
+Create an activity on a record
+
+**Risk:** `write`
+
+```ts
+await corsair.pipelinecrm.api.notes.create({ content: "Discussed renewal terms.", dealId: 4521 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | No | Title, if any |
+| `content` | `string` | No | Note content |
+| `userId` | `number` | No | Owning user id |
+| `dealId` | `number` | No | Linked deal id |
+| `companyId` | `number` | No | Linked company id |
+| `personId` | `number` | No | Linked person id |
+| `noteCategoryId` | `number` | No | Category id |
+| `notifyUserIds` | `number[]` | No | Users emailed on new comments |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | Note id |
+| `title` | `string \| null` | No | Title, if any |
+| `content` | `string \| null` | No | Content |
+| `user_id` | `number \| null` | No | Owning user id |
+| `deal_id` | `number \| null` | No | Linked deal id |
+| `company_id` | `number \| null` | No | Linked company id |
+| `person_id` | `number \| null` | No | Linked person id |
+| `milestone_id` | `number \| null` | No | Milestone id |
+| `note_category_id` | `number \| null` | No | Category id |
+| `notify_user_ids` | `number[] \| null` | No | Users emailed on new comments |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+
+
+---
+
+### delete
+
+`notes.delete`
+
+Delete an activity
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pipelinecrm.api.notes.delete({ id: 5001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record id |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`notes.get`
+
+Read one activity
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.notes.get({ id: 5001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | Note id |
+| `title` | `string \| null` | No | Title, if any |
+| `content` | `string \| null` | No | Content |
+| `user_id` | `number \| null` | No | Owning user id |
+| `deal_id` | `number \| null` | No | Linked deal id |
+| `company_id` | `number \| null` | No | Linked company id |
+| `person_id` | `number \| null` | No | Linked person id |
+| `milestone_id` | `number \| null` | No | Milestone id |
+| `note_category_id` | `number \| null` | No | Category id |
+| `notify_user_ids` | `number[] \| null` | No | Users emailed on new comments |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+
+
+---
+
+### list
+
+`notes.list`
+
+List activities filtered by deal, company or person
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.notes.list({ conditions: { "conditions[deal_id]": 4521 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conditions` | `Record<string, string \| number \| boolean>` | No | Filter conditions; one of conditions[deal_id], conditions[company_id] or conditions[person_id] is required by the API |
+| `page` | `number` | No | Page number |
+| `perPage` | `number` | No | Records per page, at most 200 |
+
+conditions must carry one of conditions[deal_id], conditions[company_id] or conditions[person_id].
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | The records on this page |
+| `pagination` | `object` | Yes | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  content?: string | null,
+  user_id?: number | null,
+  deal_id?: number | null,
+  company_id?: number | null,
+  person_id?: number | null,
+  milestone_id?: number | null,
+  note_category_id?: number | null,
+  notify_user_ids?: number[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number | null,
+  per_page: number | null,
+  total: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`notes.update`
+
+Update an activity
+
+**Risk:** `write`
+
+```ts
+await corsair.pipelinecrm.api.notes.update({ id: 5001, title: "New title" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Note id |
+| `title` | `string` | No | Title, if any |
+| `content` | `string` | No | Note content |
+| `userId` | `number` | No | Owning user id |
+| `noteCategoryId` | `number` | No | Category id |
+| `notifyUserIds` | `number[]` | No | Users emailed on new comments |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | Note id |
+| `title` | `string \| null` | No | Title, if any |
+| `content` | `string \| null` | No | Content |
+| `user_id` | `number \| null` | No | Owning user id |
+| `deal_id` | `number \| null` | No | Linked deal id |
+| `company_id` | `number \| null` | No | Linked company id |
+| `person_id` | `number \| null` | No | Linked person id |
+| `milestone_id` | `number \| null` | No | Milestone id |
+| `note_category_id` | `number \| null` | No | Category id |
+| `notify_user_ids` | `number[] \| null` | No | Users emailed on new comments |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+
+
+---
+
+## People
+
+### autocomplete
+
+`people.autocomplete`
+
+Search people by text for autocomplete
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.people.autocomplete({ q: "john" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Search text |
+| `companyId` | `number` | No | Restrict to this company |
+| `dealId` | `number` | No | Restrict to this deal |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  summary?: string | null,
+  phone?: string | null,
+  email?: string | null,
+  position?: string | null,
+  website?: string | null,
+  company_id?: number | null,
+  company_name?: string | null,
+  user_id?: number | null,
+  lead_status_id?: number | null,
+  lead_source_id?: number | null,
+  image_thumb_url?: string | null,
+  custom_fields?: Record<string, any> | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`people.create`
+
+Create a person
+
+**Risk:** `write`
+
+```ts
+await corsair.pipelinecrm.api.people.create({ fullName: "John Doe", email: "john@acme.com", companyName: "Acme Corporation" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstName` | `string` | No | First name |
+| `lastName` | `string` | No | Last name |
+| `fullName` | `string` | No | Full name; splits on whitespace into first and last |
+| `summary` | `string` | No | Summary or notes |
+| `phone` | `string` | No | Primary phone |
+| `homePhone` | `string` | No | Home phone |
+| `mobile` | `string` | No | Mobile phone |
+| `position` | `string` | No | Professional position |
+| `website` | `string` | No | Website URL |
+| `email` | `string` | No | Primary email |
+| `email2` | `string` | No | Secondary email |
+| `companyId` | `number` | No | Company id |
+| `companyName` | `string` | No | Creates and links a company of this name when no id matches |
+| `userId` | `number` | No | Owning user id |
+| `leadStatusId` | `number` | No | Lead status id |
+| `leadSourceId` | `number` | No | Lead source id |
+| `tagIds` | `number[]` | No | Predefined contact tag ids |
+| `customFields` | `Record<string, any>` | No | Custom field values keyed by custom_label_&lt;id&gt; |
+
+fullName splits on whitespace into first_name and last_name; companyName creates and links a company when none matches.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | Person id |
+| `first_name` | `string \| null` | No | First name |
+| `last_name` | `string \| null` | No | Last name |
+| `full_name` | `string \| null` | No | Full name |
+| `summary` | `string \| null` | No | Summary or notes |
+| `phone` | `string \| null` | No | Primary phone |
+| `email` | `string \| null` | No | Primary email |
+| `position` | `string \| null` | No | Professional position |
+| `website` | `string \| null` | No | Website URL |
+| `company_id` | `number \| null` | No | Company id |
+| `company_name` | `string \| null` | No | Company name |
+| `user_id` | `number \| null` | No | Owning user id |
+| `lead_status_id` | `number \| null` | No | Lead status id |
+| `lead_source_id` | `number \| null` | No | Lead source id |
+| `image_thumb_url` | `string \| null` | No | Avatar URL |
+| `custom_fields` | `Record<string, any> \| null` | No | Custom field values |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+
+
+---
+
+### delete
+
+`people.delete`
+
+Delete a person
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pipelinecrm.api.people.delete({ id: 900 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record id |
+
+
+
+**Output:** `any`
+
+
+---
+
+### get
+
+`people.get`
+
+Read one person
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.people.get({ id: 900 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | Person id |
+| `first_name` | `string \| null` | No | First name |
+| `last_name` | `string \| null` | No | Last name |
+| `full_name` | `string \| null` | No | Full name |
+| `summary` | `string \| null` | No | Summary or notes |
+| `phone` | `string \| null` | No | Primary phone |
+| `email` | `string \| null` | No | Primary email |
+| `position` | `string \| null` | No | Professional position |
+| `website` | `string \| null` | No | Website URL |
+| `company_id` | `number \| null` | No | Company id |
+| `company_name` | `string \| null` | No | Company name |
+| `user_id` | `number \| null` | No | Owning user id |
+| `lead_status_id` | `number \| null` | No | Lead status id |
+| `lead_source_id` | `number \| null` | No | Lead source id |
+| `image_thumb_url` | `string \| null` | No | Avatar URL |
+| `custom_fields` | `Record<string, any> \| null` | No | Custom field values |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+
+
+---
+
+### list
+
+`people.list`
+
+List people with conditions filters and paging
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.people.list({ conditions: { "conditions[lead_status_id]": 1 }, perPage: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conditions` | `Record<string, string \| number \| boolean>` | No | Filter conditions as Pipeline CRM query parameters: each key is the full bracketed key (e.g. "conditions[deal_stage][]" or "conditions[deal_created][selection]") with its value; unknown keys are ignored by the API |
+| `sort` | `string` | No | Sort field; prefix - for descending |
+| `page` | `number` | No | Page number |
+| `perPage` | `number` | No | Records per page, at most 200 |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | The records on this page |
+| `pagination` | `object` | Yes | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  id?: number | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  full_name?: string | null,
+  summary?: string | null,
+  phone?: string | null,
+  email?: string | null,
+  position?: string | null,
+  website?: string | null,
+  company_id?: number | null,
+  company_name?: string | null,
+  user_id?: number | null,
+  lead_status_id?: number | null,
+  lead_source_id?: number | null,
+  image_thumb_url?: string | null,
+  custom_fields?: Record<string, any> | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number | null,
+  per_page: number | null,
+  total: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listDeals
+
+`people.listDeals`
+
+List the deals of a person
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.people.listDeals({ id: 900 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | The records on this page |
+| `pagination` | `object` | Yes | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  summary?: string | null,
+  user_id?: number | null,
+  status?: number | null,
+  expected_close_date?: string | null,
+  closed_time?: string | null,
+  is_archived?: boolean | null,
+  value?: string | null,
+  primary_contact_id?: number | null,
+  person_ids?: number[] | null,
+  shared_user_ids?: number[] | null,
+  company_id?: number | null,
+  company_name?: string | null,
+  probability?: number | null,
+  deal_stage_id?: number | null,
+  deal_stage_name?: string | null,
+  deal_loss_reason_id?: number | null,
+  deal_loss_reason_notes?: string | null,
+  deal_won_reason_id?: number | null,
+  deal_won_reason_notes?: string | null,
+  deal_source?: number | null,
+  currency?: any | null,
+  custom_fields?: Record<string, any> | null,
+  tag_ids?: number[] | null,
+  owner?: {
+    id?: number | null,
+    name?: string | null,
+    email?: string | null
+  } | null,
+  next_task_name?: string | null,
+  next_task_due?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number | null,
+  per_page: number | null,
+  total: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listNotes
+
+`people.listNotes`
+
+List the activities of a person
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.people.listNotes({ id: 900 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | The records on this page |
+| `pagination` | `object` | Yes | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  id?: number | null,
+  title?: string | null,
+  content?: string | null,
+  user_id?: number | null,
+  deal_id?: number | null,
+  company_id?: number | null,
+  person_id?: number | null,
+  milestone_id?: number | null,
+  note_category_id?: number | null,
+  notify_user_ids?: number[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number | null,
+  per_page: number | null,
+  total: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`people.update`
+
+Update a person
+
+**Risk:** `write`
+
+```ts
+await corsair.pipelinecrm.api.people.update({ id: 900, position: "CTO" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | Person id |
+| `firstName` | `string` | No | First name |
+| `lastName` | `string` | No | Last name |
+| `fullName` | `string` | No | Full name; splits on whitespace |
+| `summary` | `string` | No | Summary or notes |
+| `phone` | `string` | No | Primary phone |
+| `homePhone` | `string` | No | Home phone |
+| `mobile` | `string` | No | Mobile phone |
+| `position` | `string` | No | Professional position |
+| `website` | `string` | No | Website URL |
+| `email` | `string` | No | Primary email |
+| `email2` | `string` | No | Secondary email |
+| `companyId` | `number` | No | Company id |
+| `companyName` | `string` | No | Creates and links a company of this name |
+| `userId` | `number` | No | Owning user id |
+| `leadStatusId` | `number` | No | Lead status id |
+| `leadSourceId` | `number` | No | Lead source id |
+| `tagIds` | `number[]` | No | Predefined contact tag ids |
+| `customFields` | `Record<string, any>` | No | Custom field values keyed by custom_label_&lt;id&gt; |
+| `deliverReassignmentEmail` | `boolean` | No | Email the new owner on reassignment |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | Person id |
+| `first_name` | `string \| null` | No | First name |
+| `last_name` | `string \| null` | No | Last name |
+| `full_name` | `string \| null` | No | Full name |
+| `summary` | `string \| null` | No | Summary or notes |
+| `phone` | `string \| null` | No | Primary phone |
+| `email` | `string \| null` | No | Primary email |
+| `position` | `string \| null` | No | Professional position |
+| `website` | `string \| null` | No | Website URL |
+| `company_id` | `number \| null` | No | Company id |
+| `company_name` | `string \| null` | No | Company name |
+| `user_id` | `number \| null` | No | Owning user id |
+| `lead_status_id` | `number \| null` | No | Lead status id |
+| `lead_source_id` | `number \| null` | No | Lead source id |
+| `image_thumb_url` | `string \| null` | No | Avatar URL |
+| `custom_fields` | `Record<string, any> \| null` | No | Custom field values |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Read one visible user
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.users.get({ id: 13 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The record id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | User id |
+| `email` | `string \| null` | No | Email |
+| `name` | `string \| null` | No | Display name |
+| `first_name` | `string \| null` | No | First name |
+| `last_name` | `string \| null` | No | Last name |
+| `work_phone` | `string \| null` | No | Work phone |
+| `mobile` | `string \| null` | No | Mobile phone |
+| `admin` | `boolean \| null` | No | Whether the user is an admin |
+| `user_level` | `any \| null` | No | Role level record |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+
+
+---
+
+### list
+
+`users.list`
+
+List the visible users
+
+**Risk:** `read`
+
+```ts
+await corsair.pipelinecrm.api.users.list({ conditions: { "conditions[admin]": "true" } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conditions` | `Record<string, string \| number \| boolean>` | No | Filter conditions: "conditions[email]" for an exact email match, "conditions[admin]" for admins only, "conditions[including_inactive]" to include deactivated users |
+| `page` | `number` | No | Page number |
+| `perPage` | `number` | No | Records per page, at most 200 |
+
+Returns the users this credential can see; admin-only views live under /admin/users.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | The records on this page |
+| `pagination` | `object` | Yes | Pagination metadata |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  id?: number | null,
+  email?: string | null,
+  name?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  work_phone?: string | null,
+  mobile?: string | null,
+  admin?: boolean | null,
+  user_level?: any | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  page: number | null,
+  per_page: number | null,
+  total: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
