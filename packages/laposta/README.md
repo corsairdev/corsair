@@ -102,6 +102,7 @@ All routes use `https://api.laposta.nl/v2`. The method and path below match the 
 
 - Single-resource writes use `application/x-www-form-urlencoded`, including documented bracketed nested fields such as `custom_fields[name]` and `from[email]`. `lists.sync_members` uses JSON as Laposta requires. `fields.update` sends `options_full` as JSON as required by its reference.
 - `members.list`, `campaigns.list`, and `reports.list` support `limit` (default 100, maximum 1000) and `cursor`; member and campaign history also supports cursor pagination. Send `pagination.next_cursor` back unchanged with the same filters and order.
+- Empty arrays in `members.update` custom fields are encoded as a present form key with no value, which Laposta uses to clear multiselect values.
 - Laposta documents 30 requests per minute for free accounts and 120 for paid accounts. A 429 includes `Retry-After`; Corsair's HTTP transport honors it and the plugin's error handler adds no second retry loop.
 - `members.create` requires `ip` and may send a double-opt-in confirmation email. It is marked destructive.
 - `lists.sync_members` is a paid-account feature. Its `unsubscribe_excluded` action unsubscribes all members omitted from the payload; verify the full list before using it.

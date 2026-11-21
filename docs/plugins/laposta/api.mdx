@@ -2142,6 +2142,8 @@ await corsair.laposta.api.members.update({ list_id: 'list-1', member_id: 'member
 | `state` | `active \| unsubscribed` | No | — |
 | `custom_fields` | `Record<string, any>` | No | — |
 
+Pass an empty array for a multiselect custom field to clear its current value. Laposta requires the field to be present in the form body with no assigned value.
+
 
 
 **Output**

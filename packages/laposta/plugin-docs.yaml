@@ -22,6 +22,7 @@ apiNotes:
   lists.sync_members: 'This bulk endpoint is available only to paid accounts and requires JSON. The `unsubscribe_excluded` action unsubscribes every current member omitted from the submitted list; double-check the complete member set before using it.'
   members.create: 'The `ip` is mandatory. On a double-opt-in list Laposta can send a confirmation email; `options.ignore_doubleoptin` disables that confirmation behavior.'
   members.list: 'Use `limit` (1–1000) and `cursor` to page. Pass `pagination.next_cursor` unchanged and retain the other filters. A plus sign in an email used as `member_id` is encoded as `%252B` in the path.'
+  members.update: 'Pass an empty array for a multiselect custom field to clear its current value. Laposta requires the field to be present in the form body with no assigned value.'
   members.history: 'History uses cursor pagination with a default limit of 100 and maximum of 1000. Keep the same filters and order when sending the next cursor.'
   fields.create: 'The `required`, `in_form`, and `in_list` booleans are mandatory. Select fields need at least one option.'
   fields.update: 'Laposta requires `options_full` to be sent as JSON. Changing a field datatype removes its stored values.'

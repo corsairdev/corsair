@@ -228,6 +228,20 @@ const endpointCases: EndpointCase[] = [
 		form: { state: 'unsubscribed', 'custom_fields[city]': 'Utrecht' },
 	},
 	{
+		name: 'members.update clears an empty custom-field selection',
+		method: 'POST',
+		path: '/v2/member/member-1',
+		response: { member: { ...member, custom_fields: { interests: [] } } },
+		run: () =>
+			api.members.update({
+				list_id: 'list-1',
+				member_id: 'member-1',
+				custom_fields: { interests: [] },
+			}),
+		query: { list_id: 'list-1' },
+		form: { 'custom_fields[interests]': '' },
+	},
+	{
 		name: 'members.delete',
 		method: 'DELETE',
 		path: '/v2/member/member-1',

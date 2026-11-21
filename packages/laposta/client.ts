@@ -100,6 +100,11 @@ function appendFormValue(
 		return;
 	}
 	if (Array.isArray(value)) {
+		if (value.length === 0) {
+			// Laposta treats a present custom-field key with no value as a clear operation.
+			params.append(key, '');
+			return;
+		}
 		for (const item of value) appendFormValue(params, `${key}[]`, item);
 		return;
 	}
