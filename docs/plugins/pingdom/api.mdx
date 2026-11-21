@@ -906,7 +906,7 @@ Create a maintenance window
 **Risk:** `write`
 
 ```ts
-await corsair.pingdom.api.maintenance.create({ description: "Deploy window", from: 1700000000, to: 1700003600, recurrenceType: "week", repeatEvery: 1, uptimeIds: [100] });
+await corsair.pingdom.api.maintenance.create({ description: "Deploy window", from: 2000000000, to: 2000003600, recurrenceType: "week", repeatEvery: 1, uptimeIds: [100] });
 ```
 
 **Input**
@@ -922,7 +922,7 @@ await corsair.pingdom.api.maintenance.create({ description: "Deploy window", fro
 | `uptimeIds` | `number[]` | No | Uptime check ids the window covers (sent as uptimeids) |
 | `tmsIds` | `number[]` | No | Transaction check ids the window covers (sent as tmsids) |
 
-recurrence is none, daily, weekly or monthly; from and to must be in the future (use 1 for now); effectiveTo 0 means the recurrence never stops.
+recurrenceType is none, day, week or month, with repeatEvery; from and to must be later than the request time; effectiveTo 0 means the recurrence never stops.
 
 
 
@@ -1289,7 +1289,7 @@ Move a maintenance occurrence
 **Risk:** `write`
 
 ```ts
-await corsair.pingdom.api.occurrences.update({ id: 3, from: 1700000000, to: 1700003600 });
+await corsair.pingdom.api.occurrences.update({ id: 3, from: 2000000000, to: 2000003600 });
 ```
 
 **Input**
