@@ -150,9 +150,9 @@ describe('output parsing', () => {
 
 		respond(summaryHoursOfDay);
 		const hod = (await invoke(Summaries.hoursOfDay, { checkId: 100 })) as {
-			summary?: { hours?: unknown[] };
+			hoursofday?: unknown[];
 		};
-		expect(hod.summary?.hours).toHaveLength(1);
+		expect(hod.hoursofday).toHaveLength(1);
 
 		respond(summaryOutage);
 		const outage = (await invoke(Summaries.outage, { checkId: 100 })) as {
@@ -169,9 +169,9 @@ describe('output parsing', () => {
 
 		respond(summaryProbes);
 		const sp = (await invoke(Summaries.probes, { checkId: 100 })) as {
-			summary?: { probes?: unknown[] };
+			probes?: number[];
 		};
-		expect(sp.summary?.probes).toHaveLength(1);
+		expect(sp.probes).toEqual([33, 34]);
 	});
 
 	it('parses actions, credits, probes and single check', async () => {
@@ -196,6 +196,7 @@ describe('output parsing', () => {
 		respond(singleResult);
 		const single = (await invoke(Tools.runSingle, {
 			host: 'example.com',
+			type: 'http',
 		})) as { result?: { status?: string } };
 		expect(single.result?.status).toBe('up');
 	});

@@ -47,7 +47,7 @@ export const checkDetail = {
 		created: 1297446423,
 		paused: false,
 		resolution: 5,
-		send_notification_when_down: 3,
+		sendnotificationwhendown: 3,
 		notify_again_every: 0,
 		notify_when_backup: true,
 		userids: [111250],
@@ -110,10 +110,9 @@ export const summaryAverage = {
 	},
 };
 
+// Live shape (11-21): a top-level hoursofday array.
 export const summaryHoursOfDay = {
-	summary: {
-		hours: [{ hour: 0, avgresponse: 350 }],
-	},
+	hoursofday: [{ hour: 0, avgresponse: 350 }],
 };
 
 export const summaryOutage = {
@@ -129,10 +128,9 @@ export const summaryPerformance = {
 	},
 };
 
+// Live shape (11-21): a top-level array of probe ids.
 export const summaryProbes = {
-	summary: {
-		probes: [{ probeid: 33, tests: 4757 }],
-	},
+	probes: [33, 34],
 };
 
 export const action = {

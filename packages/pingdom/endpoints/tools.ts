@@ -19,7 +19,7 @@ export const listActions: PingdomEndpoints['actionsList'] = (ctx, input) =>
 		({ checkId, from, to, limit, offset }) => ({
 			method: 'GET',
 			path: `${V31}/actions`,
-			query: { checkid: checkId, from, to, limit, offset },
+			query: { checkids: checkId, from, to, limit, offset },
 		}),
 		{ log: (_, page) => ({ count: page.actions.alerts.length }) },
 	);
@@ -75,17 +75,11 @@ export const runSingle: PingdomEndpoints['singleRun'] = (ctx, input) =>
 			output: Outputs.singleRun,
 		},
 		input,
-		({ host, publicName, resolution, integrationIds, userIds, teamIds }) => ({
+		({ host, type, probeId, ipv6, typeSettings }) => ({
 			method: 'GET',
 			path: `${V31}/single`,
-			query: {
-				host,
-				publicname: publicName,
-				resolution,
-				integrationids: integrationIds?.join(','),
-				userids: userIds?.join(','),
-				teamids: teamIds?.join(','),
-			},
+			// The documented query is host + type plus the type's own fields.
+			query: { ...typeSettings, host, type, probeid: probeId, ipv6 },
 		}),
 		{ log: (_, single) => ({ status: single.result.status ?? undefined }) },
 	);

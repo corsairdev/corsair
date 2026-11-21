@@ -25,6 +25,8 @@ import {
 	resultsList,
 	singleResult,
 	summaryAverage,
+	summaryHoursOfDay,
+	summaryProbes,
 	teamsList,
 } from './test-fixtures';
 
@@ -222,7 +224,7 @@ describe('results and summaries', () => {
 			query: { bycountry: 'true', includeuptime: 'true' },
 		});
 
-		respond({ summary: {} });
+		respond(summaryHoursOfDay);
 		await invoke(Summaries.hoursOfDay, { checkId: 100 });
 		expectCall({ path: '/api/3.1/summary.hoursofday/100' });
 
@@ -237,7 +239,7 @@ describe('results and summaries', () => {
 			query: { resolution: 'week' },
 		});
 
-		respond({ summary: {} });
+		respond(summaryProbes);
 		await invoke(Summaries.probes, { checkId: 100 });
 		expectCall({ path: '/api/3.1/summary.probes/100' });
 	});
@@ -249,7 +251,7 @@ describe('tools', () => {
 		await invoke(Tools.listActions, { checkId: 100 });
 		expectCall({
 			path: '/api/3.1/actions',
-			query: { checkid: '100' },
+			query: { checkids: '100' },
 		});
 	});
 
@@ -274,10 +276,19 @@ describe('tools', () => {
 
 	it('single sends the host', async () => {
 		respond(singleResult);
-		await invoke(Tools.runSingle, { host: 'example.com' });
+		await invoke(Tools.runSingle, {
+			host: 'example.com',
+			type: 'http',
+			typeSettings: { encryption: true, url: '/' },
+		});
 		expectCall({
 			path: '/api/3.1/single',
-			query: { host: 'example.com' },
+			query: {
+				host: 'example.com',
+				type: 'http',
+				encryption: 'true',
+				url: '/',
+			},
 		});
 	});
 });

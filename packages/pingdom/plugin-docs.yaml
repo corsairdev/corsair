@@ -19,9 +19,9 @@ overviewNote: >
   checks.updateMulti pauses or re-times every check at once.
   tools.runSingle performs a one-off test without creating a check.
 
-  Maintenance windows silence alerts for chosen checks, teams or contacts;
-  recurrence is none, daily, weekly or monthly, and only future from/to
-  values are allowed (use 1 for the current timestamp). Deleting checks,
+  Maintenance windows silence alerts for the uptime (uptimeIds) and
+  transaction (tmsIds) checks they cover; recurrenceType is none, day, week
+  or month with repeatEvery, and from/to must be in the future. Deleting checks,
   teams, contacts or maintenance windows cannot be undone.
 
   The transaction-check (/tms) group and traceroute are documented by
@@ -80,7 +80,7 @@ apiExamples:
   tools.getReference:
     call: '{}'
   tools.runSingle:
-    call: '{ host: "example.com" }'
+    call: '{ host: "example.com", type: "http", typeSettings: { encryption: true, url: "/" } }'
   maintenance.list:
     call: '{}'
   maintenance.create:

@@ -58,15 +58,12 @@ export const CheckDetailSchema = z
 		// unknown: the API answers a boolean, older checks have sent 0/1.
 		paused: z.unknown().nullish().describe('Pause state'),
 		resolution: z.number().nullish().describe('Test interval in minutes'),
-		send_notification_when_down: z
+		sendnotificationwhendown: z
 			.number()
 			.nullish()
 			.describe('Alerts after N failures'),
-		notify_again_every: z
-			.number()
-			.nullish()
-			.describe('Re-notification interval'),
-		notify_when_backup: z.boolean().nullish().describe('Alert on recovery'),
+		notifyagainevery: z.number().nullish().describe('Re-notification interval'),
+		notifywhenbackup: z.boolean().nullish().describe('Alert on recovery'),
 		userids: z.array(z.number()).nullish().describe('Assigned user ids'),
 		teamids: z.array(z.number()).nullish().describe('Assigned team ids'),
 		integrationids: z
@@ -595,15 +592,19 @@ export const SummaryAverageOutputSchema = z
 
 export const SummaryHoursOfDayOutputSchema = z
 	.object({
-		summary: z
-			.object({
-				hours: z
-					// unknown: provider-defined entries the reference does not type.
-					.array(z.unknown())
-					.nullish()
-					.describe('Per-hour response time entries'),
-			})
-			.loose(),
+		hoursofday: z
+			.array(
+				z
+					.object({
+						hour: z.number().nullish().describe('Hour of day, 0-23'),
+						avgresponse: z
+							.number()
+							.nullish()
+							.describe('Average response time in ms'),
+					})
+					.loose(),
+			)
+			.describe('Per-hour average response times'),
 	})
 	.loose()
 	.describe('The per-hour response time summary');
@@ -668,18 +669,12 @@ export const SummaryPerformanceOutputSchema = z
 
 export const SummaryProbesOutputSchema = z
 	.object({
-		summary: z
-			.object({
-				probes: z
-					// unknown: provider-defined entries the reference does not type.
-					.array(z.unknown())
-					.nullish()
-					.describe('Per-probe test counts'),
-			})
-			.loose(),
+		probes: z
+			.array(z.number())
+			.describe('Ids of the probes that tested the check in the period'),
 	})
 	.loose()
-	.describe('The per-probe summary');
+	.describe('The probes that tested the check');
 
 // ── actions, credits, probes, reference, single ────────────────────────────
 
@@ -749,23 +744,33 @@ export const ReferenceOutputSchema = z
 export const SingleRunInputSchema = z
 	.object({
 		host: z.string().min(1).describe('Target host to test'),
-		publicName: z
-			.string()
+		type: z
+			.enum([
+				'http',
+				'httpcustom',
+				'tcp',
+				'ping',
+				'dns',
+				'udp',
+				'smtp',
+				'pop3',
+				'imap',
+			])
+			.describe('Type of test'),
+		probeId: z
+			.number()
+			.int()
 			.optional()
-			.describe('Name shown on the public status page'),
-		resolution: z
-			.enum(['1', '5', '15', '30', '60'])
+			.describe('Run from this probe (sent as probeid)'),
+		ipv6: z.boolean().optional().describe('Use IPv6 instead of IPv4'),
+		typeSettings: z
+			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
 			.optional()
-			.transform((v) => (v === undefined ? undefined : Number(v)))
-			.describe('Test interval for the created check in minutes'),
-		integrationIds: z
-			.array(z.number().int())
-			.optional()
-			.describe('Integration ids to alert'),
-		userIds: z.array(z.number().int()).optional().describe('User ids to alert'),
-		teamIds: z.array(z.number().int()).optional().describe('Team ids to alert'),
+			.describe(
+				'Type-specific query fields, e.g. http: url, encryption, port, shouldcontain, verify_certificate; dns: nameserver, expectedip',
+			),
 	})
-	.describe('Input for performing a single check');
+	.describe('Input for performing a single test');
 export type SingleRunInput = z.infer<typeof SingleRunInputSchema>;
 
 export const SingleRunOutputSchema = z
