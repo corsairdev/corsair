@@ -206,7 +206,7 @@
     {
       "path": "gong.api.calls.addRecording",
       "shortPath": "calls.addRecording",
-      "description": "Upload media for a previously created Gong call.",
+      "description": "Upload media for a previously created Gong call. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -219,7 +219,8 @@
           {
             "key": "mediaFile",
             "optional": false,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The recording (WAV, MP3, MP4, MKV or FLAC, up to 1.5 GB): a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…)."
           }
         ]
       },
@@ -754,7 +755,7 @@
     {
       "path": "gong.api.crm.uploadObjects",
       "shortPath": "crm.uploadObjects",
-      "description": "Upload CRM objects from a data file.",
+      "description": "Upload CRM objects from a data file. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -777,7 +778,8 @@
           {
             "key": "dataFile",
             "optional": false,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The LDJSON data file, one object per line, up to 200 MB: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…)."
           }
         ]
       },
@@ -2382,7 +2384,7 @@
     {
       "path": "gong.api.targets.uploadAssignments",
       "shortPath": "targets.uploadAssignments",
-      "description": "Upload target assignments.",
+      "description": "Upload target assignments. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -2405,7 +2407,8 @@
           {
             "key": "file",
             "optional": false,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The CSV file of target assignments: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…)."
           }
         ]
       },

@@ -1,0 +1,3007 @@
+{
+  "id": "googleadmin",
+  "displayName": "Google Admin",
+  "description": "Manage Google Workspace users, groups, group members, organizational units and domains through the Admin SDK Directory API.",
+  "npmPackageName": "@corsair-dev/googleadmin",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 37,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": ["client_id", "client_secret", "redirect_url"],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "googleadmin.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Read the account's customer record, including its primary domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerKey",
+            "optional": false,
+            "type": "string",
+            "description": "The customer ID, or `my_customer` for the caller's own account"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "The customer ID, the `my_customer` alias target"
+          },
+          {
+            "key": "customerDomain",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "alternateEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string | null",
+            "description": "E.164 format"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 639-2 language code"
+          },
+          {
+            "key": "customerCreationTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "postalAddress",
+            "optional": true,
+            "type": "{ contactName?: string | null, organizationName?: string | null, addressLine1?: string | null, addressLine2?: string | null, addressLine3?: string | null, locality?: string | null, region?: string | null, postalCode?: string | null, countryCode?: string | null } | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.domains.aliases.list",
+      "shortPath": "domains.aliases.list",
+      "description": "List the account's domain aliases, optionally for one parent domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parentDomainName",
+            "optional": true,
+            "type": "string | null",
+            "description": "Only list the aliases of this parent domain"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domainAliases",
+            "optional": true,
+            "type": "{ domainAliasName?: string | null, parentDomainName?: string | null, verified?: boolean | null, creationTime?: string | null, etag?: string | null, kind?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.domains.get",
+      "shortPath": "domains.get",
+      "description": "Read one domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "domainName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domainName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domainAliases",
+            "optional": true,
+            "type": "{ domainAliasName?: string | null, parentDomainName?: string | null, verified?: boolean | null, creationTime?: string | null, etag?: string | null, kind?: string | null }[] | null",
+            "description": "Read-only"
+          },
+          {
+            "key": "isPrimary",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Read-only"
+          },
+          {
+            "key": "verified",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Read-only"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unix time in milliseconds"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.domains.list",
+      "shortPath": "domains.list",
+      "description": "List the account's domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "string",
+            "description": "The customer ID, or `my_customer` for the caller's own account"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "{ domainName?: string | null, domainAliases?: { domainAliasName?: string | null, parentDomainName?: string | null, verified?: boolean | null, creationTime?: string | null, etag?: string | null, kind?: string | null }[] | null, isPrimary?: boolean | null, verified?: boolean | null, creationTime?: string | null, etag?: string | null, kind?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.groups.aliases.delete",
+      "shortPath": "groups.aliases.delete",
+      "description": "Remove an alias email address from a group",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": false,
+            "type": "string",
+            "description": "The alias to remove"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googleadmin.api.groups.aliases.insert",
+      "shortPath": "groups.aliases.insert",
+      "description": "Add an alias email address to a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": false,
+            "type": "string",
+            "description": "The alias email address to add"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primaryEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.groups.aliases.list",
+      "shortPath": "groups.aliases.list",
+      "description": "List a group's aliases",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "aliases",
+            "optional": true,
+            "type": "{ id?: string | null, primaryEmail?: string | null, alias?: string | null, etag?: string | null, kind?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.groups.delete",
+      "shortPath": "groups.delete",
+      "description": "Delete a group and its memberships",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googleadmin.api.groups.get",
+      "shortPath": "groups.get",
+      "description": "Read one group by email, alias or ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique group ID, usable as groupKey"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "At most 4,096 characters"
+          },
+          {
+            "key": "adminCreated",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Read-only"
+          },
+          {
+            "key": "directMembersCount",
+            "optional": true,
+            "type": "string | null",
+            "description": "int64 as a string. Nested members of a child group are not counted"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "aliases",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Read-only"
+          },
+          {
+            "key": "nonEditableAliases",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Read-only"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.groups.insert",
+      "shortPath": "groups.insert",
+      "description": "Create a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Required. The group address, unique in the account"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The group display name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "At most 4,096 characters"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique group ID, usable as groupKey"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "At most 4,096 characters"
+          },
+          {
+            "key": "adminCreated",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Read-only"
+          },
+          {
+            "key": "directMembersCount",
+            "optional": true,
+            "type": "string | null",
+            "description": "int64 as a string. Nested members of a child group are not counted"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "aliases",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Read-only"
+          },
+          {
+            "key": "nonEditableAliases",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Read-only"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List groups in the account, one domain, or the groups a user belongs to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string | null",
+            "description": "The unique customer ID, or `my_customer` for the caller's own account"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null",
+            "description": "A domain name. Send this or customer, not both"
+          },
+          {
+            "key": "userKey",
+            "optional": true,
+            "type": "string | null",
+            "description": "List only the groups this user belongs to. Cannot be combined with customer"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string | null",
+            "description": "Search clauses such as `name:engineering` or `email:eng*`"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number | null",
+            "description": "1 to 200. 200 is both the default and the maximum, per the limits page"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "nextPageToken from a previous page"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "email | null",
+            "description": "The only documented value"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "ASCENDING | DESCENDING | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groups",
+            "optional": true,
+            "type": "{ id?: string | null, email?: string | null, name?: string | null, description?: string | null, adminCreated?: boolean | null, directMembersCount?: string | null, etag?: string | null, kind?: string | null, aliases?: string[] | null, nonEditableAliases?: string[] | null }[] | null",
+            "description": "Absent when the domain has no groups"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.groups.update",
+      "shortPath": "groups.update",
+      "description": "Update a group's email, display name or description",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique group ID, usable as groupKey"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "At most 4,096 characters"
+          },
+          {
+            "key": "adminCreated",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Read-only"
+          },
+          {
+            "key": "directMembersCount",
+            "optional": true,
+            "type": "string | null",
+            "description": "int64 as a string. Nested members of a child group are not counted"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "aliases",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Read-only"
+          },
+          {
+            "key": "nonEditableAliases",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Read-only"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.members.delete",
+      "shortPath": "members.delete",
+      "description": "Remove a member from a group; the member loses the group's mail and access",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "memberKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googleadmin.api.members.get",
+      "shortPath": "members.get",
+      "description": "Read one group membership",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "memberKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique member ID, usable as memberKey"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null",
+            "description": "`OWNER`, `MANAGER` or `MEMBER`"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "`USER`, `GROUP`, `CUSTOMER` or `EXTERNAL`"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Read-only"
+          },
+          {
+            "key": "delivery_settings",
+            "optional": true,
+            "type": "string | null",
+            "description": "`ALL_MAIL`, `DAILY`, `DIGEST`, `DISABLED` or `NONE`. Snake case is Google's spelling"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.members.hasMember",
+      "shortPath": "members.hasMember",
+      "description": "Check whether a user is a direct or nested member of a group",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "memberKey",
+            "optional": false,
+            "type": "string",
+            "description": "The user's primary email, alias, or unique ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "isMember",
+            "optional": false,
+            "type": "boolean",
+            "description": "True for a direct or nested membership"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.members.insert",
+      "shortPath": "members.insert",
+      "description": "Add a user or group to a group with a role and a mail delivery preference",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Required. The member address"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "OWNER | MANAGER | MEMBER | null",
+            "description": "Defaults to MEMBER"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "USER | GROUP | CUSTOMER | EXTERNAL | null",
+            "description": "Required when the member is outside the account domains"
+          },
+          {
+            "key": "delivery_settings",
+            "optional": true,
+            "type": "ALL_MAIL | DAILY | DIGEST | DISABLED | NONE | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique member ID, usable as memberKey"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null",
+            "description": "`OWNER`, `MANAGER` or `MEMBER`"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "`USER`, `GROUP`, `CUSTOMER` or `EXTERNAL`"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Read-only"
+          },
+          {
+            "key": "delivery_settings",
+            "optional": true,
+            "type": "string | null",
+            "description": "`ALL_MAIL`, `DAILY`, `DIGEST`, `DISABLED` or `NONE`. Snake case is Google's spelling"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.members.list",
+      "shortPath": "members.list",
+      "description": "List a group's members, optionally including members inherited from nested groups and filtered by role",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeDerivedMembership",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Also list members inherited from nested groups"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "string | null",
+            "description": "A comma-separated subset of `OWNER`, `MANAGER`, `MEMBER`"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number | null",
+            "description": "1 to 200. 200 is both the default and the maximum"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "members",
+            "optional": true,
+            "type": "{ id?: string | null, email?: string | null, role?: string | null, type?: string | null, status?: string | null, delivery_settings?: string | null, etag?: string | null, kind?: string | null }[] | null",
+            "description": "Absent when the group has no members"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.members.update",
+      "shortPath": "members.update",
+      "description": "Change a member's role or mail delivery preference",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "groupKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "memberKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "OWNER | MANAGER | MEMBER | null"
+          },
+          {
+            "key": "delivery_settings",
+            "optional": true,
+            "type": "ALL_MAIL | DAILY | DIGEST | DISABLED | NONE | null",
+            "description": "Needs `role` too: Google takes a delivery change only through the PUT update, which replaces the role as well"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique member ID, usable as memberKey"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "role",
+            "optional": true,
+            "type": "string | null",
+            "description": "`OWNER`, `MANAGER` or `MEMBER`"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "`USER`, `GROUP`, `CUSTOMER` or `EXTERNAL`"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Read-only"
+          },
+          {
+            "key": "delivery_settings",
+            "optional": true,
+            "type": "string | null",
+            "description": "`ALL_MAIL`, `DAILY`, `DIGEST`, `DISABLED` or `NONE`. Snake case is Google's spelling"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.orgUnits.delete",
+      "shortPath": "orgUnits.delete",
+      "description": "Delete an organizational unit. It must hold no users or child units first",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgUnitPath",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googleadmin.api.orgUnits.get",
+      "shortPath": "orgUnits.get",
+      "description": "Read one organizational unit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgUnitPath",
+            "optional": false,
+            "type": "string",
+            "description": "Full path without the leading slash, e.g. `engineering/apps`, or the unique ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "orgUnitPath",
+            "optional": true,
+            "type": "string | null",
+            "description": "Derived full path, e.g. `/engineering/apps`"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The path segment, e.g. `apps`"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parentOrgUnitId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parentOrgUnitPath",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.orgUnits.insert",
+      "shortPath": "orgUnits.insert",
+      "description": "Create an organizational unit under a parent",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Required. The path segment, e.g. `sales_support`"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parentOrgUnitPath",
+            "optional": true,
+            "type": "string | null",
+            "description": "Required unless parentOrgUnitId is set, e.g. `/corp/sales`"
+          },
+          {
+            "key": "parentOrgUnitId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Required unless parentOrgUnitPath is set"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "orgUnitPath",
+            "optional": true,
+            "type": "string | null",
+            "description": "Derived full path, e.g. `/engineering/apps`"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The path segment, e.g. `apps`"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parentOrgUnitId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parentOrgUnitPath",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.orgUnits.list",
+      "shortPath": "orgUnits.list",
+      "description": "List organizational units: immediate children, all descendants, or all descendants plus the unit itself",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The customer ID, or `my_customer` for the caller's own account"
+          },
+          {
+            "key": "orgUnitPath",
+            "optional": true,
+            "type": "string | null",
+            "description": "Full path or unique ID; lists the children of this unit"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "all | children | allIncludingParent | null",
+            "description": "Defaults to `children`"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "organizationUnits",
+            "optional": true,
+            "type": "{ orgUnitId?: string | null, orgUnitPath?: string | null, name?: string | null, description?: string | null, parentOrgUnitId?: string | null, parentOrgUnitPath?: string | null, etag?: string | null, kind?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.orgUnits.update",
+      "shortPath": "orgUnits.update",
+      "description": "Rename an organizational unit or move it under another parent, which changes the settings its users inherit",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "orgUnitPath",
+            "optional": false,
+            "type": "string",
+            "description": "Full path of the unit to update, e.g. `engineering/apps`"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "A new path segment"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parentOrgUnitPath",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parentOrgUnitId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "orgUnitId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "orgUnitPath",
+            "optional": true,
+            "type": "string | null",
+            "description": "Derived full path, e.g. `/engineering/apps`"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The path segment, e.g. `apps`"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parentOrgUnitId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "parentOrgUnitPath",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.users.aliases.delete",
+      "shortPath": "users.aliases.delete",
+      "description": "Remove alias email addresses from a user; mail to a removed alias is no longer delivered",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": false,
+            "type": "string",
+            "description": "The alias to remove"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googleadmin.api.users.aliases.insert",
+      "shortPath": "users.aliases.insert",
+      "description": "Add an alias email address to a user",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "alias",
+            "optional": false,
+            "type": "string",
+            "description": "The alias email address, inside one of the account domains"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primaryEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "alias",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.users.aliases.list",
+      "shortPath": "users.aliases.list",
+      "description": "List a user's alias email addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "aliases",
+            "optional": true,
+            "type": "{ id?: string | null, primaryEmail?: string | null, alias?: string | null, etag?: string | null, kind?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.users.delete",
+      "shortPath": "users.delete",
+      "description": "Delete a user account. The account stays recoverable through users.undelete while it is in the trash",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userKey",
+            "optional": false,
+            "type": "string",
+            "description": "Primary email, alias email, or unique user ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googleadmin.api.users.get",
+      "shortPath": "users.get",
+      "description": "Read one user by email, alias or ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userKey",
+            "optional": false,
+            "type": "string",
+            "description": "Primary email, alias email, or the unique user ID"
+          },
+          {
+            "key": "projection",
+            "optional": true,
+            "type": "basic | custom | full | null",
+            "description": "`basic` omits custom fields, `custom` returns the schemas named in customFieldMask, `full` returns everything."
+          },
+          {
+            "key": "customFieldMask",
+            "optional": true,
+            "type": "string | null",
+            "description": "Comma-separated schema names, only with projection `custom`"
+          },
+          {
+            "key": "viewType",
+            "optional": true,
+            "type": "admin_view | domain_public | null",
+            "description": "`admin_view` includes administrator-only fields; `domain_public` is what another user in the domain can see."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique user ID, usable as userKey"
+          },
+          {
+            "key": "primaryEmail",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "{ givenName?: string | null, familyName?: string | null, fullName?: string | null, displayName?: string | null } | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "aliases",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Read-only. Alias email addresses of the user"
+          },
+          {
+            "key": "nonEditableAliases",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Read-only. Aliases outside the account domains"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "orgUnitPath",
+            "optional": true,
+            "type": "string | null",
+            "description": "Full path of the parent organizational unit, `/` at the top level"
+          },
+          {
+            "key": "isAdmin",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Read-only. Edited through users.makeAdmin"
+          },
+          {
+            "key": "isDelegatedAdmin",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "lastLoginTime",
+            "optional": true,
+            "type": "string | null",
+            "description": "RFC 3339 timestamp"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string | null",
+            "description": "RFC 3339 timestamp"
+          },
+          {
+            "key": "deletionTime",
+            "optional": true,
+            "type": "string | null",
+            "description": "RFC 3339 timestamp"
+          },
+          {
+            "key": "agreedToTerms",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "suspended",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "suspensionReason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "suspensionTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archivalTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "changePasswordAtNextLogin",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ipWhitelisted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "includeInGlobalAddressList",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isMailboxSetup",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isEnrolledIn2Sv",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isEnforcedIn2Sv",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isGuestUser",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "thumbnailPhotoUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "Output only. The URL may be temporary or private"
+          },
+          {
+            "key": "thumbnailPhotoEtag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recoveryEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recoveryPhone",
+            "optional": true,
+            "type": "string | null",
+            "description": "E.164 format, e.g. +16506661212"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{ address?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ type?: string | null, customType?: string | null, primary?: boolean | null, formatted?: string | null, streetAddress?: string | null, extendedAddress?: string | null, poBox?: string | null, locality?: string | null, region?: string | null, postalCode?: string | null, country?: string | null, countryCode?: string | null, sourceIsStructured?: boolean | null }[] | null"
+          },
+          {
+            "key": "organizations",
+            "optional": true,
+            "type": "{ name?: string | null, title?: string | null, department?: string | null, description?: string | null, location?: string | null, costCenter?: string | null, primary?: boolean | null, type?: string | null, customType?: string | null, domain?: string | null, symbol?: string | null, fullTimeEquivalent?: number | null }[] | null"
+          },
+          {
+            "key": "externalIds",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null }[] | null"
+          },
+          {
+            "key": "relations",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null }[] | null"
+          },
+          {
+            "key": "websites",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "ims",
+            "optional": true,
+            "type": "{ im?: string | null, type?: string | null, protocol?: string | null, customProtocol?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ type?: string | null, customType?: string | null, area?: string | null, buildingId?: string | null, floorName?: string | null, floorSection?: string | null, deskCode?: string | null }[] | null"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "{ languageCode?: string | null, preference?: string | null, customLanguage?: string | null }[] | null"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null }[] | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "{ type?: string | null, customGender?: string | null, addressMeAs?: string | null } | null"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{ contentType?: string | null, value?: string | null } | null"
+          },
+          {
+            "key": "posixAccounts",
+            "optional": true,
+            "type": "{ username?: string | null, uid?: string | null, gid?: string | null, systemId?: string | null, homeDirectory?: string | null, shell?: string | null, gecos?: string | null, primary?: boolean | null, accountId?: string | null, operatingSystemType?: string | null }[] | null"
+          },
+          {
+            "key": "sshPublicKeys",
+            "optional": true,
+            "type": "{ key?: string | null, expirationTimeUsec?: string | null, fingerprint?: string | null }[] | null"
+          },
+          {
+            "key": "customSchemas",
+            "optional": true,
+            "type": "Record<string, Record<string, any>> | null",
+            "description": "Custom fields, keyed by schema name then field name"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.users.insert",
+      "shortPath": "users.insert",
+      "description": "Create a user account with an initial password. On a flexible Workspace plan the new user is a billed licence",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "primaryEmail",
+            "optional": false,
+            "type": "string",
+            "description": "Required. Unique, and not an alias of another user"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "{ givenName: string, familyName: string, displayName?: string | null }"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string",
+            "description": "Required. Either the plain password (8 to 100 characters) or a hash when hashFunction is set"
+          },
+          {
+            "key": "hashFunction",
+            "optional": true,
+            "type": "MD5 | SHA-1 | crypt | null",
+            "description": "Set when `password` is already a hash: hex for MD5 and SHA-1; `crypt` takes DES, $1$, $5$ and $6$ hashes"
+          },
+          {
+            "key": "orgUnitPath",
+            "optional": true,
+            "type": "string | null",
+            "description": "Full path of the parent organizational unit, `/` for the top level"
+          },
+          {
+            "key": "includeInGlobalAddressList",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "changePasswordAtNextLogin",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "suspended",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ipWhitelisted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "recoveryEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recoveryPhone",
+            "optional": true,
+            "type": "string | null",
+            "description": "E.164 format starting with +, e.g. +16506661212"
+          },
+          {
+            "key": "isGuestUser",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Immutable once set"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{ address?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ type?: string | null, customType?: string | null, primary?: boolean | null, formatted?: string | null, streetAddress?: string | null, extendedAddress?: string | null, poBox?: string | null, locality?: string | null, region?: string | null, postalCode?: string | null, country?: string | null, countryCode?: string | null, sourceIsStructured?: boolean | null }[] | null"
+          },
+          {
+            "key": "organizations",
+            "optional": true,
+            "type": "{ name?: string | null, title?: string | null, department?: string | null, description?: string | null, location?: string | null, costCenter?: string | null, primary?: boolean | null, type?: string | null, customType?: string | null, domain?: string | null, symbol?: string | null, fullTimeEquivalent?: number | null }[] | null"
+          },
+          {
+            "key": "externalIds",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null }[] | null"
+          },
+          {
+            "key": "relations",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null }[] | null"
+          },
+          {
+            "key": "websites",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "ims",
+            "optional": true,
+            "type": "{ im?: string | null, type?: string | null, protocol?: string | null, customProtocol?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ type?: string | null, customType?: string | null, area?: string | null, buildingId?: string | null, floorName?: string | null, floorSection?: string | null, deskCode?: string | null }[] | null"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "{ languageCode?: string | null, preference?: string | null, customLanguage?: string | null }[] | null"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null }[] | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "{ type?: string | null, customGender?: string | null, addressMeAs?: string | null } | null"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{ contentType?: string | null, value?: string | null } | null"
+          },
+          {
+            "key": "posixAccounts",
+            "optional": true,
+            "type": "{ username?: string | null, uid?: string | null, gid?: string | null, systemId?: string | null, homeDirectory?: string | null, shell?: string | null, gecos?: string | null, primary?: boolean | null, accountId?: string | null, operatingSystemType?: string | null }[] | null"
+          },
+          {
+            "key": "sshPublicKeys",
+            "optional": true,
+            "type": "{ key?: string | null, expirationTimeUsec?: string | null, fingerprint?: string | null }[] | null"
+          },
+          {
+            "key": "customSchemas",
+            "optional": true,
+            "type": "Record<string, Record<string, any>> | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique user ID, usable as userKey"
+          },
+          {
+            "key": "primaryEmail",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "{ givenName?: string | null, familyName?: string | null, fullName?: string | null, displayName?: string | null } | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "aliases",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Read-only. Alias email addresses of the user"
+          },
+          {
+            "key": "nonEditableAliases",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Read-only. Aliases outside the account domains"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "orgUnitPath",
+            "optional": true,
+            "type": "string | null",
+            "description": "Full path of the parent organizational unit, `/` at the top level"
+          },
+          {
+            "key": "isAdmin",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Read-only. Edited through users.makeAdmin"
+          },
+          {
+            "key": "isDelegatedAdmin",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "lastLoginTime",
+            "optional": true,
+            "type": "string | null",
+            "description": "RFC 3339 timestamp"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string | null",
+            "description": "RFC 3339 timestamp"
+          },
+          {
+            "key": "deletionTime",
+            "optional": true,
+            "type": "string | null",
+            "description": "RFC 3339 timestamp"
+          },
+          {
+            "key": "agreedToTerms",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "suspended",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "suspensionReason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "suspensionTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archivalTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "changePasswordAtNextLogin",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ipWhitelisted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "includeInGlobalAddressList",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isMailboxSetup",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isEnrolledIn2Sv",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isEnforcedIn2Sv",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isGuestUser",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "thumbnailPhotoUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "Output only. The URL may be temporary or private"
+          },
+          {
+            "key": "thumbnailPhotoEtag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recoveryEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recoveryPhone",
+            "optional": true,
+            "type": "string | null",
+            "description": "E.164 format, e.g. +16506661212"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{ address?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ type?: string | null, customType?: string | null, primary?: boolean | null, formatted?: string | null, streetAddress?: string | null, extendedAddress?: string | null, poBox?: string | null, locality?: string | null, region?: string | null, postalCode?: string | null, country?: string | null, countryCode?: string | null, sourceIsStructured?: boolean | null }[] | null"
+          },
+          {
+            "key": "organizations",
+            "optional": true,
+            "type": "{ name?: string | null, title?: string | null, department?: string | null, description?: string | null, location?: string | null, costCenter?: string | null, primary?: boolean | null, type?: string | null, customType?: string | null, domain?: string | null, symbol?: string | null, fullTimeEquivalent?: number | null }[] | null"
+          },
+          {
+            "key": "externalIds",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null }[] | null"
+          },
+          {
+            "key": "relations",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null }[] | null"
+          },
+          {
+            "key": "websites",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "ims",
+            "optional": true,
+            "type": "{ im?: string | null, type?: string | null, protocol?: string | null, customProtocol?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ type?: string | null, customType?: string | null, area?: string | null, buildingId?: string | null, floorName?: string | null, floorSection?: string | null, deskCode?: string | null }[] | null"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "{ languageCode?: string | null, preference?: string | null, customLanguage?: string | null }[] | null"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null }[] | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "{ type?: string | null, customGender?: string | null, addressMeAs?: string | null } | null"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{ contentType?: string | null, value?: string | null } | null"
+          },
+          {
+            "key": "posixAccounts",
+            "optional": true,
+            "type": "{ username?: string | null, uid?: string | null, gid?: string | null, systemId?: string | null, homeDirectory?: string | null, shell?: string | null, gecos?: string | null, primary?: boolean | null, accountId?: string | null, operatingSystemType?: string | null }[] | null"
+          },
+          {
+            "key": "sshPublicKeys",
+            "optional": true,
+            "type": "{ key?: string | null, expirationTimeUsec?: string | null, fingerprint?: string | null }[] | null"
+          },
+          {
+            "key": "customSchemas",
+            "optional": true,
+            "type": "Record<string, Record<string, any>> | null",
+            "description": "Custom fields, keyed by schema name then field name"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users in the account or one domain, with Google's search query and paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "string | null",
+            "description": "The unique customer ID, or `my_customer` for the caller's own account"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | null",
+            "description": "A domain name. Send this or customer, not both"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string | null",
+            "description": "Search clauses such as `email:ada*`, `orgUnitPath=/sales`, or `isSuspended=true`; see Search for users"
+          },
+          {
+            "key": "maxResults",
+            "optional": true,
+            "type": "number | null",
+            "description": "1 to 500. The API default is 100"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "nextPageToken from a previous page. Valid for three days"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "email | familyName | givenName | null",
+            "description": "Column to sort by"
+          },
+          {
+            "key": "sortOrder",
+            "optional": true,
+            "type": "ASCENDING | DESCENDING | null"
+          },
+          {
+            "key": "projection",
+            "optional": true,
+            "type": "basic | custom | full | null",
+            "description": "`basic` omits custom fields, `custom` returns the schemas named in customFieldMask, `full` returns everything."
+          },
+          {
+            "key": "customFieldMask",
+            "optional": true,
+            "type": "string | null",
+            "description": "Comma-separated schema names. Only read when projection is `custom`"
+          },
+          {
+            "key": "showDeleted",
+            "optional": true,
+            "type": "string | null",
+            "description": "Google types this one as a string, not a boolean. `true` lists deleted users"
+          },
+          {
+            "key": "viewType",
+            "optional": true,
+            "type": "admin_view | domain_public | null",
+            "description": "`admin_view` includes administrator-only fields; `domain_public` is what another user in the domain can see."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "users",
+            "optional": true,
+            "type": "{ id: string, primaryEmail: string, name?: { givenName?: string | null, familyName?: string | null, fullName?: string | null, displayName?: string | null } | null, etag?: string | null, kind?: string | null, aliases?: string[] | null, nonEditableAliases?: string[] | null, customerId?: string | null, orgUnitPath?: string | null, isAdmin?: boolean | null, isDelegatedAdmin?: boolean | null, lastLoginTime?: string | null, creationTime?: string | null, deletionTime?: string | null, agreedToTerms?: boolean | null, suspended?: boolean | null, suspensionReason?: string | null, suspensionTime?: string | null, archived?: boolean | null, archivalTime?: string | null, changePasswordAtNextLogin?: boolean | null, ipWhitelisted?: boolean | null, includeInGlobalAddressList?: boolean | null, isMailboxSetup?: boolean | null, isEnrolledIn2Sv?: boolean | null, isEnforcedIn2Sv?: boolean | null, isGuestUser?: boolean | null, thumbnailPhotoUrl?: string | null, thumbnailPhotoEtag?: string | null, recoveryEmail?: string | null, recoveryPhone?: string | null, emails?: { address?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null, phones?: { value?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null, addresses?: { type?: string | null, customType?: string | null, primary?: boolean | null, formatted?: string | null, streetAddress?: string | null, extendedAddress?: string | null, poBox?: string | null, locality?: string | null, region?: string | null, postalCode?: string | null, country?: string | null, countryCode?: string | null, sourceIsStructured?: boolean | null }[] | null, organizations?: { name?: string | null, title?: string | null, department?: string | null, description?: string | null, location?: string | null, costCenter?: string | null, primary?: boolean | null, type?: string | null, customType?: string | null, domain?: string | null, symbol?: string | null, fullTimeEquivalent?: number | null }[] | null, externalIds?: { value?: string | null, type?: string | null, customType?: string | null }[] | null, relations?: { value?: string | null, type?: string | null, customType?: string | null }[] | null, websites?: { value?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null, ims?: { im?: string | null, type?: string | null, protocol?: string | null, customProtocol?: string | null, customType?: string | null, primary?: boolean | null }[] | null, locations?: { type?: string | null, customType?: string | null, area?: string | null, buildingId?: string | null, floorName?: string | null, floorSection?: string | null, deskCode?: string | null }[] | null, languages?: { languageCode?: string | null, preference?: string | null, customLanguage?: string | null }[] | null, keywords?: { value?: string | null, type?: string | null, customType?: string | null }[] | null, gender?: { type?: string | null, customGender?: string | null, addressMeAs?: string | null } | null, notes?: { contentType?: string | null, value?: string | null } | null, posixAccounts?: { username?: string | null, uid?: string | null, gid?: string | null, systemId?: string | null, homeDirectory?: string | null, shell?: string | null, gecos?: string | null, primary?: boolean | null, accountId?: string | null, operatingSystemType?: string | null }[] | null, sshPublicKeys?: { key?: string | null, expirationTimeUsec?: string | null, fingerprint?: string | null }[] | null, customSchemas?: Record<string, Record<string, any>> | null }[] | null",
+            "description": "Absent when the domain has no matching users"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "trigger_event",
+            "optional": true,
+            "type": "string | null",
+            "description": "Only set on a push notification response"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.users.makeAdmin",
+      "shortPath": "users.makeAdmin",
+      "description": "Grant or revoke super administrator on a user. The caller cannot revoke its own last admin right",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "boolean",
+            "description": "true grants super administrator, false revokes it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googleadmin.api.users.photos.delete",
+      "shortPath": "users.photos.delete",
+      "description": "Remove a user's profile photo",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googleadmin.api.users.photos.get",
+      "shortPath": "users.photos.get",
+      "description": "Read a user's profile photo as base64 bytes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primaryEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "photoData",
+            "optional": true,
+            "type": "string | null",
+            "description": "Base64-encoded image bytes, on read and on write"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.users.photos.update",
+      "shortPath": "users.photos.update",
+      "description": "Replace a user's profile photo",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userKey",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "photoData",
+            "optional": false,
+            "type": "string",
+            "description": "Base64-encoded image bytes"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string | null",
+            "description": "`image/jpeg` or `image/png`; the API infers it when omitted"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "primaryEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "photoData",
+            "optional": true,
+            "type": "string | null",
+            "description": "Base64-encoded image bytes, on read and on write"
+          },
+          {
+            "key": "mimeType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleadmin.api.users.signOut",
+      "shortPath": "users.signOut",
+      "description": "Sign a user out of all web and device sessions, clearing their sign-in cookies",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userKey",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googleadmin.api.users.undelete",
+      "shortPath": "users.undelete",
+      "description": "Restore a deleted user by ID and optionally set the organizational unit it returns to",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userKey",
+            "optional": false,
+            "type": "string",
+            "description": "The immutable user ID. An email address is not accepted here"
+          },
+          {
+            "key": "orgUnitPath",
+            "optional": true,
+            "type": "string | null",
+            "description": "Organizational unit to restore the user into"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "void"
+      }
+    },
+    {
+      "path": "googleadmin.api.users.update",
+      "shortPath": "users.update",
+      "description": "Update a user through the PUT that keeps the patch semantics Google documents for it: omitted fields are preserved, a field sent as null is cleared",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userKey",
+            "optional": false,
+            "type": "string",
+            "description": "Primary email, alias email, or unique user ID"
+          },
+          {
+            "key": "primaryEmail",
+            "optional": true,
+            "type": "string | null",
+            "description": "Renaming can take up to 10 minutes to propagate"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "{ givenName?: string, familyName?: string, displayName?: string | null } | null",
+            "description": "Only the name parts that are sent change; the others keep their value"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string | null",
+            "description": "Optional on update. Setting it changes the password: plain text of 8 to 100 characters, or a hash when hashFunction is set"
+          },
+          {
+            "key": "hashFunction",
+            "optional": true,
+            "type": "MD5 | SHA-1 | crypt | null"
+          },
+          {
+            "key": "orgUnitPath",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "includeInGlobalAddressList",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "changePasswordAtNextLogin",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "suspended",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ipWhitelisted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "recoveryEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recoveryPhone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{ address?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ type?: string | null, customType?: string | null, primary?: boolean | null, formatted?: string | null, streetAddress?: string | null, extendedAddress?: string | null, poBox?: string | null, locality?: string | null, region?: string | null, postalCode?: string | null, country?: string | null, countryCode?: string | null, sourceIsStructured?: boolean | null }[] | null"
+          },
+          {
+            "key": "organizations",
+            "optional": true,
+            "type": "{ name?: string | null, title?: string | null, department?: string | null, description?: string | null, location?: string | null, costCenter?: string | null, primary?: boolean | null, type?: string | null, customType?: string | null, domain?: string | null, symbol?: string | null, fullTimeEquivalent?: number | null }[] | null"
+          },
+          {
+            "key": "externalIds",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null }[] | null"
+          },
+          {
+            "key": "relations",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null }[] | null"
+          },
+          {
+            "key": "websites",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "ims",
+            "optional": true,
+            "type": "{ im?: string | null, type?: string | null, protocol?: string | null, customProtocol?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ type?: string | null, customType?: string | null, area?: string | null, buildingId?: string | null, floorName?: string | null, floorSection?: string | null, deskCode?: string | null }[] | null"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "{ languageCode?: string | null, preference?: string | null, customLanguage?: string | null }[] | null"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null }[] | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "{ type?: string | null, customGender?: string | null, addressMeAs?: string | null } | null"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{ contentType?: string | null, value?: string | null } | null"
+          },
+          {
+            "key": "posixAccounts",
+            "optional": true,
+            "type": "{ username?: string | null, uid?: string | null, gid?: string | null, systemId?: string | null, homeDirectory?: string | null, shell?: string | null, gecos?: string | null, primary?: boolean | null, accountId?: string | null, operatingSystemType?: string | null }[] | null"
+          },
+          {
+            "key": "sshPublicKeys",
+            "optional": true,
+            "type": "{ key?: string | null, expirationTimeUsec?: string | null, fingerprint?: string | null }[] | null"
+          },
+          {
+            "key": "customSchemas",
+            "optional": true,
+            "type": "Record<string, Record<string, any>> | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Unique user ID, usable as userKey"
+          },
+          {
+            "key": "primaryEmail",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "{ givenName?: string | null, familyName?: string | null, fullName?: string | null, displayName?: string | null } | null"
+          },
+          {
+            "key": "etag",
+            "optional": true,
+            "type": "string | null",
+            "description": "ETag of the resource"
+          },
+          {
+            "key": "kind",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "aliases",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Read-only. Alias email addresses of the user"
+          },
+          {
+            "key": "nonEditableAliases",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Read-only. Aliases outside the account domains"
+          },
+          {
+            "key": "customerId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "orgUnitPath",
+            "optional": true,
+            "type": "string | null",
+            "description": "Full path of the parent organizational unit, `/` at the top level"
+          },
+          {
+            "key": "isAdmin",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Read-only. Edited through users.makeAdmin"
+          },
+          {
+            "key": "isDelegatedAdmin",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "lastLoginTime",
+            "optional": true,
+            "type": "string | null",
+            "description": "RFC 3339 timestamp"
+          },
+          {
+            "key": "creationTime",
+            "optional": true,
+            "type": "string | null",
+            "description": "RFC 3339 timestamp"
+          },
+          {
+            "key": "deletionTime",
+            "optional": true,
+            "type": "string | null",
+            "description": "RFC 3339 timestamp"
+          },
+          {
+            "key": "agreedToTerms",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "suspended",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "suspensionReason",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "suspensionTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "archivalTime",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "changePasswordAtNextLogin",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "ipWhitelisted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "includeInGlobalAddressList",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isMailboxSetup",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isEnrolledIn2Sv",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isEnforcedIn2Sv",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isGuestUser",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "thumbnailPhotoUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "Output only. The URL may be temporary or private"
+          },
+          {
+            "key": "thumbnailPhotoEtag",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recoveryEmail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recoveryPhone",
+            "optional": true,
+            "type": "string | null",
+            "description": "E.164 format, e.g. +16506661212"
+          },
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "{ address?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "phones",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ type?: string | null, customType?: string | null, primary?: boolean | null, formatted?: string | null, streetAddress?: string | null, extendedAddress?: string | null, poBox?: string | null, locality?: string | null, region?: string | null, postalCode?: string | null, country?: string | null, countryCode?: string | null, sourceIsStructured?: boolean | null }[] | null"
+          },
+          {
+            "key": "organizations",
+            "optional": true,
+            "type": "{ name?: string | null, title?: string | null, department?: string | null, description?: string | null, location?: string | null, costCenter?: string | null, primary?: boolean | null, type?: string | null, customType?: string | null, domain?: string | null, symbol?: string | null, fullTimeEquivalent?: number | null }[] | null"
+          },
+          {
+            "key": "externalIds",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null }[] | null"
+          },
+          {
+            "key": "relations",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null }[] | null"
+          },
+          {
+            "key": "websites",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "ims",
+            "optional": true,
+            "type": "{ im?: string | null, type?: string | null, protocol?: string | null, customProtocol?: string | null, customType?: string | null, primary?: boolean | null }[] | null"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ type?: string | null, customType?: string | null, area?: string | null, buildingId?: string | null, floorName?: string | null, floorSection?: string | null, deskCode?: string | null }[] | null"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "{ languageCode?: string | null, preference?: string | null, customLanguage?: string | null }[] | null"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "{ value?: string | null, type?: string | null, customType?: string | null }[] | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "{ type?: string | null, customGender?: string | null, addressMeAs?: string | null } | null"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "{ contentType?: string | null, value?: string | null } | null"
+          },
+          {
+            "key": "posixAccounts",
+            "optional": true,
+            "type": "{ username?: string | null, uid?: string | null, gid?: string | null, systemId?: string | null, homeDirectory?: string | null, shell?: string | null, gecos?: string | null, primary?: boolean | null, accountId?: string | null, operatingSystemType?: string | null }[] | null"
+          },
+          {
+            "key": "sshPublicKeys",
+            "optional": true,
+            "type": "{ key?: string | null, expirationTimeUsec?: string | null, fingerprint?: string | null }[] | null"
+          },
+          {
+            "key": "customSchemas",
+            "optional": true,
+            "type": "Record<string, Record<string, any>> | null",
+            "description": "Custom fields, keyed by schema name then field name"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
