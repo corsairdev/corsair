@@ -44,7 +44,7 @@ export const get: PaystackEndpoints['plansGet'] = (ctx, input) =>
 			method: 'GET',
 			path: `/plan/${encodeURIComponent(idOrCode)}`,
 		}),
-		{ log: (_, result) => ({ planCode: result.data.plan_code ?? undefined }) },
+		{ log: ({ idOrCode }) => ({ plan: idOrCode }) },
 	);
 
 export const update: PaystackEndpoints['plansUpdate'] = (ctx, input) =>
@@ -61,5 +61,5 @@ export const update: PaystackEndpoints['plansUpdate'] = (ctx, input) =>
 			path: `/plan/${encodeURIComponent(idOrCode)}`,
 			body,
 		}),
-		{ log: (_, result) => ({ planCode: result.data.plan_code ?? undefined }) },
+		{ log: ({ idOrCode }) => ({ plan: idOrCode }) },
 	);

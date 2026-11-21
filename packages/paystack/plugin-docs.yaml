@@ -84,7 +84,7 @@ apiExamples:
     call: '{ refundId: 1088 }'
 apiNotes:
   transactions.initialize: 'The answer carries authorization_url (redirect the customer), access_code (inline JS) and reference. Amount is in the currency subunit.'
-  transactions.list: 'Status filter accepts failed, success or abandoned; meta.next holds the next page URL.'
+  transactions.list: 'Status filter accepts failed, success or abandoned; meta.next is an opaque cursor, not a URL; page through with page and perPage.'
   customers.get: 'Accepts the email address or the customer code in the path.'
   customers.setRiskAction: 'allow whitelists the customer, deny blacklists, default resets.'
   plans.update: 'update_existing_subscriptions defaults to true; pass false to leave running subscriptions untouched.'

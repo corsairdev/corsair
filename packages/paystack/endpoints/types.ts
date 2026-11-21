@@ -11,16 +11,18 @@ const LIST_META_SCHEMA = z
 		next: z
 			.string()
 			.nullish()
-			.describe('URL of the next page, when one exists'),
+			.describe('Opaque cursor for the next page (cursor paging), not a URL'),
 		previous: z
 			.string()
 			.nullish()
-			.describe('URL of the previous page, when one exists'),
+			.describe(
+				'Opaque cursor for the previous page (cursor paging), not a URL',
+			),
 	})
 	.loose();
 
 /** Wraps a paged result in the documented { status, message, data, meta } envelope. */
-function pagedOutput(item: z.ZodTypeAny, label: string) {
+function pagedOutput<Item extends z.ZodType>(item: Item, label: string) {
 	return z
 		.object({
 			status: z.boolean().describe('Whether the request succeeded'),
@@ -324,8 +326,8 @@ export type GetTransactionOutput = z.infer<typeof GetTransactionOutputSchema>;
 export const CreateCustomerInputSchema = z
 	.object({
 		email: z.string().email().describe('Customer email address'),
-		first_name: z.string().describe('Customer first name'),
-		last_name: z.string().describe('Customer last name'),
+		first_name: z.string().optional().describe('Customer first name'),
+		last_name: z.string().optional().describe('Customer last name'),
 		phone: z.string().optional().describe('Customer phone number'),
 		metadata: z
 			// unknown: metadata is caller-defined, so the record cannot be
@@ -379,8 +381,8 @@ export type GetCustomerOutput = z.infer<typeof GetCustomerOutputSchema>;
 export const UpdateCustomerInputSchema = z
 	.object({
 		code: z.string().min(1).describe('Customer code'),
-		first_name: z.string().describe('Customer first name'),
-		last_name: z.string().describe('Customer last name'),
+		first_name: z.string().optional().describe('Customer first name'),
+		last_name: z.string().optional().describe('Customer last name'),
 		phone: z.string().optional().describe('Customer phone number'),
 		metadata: z
 			// unknown: metadata is caller-defined.
@@ -417,6 +419,7 @@ export type SetRiskActionOutput = z.infer<typeof SetRiskActionOutputSchema>;
 // ── plans ──────────────────────────────────────────────────────────────────
 
 const PLAN_INTERVALS = [
+	'hourly',
 	'daily',
 	'weekly',
 	'monthly',
@@ -488,9 +491,13 @@ export type GetPlanOutput = z.infer<typeof GetPlanOutputSchema>;
 export const UpdatePlanInputSchema = z
 	.object({
 		idOrCode: z.string().min(1).describe('Plan id or code'),
-		name: z.string().min(1).describe('Plan name'),
-		amount: z.number().int().describe('Amount in the currency subunit'),
-		interval: z.enum(PLAN_INTERVALS).describe('Billing interval'),
+		name: z.string().min(1).optional().describe('Plan name'),
+		amount: z
+			.number()
+			.int()
+			.optional()
+			.describe('Amount in the currency subunit'),
+		interval: z.enum(PLAN_INTERVALS).optional().describe('Billing interval'),
 		description: z.string().optional().describe('Plan description'),
 		currency: z.string().optional().describe('Plan currency'),
 		send_invoices: z
@@ -512,10 +519,11 @@ export const UpdatePlanInputSchema = z
 	.describe('Update a plan');
 export type UpdatePlanInput = z.infer<typeof UpdatePlanInputSchema>;
 
+// Paystack answers a plan update with { status, message } only.
 export const UpdatePlanOutputSchema = z
-	.object({ status: z.boolean(), message: z.string(), data: PlanSchema })
+	.object({ status: z.boolean(), message: z.string() })
 	.loose()
-	.describe('The plan as updated');
+	.describe('Confirmation that the plan was updated');
 export type UpdatePlanOutput = z.infer<typeof UpdatePlanOutputSchema>;
 
 // ── subscriptions ──────────────────────────────────────────────────────────

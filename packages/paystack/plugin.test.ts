@@ -83,6 +83,13 @@ describe('paystack plugin', () => {
 			riskLevel: 'write',
 		});
 		expect(meta['subscriptions.disable']).toMatchObject({ riskLevel: 'write' });
+		// Both start or resume debits of the customer's saved card.
+		expect(meta['subscriptions.create']).toMatchObject({
+			riskLevel: 'destructive',
+		});
+		expect(meta['subscriptions.enable']).toMatchObject({
+			riskLevel: 'destructive',
+		});
 		expect(meta['transactions.list']).toMatchObject({ riskLevel: 'read' });
 	});
 

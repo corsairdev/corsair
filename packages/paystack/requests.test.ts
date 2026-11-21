@@ -258,6 +258,51 @@ describe('plans', () => {
 	});
 });
 
+describe('documented partial bodies', () => {
+	it('plan update accepts the { status, message } answer with no data and a name-only body', async () => {
+		respond({
+			status: true,
+			message: 'Plan updated. 1 subscription(s) affected',
+		});
+		const result = await invoke(Plans.update, {
+			idOrCode: 'PLN_0peioxfhpn',
+			name: 'Renamed',
+		});
+		expect(result).toMatchObject({ status: true });
+		expect(JSON.parse(lastRequest().body as string)).toEqual({
+			name: 'Renamed',
+		});
+	});
+
+	it('plan create accepts the hourly interval', async () => {
+		respond({ status: true, message: 'Plan created', data: plan });
+		await invoke(Plans.create, {
+			name: 'Hourly',
+			amount: 5000,
+			interval: 'hourly',
+		});
+		expect(JSON.parse(lastRequest().body as string)).toMatchObject({
+			interval: 'hourly',
+		});
+	});
+
+	it('customer create needs only an email, and update takes one field', async () => {
+		respond({ status: true, message: 'Customer created', data: customer });
+		await invoke(Customers.create, { email: 'buyer@example.com' });
+		expect(JSON.parse(lastRequest().body as string)).toEqual({
+			email: 'buyer@example.com',
+		});
+		respond({ status: true, message: 'Customer updated', data: customer });
+		await invoke(Customers.update, {
+			code: 'CUS_1idh4psjybv',
+			first_name: 'Ada',
+		});
+		expect(JSON.parse(lastRequest().body as string)).toEqual({
+			first_name: 'Ada',
+		});
+	});
+});
+
 describe('subscriptions', () => {
 	it('create POSTs the subscription body', async () => {
 		respond({
