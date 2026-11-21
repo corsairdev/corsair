@@ -120,13 +120,13 @@ export const removeLead: PersistiqEndpoints['campaignsRemoveLead'] = (
 				// ([] or {}) is not that, so only a missing body or an explicit
 				// status "success" confirms the removal.
 				const status =
-					raw === undefined || raw === null || raw === ''
+					raw === undefined || raw === ''
 						? 'success'
 						: Array.isArray(raw)
 							? undefined
 							: // unknown: raw is the untouched response body; only the
-								// status flag is read.
-								(raw as { status?: unknown }).status;
+								// status flag is read. A JSON null reads as no status.
+								(raw as { status?: unknown } | null)?.status;
 				if (status !== 'success') {
 					throw new Error(
 						'PersistIQ campaigns.removeLead: the answer did not confirm the removal',

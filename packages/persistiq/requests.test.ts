@@ -284,7 +284,7 @@ describe('campaigns', () => {
 	});
 
 	it('removeLead refuses an empty JSON container as confirmation', async () => {
-		for (const body of [[], {}]) {
+		for (const body of [[], {}, null]) {
 			respond(body);
 			await expect(
 				invoke(Campaigns.removeLead, { campaignId: 'c_1', leadId: 'l_1' }),
