@@ -4,6 +4,7 @@ import {
 	createHubPermissionSession,
 	formatHubApprovalMessage,
 } from '../../hub/permission';
+import { HubDeliveryUrlError } from '../../hub/resolve-delivery-url';
 import type {
 	CorsairManualConfig,
 	CorsairPermissionsOptions,
@@ -12,6 +13,11 @@ import type {
 type ApprovalRoutingConfig = {
 	manual?: CorsairManualConfig;
 	hub?: HubConfig;
+};
+
+type ApprovalUrlResolution = {
+	approvalUrl: string | null;
+	error: unknown | null;
 };
 
 export const APPROVAL_SETUP_HINT =
@@ -53,14 +59,25 @@ export async function resolveApprovalUrl(
 	internal: ApprovalRoutingConfig,
 	record: ResolveApprovalUrlInput,
 ): Promise<string | null> {
+	const result = await resolveApprovalUrlResult(internal, record);
+	return result.approvalUrl;
+}
+
+async function resolveApprovalUrlResult(
+	internal: ApprovalRoutingConfig,
+	record: ResolveApprovalUrlInput,
+): Promise<ApprovalUrlResolution> {
 	if (usesManualApprovalConfig(internal.manual)) {
 		const baseUrl = internal.manual?.approvalBaseUrl?.trim();
-		if (!baseUrl) return null;
-		return buildManualApprovalUrl(baseUrl, record.token);
+		if (!baseUrl) return { approvalUrl: null, error: null };
+		return {
+			approvalUrl: buildManualApprovalUrl(baseUrl, record.token),
+			error: null,
+		};
 	}
 
 	const hub = internal.hub;
-	if (!hub) return null;
+	if (!hub) return { approvalUrl: null, error: null };
 
 	try {
 		const session = await createHubPermissionSession(hub, {
@@ -72,15 +89,15 @@ export async function resolveApprovalUrl(
 			tenantId: record.tenant_id,
 			expiresAt: record.expires_at,
 		});
-		return session.approvalUrl;
-	} catch (err) {
+		return { approvalUrl: session.approvalUrl, error: null };
+	} catch (error) {
 		// The caller can only report that there is no link, so the reason lands here.
 		console.warn(
 			`[corsair/${record.plugin}] could not create an approval link for '${record.endpoint}': ${
-				err instanceof Error ? err.message : String(err)
+				error instanceof Error ? error.message : String(error)
 			}`,
 		);
-		return null;
+		return { approvalUrl: null, error };
 	}
 }
 
@@ -151,7 +168,7 @@ export async function resolveAsyncApprovalMessage(
 	}
 
 	const internal = { manual, hub };
-	const approvalUrl = await resolveApprovalUrl(internal, {
+	const result = await resolveApprovalUrlResult(internal, {
 		id: permissionId,
 		token: permissionToken,
 		plugin,
@@ -160,6 +177,7 @@ export async function resolveAsyncApprovalMessage(
 		tenant_id: tenantId,
 		expires_at: expiresAt,
 	});
+	const approvalUrl = result.approvalUrl;
 
 	if (usesManualApprovalConfig(manual)) {
 		if (approvalUrl) {
@@ -175,7 +193,11 @@ export async function resolveAsyncApprovalMessage(
 		if (approvalUrl) {
 			return formatDefaultApprovalMessage(approvalUrl);
 		}
-		return `Action '${operationPath}' requires user approval before it can run. Could not create approval link. Check hub configuration and server logs.`;
+		const detail =
+			result.error instanceof HubDeliveryUrlError
+				? `: ${result.error.message}`
+				: '';
+		return `Action '${operationPath}' requires user approval before it can run. Could not create approval link${detail}. Check hub configuration and server logs.`;
 	}
 
 	return APPROVAL_SETUP_HINT;
