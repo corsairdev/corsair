@@ -1,0 +1,145 @@
+---
+title: "Passcreator plugin"
+sidebarTitle: "Overview"
+description: "Passcreator is a wallet pass platform for Apple Wallet and Google Wallet. This plugin creates and updates passes from templates with personalised properties, delivers passes by email, pushes notifications to pass holders, reads pass statistics, copies templates, moves passes between templates (API v2), and manages webhook subscriptions whose deliveries carry verifiable ECDSA signatures."
+---
+
+Use **Passcreator** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Authenticate with the API key from the Passcreator app (Account &gt; API); the plugin sends it as the raw value of the Authorization header, without a Bearer prefix, exactly as the API expects. Pass identifiers accept the pass UID, the barcode value or a user-provided ID.
+Pass properties are keyed by the template's property names or property IDs; call templates.fields to list what a template expects before creating or updating passes. Marking a pass voided is done with passes.update and the voided flag. API v3 (query language, bulk operations), pass bundles and the validate-passes endpoints are documented by Passcreator but not part of this plugin.
+Webhook subscriptions are managed through the API (webhooks.subscribe). Deliveries carry a `signedData` string and a hex ECDSA `signature` over it; verify them with the PEM public key from webhooks.getPublicKey (store it with keys.set_webhook_signature or set it as the plugin's webhookSecret).
+Every operation is described in the official docs: https://developer.passcreator.com/en
+
+**What you get:**
+
+- 21 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/passcreator better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/passcreator better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/passcreator better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/passcreator better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { passcreator } from '@corsair-dev/passcreator';
+
+export const corsair = createCorsair({
+	plugins: [
+		passcreator(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Passcreator API key before the first call: `pnpm corsair setup --plugin=passcreator --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+passcreator()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'passcreator',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a pass**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.passcreator.api.passes.get({ passUid: '54b4d891-4454-435d-b07f-308d01b187d3' });
+```
+
+
+**Create a pass from a template**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.passcreator.api.passes.create({
+	passtemplate: '6d03a4a9-cf92-4e36-80b4-a8994546e2f',
+	properties: { firstname: 'John' },
+});
+```
+
+
+See the full list on the [API](/plugins/passcreator/api) page.
+
+## Webhooks
+
+This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/passcreator/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/passcreator/api">
+    Every `passcreator.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/passcreator/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

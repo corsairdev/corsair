@@ -1,0 +1,771 @@
+---
+title: "Passcreator API reference"
+sidebarTitle: "API"
+description: "API reference for the Passcreator plugin in Corsair: every `passcreator.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Passes
+
+### activeHistory
+
+`passes.activeHistory`
+
+Read the history of active and inactive passes of a template
+
+**Risk:** `read`
+
+```ts
+await corsair.passcreator.api.passes.activeHistory({ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f", day: "2025-01-15" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateUid` | `string` | Yes | Pass-template UID |
+| `day` | `string` | No | First day of the history (YYYY-MM-DD); omit for the last seven days |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  date: string,
+  active?: number | null,
+  inactive?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### create
+
+`passes.create`
+
+Create a pass from a pass template with personalised properties
+
+**Risk:** `write`
+
+```ts
+await corsair.passcreator.api.passes.create({ passtemplate: "6d03a4a9-cf92-4e36-80b4-a8994546e2f", properties: { firstname: "John" } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passtemplate` | `string` | Yes | Pass-template UID the pass is created from |
+| `properties` | `Record<string, any>` | Yes | Additional properties keyed by property name or ID |
+
+Property keys are the template's property names or property IDs; templates.fields lists both. The answer is the created pass.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passId` | `string \| null` | No | Pass id |
+| `identifier` | `string \| null` | No | Pass identifier (UUID, barcode value or user-provided ID) |
+| `uniqueIdentifier` | `string \| null` | No | Pass UID |
+| `barcodeValue` | `string \| null` | No | Barcode value |
+| `linkToPassPage` | `string \| null` | No | Link to the pass page in the wallet app |
+| `passTemplate` | `string \| null` | No | Template name |
+| `passTemplateGuid` | `string \| null` | No | Template UID |
+| `createdOn` | `string \| null` | No | Creation timestamp |
+| `voided` | `boolean \| null` | No | Whether the pass is voided |
+
+
+
+---
+
+### delete
+
+`passes.delete`
+
+Delete a pass
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.passcreator.api.passes.delete({ passUid: "54b4d891-4454-435d-b07f-308d01b187d3" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passUid` | `string` | Yes | Pass UID, barcode value or user-provided ID |
+
+Answers a success envelope.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passUid` | `string` | Yes | The pass the call was for |
+| `success` | `boolean` | Yes | Whether the call succeeded |
+
+
+
+---
+
+### enableDownload
+
+`passes.enableDownload`
+
+Enable the download of a pass
+
+**Risk:** `write`
+
+```ts
+await corsair.passcreator.api.passes.enableDownload({ passUid: "54b4d891-4454-435d-b07f-308d01b187d3" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passUid` | `string` | Yes | Pass UID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passUid` | `string` | Yes | Pass UID |
+| `success` | `boolean` | Yes | Whether the enable succeeded |
+
+
+
+---
+
+### get
+
+`passes.get`
+
+Read one pass by UID, barcode value or user-provided ID
+
+**Risk:** `read`
+
+```ts
+await corsair.passcreator.api.passes.get({ passUid: "54b4d891-4454-435d-b07f-308d01b187d3" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passUid` | `string` | Yes | Pass UID, barcode value or user-provided ID |
+| `includeFieldMapping` | `boolean` | No | Include the field mapping of the pass |
+| `appConfigurationId` | `string` | No | Read the pass as a specific app configuration sees it |
+
+passUid accepts the pass UID, the barcode value or a user-provided ID.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passId` | `string \| null` | No | Pass id |
+| `identifier` | `string \| null` | No | Pass identifier (UUID, barcode value or user-provided ID) |
+| `uniqueIdentifier` | `string \| null` | No | Pass UID |
+| `barcodeValue` | `string \| null` | No | Barcode value |
+| `linkToPassPage` | `string \| null` | No | Link to the pass page in the wallet app |
+| `passTemplate` | `string \| null` | No | Template name |
+| `passTemplateGuid` | `string \| null` | No | Template UID |
+| `createdOn` | `string \| null` | No | Creation timestamp |
+| `voided` | `boolean \| null` | No | Whether the pass is voided |
+
+
+
+---
+
+### list
+
+`passes.list`
+
+List the passes of a pass template, paged by cursor and date
+
+**Risk:** `read`
+
+```ts
+await corsair.passcreator.api.passes.list({ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f", start: 0, pageSize: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateUid` | `string` | Yes | Pass-template UID to list passes of |
+| `start` | `number` | No | Offset of the first pass to return |
+| `pageSize` | `number` | No | Number of passes per page (max 100) |
+| `lastIdOfPriorPage` | `string` | No | Identifier of the last pass of the prior page, for cursor paging |
+| `lastCreatedOnOfPriorPage` | `string` | No | createdOn of the last pass of the prior page, for cursor paging |
+| `createdSince` | `string` | No | Only passes created after this date, e.g. "2021-07-01 15:30" |
+| `modifiedSince` | `string` | No | Only passes modified after this date, e.g. "2021-07-01 15:30" |
+
+Cursor paging: pass lastIdOfPriorPage and lastCreatedOnOfPriorPage from the prior page along with start and pageSize.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object \| null` | No | The query and its paging links |
+| `total` | `number \| null` | No | Total passes matching the query |
+| `results` | `object[]` | Yes | The passes on this page |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  start?: number | null,
+  pageSize?: number | null,
+  self?: string | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="results full type">
+
+```ts
+{
+  passId?: string | null,
+  identifier?: string | null,
+  uniqueIdentifier?: string | null,
+  barcodeValue?: string | null,
+  linkToPassPage?: string | null,
+  passTemplate?: string | null,
+  passTemplateGuid?: string | null,
+  createdOn?: string | null,
+  voided?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pushNotification
+
+`passes.pushNotification`
+
+Push a notification message to one pass holder; the message goes out and cannot be recalled
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.passcreator.api.passes.pushNotification({ passUid: "54b4d891-4454-435d-b07f-308d01b187d3", message: "Your coupon is expiring" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passUid` | `string` | Yes | Pass UID |
+| `message` | `string` | Yes | Text pushed to the pass holder (sent as pushNotificationText); may use &#123;Property&#125; placeholders |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passUid` | `string` | Yes | The pass the call was for |
+| `success` | `boolean` | Yes | Whether the call succeeded |
+
+
+
+---
+
+### search
+
+`passes.search`
+
+Search the passes of a template by content
+
+**Risk:** `read`
+
+```ts
+await corsair.passcreator.api.passes.search({ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f", searchTerm: "johnny" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateUid` | `string` | Yes | Pass-template UID to search in |
+| `searchTerm` | `string` | Yes | Search term matched against pass content |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  passId?: string | null,
+  identifier?: string | null,
+  uniqueIdentifier?: string | null,
+  barcodeValue?: string | null,
+  linkToPassPage?: string | null,
+  passTemplate?: string | null,
+  passTemplateGuid?: string | null,
+  createdOn?: string | null,
+  voided?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### sendEmail
+
+`passes.sendEmail`
+
+Send the pass to an email address; the email goes out and cannot be recalled
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.passcreator.api.passes.sendEmail({ passUid: "54b4d891-4454-435d-b07f-308d01b187d3", email: "john.doe@example.com" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passUid` | `string` | Yes | Pass UID, barcode value or user-provided ID |
+| `email` | `string` | Yes | Email address the pass link is sent to |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passUid` | `string` | Yes | The pass the call was for |
+| `success` | `boolean` | Yes | Whether the call succeeded |
+
+
+
+---
+
+### statistics
+
+`passes.statistics`
+
+Read pass usage statistics of a template by day, week or month
+
+**Risk:** `read`
+
+```ts
+await corsair.passcreator.api.passes.statistics({ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f", timeFrame: "day", day: "today" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateUid` | `string` | Yes | Pass-template UID |
+| `timeFrame` | `day \| week \| month` | No | Statistics granularity |
+| `day` | `string` | No | The day to report, e.g. "today" or 2025-01-15 |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`passes.update`
+
+Update pass properties or mark the pass voided or not voided
+
+**Risk:** `write`
+
+```ts
+await corsair.passcreator.api.passes.update({ passUid: "54b4d891-4454-435d-b07f-308d01b187d3", properties: { firstname: "Jane" }, voided: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passUid` | `string` | Yes | Pass UID, barcode value or user-provided ID |
+| `properties` | `Record<string, any>` | No | Additional properties to update |
+| `voided` | `boolean` | No | Mark the pass voided (true) or not voided (false), as the mark-voided section documents |
+
+Answers 204 with no body; the voided flag marks or unmarks a pass as voided.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passUid` | `string` | Yes | Updated pass UID |
+| `success` | `boolean` | Yes | Whether the update succeeded |
+
+
+
+---
+
+### uris
+
+`passes.uris`
+
+Read the resource URIs of a pass
+
+**Risk:** `read`
+
+```ts
+await corsair.passcreator.api.passes.uris({ passUid: "54b4d891-4454-435d-b07f-308d01b187d3" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passUid` | `string` | Yes | Pass UID |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Templates
+
+### copy
+
+`templates.copy`
+
+Copy a pass template
+
+**Risk:** `write`
+
+```ts
+await corsair.passcreator.api.templates.copy({ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f", name: "Coupon copy" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateUid` | `string` | Yes | Template UID to copy |
+| `name` | `string` | Yes | Name of the copy |
+| `description` | `string` | No | Description of the copy; defaults to the original |
+| `organizationName` | `string` | No | Organization name of the copy; defaults to the original |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string \| null` | No | UUID of the new template |
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete a pass template; the API refuses when scheduled tasks exist
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.passcreator.api.templates.delete({ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateUid` | `string` | Yes | Template UID |
+
+The API refuses with 400 while scheduled push notifications exist for the template.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateUid` | `string` | Yes | Deleted template UID |
+| `success` | `boolean` | Yes | Whether the delete succeeded |
+
+
+
+---
+
+### fields
+
+`templates.fields`
+
+Read the required and optional fields of a pass template
+
+**Risk:** `read`
+
+```ts
+await corsair.passcreator.api.templates.fields({ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateUid` | `string` | Yes | Template UID |
+
+The zapierStyle field list; use these keys to personalise passes.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`templates.list`
+
+List all pass templates of the account
+
+**Risk:** `read`
+
+```ts
+await corsair.passcreator.api.templates.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  identifier: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### movePass
+
+`templates.movePass`
+
+Move a pass to a different template of the same project (API v2)
+
+**Risk:** `write`
+
+```ts
+await corsair.passcreator.api.templates.movePass({ passUid: "54b4d891-4454-435d-b07f-308d01b187d3", targetTemplateIdentifier: "ad0dac69-cf92-4e36-80b4-a8994546e2f" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `passUid` | `string` | Yes | Pass UID, barcode value or user-provided ID |
+| `targetTemplateIdentifier` | `string` | Yes | UID of the template the pass moves to (same project and signing certificate) |
+
+API v2. Both templates must belong to the same project and share a signing certificate.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Whether the operation succeeded |
+| `description` | `string \| null` | No | Human-readable result description |
+| `statusCode` | `number \| null` | No | HTTP status code of the response |
+
+
+
+---
+
+## Webhooks
+
+### getPublicKey
+
+`webhooks.getPublicKey`
+
+Read the PEM public key that verifies webhook payload signatures
+
+**Risk:** `read`
+
+```ts
+await corsair.passcreator.api.webhooks.getPublicKey({});
+```
+
+**Input:** _empty object_
+
+Returns the PEM public key the deliveries are signed with; store it with keys.set_webhook_signature so the plugin verifies deliveries.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publicKey` | `string` | Yes | PEM-encoded public key used to verify webhook payload signatures |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the active webhook subscriptions, including pull-mode entries
+
+**Risk:** `read`
+
+```ts
+await corsair.passcreator.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  subscription_url?: string | null,
+  target_url?: string | null,
+  event?: string | null,
+  pass_template?: string | null,
+  pull_mode?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### subscribe
+
+`webhooks.subscribe`
+
+Subscribe a URL to a webhook event, optionally scoped to one template
+
+**Risk:** `write`
+
+```ts
+await corsair.passcreator.api.webhooks.subscribe({ target_url: "https://example.com/webhooks/passcreator", event: "pass_created" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target_url` | `string` | Yes | Endpoint deliveries are posted to |
+| `event` | `string` | Yes | Event to subscribe to, e.g. pass_created, pass_updated, pass_voided, pushnotification_registered, pass_template_created, pass_template_updated, app_scan_created |
+| `pass_template` | `string` | No | Scope the subscription to one pass-template UID (sent in the path) |
+| `subscription_url` | `string` | No | Optional URL that identifies this subscription |
+| `retryEnabled` | `boolean` | No | Retry failed deliveries |
+| `signPayload` | `boolean` | No | Sign deliveries (default true here: the receiver rejects unsigned ones) |
+
+Events include pass_created, pass_updated, pass_voided, pushnotification_registered, pass_template_created, pass_template_updated and app_scan_created; pass_template scopes the subscription to one template, and signPayload defaults to true so deliveries can be verified.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accessToken` | `string \| null` | No | Only returned with generateAccessToken |
+
+
+
+---
+
+### unsubscribe
+
+`webhooks.unsubscribe`
+
+Unsubscribe a webhook; deliveries stop until it is subscribed again
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.passcreator.api.webhooks.unsubscribe({ target_url: "https://example.com/webhooks/passcreator" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target_url` | `string` | Yes | target_url the subscription was created with |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | Whether the unsubscribe succeeded |
+
+
+
+---
+

@@ -1,0 +1,93 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Passcreator"
+description: "Passcreator is a wallet pass platform for Apple Wallet and Google Wallet. This plugin creates and updates passes from templates with personalised properties, delivers passes by email, pushes notifications to pass holders, reads pass statistics, copies templates, moves passes between templates (API v2), and manages webhook subscriptions whose deliveries carry verifiable ECDSA signatures."
+domain: passcreator.com
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with the API key from the Passcreator app (Account > API); the
+  plugin sends it as the raw value of the Authorization header, without a
+  Bearer prefix, exactly as the API expects. Pass identifiers accept the pass
+  UID, the barcode value or a user-provided ID.
+
+  Pass properties are keyed by the template's property names or property IDs;
+  call templates.fields to list what a template expects before creating or
+  updating passes. Marking a pass voided is done with passes.update and the
+  voided flag. API v3 (query language, bulk operations), pass bundles and the
+  validate-passes endpoints are documented by Passcreator but not part of
+  this plugin.
+
+  Webhook subscriptions are managed through the API (webhooks.subscribe).
+  Deliveries carry a `signedData` string and a hex ECDSA `signature` over it;
+  verify them with the PEM public key from webhooks.getPublicKey (store it
+  with keys.set_webhook_signature or set it as the plugin's webhookSecret).
+
+  Every operation is described in the official docs:
+  https://developer.passcreator.com/en
+examples:
+  read:
+    path: passes.get
+    title: Read a pass
+    args:
+      passUid: 54b4d891-4454-435d-b07f-308d01b187d3
+  write:
+    path: passes.create
+    title: Create a pass from a template
+    args:
+      passtemplate: 6d03a4a9-cf92-4e36-80b4-a8994546e2f
+      properties:
+        firstname: John
+apiExamples:
+  passes.create:
+    call: '{ passtemplate: "6d03a4a9-cf92-4e36-80b4-a8994546e2f", properties: { firstname: "John" } }'
+  passes.list:
+    call: '{ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f", start: 0, pageSize: 100 }'
+  passes.get:
+    call: '{ passUid: "54b4d891-4454-435d-b07f-308d01b187d3" }'
+  passes.update:
+    call: '{ passUid: "54b4d891-4454-435d-b07f-308d01b187d3", properties: { firstname: "Jane" }, voided: false }'
+  passes.delete:
+    call: '{ passUid: "54b4d891-4454-435d-b07f-308d01b187d3" }'
+  passes.search:
+    call: '{ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f", searchTerm: "johnny" }'
+  passes.uris:
+    call: '{ passUid: "54b4d891-4454-435d-b07f-308d01b187d3" }'
+  passes.statistics:
+    call: '{ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f", timeFrame: "day", day: "today" }'
+  passes.activeHistory:
+    call: '{ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f", day: "2025-01-15" }'
+  passes.enableDownload:
+    call: '{ passUid: "54b4d891-4454-435d-b07f-308d01b187d3" }'
+  passes.pushNotification:
+    call: '{ passUid: "54b4d891-4454-435d-b07f-308d01b187d3", message: "Your coupon is expiring" }'
+  passes.sendEmail:
+    call: '{ passUid: "54b4d891-4454-435d-b07f-308d01b187d3", email: "john.doe@example.com" }'
+  templates.list:
+    call: '{}'
+  templates.fields:
+    call: '{ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f" }'
+  templates.copy:
+    call: '{ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f", name: "Coupon copy" }'
+  templates.delete:
+    call: '{ templateUid: "6d03a4a9-cf92-4e36-80b4-a8994546e2f" }'
+  templates.movePass:
+    call: '{ passUid: "54b4d891-4454-435d-b07f-308d01b187d3", targetTemplateIdentifier: "ad0dac69-cf92-4e36-80b4-a8994546e2f" }'
+  webhooks.subscribe:
+    call: '{ target_url: "https://example.com/webhooks/passcreator", event: "pass_created" }'
+  webhooks.unsubscribe:
+    call: '{ target_url: "https://example.com/webhooks/passcreator" }'
+  webhooks.list:
+    call: '{}'
+  webhooks.getPublicKey:
+    call: '{}'
+apiNotes:
+  passes.create: 'Property keys are the template''s property names or property IDs; templates.fields lists both. The answer is the created pass.'
+  passes.list: 'Cursor paging: pass lastIdOfPriorPage and lastCreatedOnOfPriorPage from the prior page along with start and pageSize.'
+  passes.get: 'passUid accepts the pass UID, the barcode value or a user-provided ID.'
+  passes.update: 'Answers 204 with no body; the voided flag marks or unmarks a pass as voided.'
+  passes.delete: 'Answers a success envelope.'
+  templates.fields: 'The zapierStyle field list; use these keys to personalise passes.'
+  templates.delete: 'The API refuses with 400 while scheduled push notifications exist for the template.'
+  templates.movePass: 'API v2. Both templates must belong to the same project and share a signing certificate.'
+  webhooks.subscribe: 'Events include pass_created, pass_updated, pass_voided, pushnotification_registered, pass_template_created, pass_template_updated and app_scan_created; pass_template scopes the subscription to one template, and signPayload defaults to true so deliveries can be verified.'
+  webhooks.getPublicKey: 'Returns the PEM public key the deliveries are signed with; store it with keys.set_webhook_signature so the plugin verifies deliveries.'
