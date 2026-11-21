@@ -94,6 +94,10 @@ export async function makePiloterrRequest(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		// Rendering, unlocker and screenshot calls wait for the page (rendering
+		// takes a timeout up to 60 s plus wait_in_seconds); core's default is
+		// 20 s.
+		TIMEOUT: 120_000,
 		HEADERS: {
 			Accept: 'application/json',
 			'x-api-key': apiKey,

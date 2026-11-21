@@ -304,6 +304,15 @@ describe('linkedin', () => {
 		expect(result.status).toBe('catch_all');
 	});
 
+	it('profile info keeps the person out of the event log (R8)', async () => {
+		respond(linkedinProfile);
+		await invoke(LinkedIn.profileInfo, {
+			query: 'https://www.linkedin.com/in/example-user',
+		});
+		const logged = JSON.stringify(mockLog.mock.calls.at(-1)?.[2]);
+		expect(logged).toBe('{"found":true}');
+	});
+
 	it('profile, job and post info send the query', async () => {
 		respond(linkedinProfile);
 		await invoke(LinkedIn.profileInfo, {

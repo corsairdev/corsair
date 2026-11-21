@@ -46,7 +46,8 @@ export const profileInfo: PiloterrEndpoints['linkedinProfileInfo'] = (
 			path: `${V2}/linkedin/profile/info`,
 			query: { query, fields },
 		}),
-		{ log: (_, profile) => ({ username: profile.username ?? undefined }) },
+		// R8: no personal identifiers in the event log.
+		{ log: (_, profile) => ({ found: Boolean(profile.username) }) },
 	);
 
 export const jobInfo: PiloterrEndpoints['linkedinJobInfo'] = (ctx, input) =>
