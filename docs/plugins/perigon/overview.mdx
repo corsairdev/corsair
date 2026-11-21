@@ -8,8 +8,8 @@ Use **Perigon** through Corsair: one client, typed API calls.
 
 Authenticate with the API key from the Developers section of your Perigon account; the plugin sends it in the x-api-key header (the docs also allow a query parameter and a Bearer header — the header keeps the key out of URLs). Every route here is a GET.
 Articles API returns one result per published article URL; Stories API returns clustered narratives. The limits endpoint is free to poll — it does not count against your quota — and reports requestsUsed, requestLimit and resetAt. Article body text may be truncated on some plans; check articleContentTruncation in limits.get.
-Filters are documented across the Search & Filtering pages (query logic, dates, sources, topics, sentiment, deduplication); this plugin exposes the common family. Monitors, Social (X, Reddit, LinkedIn), vector search and the summarizer are documented by Perigon but not part of this plugin.
-Every operation is described in the official docs: https://perigon.io/docs/api/authentication
+Lists answer &#123; status, numResults, articles &#125; (articles) or &#123; status, numResults, results &#125; (the rest); numResults is the total match count and pages are numbered from 0. Filters that take several values (source, topic, country, ...) accept a list and OR them. This plugin exposes the common filters from Perigon's OpenAPI. Monitors, Social (X, Reddit, LinkedIn), vector search and the summarizer are documented by Perigon but not part of this plugin.
+Every operation is described in the official docs: https://docs.perigon.io/openapi.json
 
 **What you get:**
 
@@ -103,7 +103,12 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.perigon.api.articles.list({ q: 'climate AND policy', from: '2025-11-01', size: 25 });
+await tenant.perigon.api.articles.list({
+	q: 'climate AND policy',
+	from: '2025-11-01',
+	size: 25,
+	page: 0,
+});
 ```
 
 
