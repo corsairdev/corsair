@@ -1,0 +1,10792 @@
+---
+title: "MailerLite API reference"
+sidebarTitle: "API"
+description: "API reference for the MailerLite plugin in Corsair: every `mailerlite.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Automation Emails
+
+### ecommerceStats
+
+`automationEmails.ecommerceStats`
+
+MailerLite ecommerce stats automation emails.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationEmails.ecommerceStats({ automationId: '1', emailId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `emailId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  start_date?: string,
+  end_date?: string,
+  shop_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getContent
+
+`automationEmails.getContent`
+
+MailerLite get content automation emails.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationEmails.getContent({ automationId: '1', emailId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `emailId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  html: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setContent
+
+`automationEmails.setContent`
+
+MailerLite set content automation emails.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.automationEmails.setContent({
+	automationId: '1',
+	emailId: '1',
+	body: { html: '<html><body>Test</body></html>' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `emailId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  html: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stats
+
+`automationEmails.stats`
+
+MailerLite stats automation emails.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationEmails.stats({ automationId: '1', emailId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `emailId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  start_date?: string,
+  end_date?: string,
+  shop_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unsubscribeReasons
+
+`automationEmails.unsubscribeReasons`
+
+MailerLite unsubscribe reasons automation emails.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationEmails.unsubscribeReasons({ automationId: '1', emailId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `emailId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  label: string,
+  count: number,
+  percentage: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Automation Reports
+
+### abStepStat
+
+`automationReports.abStepStat`
+
+MailerLite ab step stat automation reports.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationReports.abStepStat({ automationId: '1', stepId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### abStepStats
+
+`automationReports.abStepStats`
+
+MailerLite ab step stats automation reports.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationReports.abStepStats({ automationId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ecommerceTotals
+
+`automationReports.ecommerceTotals`
+
+MailerLite ecommerce totals automation reports.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationReports.ecommerceTotals({ automationId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  start_date?: string,
+  end_date?: string,
+  shop_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### emailTotals
+
+`automationReports.emailTotals`
+
+MailerLite email totals automation reports.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationReports.emailTotals({ automationId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  start_date?: string,
+  end_date?: string,
+  shop_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### orders
+
+`automationReports.orders`
+
+MailerLite orders automation reports.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationReports.orders({
+	automationId: '1',
+	query: { time_frame: 'week' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  time_frame: week | month | two_months | three_months | six_months | year | last_year | all_time | custom,
+  time_frame_start?: string,
+  time_frame_end?: string,
+  ecommerce_shop_id?: string | number,
+  limit?: number,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stepRunCount
+
+`automationReports.stepRunCount`
+
+MailerLite step run count automation reports.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationReports.stepRunCount({ automationId: '1', stepId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  step_id?: string | number,
+  completed_step_runs?: number,
+  in_queue_step_runs?: number,
+  completed_runs?: number,
+  queued_runs?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stepRunCounts
+
+`automationReports.stepRunCounts`
+
+MailerLite step run counts automation reports.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationReports.stepRunCounts({ automationId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  step_id: string | number,
+  completed_step_runs: number,
+  in_queue_step_runs: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stepSubscribers
+
+`automationReports.stepSubscribers`
+
+MailerLite step subscribers automation reports.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationReports.stepSubscribers({
+	automationId: '1',
+	stepId: '1',
+	query: { status: 'queued' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  status: queued | completed,
+  limit?: number,
+  page?: number,
+  sort?: string,
+  filter[
+    date_from
+  ]?: string,
+  filter[
+    date_to
+  ]?: string,
+  filter[
+    search
+  ]?: string,
+  filter[
+    id
+  ]?: string | (string | number)[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### triggerRunCount
+
+`automationReports.triggerRunCount`
+
+MailerLite trigger run count automation reports.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationReports.triggerRunCount({ automationId: '1', triggerId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `triggerId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### triggerRunCounts
+
+`automationReports.triggerRunCounts`
+
+MailerLite trigger run counts automation reports.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationReports.triggerRunCounts({ automationId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### triggerSubscribers
+
+`automationReports.triggerSubscribers`
+
+MailerLite trigger subscribers automation reports.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationReports.triggerSubscribers({
+	automationId: '1',
+	triggerId: '1',
+	query: { status: 'queued' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `triggerId` | `string` | Yes | — |
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  status: queued | completed,
+  limit?: number,
+  page?: number,
+  sort?: string,
+  filter[
+    date_from
+  ]?: string,
+  filter[
+    date_to
+  ]?: string,
+  filter[
+    search
+  ]?: string,
+  filter[
+    id
+  ]?: string | (string | number)[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Automations
+
+### activity
+
+`automations.activity`
+
+MailerLite activity automations.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automations.activity({
+	automationId: '1',
+	query: { filter[status]: 'completed' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter[
+    status
+  ]: completed | active | canceled | failed,
+  filter[
+    date_from
+  ]?: string,
+  filter[
+    date_to
+  ]?: string,
+  filter[
+    scheduled_from
+  ]?: string,
+  filter[
+    scheduled_to
+  ]?: string,
+  filter[
+    search
+  ]?: string,
+  with_subscribers?: boolean,
+  sort?: string,
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addSubscribers
+
+`automations.addSubscribers`
+
+MailerLite add subscribers automations.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.automations.addSubscribers({
+	automationId: 'automation-1',
+	body: {
+		emails: ['active@mailerlite.test'],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  emails?: string[],
+  groups?: (string | number)[],
+  step_id?: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### addToGroup
+
+`automations.addToGroup`
+
+MailerLite add to group automations.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.automations.addToGroup({
+	automationId: '1',
+	body: {
+		destination_groups: ['1'],
+		filter: { status: 'active' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  destination_groups: (string | number)[],
+  filter: {
+    status: active | completed | canceled,
+    id?: (string | number)[],
+    search?: string,
+    reason?: string,
+    date_from?: string,
+    date_to?: string,
+    scheduled_from?: string,
+    scheduled_to?: string,
+    next_step?: string | number,
+    current_step?: string | number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### cancelRuns
+
+`automations.cancelRuns`
+
+MailerLite cancel runs automations.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.automations.cancelRuns({
+	automationId: '1',
+	body: {
+		filter: { status: 'active' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  filter: {
+    status: active,
+    id?: (string | number)[],
+    step?: string | number,
+    search?: string,
+    date_from?: string,
+    date_to?: string,
+    scheduled_from?: string,
+    scheduled_to?: string,
+    next_step?: string | number,
+    current_step?: string | number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### copy
+
+`automations.copy`
+
+MailerLite copy automations.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.automations.copy({ automationId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`automations.create`
+
+MailerLite create automations.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.automations.create({
+	body: { name: '1' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`automations.delete`
+
+MailerLite delete automations.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.automations.delete({ automationId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### disable
+
+`automations.disable`
+
+MailerLite disable automations.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.automations.disable({ automationId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enable
+
+`automations.enable`
+
+MailerLite enable automations.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.automations.enable({ automationId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+
+Enabling activates workflow triggers and may start sending automation emails.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`automations.get`
+
+MailerLite get automations.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automations.get({ automationId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  include?: flow
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`automations.list`
+
+MailerLite list automations.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter[
+    folder
+  ]?: number,
+  filter[
+    group
+  ]?: number,
+  filter[
+    enabled
+  ]?: 0 | 1 | true | false,
+  filter[
+    status
+  ]?: true | false,
+  filter[
+    name
+  ]?: string,
+  filter[
+    automation_state
+  ]?: workflows | drafts,
+  filter[
+    drafts_state
+  ]?: complete_workflow | broken_workflow,
+  sort?: string,
+  with_steps?: 0 | 1 | true | false,
+  page?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### readd
+
+`automations.readd`
+
+MailerLite readd automations.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.automations.readd({
+	automationId: '1',
+	body: {
+		readd_subscribers_to: 'last_completed_step',
+		filter: { status: 'completed' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  readd_subscribers_to: last_completed_step | last_failed_step | selected_step,
+  selected_step_id?: string | number,
+  filter: {
+    status: completed | canceled | failed,
+    id?: (string | number)[],
+    step?: string | number,
+    search?: string,
+    date_from?: string,
+    date_to?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### skipDelay
+
+`automations.skipDelay`
+
+MailerLite skip delay automations.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.automations.skipDelay({
+	automationId: '1',
+	body: {
+		filter: { status: 'active' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  filter: {
+    status: active,
+    id?: (string | number)[],
+    step?: string | number,
+    search?: string,
+    date_from?: string,
+    date_to?: string,
+    scheduled_from?: string,
+    scheduled_to?: string,
+    next_step?: string | number,
+    current_step?: string | number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### test
+
+`automations.test`
+
+MailerLite test automations.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.automations.test({
+	automationId: '1',
+	body: { email: 'test@mailerlite.test' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  email: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  queued: {
+    step_id: string | number,
+    email_id: string | number,
+    subject: string
+  }[],
+  skipped: {
+    step_id: string | number,
+    subject: string,
+    reason: not_eligible_for_sending | not_designed
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`automations.update`
+
+MailerLite update automations.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.automations.update({
+	automationId: '1',
+	body: {},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name?: string,
+  enabled?: boolean,
+  trigger_data?: {
+    repeatable?: boolean,
+    repeatable_settings?: {
+      mode: string,
+      value: number,
+      unit: string
+    },
+    track_ecommerce?: boolean
+  },
+  triggers?: {
+    type: subscriber_joins_group | subscriber_joins_segment | clicks_link | form_completed | field_updated | anniversary | exact_date | manual | purchased_any_product | purchased_from_category | purchased_specific_product | abandoned_cart | abandoned_checkout | purchase_frequency,
+    data?: {
+      group_ids: (string | number)[],
+      exclude_group_ids?: (string | number)[]
+    } | {
+      segment_id: string | number
+    } | {
+      link: string
+    } | {
+      form_type: string,
+      form_id: string | number
+    } | {
+      field_id: string | number | email,
+      field_operator: string,
+      value?: string | number | boolean
+    } | {
+      field_id: string | number,
+      group_ids: (string | number)[],
+      exclude_group_ids?: (string | number)[],
+      send_hour: string,
+      send_minute: string,
+      start_before_time?: number,
+      start_before_time_unit?: day | month,
+      start_after_time?: number,
+      start_after_time_unit?: day | month,
+      use_timezone?: account | subscriber | custom,
+      timezone_id?: number
+    } | {
+    } | {
+      ecommerce_shop_id: string | number
+    } | {
+      ecommerce_shop_id: string | number,
+      ecommerce_category_id: string | number
+    } | {
+      ecommerce_shop_id: string | number,
+      ecommerce_product_id: string | number,
+      variation_ids?: (string | number)[]
+    } | {
+      ecommerce_shop_id: string | number,
+      unit: hours | days | weeks | months,
+      value: number
+    } | {
+      ecommerce_shop_id: string | number,
+      interval: number,
+      value: number,
+      unit: string,
+      order_cap?: number
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Automation Steps
+
+### copy
+
+`automationSteps.copy`
+
+MailerLite copy automation steps.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.automationSteps.copy({ automationId: '1', stepId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+| `body` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  parent_id?: string | number,
+  branch?: yes | no | a_path | b_path | c_path,
+  move_to_branch?: yes | no
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`automationSteps.create`
+
+MailerLite create automation steps.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.automationSteps.create({
+	automationId: '1',
+	body: { type: 'email' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  type: email | delay | condition | abtest | webhook | action,
+  parent_id?: string | number,
+  append?: boolean,
+  branch?: yes | no | a_path | b_path | c_path,
+  move_to_branch?: yes | no,
+  data?: {
+    name?: string,
+    subject?: string,
+    from: string,
+    from_name: string,
+    reply_to: string,
+    email_id?: string | number,
+    language_id?: number,
+    google_analytics?: boolean,
+    track_opens?: boolean,
+    preheader?: string
+  } | {
+    unit: minutes | hours | days | weeks | months,
+    value: number
+  } | {
+    unit: next | next_weekday | next_monthday | next_date | subscriber_field,
+    hour: string,
+    minute: 15 | 30 | 45 | 00,
+    use_timezone: account | subscriber | custom,
+    timezone_id?: number,
+    week_days?: (1 | 2 | 3 | 4 | 5 | 6 | 7)[],
+    month_day?: string | last,
+    date?: string,
+    field_id?: string | number,
+    action_on_date_elapsed?: stop | move_to_next_step | move_to_step,
+    go_to_step_id?: string | number,
+    go_to_step_type?: string
+  } | {
+    conditions: {
+      type: campaign_activity | workflow_activity | custom_fields | group_membership | segment_membership,
+      campaign_id?: string | number,
+      email_id?: string | number,
+      action?: string,
+      link_id?: string | number,
+      field_id?: string | number | email,
+      action_value?: string,
+      group_id?: string | number,
+      segment_id?: string | number
+    }[],
+    matching_type?: any | all,
+    yes_step_id?: string | number,
+    no_step_id?: string | number
+  } | {
+    split_percentages: {
+      label: string,
+      path: a_path | b_path | c_path,
+      value: number
+    }[],
+    name?: string,
+    a_path_step_id?: string | number,
+    b_path_step_id?: string | number,
+    c_path_step_id?: string | number,
+    ab_test_winner?: a_path | b_path | c_path
+  } | {
+    url: string,
+    secret: string,
+    webhook_id?: string | number
+  } | {
+    action_type: copy_to_group,
+    group_ids: (string | number)[]
+  } | {
+    action_type: remove_from_group,
+    group_ids: (string | number)[]
+  } | {
+    action_type: move_to_group,
+    from_group_ids: (string | number)[],
+    to_group_ids: (string | number)[]
+  } | {
+    action_type: mark_as_unsubscribed
+  } | {
+    action_type: go_to_step,
+    go_to_step_id: string | number,
+    go_to_step_type: string
+  } | {
+    action_type: update_custom_field,
+    field_id: string | number,
+    date_operation?: string,
+    number_operation?: string,
+    value?: string
+  } | {
+    action_type: send_internal_email_notification,
+    from: string,
+    from_name: string,
+    reply_to: string,
+    subject: string,
+    message: string,
+    recipients: string[],
+    fields?: (string | number)[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`automationSteps.delete`
+
+MailerLite delete automation steps.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.automationSteps.delete({ automationId: '1', stepId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  branch_to_delete?: all | yes | no | a_path | b_path | c_path,
+  branch_to_keep?: yes | no | a_path | b_path | c_path
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`automationSteps.get`
+
+MailerLite get automation steps.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationSteps.get({ automationId: '1', stepId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`automationSteps.list`
+
+MailerLite list automation steps.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationSteps.list({ automationId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reorder
+
+`automationSteps.reorder`
+
+MailerLite reorder automation steps.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.automationSteps.reorder({
+	automationId: 'automation-1',
+	body: { dragged_step_id: 'step-1' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  dragged_step_id?: string | number,
+  step_ids?: (string | number)[],
+  new_parent_step_id?: string | number,
+  branch?: yes | no | a_path | b_path | c_path,
+  branch_for_child?: yes | no
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### selectWinner
+
+`automationSteps.selectWinner`
+
+MailerLite select winner automation steps.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.automationSteps.selectWinner({
+	automationId: '1',
+	stepId: '1',
+	body: { ab_test_winner: 'a_path' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  ab_test_winner: a_path | b_path | c_path
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`automationSteps.update`
+
+MailerLite update automation steps.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.automationSteps.update({
+	automationId: '1',
+	stepId: '1',
+	body: {},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  parent_id?: string | number,
+  data?: {
+    name?: string,
+    subject?: string,
+    from: string,
+    from_name: string,
+    reply_to: string,
+    email_id?: string | number,
+    language_id?: number,
+    google_analytics?: boolean,
+    track_opens?: boolean,
+    preheader?: string
+  } | {
+    unit: minutes | hours | days | weeks | months,
+    value: number
+  } | {
+    unit: next | next_weekday | next_monthday | next_date | subscriber_field,
+    hour: string,
+    minute: 15 | 30 | 45 | 00,
+    use_timezone: account | subscriber | custom,
+    timezone_id?: number,
+    week_days?: (1 | 2 | 3 | 4 | 5 | 6 | 7)[],
+    month_day?: string | last,
+    date?: string,
+    field_id?: string | number,
+    action_on_date_elapsed?: stop | move_to_next_step | move_to_step,
+    go_to_step_id?: string | number,
+    go_to_step_type?: string
+  } | {
+    conditions: {
+      type: campaign_activity | workflow_activity | custom_fields | group_membership | segment_membership,
+      campaign_id?: string | number,
+      email_id?: string | number,
+      action?: string,
+      link_id?: string | number,
+      field_id?: string | number | email,
+      action_value?: string,
+      group_id?: string | number,
+      segment_id?: string | number
+    }[],
+    matching_type?: any | all,
+    yes_step_id?: string | number,
+    no_step_id?: string | number
+  } | {
+    split_percentages: {
+      label: string,
+      path: a_path | b_path | c_path,
+      value: number
+    }[],
+    name?: string,
+    a_path_step_id?: string | number,
+    b_path_step_id?: string | number,
+    c_path_step_id?: string | number,
+    ab_test_winner?: a_path | b_path | c_path
+  } | {
+    url: string,
+    secret: string,
+    webhook_id?: string | number
+  } | {
+    action_type: copy_to_group,
+    group_ids: (string | number)[]
+  } | {
+    action_type: remove_from_group,
+    group_ids: (string | number)[]
+  } | {
+    action_type: move_to_group,
+    from_group_ids: (string | number)[],
+    to_group_ids: (string | number)[]
+  } | {
+    action_type: mark_as_unsubscribed
+  } | {
+    action_type: go_to_step,
+    go_to_step_id: string | number,
+    go_to_step_type: string
+  } | {
+    action_type: update_custom_field,
+    field_id: string | number,
+    date_operation?: string,
+    number_operation?: string,
+    value?: string
+  } | {
+    action_type: send_internal_email_notification,
+    from: string,
+    from_name: string,
+    reply_to: string,
+    subject: string,
+    message: string,
+    recipients: string[],
+    fields?: (string | number)[]
+  },
+  reschedule_waiting_subscribers?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Automation Templates
+
+### createFromTemplate
+
+`automationTemplates.createFromTemplate`
+
+MailerLite create from template automation templates.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.automationTemplates.createFromTemplate({ templateId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`automationTemplates.list`
+
+MailerLite list automation templates.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter[
+    type
+  ]?: welcome | date | event | feedback | promotion | reminder,
+  filter[
+    category
+  ]?: number,
+  limit?: number,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Automation Triggers
+
+### create
+
+`automationTriggers.create`
+
+MailerLite create automation triggers.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.automationTriggers.create({
+	automationId: '1',
+	body: { type: 'subscriber_joins_group' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  type: subscriber_joins_group | subscriber_joins_segment | clicks_link | form_completed | field_updated | anniversary | exact_date | manual | purchased_any_product | purchased_from_category | purchased_specific_product | abandoned_cart | abandoned_checkout | purchase_frequency,
+  data?: {
+    group_ids: (string | number)[],
+    exclude_group_ids?: (string | number)[]
+  } | {
+    segment_id: string | number
+  } | {
+    link: string
+  } | {
+    form_type: string,
+    form_id: string | number
+  } | {
+    field_id: string | number | email,
+    field_operator: string,
+    value?: string | number | boolean
+  } | {
+    field_id: string | number,
+    group_ids: (string | number)[],
+    exclude_group_ids?: (string | number)[],
+    send_hour: string,
+    send_minute: string,
+    start_before_time?: number,
+    start_before_time_unit?: day | month,
+    start_after_time?: number,
+    start_after_time_unit?: day | month,
+    use_timezone?: account | subscriber | custom,
+    timezone_id?: number
+  } | {
+  } | {
+    ecommerce_shop_id: string | number
+  } | {
+    ecommerce_shop_id: string | number,
+    ecommerce_category_id: string | number
+  } | {
+    ecommerce_shop_id: string | number,
+    ecommerce_product_id: string | number,
+    variation_ids?: (string | number)[]
+  } | {
+    ecommerce_shop_id: string | number,
+    unit: hours | days | weeks | months,
+    value: number
+  } | {
+    ecommerce_shop_id: string | number,
+    interval: number,
+    value: number,
+    unit: string,
+    order_cap?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`automationTriggers.delete`
+
+MailerLite delete automation triggers.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.automationTriggers.delete({ automationId: '1', triggerId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `triggerId` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`automationTriggers.get`
+
+MailerLite get automation triggers.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationTriggers.get({ automationId: '1', triggerId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `triggerId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`automationTriggers.list`
+
+MailerLite list automation triggers.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.automationTriggers.list({ automationId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`automationTriggers.update`
+
+MailerLite update automation triggers.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.automationTriggers.update({
+	automationId: '1',
+	triggerId: '1',
+	body: {},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `automationId` | `string` | Yes | — |
+| `triggerId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data?: {
+    group_ids: (string | number)[],
+    exclude_group_ids?: (string | number)[]
+  } | {
+    segment_id: string | number
+  } | {
+    link: string
+  } | {
+    form_type: string,
+    form_id: string | number
+  } | {
+    field_id: string | number | email,
+    field_operator: string,
+    value?: string | number | boolean
+  } | {
+    field_id: string | number,
+    group_ids: (string | number)[],
+    exclude_group_ids?: (string | number)[],
+    send_hour: string,
+    send_minute: string,
+    start_before_time?: number,
+    start_before_time_unit?: day | month,
+    start_after_time?: number,
+    start_after_time_unit?: day | month,
+    use_timezone?: account | subscriber | custom,
+    timezone_id?: number
+  } | {
+  } | {
+    ecommerce_shop_id: string | number
+  } | {
+    ecommerce_shop_id: string | number,
+    ecommerce_category_id: string | number
+  } | {
+    ecommerce_shop_id: string | number,
+    ecommerce_product_id: string | number,
+    variation_ids?: (string | number)[]
+  } | {
+    ecommerce_shop_id: string | number,
+    unit: hours | days | weeks | months,
+    value: number
+  } | {
+    ecommerce_shop_id: string | number,
+    interval: number,
+    value: number,
+    unit: string,
+    order_cap?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Brand Styles
+
+### list
+
+`brandStyles.list`
+
+MailerLite list brand styles.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.brandStyles.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  brand: {
+    identifier: string,
+    name: string,
+    font_family: string,
+    primary_color: string,
+    secondary_color: string,
+    heading_color: string,
+    text_color: string,
+    border_color: string,
+    background_color: string
+  } | null,
+  default: {
+    identifier: string,
+    name: string,
+    font_family: string,
+    primary_color: string,
+    secondary_color: string,
+    heading_color: string,
+    text_color: string,
+    border_color: string,
+    background_color: string
+  },
+  presets: {
+    identifier: string,
+    name: string,
+    font_family: string,
+    primary_color: string,
+    secondary_color: string,
+    heading_color: string,
+    text_color: string,
+    border_color: string,
+    background_color: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Campaign Languages
+
+### list
+
+`campaignLanguages.list`
+
+MailerLite list campaign languages.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.campaignLanguages.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  shortcode: string,
+  iso639: string,
+  name: string,
+  direction: ltr | rtl
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Campaigns
+
+### cancel
+
+`campaigns.cancel`
+
+MailerLite cancel campaigns.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.campaigns.cancel({ campaignId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`campaigns.create`
+
+MailerLite create campaigns.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.campaigns.create({
+	body: {
+		name: 'Welcome note',
+		type: 'regular',
+		emails: [{ subject: 'Welcome', from_name: 'Team', from: 'sender@mailerlite.test' }],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  type: regular | ab | resend | multivariate,
+  language_id?: number,
+  emails?: {
+    subject?: string,
+    from_name?: string,
+    from?: string,
+    reply_to?: string,
+    content?: string,
+    editor?: simple,
+    template_id?: number
+  }[],
+  groups?: (string | number)[],
+  segments?: (string | number)[],
+  ab_settings?: {
+    test_type: subject | sender | sending_time,
+    select_winner_by?: o | c,
+    after_time_amount?: number,
+    after_time_unit?: h | d,
+    test_split: number,
+    b_value?: {
+      subject?: string,
+      from_name?: string,
+      from?: string
+    }
+  },
+  resend_settings?: {
+    test_type: subject,
+    select_winner_by: o | c,
+    b_value: {
+      subject: string
+    }
+  },
+  multivariate_settings?: {
+    test_variants: {
+      subject: string[],
+      sender: {
+        from: string,
+        from_name: string
+      }[],
+      content: number,
+      sending_time: number
+    },
+    select_winner_by?: o | c,
+    after_time_amount?: number,
+    after_time_unit?: h | d,
+    test_split?: number
+  },
+  settings?: {
+    ecommerce_tracking?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`campaigns.delete`
+
+MailerLite delete campaigns.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.campaigns.delete({ campaignId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### ecommerceOrders
+
+`campaigns.ecommerceOrders`
+
+MailerLite ecommerce orders campaigns.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.campaigns.ecommerceOrders({ campaignId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  shop_id: number,
+  limit?: number,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  subscriber: {
+    id: string | number,
+    email: string
+  },
+  total: number,
+  updated_at: string,
+  order: string
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ecommerceReport
+
+`campaigns.ecommerceReport`
+
+MailerLite ecommerce report campaigns.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.campaigns.ecommerceReport({ campaignId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  shop_id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ecommerce: {
+    orders_count: number,
+    revenue: number,
+    average_order_value: number,
+    conversion_rate: string
+  },
+  best_performing_email: {
+    id: string | number
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`campaigns.get`
+
+MailerLite get campaigns.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.campaigns.get({ campaignId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+MailerLite list campaigns.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.campaigns.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter[
+    status
+  ]?: sent | draft | ready,
+  filter[
+    type
+  ]?: regular | ab | resend | rss | multivariate | all,
+  filter[
+    date_from
+  ]?: string,
+  filter[
+    date_to
+  ]?: string,
+  filter[
+    folder
+  ]?: number,
+  filter[
+    subject
+  ]?: string,
+  limit?: number,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### schedule
+
+`campaigns.schedule`
+
+MailerLite schedule campaigns.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.campaigns.schedule({
+	campaignId: '1',
+	body: { delivery: 'instant' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+Scheduling with delivery=instant sends the campaign immediately; scheduled and timezone-based delivery also sends once MailerLite reaches the configured time.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  delivery?: instant | scheduled | timezone_based | smart_sending,
+  schedule?: {
+    date?: string,
+    hours?: string,
+    minutes?: string,
+    timezone_id?: number
+  },
+  resend?: {
+    delivery?: day | scheduled,
+    date?: string,
+    hours?: string,
+    minutes?: string,
+    timezone_id?: number
+  },
+  sending_time_test_schedule?: {
+    date: string,
+    hours: string,
+    minutes: string,
+    timezone_id?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subscriberActivity
+
+`campaigns.subscriberActivity`
+
+MailerLite subscriber activity campaigns.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.campaigns.subscriberActivity({ campaignId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter[
+    type
+  ]?: opened | unopened | clicked | unsubscribed | forwarded | hardbounced | softbounced | junk | sent | social_interaction,
+  filter[
+    search
+  ]?: string,
+  limit?: 10 | 25 | 50 | 100,
+  page?: number,
+  sort?: id | clicks_count | opens_count | -id | -clicks_count | -opens_count,
+  include?: subscriber | subscriber.groups
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaigns.update`
+
+MailerLite update campaigns.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.campaigns.update({
+	campaignId: '1',
+	body: { name: '1' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  language_id?: number,
+  emails?: {
+    subject?: string,
+    from_name?: string,
+    from?: string,
+    reply_to?: string,
+    content?: string,
+    editor?: simple,
+    template_id?: number
+  }[],
+  groups?: (string | number)[],
+  segments?: (string | number)[],
+  ab_settings?: {
+    test_type: subject | sender | sending_time,
+    select_winner_by?: o | c,
+    after_time_amount?: number,
+    after_time_unit?: h | d,
+    test_split: number,
+    b_value?: {
+      subject?: string,
+      from_name?: string,
+      from?: string
+    }
+  },
+  resend_settings?: {
+    test_type: subject,
+    select_winner_by: o | c,
+    b_value: {
+      subject: string
+    }
+  },
+  multivariate_settings?: {
+    test_variants: {
+      subject: string[],
+      sender: {
+        from: string,
+        from_name: string
+      }[],
+      content: number,
+      sending_time: number
+    },
+    select_winner_by?: o | c,
+    after_time_amount?: number,
+    after_time_unit?: h | d,
+    test_split?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Cart Items
+
+### count
+
+`cartItems.count`
+
+MailerLite count cart items.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.cartItems.count({ shopId: '1', cartId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `cartId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+
+
+
+---
+
+### create
+
+`cartItems.create`
+
+MailerLite create cart items.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.cartItems.create({
+	shopId: 'shop-1',
+	cartId: 'cart-1',
+	body: { ecommerce_product_id: 'product-1' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `cartId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  ecommerce_product_id?: string | number,
+  product_resource_id?: string,
+  resource_id?: string,
+  ecommerce_product_variant_id?: string | number,
+  variant?: string,
+  quantity?: number,
+  price?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`cartItems.delete`
+
+MailerLite delete cart items.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.cartItems.delete({ shopId: '1', cartId: '1', itemId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `cartId` | `string` | Yes | — |
+| `itemId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`cartItems.get`
+
+MailerLite get cart items.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.cartItems.get({ shopId: '1', cartId: '1', itemId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `cartId` | `string` | Yes | — |
+| `itemId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`cartItems.list`
+
+MailerLite list cart items.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.cartItems.list({ shopId: '1', cartId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `cartId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  limit?: number,
+  page?: number,
+  sort?: id | created_at | -id | -created_at,
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`cartItems.update`
+
+MailerLite update cart items.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.cartItems.update({
+	shopId: 'shop-1',
+	cartId: 'cart-1',
+	itemId: 'item-1',
+	body: { ecommerce_product_id: 'product-1' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `cartId` | `string` | Yes | — |
+| `itemId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  ecommerce_product_id?: string | number,
+  product_resource_id?: string,
+  resource_id?: string,
+  ecommerce_product_variant_id?: string | number,
+  variant?: string,
+  quantity?: number,
+  price?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Carts
+
+### count
+
+`carts.count`
+
+MailerLite count carts.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.carts.count({ shopId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`carts.get`
+
+MailerLite get carts.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.carts.get({ shopId: '1', cartId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `cartId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`carts.list`
+
+MailerLite list carts.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.carts.list({ shopId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  limit?: number,
+  page?: number,
+  sort?: id | created_at | -id | -created_at
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`carts.update`
+
+MailerLite update carts.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.carts.update({
+	shopId: '1',
+	cartId: '1',
+	body: {},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `cartId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  checkout_url?: string,
+  cart_total?: number,
+  ecommerce_customer_id?: string | number,
+  resource_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Categories
+
+### count
+
+`categories.count`
+
+MailerLite count categories.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.categories.count({ shopId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+
+
+
+---
+
+### create
+
+`categories.create`
+
+MailerLite create categories.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.categories.create({
+	shopId: '1',
+	body: { name: '1' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  exclude_from_automations?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`categories.delete`
+
+MailerLite delete categories.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.categories.delete({ shopId: '1', categoryId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `categoryId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+---
+
+### get
+
+`categories.get`
+
+MailerLite get categories.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.categories.get({ shopId: '1', categoryId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `categoryId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`categories.list`
+
+MailerLite list categories.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.categories.list({ shopId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  limit?: number,
+  page?: number,
+  sort?: id | name | created_at | -id | -name | -created_at
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`categories.update`
+
+MailerLite update categories.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.categories.update({
+	shopId: '1',
+	categoryId: '1',
+	body: { name: '1' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `categoryId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  exclude_from_automations?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Category Products
+
+### assign
+
+`categoryProducts.assign`
+
+MailerLite assign category products.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.categoryProducts.assign({ shopId: '1', categoryId: '1', productId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `categoryId` | `string` | Yes | — |
+| `productId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### assignMultiple
+
+`categoryProducts.assignMultiple`
+
+MailerLite assign multiple category products.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.categoryProducts.assignMultiple({
+	shopId: '1',
+	productId: '1',
+	body: {
+		categories: ['1'],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `productId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  categories: (string | number)[],
+  replace?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`categoryProducts.list`
+
+MailerLite list category products.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.categoryProducts.list({ shopId: '1', categoryId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `categoryId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  limit?: number,
+  page?: number,
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unassign
+
+`categoryProducts.unassign`
+
+MailerLite unassign category products.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.categoryProducts.unassign({ shopId: '1', categoryId: '1', productId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `categoryId` | `string` | Yes | — |
+| `productId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+---
+
+## Customers
+
+### count
+
+`customers.count`
+
+MailerLite count customers.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.customers.count({ shopId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+
+
+
+---
+
+### create
+
+`customers.create`
+
+MailerLite create customers.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.customers.create({
+	shopId: '1',
+	body: { email: 'test@mailerlite.test' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+Set accepts_marketing from the customer's actual consent; create_subscriber is passed explicitly and does not imply consent by itself.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  email: string,
+  resource_id?: string,
+  accepts_marketing?: boolean,
+  total_spent?: number,
+  create_subscriber?: boolean,
+  name?: string | null,
+  last_name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`customers.delete`
+
+MailerLite delete customers.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.customers.delete({ shopId: '1', customerId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `customerId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`customers.get`
+
+MailerLite get customers.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.customers.get({ shopId: '1', customerId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `customerId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`customers.list`
+
+MailerLite list customers.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.customers.list({ shopId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  limit?: number,
+  page?: number,
+  sort?: id | email | created_at | -id | -email | -created_at,
+  filter[
+    email
+  ]?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`customers.update`
+
+MailerLite update customers.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.customers.update({
+	shopId: '1',
+	customerId: '1',
+	body: { email: 'test@mailerlite.test' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `customerId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  email: string,
+  resource_id?: string,
+  accepts_marketing?: boolean,
+  total_spent?: number,
+  create_subscriber?: boolean,
+  name?: string | null,
+  last_name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ecommerce Imports
+
+### categories
+
+`ecommerceImports.categories`
+
+MailerLite categories ecommerce imports.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.ecommerceImports.categories({
+	shopId: '1',
+	body: [{ name: '1' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  exclude_from_automations?: boolean,
+  resource_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### customers
+
+`ecommerceImports.customers`
+
+MailerLite customers ecommerce imports.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.ecommerceImports.customers({
+	shopId: '1',
+	body: [{ email: 'test@mailerlite.test' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  email: string,
+  resource_id?: string,
+  accepts_marketing?: boolean,
+  create_subscriber?: boolean,
+  total_spent?: number,
+  orders_count?: number,
+  name?: string,
+  last_name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  resource_id?: string,
+  email: string,
+  accepts_marketing?: boolean,
+  create_subscriber?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### orders
+
+`ecommerceImports.orders`
+
+MailerLite orders ecommerce imports.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.ecommerceImports.orders({
+	shopId: 'shop-1',
+	body: {
+		orders: [{
+			customer_id: 'customer-1',
+			cart: {
+				items: [{ ecommerce_product_id: 'product-1' }],
+			},
+		}],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  orders: {
+    customer?: {
+      email: string,
+      resource_id?: string,
+      accepts_marketing?: boolean,
+      total_spent?: number,
+      create_subscriber?: boolean,
+      name?: string | null,
+      last_name?: string | null
+    },
+    customer_id?: string | number,
+    cart: {
+      resource_id?: string,
+      items: {
+        resource_id?: string,
+        ecommerce_product_id?: string | number,
+        product_resource_id?: string,
+        ecommerce_product_variant_id?: string | number,
+        variant?: string,
+        quantity?: number,
+        price?: number
+      }[]
+    },
+    status?: pending | complete,
+    total_price?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### products
+
+`ecommerceImports.products`
+
+MailerLite products ecommerce imports.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.ecommerceImports.products({
+	shopId: '1',
+	body: [{ name: '1' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  price?: number,
+  exclude_from_automations?: boolean,
+  enabled?: boolean,
+  url?: string,
+  image?: string,
+  short_description?: string,
+  description?: string,
+  categories?: (string | number)[],
+  resource_id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ecommerce Settings
+
+### get
+
+`ecommerceSettings.get`
+
+MailerLite get ecommerce settings.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.ecommerceSettings.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ecommerce_tracking_in_campaigns: boolean,
+  ecommerce_tracking_in_automations: boolean,
+  ecommerce_attribution_window: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Emails
+
+### deleteBlock
+
+`emails.deleteBlock`
+
+MailerLite delete block emails.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.emails.deleteBlock({
+	emailId: '1',
+	blockId: '1',
+	body: { etag: '1' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailId` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `blockId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  etag: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`emails.get`
+
+MailerLite get emails.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.emails.get({ emailId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBlock
+
+`emails.getBlock`
+
+MailerLite get block emails.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.emails.getBlock({ emailId: '1', blockId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailId` | `string` | Yes | — |
+| `blockId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### html
+
+`emails.html`
+
+MailerLite html emails.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.emails.html({ emailId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `etag` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  html: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insertBlock
+
+`emails.insertBlock`
+
+MailerLite insert block emails.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.emails.insertBlock({
+	emailId: '1',
+	body: {
+		type: 'divider',
+		etag: '42',
+		editor_content: {},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailId` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  type: blockquote | bulleted_list | button | code | divider | heading | image | numbered_list | paragraph | social_icon | video,
+  editor_content: {
+    attrs?: Record<string, string | number | boolean | null>,
+    content?: {
+      type: text | listItem | nodeParagraph | bulletList | orderedList | hardBreak,
+      text?: string,
+      attrs?: Record<string, string | number | boolean | null>,
+      content?: (recursive)[],
+      marks?: {
+        type: bold | italic | underline | strike | code | link | textStyle | subscript | superscript,
+        attrs?: Record<string, string | number | boolean | null>
+      }[]
+    }[]
+  },
+  etag: string,
+  placement?: {
+    position: start | end | before | after,
+    block_id?: string | number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### moveBlock
+
+`emails.moveBlock`
+
+MailerLite move block emails.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.emails.moveBlock({
+	emailId: '1',
+	blockId: '1',
+	body: {
+		etag: '1',
+		placement: { position: 'start' },
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailId` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `blockId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  etag: string,
+  placement: {
+    position: start | end | before | after,
+    block_id?: string | number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### restoreVersion
+
+`emails.restoreVersion`
+
+MailerLite restore version emails.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.emails.restoreVersion({ emailId: '1', versionId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailId` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `versionId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### saveTemplate
+
+`emails.saveTemplate`
+
+MailerLite save template emails.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.emails.saveTemplate({
+	emailId: '1',
+	body: { name: '1' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailId` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  name: string,
+  type: string,
+  created_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### saveVersion
+
+`emails.saveVersion`
+
+MailerLite save version emails.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.emails.saveVersion({ emailId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailId` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateBlock
+
+`emails.updateBlock`
+
+MailerLite update block emails.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.emails.updateBlock({
+	emailId: '1',
+	blockId: '1',
+	body: {
+		editor_content: {},
+		etag: '1',
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailId` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `blockId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  editor_content: {
+    attrs?: Record<string, string | number | boolean | null>,
+    content?: {
+      type: text | listItem | nodeParagraph | bulletList | orderedList | hardBreak,
+      text?: string,
+      attrs?: Record<string, string | number | boolean | null>,
+      content?: (recursive)[],
+      marks?: {
+        type: bold | italic | underline | strike | code | link | textStyle | subscript | superscript,
+        attrs?: Record<string, string | number | boolean | null>
+      }[]
+    }[]
+  },
+  etag: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateSettings
+
+`emails.updateSettings`
+
+MailerLite update settings emails.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.emails.updateSettings({
+	emailId: '1',
+	body: { etag: '1' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailId` | `string` | Yes | — |
+| `idempotencyKey` | `string` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  brand?: {
+    mode?: account | template | custom,
+    style?: string,
+    font_family?: string,
+    background_color?: string,
+    text_color?: string,
+    border_color?: string
+  },
+  layout?: {
+    width_mode?: default | full,
+    alignment?: left | center
+  },
+  typography?: {
+    link?: {
+      color?: string
+    },
+    heading?: {
+      font_family?: string,
+      font_weight?: 300 | 400 | 500 | 600 | 700,
+      line_height?: 100% | 137% | 150% | 165% | 200%,
+      letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+      color?: string,
+      size?: string,
+      h1?: {
+        font_family?: string,
+        font_weight?: 300 | 400 | 500 | 600 | 700,
+        line_height?: 100% | 137% | 150% | 165% | 200%,
+        letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+        color?: string,
+        size?: string
+      },
+      h2?: {
+        font_family?: string,
+        font_weight?: 300 | 400 | 500 | 600 | 700,
+        line_height?: 100% | 137% | 150% | 165% | 200%,
+        letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+        color?: string,
+        size?: string
+      },
+      h3?: {
+        font_family?: string,
+        font_weight?: 300 | 400 | 500 | 600 | 700,
+        line_height?: 100% | 137% | 150% | 165% | 200%,
+        letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+        color?: string,
+        size?: string
+      }
+    },
+    paragraph?: {
+      font_family?: string,
+      font_weight?: 300 | 400 | 500 | 600 | 700,
+      line_height?: 100% | 137% | 150% | 165% | 200%,
+      letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+      color?: string,
+      size?: string,
+      p1?: {
+        font_family?: string,
+        font_weight?: 300 | 400 | 500 | 600 | 700,
+        line_height?: 100% | 137% | 150% | 165% | 200%,
+        letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+        color?: string,
+        size?: string
+      }
+    }
+  },
+  button?: {
+    font_family?: string,
+    font_weight?: 300 | 400 | 500 | 600 | 700,
+    letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+    background_color?: string,
+    text_color?: string,
+    border_radius?: string
+  },
+  footer?: {
+    show_preferences?: boolean,
+    unsubscribe_text?: string,
+    preferences_text?: string,
+    company_name?: {
+      editor_content: {
+        attrs?: Record<string, string | number | boolean | null>,
+        content?: {
+          type: text | listItem | nodeParagraph | bulletList | orderedList | hardBreak,
+          text?: string,
+          attrs?: Record<string, string | number | boolean | null>,
+          content?: (recursive)[],
+          marks?: {
+            type: bold | italic | underline | strike | code | link | textStyle | subscript | superscript,
+            attrs?: Record<string, string | number | boolean | null>
+          }[]
+        }[]
+      }
+    },
+    address?: {
+      editor_content: {
+        attrs?: Record<string, string | number | boolean | null>,
+        content?: {
+          type: text | listItem | nodeParagraph | bulletList | orderedList | hardBreak,
+          text?: string,
+          attrs?: Record<string, string | number | boolean | null>,
+          content?: (recursive)[],
+          marks?: {
+            type: bold | italic | underline | strike | code | link | textStyle | subscript | superscript,
+            attrs?: Record<string, string | number | boolean | null>
+          }[]
+        }[]
+      }
+    },
+    info_text?: {
+      editor_content: {
+        attrs?: Record<string, string | number | boolean | null>,
+        content?: {
+          type: text | listItem | nodeParagraph | bulletList | orderedList | hardBreak,
+          text?: string,
+          attrs?: Record<string, string | number | boolean | null>,
+          content?: (recursive)[],
+          marks?: {
+            type: bold | italic | underline | strike | code | link | textStyle | subscript | superscript,
+            attrs?: Record<string, string | number | boolean | null>
+          }[]
+        }[]
+      }
+    },
+    social_links?: {
+      url: string,
+      type: string,
+      label: string,
+      link_id?: number
+    }[]
+  },
+  etag: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+| `etag` | `string` | Yes | — |
+| `rejected` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  brand?: {
+    mode?: account | template | custom,
+    style?: string,
+    font_family?: string,
+    background_color?: string,
+    text_color?: string,
+    border_color?: string
+  },
+  layout?: {
+    width_mode?: default | full,
+    alignment?: left | center
+  },
+  typography?: {
+    link?: {
+      color?: string
+    },
+    heading?: {
+      font_family?: string,
+      font_weight?: 300 | 400 | 500 | 600 | 700,
+      line_height?: 100% | 137% | 150% | 165% | 200%,
+      letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+      color?: string,
+      size?: string,
+      h1?: {
+        font_family?: string,
+        font_weight?: 300 | 400 | 500 | 600 | 700,
+        line_height?: 100% | 137% | 150% | 165% | 200%,
+        letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+        color?: string,
+        size?: string
+      },
+      h2?: {
+        font_family?: string,
+        font_weight?: 300 | 400 | 500 | 600 | 700,
+        line_height?: 100% | 137% | 150% | 165% | 200%,
+        letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+        color?: string,
+        size?: string
+      },
+      h3?: {
+        font_family?: string,
+        font_weight?: 300 | 400 | 500 | 600 | 700,
+        line_height?: 100% | 137% | 150% | 165% | 200%,
+        letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+        color?: string,
+        size?: string
+      }
+    },
+    paragraph?: {
+      font_family?: string,
+      font_weight?: 300 | 400 | 500 | 600 | 700,
+      line_height?: 100% | 137% | 150% | 165% | 200%,
+      letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+      color?: string,
+      size?: string,
+      p1?: {
+        font_family?: string,
+        font_weight?: 300 | 400 | 500 | 600 | 700,
+        line_height?: 100% | 137% | 150% | 165% | 200%,
+        letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+        color?: string,
+        size?: string
+      }
+    }
+  },
+  button?: {
+    font_family?: string,
+    font_weight?: 300 | 400 | 500 | 600 | 700,
+    letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+    background_color?: string,
+    text_color?: string,
+    border_radius?: string
+  },
+  footer?: {
+    show_preferences?: boolean,
+    unsubscribe_text?: string,
+    preferences_text?: string,
+    company_name?: {
+      editor_content: {
+        attrs?: Record<string, string | number | boolean | null>,
+        content?: {
+          type: text | listItem | nodeParagraph | bulletList | orderedList | hardBreak,
+          text?: string,
+          attrs?: Record<string, string | number | boolean | null>,
+          content?: (recursive)[],
+          marks?: {
+            type: bold | italic | underline | strike | code | link | textStyle | subscript | superscript,
+            attrs?: Record<string, string | number | boolean | null>
+          }[]
+        }[]
+      }
+    },
+    address?: {
+      editor_content: {
+        attrs?: Record<string, string | number | boolean | null>,
+        content?: {
+          type: text | listItem | nodeParagraph | bulletList | orderedList | hardBreak,
+          text?: string,
+          attrs?: Record<string, string | number | boolean | null>,
+          content?: (recursive)[],
+          marks?: {
+            type: bold | italic | underline | strike | code | link | textStyle | subscript | superscript,
+            attrs?: Record<string, string | number | boolean | null>
+          }[]
+        }[]
+      }
+    },
+    info_text?: {
+      editor_content: {
+        attrs?: Record<string, string | number | boolean | null>,
+        content?: {
+          type: text | listItem | nodeParagraph | bulletList | orderedList | hardBreak,
+          text?: string,
+          attrs?: Record<string, string | number | boolean | null>,
+          content?: (recursive)[],
+          marks?: {
+            type: bold | italic | underline | strike | code | link | textStyle | subscript | superscript,
+            attrs?: Record<string, string | number | boolean | null>
+          }[]
+        }[]
+      }
+    },
+    social_links?: {
+      url: string,
+      type: string,
+      label: string,
+      link_id?: number
+    }[]
+  }
+}
+```
+</Accordion>
+
+<Accordion title="rejected full type">
+
+```ts
+{
+  message: string,
+  keys: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validateBlock
+
+`emails.validateBlock`
+
+MailerLite validate block emails.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.emails.validateBlock({
+	body: {
+		type: 'blockquote',
+		editor_content: {},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  type: blockquote | bulleted_list | button | code | divider | heading | image | numbered_list | paragraph | social_icon | video,
+  editor_content: {
+    attrs?: Record<string, string | number | boolean | null>,
+    content?: {
+      type: text | listItem | nodeParagraph | bulletList | orderedList | hardBreak,
+      text?: string,
+      attrs?: Record<string, string | number | boolean | null>,
+      content?: (recursive)[],
+      marks?: {
+        type: bold | italic | underline | strike | code | link | textStyle | subscript | superscript,
+        attrs?: Record<string, string | number | boolean | null>
+      }[]
+    }[]
+  },
+  placement?: {
+    position: start | end | before | after,
+    block_id?: string | number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `valid` | `boolean` | Yes | — |
+| `errors` | `Record<string, string[]>` | Yes | — |
+| `schema` | `object` | Yes | — |
+| `rejected` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="schema full type">
+
+```ts
+{
+  version: string,
+  hash: string
+}
+```
+</Accordion>
+
+<Accordion title="rejected full type">
+
+```ts
+{
+  message: string,
+  keys: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validateSettings
+
+`emails.validateSettings`
+
+MailerLite validate settings emails.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.emails.validateSettings({
+	emailId: '1',
+	body: {},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  brand?: {
+    mode?: account | template | custom,
+    style?: string,
+    font_family?: string,
+    background_color?: string,
+    text_color?: string,
+    border_color?: string
+  },
+  layout?: {
+    width_mode?: default | full,
+    alignment?: left | center
+  },
+  typography?: {
+    link?: {
+      color?: string
+    },
+    heading?: {
+      font_family?: string,
+      font_weight?: 300 | 400 | 500 | 600 | 700,
+      line_height?: 100% | 137% | 150% | 165% | 200%,
+      letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+      color?: string,
+      size?: string,
+      h1?: {
+        font_family?: string,
+        font_weight?: 300 | 400 | 500 | 600 | 700,
+        line_height?: 100% | 137% | 150% | 165% | 200%,
+        letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+        color?: string,
+        size?: string
+      },
+      h2?: {
+        font_family?: string,
+        font_weight?: 300 | 400 | 500 | 600 | 700,
+        line_height?: 100% | 137% | 150% | 165% | 200%,
+        letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+        color?: string,
+        size?: string
+      },
+      h3?: {
+        font_family?: string,
+        font_weight?: 300 | 400 | 500 | 600 | 700,
+        line_height?: 100% | 137% | 150% | 165% | 200%,
+        letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+        color?: string,
+        size?: string
+      }
+    },
+    paragraph?: {
+      font_family?: string,
+      font_weight?: 300 | 400 | 500 | 600 | 700,
+      line_height?: 100% | 137% | 150% | 165% | 200%,
+      letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+      color?: string,
+      size?: string,
+      p1?: {
+        font_family?: string,
+        font_weight?: 300 | 400 | 500 | 600 | 700,
+        line_height?: 100% | 137% | 150% | 165% | 200%,
+        letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+        color?: string,
+        size?: string
+      }
+    }
+  },
+  button?: {
+    font_family?: string,
+    font_weight?: 300 | 400 | 500 | 600 | 700,
+    letter_spacing?: 0 | -0.05 | -0.025 | 0.025 | 0.05,
+    background_color?: string,
+    text_color?: string,
+    border_radius?: string
+  },
+  footer?: {
+    show_preferences?: boolean,
+    unsubscribe_text?: string,
+    preferences_text?: string,
+    company_name?: {
+      editor_content: {
+        attrs?: Record<string, string | number | boolean | null>,
+        content?: {
+          type: text | listItem | nodeParagraph | bulletList | orderedList | hardBreak,
+          text?: string,
+          attrs?: Record<string, string | number | boolean | null>,
+          content?: (recursive)[],
+          marks?: {
+            type: bold | italic | underline | strike | code | link | textStyle | subscript | superscript,
+            attrs?: Record<string, string | number | boolean | null>
+          }[]
+        }[]
+      }
+    },
+    address?: {
+      editor_content: {
+        attrs?: Record<string, string | number | boolean | null>,
+        content?: {
+          type: text | listItem | nodeParagraph | bulletList | orderedList | hardBreak,
+          text?: string,
+          attrs?: Record<string, string | number | boolean | null>,
+          content?: (recursive)[],
+          marks?: {
+            type: bold | italic | underline | strike | code | link | textStyle | subscript | superscript,
+            attrs?: Record<string, string | number | boolean | null>
+          }[]
+        }[]
+      }
+    },
+    info_text?: {
+      editor_content: {
+        attrs?: Record<string, string | number | boolean | null>,
+        content?: {
+          type: text | listItem | nodeParagraph | bulletList | orderedList | hardBreak,
+          text?: string,
+          attrs?: Record<string, string | number | boolean | null>,
+          content?: (recursive)[],
+          marks?: {
+            type: bold | italic | underline | strike | code | link | textStyle | subscript | superscript,
+            attrs?: Record<string, string | number | boolean | null>
+          }[]
+        }[]
+      }
+    },
+    social_links?: {
+      url: string,
+      type: string,
+      label: string,
+      link_id?: number
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `valid` | `boolean` | Yes | — |
+| `errors` | `Record<string, string[]>` | Yes | — |
+| `schema` | `object` | Yes | — |
+| `rejected` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="schema full type">
+
+```ts
+{
+  version: string,
+  hash: string
+}
+```
+</Accordion>
+
+<Accordion title="rejected full type">
+
+```ts
+{
+  message: string,
+  keys: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### versions
+
+`emails.versions`
+
+MailerLite versions emails.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.emails.versions({ emailId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emailId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  limit?: number,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fields
+
+### create
+
+`fields.create`
+
+MailerLite create fields.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.fields.create({
+	body: { name: 'Customer score', type: 'number' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  type: text | number | date
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`fields.delete`
+
+MailerLite delete fields.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.fields.delete({ fieldId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fieldId` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`fields.list`
+
+MailerLite list fields.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.fields.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  limit?: number,
+  page?: number,
+  filter[
+    keyword
+  ]?: string,
+  filter[
+    type
+  ]?: string,
+  sort?: id | created_at | subscribed_at | unsubscribed_at | email | signup_date | -id | -created_at | -subscribed_at | -unsubscribed_at | -email | -signup_date
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`fields.update`
+
+MailerLite update fields.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.fields.update({
+	fieldId: '1',
+	body: { name: 'Customer score' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fieldId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Files
+
+### list
+
+`files.list`
+
+MailerLite list files.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.files.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  limit?: number,
+  page?: number,
+  filter[
+    name
+  ]?: string,
+  filter[
+    type
+  ]?: image | pdf | epub,
+  sort?: created_at | -created_at | name | -name | size | -size
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Forms
+
+### delete
+
+`forms.delete`
+
+MailerLite delete forms.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.forms.delete({ formId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`forms.get`
+
+MailerLite get forms.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.forms.get({ formId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`forms.list`
+
+MailerLite list forms.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.forms.list({ type: 'popup' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `popup \| embedded \| promotion` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  limit?: number,
+  page?: number,
+  filter[
+    name
+  ]?: string,
+  sort?: created_at | name | conversions_count | opens_count | visitors | conversion_rate | last_registration_at | -created_at | -name | -conversions_count | -opens_count | -visitors | -conversion_rate | -last_registration_at
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subscribers
+
+`forms.subscribers`
+
+MailerLite subscribers forms.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.forms.subscribers({ formId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter[
+    status
+  ]?: active | unsubscribed | unconfirmed | bounced | junk,
+  limit?: number,
+  cursor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`forms.update`
+
+MailerLite update forms.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.forms.update({
+	formId: '1',
+	body: { name: 'Newsletter form' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### create
+
+`groups.create`
+
+MailerLite create groups.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.groups.create({
+	body: { name: 'Newsletter subscribers' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`groups.delete`
+
+MailerLite delete groups.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.groups.delete({ groupId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### importSubscribers
+
+`groups.importSubscribers`
+
+MailerLite import subscribers groups.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.groups.importSubscribers({
+	groupId: '1',
+	body: {
+		subscribers: [{ email: 'test@mailerlite.test' }],
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+This import route is limited to five creation requests per minute and can enter subscribers into automations when trigger_automations is true.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  subscribers: {
+    email: string,
+    fields?: Record<string, string | number | boolean | null>,
+    name?: string
+  }[],
+  trigger_automations?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `import_progress_url` | `string` | Yes | — |
+
+
+
+---
+
+### list
+
+`groups.list`
+
+MailerLite list groups.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.groups.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  limit?: number,
+  page?: number,
+  filter[
+    name
+  ]?: string,
+  sort?: id | name | active_count | open_rate | click_rate | created_at | -id | -name | -active_count | -open_rate | -click_rate | -created_at
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subscribers
+
+`groups.subscribers`
+
+MailerLite subscribers groups.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.groups.subscribers({ groupId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter[
+    status
+  ]?: active | unsubscribed | unconfirmed | bounced | junk,
+  limit?: number,
+  cursor?: string,
+  include?: groups
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`groups.update`
+
+MailerLite update groups.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.groups.update({
+	groupId: '1',
+	body: { name: 'Newsletter subscribers' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groupId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Orders
+
+### count
+
+`orders.count`
+
+MailerLite count orders.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.orders.count({ shopId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+
+
+
+---
+
+### create
+
+`orders.create`
+
+MailerLite create orders.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.orders.create({
+	shopId: 'shop-1',
+	body: {
+		customer: { email: 'buyer@mailerlite.test', accepts_marketing: false },
+		cart: {
+			items: [{ ecommerce_product_id: 'product-1' }],
+		},
+		status: 'pending',
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+Orders marked complete can trigger purchase automations and revenue attribution.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  resource_id?: string,
+  customer: {
+    email: string,
+    resource_id?: string,
+    accepts_marketing?: boolean,
+    total_spent?: number,
+    create_subscriber?: boolean,
+    name?: string | null,
+    last_name?: string | null
+  },
+  cart: {
+    resource_id?: string,
+    items: {
+      resource_id?: string,
+      ecommerce_product_id?: string | number,
+      product_resource_id?: string,
+      ecommerce_product_variant_id?: string | number,
+      variant?: string,
+      quantity?: number,
+      price?: number
+    }[]
+  },
+  status?: pending | complete,
+  total_price?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`orders.delete`
+
+MailerLite delete orders.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.orders.delete({ shopId: '1', orderId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `orderId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`orders.get`
+
+MailerLite get orders.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.orders.get({ shopId: '1', orderId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `orderId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`orders.list`
+
+MailerLite list orders.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.orders.list({ shopId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  limit?: number,
+  page?: number,
+  sort?: id | created_at | -id | -created_at,
+  filter[
+    status
+  ]?: pending | complete,
+  filter[
+    customer
+  ]?: number,
+  filter[
+    attributed
+  ]?: boolean,
+  filter[
+    email_id
+  ]?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`orders.update`
+
+MailerLite update orders.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.orders.update({
+	shopId: '1',
+	orderId: '1',
+	body: {},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `orderId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  status?: pending | complete,
+  total_price?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Products
+
+### changeStatus
+
+`products.changeStatus`
+
+MailerLite change status products.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.products.changeStatus({
+	shopId: '1',
+	productId: '1',
+	body: { status: true },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `productId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  status: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### count
+
+`products.count`
+
+MailerLite count products.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.products.count({ shopId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+
+
+
+---
+
+### create
+
+`products.create`
+
+MailerLite create products.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.products.create({
+	shopId: '1',
+	body: { name: '1' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  price?: number,
+  exclude_from_automations?: boolean,
+  enabled?: boolean,
+  url?: string,
+  image?: string,
+  short_description?: string,
+  description?: string,
+  currency?: string,
+  type?: one-time | subscription | booking,
+  settings?: {
+    action: move_to_group | remove_from_group | update_custom_field,
+    group_id?: string,
+    field_id?: string,
+    action_on_field?: set_to_current_date,
+    field_value?: string,
+    free?: boolean,
+    booking_type?: one-on-one | group,
+    duration?: number,
+    duration_unit?: minutes | hours,
+    calendar_integration_type?: google | outlook | external,
+    external_link?: string,
+    location?: google-meet | in-person | phone-call | custom-link | teams-meeting,
+    location_address?: string,
+    location_link?: string,
+    location_instructions?: string,
+    timezone_id?: number,
+    booking_window_days?: number,
+    buffer_between_meetings?: number,
+    buffer_between_meetings_unit?: minutes | hours,
+    minimum_notice_period?: number,
+    minimum_notice_period_unit?: minutes | hours | days,
+    booking_group_date_time_utc?: string,
+    booking_group_max_participants?: number,
+    booking_group_display_remaining_slots?: boolean,
+    custom_availability_days?: Record<string, string[]>
+  },
+  discounts?: {
+    name?: string,
+    value?: number,
+    is_percentage?: boolean,
+    enabled?: boolean,
+    start_date?: string,
+    end_date?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`products.delete`
+
+MailerLite delete products.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.products.delete({ shopId: '1', productId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `productId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`products.get`
+
+MailerLite get products.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.products.get({ shopId: '1', productId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `productId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`products.list`
+
+MailerLite list products.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.products.list({ shopId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  limit?: number,
+  page?: number,
+  sort?: id | name | created_at | -id | -name | -created_at,
+  filter[
+    name
+  ]?: string,
+  filter[
+    type
+  ]?: one-time | subscription | booking,
+  filter[
+    enabled
+  ]?: boolean,
+  filter[
+    category
+  ]?: number,
+  filter[
+    exclude_from_automations
+  ]?: boolean,
+  type?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`products.update`
+
+MailerLite update products.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.products.update({
+	shopId: '1',
+	productId: '1',
+	body: { name: '1' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `productId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  price?: number,
+  exclude_from_automations?: boolean,
+  enabled?: boolean,
+  url?: string,
+  image?: string,
+  short_description?: string,
+  description?: string,
+  currency?: string,
+  type?: one-time | subscription | booking,
+  settings?: {
+    action: move_to_group | remove_from_group | update_custom_field,
+    group_id?: string,
+    field_id?: string,
+    action_on_field?: set_to_current_date,
+    field_value?: string,
+    free?: boolean,
+    booking_type?: one-on-one | group,
+    duration?: number,
+    duration_unit?: minutes | hours,
+    calendar_integration_type?: google | outlook | external,
+    external_link?: string,
+    location?: google-meet | in-person | phone-call | custom-link | teams-meeting,
+    location_address?: string,
+    location_link?: string,
+    location_instructions?: string,
+    timezone_id?: number,
+    booking_window_days?: number,
+    buffer_between_meetings?: number,
+    buffer_between_meetings_unit?: minutes | hours,
+    minimum_notice_period?: number,
+    minimum_notice_period_unit?: minutes | hours | days,
+    booking_group_date_time_utc?: string,
+    booking_group_max_participants?: number,
+    booking_group_display_remaining_slots?: boolean,
+    custom_availability_days?: Record<string, string[]>
+  },
+  discounts?: {
+    name?: string,
+    value?: number,
+    is_percentage?: boolean,
+    enabled?: boolean,
+    start_date?: string,
+    end_date?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Product Variants
+
+### create
+
+`productVariants.create`
+
+MailerLite create product variants.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.productVariants.create({
+	shopId: '1',
+	productId: '1',
+	body: [{
+		name: '1',
+		attributes: {},
+	}],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `productId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object[]` | Yes | — |
+
+E-commerce product variant creation with resource_id can delete variants omitted from the submitted list.
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  attributes: Record<string, string>,
+  price_type?: fixed | increment,
+  price?: number,
+  resource_id?: string,
+  image_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`productVariants.delete`
+
+MailerLite delete product variants.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.productVariants.delete({ shopId: '1', productId: '1', variantId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `productId` | `string` | Yes | — |
+| `variantId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`productVariants.list`
+
+MailerLite list product variants.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.productVariants.list({ shopId: '1', productId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `productId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`productVariants.update`
+
+MailerLite update product variants.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.productVariants.update({
+	shopId: '1',
+	productId: '1',
+	variantId: '1',
+	body: {
+		name: '1',
+		attributes: {},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `productId` | `string` | Yes | — |
+| `variantId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  with_resource_id?: true
+}
+```
+</Accordion>
+
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  attributes: Record<string, string>,
+  price_type?: fixed | increment,
+  price?: number,
+  resource_id?: string,
+  image_url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Segments
+
+### delete
+
+`segments.delete`
+
+MailerLite delete segments.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.segments.delete({ segmentId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segmentId` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### list
+
+`segments.list`
+
+MailerLite list segments.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.segments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  limit?: number,
+  page?: number,
+  sort?: id | name | total | open_rate | click_rate | created_at | -id | -name | -total | -open_rate | -click_rate | -created_at
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subscribers
+
+`segments.subscribers`
+
+MailerLite subscribers segments.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.segments.subscribers({ segmentId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segmentId` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter[
+    status
+  ]?: active | unsubscribed | unconfirmed | bounced | junk,
+  limit?: number,
+  cursor?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`segments.update`
+
+MailerLite update segments.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.segments.update({
+	segmentId: '1',
+	body: { name: 'Active subscribers' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segmentId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Shops
+
+### count
+
+`shops.count`
+
+MailerLite count shops.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.shops.count({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+
+
+
+---
+
+### create
+
+`shops.create`
+
+MailerLite create shops.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.shops.create({
+	body: { name: 'Test shop', url: 'https://mailer.test', currency: 'USD' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  url: string,
+  currency: string,
+  platform?: string,
+  group_id?: string | number,
+  enable_popups?: boolean,
+  enabled?: boolean,
+  access_data?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`shops.delete`
+
+MailerLite delete shops.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.shops.delete({ shopId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`shops.get`
+
+MailerLite get shops.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.shops.get({ shopId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`shops.list`
+
+MailerLite list shops.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.shops.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  limit?: number,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stats
+
+`shops.stats`
+
+MailerLite stats shops.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.shops.stats({
+	shopId: '1',
+	query: { start_date: '2026-11-01', end_date: '2026-11-21' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  start_date: string,
+  end_date: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ecommerce: {
+    orders_count: number,
+    revenue: number,
+    average_order_value: number,
+    conversion_rate: string
+  },
+  series: {
+    date: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`shops.update`
+
+MailerLite update shops.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.shops.update({
+	shopId: 'shop-1',
+	body: { name: 'Test shop', url: 'https://mailer.test', currency: 'USD' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  url: string,
+  currency: string,
+  platform?: string,
+  group_id?: string | number,
+  enable_popups?: boolean,
+  enabled?: boolean,
+  access_data?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscribers
+
+### activity
+
+`subscribers.activity`
+
+MailerLite activity subscribers.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.subscribers.activity({ id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter[
+    log_name
+  ]?: string,
+  limit?: number,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addToGroup
+
+`subscribers.addToGroup`
+
+MailerLite add to group subscribers.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.subscribers.addToGroup({ subscriberId: '1', groupId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberId` | `string` | Yes | — |
+| `groupId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### count
+
+`subscribers.count`
+
+MailerLite count subscribers.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.subscribers.count({
+	query: { limit: 0 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  limit: 0,
+  filter[
+    status
+  ]?: string,
+  filter[
+    subscribed_from
+  ]?: string,
+  filter[
+    subscribed_to
+  ]?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+
+
+
+---
+
+### create
+
+`subscribers.create`
+
+MailerLite create subscribers.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.subscribers.create({
+	body: { email: 'test@mailerlite.test' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+The plugin pins X-Version to the implementation date and preserves MailerLite's Retry-After value. Subscriber status and group changes follow MailerLite's consent rules; do not use resubscribe without renewed consent.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  email: string,
+  fields?: Record<string, string | number | boolean | null>,
+  groups?: (string | number)[],
+  status?: active | unsubscribed | unconfirmed | bounced | junk,
+  subscribed_at?: string,
+  ip_address?: string,
+  opted_in_at?: string,
+  optin_ip?: string,
+  unsubscribed_at?: string,
+  resubscribe?: boolean,
+  double_optin?: boolean,
+  notes?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`subscribers.delete`
+
+MailerLite delete subscribers.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.subscribers.delete({ id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### ecommerceOrders
+
+`subscribers.ecommerceOrders`
+
+MailerLite ecommerce orders subscribers.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.subscribers.ecommerceOrders({
+	id: '1',
+	query: { shop_id: 1 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  shop_id: number,
+  limit?: number,
+  page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ecommerceStats
+
+`subscribers.ecommerceStats`
+
+MailerLite ecommerce stats subscribers.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.subscribers.ecommerceStats({
+	id: '1',
+	query: { shop_id: 1 },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  shop_id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  ecommerce: {
+    orders_count: number,
+    revenue: number,
+    average_order_value: number,
+    conversion_rate: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### forget
+
+`subscribers.forget`
+
+MailerLite forget subscribers.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.subscribers.forget({ id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`subscribers.get`
+
+MailerLite get subscribers.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.subscribers.get({ identifier: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### importStatus
+
+`subscribers.importStatus`
+
+MailerLite import status subscribers.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.subscribers.importStatus({ importId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `importId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number,
+  total: number,
+  processed: number,
+  imported: number,
+  updated: number,
+  errored: number,
+  percent: number,
+  done: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subscribers.list`
+
+MailerLite list subscribers.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.subscribers.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="query full type">
+
+```ts
+{
+  filter[
+    status
+  ]?: string,
+  filter[
+    subscribed_from
+  ]?: string,
+  filter[
+    subscribed_to
+  ]?: string,
+  filter[
+    group
+  ]?: string,
+  filter[
+    automation
+  ]?: string,
+  filter[
+    form
+  ]?: string,
+  filter[
+    site
+  ]?: string,
+  filter[
+    page
+  ]?: string,
+  filter[
+    import
+  ]?: string,
+  filter[
+    post
+  ]?: string,
+  limit?: number,
+  cursor?: string,
+  sort?: name | type | -name | -type,
+  include?: groups,
+  start_date?: string,
+  end_date?: string,
+  with_fields?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeFromGroup
+
+`subscribers.removeFromGroup`
+
+MailerLite remove from group subscribers.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.subscribers.removeFromGroup({ subscriberId: '1', groupId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberId` | `string` | Yes | — |
+| `groupId` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### update
+
+`subscribers.update`
+
+MailerLite update subscribers.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.subscribers.update({
+	id: '1',
+	body: {},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  email?: string,
+  fields?: Record<string, string | number | boolean | null>,
+  groups?: (string | number)[],
+  status?: active | unsubscribed | unconfirmed | bounced | junk,
+  subscribed_at?: string,
+  ip_address?: string,
+  opted_in_at?: string,
+  optin_ip?: string,
+  unsubscribed_at?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Timezones
+
+### list
+
+`timezones.list`
+
+MailerLite list timezones.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.timezones.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  name_for_humans: string,
+  offset_name: string,
+  offset: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+MailerLite create webhooks.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.webhooks.create({
+	body: {
+		events: ['subscriber.created'],
+		url: 'https://mailer.test',
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name?: string,
+  events: (subscriber.created | subscriber.updated | subscriber.unsubscribed | subscriber.added_to_group | subscriber.removed_from_group | subscriber.bounced | subscriber.automation_triggered | subscriber.automation_completed | subscriber.spam_reported | subscriber.deleted | subscriber.active | campaign.sent | campaign.click | campaign.open)[],
+  url: string,
+  enabled?: boolean,
+  batchable?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+MailerLite delete webhooks.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailerlite.api.webhooks.delete({ webhookId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+
+
+
+**Output:** `undefined`
+
+
+---
+
+### get
+
+`webhooks.get`
+
+MailerLite get webhooks.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.webhooks.get({ webhookId: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+MailerLite list webhooks.
+
+**Risk:** `read`
+
+```ts
+await corsair.mailerlite.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  first?: string | null,
+  last?: string | null,
+  prev?: string | null,
+  next?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  current_page?: number,
+  last_page?: number,
+  per_page?: number,
+  total?: number,
+  next_cursor?: string | null,
+  prev_cursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+MailerLite update webhooks.
+
+**Risk:** `write`
+
+```ts
+await corsair.mailerlite.api.webhooks.update({
+	webhookId: '1',
+	body: {},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name?: string,
+  events?: (subscriber.created | subscriber.updated | subscriber.unsubscribed | subscriber.added_to_group | subscriber.removed_from_group | subscriber.bounced | subscriber.automation_triggered | subscriber.automation_completed | subscriber.spam_reported | subscriber.deleted | subscriber.active | campaign.sent | campaign.click | campaign.open)[],
+  url?: string,
+  enabled?: boolean,
+  batchable?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---

@@ -1,40 +1,59 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
-	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { MailerLiteEndpointInputs, MailerLiteEndpointOutputs } from './endpoints/types';
-import { MailerLiteEndpointInputSchemas, MailerLiteEndpointOutputSchemas } from './endpoints/types';
-import type {
-	MailerLiteWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { MailerLiteSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+import { AuthMissingError } from 'corsair/core';
+import {
+	AutomationEmails,
+	AutomationReports,
+	AutomationSteps,
+	Automations,
+	AutomationTemplates,
+	AutomationTriggers,
+} from './endpoints/automations';
+import {
+	CartItems,
+	Carts,
+	Categories,
+	CategoryProducts,
+	Customers,
+	EcommerceImports,
+	EcommerceSettings,
+	Orders,
+	Products,
+	ProductVariants,
+	Shops,
+} from './endpoints/ecommerce';
+import { Emails } from './endpoints/emails';
+import {
+	BrandStyles,
+	CampaignLanguages,
+	Campaigns,
+	Fields,
+	Files,
+	Forms,
+	Groups,
+	Segments,
+	Subscribers,
+	Timezones,
+	Webhooks,
+} from './endpoints/marketing';
 import { errorHandlers } from './error-handlers';
-import { matchMailerLiteTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveMailerLiteOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { MailerLiteSchema } from './schema';
 
 export type MailerLitePluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalMailerLitePlugin['hooks'];
-	webhookHooks?: InternalMailerLitePlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof mailerLiteEndpointsNested>;
 };
@@ -44,94 +63,658 @@ export type MailerLiteContext = CorsairPluginContext<
 	MailerLitePluginOptions
 >;
 
-export type MailerLiteKeyBuilderContext = KeyBuilderContext<MailerLitePluginOptions>;
-
-export type MailerLiteBoundEndpoints = BindEndpoints<typeof mailerLiteEndpointsNested>;
-
-type MailerLiteEndpoint<
-	K extends keyof MailerLiteEndpointOutputs,
-> = CorsairEndpoint<
-	MailerLiteContext,
-	MailerLiteEndpointInputs[K],
-	MailerLiteEndpointOutputs[K]
+export type MailerLiteKeyBuilderContext =
+	KeyBuilderContext<MailerLitePluginOptions>;
+export type MailerLiteBoundEndpoints = BindEndpoints<
+	typeof mailerLiteEndpointsNested
 >;
-
-export type MailerLiteEndpoints = {
-	exampleGet: MailerLiteEndpoint<'exampleGet'>;
-};
-
-type MailerLiteWebhook<
-	K extends keyof MailerLiteWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<MailerLiteContext, TEvent, MailerLiteWebhookOutputs[K]>;
-
-export type MailerLiteWebhooks = {
-	example: MailerLiteWebhook<'example', ExampleEvent>;
-};
-
-export type MailerLiteBoundWebhooks = BindWebhooks<MailerLiteWebhooks>;
 
 const mailerLiteEndpointsNested = {
-	example: {
-		get: Example.get,
+	subscribers: {
+		list: Subscribers.list,
+		create: Subscribers.create,
+		update: Subscribers.update,
+		get: Subscribers.get,
+		count: Subscribers.count,
+		activity: Subscribers.activity,
+		delete: Subscribers.delete,
+		forget: Subscribers.forget,
+		importStatus: Subscribers.importStatus,
+		ecommerceStats: Subscribers.ecommerceStats,
+		ecommerceOrders: Subscribers.ecommerceOrders,
+		addToGroup: Subscribers.addToGroup,
+		removeFromGroup: Subscribers.removeFromGroup,
+	},
+	groups: {
+		list: Groups.list,
+		create: Groups.create,
+		update: Groups.update,
+		delete: Groups.delete,
+		subscribers: Groups.subscribers,
+		importSubscribers: Groups.importSubscribers,
+	},
+	fields: {
+		list: Fields.list,
+		create: Fields.create,
+		update: Fields.update,
+		delete: Fields.delete,
+	},
+	segments: {
+		list: Segments.list,
+		update: Segments.update,
+		delete: Segments.delete,
+		subscribers: Segments.subscribers,
+	},
+	campaigns: {
+		list: Campaigns.list,
+		get: Campaigns.get,
+		create: Campaigns.create,
+		update: Campaigns.update,
+		schedule: Campaigns.schedule,
+		cancel: Campaigns.cancel,
+		delete: Campaigns.delete,
+		ecommerceReport: Campaigns.ecommerceReport,
+		ecommerceOrders: Campaigns.ecommerceOrders,
+		subscriberActivity: Campaigns.subscriberActivity,
+	},
+	automations: {
+		list: Automations.list,
+		get: Automations.get,
+		activity: Automations.activity,
+		create: Automations.create,
+		update: Automations.update,
+		copy: Automations.copy,
+		enable: Automations.enable,
+		disable: Automations.disable,
+		test: Automations.test,
+		addSubscribers: Automations.addSubscribers,
+		readd: Automations.readd,
+		addToGroup: Automations.addToGroup,
+		cancelRuns: Automations.cancelRuns,
+		skipDelay: Automations.skipDelay,
+		delete: Automations.delete,
+	},
+	automationSteps: {
+		list: AutomationSteps.list,
+		get: AutomationSteps.get,
+		create: AutomationSteps.create,
+		update: AutomationSteps.update,
+		delete: AutomationSteps.delete,
+		copy: AutomationSteps.copy,
+		reorder: AutomationSteps.reorder,
+		selectWinner: AutomationSteps.selectWinner,
+	},
+	automationTriggers: {
+		list: AutomationTriggers.list,
+		get: AutomationTriggers.get,
+		create: AutomationTriggers.create,
+		update: AutomationTriggers.update,
+		delete: AutomationTriggers.delete,
+	},
+	automationTemplates: {
+		list: AutomationTemplates.list,
+		createFromTemplate: AutomationTemplates.createFromTemplate,
+	},
+	automationReports: {
+		stepRunCounts: AutomationReports.stepRunCounts,
+		stepRunCount: AutomationReports.stepRunCount,
+		triggerRunCounts: AutomationReports.triggerRunCounts,
+		triggerRunCount: AutomationReports.triggerRunCount,
+		abStepStats: AutomationReports.abStepStats,
+		abStepStat: AutomationReports.abStepStat,
+		stepSubscribers: AutomationReports.stepSubscribers,
+		triggerSubscribers: AutomationReports.triggerSubscribers,
+		orders: AutomationReports.orders,
+		emailTotals: AutomationReports.emailTotals,
+		ecommerceTotals: AutomationReports.ecommerceTotals,
+	},
+	automationEmails: {
+		getContent: AutomationEmails.getContent,
+		setContent: AutomationEmails.setContent,
+		stats: AutomationEmails.stats,
+		ecommerceStats: AutomationEmails.ecommerceStats,
+		unsubscribeReasons: AutomationEmails.unsubscribeReasons,
+	},
+	emails: {
+		get: Emails.get,
+		html: Emails.html,
+		getBlock: Emails.getBlock,
+		insertBlock: Emails.insertBlock,
+		validateBlock: Emails.validateBlock,
+		updateBlock: Emails.updateBlock,
+		moveBlock: Emails.moveBlock,
+		deleteBlock: Emails.deleteBlock,
+		updateSettings: Emails.updateSettings,
+		validateSettings: Emails.validateSettings,
+		saveTemplate: Emails.saveTemplate,
+		versions: Emails.versions,
+		saveVersion: Emails.saveVersion,
+		restoreVersion: Emails.restoreVersion,
+	},
+	forms: {
+		list: Forms.list,
+		get: Forms.get,
+		update: Forms.update,
+		delete: Forms.delete,
+		subscribers: Forms.subscribers,
+	},
+	brandStyles: { list: BrandStyles.list },
+	files: { list: Files.list },
+	timezones: { list: Timezones.list },
+	campaignLanguages: { list: CampaignLanguages.list },
+	webhooks: {
+		list: Webhooks.list,
+		get: Webhooks.get,
+		create: Webhooks.create,
+		update: Webhooks.update,
+		delete: Webhooks.delete,
+	},
+	shops: {
+		list: Shops.list,
+		create: Shops.create,
+		get: Shops.get,
+		update: Shops.update,
+		count: Shops.count,
+		delete: Shops.delete,
+		stats: Shops.stats,
+	},
+	ecommerceSettings: { get: EcommerceSettings.get },
+	carts: {
+		list: Carts.list,
+		get: Carts.get,
+		count: Carts.count,
+		update: Carts.update,
+	},
+	cartItems: {
+		list: CartItems.list,
+		get: CartItems.get,
+		count: CartItems.count,
+		create: CartItems.create,
+		update: CartItems.update,
+		delete: CartItems.delete,
+	},
+	categories: {
+		list: Categories.list,
+		get: Categories.get,
+		count: Categories.count,
+		create: Categories.create,
+		update: Categories.update,
+		delete: Categories.delete,
+	},
+	categoryProducts: {
+		list: CategoryProducts.list,
+		assign: CategoryProducts.assign,
+		unassign: CategoryProducts.unassign,
+		assignMultiple: CategoryProducts.assignMultiple,
+	},
+	customers: {
+		list: Customers.list,
+		get: Customers.get,
+		count: Customers.count,
+		create: Customers.create,
+		update: Customers.update,
+		delete: Customers.delete,
+	},
+	orders: {
+		list: Orders.list,
+		get: Orders.get,
+		count: Orders.count,
+		create: Orders.create,
+		update: Orders.update,
+		delete: Orders.delete,
+	},
+	products: {
+		list: Products.list,
+		get: Products.get,
+		count: Products.count,
+		create: Products.create,
+		update: Products.update,
+		changeStatus: Products.changeStatus,
+		delete: Products.delete,
+	},
+	productVariants: {
+		list: ProductVariants.list,
+		create: ProductVariants.create,
+		update: ProductVariants.update,
+		delete: ProductVariants.delete,
+	},
+	ecommerceImports: {
+		categories: EcommerceImports.categories,
+		customers: EcommerceImports.customers,
+		products: EcommerceImports.products,
+		orders: EcommerceImports.orders,
 	},
 } as const;
 
-const mailerLiteWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+type EndpointMap = typeof mailerLiteEndpointsNested;
+type MailerLiteOperationMetadata = {
+	readonly riskLevel: 'read' | 'write' | 'destructive';
+	readonly description: string;
+};
+
+// ZodType's generic boundary is inferred separately for each operation and
+// narrowed by that operation's runtime parse before network I/O.
+function endpointSchema<
+	Input extends import('zod').ZodType,
+	Output extends import('zod').ZodType,
+>(endpoint: { readonly inputSchema: Input; readonly outputSchema: Output }) {
+	return { input: endpoint.inputSchema, output: endpoint.outputSchema };
+}
+
+function endpointMeta(endpoint: MailerLiteOperationMetadata) {
+	return { riskLevel: endpoint.riskLevel, description: endpoint.description };
+}
 
 export const mailerLiteEndpointSchemas = {
-	'example.get': {
-		input: MailerLiteEndpointInputSchemas.exampleGet,
-		output: MailerLiteEndpointOutputSchemas.exampleGet,
-	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof mailerLiteEndpointsNested>;
-
-const mailerLiteWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof mailerLiteWebhooksNested>;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
+	'subscribers.list': endpointSchema(Subscribers.list),
+	'subscribers.create': endpointSchema(Subscribers.create),
+	'subscribers.update': endpointSchema(Subscribers.update),
+	'subscribers.get': endpointSchema(Subscribers.get),
+	'subscribers.count': endpointSchema(Subscribers.count),
+	'subscribers.activity': endpointSchema(Subscribers.activity),
+	'subscribers.delete': endpointSchema(Subscribers.delete),
+	'subscribers.forget': endpointSchema(Subscribers.forget),
+	'subscribers.importStatus': endpointSchema(Subscribers.importStatus),
+	'subscribers.ecommerceStats': endpointSchema(Subscribers.ecommerceStats),
+	'subscribers.ecommerceOrders': endpointSchema(Subscribers.ecommerceOrders),
+	'subscribers.addToGroup': endpointSchema(Subscribers.addToGroup),
+	'subscribers.removeFromGroup': endpointSchema(Subscribers.removeFromGroup),
+	'groups.list': endpointSchema(Groups.list),
+	'groups.create': endpointSchema(Groups.create),
+	'groups.update': endpointSchema(Groups.update),
+	'groups.delete': endpointSchema(Groups.delete),
+	'groups.subscribers': endpointSchema(Groups.subscribers),
+	'groups.importSubscribers': endpointSchema(Groups.importSubscribers),
+	'fields.list': endpointSchema(Fields.list),
+	'fields.create': endpointSchema(Fields.create),
+	'fields.update': endpointSchema(Fields.update),
+	'fields.delete': endpointSchema(Fields.delete),
+	'segments.list': endpointSchema(Segments.list),
+	'segments.update': endpointSchema(Segments.update),
+	'segments.delete': endpointSchema(Segments.delete),
+	'segments.subscribers': endpointSchema(Segments.subscribers),
+	'campaigns.list': endpointSchema(Campaigns.list),
+	'campaigns.get': endpointSchema(Campaigns.get),
+	'campaigns.create': endpointSchema(Campaigns.create),
+	'campaigns.update': endpointSchema(Campaigns.update),
+	'campaigns.schedule': endpointSchema(Campaigns.schedule),
+	'campaigns.cancel': endpointSchema(Campaigns.cancel),
+	'campaigns.delete': endpointSchema(Campaigns.delete),
+	'campaigns.ecommerceReport': endpointSchema(Campaigns.ecommerceReport),
+	'campaigns.ecommerceOrders': endpointSchema(Campaigns.ecommerceOrders),
+	'campaigns.subscriberActivity': endpointSchema(Campaigns.subscriberActivity),
+	'forms.list': endpointSchema(Forms.list),
+	'forms.get': endpointSchema(Forms.get),
+	'forms.update': endpointSchema(Forms.update),
+	'forms.delete': endpointSchema(Forms.delete),
+	'forms.subscribers': endpointSchema(Forms.subscribers),
+	'brandStyles.list': endpointSchema(BrandStyles.list),
+	'files.list': endpointSchema(Files.list),
+	'timezones.list': endpointSchema(Timezones.list),
+	'campaignLanguages.list': endpointSchema(CampaignLanguages.list),
+	'webhooks.list': endpointSchema(Webhooks.list),
+	'webhooks.get': endpointSchema(Webhooks.get),
+	'webhooks.create': endpointSchema(Webhooks.create),
+	'webhooks.update': endpointSchema(Webhooks.update),
+	'webhooks.delete': endpointSchema(Webhooks.delete),
+	'shops.list': endpointSchema(Shops.list),
+	'shops.create': endpointSchema(Shops.create),
+	'shops.get': endpointSchema(Shops.get),
+	'shops.update': endpointSchema(Shops.update),
+	'shops.count': endpointSchema(Shops.count),
+	'shops.delete': endpointSchema(Shops.delete),
+	'shops.stats': endpointSchema(Shops.stats),
+	'ecommerceSettings.get': endpointSchema(EcommerceSettings.get),
+	'carts.list': endpointSchema(Carts.list),
+	'carts.get': endpointSchema(Carts.get),
+	'carts.count': endpointSchema(Carts.count),
+	'carts.update': endpointSchema(Carts.update),
+	'cartItems.list': endpointSchema(CartItems.list),
+	'cartItems.get': endpointSchema(CartItems.get),
+	'cartItems.count': endpointSchema(CartItems.count),
+	'cartItems.create': endpointSchema(CartItems.create),
+	'cartItems.update': endpointSchema(CartItems.update),
+	'cartItems.delete': endpointSchema(CartItems.delete),
+	'categories.list': endpointSchema(Categories.list),
+	'categories.get': endpointSchema(Categories.get),
+	'categories.count': endpointSchema(Categories.count),
+	'categories.create': endpointSchema(Categories.create),
+	'categories.update': endpointSchema(Categories.update),
+	'categories.delete': endpointSchema(Categories.delete),
+	'categoryProducts.list': endpointSchema(CategoryProducts.list),
+	'categoryProducts.assign': endpointSchema(CategoryProducts.assign),
+	'categoryProducts.unassign': endpointSchema(CategoryProducts.unassign),
+	'categoryProducts.assignMultiple': endpointSchema(
+		CategoryProducts.assignMultiple,
+	),
+	'customers.list': endpointSchema(Customers.list),
+	'customers.get': endpointSchema(Customers.get),
+	'customers.count': endpointSchema(Customers.count),
+	'customers.create': endpointSchema(Customers.create),
+	'customers.update': endpointSchema(Customers.update),
+	'customers.delete': endpointSchema(Customers.delete),
+	'orders.list': endpointSchema(Orders.list),
+	'orders.get': endpointSchema(Orders.get),
+	'orders.count': endpointSchema(Orders.count),
+	'orders.create': endpointSchema(Orders.create),
+	'orders.update': endpointSchema(Orders.update),
+	'orders.delete': endpointSchema(Orders.delete),
+	'products.list': endpointSchema(Products.list),
+	'products.get': endpointSchema(Products.get),
+	'products.count': endpointSchema(Products.count),
+	'products.create': endpointSchema(Products.create),
+	'products.update': endpointSchema(Products.update),
+	'products.changeStatus': endpointSchema(Products.changeStatus),
+	'products.delete': endpointSchema(Products.delete),
+	'productVariants.list': endpointSchema(ProductVariants.list),
+	'productVariants.create': endpointSchema(ProductVariants.create),
+	'productVariants.update': endpointSchema(ProductVariants.update),
+	'productVariants.delete': endpointSchema(ProductVariants.delete),
+	'ecommerceImports.categories': endpointSchema(EcommerceImports.categories),
+	'ecommerceImports.customers': endpointSchema(EcommerceImports.customers),
+	'ecommerceImports.products': endpointSchema(EcommerceImports.products),
+	'ecommerceImports.orders': endpointSchema(EcommerceImports.orders),
+	'automations.list': endpointSchema(Automations.list),
+	'automations.get': endpointSchema(Automations.get),
+	'automations.activity': endpointSchema(Automations.activity),
+	'automations.create': endpointSchema(Automations.create),
+	'automations.update': endpointSchema(Automations.update),
+	'automations.copy': endpointSchema(Automations.copy),
+	'automations.enable': endpointSchema(Automations.enable),
+	'automations.disable': endpointSchema(Automations.disable),
+	'automations.test': endpointSchema(Automations.test),
+	'automations.addSubscribers': endpointSchema(Automations.addSubscribers),
+	'automations.readd': endpointSchema(Automations.readd),
+	'automations.addToGroup': endpointSchema(Automations.addToGroup),
+	'automations.cancelRuns': endpointSchema(Automations.cancelRuns),
+	'automations.skipDelay': endpointSchema(Automations.skipDelay),
+	'automations.delete': endpointSchema(Automations.delete),
+	'automationSteps.list': endpointSchema(AutomationSteps.list),
+	'automationSteps.get': endpointSchema(AutomationSteps.get),
+	'automationSteps.create': endpointSchema(AutomationSteps.create),
+	'automationSteps.update': endpointSchema(AutomationSteps.update),
+	'automationSteps.delete': endpointSchema(AutomationSteps.delete),
+	'automationSteps.copy': endpointSchema(AutomationSteps.copy),
+	'automationSteps.reorder': endpointSchema(AutomationSteps.reorder),
+	'automationSteps.selectWinner': endpointSchema(AutomationSteps.selectWinner),
+	'automationTriggers.list': endpointSchema(AutomationTriggers.list),
+	'automationTriggers.get': endpointSchema(AutomationTriggers.get),
+	'automationTriggers.create': endpointSchema(AutomationTriggers.create),
+	'automationTriggers.update': endpointSchema(AutomationTriggers.update),
+	'automationTriggers.delete': endpointSchema(AutomationTriggers.delete),
+	'automationTemplates.list': endpointSchema(AutomationTemplates.list),
+	'automationTemplates.createFromTemplate': endpointSchema(
+		AutomationTemplates.createFromTemplate,
+	),
+	'automationReports.stepRunCounts': endpointSchema(
+		AutomationReports.stepRunCounts,
+	),
+	'automationReports.stepRunCount': endpointSchema(
+		AutomationReports.stepRunCount,
+	),
+	'automationReports.triggerRunCounts': endpointSchema(
+		AutomationReports.triggerRunCounts,
+	),
+	'automationReports.triggerRunCount': endpointSchema(
+		AutomationReports.triggerRunCount,
+	),
+	'automationReports.abStepStats': endpointSchema(
+		AutomationReports.abStepStats,
+	),
+	'automationReports.abStepStat': endpointSchema(AutomationReports.abStepStat),
+	'automationReports.stepSubscribers': endpointSchema(
+		AutomationReports.stepSubscribers,
+	),
+	'automationReports.triggerSubscribers': endpointSchema(
+		AutomationReports.triggerSubscribers,
+	),
+	'automationReports.orders': endpointSchema(AutomationReports.orders),
+	'automationReports.emailTotals': endpointSchema(
+		AutomationReports.emailTotals,
+	),
+	'automationReports.ecommerceTotals': endpointSchema(
+		AutomationReports.ecommerceTotals,
+	),
+	'automationEmails.getContent': endpointSchema(AutomationEmails.getContent),
+	'automationEmails.setContent': endpointSchema(AutomationEmails.setContent),
+	'automationEmails.stats': endpointSchema(AutomationEmails.stats),
+	'automationEmails.ecommerceStats': endpointSchema(
+		AutomationEmails.ecommerceStats,
+	),
+	'automationEmails.unsubscribeReasons': endpointSchema(
+		AutomationEmails.unsubscribeReasons,
+	),
+	'emails.get': endpointSchema(Emails.get),
+	'emails.html': endpointSchema(Emails.html),
+	'emails.getBlock': endpointSchema(Emails.getBlock),
+	'emails.insertBlock': endpointSchema(Emails.insertBlock),
+	'emails.validateBlock': endpointSchema(Emails.validateBlock),
+	'emails.updateBlock': endpointSchema(Emails.updateBlock),
+	'emails.moveBlock': endpointSchema(Emails.moveBlock),
+	'emails.deleteBlock': endpointSchema(Emails.deleteBlock),
+	'emails.updateSettings': endpointSchema(Emails.updateSettings),
+	'emails.validateSettings': endpointSchema(Emails.validateSettings),
+	'emails.saveTemplate': endpointSchema(Emails.saveTemplate),
+	'emails.versions': endpointSchema(Emails.versions),
+	'emails.saveVersion': endpointSchema(Emails.saveVersion),
+	'emails.restoreVersion': endpointSchema(Emails.restoreVersion),
+} as const satisfies RequiredPluginEndpointSchemas<EndpointMap>;
 
 const mailerLiteEndpointMeta = {
-	'example.get': {
-		riskLevel: 'read',
-		description: 'Get an example resource by ID',
-	},
-} as const satisfies RequiredPluginEndpointMeta<typeof mailerLiteEndpointsNested>;
+	'subscribers.list': endpointMeta(Subscribers.list),
+	'subscribers.create': endpointMeta(Subscribers.create),
+	'subscribers.update': endpointMeta(Subscribers.update),
+	'subscribers.get': endpointMeta(Subscribers.get),
+	'subscribers.count': endpointMeta(Subscribers.count),
+	'subscribers.activity': endpointMeta(Subscribers.activity),
+	'subscribers.delete': endpointMeta(Subscribers.delete),
+	'subscribers.forget': endpointMeta(Subscribers.forget),
+	'subscribers.importStatus': endpointMeta(Subscribers.importStatus),
+	'subscribers.ecommerceStats': endpointMeta(Subscribers.ecommerceStats),
+	'subscribers.ecommerceOrders': endpointMeta(Subscribers.ecommerceOrders),
+	'subscribers.addToGroup': endpointMeta(Subscribers.addToGroup),
+	'subscribers.removeFromGroup': endpointMeta(Subscribers.removeFromGroup),
+	'groups.list': endpointMeta(Groups.list),
+	'groups.create': endpointMeta(Groups.create),
+	'groups.update': endpointMeta(Groups.update),
+	'groups.delete': endpointMeta(Groups.delete),
+	'groups.subscribers': endpointMeta(Groups.subscribers),
+	'groups.importSubscribers': endpointMeta(Groups.importSubscribers),
+	'fields.list': endpointMeta(Fields.list),
+	'fields.create': endpointMeta(Fields.create),
+	'fields.update': endpointMeta(Fields.update),
+	'fields.delete': endpointMeta(Fields.delete),
+	'segments.list': endpointMeta(Segments.list),
+	'segments.update': endpointMeta(Segments.update),
+	'segments.delete': endpointMeta(Segments.delete),
+	'segments.subscribers': endpointMeta(Segments.subscribers),
+	'campaigns.list': endpointMeta(Campaigns.list),
+	'campaigns.get': endpointMeta(Campaigns.get),
+	'campaigns.create': endpointMeta(Campaigns.create),
+	'campaigns.update': endpointMeta(Campaigns.update),
+	'campaigns.schedule': endpointMeta(Campaigns.schedule),
+	'campaigns.cancel': endpointMeta(Campaigns.cancel),
+	'campaigns.delete': endpointMeta(Campaigns.delete),
+	'campaigns.ecommerceReport': endpointMeta(Campaigns.ecommerceReport),
+	'campaigns.ecommerceOrders': endpointMeta(Campaigns.ecommerceOrders),
+	'campaigns.subscriberActivity': endpointMeta(Campaigns.subscriberActivity),
+	'forms.list': endpointMeta(Forms.list),
+	'forms.get': endpointMeta(Forms.get),
+	'forms.update': endpointMeta(Forms.update),
+	'forms.delete': endpointMeta(Forms.delete),
+	'forms.subscribers': endpointMeta(Forms.subscribers),
+	'brandStyles.list': endpointMeta(BrandStyles.list),
+	'files.list': endpointMeta(Files.list),
+	'timezones.list': endpointMeta(Timezones.list),
+	'campaignLanguages.list': endpointMeta(CampaignLanguages.list),
+	'webhooks.list': endpointMeta(Webhooks.list),
+	'webhooks.get': endpointMeta(Webhooks.get),
+	'webhooks.create': endpointMeta(Webhooks.create),
+	'webhooks.update': endpointMeta(Webhooks.update),
+	'webhooks.delete': endpointMeta(Webhooks.delete),
+	'shops.list': endpointMeta(Shops.list),
+	'shops.create': endpointMeta(Shops.create),
+	'shops.get': endpointMeta(Shops.get),
+	'shops.update': endpointMeta(Shops.update),
+	'shops.count': endpointMeta(Shops.count),
+	'shops.delete': endpointMeta(Shops.delete),
+	'shops.stats': endpointMeta(Shops.stats),
+	'ecommerceSettings.get': endpointMeta(EcommerceSettings.get),
+	'carts.list': endpointMeta(Carts.list),
+	'carts.get': endpointMeta(Carts.get),
+	'carts.count': endpointMeta(Carts.count),
+	'carts.update': endpointMeta(Carts.update),
+	'cartItems.list': endpointMeta(CartItems.list),
+	'cartItems.get': endpointMeta(CartItems.get),
+	'cartItems.count': endpointMeta(CartItems.count),
+	'cartItems.create': endpointMeta(CartItems.create),
+	'cartItems.update': endpointMeta(CartItems.update),
+	'cartItems.delete': endpointMeta(CartItems.delete),
+	'categories.list': endpointMeta(Categories.list),
+	'categories.get': endpointMeta(Categories.get),
+	'categories.count': endpointMeta(Categories.count),
+	'categories.create': endpointMeta(Categories.create),
+	'categories.update': endpointMeta(Categories.update),
+	'categories.delete': endpointMeta(Categories.delete),
+	'categoryProducts.list': endpointMeta(CategoryProducts.list),
+	'categoryProducts.assign': endpointMeta(CategoryProducts.assign),
+	'categoryProducts.unassign': endpointMeta(CategoryProducts.unassign),
+	'categoryProducts.assignMultiple': endpointMeta(
+		CategoryProducts.assignMultiple,
+	),
+	'customers.list': endpointMeta(Customers.list),
+	'customers.get': endpointMeta(Customers.get),
+	'customers.count': endpointMeta(Customers.count),
+	'customers.create': endpointMeta(Customers.create),
+	'customers.update': endpointMeta(Customers.update),
+	'customers.delete': endpointMeta(Customers.delete),
+	'orders.list': endpointMeta(Orders.list),
+	'orders.get': endpointMeta(Orders.get),
+	'orders.count': endpointMeta(Orders.count),
+	'orders.create': endpointMeta(Orders.create),
+	'orders.update': endpointMeta(Orders.update),
+	'orders.delete': endpointMeta(Orders.delete),
+	'products.list': endpointMeta(Products.list),
+	'products.get': endpointMeta(Products.get),
+	'products.count': endpointMeta(Products.count),
+	'products.create': endpointMeta(Products.create),
+	'products.update': endpointMeta(Products.update),
+	'products.changeStatus': endpointMeta(Products.changeStatus),
+	'products.delete': endpointMeta(Products.delete),
+	'productVariants.list': endpointMeta(ProductVariants.list),
+	'productVariants.create': endpointMeta(ProductVariants.create),
+	'productVariants.update': endpointMeta(ProductVariants.update),
+	'productVariants.delete': endpointMeta(ProductVariants.delete),
+	'ecommerceImports.categories': endpointMeta(EcommerceImports.categories),
+	'ecommerceImports.customers': endpointMeta(EcommerceImports.customers),
+	'ecommerceImports.products': endpointMeta(EcommerceImports.products),
+	'ecommerceImports.orders': endpointMeta(EcommerceImports.orders),
+	'automations.list': endpointMeta(Automations.list),
+	'automations.get': endpointMeta(Automations.get),
+	'automations.activity': endpointMeta(Automations.activity),
+	'automations.create': endpointMeta(Automations.create),
+	'automations.update': endpointMeta(Automations.update),
+	'automations.copy': endpointMeta(Automations.copy),
+	'automations.enable': endpointMeta(Automations.enable),
+	'automations.disable': endpointMeta(Automations.disable),
+	'automations.test': endpointMeta(Automations.test),
+	'automations.addSubscribers': endpointMeta(Automations.addSubscribers),
+	'automations.readd': endpointMeta(Automations.readd),
+	'automations.addToGroup': endpointMeta(Automations.addToGroup),
+	'automations.cancelRuns': endpointMeta(Automations.cancelRuns),
+	'automations.skipDelay': endpointMeta(Automations.skipDelay),
+	'automations.delete': endpointMeta(Automations.delete),
+	'automationSteps.list': endpointMeta(AutomationSteps.list),
+	'automationSteps.get': endpointMeta(AutomationSteps.get),
+	'automationSteps.create': endpointMeta(AutomationSteps.create),
+	'automationSteps.update': endpointMeta(AutomationSteps.update),
+	'automationSteps.delete': endpointMeta(AutomationSteps.delete),
+	'automationSteps.copy': endpointMeta(AutomationSteps.copy),
+	'automationSteps.reorder': endpointMeta(AutomationSteps.reorder),
+	'automationSteps.selectWinner': endpointMeta(AutomationSteps.selectWinner),
+	'automationTriggers.list': endpointMeta(AutomationTriggers.list),
+	'automationTriggers.get': endpointMeta(AutomationTriggers.get),
+	'automationTriggers.create': endpointMeta(AutomationTriggers.create),
+	'automationTriggers.update': endpointMeta(AutomationTriggers.update),
+	'automationTriggers.delete': endpointMeta(AutomationTriggers.delete),
+	'automationTemplates.list': endpointMeta(AutomationTemplates.list),
+	'automationTemplates.createFromTemplate': endpointMeta(
+		AutomationTemplates.createFromTemplate,
+	),
+	'automationReports.stepRunCounts': endpointMeta(
+		AutomationReports.stepRunCounts,
+	),
+	'automationReports.stepRunCount': endpointMeta(
+		AutomationReports.stepRunCount,
+	),
+	'automationReports.triggerRunCounts': endpointMeta(
+		AutomationReports.triggerRunCounts,
+	),
+	'automationReports.triggerRunCount': endpointMeta(
+		AutomationReports.triggerRunCount,
+	),
+	'automationReports.abStepStats': endpointMeta(AutomationReports.abStepStats),
+	'automationReports.abStepStat': endpointMeta(AutomationReports.abStepStat),
+	'automationReports.stepSubscribers': endpointMeta(
+		AutomationReports.stepSubscribers,
+	),
+	'automationReports.triggerSubscribers': endpointMeta(
+		AutomationReports.triggerSubscribers,
+	),
+	'automationReports.orders': endpointMeta(AutomationReports.orders),
+	'automationReports.emailTotals': endpointMeta(AutomationReports.emailTotals),
+	'automationReports.ecommerceTotals': endpointMeta(
+		AutomationReports.ecommerceTotals,
+	),
+	'automationEmails.getContent': endpointMeta(AutomationEmails.getContent),
+	'automationEmails.setContent': endpointMeta(AutomationEmails.setContent),
+	'automationEmails.stats': endpointMeta(AutomationEmails.stats),
+	'automationEmails.ecommerceStats': endpointMeta(
+		AutomationEmails.ecommerceStats,
+	),
+	'automationEmails.unsubscribeReasons': endpointMeta(
+		AutomationEmails.unsubscribeReasons,
+	),
+	'emails.get': endpointMeta(Emails.get),
+	'emails.html': endpointMeta(Emails.html),
+	'emails.getBlock': endpointMeta(Emails.getBlock),
+	'emails.insertBlock': endpointMeta(Emails.insertBlock),
+	'emails.validateBlock': endpointMeta(Emails.validateBlock),
+	'emails.updateBlock': endpointMeta(Emails.updateBlock),
+	'emails.moveBlock': endpointMeta(Emails.moveBlock),
+	'emails.deleteBlock': endpointMeta(Emails.deleteBlock),
+	'emails.updateSettings': endpointMeta(Emails.updateSettings),
+	'emails.validateSettings': endpointMeta(Emails.validateSettings),
+	'emails.saveTemplate': endpointMeta(Emails.saveTemplate),
+	'emails.versions': endpointMeta(Emails.versions),
+	'emails.saveVersion': endpointMeta(Emails.saveVersion),
+	'emails.restoreVersion': endpointMeta(Emails.restoreVersion),
+} as const satisfies RequiredPluginEndpointMeta<EndpointMap>;
+
+const defaultAuthType: AuthTypes = 'api_key';
 
 export const mailerLiteAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
-export type BaseMailerLitePlugin<T extends MailerLitePluginOptions> = CorsairPlugin<
-	'mailerlite',
-	typeof MailerLiteSchema,
-	typeof mailerLiteEndpointsNested,
-	typeof mailerLiteWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseMailerLitePlugin<T extends MailerLitePluginOptions> =
+	CorsairPlugin<
+		'mailerlite',
+		typeof MailerLiteSchema,
+		EndpointMap,
+		Record<string, never>,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalMailerLitePlugin = BaseMailerLitePlugin<MailerLitePluginOptions>;
-
+export type InternalMailerLitePlugin =
+	BaseMailerLitePlugin<MailerLitePluginOptions>;
 export type ExternalMailerLitePlugin<T extends MailerLitePluginOptions> =
 	BaseMailerLitePlugin<T>;
 
 export function mailerlite<const T extends MailerLitePluginOptions>(
-	incomingOptions: MailerLitePluginOptions & T = {} as MailerLitePluginOptions & T,
+	incomingOptions: MailerLitePluginOptions & T = {} as MailerLitePluginOptions &
+		T,
 ): ExternalMailerLitePlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -141,62 +724,29 @@ export function mailerlite<const T extends MailerLitePluginOptions>(
 		id: 'mailerlite',
 		authConfig: mailerLiteAuthConfig,
 		schema: MailerLiteSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: mailerLiteEndpointsNested,
-		webhooks: mailerLiteWebhooksNested,
+		webhooks: {},
 		endpointMeta: mailerLiteEndpointMeta,
 		endpointSchemas: mailerLiteEndpointSchemas,
-		webhookSchemas: mailerLiteWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-mailerlite-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchMailerLiteTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveMailerLiteOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: MailerLiteKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && options.key) {
-				return options.key;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			if (source !== 'endpoint') return '';
+			if (options.key) return options.key;
+			if (!ctx.keys) throw new AuthMissingError('mailerlite', 'api_key');
+			const apiKey = await ctx.keys.get_api_key();
+			if (!apiKey) throw new AuthMissingError('mailerlite', 'api_key');
+			return apiKey;
 		},
 	} satisfies InternalMailerLitePlugin;
 }
 
 export type {
-	ExampleEvent,
-	MailerLiteWebhookOutputs,
-} from './webhooks/types';
-
-export type {
-	MailerLiteEndpointInputs,
-	MailerLiteEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	MailerLiteListResponse,
+	MailerLiteResource,
+	MailerLiteResourceResponse,
 } from './endpoints/types';

@@ -1,7 +1,5 @@
-import { get as exampleGet } from './example';
-
-export const Example = {
-	get: exampleGet,
-};
-
+export * from './automations';
+export * from './ecommerce';
+export * from './emails';
+export * from './marketing';
 export * from './types';

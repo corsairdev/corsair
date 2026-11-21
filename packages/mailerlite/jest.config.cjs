@@ -16,6 +16,7 @@ module.exports = {
 		'!jest.config.ts',
 		'!tests/**',
 	],
+	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts'],
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
 	transform: {
 		'^.+\\.yaml$': '<rootDir>/../corsair/jest-yaml-transform.cjs',

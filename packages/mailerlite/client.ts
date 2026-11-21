@@ -1,65 +1,87 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import { AuthMissingError } from 'corsair/core';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
-export class MailerLiteAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'MailerLiteAPIError';
-	}
-}
+export const MAILERLITE_API_BASE = 'https://connect.mailerlite.com/api';
+export const MAILERLITE_API_VERSION = '2026-11-21';
 
-// TODO: Update with your API base URL
-const MAILERLITE_API_BASE = 'https://api.example.com';
+export type MailerLiteRequestOptions = {
+	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+	url: string;
+	query?: Record<string, string | number | boolean | undefined>;
+	body?: object | readonly object[];
+	headers?: Record<string, string>;
+};
+
+const WRITE_RATE_LIMIT_CONFIG = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: { retryAfter: 'retry-after' },
+} as const;
 
 export async function makeMailerLiteRequest<T>(
-	endpoint: string,
-	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+	requestOptions: MailerLiteRequestOptions,
+	apiKey?: string,
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	if (apiKey !== undefined && apiKey.length === 0) {
+		throw new AuthMissingError('mailerlite', 'api_key');
+	}
 
 	const config: OpenAPIConfig = {
 		BASE: MAILERLITE_API_BASE,
-		VERSION: '1.0.0',
+		VERSION: MAILERLITE_API_VERSION,
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
+			Accept: 'application/json',
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			'X-Version': MAILERLITE_API_VERSION,
+			...(apiKey === undefined ? {} : { Authorization: `Bearer ${apiKey}` }),
 		},
 	};
 
-	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+	const options: ApiRequestOptions = {
+		...requestOptions,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		// Keep Retry-After extraction enabled for writes, but never replay a
+		// write automatically: MailerLite only documents idempotency on select
+		// email routes, and many writes can send mail or change consent/data.
+		return await request<T>(
+			config,
+			options,
+			requestOptions.method === 'GET'
+				? undefined
+				: { rateLimitConfig: WRITE_RATE_LIMIT_CONFIG },
+		);
 	} catch (error) {
-		// Rethrow core's ApiError as is: its status and retryAfter are what the
-		// error handlers match (429 retries) and what core reads to refresh an
-		// OAuth token after a 401. Wrapping it in a new error loses both.
-		if (error instanceof ApiError) throw error;
-		if (error instanceof Error) {
-			throw new MailerLiteAPIError(error.message);
+		// `unknown` because transport failures are not guaranteed to be Error
+		// instances; narrowing below preserves status/retryAfter without leaking
+		// MailerLite request bodies, subscriber PII, or resource IDs.
+		const caught: unknown = error;
+		if (caught instanceof ApiError) {
+			throw new ApiError(
+				{ method: caught.request.method, url: '/api/[redacted]' },
+				{
+					url: `${MAILERLITE_API_BASE}/[redacted]`,
+					ok: false,
+					status: caught.status,
+					statusText: 'MailerLite API request failed',
+					body: {},
+				},
+				`MailerLite API request failed (HTTP ${caught.status})`,
+				{
+					retryAfter: caught.retryAfter,
+					rateLimitReset: caught.rateLimitReset,
+					rateLimitRemaining: caught.rateLimitRemaining,
+					rateLimitLimit: caught.rateLimitLimit,
+				},
+			);
 		}
-		throw new MailerLiteAPIError('Unknown error');
+		throw new Error('MailerLite API request failed');
 	}
 }
