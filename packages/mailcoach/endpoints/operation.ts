@@ -38,7 +38,7 @@ export function defineMailcoachOperation<
 		z.output<O>
 	> = async (context, input) => {
 		const parsedInput = spec.inputSchema.parse(input);
-		const accountApiUrl = await context.keys.get_api_url();
+		const accountApiUrl = await context.keys?.get_api_url();
 		const rawResponse = await makeMailcoachRequest<z.output<O>>(
 			spec.path(parsedInput),
 			context.key,

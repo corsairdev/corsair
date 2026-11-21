@@ -107,6 +107,23 @@ describe('Mailcoach schemas', () => {
 		).toBe(true);
 	});
 
+	it('accepts quoted CSV headers in import creation and update', () => {
+		const csv =
+			'"email","first_name","last, first"\nperson@example.com,Sam,Sample';
+		expect(
+			MailcoachEndpointInputSchemas['subscriberImports.create'].safeParse({
+				subscribers_csv: csv,
+				email_list_uuid: UUID,
+			}).success,
+		).toBe(true);
+		expect(
+			MailcoachEndpointInputSchemas['subscriberImports.update'].safeParse({
+				importUuid: UUID,
+				body: { subscribers_csv: csv, email_list_uuid: UUID },
+			}).success,
+		).toBe(true);
+	});
+
 	it('requires saved-mail or inline transactional content, not both', () => {
 		const schema = MailcoachEndpointInputSchemas['transactionalMails.send'];
 		const common = {

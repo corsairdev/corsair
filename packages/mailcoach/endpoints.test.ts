@@ -687,6 +687,20 @@ describe('Mailcoach endpoints', () => {
 		);
 	});
 
+	it('uses the explicit API URL when an inline-key context has no key manager', async () => {
+		const explicitKeyContext = buildContext();
+		Reflect.deleteProperty(explicitKeyContext, 'keys');
+		responseBody = mockResponse('user.get');
+
+		await MailcoachOperations['user.get'].endpoint(explicitKeyContext, {});
+
+		const [requestUrl, requestInit] = fetchSpy.mock.calls[0] ?? [];
+		expect(String(requestUrl)).toBe(`${TEAM_API_URL}/user`);
+		expect(new Headers(requestInit?.headers).get('Authorization')).toBe(
+			`Bearer ${API_KEY}`,
+		);
+	});
+
 	it('keeps strict inputs and endpoint schemas aligned', () => {
 		expect(Object.keys(MailcoachEndpointInputSchemas).sort()).toEqual(
 			Object.keys(MailcoachOperations).sort(),

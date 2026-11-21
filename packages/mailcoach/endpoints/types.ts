@@ -220,18 +220,56 @@ const SubscriberUpdateBody = z
 	})
 	.strict();
 const TagsBody = z.object({ tags: z.array(z.string()) }).strict();
+
+function hasEmailCsvHeader(csv: string): boolean {
+	const header = (csv.split(/\r?\n/, 1)[0] ?? '').replace(/^\uFEFF/, '');
+	const columns: string[] = [];
+	let column = '';
+	let quoted = false;
+	let afterQuote = false;
+
+	for (let index = 0; index < header.length; index += 1) {
+		const character = header[index];
+		if (character === undefined) continue;
+
+		if (quoted) {
+			if (character !== '"') {
+				column += character;
+			} else if (header[index + 1] === '"') {
+				column += '"';
+				index += 1;
+			} else {
+				quoted = false;
+				afterQuote = true;
+			}
+			continue;
+		}
+
+		if (character === ',') {
+			columns.push(column.trim());
+			column = '';
+			afterQuote = false;
+		} else if (character === '"' && column.trim().length === 0 && !afterQuote) {
+			column = '';
+			quoted = true;
+		} else if (afterQuote) {
+			if (character.trim().length > 0) return false;
+		} else {
+			column += character;
+		}
+	}
+
+	if (quoted) return false;
+	columns.push(column.trim());
+	return columns.includes('email');
+}
+
 const ImportBody = z
 	.object({
 		subscribers_csv: z
 			.string()
 			.min(1)
-			.refine((csv) => {
-				const header = csv.split(/\r?\n/, 1)[0] ?? '';
-				return header
-					.split(',')
-					.map((column) => column.trim())
-					.includes('email');
-			}, 'CSV must include an email header row'),
+			.refine(hasEmailCsvHeader, 'CSV must include an email header row'),
 		email_list_uuid: UuidSchema,
 		subscribe_unsubscribed: z.boolean().optional(),
 		unsubscribe_others: z.boolean().optional(),
