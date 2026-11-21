@@ -1,0 +1,142 @@
+---
+title: "Paystack plugin"
+sidebarTitle: "Overview"
+description: "Paystack is a payments platform for African markets. This plugin starts checkouts and verifies transactions, manages customers including risk actions, creates and updates plans, subscribes customers and enables or disables subscriptions, issues refunds, and receives charge and transfer webhooks verified under either documented HMAC-SHA512 signature scheme."
+---
+
+Use **Paystack** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Authenticate with the secret key from Developers &gt; API Keys & Webhooks (sk_test_ for test, sk_live_ for live); the plugin sends it as an Authorization Bearer token. Amounts are in the currency subunit (kobo for NGN, pesewas for GHS).
+Paystack answers some validation failures with HTTP 200 and status false in the body; the plugin turns those into errors so a caller never reads them as data. Some routes documented on the site (charge authorization, partial debit, timeline, totals, export, customer identification and direct debit, transfers, verification, payment pages) are not part of this plugin.
+Webhook deliveries come in two documented schemes: the legacy x-paystack-signature header (HMAC-SHA512 of the raw body keyed with your secret key) and the current Paystack-Signature header (t=...,v1=..., keyed with the whsec_ signing secret, 300-second timestamp tolerance). The plugin verifies whichever scheme a delivery uses; pass the matching secret as webhookSecret. Paystack delivers only from 52.31.139.75, 52.49.173.169 and 52.214.14.220.
+Every operation is described in the official docs: https://paystack.com/docs/api/
+
+**What you get:**
+
+- 21 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/paystack better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/paystack better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/paystack better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/paystack better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { paystack } from '@corsair-dev/paystack';
+
+export const corsair = createCorsair({
+	plugins: [
+		paystack(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Paystack API key before the first call: `pnpm corsair setup --plugin=paystack --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+paystack()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'paystack',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Verify a transaction**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.paystack.api.transactions.verify({ reference: '7PVGX8MEk85tgeEpVDtD' });
+```
+
+
+**Start a checkout**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.paystack.api.transactions.initialize({ amount: '10000', email: 'john.doe@example.com' });
+```
+
+
+See the full list on the [API](/plugins/paystack/api) page.
+
+## Webhooks
+
+This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/paystack/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/paystack/api">
+    Every `paystack.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/paystack/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

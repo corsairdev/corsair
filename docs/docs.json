@@ -4104,6 +4104,15 @@
                 ]
               },
               {
+                "group": "Paystack",
+                "pages": [
+                  "plugins/paystack/overview",
+                  "plugins/paystack/api",
+                  "plugins/paystack/database",
+                  "plugins/paystack/webhooks"
+                ]
+              },
+              {
                 "group": "PDF-API.io",
                 "pages": [
                   "plugins/pdfapi/overview",
