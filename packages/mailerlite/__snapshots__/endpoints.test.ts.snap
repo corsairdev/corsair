@@ -1,0 +1,1515 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MailerLite endpoint contracts automationEmails.ecommerceStats validates its input, full request, and response contract: automationEmails.ecommerceStats 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/automations/1/emails/1/ecommerce-overview-stats",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationEmails.getContent validates its input, full request, and response contract: automationEmails.getContent 1`] = `
+{
+  "method": "GET",
+  "url": "/automations/1/emails/1/content",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationEmails.setContent validates its input, full request, and response contract: automationEmails.setContent 1`] = `
+{
+  "body": {
+    "html": "<html><body>Test</body></html>",
+  },
+  "method": "PUT",
+  "url": "/automations/1/emails/1/content",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationEmails.stats validates its input, full request, and response contract: automationEmails.stats 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/automations/1/emails/1/report-stats",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationEmails.unsubscribeReasons validates its input, full request, and response contract: automationEmails.unsubscribeReasons 1`] = `
+{
+  "method": "GET",
+  "url": "/automations/1/emails/1/unsubscribe-reasons",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationReports.abStepStat validates its input, full request, and response contract: automationReports.abStepStat 1`] = `
+{
+  "method": "GET",
+  "url": "/automations/1/ab-steps-stats/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationReports.abStepStats validates its input, full request, and response contract: automationReports.abStepStats 1`] = `
+{
+  "method": "GET",
+  "url": "/automations/1/ab-steps-stats",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationReports.ecommerceTotals validates its input, full request, and response contract: automationReports.ecommerceTotals 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/automations/1/monthly-totals/ecommerce",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationReports.emailTotals validates its input, full request, and response contract: automationReports.emailTotals 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/automations/1/monthly-totals/email",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationReports.orders validates its input, full request, and response contract: automationReports.orders 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "time_frame": "week",
+  },
+  "url": "/automations/1/order-activity",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationReports.stepRunCount validates its input, full request, and response contract: automationReports.stepRunCount 1`] = `
+{
+  "method": "GET",
+  "url": "/automations/1/steps/run-counts/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationReports.stepRunCounts validates its input, full request, and response contract: automationReports.stepRunCounts 1`] = `
+{
+  "method": "GET",
+  "url": "/automations/1/steps/run-counts",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationReports.stepSubscribers validates its input, full request, and response contract: automationReports.stepSubscribers 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "filter[id]": undefined,
+    "status": "queued",
+  },
+  "url": "/automations/1/activity/steps/1/subscribers",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationReports.triggerRunCount validates its input, full request, and response contract: automationReports.triggerRunCount 1`] = `
+{
+  "method": "GET",
+  "url": "/automations/1/triggers/run-counts/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationReports.triggerRunCounts validates its input, full request, and response contract: automationReports.triggerRunCounts 1`] = `
+{
+  "method": "GET",
+  "url": "/automations/1/triggers/run-counts",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationReports.triggerSubscribers validates its input, full request, and response contract: automationReports.triggerSubscribers 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "filter[id]": undefined,
+    "status": "queued",
+  },
+  "url": "/automations/1/activity/triggers/1/subscribers",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationSteps.copy validates its input, full request, and response contract: automationSteps.copy 1`] = `
+{
+  "body": undefined,
+  "method": "POST",
+  "url": "/automations/1/steps/1/copy",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationSteps.create validates its input, full request, and response contract: automationSteps.create 1`] = `
+{
+  "body": {
+    "type": "email",
+  },
+  "method": "POST",
+  "url": "/automations/1/steps",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationSteps.delete validates its input, full request, and response contract: automationSteps.delete 1`] = `
+{
+  "method": "DELETE",
+  "query": undefined,
+  "url": "/automations/1/steps/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationSteps.get validates its input, full request, and response contract: automationSteps.get 1`] = `
+{
+  "method": "GET",
+  "url": "/automations/1/steps/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationSteps.list validates its input, full request, and response contract: automationSteps.list 1`] = `
+{
+  "method": "GET",
+  "url": "/automations/1/steps/index",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationSteps.reorder validates its input, full request, and response contract: automationSteps.reorder 1`] = `
+{
+  "body": {
+    "dragged_step_id": "step-1",
+  },
+  "method": "POST",
+  "url": "/automations/automation-1/steps/reorder",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationSteps.selectWinner validates its input, full request, and response contract: automationSteps.selectWinner 1`] = `
+{
+  "body": {
+    "ab_test_winner": "a_path",
+  },
+  "method": "PUT",
+  "url": "/automations/1/steps/1/select-ab-test-winner",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationSteps.update validates its input, full request, and response contract: automationSteps.update 1`] = `
+{
+  "body": {},
+  "method": "PUT",
+  "url": "/automations/1/steps/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationTemplates.createFromTemplate validates its input, full request, and response contract: automationTemplates.createFromTemplate 1`] = `
+{
+  "method": "POST",
+  "url": "/automations/select-template/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationTemplates.list validates its input, full request, and response contract: automationTemplates.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/automation-templates",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationTriggers.create validates its input, full request, and response contract: automationTriggers.create 1`] = `
+{
+  "body": {
+    "type": "subscriber_joins_group",
+  },
+  "method": "POST",
+  "url": "/automations/1/triggers",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationTriggers.delete validates its input, full request, and response contract: automationTriggers.delete 1`] = `
+{
+  "method": "DELETE",
+  "url": "/automations/1/triggers/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationTriggers.get validates its input, full request, and response contract: automationTriggers.get 1`] = `
+{
+  "method": "GET",
+  "url": "/automations/1/triggers/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationTriggers.list validates its input, full request, and response contract: automationTriggers.list 1`] = `
+{
+  "method": "GET",
+  "url": "/automations/1/triggers",
+}
+`;
+
+exports[`MailerLite endpoint contracts automationTriggers.update validates its input, full request, and response contract: automationTriggers.update 1`] = `
+{
+  "body": {},
+  "method": "PUT",
+  "url": "/automations/1/triggers/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts automations.activity validates its input, full request, and response contract: automations.activity 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "filter[status]": "completed",
+  },
+  "url": "/automations/1/activity",
+}
+`;
+
+exports[`MailerLite endpoint contracts automations.addSubscribers validates its input, full request, and response contract: automations.addSubscribers 1`] = `
+{
+  "body": {
+    "emails": [
+      "active@mailerlite.test",
+    ],
+  },
+  "method": "POST",
+  "url": "/automations/automation-1/add-subscribers",
+}
+`;
+
+exports[`MailerLite endpoint contracts automations.addToGroup validates its input, full request, and response contract: automations.addToGroup 1`] = `
+{
+  "body": {
+    "destination_groups": [
+      "1",
+    ],
+    "filter": {
+      "status": "active",
+    },
+  },
+  "method": "POST",
+  "url": "/automations/1/activity/add-to-group",
+}
+`;
+
+exports[`MailerLite endpoint contracts automations.cancelRuns validates its input, full request, and response contract: automations.cancelRuns 1`] = `
+{
+  "body": {
+    "filter": {
+      "status": "active",
+    },
+  },
+  "method": "POST",
+  "url": "/automations/1/activity/cancel-automation",
+}
+`;
+
+exports[`MailerLite endpoint contracts automations.copy validates its input, full request, and response contract: automations.copy 1`] = `
+{
+  "method": "POST",
+  "url": "/automations/1/copy",
+}
+`;
+
+exports[`MailerLite endpoint contracts automations.create validates its input, full request, and response contract: automations.create 1`] = `
+{
+  "body": {
+    "name": "1",
+  },
+  "method": "POST",
+  "url": "/automations",
+}
+`;
+
+exports[`MailerLite endpoint contracts automations.delete validates its input, full request, and response contract: automations.delete 1`] = `
+{
+  "method": "DELETE",
+  "url": "/automations/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts automations.disable validates its input, full request, and response contract: automations.disable 1`] = `
+{
+  "method": "POST",
+  "url": "/automations/1/disable",
+}
+`;
+
+exports[`MailerLite endpoint contracts automations.enable validates its input, full request, and response contract: automations.enable 1`] = `
+{
+  "method": "POST",
+  "url": "/automations/1/enable",
+}
+`;
+
+exports[`MailerLite endpoint contracts automations.get validates its input, full request, and response contract: automations.get 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/automations/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts automations.list validates its input, full request, and response contract: automations.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/automations",
+}
+`;
+
+exports[`MailerLite endpoint contracts automations.readd validates its input, full request, and response contract: automations.readd 1`] = `
+{
+  "body": {
+    "filter": {
+      "status": "completed",
+    },
+    "readd_subscribers_to": "last_completed_step",
+  },
+  "method": "POST",
+  "url": "/automations/1/readd",
+}
+`;
+
+exports[`MailerLite endpoint contracts automations.skipDelay validates its input, full request, and response contract: automations.skipDelay 1`] = `
+{
+  "body": {
+    "filter": {
+      "status": "active",
+    },
+  },
+  "method": "POST",
+  "url": "/automations/1/activity/skip-delay",
+}
+`;
+
+exports[`MailerLite endpoint contracts automations.test validates its input, full request, and response contract: automations.test 1`] = `
+{
+  "body": {
+    "email": "test@mailerlite.test",
+  },
+  "method": "POST",
+  "url": "/automations/1/test",
+}
+`;
+
+exports[`MailerLite endpoint contracts automations.update validates its input, full request, and response contract: automations.update 1`] = `
+{
+  "body": {},
+  "method": "PUT",
+  "url": "/automations/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts brandStyles.list validates its input, full request, and response contract: brandStyles.list 1`] = `
+{
+  "method": "GET",
+  "url": "/brand-styles",
+}
+`;
+
+exports[`MailerLite endpoint contracts campaignLanguages.list validates its input, full request, and response contract: campaignLanguages.list 1`] = `
+{
+  "method": "GET",
+  "url": "/campaigns/languages",
+}
+`;
+
+exports[`MailerLite endpoint contracts campaigns.cancel validates its input, full request, and response contract: campaigns.cancel 1`] = `
+{
+  "method": "POST",
+  "url": "/campaigns/1/cancel",
+}
+`;
+
+exports[`MailerLite endpoint contracts campaigns.create validates its input, full request, and response contract: campaigns.create 1`] = `
+{
+  "body": {
+    "emails": [
+      {
+        "from": "sender@mailerlite.test",
+        "from_name": "Team",
+        "subject": "Welcome",
+      },
+    ],
+    "name": "Welcome note",
+    "type": "regular",
+  },
+  "method": "POST",
+  "url": "/campaigns",
+}
+`;
+
+exports[`MailerLite endpoint contracts campaigns.delete validates its input, full request, and response contract: campaigns.delete 1`] = `
+{
+  "method": "DELETE",
+  "url": "/campaigns/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts campaigns.ecommerceOrders validates its input, full request, and response contract: campaigns.ecommerceOrders 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "shop_id": 1,
+  },
+  "url": "/campaigns/1/reports/ecommerce/orders",
+}
+`;
+
+exports[`MailerLite endpoint contracts campaigns.ecommerceReport validates its input, full request, and response contract: campaigns.ecommerceReport 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "shop_id": 1,
+  },
+  "url": "/campaigns/1/reports/ecommerce",
+}
+`;
+
+exports[`MailerLite endpoint contracts campaigns.get validates its input, full request, and response contract: campaigns.get 1`] = `
+{
+  "method": "GET",
+  "url": "/campaigns/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts campaigns.list validates its input, full request, and response contract: campaigns.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/campaigns",
+}
+`;
+
+exports[`MailerLite endpoint contracts campaigns.schedule validates its input, full request, and response contract: campaigns.schedule 1`] = `
+{
+  "body": {
+    "delivery": "instant",
+  },
+  "method": "POST",
+  "url": "/campaigns/1/schedule",
+}
+`;
+
+exports[`MailerLite endpoint contracts campaigns.subscriberActivity validates its input, full request, and response contract: campaigns.subscriberActivity 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/campaigns/1/reports/subscriber-activity",
+}
+`;
+
+exports[`MailerLite endpoint contracts campaigns.update validates its input, full request, and response contract: campaigns.update 1`] = `
+{
+  "body": {
+    "name": "1",
+  },
+  "method": "PUT",
+  "url": "/campaigns/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts cartItems.count validates its input, full request, and response contract: cartItems.count 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "limit": 0,
+  },
+  "url": "/ecommerce/shops/1/carts/1/items",
+}
+`;
+
+exports[`MailerLite endpoint contracts cartItems.create validates its input, full request, and response contract: cartItems.create 1`] = `
+{
+  "body": {
+    "ecommerce_product_id": "product-1",
+  },
+  "method": "POST",
+  "query": undefined,
+  "url": "/ecommerce/shops/shop-1/carts/cart-1/items",
+}
+`;
+
+exports[`MailerLite endpoint contracts cartItems.delete validates its input, full request, and response contract: cartItems.delete 1`] = `
+{
+  "method": "DELETE",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/carts/1/items/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts cartItems.get validates its input, full request, and response contract: cartItems.get 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/carts/1/items/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts cartItems.list validates its input, full request, and response contract: cartItems.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/carts/1/items",
+}
+`;
+
+exports[`MailerLite endpoint contracts cartItems.update validates its input, full request, and response contract: cartItems.update 1`] = `
+{
+  "body": {
+    "ecommerce_product_id": "product-1",
+  },
+  "method": "PUT",
+  "query": undefined,
+  "url": "/ecommerce/shops/shop-1/carts/cart-1/items/item-1",
+}
+`;
+
+exports[`MailerLite endpoint contracts carts.count validates its input, full request, and response contract: carts.count 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "limit": 0,
+  },
+  "url": "/ecommerce/shops/1/carts",
+}
+`;
+
+exports[`MailerLite endpoint contracts carts.get validates its input, full request, and response contract: carts.get 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/carts/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts carts.list validates its input, full request, and response contract: carts.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/carts",
+}
+`;
+
+exports[`MailerLite endpoint contracts carts.update validates its input, full request, and response contract: carts.update 1`] = `
+{
+  "body": {},
+  "method": "PUT",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/carts/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts categories.count validates its input, full request, and response contract: categories.count 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "limit": 0,
+  },
+  "url": "/ecommerce/shops/1/categories",
+}
+`;
+
+exports[`MailerLite endpoint contracts categories.create validates its input, full request, and response contract: categories.create 1`] = `
+{
+  "body": {
+    "name": "1",
+  },
+  "method": "POST",
+  "url": "/ecommerce/shops/1/categories",
+}
+`;
+
+exports[`MailerLite endpoint contracts categories.delete validates its input, full request, and response contract: categories.delete 1`] = `
+{
+  "method": "DELETE",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/categories/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts categories.get validates its input, full request, and response contract: categories.get 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/categories/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts categories.list validates its input, full request, and response contract: categories.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/categories",
+}
+`;
+
+exports[`MailerLite endpoint contracts categories.update validates its input, full request, and response contract: categories.update 1`] = `
+{
+  "body": {
+    "name": "1",
+  },
+  "method": "PUT",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/categories/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts categoryProducts.assign validates its input, full request, and response contract: categoryProducts.assign 1`] = `
+{
+  "method": "PUT",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/categories/1/products/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts categoryProducts.assignMultiple validates its input, full request, and response contract: categoryProducts.assignMultiple 1`] = `
+{
+  "body": {
+    "categories": [],
+  },
+  "method": "PUT",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/products/1/categories/multiple",
+}
+`;
+
+exports[`MailerLite endpoint contracts categoryProducts.list validates its input, full request, and response contract: categoryProducts.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/categories/1/products",
+}
+`;
+
+exports[`MailerLite endpoint contracts categoryProducts.unassign validates its input, full request, and response contract: categoryProducts.unassign 1`] = `
+{
+  "method": "DELETE",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/categories/1/products/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts customers.count validates its input, full request, and response contract: customers.count 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "limit": 0,
+  },
+  "url": "/ecommerce/shops/1/customers",
+}
+`;
+
+exports[`MailerLite endpoint contracts customers.create validates its input, full request, and response contract: customers.create 1`] = `
+{
+  "body": {
+    "email": "test@mailerlite.test",
+  },
+  "method": "POST",
+  "url": "/ecommerce/shops/1/customers",
+}
+`;
+
+exports[`MailerLite endpoint contracts customers.delete validates its input, full request, and response contract: customers.delete 1`] = `
+{
+  "method": "DELETE",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/customers/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts customers.get validates its input, full request, and response contract: customers.get 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/customers/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts customers.list validates its input, full request, and response contract: customers.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/customers",
+}
+`;
+
+exports[`MailerLite endpoint contracts customers.update validates its input, full request, and response contract: customers.update 1`] = `
+{
+  "body": {
+    "email": "test@mailerlite.test",
+  },
+  "method": "PUT",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/customers/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts ecommerceImports.categories validates its input, full request, and response contract: ecommerceImports.categories 1`] = `
+{
+  "body": [
+    {
+      "name": "Test resource",
+    },
+  ],
+  "method": "POST",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/categories/import",
+}
+`;
+
+exports[`MailerLite endpoint contracts ecommerceImports.customers validates its input, full request, and response contract: ecommerceImports.customers 1`] = `
+{
+  "body": [
+    {
+      "email": "person@mailerlite.test",
+    },
+  ],
+  "method": "POST",
+  "url": "/ecommerce/shops/1/customers/import",
+}
+`;
+
+exports[`MailerLite endpoint contracts ecommerceImports.orders validates its input, full request, and response contract: ecommerceImports.orders 1`] = `
+{
+  "body": {
+    "orders": [
+      {
+        "cart": {
+          "items": [
+            {
+              "ecommerce_product_id": "product-1",
+            },
+          ],
+        },
+        "customer_id": "customer-1",
+      },
+    ],
+  },
+  "method": "POST",
+  "url": "/ecommerce/shops/shop-1/orders/import",
+}
+`;
+
+exports[`MailerLite endpoint contracts ecommerceImports.products validates its input, full request, and response contract: ecommerceImports.products 1`] = `
+{
+  "body": [
+    {
+      "name": "Test resource",
+    },
+  ],
+  "method": "POST",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/products/import",
+}
+`;
+
+exports[`MailerLite endpoint contracts ecommerceSettings.get validates its input, full request, and response contract: ecommerceSettings.get 1`] = `
+{
+  "method": "GET",
+  "url": "/ecommerce/settings",
+}
+`;
+
+exports[`MailerLite endpoint contracts emails.deleteBlock validates its input, full request, and response contract: emails.deleteBlock 1`] = `
+{
+  "body": {
+    "etag": "1",
+  },
+  "headers": undefined,
+  "method": "DELETE",
+  "url": "/emails/1/blocks/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts emails.get validates its input, full request, and response contract: emails.get 1`] = `
+{
+  "method": "GET",
+  "url": "/emails/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts emails.getBlock validates its input, full request, and response contract: emails.getBlock 1`] = `
+{
+  "method": "GET",
+  "url": "/emails/1/blocks/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts emails.html validates its input, full request, and response contract: emails.html 1`] = `
+{
+  "method": "GET",
+  "url": "/emails/1/html",
+}
+`;
+
+exports[`MailerLite endpoint contracts emails.insertBlock validates its input, full request, and response contract: emails.insertBlock 1`] = `
+{
+  "body": {
+    "editor_content": {},
+    "etag": "42",
+    "type": "divider",
+  },
+  "headers": undefined,
+  "method": "POST",
+  "url": "/emails/1/blocks",
+}
+`;
+
+exports[`MailerLite endpoint contracts emails.moveBlock validates its input, full request, and response contract: emails.moveBlock 1`] = `
+{
+  "body": {
+    "etag": "1",
+    "placement": {
+      "position": "start",
+    },
+  },
+  "headers": undefined,
+  "method": "POST",
+  "url": "/emails/1/blocks/1/move",
+}
+`;
+
+exports[`MailerLite endpoint contracts emails.restoreVersion validates its input, full request, and response contract: emails.restoreVersion 1`] = `
+{
+  "headers": undefined,
+  "method": "POST",
+  "url": "/emails/1/versions/1/restore",
+}
+`;
+
+exports[`MailerLite endpoint contracts emails.saveTemplate validates its input, full request, and response contract: emails.saveTemplate 1`] = `
+{
+  "body": {
+    "name": "1",
+  },
+  "headers": undefined,
+  "method": "POST",
+  "url": "/emails/1/templates",
+}
+`;
+
+exports[`MailerLite endpoint contracts emails.saveVersion validates its input, full request, and response contract: emails.saveVersion 1`] = `
+{
+  "headers": undefined,
+  "method": "POST",
+  "url": "/emails/1/versions",
+}
+`;
+
+exports[`MailerLite endpoint contracts emails.updateBlock validates its input, full request, and response contract: emails.updateBlock 1`] = `
+{
+  "body": {
+    "editor_content": {},
+    "etag": "1",
+  },
+  "headers": undefined,
+  "method": "PATCH",
+  "url": "/emails/1/blocks/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts emails.updateSettings validates its input, full request, and response contract: emails.updateSettings 1`] = `
+{
+  "body": {
+    "etag": "1",
+  },
+  "headers": undefined,
+  "method": "PATCH",
+  "url": "/emails/1/settings",
+}
+`;
+
+exports[`MailerLite endpoint contracts emails.validateBlock validates its input, full request, and response contract: emails.validateBlock 1`] = `
+{
+  "body": {
+    "editor_content": {},
+    "type": "blockquote",
+  },
+  "method": "POST",
+  "url": "/emails/blocks/validate",
+}
+`;
+
+exports[`MailerLite endpoint contracts emails.validateSettings validates its input, full request, and response contract: emails.validateSettings 1`] = `
+{
+  "body": {},
+  "method": "POST",
+  "url": "/emails/1/settings/validate",
+}
+`;
+
+exports[`MailerLite endpoint contracts emails.versions validates its input, full request, and response contract: emails.versions 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/emails/1/versions",
+}
+`;
+
+exports[`MailerLite endpoint contracts fields.create validates its input, full request, and response contract: fields.create 1`] = `
+{
+  "body": {
+    "name": "Customer score",
+    "type": "number",
+  },
+  "method": "POST",
+  "url": "/fields",
+}
+`;
+
+exports[`MailerLite endpoint contracts fields.delete validates its input, full request, and response contract: fields.delete 1`] = `
+{
+  "method": "DELETE",
+  "url": "/fields/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts fields.list validates its input, full request, and response contract: fields.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/fields",
+}
+`;
+
+exports[`MailerLite endpoint contracts fields.update validates its input, full request, and response contract: fields.update 1`] = `
+{
+  "body": {
+    "name": "Customer score",
+  },
+  "method": "PUT",
+  "url": "/fields/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts files.list validates its input, full request, and response contract: files.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/files",
+}
+`;
+
+exports[`MailerLite endpoint contracts forms.delete validates its input, full request, and response contract: forms.delete 1`] = `
+{
+  "method": "DELETE",
+  "url": "/forms/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts forms.get validates its input, full request, and response contract: forms.get 1`] = `
+{
+  "method": "GET",
+  "url": "/forms/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts forms.list validates its input, full request, and response contract: forms.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/forms/popup",
+}
+`;
+
+exports[`MailerLite endpoint contracts forms.subscribers validates its input, full request, and response contract: forms.subscribers 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/forms/1/subscribers",
+}
+`;
+
+exports[`MailerLite endpoint contracts forms.update validates its input, full request, and response contract: forms.update 1`] = `
+{
+  "body": {
+    "name": "Newsletter form",
+  },
+  "method": "PUT",
+  "url": "/forms/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts groups.create validates its input, full request, and response contract: groups.create 1`] = `
+{
+  "body": {
+    "name": "Newsletter subscribers",
+  },
+  "method": "POST",
+  "url": "/groups",
+}
+`;
+
+exports[`MailerLite endpoint contracts groups.delete validates its input, full request, and response contract: groups.delete 1`] = `
+{
+  "method": "DELETE",
+  "url": "/groups/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts groups.importSubscribers validates its input, full request, and response contract: groups.importSubscribers 1`] = `
+{
+  "body": {
+    "subscribers": [
+      {
+        "email": "person@mailerlite.test",
+      },
+    ],
+  },
+  "method": "POST",
+  "url": "/groups/1/import-subscribers",
+}
+`;
+
+exports[`MailerLite endpoint contracts groups.list validates its input, full request, and response contract: groups.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/groups",
+}
+`;
+
+exports[`MailerLite endpoint contracts groups.subscribers validates its input, full request, and response contract: groups.subscribers 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/groups/1/subscribers",
+}
+`;
+
+exports[`MailerLite endpoint contracts groups.update validates its input, full request, and response contract: groups.update 1`] = `
+{
+  "body": {
+    "name": "Newsletter subscribers",
+  },
+  "method": "PUT",
+  "url": "/groups/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts orders.count validates its input, full request, and response contract: orders.count 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "limit": 0,
+  },
+  "url": "/ecommerce/shops/1/orders",
+}
+`;
+
+exports[`MailerLite endpoint contracts orders.create validates its input, full request, and response contract: orders.create 1`] = `
+{
+  "body": {
+    "cart": {
+      "items": [
+        {
+          "ecommerce_product_id": "product-1",
+        },
+      ],
+    },
+    "customer": {
+      "accepts_marketing": false,
+      "email": "buyer@mailerlite.test",
+    },
+    "status": "pending",
+  },
+  "method": "POST",
+  "query": undefined,
+  "url": "/ecommerce/shops/shop-1/orders",
+}
+`;
+
+exports[`MailerLite endpoint contracts orders.delete validates its input, full request, and response contract: orders.delete 1`] = `
+{
+  "method": "DELETE",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/orders/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts orders.get validates its input, full request, and response contract: orders.get 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/orders/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts orders.list validates its input, full request, and response contract: orders.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/orders",
+}
+`;
+
+exports[`MailerLite endpoint contracts orders.update validates its input, full request, and response contract: orders.update 1`] = `
+{
+  "body": {},
+  "method": "PUT",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/orders/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts productVariants.create validates its input, full request, and response contract: productVariants.create 1`] = `
+{
+  "body": [
+    {
+      "attributes": {},
+      "name": "Test resource",
+    },
+  ],
+  "method": "POST",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/products/1/variants",
+}
+`;
+
+exports[`MailerLite endpoint contracts productVariants.delete validates its input, full request, and response contract: productVariants.delete 1`] = `
+{
+  "method": "DELETE",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/products/1/variants/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts productVariants.list validates its input, full request, and response contract: productVariants.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/products/1/variants",
+}
+`;
+
+exports[`MailerLite endpoint contracts productVariants.update validates its input, full request, and response contract: productVariants.update 1`] = `
+{
+  "body": {
+    "attributes": {},
+    "name": "1",
+  },
+  "method": "PUT",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/products/1/variants/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts products.changeStatus validates its input, full request, and response contract: products.changeStatus 1`] = `
+{
+  "body": {
+    "status": true,
+  },
+  "method": "PUT",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/products/1/change-status",
+}
+`;
+
+exports[`MailerLite endpoint contracts products.count validates its input, full request, and response contract: products.count 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "limit": 0,
+  },
+  "url": "/ecommerce/shops/1/products",
+}
+`;
+
+exports[`MailerLite endpoint contracts products.create validates its input, full request, and response contract: products.create 1`] = `
+{
+  "body": {
+    "name": "1",
+  },
+  "method": "POST",
+  "url": "/ecommerce/shops/1/products",
+}
+`;
+
+exports[`MailerLite endpoint contracts products.delete validates its input, full request, and response contract: products.delete 1`] = `
+{
+  "method": "DELETE",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/products/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts products.get validates its input, full request, and response contract: products.get 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/products/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts products.list validates its input, full request, and response contract: products.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/products",
+}
+`;
+
+exports[`MailerLite endpoint contracts products.update validates its input, full request, and response contract: products.update 1`] = `
+{
+  "body": {
+    "name": "1",
+  },
+  "method": "PUT",
+  "query": undefined,
+  "url": "/ecommerce/shops/1/products/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts segments.delete validates its input, full request, and response contract: segments.delete 1`] = `
+{
+  "method": "DELETE",
+  "url": "/segments/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts segments.list validates its input, full request, and response contract: segments.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/segments",
+}
+`;
+
+exports[`MailerLite endpoint contracts segments.subscribers validates its input, full request, and response contract: segments.subscribers 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/segments/1/subscribers",
+}
+`;
+
+exports[`MailerLite endpoint contracts segments.update validates its input, full request, and response contract: segments.update 1`] = `
+{
+  "body": {
+    "name": "Active subscribers",
+  },
+  "method": "PUT",
+  "url": "/segments/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts shops.count validates its input, full request, and response contract: shops.count 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "limit": 0,
+  },
+  "url": "/ecommerce/shops",
+}
+`;
+
+exports[`MailerLite endpoint contracts shops.create validates its input, full request, and response contract: shops.create 1`] = `
+{
+  "body": {
+    "currency": "USD",
+    "name": "Test shop",
+    "url": "https://mailer.test",
+  },
+  "method": "POST",
+  "url": "/ecommerce/shops",
+}
+`;
+
+exports[`MailerLite endpoint contracts shops.delete validates its input, full request, and response contract: shops.delete 1`] = `
+{
+  "method": "DELETE",
+  "url": "/ecommerce/shops/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts shops.get validates its input, full request, and response contract: shops.get 1`] = `
+{
+  "method": "GET",
+  "url": "/ecommerce/shops/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts shops.list validates its input, full request, and response contract: shops.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/ecommerce/shops",
+}
+`;
+
+exports[`MailerLite endpoint contracts shops.stats validates its input, full request, and response contract: shops.stats 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "end_date": "2026-11-21",
+    "start_date": "2026-11-01",
+  },
+  "url": "/ecommerce/shops/1/reports/stats",
+}
+`;
+
+exports[`MailerLite endpoint contracts shops.update validates its input, full request, and response contract: shops.update 1`] = `
+{
+  "body": {
+    "currency": "USD",
+    "name": "Test shop",
+    "url": "https://mailer.test",
+  },
+  "method": "PUT",
+  "url": "/ecommerce/shops/shop-1",
+}
+`;
+
+exports[`MailerLite endpoint contracts subscribers.activity validates its input, full request, and response contract: subscribers.activity 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/subscribers/1/activity-log",
+}
+`;
+
+exports[`MailerLite endpoint contracts subscribers.addToGroup validates its input, full request, and response contract: subscribers.addToGroup 1`] = `
+{
+  "method": "POST",
+  "url": "/subscribers/1/groups/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts subscribers.count validates its input, full request, and response contract: subscribers.count 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "limit": 0,
+  },
+  "url": "/subscribers",
+}
+`;
+
+exports[`MailerLite endpoint contracts subscribers.create validates its input, full request, and response contract: subscribers.create 1`] = `
+{
+  "body": {
+    "email": "test@mailerlite.test",
+  },
+  "method": "POST",
+  "url": "/subscribers",
+}
+`;
+
+exports[`MailerLite endpoint contracts subscribers.delete validates its input, full request, and response contract: subscribers.delete 1`] = `
+{
+  "method": "DELETE",
+  "url": "/subscribers/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts subscribers.ecommerceOrders validates its input, full request, and response contract: subscribers.ecommerceOrders 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "shop_id": 1,
+  },
+  "url": "/subscribers/1/reports/ecommerce/orders",
+}
+`;
+
+exports[`MailerLite endpoint contracts subscribers.ecommerceStats validates its input, full request, and response contract: subscribers.ecommerceStats 1`] = `
+{
+  "method": "GET",
+  "query": {
+    "shop_id": 1,
+  },
+  "url": "/subscribers/1/reports/ecommerce",
+}
+`;
+
+exports[`MailerLite endpoint contracts subscribers.forget validates its input, full request, and response contract: subscribers.forget 1`] = `
+{
+  "method": "POST",
+  "url": "/subscribers/1/forget",
+}
+`;
+
+exports[`MailerLite endpoint contracts subscribers.get validates its input, full request, and response contract: subscribers.get 1`] = `
+{
+  "method": "GET",
+  "url": "/subscribers/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts subscribers.importStatus validates its input, full request, and response contract: subscribers.importStatus 1`] = `
+{
+  "method": "GET",
+  "url": "/subscribers/import/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts subscribers.list validates its input, full request, and response contract: subscribers.list 1`] = `
+{
+  "method": "GET",
+  "query": undefined,
+  "url": "/subscribers",
+}
+`;
+
+exports[`MailerLite endpoint contracts subscribers.removeFromGroup validates its input, full request, and response contract: subscribers.removeFromGroup 1`] = `
+{
+  "method": "DELETE",
+  "url": "/subscribers/1/groups/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts subscribers.update validates its input, full request, and response contract: subscribers.update 1`] = `
+{
+  "body": {},
+  "method": "PUT",
+  "url": "/subscribers/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts timezones.list validates its input, full request, and response contract: timezones.list 1`] = `
+{
+  "method": "GET",
+  "url": "/timezones",
+}
+`;
+
+exports[`MailerLite endpoint contracts webhooks.create validates its input, full request, and response contract: webhooks.create 1`] = `
+{
+  "body": {
+    "events": [
+      "subscriber.created",
+    ],
+    "url": "https://mailer.test",
+  },
+  "method": "POST",
+  "url": "/webhooks",
+}
+`;
+
+exports[`MailerLite endpoint contracts webhooks.delete validates its input, full request, and response contract: webhooks.delete 1`] = `
+{
+  "method": "DELETE",
+  "url": "/webhooks/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts webhooks.get validates its input, full request, and response contract: webhooks.get 1`] = `
+{
+  "method": "GET",
+  "url": "/webhooks/1",
+}
+`;
+
+exports[`MailerLite endpoint contracts webhooks.list validates its input, full request, and response contract: webhooks.list 1`] = `
+{
+  "method": "GET",
+  "url": "/webhooks",
+}
+`;
+
+exports[`MailerLite endpoint contracts webhooks.update validates its input, full request, and response contract: webhooks.update 1`] = `
+{
+  "body": {},
+  "method": "PUT",
+  "url": "/webhooks/1",
+}
+`;
