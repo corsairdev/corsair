@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 // Tinify output ids are the last segment of the shrink Location header.
@@ -116,14 +117,22 @@ export type ShrinkResponse = z.infer<typeof ShrinkResponseSchema>;
 export const OutputInputSchema = z.object({ imageId: ImageIdSchema });
 export type OutputInput = z.infer<typeof OutputInputSchema>;
 
-const ImageFileSchema = z.object({
+const ImageFileSchema = FileOutputSchema.omit({
+	contentBase64: true,
+	text: true,
+}).extend({
 	imageId: z.string(),
 	contentType: z.string(),
 	size: z.number(),
 	width: z.number().optional(),
 	height: z.number().optional(),
 	compressionCount: z.number().optional(),
-	base64: z.string(),
+	base64: z
+		.string()
+		.optional()
+		.describe(
+			'The image, base64-encoded. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId).',
+		),
 });
 
 export const OutputResponseSchema = ImageFileSchema;

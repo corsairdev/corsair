@@ -22,6 +22,7 @@ pnpm add @corsair-dev/slack
 | `channels.get` | `slack.api.channels.get` | `read` | Get info about a channel |
 | `channels.getHistory` | `slack.api.channels.getHistory` | `read` | Fetch message history for a channel |
 | `channels.getMembers` | `slack.api.channels.getMembers` | `read` | List members of a channel |
+| `channels.listMine` | `slack.api.channels.listMine` | `read` | List the connected user's own conversations (user token) |
 | `channels.getReplies` | `slack.api.channels.getReplies` | `read` | Fetch replies for a thread |
 | `channels.invite` | `slack.api.channels.invite` | `write` | Invite users to a channel |
 | `channels.join` | `slack.api.channels.join` | `write` | Join a channel |

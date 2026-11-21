@@ -1,0 +1,680 @@
+{
+  "id": "googleads",
+  "displayName": "Google Ads",
+  "description": "Run Google Ads Query Language reports and manage campaigns, budgets and ad groups through the Google Ads API.",
+  "npmPackageName": "@corsair-dev/googleads",
+  "authTypes": ["oauth_2"],
+  "defaultAuthType": "oauth_2",
+  "counts": {
+    "api": 13,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "oauth_2",
+      "integrationFields": [
+        "client_id",
+        "client_secret",
+        "redirect_url",
+        "developer_token",
+        "login_customer_id"
+      ],
+      "accountFields": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "scope",
+        "webhook_signature"
+      ]
+    }
+  ],
+  "api": [
+    {
+      "path": "googleads.api.adGroups.create",
+      "shortPath": "adGroups.create",
+      "description": "Create an ad group inside an existing campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask"
+          },
+          {
+            "key": "adGroup",
+            "optional": false,
+            "type": "{ name: string, campaign: string, status?: UNSPECIFIED | UNKNOWN | ENABLED | PAUSED | REMOVED | null, type?: UNSPECIFIED | UNKNOWN | SEARCH_STANDARD | DISPLAY_STANDARD | SHOPPING_PRODUCT_ADS | HOTEL_ADS | VIDEO_BUMPER | VIDEO_TRUE_VIEW_IN_STREAM | VIDEO_TRUE_VIEW_IN_DISPLAY | VIDEO_NON_SKIPPABLE_IN_STREAM | VIDEO_OUTSTREAM | SEARCH_DYNAMIC_ADS | SHOPPING_SMART_ADS | DISPLAY_GMAIL_AD | SHOPPING_COMPARISON_LISTING_ADS | SMART_CAMPAIGN | VIDEO_RESPONSIVE | DISPLAY_SMART_CAMPAIGN | null, cpcBidMicros?: string | null }"
+          },
+          {
+            "key": "validateOnly",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Validate the request without applying it: Google returns only errors, never results"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ resourceName?: string | null }[] | null",
+            "description": "One result per operation, in order, each naming the resource"
+          },
+          {
+            "key": "partialFailureError",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, details?: { errors?: { errorCode?: Record<string, string> | null, message?: string | null, trigger?: Record<string, any> | null, location?: { fieldPathElements?: { fieldName?: string | null, index?: number | null }[] | null } | null }[] | null, requestId?: string | null }[] | null } | null",
+            "description": "Present when partialFailure was set and some operations failed"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleads.api.adGroups.update",
+      "shortPath": "adGroups.update",
+      "description": "Change an ad group's name, status or default CPC bid, which can change spend; updateMask names the fields that change",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask"
+          },
+          {
+            "key": "adGroupId",
+            "optional": false,
+            "type": "string",
+            "description": "The ad group id, or its resource name"
+          },
+          {
+            "key": "adGroup",
+            "optional": false,
+            "type": "{ name?: string | null, status?: UNSPECIFIED | UNKNOWN | ENABLED | PAUSED | REMOVED | null, cpcBidMicros?: string | null }"
+          },
+          {
+            "key": "updateMask",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated fields to change, e.g. `status`"
+          },
+          {
+            "key": "validateOnly",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Validate the request without applying it: Google returns only errors, never results"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ resourceName?: string | null }[] | null",
+            "description": "One result per operation, in order, each naming the resource"
+          },
+          {
+            "key": "partialFailureError",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, details?: { errors?: { errorCode?: Record<string, string> | null, message?: string | null, trigger?: Record<string, any> | null, location?: { fieldPathElements?: { fieldName?: string | null, index?: number | null }[] | null } | null }[] | null, requestId?: string | null }[] | null } | null",
+            "description": "Present when partialFailure was set and some operations failed"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleads.api.campaignBudgets.create",
+      "shortPath": "campaignBudgets.create",
+      "description": "Create a campaign budget in micros of the account currency",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask"
+          },
+          {
+            "key": "campaignBudget",
+            "optional": false,
+            "type": "{ name: string, amountMicros: string, deliveryMethod?: UNSPECIFIED | UNKNOWN | STANDARD | ACCELERATED | null, explicitlyShared?: boolean | null }"
+          },
+          {
+            "key": "validateOnly",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Validate the request without applying it: Google returns only errors, never results"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ resourceName?: string | null }[] | null",
+            "description": "One result per operation, in order, each naming the resource"
+          },
+          {
+            "key": "partialFailureError",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, details?: { errors?: { errorCode?: Record<string, string> | null, message?: string | null, trigger?: Record<string, any> | null, location?: { fieldPathElements?: { fieldName?: string | null, index?: number | null }[] | null } | null }[] | null, requestId?: string | null }[] | null } | null",
+            "description": "Present when partialFailure was set and some operations failed"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleads.api.campaignBudgets.update",
+      "shortPath": "campaignBudgets.update",
+      "description": "Change a budget amount or name, which changes how much the campaigns using it can spend",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask"
+          },
+          {
+            "key": "campaignBudgetId",
+            "optional": false,
+            "type": "string",
+            "description": "The budget id, or its resource name"
+          },
+          {
+            "key": "campaignBudget",
+            "optional": false,
+            "type": "{ name?: string | null, amountMicros?: string | null, deliveryMethod?: UNSPECIFIED | UNKNOWN | STANDARD | ACCELERATED | null }"
+          },
+          {
+            "key": "updateMask",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated fields to change, e.g. `amountMicros`"
+          },
+          {
+            "key": "validateOnly",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Validate the request without applying it: Google returns only errors, never results"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ resourceName?: string | null }[] | null",
+            "description": "One result per operation, in order, each naming the resource"
+          },
+          {
+            "key": "partialFailureError",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, details?: { errors?: { errorCode?: Record<string, string> | null, message?: string | null, trigger?: Record<string, any> | null, location?: { fieldPathElements?: { fieldName?: string | null, index?: number | null }[] | null } | null }[] | null, requestId?: string | null }[] | null } | null",
+            "description": "Present when partialFailure was set and some operations failed"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleads.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Create a campaign that starts serving and spending unless status is PAUSED, against an existing budget",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask"
+          },
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ name: string, status?: UNSPECIFIED | UNKNOWN | ENABLED | PAUSED | REMOVED | null, advertisingChannelType: SEARCH | DISPLAY | SHOPPING | VIDEO | MULTI_CHANNEL | LOCAL | SMART | PERFORMANCE_MAX | LOCAL_SERVICES | TRAVEL | DEMAND_GEN, campaignBudget: string, containsEuPoliticalAdvertising: CONTAINS_EU_POLITICAL_ADVERTISING | DOES_NOT_CONTAIN_EU_POLITICAL_ADVERTISING, startDateTime?: string | null, endDateTime?: string | null, networkSettings?: { targetGoogleSearch?: boolean | null, targetSearchNetwork?: boolean | null, targetContentNetwork?: boolean | null, targetPartnerSearchNetwork?: boolean | null } | null, manualCpc?: { enhancedCpcEnabled?: boolean | null } | null, targetSpend?: {} | null }"
+          },
+          {
+            "key": "validateOnly",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Validate the request without applying it: Google returns only errors, never results"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ resourceName?: string | null }[] | null",
+            "description": "One result per operation, in order, each naming the resource"
+          },
+          {
+            "key": "partialFailureError",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, details?: { errors?: { errorCode?: Record<string, string> | null, message?: string | null, trigger?: Record<string, any> | null, location?: { fieldPathElements?: { fieldName?: string | null, index?: number | null }[] | null } | null }[] | null, requestId?: string | null }[] | null } | null",
+            "description": "Present when partialFailure was set and some operations failed"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleads.api.campaigns.remove",
+      "shortPath": "campaigns.remove",
+      "description": "Remove a campaign: its status becomes REMOVED and it cannot be restored, only recreated as a new campaign",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "validateOnly",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Validate the request without applying it: Google returns only errors, never results"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ resourceName?: string | null }[] | null",
+            "description": "One result per operation, in order, each naming the resource"
+          },
+          {
+            "key": "partialFailureError",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, details?: { errors?: { errorCode?: Record<string, string> | null, message?: string | null, trigger?: Record<string, any> | null, location?: { fieldPathElements?: { fieldName?: string | null, index?: number | null }[] | null } | null }[] | null, requestId?: string | null }[] | null } | null",
+            "description": "Present when partialFailure was set and some operations failed"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleads.api.campaigns.update",
+      "shortPath": "campaigns.update",
+      "description": "Change a campaign's name, status or dates; enabling it starts spending. updateMask names the fields that change",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "The campaign id, or its full resource name, e.g. `1234567890`"
+          },
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ name?: string | null, status?: UNSPECIFIED | UNKNOWN | ENABLED | PAUSED | REMOVED | null, containsEuPoliticalAdvertising?: CONTAINS_EU_POLITICAL_ADVERTISING | DOES_NOT_CONTAIN_EU_POLITICAL_ADVERTISING | null, startDateTime?: string | null, endDateTime?: string | null }"
+          },
+          {
+            "key": "updateMask",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated fields the update changes, e.g. `name,status`. Required: Google ignores an update without one"
+          },
+          {
+            "key": "validateOnly",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Validate the request without applying it: Google returns only errors, never results"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ resourceName?: string | null }[] | null",
+            "description": "One result per operation, in order, each naming the resource"
+          },
+          {
+            "key": "partialFailureError",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, details?: { errors?: { errorCode?: Record<string, string> | null, message?: string | null, trigger?: Record<string, any> | null, location?: { fieldPathElements?: { fieldName?: string | null, index?: number | null }[] | null } | null }[] | null, requestId?: string | null }[] | null } | null",
+            "description": "Present when partialFailure was set and some operations failed"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleads.api.customers.listAccessible",
+      "shortPath": "customers.listAccessible",
+      "description": "List the accounts the credentials can call, which is how a caller finds a customer ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "resourceNames",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "e.g. `customers/1234567890`, the accounts the token can call"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleads.api.customers.update",
+      "shortPath": "customers.update",
+      "description": "Update the account record itself: auto-tagging, final URL suffix and call reporting",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask"
+          },
+          {
+            "key": "updateMask",
+            "optional": false,
+            "type": "string",
+            "description": "The customer fields to change. Only `autoTaggingEnabled`, `finalUrlSuffix` and the tracking settings are writable"
+          },
+          {
+            "key": "customer",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "The Customer resource fields named in updateMask"
+          },
+          {
+            "key": "validateOnly",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Validate the request without applying it: Google returns only errors, never results"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ resourceName?: string | null } | null",
+            "description": "The mutated customer, named by its resource name"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleads.api.googleAdsFields.search",
+      "shortPath": "googleAdsFields.search",
+      "description": "Search the queryable fields, which is how a caller finds what a GAQL statement may select",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "A Google Ads Query Language statement, e.g. `SELECT campaign.id, campaign.name FROM campaign WHERE campaign.status = 'ENABLED'`"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number | null",
+            "description": "1 to 10,000 fields. Omitted, Google chooses"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "nextPageToken from a previous page of the same query"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ resourceName?: string | null, name?: string | null, category?: string | null, selectable?: boolean | null, filterable?: boolean | null, sortable?: boolean | null, selectableWith?: string[] | null, attributeResources?: string[] | null, metrics?: string[] | null, segments?: string[] | null, dataType?: string | null, typeUrl?: string | null, isRepeated?: boolean | null }[] | null"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "totalResultsCount",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleads.api.reporting.mutate",
+      "shortPath": "reporting.mutate",
+      "description": "Mutate any entity in one call: each entry names its own operation, and removing is permanent for that entity",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask"
+          },
+          {
+            "key": "mutateOperations",
+            "optional": false,
+            "type": "Record<string, any>[]",
+            "description": "One entry per entity, each naming its operation, e.g. `{ campaignOperation: { update: { resourceName, name }, updateMask: \"name\" } }`"
+          },
+          {
+            "key": "partialFailure",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Let the request succeed for the operations that can, reporting the rest in partialFailureError. Off by default, which makes the batch all-or-nothing"
+          },
+          {
+            "key": "validateOnly",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Validate the request without applying it: Google returns only errors, never results"
+          },
+          {
+            "key": "responseContentType",
+            "optional": true,
+            "type": "UNSPECIFIED | RESOURCE_NAME_ONLY | MUTABLE_RESOURCE | null",
+            "description": "`MUTABLE_RESOURCE` returns the changed resource; the default returns only the resource name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mutateOperationResponses",
+            "optional": true,
+            "type": "Record<string, { resourceName?: string | null }>[] | null",
+            "description": "One entry per operation, in order, keyed by entity, e.g. `{ campaignResult: { resourceName } }`"
+          },
+          {
+            "key": "partialFailureError",
+            "optional": true,
+            "type": "{ code?: number | null, message?: string | null, details?: { errors?: { errorCode?: Record<string, string> | null, message?: string | null, trigger?: Record<string, any> | null, location?: { fieldPathElements?: { fieldName?: string | null, index?: number | null }[] | null } | null }[] | null, requestId?: string | null }[] | null } | null",
+            "description": "Present when partialFailure was set and some operations failed"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleads.api.reporting.search",
+      "shortPath": "reporting.search",
+      "description": "Run a Google Ads Query Language statement and read its rows, 10,000 at a time",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "A Google Ads Query Language statement, e.g. `SELECT campaign.id, campaign.name FROM campaign WHERE campaign.status = 'ENABLED'`"
+          },
+          {
+            "key": "pageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "nextPageToken from a previous page of the same query"
+          },
+          {
+            "key": "validateOnly",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Validate the request without applying it: Google returns only errors, never results"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "Absent when the query matched nothing"
+          },
+          {
+            "key": "nextPageToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass back as pageToken. Absent on the last page"
+          },
+          {
+            "key": "totalResultsCount",
+            "optional": true,
+            "type": "string | null",
+            "description": "int64 as a string, and only counted when the query asks for the total"
+          },
+          {
+            "key": "fieldMask",
+            "optional": true,
+            "type": "string | null",
+            "description": "Comma-separated fields the response carries"
+          },
+          {
+            "key": "queryResourceConsumption",
+            "optional": true,
+            "type": "string | null",
+            "description": "int64 as a string: the quota cost this query used"
+          }
+        ]
+      }
+    },
+    {
+      "path": "googleads.api.reporting.searchStream",
+      "shortPath": "reporting.searchStream",
+      "description": "Run a query and read the whole result set in one response, without paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "string",
+            "description": "The account's customer ID, e.g. `1234567890`. A hyphenated `123-456-7890` is accepted and the hyphens are removed, which is what the docs ask"
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "A Google Ads Query Language statement, e.g. `SELECT campaign.id, campaign.name FROM campaign WHERE campaign.status = 'ENABLED'`"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          },
+          {
+            "key": "fieldMask",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "requestId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "queryResourceConsumption",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

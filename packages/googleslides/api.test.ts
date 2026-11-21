@@ -130,7 +130,7 @@ describeIfToken('googleslides live smoke', () => {
 			presentationId: presentationId as string,
 		});
 
-		const bytes = Buffer.from(exported.data, 'base64');
+		const bytes = Buffer.from(exported.data ?? '', 'base64');
 		expect(bytes.byteLength).toBe(exported.byteLength);
 		expect(bytes.subarray(0, 4).toString()).toBe('%PDF');
 	}, 120_000);

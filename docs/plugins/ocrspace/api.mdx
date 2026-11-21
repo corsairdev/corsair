@@ -49,7 +49,7 @@ await corsair.ocrspace.api.account.conversions({});
 
 `ocr.parse`
 
-Extract text from an image or PDF supplied as exactly one of a URL, a file upload (pass a File so the filename is sent, or set filetype), or a base64 data URI
+Extract text from an image or PDF supplied as exactly one of a URL, a file upload (pass a File so the filename is sent, or set filetype), or a base64 data URI. The file upload takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `read`
 
@@ -62,7 +62,7 @@ await corsair.ocrspace.api.ocr.parse({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `url` | `string` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The image or PDF to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Set filetype when neither its name nor its type says what it is. |
 | `base64Image` | `string` | No | — |
 | `language` | `string` | No | — |
 | `OCREngine` | `1 \| 2 \| 3` | No | — |
@@ -73,6 +73,23 @@ await corsair.ocrspace.api.ocr.parse({});
 | `isCreateSearchablePdf` | `boolean` | No | — |
 | `isSearchablePdfHideTextLayer` | `boolean` | No | — |
 | `filetype` | `PDF \| GIF \| PNG \| JPG \| TIF \| BMP` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 

@@ -1,3 +1,4 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 /**
@@ -146,6 +147,12 @@ const ListVideosInputSchema = z.object({
 });
 export type ListVideosInput = z.input<typeof ListVideosInputSchema>;
 
+/**
+ * A file to upload: a link or base64 an agent can send, or a Blob from
+ * TypeScript. A link is fetched into memory before the upload.
+ */
+const UploadFileSchema = z.union([FileInputSchema, z.instanceof(Blob)]);
+
 /** `api/videos` answers `{ videos: { total, per_page: 1000, ..., data } }`. */
 const VideosOutputSchema = z
 	.object({
@@ -163,10 +170,9 @@ const CreateVideoInputSchema = z
 			.describe(
 				'Any hosted video link (YouTube, Vimeo, Drive); wins over `file`',
 			),
-		file: z
-			.instanceof(Blob)
-			.optional()
-			.describe('Video file to upload, used when `url` is absent'),
+		file: UploadFileSchema.optional().describe(
+			'Video file to upload, used when `url` is absent: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). A link is fetched here, up to 25 MB; for a larger video pass its link as `url` and Spotlightr fetches it itself',
+		),
 		custom_s3: z
 			.number()
 			.int()
@@ -360,7 +366,9 @@ const SearchOutputSchema = z.union([
 ]);
 
 const UploadAssetInputSchema = z.object({
-	file: z.instanceof(Blob).describe('File to upload'),
+	file: UploadFileSchema.describe(
+		'File to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…)',
+	),
 });
 export type UploadAssetInput = z.input<typeof UploadAssetInputSchema>;
 

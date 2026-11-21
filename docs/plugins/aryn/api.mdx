@@ -256,7 +256,7 @@ await corsair.aryn.api.document.getBinary({});
 
 `document.partition`
 
-Partition document using Aryn DocParse
+Partition document using Aryn DocParse. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -268,11 +268,26 @@ await corsair.aryn.api.document.partition({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The document: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Downloaded here and uploaded; file_url instead has Aryn fetch the link itself. |
 | `file_url` | `string` | No | — |
 | `options` | `object` | No | — |
 
 <AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+
 <Accordion title="options full type">
 
 ```ts
@@ -338,7 +353,7 @@ await corsair.aryn.api.document.partition({});
 
 `document.submitAsyncAdd`
 
-Submit document asynchronously to a DocSet
+Submit document asynchronously to a DocSet. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -351,11 +366,26 @@ await corsair.aryn.api.document.submitAsyncAdd({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `docset_id` | `string` | Yes | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The document: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Downloaded here and uploaded; file_url instead has Aryn fetch the link itself. |
 | `file_url` | `string` | No | — |
 | `options` | `object` | No | — |
 
 <AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+
 <Accordion title="options full type">
 
 ```ts

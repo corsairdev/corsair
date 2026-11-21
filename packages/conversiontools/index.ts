@@ -225,7 +225,7 @@ const conversiontoolsEndpointMeta = {
 	'files.upload': {
 		riskLevel: 'write',
 		description:
-			'Upload a file as multipart form data. https://conversiontools.io/api-documentation#upload-file-to-server',
+			'Upload a file as multipart form data. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id. https://conversiontools.io/api-documentation#upload-file-to-server',
 	},
 	'files.getInfo': {
 		riskLevel: 'read',
@@ -255,7 +255,7 @@ const conversiontoolsEndpointMeta = {
 	'files.uploadToSession': {
 		riskLevel: 'write',
 		description:
-			'Upload raw file bytes to a one-time session URL. https://conversiontools.io/llms-full.txt',
+			'Upload raw file bytes to a one-time session URL. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id. https://conversiontools.io/llms-full.txt',
 	},
 	'tasks.create': {
 		riskLevel: 'destructive',

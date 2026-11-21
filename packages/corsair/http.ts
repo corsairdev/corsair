@@ -21,6 +21,7 @@ export type {
 	FileInput,
 	FileOutput,
 	FileSink,
+	FileSinkOptions,
 	ResolvedFile,
 	ResolveFileOptions,
 } from './async-core/files';

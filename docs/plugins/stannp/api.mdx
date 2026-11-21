@@ -1,0 +1,1605 @@
+---
+title: "Stannp API reference"
+sidebarTitle: "API"
+description: "API reference for the Stannp plugin in Corsair: every `stannp.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### balance
+
+`account.balance`
+
+Read the account balance
+
+**Risk:** `read`
+
+```ts
+await corsair.stannp.api.account.balance({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `balance` | `string \| number \| null` | No | Account balance, such as "214.4200". |
+
+
+
+---
+
+### topup
+
+`account.topup`
+
+Top up the account balance from the saved card; the amount is charged for real
+
+**Risk:** `destructive`
+
+```ts
+await corsair.stannp.api.account.topup({ net: '10.00' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `net` | `string` | Yes | Amount to top up, such as "10.00". Tax may be added. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `receipt_pdf` | `string \| number \| null` | No | URL of the receipt. |
+
+
+
+---
+
+## Addresses
+
+### validate
+
+`addresses.validate`
+
+Validate a UK or US postal address and get the corrected form with a validity flag
+
+**Risk:** `read`
+
+```ts
+await corsair.stannp.api.addresses.validate({ address1: '1000 N West Street', city: 'Wilmington', zipcode: '19801', country: 'US' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `string` | No | — |
+| `address1` | `string` | Yes | Address line 1. |
+| `address2` | `string` | No | — |
+| `address3` | `string` | No | — |
+| `city` | `string` | No | Required for US/CA addresses when zipcode is not provided. |
+| `postcode` | `string` | No | UK postcode; enough without a city for UK addresses. |
+| `state` | `string` | No | Two-letter US state abbreviation. |
+| `province` | `string` | No | Two-letter CA province abbreviation (ON, BC, QC). |
+| `zipcode` | `string` | No | US/CA. Required when city is not provided. |
+| `country` | `string` | No | ISO 3166-1 alpha-2. UK and US addresses only. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address1` | `string \| number \| null` | No | — |
+| `address2` | `string \| number \| null` | No | — |
+| `address3` | `string \| number \| null` | No | — |
+| `city` | `string \| number \| null` | No | — |
+| `county` | `string \| number \| null` | No | — |
+| `postcode` | `string \| number \| null` | No | — |
+| `country` | `string \| number \| null` | No | — |
+| `reference_id` | `number \| string \| null` | No | — |
+| `dps` | `string \| number \| null` | No | Delivery point suffix. |
+| `udprn` | `string \| number \| null` | No | — |
+| `is_valid` | `boolean \| null` | No | — |
+
+
+
+---
+
+## Campaigns
+
+### approve
+
+`campaigns.approve`
+
+Approve a campaign, locking its design and recipient selection; the lock cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.stannp.api.campaigns.approve({ id: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The campaign to approve. |
+
+
+
+**Output:** `boolean \| number`
+
+
+---
+
+### availableDates
+
+`campaigns.availableDates`
+
+List the dates a campaign can be booked for
+
+**Risk:** `read`
+
+```ts
+await corsair.stannp.api.campaigns.availableDates({ start: '2026-01-22', end: '2026-02-21' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `string` | No | Defaults to today. |
+| `end` | `string` | No | Defaults to 30 days out. |
+
+
+
+**Output:** `string[]`
+
+
+---
+
+### book
+
+`campaigns.book`
+
+Book a campaign for dispatch on a date, paying from the balance; this starts a real mailing
+
+**Risk:** `destructive`
+
+```ts
+await corsair.stannp.api.campaigns.book({ id: 123, send_date: '2026-01-22', use_balance: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The campaign to book. |
+| `send_date` | `string` | Yes | The dispatch date. |
+| `next_available_date` | `boolean` | No | Defaults to true: books on the next available date when yours is taken. False returns an error instead. |
+| `use_balance` | `boolean` | No | Defaults to true: pays from the balance. False schedules the campaign but nothing posts until payment. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+
+
+**Output:** `boolean \| number`
+
+
+---
+
+### cost
+
+`campaigns.cost`
+
+Price a campaign: per-piece rates and totals for validated, non-validated and international recipients
+
+**Risk:** `read`
+
+```ts
+await corsair.stannp.api.campaigns.cost({ id: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The campaign to price. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rate` | `string \| number \| null` | No | Per-piece rate for validated addresses. |
+| `non_valid_rate` | `string \| number \| null` | No | — |
+| `delivery_rate` | `string \| number \| null` | No | — |
+| `international_rate` | `string \| number \| null` | No | — |
+| `valid` | `string \| number \| null` | No | Total for validated recipients. |
+| `not_valid` | `string \| number \| null` | No | Total for non-validated recipients. |
+| `international` | `string \| number \| null` | No | — |
+| `delivery_charge` | `string \| number \| null` | No | — |
+| `net` | `string \| number \| null` | No | — |
+| `vat` | `string \| number \| null` | No | — |
+| `total` | `string \| number \| null` | No | — |
+
+
+
+---
+
+### create
+
+`campaigns.create`
+
+Create a campaign for a group from a template, copied design or uploaded artwork; nothing sends until it is booked
+
+**Risk:** `write`
+
+```ts
+await corsair.stannp.api.campaigns.create({ name: 'My Campaign', type: 'a6-postcard', template_id: 12345, group_id: 12345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the campaign, for reference. |
+| `type` | `a6-postcard \| a5-postcard \| letter \| A6-postcard \| A5-postcard` | Yes | The mailpiece this campaign sends. |
+| `template_id` | `number` | No | A template to copy. 0 or omitted uses a blank template of the format. |
+| `file` | `string` | No | URL of a PDF to use as the design artwork. |
+| `front` | `string` | No | URL of a PDF or JPG for the front image. |
+| `back` | `string` | No | URL of a PDF or JPG for the back image. |
+| `size` | `string` | No | Required with file or front/back images, such as A4, A5 or A6. |
+| `save` | `boolean` | No | Save the uploaded artwork as a new design template. |
+| `group_id` | `number` | Yes | The group this campaign sends to. |
+| `what_recipients` | `all \| valid \| not_valid \| int` | No | all is every recipient in the group, valid and not_valid are UK validated and non-validated addresses, int is international addresses. |
+| `addons` | `string` | No | Addon code for the campaign. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### delete
+
+`campaigns.delete`
+
+Permanently delete a campaign that has not been booked; this cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.stannp.api.campaigns.delete({ id: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The campaign to delete. Only unbooked campaigns can be deleted. |
+
+
+
+**Output:** `boolean \| number`
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Get one campaign by id
+
+**Risk:** `read`
+
+```ts
+await corsair.stannp.api.campaigns.get({ id: 126 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The campaign id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `account_id` | `string \| number \| null` | No | — |
+| `name` | `string \| number \| null` | No | — |
+| `template_id` | `string \| number \| null` | No | — |
+| `type` | `string \| number \| null` | No | — |
+| `trigger_date` | `string \| number \| null` | No | — |
+| `send_date` | `string \| number \| null` | No | — |
+| `trigger_offset` | `string \| number \| null` | No | — |
+| `created` | `string \| number \| null` | No | — |
+| `updated` | `string \| number \| null` | No | — |
+| `status` | `string \| number \| null` | No | — |
+| `recipients_group` | `string \| number \| null` | No | — |
+| `recipients_filter` | `string \| number \| null` | No | — |
+| `recipients_validated` | `string \| number \| null` | No | — |
+| `recipients` | `string \| number \| null` | No | — |
+| `recipients_not_valid` | `string \| number \| null` | No | — |
+| `dispatched` | `string \| number \| null` | No | — |
+| `cost` | `string \| number \| null` | No | — |
+| `voucher_code` | `string \| number \| null` | No | — |
+| `image` | `string \| number \| null` | No | — |
+| `size` | `string \| number \| null` | No | — |
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+List campaigns with status, recipient counts and cost
+
+**Risk:** `read`
+
+```ts
+await corsair.stannp.api.campaigns.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number | null,
+  account_id?: string | number | null,
+  name?: string | number | null,
+  template_id?: string | number | null,
+  type?: string | number | null,
+  trigger_date?: string | number | null,
+  send_date?: string | number | null,
+  trigger_offset?: string | number | null,
+  created?: string | number | null,
+  updated?: string | number | null,
+  status?: string | number | null,
+  recipients_group?: string | number | null,
+  recipients_filter?: string | number | null,
+  recipients_validated?: string | number | null,
+  recipients?: string | number | null,
+  recipients_not_valid?: string | number | null,
+  dispatched?: string | number | null,
+  cost?: string | number | null,
+  voucher_code?: string | number | null,
+  image?: string | number | null,
+  size?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### sample
+
+`campaigns.sample`
+
+Produce a PDF sample of the campaign; the link is valid for 30 minutes
+
+**Risk:** `write`
+
+```ts
+await corsair.stannp.api.campaigns.sample({ id: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The campaign to sample. |
+
+
+
+**Output:** `string`
+
+
+---
+
+## Events
+
+### create
+
+`events.create`
+
+Record an event against a recipient for tracking, conversions and automation triggers
+
+**Risk:** `write`
+
+```ts
+await corsair.stannp.api.events.create({ recipient_id: '12345', name: 'PURCHASE', value: '24.99', conversion: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipient_id` | `string` | Yes | The recipient id, or the ref_id stored on the recipient. |
+| `name` | `string` | Yes | Event name, such as PURCHASE, SIGNUP, PAGE_VIEW, PRODUCT_VIEW, PRODUCT_TO_BASKET. |
+| `value` | `string` | No | Value information, such as the purchase amount or product name. |
+| `conversion` | `boolean` | No | True for a conversion event. Defaults to false. |
+| `data` | `string` | No | Extended data for automation or dynamic templating. |
+| `ref` | `string` | No | A campaign or mailpiece reference. Empty uses the most recent communication. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+
+
+**Output:** `number \| string`
+
+
+---
+
+## Files
+
+### createFolder
+
+`files.createFolder`
+
+Create a folder in the secure file transfer area
+
+**Risk:** `write`
+
+```ts
+await corsair.stannp.api.files.createFolder({ name: 'Test Folder' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the folder to create. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+
+
+**Output:** `string`
+
+
+---
+
+### listFolders
+
+`files.listFolders`
+
+List the folders in the secure file transfer area
+
+**Risk:** `read`
+
+```ts
+await corsair.stannp.api.files.listFolders({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | number | null,
+  created?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### upload
+
+`files.upload`
+
+Upload a file by URL into the secure file transfer area
+
+**Risk:** `write`
+
+```ts
+await corsair.stannp.api.files.upload({ file: 'https://www.stannp.com/assets/samples/letter-heading.webp' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | Yes | URL of the file to upload into the secure file transfer area. |
+| `folder` | `number` | No | Folder to place the file in. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | The new file id, as a string. |
+
+
+
+---
+
+## Groups
+
+### addRecipients
+
+`groups.addRecipients`
+
+Add recipients to a group
+
+**Risk:** `write`
+
+```ts
+await corsair.stannp.api.groups.addRecipients({ group_id: 39, recipients: [45112, 45113] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | The group to change. |
+| `recipients` | `number[]` | Yes | Recipient ids, sent comma-separated. |
+
+
+
+**Output:** `number`
+
+
+---
+
+### calculate
+
+`groups.calculate`
+
+Recalculate a group so its statistics are up to date
+
+**Risk:** `write`
+
+```ts
+await corsair.stannp.api.groups.calculate({ group_id: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | The group to recalculate. |
+
+
+
+**Output:** `boolean \| number`
+
+
+---
+
+### create
+
+`groups.create`
+
+Create a new empty mailing group
+
+**Risk:** `write`
+
+```ts
+await corsair.stannp.api.groups.create({ name: 'My Group' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the new group. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+
+
+**Output:** `string \| number`
+
+
+---
+
+### delete
+
+`groups.delete`
+
+Delete a mailing group; with delete_recipients the recipients are deleted account-wide, which cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.stannp.api.groups.delete({ id: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The group to delete. |
+| `delete_recipients` | `boolean` | No | Defaults to false. True also deletes the recipients everywhere, including other groups. Cannot be undone. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+
+
+**Output:** `boolean \| number`
+
+
+---
+
+### list
+
+`groups.list`
+
+List mailing groups with recipient counts and import progress, paged with offset and limit
+
+**Risk:** `read`
+
+```ts
+await corsair.stannp.api.groups.list({ offset: 0, limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | Offset for pagination. |
+| `limit` | `number` | No | Limit for pagination. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number | null,
+  account_id?: string | number | null,
+  name?: string | number | null,
+  created?: string | number | null,
+  recipients?: string | number | null,
+  valid?: string | number | null,
+  international?: string | number | null,
+  skipped?: string | number | null,
+  status?: string | number | null,
+  import_progress?: string | number | null,
+  is_seeds?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### purge
+
+`groups.purge`
+
+Remove every recipient from a group; with delete_recipients the recipients are deleted account-wide, which cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.stannp.api.groups.purge({ id: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The group to purge. |
+| `delete_recipients` | `boolean` | No | Defaults to false. True also deletes the recipients everywhere, including other groups. Cannot be undone. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+
+
+**Output:** `boolean \| number`
+
+
+---
+
+### removeRecipients
+
+`groups.removeRecipients`
+
+Remove recipients from a group; the recipients stay on the account
+
+**Risk:** `write`
+
+```ts
+await corsair.stannp.api.groups.removeRecipients({ group_id: 39, recipients: [45112, 45113] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | The group to change. |
+| `recipients` | `number[]` | Yes | Recipient ids, sent comma-separated. |
+
+
+
+**Output:** `number`
+
+
+---
+
+## Letters
+
+### cancel
+
+`letters.cancel`
+
+Cancel a letter that has not started processing yet
+
+**Risk:** `destructive`
+
+```ts
+await corsair.stannp.api.letters.cancel({ id: 12345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The id of the mailpiece item. |
+
+
+
+**Output:** `number`
+
+
+---
+
+### create
+
+`letters.create`
+
+Create and mail a letter merged from a template or PDF; test mode renders a PDF proof without posting or charging
+
+**Risk:** `destructive`
+
+```ts
+await corsair.stannp.api.letters.create({ test: true, file: 'https://www.stannp.com/assets/samples/letter-heading.pdf', recipient: { firstname: 'John', lastname: 'Smith', address1: '123 Sample Street', city: 'Sampletown', zipcode: '12345', country: 'US' }, addons: 'FIRST_CLASS' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test` | `boolean` | No | True produces a sample PDF without dispatching or charging. Defaults to false: the letter is posted for real. |
+| `recipient` | `number \| object` | Yes | An existing recipient id, or a new recipient object. |
+| `template` | `number` | No | A template set up on the platform. |
+| `file` | `string` | No | URL of a PDF or DOC file to mail merge, instead of a template. Page limits apply per the docs. |
+| `pages` | `string` | No | Letter content as HTML with merge fields such as &#123;firstname&#125;, instead of a template or file. |
+| `size` | `A4 \| US-LETTER \| US-LETTER-XL-WINDOW` | No | Defaults to A4 for EU/UK accounts, US-LETTER for US accounts. |
+| `duplex` | `boolean` | No | Defaults to true. False prints front sides only. |
+| `clearzone` | `boolean` | No | Defaults to true. True overlays clear zones with white. |
+| `post_unverified` | `boolean` | No | Defaults to true. If false, the letter is not posted when the address could not be verified. |
+| `tags` | `string` | No | Comma-separated tags for reporting. |
+| `addons` | `string` | No | Comma-separated addon codes: FIRST_CLASS, C4_ENVELOPE, CONFIDENTIAL, STOCK_120. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+<AccordionGroup>
+<Accordion title="recipient full type">
+
+```ts
+number | {
+  title?: string,
+  firstname?: string,
+  lastname?: string,
+  company?: string,
+  address1?: string,
+  address2?: string,
+  address3?: string,
+  city?: string,
+  county?: string,
+  postcode?: string,
+  zipcode?: string,
+  country?: string,
+  email?: string,
+  url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pdf` | `string \| number \| null` | No | URL of the merged PDF proof. |
+| `id` | `number \| string \| null` | No | The new mailpiece id; 0 in test mode. |
+| `created` | `string \| number \| null` | No | — |
+| `format` | `string \| number \| null` | No | — |
+| `cost` | `string \| number \| null` | No | — |
+| `status` | `string \| number \| null` | No | "test" when test is set. |
+
+
+
+---
+
+### get
+
+`letters.get`
+
+Get one letter mailpiece with its status, tracking and cost
+
+**Risk:** `read`
+
+```ts
+await corsair.stannp.api.letters.get({ id: 16818210 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The letter id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string \| null` | No | — |
+| `account_id` | `number \| string \| null` | No | — |
+| `timestamp` | `string \| number \| null` | No | — |
+| `status` | `string \| number \| null` | No | — |
+| `type` | `string \| number \| null` | No | — |
+| `format` | `string \| number \| null` | No | — |
+| `pdf_file` | `string \| number \| null` | No | — |
+| `dispatched` | `string \| number \| null` | No | — |
+| `country` | `string \| number \| null` | No | — |
+| `cost` | `number \| string \| null` | No | — |
+| `addons` | `string \| number \| null` | No | — |
+| `tags` | `string \| number \| null` | No | — |
+| `template_id` | `number \| string \| null` | No | — |
+| `campaign_id` | `number \| string \| null` | No | — |
+| `recipient_id` | `number \| string \| null` | No | — |
+| `firstname` | `string \| number \| null` | No | — |
+| `lastname` | `string \| number \| null` | No | — |
+| `address1` | `string \| number \| null` | No | — |
+| `address2` | `string \| number \| null` | No | — |
+| `address3` | `string \| number \| null` | No | — |
+| `city` | `string \| number \| null` | No | — |
+| `county` | `string \| number \| null` | No | — |
+| `postcode` | `string \| number \| null` | No | — |
+| `zipcode` | `string \| number \| null` | No | — |
+| `transactional` | `number \| string \| null` | No | — |
+| `class` | `number \| string \| null` | No | — |
+| `updated` | `string \| number \| null` | No | — |
+| `mailpiece_id` | `number \| string \| null` | No | — |
+| `tracking_ref` | `string \| number \| null` | No | — |
+| `tracking` | `Record<string, any>[] \| null` | No | — |
+
+
+
+---
+
+### post
+
+`letters.post`
+
+Post an already mail-merged letter PDF whose address the API reads with OCR; test mode renders a PDF proof without posting or charging
+
+**Risk:** `destructive`
+
+```ts
+await corsair.stannp.api.letters.post({ test: true, country: 'GB', pdf: 'https://www.stannp.com/assets/samples/letter-sample.pdf' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test` | `boolean` | No | True produces a sample PDF without dispatching or charging. Defaults to false: the letter is posted for real. |
+| `country` | `string` | Yes | ISO alpha-2 country code, such as US, CA, GB, FR. |
+| `pdf` | `string` | No | URL of the already mail-merged PDF. The address must be on the document in machine-readable form; the API reads it with OCR. The API also accepts this under the name "file". |
+| `size` | `A4 \| US-LETTER \| US-LETTER-XL-WINDOW` | No | Defaults to A4 for EU/UK accounts, US-LETTER for US accounts. |
+| `duplex` | `boolean` | No | Defaults to true. |
+| `transactional` | `boolean` | No | Use for sensitive data. Defaults to false. |
+| `tags` | `string` | No | Comma-separated tags for reporting. |
+| `addons` | `string` | No | Comma-separated addon codes: FIRST_CLASS, C4_ENVELOPE, CONFIDENTIAL, STOCK_120. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pdf` | `string \| number \| null` | No | URL of the merged PDF proof. |
+| `id` | `number \| string \| null` | No | The new mailpiece id; 0 in test mode. |
+| `created` | `string \| number \| null` | No | — |
+| `format` | `string \| number \| null` | No | — |
+| `cost` | `string \| number \| null` | No | — |
+| `status` | `string \| number \| null` | No | "test" when test is set. |
+
+
+
+---
+
+## Postcards
+
+### cancel
+
+`postcards.cancel`
+
+Cancel a postcard that has not started processing yet
+
+**Risk:** `destructive`
+
+```ts
+await corsair.stannp.api.postcards.cancel({ id: 12345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The id of the mailpiece item. |
+
+
+
+**Output:** `number`
+
+
+---
+
+### create
+
+`postcards.create`
+
+Create and mail a postcard to one recipient; test mode renders a PDF proof without posting or charging
+
+**Risk:** `destructive`
+
+```ts
+await corsair.stannp.api.postcards.create({ test: true, size: '4x6', front: 'https://www.stannp.com/assets/samples/a6-postcard-front.webp', back: 'https://www.stannp.com/assets/samples/signature-example.webp', message: 'hello world', recipient: { firstname: 'John', lastname: 'Smith', address1: '123 Sample Street', city: 'Sampletown', zipcode: '12345', country: 'US' }, tags: 'used.for.reporting' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `size` | `A6 \| A5 \| A5-ENV \| A5-PORT \| 4x6 \| 6x9 \| 6x11` | No | EU/UK: A6 (default), A5, A5-ENV, A5-PORT. US: 4x6 (default), 6x9, 6x11. |
+| `test` | `boolean` | No | True produces a sample PDF without dispatching or charging. Defaults to false: the card is posted for real. |
+| `template` | `number` | No | A template set up on the platform. Leave out to use front and back. |
+| `recipient` | `number \| object` | Yes | An existing recipient id, or a new recipient object. |
+| `message` | `string` | No | A message on the back of the card, overlaid on a back image. |
+| `signature` | `string` | No | URL or base64 JPG (768 x 118 pixels) placed in the signature location. |
+| `front` | `string` | No | URL or base64 JPG, PNG or PDF for the front. Required when no template is used. |
+| `back` | `string` | No | URL or base64 JPG, PNG or PDF for the back. |
+| `padding` | `number` | No | Set 0 to remove the default white border on the front. |
+| `post_unverified` | `boolean` | No | Defaults to true. If false, the card is not posted when the address could not be verified. |
+| `clearzone` | `boolean` | No | Defaults to false. True overlays clear zones with white to keep the card machine-readable. |
+| `return_address` | `string` | No | Custom return address printed on the card. |
+| `tags` | `string` | No | Comma-separated tags for reporting. |
+| `addons` | `string` | No | Comma-separated addon codes such as FIRST_CLASS, STOCK_350_SILK, STOCK_350_UNCOATED. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+<AccordionGroup>
+<Accordion title="recipient full type">
+
+```ts
+number | {
+  title?: string,
+  firstname?: string,
+  lastname?: string,
+  company?: string,
+  address1?: string,
+  address2?: string,
+  address3?: string,
+  city?: string,
+  county?: string,
+  postcode?: string,
+  zipcode?: string,
+  country?: string,
+  email?: string,
+  url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pdf` | `string \| number \| null` | No | URL of the merged PDF proof. |
+| `id` | `number \| string \| null` | No | The new mailpiece id; 0 in test mode. |
+| `created` | `string \| number \| null` | No | — |
+| `format` | `string \| number \| null` | No | — |
+| `cost` | `string \| number \| null` | No | — |
+| `status` | `string \| number \| null` | No | "test" when test is set. |
+
+
+
+---
+
+### get
+
+`postcards.get`
+
+Get one postcard mailpiece with its status, tracking and cost
+
+**Risk:** `read`
+
+```ts
+await corsair.stannp.api.postcards.get({ id: 16818211 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The postcard id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string \| null` | No | — |
+| `account_id` | `number \| string \| null` | No | — |
+| `timestamp` | `string \| number \| null` | No | — |
+| `status` | `string \| number \| null` | No | — |
+| `type` | `string \| number \| null` | No | — |
+| `format` | `string \| number \| null` | No | — |
+| `pdf_file` | `string \| number \| null` | No | — |
+| `dispatched` | `string \| number \| null` | No | — |
+| `country` | `string \| number \| null` | No | — |
+| `cost` | `number \| string \| null` | No | — |
+| `addons` | `string \| number \| null` | No | — |
+| `tags` | `string \| number \| null` | No | — |
+| `template_id` | `number \| string \| null` | No | — |
+| `campaign_id` | `number \| string \| null` | No | — |
+| `recipient_id` | `number \| string \| null` | No | — |
+| `firstname` | `string \| number \| null` | No | — |
+| `lastname` | `string \| number \| null` | No | — |
+| `address1` | `string \| number \| null` | No | — |
+| `address2` | `string \| number \| null` | No | — |
+| `address3` | `string \| number \| null` | No | — |
+| `city` | `string \| number \| null` | No | — |
+| `county` | `string \| number \| null` | No | — |
+| `postcode` | `string \| number \| null` | No | — |
+| `zipcode` | `string \| number \| null` | No | — |
+| `transactional` | `number \| string \| null` | No | — |
+| `class` | `number \| string \| null` | No | — |
+| `updated` | `string \| number \| null` | No | — |
+| `mailpiece_id` | `number \| string \| null` | No | — |
+| `tracking_ref` | `string \| number \| null` | No | — |
+| `tracking` | `Record<string, any>[] \| null` | No | — |
+
+
+
+---
+
+## Recipients
+
+### create
+
+`recipients.create`
+
+Create a recipient, optionally into a group, with duplicate handling and custom fields
+
+**Risk:** `write`
+
+```ts
+await corsair.stannp.api.recipients.create({ group_id: 123, firstname: 'John', lastname: 'Smith', address1: '123 Main Street', city: 'New York', zipcode: '10001', country: 'US', email: 'john.smith@example.com', ref_id: 'JS12345', on_duplicate: 'update' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | No | The group to add the recipient to. |
+| `title` | `string` | No | Such as Mr, Mrs, Dr. |
+| `firstname` | `string` | No | — |
+| `lastname` | `string` | No | — |
+| `company` | `string` | No | — |
+| `job_title` | `string` | No | — |
+| `address1` | `string` | No | — |
+| `address2` | `string` | No | — |
+| `address3` | `string` | No | — |
+| `city` | `string` | No | — |
+| `county` | `string` | No | County or state; the API also accepts "state". |
+| `state` | `string` | No | US state; an alias for county, sent as county. |
+| `postcode` | `string` | No | The API also accepts "zipcode". |
+| `zipcode` | `string` | No | US zip code; the documented request example sends this name. |
+| `country` | `string` | No | ISO 3166-1 alpha-2. Defaults to the account region. |
+| `email` | `string` | No | — |
+| `phone_number` | `string` | No | — |
+| `ref_id` | `string` | No | An id from another system, for matching the recipient across services. |
+| `on_duplicate` | `update \| ignore \| duplicate` | No | What to do when a duplicate is found. |
+| `test_level` | `email \| fullname \| initial \| ref_id` | No | How duplicates are matched. Defaults to fullname. |
+| `customFields` | `Record<string, string \| number \| boolean>` | No | Custom recipient fields set up on your account, sent as extra parameters. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | The new recipient id, as a string. |
+| `valid` | `boolean \| null` | No | Whether the address validated. |
+| `created` | `string \| number \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`recipients.delete`
+
+Permanently delete a recipient from the account; this cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.stannp.api.recipients.delete({ id: 12345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The recipient to delete. |
+
+
+
+**Output:** `number \| string`
+
+
+---
+
+### get
+
+`recipients.get`
+
+Get one recipient by id
+
+**Risk:** `read`
+
+```ts
+await corsair.stannp.api.recipients.get({ id: 1943 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The recipient id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `account_id` | `string \| number \| null` | No | — |
+| `title` | `string \| number \| null` | No | — |
+| `firstname` | `string \| number \| null` | No | — |
+| `lastname` | `string \| number \| null` | No | — |
+| `company` | `string \| number \| null` | No | — |
+| `job_title` | `string \| number \| null` | No | — |
+| `address1` | `string \| number \| null` | No | — |
+| `address2` | `string \| number \| null` | No | — |
+| `address3` | `string \| number \| null` | No | — |
+| `city` | `string \| number \| null` | No | — |
+| `county` | `string \| number \| null` | No | — |
+| `country` | `string \| number \| null` | No | — |
+| `postcode` | `string \| number \| null` | No | — |
+| `zipcode` | `string \| number \| null` | No | — |
+| `dps` | `string \| number \| null` | No | — |
+| `email` | `string \| number \| null` | No | — |
+| `phone_number` | `string \| number \| null` | No | — |
+| `ref_id` | `string \| number \| null` | No | — |
+| `blacklist` | `string \| boolean \| null` | No | — |
+| `created` | `string \| number \| null` | No | — |
+| `updated` | `string \| number \| null` | No | — |
+
+
+
+---
+
+### import
+
+`recipients.import`
+
+Import a CSV or XLS data file into a group, with column remapping and duplicate handling
+
+**Risk:** `write`
+
+```ts
+await corsair.stannp.api.recipients.import({ file: 'https://example.com/data.csv', group_id: 123, duplicates: 'update' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `file` | `string` | Yes | URL of a CSV or XLS file, or a base64 encoded CSV string. |
+| `group_id` | `number` | Yes | The group to import into. |
+| `duplicates` | `update \| ignore \| duplicate` | No | What to do with duplicates. Defaults to update: the existing record gets the newest data. |
+| `no_headings` | `boolean` | No | True when the CSV has no heading row; mappings must then be supplied. |
+| `mappings` | `string` | No | Comma-separated headings remapping the CSV columns, such as title,firstname,lastname,company,address1,address2,city,postcode,country,custom,custom,skip. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+
+
+**Output:** `string`
+
+
+---
+
+### list
+
+`recipients.list`
+
+List recipients with their addresses and blacklist flag, filtered by group and paged with offset and limit
+
+**Risk:** `read`
+
+```ts
+await corsair.stannp.api.recipients.list({ group_id: 123, offset: 0, limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | No | Only recipients in this group. |
+| `offset` | `number` | No | Offset for pagination. |
+| `limit` | `number` | No | Limit for pagination. Defaults to 100 when omitted. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number | null,
+  account_id?: string | number | null,
+  title?: string | number | null,
+  firstname?: string | number | null,
+  lastname?: string | number | null,
+  company?: string | number | null,
+  job_title?: string | number | null,
+  address1?: string | number | null,
+  address2?: string | number | null,
+  address3?: string | number | null,
+  city?: string | number | null,
+  county?: string | number | null,
+  country?: string | number | null,
+  postcode?: string | number | null,
+  zipcode?: string | number | null,
+  dps?: string | number | null,
+  email?: string | number | null,
+  phone_number?: string | number | null,
+  ref_id?: string | number | null,
+  blacklist?: string | boolean | null,
+  created?: string | number | null,
+  updated?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Reporting
+
+### list
+
+`reporting.list`
+
+List mailpieces in a date range, optionally filtered by status, or by status and tag (a tag needs a status)
+
+**Risk:** `read`
+
+```ts
+await corsair.stannp.api.reporting.list({ startdate: '2024-01-01', enddate: '2024-01-31', status: 'delivered' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startdate` | `string` | Yes | Start of the reporting period. |
+| `enddate` | `string` | Yes | End of the reporting period. |
+| `status` | `string` | No | Only mailpieces in this status, such as delivered or returned. |
+| `tag` | `string` | No | Only mailpieces carrying this tag. The tag is the path segment after status, so it needs a status too. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `singles` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="singles full type">
+
+```ts
+{
+  id?: string | number | null,
+  timestamp?: string | number | null,
+  status?: string | number | null,
+  type?: string | number | null,
+  format?: string | number | null,
+  pdf_file?: string | number | null,
+  dispatched?: string | number | null,
+  country?: string | number | null,
+  cost?: string | number | null,
+  addons?: string | number | null,
+  tags?: string | number | null,
+  zipcode?: string | number | null,
+  address?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### summary
+
+`reporting.summary`
+
+Count mailpieces per delivery status within a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.stannp.api.reporting.summary({ startdate: '2024-01-01', enddate: '2024-01-31' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startdate` | `string` | Yes | Start of the reporting period. |
+| `enddate` | `string` | Yes | End of the period; the whole day is included. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number \| string \| null` | No | — |
+| `received` | `number \| string \| null` | No | Requests received. |
+| `printing` | `number \| string \| null` | No | Printing or finishing. |
+| `producing` | `number \| string \| null` | No | Being printed or finished. |
+| `in_transit` | `number \| string \| null` | No | In transit with the delivery service. |
+| `handed_over` | `number \| string \| null` | No | Handed to the delivery service. |
+| `local_delivery` | `number \| string \| null` | No | At the final delivery office. |
+| `delivered` | `number \| string \| null` | No | Estimated as delivered. |
+| `returned` | `number \| string \| null` | No | Returned to sender. |
+| `cancelled` | `number \| string \| null` | No | Cancelled before production. |
+
+
+
+---
+
+## Selections
+
+### create
+
+`selections.create`
+
+Create an auto-filter selection that targets a subset of a group
+
+**Risk:** `write`
+
+```ts
+await corsair.stannp.api.selections.create({ group_id: 1, name: 'High spenders', filters: 'total_spent:::more_than:::300' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | The group this selection filters. |
+| `name` | `string` | No | Name of the filter. |
+| `filters` | `string` | No | Filter string in [column]:::[operator]:::[value] form, chained with :::AND:::. Operators: matches, contains, begins, ends, before, after, less_than, more_than, is_not. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+
+
+**Output:** `object[] \| boolean`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number | null
+}[] | boolean
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Sms
+
+### create
+
+`sms.create`
+
+Send an SMS to a phone number or stored recipient; test mode builds it without sending or charging
+
+**Risk:** `destructive`
+
+```ts
+await corsair.stannp.api.sms.create({ test: true, recipient_id: 12345, message: 'Hi {firstname}, your order has shipped' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `test` | `boolean` | No | True builds the message without sending it and without charging. |
+| `phone_number` | `string` | No | The recipient's mobile number. Required when recipient_id is not provided. |
+| `recipient_id` | `number` | No | An existing recipient. Required when phone_number is not provided. |
+| `message` | `string` | Yes | The message. Supports template tags such as &#123;firstname&#125; with recipient_id. |
+| `country` | `string` | No | Defaults to the account region. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string \| null` | No | — |
+| `recipient_id` | `number \| string \| null` | No | — |
+| `phone_number` | `string \| number \| null` | No | — |
+| `from` | `string \| number \| null` | No | — |
+| `profile_id` | `number \| string \| null` | No | — |
+| `usage_campaign_id` | `number \| string \| null` | No | — |
+| `profile_type` | `string \| number \| null` | No | — |
+| `message` | `string \| number \| null` | No | — |
+| `message_parts` | `number \| string \| null` | No | — |
+| `cost` | `number \| string \| null` | No | — |
+| `destination_country` | `string \| number \| null` | No | — |
+| `status` | `string \| number \| null` | No | "test" when test is set. |
+| `campaign_id` | `number \| string \| null` | No | — |
+| `created` | `string \| number \| null` | No | — |
+| `updated` | `string \| number \| null` | No | — |
+
+
+
+---
+
+## Tools
+
+### pdfMerge
+
+`tools.pdfMerge`
+
+Merge several PDFs by URL into one file
+
+**Risk:** `read`
+
+```ts
+await corsair.stannp.api.tools.pdfMerge({ files: ['https://file1.pdf', 'https://file2.pdf'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `files` | `string[]` | Yes | URLs of the PDF files to merge, in order. |
+| `idempotencyKey` | `string` | No | Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again. |
+
+
+
+**Output:** `string`
+
+
+---
+
+### templates
+
+`tools.templates`
+
+List the design templates on the account
+
+**Risk:** `read`
+
+```ts
+await corsair.stannp.api.tools.templates({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number | null,
+  account_id?: string | number | null,
+  template_name?: string | number | null,
+  image?: string | number | null,
+  created?: string | number | null,
+  updated?: string | number | null,
+  size?: string | number | null,
+  page_count?: string | number | null,
+  duplex?: string | number | null,
+  back_image?: string | number | null,
+  template?: string | number | null,
+  is_public?: string | number | null,
+  is_template?: string | number | null,
+  version?: string | number | null,
+  is_hidden?: string | number | null,
+  shared?: string | number | null,
+  user_id?: string | number | null,
+  tags?: string | number | null,
+  versions?: string | number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

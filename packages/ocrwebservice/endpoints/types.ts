@@ -1,3 +1,4 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 export const OCRWEBSERVICE_OUTPUT_FORMATS = [
@@ -86,7 +87,11 @@ const LogResponseSchema = z
 
 const RecognizeInputSchema = z
 	.object({
-		file: z.instanceof(Blob),
+		file: z
+			.union([FileInputSchema, z.instanceof(Blob)])
+			.describe(
+				'The image or document to OCR: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…).',
+			),
 		language: z.string().min(1).default('english'),
 		pagerange: z.string().min(1).optional(),
 		tobw: z.boolean().optional(),

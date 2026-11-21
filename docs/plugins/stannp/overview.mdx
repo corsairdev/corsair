@@ -1,0 +1,160 @@
+---
+title: "Stannp plugin"
+sidebarTitle: "Overview"
+description: "Direct mail with Stannp - send postcards, letters and SMS, manage recipients, groups and campaigns, validate addresses, read delivery reporting and receive mailpiece and campaign webhooks. Webhook deliveries are verified when the webhook has a secret and Corsair has the same one."
+---
+
+Use **Stannp** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Create your API key at the bottom of the settings page in Stannp. US and Canadian accounts use the api-us1 host and EU/UK accounts api-eu1; build the plugin with `region: 'us'` (default) or `region: 'eu'`. Things to know before you send:
+
+- **Real mail costs real money.** `postcards.create`, `letters.create`, `letters.post` and `sms.create` spend from the balance unless you pass `test: true`, which renders a PDF proof (or builds the SMS) without posting or charging; test mailpieces come back with id 0. `campaigns.book` and `account.topup` have no test mode: they always charge. All of these are `destructive`, so they need approval.
+- **Sending takes two steps for campaigns.** `campaigns.create` builds a draft for a group; `campaigns.approve` locks it (this cannot be undone) and `campaigns.book` schedules dispatch and takes payment. Mailpieces send immediately on create unless `test` is set, and can be cancelled with `postcards.cancel` / `letters.cancel` only before processing starts.
+- **Idempotent sends.** The create and book operations accept an `idempotencyKey`, sent as the `X-Idempotency-Key` header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again; the original body is on `error.body` of the thrown `StannpAPIError`.
+- **Recipient ids are strings in lists and numbers in mailpiece reads.** Stannp returns `"id": "1943"` for recipients, groups and campaigns but numeric ids for mailpieces; the schemas keep both as documented.
+- **Paging.** `recipients.list` and `groups.list` page with `offset` and `limit`. Reporting pages by date range (`reporting.summary`, `reporting.list`).
+- **Rate limits.** Paid plans allow 300 requests per minute or more; the free plan allows 10. Responses carry `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` (seconds until the window resets); the plugin reads the reset header and retries a 429 up to three times with backoff.
+- **Webhooks are created in the Stannp platform**, not through the API (account settings, webhooks page). On creation Stannp sends a validation POST (`event: "test_url"`) that must answer HTTP 200, which `webhooks.testUrl` handles. Set a secret on the webhook to enable signing: deliveries then carry an HMAC-SHA256 signature in `X-Stannp-Signature`, which the plugin verifies. Give Corsair the same secret (the `webhookSecret` option or the stored webhook signature): with no secret on the Corsair side, deliveries are accepted unverified, matching Stannp's optional signing. A stored secret that cannot be read rejects the delivery.
+- **Binary uploads.** File parameters accept the documented URL and base64 forms; binary multipart bodies are not exposed.
+- **Under the hood.** All requests use HTTP Basic auth with the API key as the username and an empty password, over HTTPS. Every v1 response is wrapped in `{ "success": true, "data": ... }` or `{ "success": false, "error": "..." }`; a 200 body that still says error throws. Two documented operations are left out: `qrcode/create` (needs a separate public key and returns a binary JPEG) and `POST /v2/balance` (a separate API style; `account.topup` on `/v1/accounts/topup` is implemented instead).
+
+**What you get:**
+
+- 41 typed API operations
+- 4 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/stannp better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/stannp better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/stannp better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/stannp better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { stannp } from '@corsair-dev/stannp';
+
+export const corsair = createCorsair({
+	plugins: [
+		stannp(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Stannp API key before the first call: `pnpm corsair setup --plugin=stannp --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+stannp()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'stannp',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Get a postcard by id**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.stannp.api.postcards.get({ id: 16818211 });
+```
+
+
+**Send a test letter to a new recipient**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.stannp.api.letters.create({
+	test: true,
+	recipient: {
+		firstname: 'John',
+		lastname: 'Smith',
+		address1: '123 Sample Street',
+		city: 'Sampletown',
+		zipcode: '12345',
+		country: 'US',
+	},
+	file: 'https://www.stannp.com/assets/samples/letter-heading.pdf',
+});
+```
+
+
+See the full list on the [API](/plugins/stannp/api) page.
+
+## Webhooks
+
+This plugin registers **4** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/stannp/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/stannp/api">
+    Every `stannp.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/stannp/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

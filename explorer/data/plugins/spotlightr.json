@@ -100,7 +100,7 @@
     {
       "path": "spotlightr.api.assets.upload",
       "shortPath": "assets.upload",
-      "description": "Upload an asset file to the account library",
+      "description": "Upload an asset file to the account library. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -108,8 +108,8 @@
           {
             "key": "file",
             "optional": false,
-            "type": "custom",
-            "description": "File to upload"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "File to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…)"
           }
         ]
       },
@@ -269,7 +269,7 @@
     {
       "path": "spotlightr.api.videos.create",
       "shortPath": "videos.create",
-      "description": "Create a video from a hosted link or an uploaded file, optionally copying player settings from another video",
+      "description": "Create a video from a hosted link or an uploaded file, optionally copying player settings from another video. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -289,8 +289,8 @@
           {
             "key": "file",
             "optional": true,
-            "type": "custom",
-            "description": "Video file to upload, used when `url` is absent"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "Video file to upload, used when `url` is absent: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). A link is fetched here, up to 25 MB; for a larger video pass its link as `url` and Spotlightr fetches it itself"
           },
           {
             "key": "custom_s3",

@@ -1,5 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeOpenaiRequest, multipartOpenaiRequest } from '../client';
+import {
+	makeOpenaiRequest,
+	multipartOpenaiRequest,
+	OPENAI_UPLOAD_MAX_BYTES,
+} from '../client';
 import type { OpenaiEndpoints } from '../index';
 import type {
 	UploadsAddPartResponse,
@@ -39,7 +43,16 @@ export const addPart: OpenaiEndpoints['uploadsAddPart'] = async (
 	const result = await multipartOpenaiRequest<UploadsAddPartResponse>(
 		`uploads/${input.uploadId}/parts`,
 		ctx.key,
-		{ files: [{ field: 'data', file: input.data, fileName: input.fileName }] },
+		{
+			files: [
+				{
+					field: 'data',
+					file: input.data,
+					fileName: input.fileName,
+					maxBytes: OPENAI_UPLOAD_MAX_BYTES.uploadPart,
+				},
+			],
+		},
 	);
 
 	await logEventFromContext(

@@ -1,9 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
+import { resolveFileInput } from 'corsair/http';
 import {
 	FilevineAPIError,
 	makeFilevineRequest,
 	resolveFilevineOrgContext,
 } from '../client';
+
+/**
+ * Most bytes taken from a link, base64 or a data: URL: core's download default,
+ * passed explicitly so inline base64 is held to it too (core caps it only when asked).
+ */
+const FILE_MAX_BYTES = 25 * 1024 * 1024;
 
 function stringToBlob(input: string, encoding: 'base64' | 'text'): Blob {
 	// Explicit encoding only — never guess. 'base64' is strictly validated
@@ -44,8 +51,61 @@ function stringToBlob(input: string, encoding: 'base64' | 'text'): Blob {
 	return new Blob([input]);
 }
 
+// A string is a link only when no fileEncoding says it is content.
+const LINK = /^https?:\/\//i;
+
+/**
+ * The document as a Blob for the multipart body. Binary values are wrapped,
+ * a Blob is sent as given, a string follows fileEncoding (default 'text'),
+ * and a link or `{ url }` / `{ base64 }` object is fetched or decoded by
+ * core's resolveFileInput. Filevine documents no size limit for this route
+ * (its app takes files under 50 GB), so a link is held to core's 25 MB default.
+ */
+async function documentBlob(
+	file: NonNullable<UploadProjectDocumentInput['file']>,
+	fileEncoding: UploadProjectDocumentInput['fileEncoding'],
+): Promise<Blob> {
+	if (typeof file === 'string') {
+		if (fileEncoding === undefined && LINK.test(file)) {
+			return (
+				await resolveFileInput(file, {
+					maxBytes: FILE_MAX_BYTES,
+					fallbackName: 'document',
+				})
+			).file;
+		}
+		return stringToBlob(file, fileEncoding ?? 'text');
+	}
+	if (typeof Buffer !== 'undefined' && Buffer.isBuffer(file))
+		return new Blob([file]);
+	if (file instanceof Uint8Array) return new Blob([file]);
+	if (file instanceof Blob) return file;
+	if (file instanceof ArrayBuffer) return new Blob([file]);
+	// unknown: the endpoint takes its input unparsed, so the object is checked here.
+	const given: unknown = file;
+	if (
+		typeof given === 'object' &&
+		given !== null &&
+		('url' in given || 'base64' in given)
+	) {
+		return (
+			await resolveFileInput(file, {
+				maxBytes: FILE_MAX_BYTES,
+				fallbackName: 'document',
+			})
+		).file;
+	}
+	throw new FilevineAPIError(
+		'documents.upload file must be a link, {url}, {base64}, Blob, Buffer, Uint8Array, ArrayBuffer, or base64/text string',
+		'INVALID_FILE',
+	);
+}
+
 import type { FilevineEndpoints } from '../index';
-import type { FilevineEndpointOutputs } from './types';
+import type {
+	FilevineEndpointOutputs,
+	UploadProjectDocumentInput,
+} from './types';
 import {
 	GetDocumentResponseSchema,
 	ListProjectDocumentsResponseSchema,
@@ -146,8 +206,6 @@ export const upload: FilevineEndpoints['uploadProjectDocument'] = async (
 	ctx,
 	input,
 ) => {
-	const { orgId: resolvedOrgId, userId: resolvedUserId } =
-		await resolveFilevineOrgContext(ctx.key, input.orgId, input.userId);
 	const {
 		projectId,
 		file,
@@ -156,25 +214,13 @@ export const upload: FilevineEndpoints['uploadProjectDocument'] = async (
 		userId: _user,
 		...rest
 	} = input;
-	if (file != null) {
-		// Normalize binary inputs to Blob — the shared multipart layer only
-		// recognizes real Blob/File values (isBlob checks .type/.stream).
-		// String handling is explicit via fileEncoding (default 'text'):
-		// 'base64' decodes to bytes, 'text' uploads literally — never guessed,
-		// so plain text like "test" can never be mis-decoded as base64.
-		let blob: Blob;
-		if (typeof file === 'string')
-			blob = stringToBlob(file, fileEncoding ?? 'text');
-		else if (typeof Buffer !== 'undefined' && Buffer.isBuffer(file))
-			blob = new Blob([file]);
-		else if (file instanceof Uint8Array) blob = new Blob([file]);
-		else if (file instanceof Blob) blob = file;
-		else if (file instanceof ArrayBuffer) blob = new Blob([file]);
-		else
-			throw new FilevineAPIError(
-				'documents.upload file must be a Blob, Buffer, Uint8Array, ArrayBuffer, or base64/text string',
-				'INVALID_FILE',
-			);
+	// Normalize the file to a Blob before any Filevine request — the shared
+	// multipart layer only recognizes real Blob/File values (isBlob checks
+	// .type/.stream), and a bad link or base64 fails here, not after a call.
+	const blob = file != null ? await documentBlob(file, fileEncoding) : null;
+	const { orgId: resolvedOrgId, userId: resolvedUserId } =
+		await resolveFilevineOrgContext(ctx.key, input.orgId, input.userId);
+	if (blob !== null) {
 		const formData: Record<string, unknown> = {
 			file: blob,
 			projectId: String(projectId),
