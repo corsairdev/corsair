@@ -85,7 +85,10 @@ describe('perigon plugin', () => {
 describe('perigon keyBuilder', () => {
 	it('uses the inline key first', async () => {
 		await expect(
-			keyBuilderOf(perigon({ key: 'inline-key' }))(fixture('stored-key'), 'endpoint'),
+			keyBuilderOf(perigon({ key: 'inline-key' }))(
+				fixture('stored-key'),
+				'endpoint',
+			),
 		).resolves.toBe('inline-key');
 	});
 
