@@ -92,6 +92,7 @@ export type PingdomRequest = {
 	path: string;
 	query?: PingdomQuery;
 	/** JSON body; Pingdom accepts JSON on every write. */
+	// unknown: bodies mix strings, numbers, booleans and id arrays per route.
 	body?: Record<string, unknown>;
 };
 

@@ -8,6 +8,7 @@ import {
 const V31 = '/api/3.1';
 
 /** Common create/update fields mapped to the Pingdom body keys. */
+// unknown: the body mixes the common fields' strings, numbers, booleans and arrays.
 function checkCommonBody(common: {
 	paused?: boolean;
 	resolution?: number;
