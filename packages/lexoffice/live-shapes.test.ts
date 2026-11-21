@@ -1,5 +1,11 @@
 // Response shapes from a live Lexware Office trial (11-21), trimmed. The voucher id is from the test account.
-import { VoucherListResponseSchema } from './endpoints/types';
+import { ApiError } from 'corsair/http';
+import { sanitizeApiError } from './client';
+import type { ContactCreateInput } from './endpoints/types';
+import {
+	ProfileGetResponseSchema,
+	VoucherListResponseSchema,
+} from './endpoints/types';
 
 describe('Lexware live response shapes', () => {
 	it('lists an unchecked uploaded voucher that has no voucherDate or number yet', () => {
@@ -24,5 +30,57 @@ describe('Lexware live response shapes', () => {
 			number: 0,
 		});
 		expect(parsed.content[0]?.voucherDate).toBeUndefined();
+	});
+
+	it('keeps the documented subscriptionStatus and features on profile.get', () => {
+		const parsed = ProfileGetResponseSchema.parse({
+			organizationId: 'org-1',
+			subscriptionStatus: 'active',
+			features: ['cashbox'],
+			businessFeatures: [],
+		});
+		expect(parsed.subscriptionStatus).toBe('active');
+		expect(parsed.features).toEqual(['cashbox']);
+	});
+
+	it('keeps long Lexware issue identifiers on sanitized errors', () => {
+		const error = new ApiError(
+			{ method: 'POST', url: '/contacts' },
+			{
+				url: 'https://api.lexware.io/v1/contacts',
+				ok: false,
+				status: 400,
+				statusText: 'Bad Request',
+				body: {
+					IssueList: [
+						{
+							i18nKey: 'invalid_value',
+							source: 'contact_has_not_mappable_phone_number',
+							type: 'validation_failure',
+						},
+					],
+				},
+			},
+			'Bad Request',
+		);
+		sanitizeApiError(error);
+		expect(error.body).toEqual({
+			message: 'Lexware API request failed',
+			IssueList: [
+				{
+					i18nKey: 'invalid_value',
+					source: 'contact_has_not_mappable_phone_number',
+					type: 'validation_failure',
+				},
+			],
+		});
+	});
+
+	it('lets typed callers leave out version on contacts.create', () => {
+		const input: ContactCreateInput = {
+			roles: { customer: {} },
+			company: { name: 'corsair-plugin-test GmbH' },
+		};
+		expect(input.version).toBeUndefined();
 	});
 });

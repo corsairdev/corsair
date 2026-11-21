@@ -375,7 +375,8 @@ export const ContactCreateInputSchema = z
 	})
 	.strict()
 	.superRefine(validateContactWrite);
-export type ContactCreateInput = z.infer<typeof ContactCreateInputSchema>;
+// z.input: version is optional for callers; the schema fills in 0.
+export type ContactCreateInput = z.input<typeof ContactCreateInputSchema>;
 
 export const ContactUpdateInputSchema = z
 	.object({
@@ -1139,6 +1140,8 @@ export const ProfileGetResponseSchema = z.object({
 	taxType: z.enum(['net', 'gross', 'vatfree']).optional(),
 	distanceSalesPrinciple: z.enum(['ORIGIN', 'DESTINATION']).optional(),
 	businessFeatures: z.array(z.string()).optional(),
+	features: z.array(z.string()).optional(),
+	subscriptionStatus: z.string().optional(),
 	smallBusiness: z.boolean().optional(),
 });
 export type ProfileGetResponse = z.infer<typeof ProfileGetResponseSchema>;
