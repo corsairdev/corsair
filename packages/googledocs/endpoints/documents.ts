@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { toFileOutput } from 'corsair/http';
 import {
 	countWords,
 	DOCS_API_BASE,
@@ -434,6 +435,30 @@ export const updateDocumentBatch: GoogleDocsEndpoints['updateDocumentBatch'] =
 		return response;
 	};
 
+/**
+ * Most bytes of an exported PDF returned inline to a caller without a host. A
+ * host that keeps files (setFileSink) caps it at its own limit and gets a fileId.
+ */
+const EXPORT_MAX_BYTES = 100_000_000;
+
+/** The document's Drive name, for the exported file's name; undefined if it can't be read. */
+async function documentName(
+	ctx: Parameters<GoogleDocsEndpoints['exportDocumentAsPdf']>[0],
+	fileId: string,
+): Promise<string | undefined> {
+	try {
+		const meta = await makeAuthenticatedGoogleRequest<{ name?: string }>(
+			DRIVE_API_BASE,
+			`/files/${fileId}`,
+			ctx,
+			{ method: 'GET', query: { fields: 'name', supportsAllDrives: true } },
+		);
+		return meta.name || undefined;
+	} catch {
+		return undefined;
+	}
+}
+
 export const exportDocumentAsPdf: GoogleDocsEndpoints['exportDocumentAsPdf'] =
 	async (ctx, input) => {
 		// Export returns raw PDF bytes, so it cannot go through the JSON
@@ -460,11 +485,19 @@ export const exportDocumentAsPdf: GoogleDocsEndpoints['exportDocumentAsPdf'] =
 			throw new Error(`Failed to export document as PDF: ${error}`);
 		}
 
-		const buffer = Buffer.from(await response.arrayBuffer());
+		const bytes = new Uint8Array(await response.arrayBuffer());
+		const name = await documentName(ctx, input.fileId);
+		// The PDF keeps its own key, data; the rest is core's file output, so a
+		// host that keeps files gets a fileId for a large PDF instead.
+		const { contentBase64, ...file } = toFileOutput(bytes, 'application/pdf', {
+			filename: `${name ?? input.fileId}.pdf`,
+			maxBytes: EXPORT_MAX_BYTES,
+			text: false,
+		});
 		const result = {
-			fileId: input.fileId,
 			mimeType: 'application/pdf',
-			data: buffer.toString('base64'),
+			...file,
+			...(contentBase64 !== undefined ? { data: contentBase64 } : {}),
 		};
 
 		await logEventFromContext(

@@ -135,7 +135,7 @@
     {
       "path": "tinypng.api.images.output",
       "shortPath": "images.output",
-      "description": "Download a compressed image by its Tinify image ID as base64",
+      "description": "Download a compressed image by its Tinify image ID. On Corsair up to about 700 KB comes back inline as base64 and a larger image comes back as fileId, a Files id; without a host that keeps files the image comes back inline as base64 up to 100 MB, or contentOmitted beyond it.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -151,12 +151,36 @@
         "kind": "object",
         "fields": [
           {
-            "key": "imageId",
+            "key": "contentType",
             "optional": false,
             "type": "string"
           },
           {
-            "key": "contentType",
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+          },
+          {
+            "key": "imageId",
             "optional": false,
             "type": "string"
           },
@@ -182,8 +206,9 @@
           },
           {
             "key": "base64",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "The image, base64-encoded. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId)."
           }
         ]
       }
@@ -237,7 +262,7 @@
     {
       "path": "tinypng.api.images.transform",
       "shortPath": "images.transform",
-      "description": "Resize, convert, fill the background of, or preserve metadata on a compressed image, optionally storing it on S3 or GCS",
+      "description": "Resize, convert, fill the background of, or preserve metadata on a compressed image, optionally storing it on S3 or GCS. A returned image comes back like images.output: inline up to about 700 KB on Corsair, as fileId beyond it.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -278,7 +303,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ imageId: string, contentType: string, size: number, width?: number, height?: number, compressionCount?: number, base64: string, stored: false } | { stored: true, imageId: string, location: string, width?: number, height?: number, compressionCount?: number }"
+        "type": "{ contentType: string, byteLength: number, filename?: string, contentOmitted?: not_requested | over_limit, fileId?: string, imageId: string, size: number, width?: number, height?: number, compressionCount?: number, base64?: string, stored: false } | { stored: true, imageId: string, location: string, width?: number, height?: number, compressionCount?: number }"
       }
     }
   ],

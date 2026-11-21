@@ -198,6 +198,8 @@ export type BrowserDeliveryPayload = {
 	expiresIn?: number;
 	/** OAuth scopes granted. */
 	scope?: string;
+	/** The connecting user's own token, when the provider issues one beside the app's. */
+	userAccessToken?: string;
 	/** Auth type the delivered tokens belong to — `managed` (default) or `oauth_2` (BYO). */
 	authType?: 'managed' | 'oauth_2';
 	/** Provider token-body identity (team, workspace_id, …) for the SDK resolver. */

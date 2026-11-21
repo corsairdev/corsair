@@ -1,0 +1,466 @@
+---
+title: "Google Search Console API reference"
+sidebarTitle: "API"
+description: "API reference for Google Search Console: every `googlesearchconsole.api.*` operation with input and output types."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Searchanalytics
+
+### query
+
+`searchanalytics.query`
+
+Query search traffic: clicks, impressions, CTR and position, grouped by date, query, page, country, device or another dimension
+
+**Risk:** `read`
+
+```ts
+await corsair.googlesearchconsole.api.searchanalytics.query({ siteUrl: 'https://example.com/', startDate: '2026-10-01', endDate: '2026-10-31', dimensions: ['QUERY'], rowLimit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteUrl` | `string` | Yes | The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property |
+| `startDate` | `string` | Yes | YYYY-MM-DD, in Pacific Time (the API's own time zone) |
+| `endDate` | `string` | Yes | YYYY-MM-DD, in Pacific Time (the API's own time zone) |
+| `dimensions` | `(DATE \| QUERY \| PAGE \| COUNTRY \| DEVICE \| SEARCH_APPEARANCE \| HOUR \| BRANDED_CLASSIFICATION)[] \| null` | No | Zero or more dimensions to group by. `HOUR` requires dataState HOURLY_ALL |
+| `type` | `WEB \| IMAGE \| VIDEO \| NEWS \| DISCOVER \| GOOGLE_NEWS \| WEB_MULTIMODAL \| null` | No | Defaults to `WEB` |
+| `searchType` | `WEB \| IMAGE \| VIDEO \| NEWS \| DISCOVER \| GOOGLE_NEWS \| WEB_MULTIMODAL \| null` | No | The older spelling of `type`, with the same values and default. Send one, not both |
+| `dimensionFilterGroups` | `object[] \| null` | No | Filters applied to the grouped values |
+| `aggregationType` | `AUTO \| BY_PROPERTY \| BY_PAGE \| BY_NEWS_SHOWCASE_PANEL \| null` | No | `BY_PROPERTY` merges data across properties; `BY_PAGE` groups by URI. Neither is supported for DISCOVER or GOOGLE_NEWS |
+| `rowLimit` | `number \| null` | No | 1 to 25,000. The API default is 1,000 |
+| `startRow` | `number \| null` | No | Zero-based row to start at, which is how a caller pages. Past the end, the answer is a successful empty page |
+| `dataState` | `DATA_STATE_UNSPECIFIED \| FINAL \| ALL \| HOURLY_ALL \| null` | No | `ALL` includes fresh, unfinalized data; `FINAL` is the default; `HOURLY_ALL` is required for the HOUR dimension |
+
+Page with `startRow`; there is no page token. Results are sorted by clicks, descending. The HOUR dimension needs dataState HOURLY_ALL and covers only 10 days.
+
+<AccordionGroup>
+<Accordion title="dimensionFilterGroups full type">
+
+```ts
+{
+  groupType?: AND | null,
+  filters?: {
+    dimension: QUERY | PAGE | COUNTRY | DEVICE | SEARCH_APPEARANCE | BRANDED_CLASSIFICATION,
+    operator: EQUALS | NOT_EQUALS | CONTAINS | NOT_CONTAINS | INCLUDING_REGEX | EXCLUDING_REGEX,
+    expression: string
+  }[] | null,
+  filterLists?: {
+    dimension: QUERY | PAGE | COUNTRY | DEVICE | SEARCH_APPEARANCE | BRANDED_CLASSIFICATION,
+    expressions: string[]
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rows` | `object[] \| null` | No | Grouped rows, sorted by clicks descending. Absent when nothing matched |
+| `responseAggregationType` | `string \| null` | No | How the rows were aggregated, which can differ from what was asked |
+| `metadata` | `object \| null` | No | The date or hour still being processed |
+
+<AccordionGroup>
+<Accordion title="rows full type">
+
+```ts
+{
+  keys?: string[] | null,
+  clicks?: number | null,
+  impressions?: number | null,
+  ctr?: number | null,
+  position?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  firstIncompleteDate?: string | null,
+  firstIncompleteHour?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sitemaps
+
+### delete
+
+`sitemaps.delete`
+
+Remove a sitemap from the property's Sitemaps report. Google may still crawl the sitemap and the URLs it already found
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googlesearchconsole.api.sitemaps.delete({ siteUrl: 'https://example.com/', feedpath: 'https://example.com/sitemap.xml' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteUrl` | `string` | Yes | The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property |
+| `feedpath` | `string` | Yes | The sitemap's own URL, e.g. `https://example.com/sitemap.xml`. It is a URL, not a path |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`sitemaps.get`
+
+Read one submitted sitemap
+
+**Risk:** `read`
+
+```ts
+await corsair.googlesearchconsole.api.sitemaps.get({ siteUrl: 'https://example.com/', feedpath: 'https://example.com/sitemap.xml' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteUrl` | `string` | Yes | The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property |
+| `feedpath` | `string` | Yes | The sitemap's own URL, e.g. `https://example.com/sitemap.xml`. It is a URL, not a path |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `string \| null` | No | — |
+| `lastSubmitted` | `string \| null` | No | RFC 3339 |
+| `lastDownloaded` | `string \| null` | No | RFC 3339 |
+| `isPending` | `boolean \| null` | No | — |
+| `isSitemapsIndex` | `boolean \| null` | No | True when this sitemap is a collection of other sitemaps |
+| `type` | `string \| null` | No | `sitemap`, `rssFeed`, `atomFeed`, `urlList`, `patternSitemap` or `notSitemap` |
+| `warnings` | `string \| null` | No | int64 as a string |
+| `errors` | `string \| null` | No | int64 as a string |
+| `contents` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="contents full type">
+
+```ts
+{
+  type?: string | null,
+  submitted?: string | null,
+  indexed?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`sitemaps.list`
+
+List the sitemaps submitted for a property, with their errors and warnings
+
+**Risk:** `read`
+
+```ts
+await corsair.googlesearchconsole.api.sitemaps.list({ siteUrl: 'https://example.com/' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteUrl` | `string` | Yes | The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property |
+| `sitemapIndex` | `string \| null` | No | List only the sitemaps named inside this sitemap index |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sitemap` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sitemap full type">
+
+```ts
+{
+  path?: string | null,
+  lastSubmitted?: string | null,
+  lastDownloaded?: string | null,
+  isPending?: boolean | null,
+  isSitemapsIndex?: boolean | null,
+  type?: string | null,
+  warnings?: string | null,
+  errors?: string | null,
+  contents?: {
+    type?: string | null,
+    submitted?: string | null,
+    indexed?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### submit
+
+`sitemaps.submit`
+
+Submit a sitemap URL, which asks Google to fetch it. Sending one already listed refreshes its status
+
+**Risk:** `write`
+
+```ts
+await corsair.googlesearchconsole.api.sitemaps.submit({ siteUrl: 'https://example.com/', feedpath: 'https://example.com/sitemap.xml' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteUrl` | `string` | Yes | The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property |
+| `feedpath` | `string` | Yes | The sitemap's own URL, e.g. `https://example.com/sitemap.xml`. It is a URL, not a path |
+
+`feedpath` is the sitemap URL; Google fetches it. A PUT with no body.
+
+
+
+**Output:** `void`
+
+
+---
+
+## Sites
+
+### add
+
+`sites.add`
+
+Add a property the account already controls to the API's property list. It does not verify ownership
+
+**Risk:** `write`
+
+```ts
+await corsair.googlesearchconsole.api.sites.add({ siteUrl: 'https://example.com/' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteUrl` | `string` | Yes | The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property |
+
+Adds a property the account already controls. It does not verify ownership.
+
+
+
+**Output:** `void`
+
+
+---
+
+### delete
+
+`sites.delete`
+
+Remove a property from this account's Search Console property list. Other owners keep it, and it can usually be re-added without verifying again
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googlesearchconsole.api.sites.delete({ siteUrl: 'https://example.com/' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteUrl` | `string` | Yes | The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`sites.get`
+
+Read one property and the permission level on it
+
+**Risk:** `read`
+
+```ts
+await corsair.googlesearchconsole.api.sites.get({ siteUrl: 'https://example.com/' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteUrl` | `string` | Yes | The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteUrl` | `string \| null` | No | — |
+| `permissionLevel` | `string \| null` | No | What this credential may do on the property: `siteOwner`, `siteFullUser`, `siteRestrictedUser` or `siteUnverifiedUser`. Owners and full users can manage it, restricted users can view most data including Performance, and unverified users can read nothing |
+
+
+
+---
+
+### list
+
+`sites.list`
+
+List the properties the credentials can reach, with the permission level on each
+
+**Risk:** `read`
+
+```ts
+await corsair.googlesearchconsole.api.sites.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteEntry` | `object[] \| null` | No | Absent when the credential can reach no properties |
+
+<AccordionGroup>
+<Accordion title="siteEntry full type">
+
+```ts
+{
+  siteUrl?: string | null,
+  permissionLevel?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Url Inspection
+
+### inspect
+
+`urlInspection.inspect`
+
+Inspect one URL: whether Google indexed it, the canonical it chose, and any mobile-usability, rich-result or AMP issues
+
+**Risk:** `read`
+
+```ts
+await corsair.googlesearchconsole.api.urlInspection.inspect({ siteUrl: 'https://example.com/', inspectionUrl: 'https://example.com/pricing' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `siteUrl` | `string` | Yes | The property as Search Console names it: `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property |
+| `inspectionUrl` | `string` | Yes | The URL to inspect. It must be under the property in siteUrl |
+| `languageCode` | `string \| null` | No | IETF BCP-47 language for the localized issue messages, e.g. `en-US` |
+
+Its own quota: 2,000 per day and 600 per minute per site.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `inspectionResult` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="inspectionResult full type">
+
+```ts
+{
+  inspectionResultLink?: string | null,
+  indexStatusResult?: {
+    verdict?: VERDICT_UNSPECIFIED | PASS | PARTIAL | FAIL | NEUTRAL | null,
+    coverageState?: string | null,
+    robotsTxtState?: ROBOTS_TXT_STATE_UNSPECIFIED | ALLOWED | DISALLOWED | null,
+    indexingState?: INDEXING_STATE_UNSPECIFIED | INDEXING_ALLOWED | BLOCKED_BY_META_TAG | BLOCKED_BY_HTTP_HEADER | BLOCKED_BY_ROBOTS_TXT | null,
+    lastCrawlTime?: string | null,
+    pageFetchState?: PAGE_FETCH_STATE_UNSPECIFIED | SUCCESSFUL | SOFT_404 | BLOCKED_ROBOTS_TXT | NOT_FOUND | ACCESS_DENIED | SERVER_ERROR | REDIRECT_ERROR | ACCESS_FORBIDDEN | BLOCKED_4XX | INTERNAL_CRAWL_ERROR | INVALID_URL | null,
+    googleCanonical?: string | null,
+    userCanonical?: string | null,
+    crawledAs?: CRAWLING_USER_AGENT_UNSPECIFIED | DESKTOP | MOBILE | null,
+    referringUrls?: string[] | null,
+    sitemap?: string[] | null
+  } | null,
+  mobileUsabilityResult?: {
+    verdict?: VERDICT_UNSPECIFIED | PASS | PARTIAL | FAIL | NEUTRAL | null,
+    issues?: {
+      message?: string | null,
+      issueType?: string | null,
+      severity?: string | null
+    }[] | null
+  } | null,
+  richResultsResult?: {
+    verdict?: VERDICT_UNSPECIFIED | PASS | PARTIAL | FAIL | NEUTRAL | null,
+    detectedItems?: Record<string, any>[] | null
+  } | null,
+  ampResult?: {
+    verdict?: VERDICT_UNSPECIFIED | PASS | PARTIAL | FAIL | NEUTRAL | null,
+    ampUrl?: string | null,
+    robotsTxtState?: ROBOTS_TXT_STATE_UNSPECIFIED | ALLOWED | DISALLOWED | null,
+    indexingState?: AMP_INDEXING_STATE_UNSPECIFIED | AMP_INDEXING_ALLOWED | BLOCKED_DUE_TO_NOINDEX | BLOCKED_DUE_TO_EXPIRED_UNAVAILABLE_AFTER | null,
+    pageFetchState?: string | null,
+    lastCrawlTime?: string | null,
+    issues?: Record<string, any>[] | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

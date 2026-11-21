@@ -1,4 +1,4 @@
-import { request } from 'corsair/http';
+import { FILE_OUTPUT_MAX_BYTES, request, setFileSink } from 'corsair/http';
 import { PresentationsEndpoints } from './endpoints';
 import type { GoogleSlidesContext } from './index';
 import { makeContext, makeStore } from './test-helpers';
@@ -264,11 +264,17 @@ describe('presentations.exportPdf', () => {
 			}),
 		);
 
+		mockRequest.mockResolvedValueOnce({ name: 'Quarterly review' });
 		const result = await PresentationsEndpoints.exportPdf(ctx, {
 			presentationId: 'deck-1',
 		});
 
 		expect(fetchMock).toHaveBeenCalledTimes(1);
+		// The deck's name, for the file name, comes from Drive's JSON route.
+		expect(calledUrl()).toBe(
+			'https://www.googleapis.com/drive/v3/files/deck-1',
+		);
+		expect(calledQuery()).toMatchObject({ fields: 'name' });
 		const [url, init] = fetchMock.mock.calls[0] ?? [];
 		expect(String(url)).toBe(
 			'https://www.googleapis.com/drive/v3/files/deck-1/export?mimeType=application%2Fpdf',
@@ -277,8 +283,42 @@ describe('presentations.exportPdf', () => {
 			'Bearer test-access-token',
 		);
 		expect(result.mimeType).toBe('application/pdf');
-		expect(Buffer.from(result.data, 'base64').toString()).toBe('%PDF-1.4 test');
+		expect(Buffer.from(result.data ?? '', 'base64').toString()).toBe(
+			'%PDF-1.4 test',
+		);
+		expect(result.filename).toBe('Quarterly review.pdf');
 		expect(result.byteLength).toBe(Buffer.byteLength('%PDF-1.4 test'));
+	});
+
+	it('hands a host that keeps files a large export, which comes back as its fileId', async () => {
+		const big = Buffer.alloc(FILE_OUTPUT_MAX_BYTES + 1, 7);
+		jest.spyOn(global, 'fetch').mockResolvedValue(
+			new Response(big, {
+				status: 200,
+				headers: { 'content-type': 'application/pdf' },
+			}),
+		);
+		mockRequest.mockResolvedValueOnce({ name: 'Quarterly review' });
+		const held: Array<string | undefined> = [];
+		setFileSink(() => (file) => {
+			held.push(file.filename);
+			return 'held_1';
+		});
+		try {
+			const result = await PresentationsEndpoints.exportPdf(ctx, {
+				presentationId: 'deck-1',
+			});
+			expect(result).toMatchObject({
+				format: 'pdf',
+				byteLength: big.byteLength,
+				filename: 'Quarterly review.pdf',
+				fileId: 'held_1',
+			});
+			expect(result.data).toBeUndefined();
+			expect(held).toEqual(['Quarterly review.pdf']);
+		} finally {
+			setFileSink(() => undefined);
+		}
 	});
 
 	it('defaults to PDF and honours pptx', async () => {

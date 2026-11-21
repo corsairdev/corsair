@@ -1,0 +1,2613 @@
+{
+  "id": "stannp",
+  "displayName": "Stannp",
+  "description": "Direct mail with Stannp - send postcards, letters and SMS, manage recipients, groups and campaigns, validate addresses, read delivery reporting and receive mailpiece and campaign webhooks. Webhook deliveries are verified when the webhook has a secret and Corsair has the same one.",
+  "npmPackageName": "@corsair-dev/stannp",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 41,
+    "webhooks": 4,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "stannp.api.account.balance",
+      "shortPath": "account.balance",
+      "description": "Read the account balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "balance",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "Account balance, such as \"214.4200\"."
+          }
+        ]
+      }
+    },
+    {
+      "path": "stannp.api.account.topup",
+      "shortPath": "account.topup",
+      "description": "Top up the account balance from the saved card; the amount is charged for real",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "net",
+            "optional": false,
+            "type": "string",
+            "description": "Amount to top up, such as \"10.00\". Tax may be added."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "receipt_pdf",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "URL of the receipt."
+          }
+        ]
+      }
+    },
+    {
+      "path": "stannp.api.addresses.validate",
+      "shortPath": "addresses.validate",
+      "description": "Validate a UK or US postal address and get the corrected form with a validity flag",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address1",
+            "optional": false,
+            "type": "string",
+            "description": "Address line 1."
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address3",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string",
+            "description": "Required for US/CA addresses when zipcode is not provided."
+          },
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string",
+            "description": "UK postcode; enough without a city for UK addresses."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter US state abbreviation."
+          },
+          {
+            "key": "province",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter CA province abbreviation (ON, BC, QC)."
+          },
+          {
+            "key": "zipcode",
+            "optional": true,
+            "type": "string",
+            "description": "US/CA. Required when city is not provided."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2. UK and US addresses only."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address1",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address3",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "county",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "reference_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "dps",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "Delivery point suffix."
+          },
+          {
+            "key": "udprn",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "is_valid",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stannp.api.campaigns.approve",
+      "shortPath": "campaigns.approve",
+      "description": "Approve a campaign, locking its design and recipient selection; the lock cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The campaign to approve."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean | number"
+      }
+    },
+    {
+      "path": "stannp.api.campaigns.availableDates",
+      "shortPath": "campaigns.availableDates",
+      "description": "List the dates a campaign can be booked for",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "start",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to today."
+          },
+          {
+            "key": "end",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to 30 days out."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string[]"
+      }
+    },
+    {
+      "path": "stannp.api.campaigns.book",
+      "shortPath": "campaigns.book",
+      "description": "Book a campaign for dispatch on a date, paying from the balance; this starts a real mailing",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The campaign to book."
+          },
+          {
+            "key": "send_date",
+            "optional": false,
+            "type": "string",
+            "description": "The dispatch date."
+          },
+          {
+            "key": "next_available_date",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true: books on the next available date when yours is taken. False returns an error instead."
+          },
+          {
+            "key": "use_balance",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true: pays from the balance. False schedules the campaign but nothing posts until payment."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean | number"
+      }
+    },
+    {
+      "path": "stannp.api.campaigns.cost",
+      "shortPath": "campaigns.cost",
+      "description": "Price a campaign: per-piece rates and totals for validated, non-validated and international recipients",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The campaign to price."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rate",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "Per-piece rate for validated addresses."
+          },
+          {
+            "key": "non_valid_rate",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "delivery_rate",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "international_rate",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "valid",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "Total for validated recipients."
+          },
+          {
+            "key": "not_valid",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "Total for non-validated recipients."
+          },
+          {
+            "key": "international",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "delivery_charge",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "net",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "vat",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stannp.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Create a campaign for a group from a template, copied design or uploaded artwork; nothing sends until it is booked",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the campaign, for reference."
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "a6-postcard | a5-postcard | letter | A6-postcard | A5-postcard",
+            "description": "The mailpiece this campaign sends."
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "number",
+            "description": "A template to copy. 0 or omitted uses a blank template of the format."
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string",
+            "description": "URL of a PDF to use as the design artwork."
+          },
+          {
+            "key": "front",
+            "optional": true,
+            "type": "string",
+            "description": "URL of a PDF or JPG for the front image."
+          },
+          {
+            "key": "back",
+            "optional": true,
+            "type": "string",
+            "description": "URL of a PDF or JPG for the back image."
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string",
+            "description": "Required with file or front/back images, such as A4, A5 or A6."
+          },
+          {
+            "key": "save",
+            "optional": true,
+            "type": "boolean",
+            "description": "Save the uploaded artwork as a new design template."
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The group this campaign sends to."
+          },
+          {
+            "key": "what_recipients",
+            "optional": true,
+            "type": "all | valid | not_valid | int",
+            "description": "all is every recipient in the group, valid and not_valid are UK validated and non-validated addresses, int is international addresses."
+          },
+          {
+            "key": "addons",
+            "optional": true,
+            "type": "string",
+            "description": "Addon code for the campaign."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "unknown"
+      }
+    },
+    {
+      "path": "stannp.api.campaigns.delete",
+      "shortPath": "campaigns.delete",
+      "description": "Permanently delete a campaign that has not been booked; this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The campaign to delete. Only unbooked campaigns can be deleted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean | number"
+      }
+    },
+    {
+      "path": "stannp.api.campaigns.get",
+      "shortPath": "campaigns.get",
+      "description": "Get one campaign by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The campaign id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "trigger_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "send_date",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "trigger_offset",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "recipients_group",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "recipients_filter",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "recipients_validated",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "recipients_not_valid",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "dispatched",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "voucher_code",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stannp.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List campaigns with status, recipient counts and cost",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number | null, account_id?: string | number | null, name?: string | number | null, template_id?: string | number | null, type?: string | number | null, trigger_date?: string | number | null, send_date?: string | number | null, trigger_offset?: string | number | null, created?: string | number | null, updated?: string | number | null, status?: string | number | null, recipients_group?: string | number | null, recipients_filter?: string | number | null, recipients_validated?: string | number | null, recipients?: string | number | null, recipients_not_valid?: string | number | null, dispatched?: string | number | null, cost?: string | number | null, voucher_code?: string | number | null, image?: string | number | null, size?: string | number | null }[]"
+      }
+    },
+    {
+      "path": "stannp.api.campaigns.sample",
+      "shortPath": "campaigns.sample",
+      "description": "Produce a PDF sample of the campaign; the link is valid for 30 minutes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The campaign to sample."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "stannp.api.events.create",
+      "shortPath": "events.create",
+      "description": "Record an event against a recipient for tracking, conversions and automation triggers",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recipient_id",
+            "optional": false,
+            "type": "string",
+            "description": "The recipient id, or the ref_id stored on the recipient."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Event name, such as PURCHASE, SIGNUP, PAGE_VIEW, PRODUCT_VIEW, PRODUCT_TO_BASKET."
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string",
+            "description": "Value information, such as the purchase amount or product name."
+          },
+          {
+            "key": "conversion",
+            "optional": true,
+            "type": "boolean",
+            "description": "True for a conversion event. Defaults to false."
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "string",
+            "description": "Extended data for automation or dynamic templating."
+          },
+          {
+            "key": "ref",
+            "optional": true,
+            "type": "string",
+            "description": "A campaign or mailpiece reference. Empty uses the most recent communication."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number | string"
+      }
+    },
+    {
+      "path": "stannp.api.files.createFolder",
+      "shortPath": "files.createFolder",
+      "description": "Create a folder in the secure file transfer area",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the folder to create."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "stannp.api.files.listFolders",
+      "shortPath": "files.listFolders",
+      "description": "List the folders in the secure file transfer area",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number | null, name?: string | number | null, created?: string | number | null }[]"
+      }
+    },
+    {
+      "path": "stannp.api.files.upload",
+      "shortPath": "files.upload",
+      "description": "Upload a file by URL into the secure file transfer area",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string",
+            "description": "URL of the file to upload into the secure file transfer area."
+          },
+          {
+            "key": "folder",
+            "optional": true,
+            "type": "number",
+            "description": "Folder to place the file in."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "The new file id, as a string."
+          }
+        ]
+      }
+    },
+    {
+      "path": "stannp.api.groups.addRecipients",
+      "shortPath": "groups.addRecipients",
+      "description": "Add recipients to a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The group to change."
+          },
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "number[]",
+            "description": "Recipient ids, sent comma-separated."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number"
+      }
+    },
+    {
+      "path": "stannp.api.groups.calculate",
+      "shortPath": "groups.calculate",
+      "description": "Recalculate a group so its statistics are up to date",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The group to recalculate."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean | number"
+      }
+    },
+    {
+      "path": "stannp.api.groups.create",
+      "shortPath": "groups.create",
+      "description": "Create a new empty mailing group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the new group."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | number"
+      }
+    },
+    {
+      "path": "stannp.api.groups.delete",
+      "shortPath": "groups.delete",
+      "description": "Delete a mailing group; with delete_recipients the recipients are deleted account-wide, which cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The group to delete."
+          },
+          {
+            "key": "delete_recipients",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false. True also deletes the recipients everywhere, including other groups. Cannot be undone."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean | number"
+      }
+    },
+    {
+      "path": "stannp.api.groups.list",
+      "shortPath": "groups.list",
+      "description": "List mailing groups with recipient counts and import progress, paged with offset and limit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Offset for pagination."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Limit for pagination."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number | null, account_id?: string | number | null, name?: string | number | null, created?: string | number | null, recipients?: string | number | null, valid?: string | number | null, international?: string | number | null, skipped?: string | number | null, status?: string | number | null, import_progress?: string | number | null, is_seeds?: string | number | null }[]"
+      }
+    },
+    {
+      "path": "stannp.api.groups.purge",
+      "shortPath": "groups.purge",
+      "description": "Remove every recipient from a group; with delete_recipients the recipients are deleted account-wide, which cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The group to purge."
+          },
+          {
+            "key": "delete_recipients",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false. True also deletes the recipients everywhere, including other groups. Cannot be undone."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean | number"
+      }
+    },
+    {
+      "path": "stannp.api.groups.removeRecipients",
+      "shortPath": "groups.removeRecipients",
+      "description": "Remove recipients from a group; the recipients stay on the account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The group to change."
+          },
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "number[]",
+            "description": "Recipient ids, sent comma-separated."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number"
+      }
+    },
+    {
+      "path": "stannp.api.letters.cancel",
+      "shortPath": "letters.cancel",
+      "description": "Cancel a letter that has not started processing yet",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the mailpiece item."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number"
+      }
+    },
+    {
+      "path": "stannp.api.letters.create",
+      "shortPath": "letters.create",
+      "description": "Create and mail a letter merged from a template or PDF; test mode renders a PDF proof without posting or charging",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean",
+            "description": "True produces a sample PDF without dispatching or charging. Defaults to false: the letter is posted for real."
+          },
+          {
+            "key": "recipient",
+            "optional": false,
+            "type": "number | { title?: string, firstname?: string, lastname?: string, company?: string, address1?: string, address2?: string, address3?: string, city?: string, county?: string, postcode?: string, zipcode?: string, country?: string, email?: string, url?: string }",
+            "description": "An existing recipient id, or a new recipient object."
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "number",
+            "description": "A template set up on the platform."
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string",
+            "description": "URL of a PDF or DOC file to mail merge, instead of a template. Page limits apply per the docs."
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "string",
+            "description": "Letter content as HTML with merge fields such as {firstname}, instead of a template or file."
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "A4 | US-LETTER | US-LETTER-XL-WINDOW",
+            "description": "Defaults to A4 for EU/UK accounts, US-LETTER for US accounts."
+          },
+          {
+            "key": "duplex",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true. False prints front sides only."
+          },
+          {
+            "key": "clearzone",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true. True overlays clear zones with white."
+          },
+          {
+            "key": "post_unverified",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true. If false, the letter is not posted when the address could not be verified."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated tags for reporting."
+          },
+          {
+            "key": "addons",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated addon codes: FIRST_CLASS, C4_ENVELOPE, CONFIDENTIAL, STOCK_120."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pdf",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "URL of the merged PDF proof."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "The new mailpiece id; 0 in test mode."
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "\"test\" when test is set."
+          }
+        ]
+      }
+    },
+    {
+      "path": "stannp.api.letters.get",
+      "shortPath": "letters.get",
+      "description": "Get one letter mailpiece with its status, tracking and cost",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The letter id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "pdf_file",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "dispatched",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "addons",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "campaign_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "recipient_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address1",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address3",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "county",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "zipcode",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "transactional",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "class",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "mailpiece_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "tracking_ref",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "tracking",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stannp.api.letters.post",
+      "shortPath": "letters.post",
+      "description": "Post an already mail-merged letter PDF whose address the API reads with OCR; test mode renders a PDF proof without posting or charging",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean",
+            "description": "True produces a sample PDF without dispatching or charging. Defaults to false: the letter is posted for real."
+          },
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string",
+            "description": "ISO alpha-2 country code, such as US, CA, GB, FR."
+          },
+          {
+            "key": "pdf",
+            "optional": true,
+            "type": "string",
+            "description": "URL of the already mail-merged PDF. The address must be on the document in machine-readable form; the API reads it with OCR. The API also accepts this under the name \"file\"."
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "A4 | US-LETTER | US-LETTER-XL-WINDOW",
+            "description": "Defaults to A4 for EU/UK accounts, US-LETTER for US accounts."
+          },
+          {
+            "key": "duplex",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true."
+          },
+          {
+            "key": "transactional",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use for sensitive data. Defaults to false."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated tags for reporting."
+          },
+          {
+            "key": "addons",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated addon codes: FIRST_CLASS, C4_ENVELOPE, CONFIDENTIAL, STOCK_120."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pdf",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "URL of the merged PDF proof."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "The new mailpiece id; 0 in test mode."
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "\"test\" when test is set."
+          }
+        ]
+      }
+    },
+    {
+      "path": "stannp.api.postcards.cancel",
+      "shortPath": "postcards.cancel",
+      "description": "Cancel a postcard that has not started processing yet",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The id of the mailpiece item."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number"
+      }
+    },
+    {
+      "path": "stannp.api.postcards.create",
+      "shortPath": "postcards.create",
+      "description": "Create and mail a postcard to one recipient; test mode renders a PDF proof without posting or charging",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "size",
+            "optional": true,
+            "type": "A6 | A5 | A5-ENV | A5-PORT | 4x6 | 6x9 | 6x11",
+            "description": "EU/UK: A6 (default), A5, A5-ENV, A5-PORT. US: 4x6 (default), 6x9, 6x11."
+          },
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean",
+            "description": "True produces a sample PDF without dispatching or charging. Defaults to false: the card is posted for real."
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "number",
+            "description": "A template set up on the platform. Leave out to use front and back."
+          },
+          {
+            "key": "recipient",
+            "optional": false,
+            "type": "number | { title?: string, firstname?: string, lastname?: string, company?: string, address1?: string, address2?: string, address3?: string, city?: string, county?: string, postcode?: string, zipcode?: string, country?: string, email?: string, url?: string }",
+            "description": "An existing recipient id, or a new recipient object."
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "A message on the back of the card, overlaid on a back image."
+          },
+          {
+            "key": "signature",
+            "optional": true,
+            "type": "string",
+            "description": "URL or base64 JPG (768 x 118 pixels) placed in the signature location."
+          },
+          {
+            "key": "front",
+            "optional": true,
+            "type": "string",
+            "description": "URL or base64 JPG, PNG or PDF for the front. Required when no template is used."
+          },
+          {
+            "key": "back",
+            "optional": true,
+            "type": "string",
+            "description": "URL or base64 JPG, PNG or PDF for the back."
+          },
+          {
+            "key": "padding",
+            "optional": true,
+            "type": "number",
+            "description": "Set 0 to remove the default white border on the front."
+          },
+          {
+            "key": "post_unverified",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to true. If false, the card is not posted when the address could not be verified."
+          },
+          {
+            "key": "clearzone",
+            "optional": true,
+            "type": "boolean",
+            "description": "Defaults to false. True overlays clear zones with white to keep the card machine-readable."
+          },
+          {
+            "key": "return_address",
+            "optional": true,
+            "type": "string",
+            "description": "Custom return address printed on the card."
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated tags for reporting."
+          },
+          {
+            "key": "addons",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated addon codes such as FIRST_CLASS, STOCK_350_SILK, STOCK_350_UNCOATED."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pdf",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "URL of the merged PDF proof."
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "The new mailpiece id; 0 in test mode."
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "\"test\" when test is set."
+          }
+        ]
+      }
+    },
+    {
+      "path": "stannp.api.postcards.get",
+      "shortPath": "postcards.get",
+      "description": "Get one postcard mailpiece with its status, tracking and cost",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The postcard id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "pdf_file",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "dispatched",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "addons",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "campaign_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "recipient_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address1",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address3",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "county",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "zipcode",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "transactional",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "class",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "mailpiece_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "tracking_ref",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "tracking",
+            "optional": true,
+            "type": "Record<string, any>[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stannp.api.recipients.create",
+      "shortPath": "recipients.create",
+      "description": "Create a recipient, optionally into a group, with duplicate handling and custom fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "number",
+            "description": "The group to add the recipient to."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Such as Mr, Mrs, Dr."
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address3",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "county",
+            "optional": true,
+            "type": "string",
+            "description": "County or state; the API also accepts \"state\"."
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "US state; an alias for county, sent as county."
+          },
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string",
+            "description": "The API also accepts \"zipcode\"."
+          },
+          {
+            "key": "zipcode",
+            "optional": true,
+            "type": "string",
+            "description": "US zip code; the documented request example sends this name."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2. Defaults to the account region."
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ref_id",
+            "optional": true,
+            "type": "string",
+            "description": "An id from another system, for matching the recipient across services."
+          },
+          {
+            "key": "on_duplicate",
+            "optional": true,
+            "type": "update | ignore | duplicate",
+            "description": "What to do when a duplicate is found."
+          },
+          {
+            "key": "test_level",
+            "optional": true,
+            "type": "email | fullname | initial | ref_id",
+            "description": "How duplicates are matched. Defaults to fullname."
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Custom recipient fields set up on your account, sent as extra parameters."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "The new recipient id, as a string."
+          },
+          {
+            "key": "valid",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the address validated."
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stannp.api.recipients.delete",
+      "shortPath": "recipients.delete",
+      "description": "Permanently delete a recipient from the account; this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The recipient to delete."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "number | string"
+      }
+    },
+    {
+      "path": "stannp.api.recipients.get",
+      "shortPath": "recipients.get",
+      "description": "Get one recipient by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The recipient id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "account_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "firstname",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "lastname",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address1",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "address3",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "county",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "zipcode",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "dps",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "ref_id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "blacklist",
+            "optional": true,
+            "type": "string | boolean | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stannp.api.recipients.import",
+      "shortPath": "recipients.import",
+      "description": "Import a CSV or XLS data file into a group, with column remapping and duplicate handling",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string",
+            "description": "URL of a CSV or XLS file, or a base64 encoded CSV string."
+          },
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The group to import into."
+          },
+          {
+            "key": "duplicates",
+            "optional": true,
+            "type": "update | ignore | duplicate",
+            "description": "What to do with duplicates. Defaults to update: the existing record gets the newest data."
+          },
+          {
+            "key": "no_headings",
+            "optional": true,
+            "type": "boolean",
+            "description": "True when the CSV has no heading row; mappings must then be supplied."
+          },
+          {
+            "key": "mappings",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated headings remapping the CSV columns, such as title,firstname,lastname,company,address1,address2,city,postcode,country,custom,custom,skip."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "stannp.api.recipients.list",
+      "shortPath": "recipients.list",
+      "description": "List recipients with their addresses and blacklist flag, filtered by group and paged with offset and limit",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": true,
+            "type": "number",
+            "description": "Only recipients in this group."
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Offset for pagination."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Limit for pagination. Defaults to 100 when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number | null, account_id?: string | number | null, title?: string | number | null, firstname?: string | number | null, lastname?: string | number | null, company?: string | number | null, job_title?: string | number | null, address1?: string | number | null, address2?: string | number | null, address3?: string | number | null, city?: string | number | null, county?: string | number | null, country?: string | number | null, postcode?: string | number | null, zipcode?: string | number | null, dps?: string | number | null, email?: string | number | null, phone_number?: string | number | null, ref_id?: string | number | null, blacklist?: string | boolean | null, created?: string | number | null, updated?: string | number | null }[]"
+      }
+    },
+    {
+      "path": "stannp.api.reporting.list",
+      "shortPath": "reporting.list",
+      "description": "List mailpieces in a date range, optionally filtered by status, or by status and tag (a tag needs a status)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startdate",
+            "optional": false,
+            "type": "string",
+            "description": "Start of the reporting period."
+          },
+          {
+            "key": "enddate",
+            "optional": false,
+            "type": "string",
+            "description": "End of the reporting period."
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "Only mailpieces in this status, such as delivered or returned."
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Only mailpieces carrying this tag. The tag is the path segment after status, so it needs a status too."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "singles",
+            "optional": false,
+            "type": "{ id?: string | number | null, timestamp?: string | number | null, status?: string | number | null, type?: string | number | null, format?: string | number | null, pdf_file?: string | number | null, dispatched?: string | number | null, country?: string | number | null, cost?: string | number | null, addons?: string | number | null, tags?: string | number | null, zipcode?: string | number | null, address?: string | number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stannp.api.reporting.summary",
+      "shortPath": "reporting.summary",
+      "description": "Count mailpieces per delivery status within a date range",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "startdate",
+            "optional": false,
+            "type": "string",
+            "description": "Start of the reporting period."
+          },
+          {
+            "key": "enddate",
+            "optional": false,
+            "type": "string",
+            "description": "End of the period; the whole day is included."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "received",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "Requests received."
+          },
+          {
+            "key": "printing",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "Printing or finishing."
+          },
+          {
+            "key": "producing",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "Being printed or finished."
+          },
+          {
+            "key": "in_transit",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "In transit with the delivery service."
+          },
+          {
+            "key": "handed_over",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "Handed to the delivery service."
+          },
+          {
+            "key": "local_delivery",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "At the final delivery office."
+          },
+          {
+            "key": "delivered",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "Estimated as delivered."
+          },
+          {
+            "key": "returned",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "Returned to sender."
+          },
+          {
+            "key": "cancelled",
+            "optional": true,
+            "type": "number | string | null",
+            "description": "Cancelled before production."
+          }
+        ]
+      }
+    },
+    {
+      "path": "stannp.api.selections.create",
+      "shortPath": "selections.create",
+      "description": "Create an auto-filter selection that targets a subset of a group",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "group_id",
+            "optional": false,
+            "type": "number",
+            "description": "The group this selection filters."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the filter."
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string",
+            "description": "Filter string in [column]:::[operator]:::[value] form, chained with :::AND:::. Operators: matches, contains, begins, ends, before, after, less_than, more_than, is_not."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number | null }[] | boolean"
+      }
+    },
+    {
+      "path": "stannp.api.sms.create",
+      "shortPath": "sms.create",
+      "description": "Send an SMS to a phone number or stored recipient; test mode builds it without sending or charging",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "test",
+            "optional": true,
+            "type": "boolean",
+            "description": "True builds the message without sending it and without charging."
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string",
+            "description": "The recipient's mobile number. Required when recipient_id is not provided."
+          },
+          {
+            "key": "recipient_id",
+            "optional": true,
+            "type": "number",
+            "description": "An existing recipient. Required when phone_number is not provided."
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "The message. Supports template tags such as {firstname} with recipient_id."
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to the account region."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "recipient_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "phone_number",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "profile_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "usage_campaign_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "profile_type",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "message_parts",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "cost",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "destination_country",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | number | null",
+            "description": "\"test\" when test is set."
+          },
+          {
+            "key": "campaign_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "updated",
+            "optional": true,
+            "type": "string | number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "stannp.api.tools.pdfMerge",
+      "shortPath": "tools.pdfMerge",
+      "description": "Merge several PDFs by URL into one file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "files",
+            "optional": false,
+            "type": "string[]",
+            "description": "URLs of the PDF files to merge, in order."
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the X-Idempotency-Key header. A repeat call with the same key and body returns the original response with HTTP 409 instead of running again."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "stannp.api.tools.templates",
+      "shortPath": "tools.templates",
+      "description": "List the design templates on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | number | null, account_id?: string | number | null, template_name?: string | number | null, image?: string | number | null, created?: string | number | null, updated?: string | number | null, size?: string | number | null, page_count?: string | number | null, duplex?: string | number | null, back_image?: string | number | null, template?: string | number | null, is_public?: string | number | null, is_template?: string | number | null, version?: string | number | null, is_hidden?: string | number | null, shared?: string | number | null, user_id?: string | number | null, tags?: string | number | null, versions?: string | number | null }[]"
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "stannp.webhooks.campaigns.status",
+      "shortPath": "campaigns.status",
+      "description": "A campaign changed status: printing, dispatched or cancelled; up to 50 campaigns per call",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "campaign_status"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "retries",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "campaigns",
+            "optional": false,
+            "type": "{ id?: string | number | null, account_id?: string | number | null, name?: string | number | null, template_id?: string | number | null, type?: string | number | null, trigger_date?: string | number | null, send_date?: string | number | null, trigger_offset?: string | number | null, created?: string | number | null, updated?: string | number | null, status?: string | number | null, recipients_group?: string | number | null, recipients_filter?: string | number | null, recipients_validated?: string | number | null, recipients?: string | number | null, recipients_not_valid?: string | number | null, dispatched?: string | number | null, cost?: string | number | null, voucher_code?: string | number | null, image?: string | number | null, size?: string | number | null }[]"
+          }
+        ]
+      },
+      "responseType": "{ webhook_id?: number | string | null, event: campaign_status, created: string, retries?: number | string | null, campaigns: { id?: string | number | null, account_id?: string | number | null, name?: string | number | null, template_id?: string | number | null, type?: string | number | null, trigger_date?: string | number | null, send_date?: string | number | null, trigger_offset?: string | number | null, created?: string | number | null, updated?: string | number | null, status?: string | number | null, recipients_group?: string | number | null, recipients_filter?: string | number | null, recipients_validated?: string | number | null, recipients?: string | number | null, recipients_not_valid?: string | number | null, dispatched?: string | number | null, cost?: string | number | null, voucher_code?: string | number | null, image?: string | number | null, size?: string | number | null }[] }",
+      "usageExample": "stannp({\n    webhookHooks: {\n        campaigns: {\n            status: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "stannp.webhooks.events.created",
+      "shortPath": "events.created",
+      "description": "A new recipient event was recorded; up to 50 events per call",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "recipient_events"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "retries",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      },
+      "responseType": "{ webhook_id?: number | string | null, event: recipient_events, created: string, retries?: number | string | null, events: Record<string, any>[] }",
+      "usageExample": "stannp({\n    webhookHooks: {\n        events: {\n            created: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "stannp.webhooks.mailpieces.status",
+      "shortPath": "mailpieces.status",
+      "description": "A mailpiece changed status: printing, dispatched, cancelled, local_delivery, delivered or returned; up to 50 mailpieces per call",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "mailpiece_status"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "retries",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "mailpieces",
+            "optional": false,
+            "type": "{ id?: number | string | null, account_id?: number | string | null, timestamp?: string | number | null, status?: string | number | null, type?: string | number | null, format?: string | number | null, pdf_file?: string | number | null, dispatched?: string | number | null, country?: string | number | null, cost?: number | string | null, addons?: string | number | null, tags?: string | number | null, template_id?: number | string | null, campaign_id?: number | string | null, recipient_id?: number | string | null, firstname?: string | number | null, lastname?: string | number | null, address1?: string | number | null, address2?: string | number | null, address3?: string | number | null, city?: string | number | null, county?: string | number | null, postcode?: string | number | null, zipcode?: string | number | null, transactional?: number | string | null, class?: number | string | null, updated?: string | number | null, mailpiece_id?: number | string | null, tracking_ref?: string | number | null, tracking?: Record<string, any>[] | null }[]"
+          }
+        ]
+      },
+      "responseType": "{ webhook_id?: number | string | null, event: mailpiece_status, created: string, retries?: number | string | null, mailpieces: { id?: number | string | null, account_id?: number | string | null, timestamp?: string | number | null, status?: string | number | null, type?: string | number | null, format?: string | number | null, pdf_file?: string | number | null, dispatched?: string | number | null, country?: string | number | null, cost?: number | string | null, addons?: string | number | null, tags?: string | number | null, template_id?: number | string | null, campaign_id?: number | string | null, recipient_id?: number | string | null, firstname?: string | number | null, lastname?: string | number | null, address1?: string | number | null, address2?: string | number | null, address3?: string | number | null, city?: string | number | null, county?: string | number | null, postcode?: string | number | null, zipcode?: string | number | null, transactional?: number | string | null, class?: number | string | null, updated?: string | number | null, mailpiece_id?: number | string | null, tracking_ref?: string | number | null, tracking?: Record<string, any>[] | null }[] }",
+      "usageExample": "stannp({\n    webhookHooks: {\n        mailpieces: {\n            status: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    },
+    {
+      "path": "stannp.webhooks.webhooks.testUrl",
+      "shortPath": "webhooks.testUrl",
+      "description": "Validation POST sent once when a webhook is created; the platform keeps the webhook only if this answers HTTP 200",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook_id",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "test_url"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "retries",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      },
+      "responseType": "{ webhook_id?: number | string | null, event: test_url, created: string, retries?: number | string | null }",
+      "usageExample": "stannp({\n    webhookHooks: {\n        webhooks: {\n            testUrl: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

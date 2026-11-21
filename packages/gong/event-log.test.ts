@@ -26,6 +26,7 @@ import { updateReminder } from './endpoints/tasks';
 import { getUser, listMultipleUsers } from './endpoints/users';
 
 jest.mock('corsair/http', () => ({
+	...jest.requireActual('corsair/http'),
 	ApiError: class ApiError extends Error {},
 	request: jest.fn(),
 }));

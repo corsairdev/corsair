@@ -1,11 +1,54 @@
 import { logEventFromContext } from 'corsair/core';
+import { resolveFileInput } from 'corsair/http';
+import { z } from 'zod';
 import type { CloudlayerEndpoints } from '..';
 import { makeCloudlayerRequest, makeCloudlayerSyncRequest } from '../client';
 import type { TemplateToImageOutput, TemplateToPdfOutput } from './types';
 import {
 	CloudlayerEndpointInputSchemas,
 	CloudlayerEndpointOutputSchemas,
+	TemplateMultipartInputSchema,
 } from './types';
+
+/**
+ * Most bytes taken from a link, base64 or a data: URL: core's download default,
+ * passed explicitly so inline base64 is held to it too (core caps it only when asked).
+ */
+const FILE_MAX_BYTES = 25 * 1024 * 1024;
+
+const InlineTemplateSchema = z.base64();
+
+/**
+ * The multipart form parts when the call uploads a template file, or undefined
+ * for the JSON form. A bare base64 string is the JSON body's inline template,
+ * which the input union matches first, so it stays JSON here too. A link or
+ * base64 object is fetched or decoded into a file; a Blob is sent as given.
+ */
+async function templateUploadForm(
+	input: unknown,
+): Promise<{ template: Blob; data: string } | undefined> {
+	const upload = TemplateMultipartInputSchema.safeParse(input);
+	if (!upload.success) return undefined;
+	const { template, data } = upload.data;
+	if (
+		typeof template === 'string' &&
+		InlineTemplateSchema.safeParse(template).success
+	) {
+		return undefined;
+	}
+	// cloudlayer.io documents no size limit for an uploaded template, so a link
+	// is held to core's default download cap.
+	const file =
+		template instanceof Blob
+			? template
+			: (
+					await resolveFileInput(template, {
+						maxBytes: FILE_MAX_BYTES,
+						fallbackName: 'template.html',
+					})
+				).file;
+	return { template: file, data: JSON.stringify(data) };
+}
 
 // https://cloudlayer.io/docs/template-to-pdf/ — POST /v2/template/pdf; async:false is JSON
 export const templateToPdf: CloudlayerEndpoints['template']['toPdf'] = async (
@@ -14,19 +57,14 @@ export const templateToPdf: CloudlayerEndpoints['template']['toPdf'] = async (
 ) => {
 	const parsedInput =
 		CloudlayerEndpointInputSchemas['template.toPdf'].parse(input);
+	const formData = await templateUploadForm(parsedInput);
 
 	const response =
-		parsedInput.template instanceof Blob
+		formData !== undefined
 			? await makeCloudlayerRequest<TemplateToPdfOutput>(
 					'/template/pdf',
 					ctx.key,
-					{
-						method: 'POST',
-						formData: {
-							template: parsedInput.template,
-							data: JSON.stringify(parsedInput.data),
-						},
-					},
+					{ method: 'POST', formData },
 				)
 			: 'async' in parsedInput && parsedInput.async === false
 				? await makeCloudlayerSyncRequest('/template/pdf', ctx.key, {
@@ -81,19 +119,14 @@ export const templateToImage: CloudlayerEndpoints['template']['toImage'] =
 	async (ctx, input) => {
 		const parsedInput =
 			CloudlayerEndpointInputSchemas['template.toImage'].parse(input);
+		const formData = await templateUploadForm(parsedInput);
 
 		const response =
-			parsedInput.template instanceof Blob
+			formData !== undefined
 				? await makeCloudlayerRequest<TemplateToImageOutput>(
 						'/template/image',
 						ctx.key,
-						{
-							method: 'POST',
-							formData: {
-								template: parsedInput.template,
-								data: JSON.stringify(parsedInput.data),
-							},
-						},
+						{ method: 'POST', formData },
 					)
 				: 'async' in parsedInput && parsedInput.async === false
 					? await makeCloudlayerSyncRequest('/template/image', ctx.key, {

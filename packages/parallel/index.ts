@@ -1,5 +1,6 @@
 import type {
 	BindEndpoints,
+	BindWebhooks,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
@@ -11,16 +12,30 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import {
+	createManagedPricingCredentialCache,
+	resolveManagedPricingApiKey,
+} from 'corsair/hub';
 import type { z } from 'zod';
 import { endpoints } from './endpoints';
 import { EndpointInputSchemas, EndpointOutputSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ParallelSchema } from './schema';
+import {
+	matchParallelWebhook,
+	ParallelWebhooks,
+	parallelWebhookSchemas,
+} from './webhooks';
 
 export type ParallelPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	/** `managed_pricing` runs on Corsair's Parallel account, billed in Corsair credits. */
+	authType?: PickAuth<'api_key' | 'managed_pricing'>;
 	key?: string;
+	/** The account webhook secret (`whsec_…`) from Parallel's Settings → Webhooks.
+	 * Without it, the stored webhook signature is used. */
+	webhookSecret?: string;
 	hooks?: InternalParallelPlugin['hooks'];
+	webhookHooks?: InternalParallelPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof endpoints>;
 };
@@ -29,6 +44,7 @@ export type ParallelContext = CorsairPluginContext<
 	ParallelPluginOptions
 >;
 export type ParallelBoundEndpoints = BindEndpoints<typeof endpoints>;
+export type ParallelBoundWebhooks = BindWebhooks<typeof ParallelWebhooks>;
 export const parallelEndpointSchemas = {
 	'monitors.create': {
 		input: EndpointInputSchemas['monitors.create'],
@@ -149,6 +165,18 @@ export const parallelEndpointSchemas = {
 	'places.search': {
 		input: EndpointInputSchemas['places.search'],
 		output: EndpointOutputSchemas['places.search'],
+	},
+	'flights.search': {
+		input: EndpointInputSchemas['flights.search'],
+		output: EndpointOutputSchemas['flights.search'],
+	},
+	'hotels.search': {
+		input: EndpointInputSchemas['hotels.search'],
+		output: EndpointOutputSchemas['hotels.search'],
+	},
+	'shopping.search': {
+		input: EndpointInputSchemas['shopping.search'],
+		output: EndpointOutputSchemas['shopping.search'],
 	},
 	'decisions.create': {
 		input: EndpointInputSchemas['decisions.create'],
@@ -282,6 +310,18 @@ const meta = {
 		riskLevel: 'read',
 		description: 'Search for places by location',
 	},
+	'flights.search': {
+		riskLevel: 'read',
+		description: 'Search one-way or round-trip flights with where to book them',
+	},
+	'hotels.search': {
+		riskLevel: 'read',
+		description: 'Search hotels and vacation rentals for a stay',
+	},
+	'shopping.search': {
+		riskLevel: 'read',
+		description: 'Search products to buy, linked to store product pages',
+	},
 	'decisions.create': {
 		riskLevel: 'destructive',
 		description: 'Answer grounded decision questions',
@@ -299,11 +339,16 @@ export const parallelAuthConfig = {
 	api_key: { account: [] as const },
 } as const satisfies PluginAuthConfig;
 const defaultAuthType = 'api_key' as const;
+
+// Short-lived keys Hub mints for Corsair's own Parallel account, one per
+// metered operation, cached until they expire.
+const parallelManagedPricingCache = createManagedPricingCredentialCache();
+
 export type BaseParallelPlugin<T extends ParallelPluginOptions> = CorsairPlugin<
 	'parallel',
 	typeof ParallelSchema,
 	typeof endpoints,
-	Record<string, never>,
+	typeof ParallelWebhooks,
 	T,
 	typeof defaultAuthType
 >;
@@ -322,26 +367,50 @@ export function parallel(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	// managed_pricing runs on Corsair's key, which core gets from Hub without
+	// asking the keyBuilder, so an explicit key would be dropped silently and
+	// the call billed to Corsair credits. The two can't both apply.
+	if (options.authType === 'managed_pricing' && options.key) {
+		throw new Error(
+			"parallel: `key` can't be used with authType 'managed_pricing', which runs on Corsair's Parallel key. Drop `key`, or use authType 'api_key' to call Parallel with your own key.",
+		);
+	}
 	return {
 		id: 'parallel',
 		authConfig: parallelAuthConfig,
 		schema: ParallelSchema,
 		options,
 		hooks: options.hooks,
+		webhookHooks: options.webhookHooks,
 		endpoints,
-		webhooks: {},
+		webhooks: ParallelWebhooks,
 		endpointMeta: meta,
 		endpointSchemas: parallelEndpointSchemas,
-		pluginWebhookMatcher: () => false,
+		webhookSchemas: parallelWebhookSchemas,
+		pluginWebhookMatcher: matchParallelWebhook,
 		pluginTenantWebhookMatcher: () => null,
 		oauthWebhookTenantLinkResolver: () => null,
 		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
+		// Endpoints: the explicit key, a key Hub mints on Corsair's account
+		// (managed_pricing), or the stored key. Webhooks: the webhook secret.
 		keyBuilder: async (
 			ctx: KeyBuilderContext<ParallelPluginOptions>,
 			source,
 		) => {
+			if (source === 'webhook') {
+				if (options.webhookSecret?.trim()) return options.webhookSecret;
+				if (ctx.authType !== 'api_key') return '';
+				return (await ctx.keys?.get_webhook_signature()) ?? '';
+			}
 			if (source !== 'endpoint') return '';
 			if (options.key?.trim()) return options.key;
+			if (ctx.authType === 'managed_pricing') {
+				return resolveManagedPricingApiKey(ctx, {
+					plugin: 'parallel',
+					cache: parallelManagedPricingCache,
+					operation: ctx.meteredOperationId,
+				});
+			}
 			const key = await ctx.keys?.get_api_key();
 			if (key?.trim()) return key;
 			throw new AuthMissingError('parallel', 'api_key');
@@ -353,6 +422,10 @@ export {
 	DecisionOutput,
 	ExtractInput,
 	ExtractOutput,
+	FlightSearchInput,
+	FlightSearchOutput,
+	HotelSearchInput,
+	HotelSearchOutput,
 	ImageSearchInput,
 	ImageSearchOutput,
 	MemoryClearInput,
@@ -363,4 +436,7 @@ export {
 	PlaceSearchOutput,
 	SearchInput,
 	SearchOutput,
+	ShoppingSearchInput,
+	ShoppingSearchOutput,
 } from './endpoints/types';
+export type { ParallelWebhookOutputs } from './webhooks';

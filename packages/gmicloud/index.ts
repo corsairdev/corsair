@@ -888,7 +888,7 @@ const gmicloudEndpointMeta = {
 	'sandboxFiles.download': {
 		riskLevel: 'read',
 		description:
-			'Download a file from a sandbox by absolute path; returns base64 content',
+			'Download a file from a sandbox by absolute path. On Corsair up to about 700 KB comes back inline as contentBase64 and a larger file comes back as fileId, a Files id; without a host that keeps files the content comes back inline up to 100 MB, or contentOmitted beyond it.',
 	},
 	'sandboxFiles.upload': {
 		riskLevel: 'write',

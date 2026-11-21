@@ -1,5 +1,6 @@
 import { createAccountKeyManager, createCorsair } from '../core';
 import type { CorsairPlugin } from '../core/plugins';
+import { getCallableProperty } from '../core/utils/callable';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { setupCorsair } from '../setup';
 import { createTestDatabase } from './setup-db';
@@ -33,9 +34,16 @@ const linearByo = {
 	authConfig: { oauth_2: { account: [] as const } },
 } as unknown as CorsairPlugin;
 
+// A stand-in plugin with only the fields delivery reads; a full CorsairPlugin needs endpoints and schemas this test never touches.
+const userScoped = {
+	id: 'userscoped',
+	options: { authType: 'managed' as const },
+	authConfig: { managed: { account: ['team_id', 'user_token'] as const } },
+} as unknown as CorsairPlugin;
+
 function makeCorsair(env: ReturnType<typeof createTestDatabase>) {
 	return createCorsair({
-		plugins: [linearByo],
+		plugins: [linearByo, userScoped],
 		database: env.db,
 		kek: KEK,
 	} as any);
@@ -114,5 +122,47 @@ describe('processManagedOAuthDelivery — BYO (oauth_2) mode', () => {
 		expect(setWebhookTenantLink).toHaveBeenCalledWith(
 			expect.objectContaining({ authType: 'oauth_2' }),
 		);
+	});
+
+	it('stores the user token only for a plugin that declares user_token', async () => {
+		env = createTestDatabase();
+		const corsair = makeCorsair(env);
+		await setupCorsair(corsair);
+		const database = getCorsairInternal(corsair).database!;
+
+		await processManagedOAuthDelivery(corsair, {
+			plugin: 'userscoped',
+			tenantId: 'default',
+			accessToken: 'app-token',
+			userAccessToken: 'user-token',
+		});
+		const userKm = createAccountKeyManager({
+			authType: 'managed',
+			integrationName: 'userscoped',
+			tenantId: 'default',
+			kek: KEK,
+			database,
+			extraAccountFields: ['team_id', 'user_token'],
+		});
+		expect(await userKm.get_access_token()).toBe('app-token');
+		expect(await getCallableProperty(userKm, 'get_user_token')?.()).toBe(
+			'user-token',
+		);
+
+		await processManagedOAuthDelivery(corsair, {
+			plugin: 'linear',
+			tenantId: 'default',
+			accessToken: 'lin_at',
+			userAccessToken: 'ignored',
+			authType: 'oauth_2',
+		});
+		const linearKm = createAccountKeyManager({
+			authType: 'oauth_2',
+			integrationName: 'linear',
+			tenantId: 'default',
+			kek: KEK,
+			database,
+		});
+		expect(await linearKm.get_access_token()).toBe('lin_at');
 	});
 });
