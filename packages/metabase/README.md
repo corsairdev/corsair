@@ -346,6 +346,7 @@ All 309 operations below are selected from routes with an official 2xx schema. I
 - `POST /api/metabot/slack/events` is excluded as an inbound Slack Events API receiver, not an outbound Metabase operation. Metabase describes it as responding to Slack activity; its OpenAPI has no request parameters/body schema and its success schema is an HTTP response envelope. Slack documents Events API as Slack calling the app’s public endpoint. See [Metabot in Slack](https://www.metabase.com/docs/latest/ai/metabot-slack) and [Slack Events API](https://docs.slack.dev/apis/events-api/).
 - The other 419 operations in the current OpenAPI document have no declared 2xx response schema. No response shape is invented for them; no separate first-party endpoint page with a complete alternative success contract was identified.
 - Some binary operations have route descriptions that specify files while the generated OpenAPI media/schema is generic or JSON-shaped. Per-operation docs note the source discrepancy; the adapter follows the explicit route description and caps returned bytes.
+- Metabase’s OpenAPI models three feedback operations as JSON wrappers around HTTP 204. Since 204 responses have no body, these endpoints validate and return `null` on success; the discrepancy is noted on each operation.
 - Metabase’s masked API-key schema contains an invalid ECMAScript regex; its description documents the prefix/masked-suffix shape, which the plugin validates instead.
 - Webhook receiver support was not requested; `webhooks` is empty.
 

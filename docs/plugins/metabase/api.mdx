@@ -9615,6 +9615,8 @@ await corsair.metabase.api.embedMcp.postFeedback({ "body": { "feedback": { "posi
 |------|------|----------|-------------|
 | `body` | `object` | No | — |
 
+The OpenAPI models a JSON response wrapper with status 204, but HTTP 204 responses have no body. The adapter returns and validates null for the successful empty response.
+
 <AccordionGroup>
 <Accordion title="body full type">
 
@@ -9637,13 +9639,7 @@ await corsair.metabase.api.embedMcp.postFeedback({ "body": { "feedback": { "posi
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `body` | `null` | Yes | — |
-| `status` | `204` | Yes | — |
-
+**Output:** `null`
 
 
 ---
@@ -12708,6 +12704,8 @@ await corsair.metabase.api.metabot.postFeedback({ "body": { "metabot_id": 1, "me
 |------|------|----------|-------------|
 | `body` | `object` | No | — |
 
+The OpenAPI models a JSON response wrapper with status 204, but HTTP 204 responses have no body. The adapter returns and validates null for the successful empty response.
+
 <AccordionGroup>
 <Accordion title="body full type">
 
@@ -12725,13 +12723,7 @@ await corsair.metabase.api.metabot.postFeedback({ "body": { "metabot_id": 1, "me
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `body` | `null` | Yes | — |
-| `status` | `204` | Yes | — |
-
+**Output:** `null`
 
 
 ---
@@ -12806,6 +12798,8 @@ await corsair.metabase.api.metabot.postSourceFeedback({ "body": { "metabot_id": 
 |------|------|----------|-------------|
 | `body` | `object` | No | — |
 
+The OpenAPI models a JSON response wrapper with status 204, but HTTP 204 responses have no body. The adapter returns and validates null for the successful empty response.
+
 <AccordionGroup>
 <Accordion title="body full type">
 
@@ -12823,13 +12817,7 @@ await corsair.metabase.api.metabot.postSourceFeedback({ "body": { "metabot_id": 
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `body` | `null` | Yes | — |
-| `status` | `204` | Yes | — |
-
+**Output:** `null`
 
 
 ---

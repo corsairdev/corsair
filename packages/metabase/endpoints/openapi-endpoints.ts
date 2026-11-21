@@ -4716,7 +4716,7 @@ const openApiInput164 = z
 			.optional(),
 	})
 	.strict();
-const openApiOutput164 = z.object({ body: z.null(), status: z.literal(204) });
+const openApiOutput164 = z.null();
 const openApiEndpoint164 = createMetabaseEndpoint(
 	'embedMcp.postFeedback',
 	openApiInput164,
@@ -6357,7 +6357,7 @@ const openApiInput216 = z
 			.optional(),
 	})
 	.strict();
-const openApiOutput216 = z.object({ body: z.null(), status: z.literal(204) });
+const openApiOutput216 = z.null();
 const openApiEndpoint216 = createMetabaseEndpoint(
 	'metabot.postFeedback',
 	openApiInput216,
@@ -6456,7 +6456,7 @@ const openApiInput220 = z
 			.optional(),
 	})
 	.strict();
-const openApiOutput220 = z.object({ body: z.null(), status: z.literal(204) });
+const openApiOutput220 = z.null();
 const openApiEndpoint220 = createMetabaseEndpoint(
 	'metabot.postSourceFeedback',
 	openApiInput220,
@@ -15049,7 +15049,7 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 				conversation_data: { source: 'mcp' },
 			},
 		},
-		output: { status: 204, body: null },
+		output: null,
 		expectedOptions: {
 			method: 'POST',
 			body: {
@@ -16170,7 +16170,7 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		method: 'POST',
 		path: '/api/metabot/feedback',
 		input: { body: { metabot_id: 1, message_id: 'a', positive: false } },
-		output: { status: 204, body: null },
+		output: null,
 		expectedOptions: {
 			method: 'POST',
 			body: { metabot_id: 1, message_id: 'a', positive: false },
@@ -16265,7 +16265,7 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 				positive: false,
 			},
 		},
-		output: { status: 204, body: null },
+		output: null,
 		expectedOptions: {
 			method: 'POST',
 			body: {

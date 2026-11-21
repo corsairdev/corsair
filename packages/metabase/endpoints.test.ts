@@ -424,5 +424,37 @@ describe('Metabase collection operations', () => {
 				},
 			);
 		});
+
+		it('accepts empty HTTP 204 responses for feedback operations', async () => {
+			const feedbackRoutes = MetabaseOpenApiTestCases.filter((route) =>
+				[
+					'embedMcp.postFeedback',
+					'metabot.postFeedback',
+					'metabot.postSourceFeedback',
+				].includes(route.shortPath),
+			);
+			expect(feedbackRoutes).toHaveLength(3);
+
+			const fetchMock = jest
+				.spyOn(globalThis, 'fetch')
+				.mockResolvedValue(new Response(null, { status: 204 }));
+			const actualClient =
+				jest.requireActual<typeof import('./client')>('./client');
+			mockedRequest.mockImplementation(actualClient.makeMetabaseRequest);
+
+			for (const route of feedbackRoutes) {
+				expect(route.output).toBeNull();
+				await expect(route.invoke(context, route.input)).resolves.toBeNull();
+			}
+
+			expect(fetchMock).toHaveBeenCalledTimes(3);
+			expect(
+				fetchMock.mock.calls.map(([url]) => new URL(String(url)).pathname),
+			).toEqual([
+				'/api/embed-mcp/feedback',
+				'/api/metabot/feedback',
+				'/api/metabot/source-feedback',
+			]);
+		});
 	});
 });
