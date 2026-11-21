@@ -57,6 +57,7 @@ export function compactQuery(
  * Provider text kept on a sanitized error only when it carries no email
  * address, bearer token or long token-like value.
  */
+// `unknown` because provider error fields are untyped JSON and are checked here before use.
 function safeProviderText(value: unknown): string | undefined {
 	if (typeof value !== 'string' || value.length === 0 || value.length > 300) {
 		return undefined;
