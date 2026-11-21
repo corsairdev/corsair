@@ -2,6 +2,7 @@ import { createHmac } from 'node:crypto';
 import { webhookEvent } from './test-fixtures';
 import { event } from './webhooks';
 import {
+	matchPaystackEvent,
 	matchPaystackWebhook,
 	PaystackWebhookPayloadSchema,
 	parseCurrentSignature,
@@ -203,6 +204,12 @@ describe('matchPaystackWebhook', () => {
 		expect(
 			matchPaystackWebhook(rawRequest([webhookEvent], signed) as never),
 		).toBe(false);
+	});
+});
+
+describe('matchPaystackEvent', () => {
+	it('matches a Hub-routed delivery without signature headers', () => {
+		expect(matchPaystackEvent(rawRequest(webhookEvent) as never)).toBe(true);
 	});
 });
 

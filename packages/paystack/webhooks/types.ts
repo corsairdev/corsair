@@ -165,9 +165,19 @@ export type PaystackWebhookPayload = z.infer<typeof PaystackEventSchema>;
 // ── Matching ───────────────────────────────────────────────────────────────
 
 /**
- * Paystack sends every event type to the one endpoint configured in the
- * dashboard. Other providers also post `{ event: ... }` bodies (Zoom), so a
- * delivery only matches when it carries one of Paystack's signature headers.
+ * The event webhook's matcher: the documented `{ event }` envelope. Hub-routed
+ * deliveries reach it already verified, possibly without signature headers.
+ */
+export function matchPaystackEvent(request: RawWebhookRequest): boolean {
+	const body = readBodyRecord(request);
+	return body !== null && typeof body.event === 'string';
+}
+
+/**
+ * Plugin-level matcher for unhinted dispatch. Paystack sends every event type
+ * to the one endpoint configured in the dashboard. Other providers also post
+ * `{ event: ... }` bodies (Zoom), so a direct delivery only matches when it
+ * carries one of Paystack's signature headers.
  * A body parsed by processWebhook is an object here (readBodyRecord returns
  * null otherwise).
  */

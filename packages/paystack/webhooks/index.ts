@@ -3,7 +3,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { PaystackContext } from '..';
 import type { PaystackWebhookPayload } from './types';
 import {
-	matchPaystackWebhook,
+	matchPaystackEvent,
 	PaystackWebhookPayloadSchema,
 	verifyPaystackWebhook,
 } from './types';
@@ -37,7 +37,7 @@ export const event: CorsairWebhook<
 	PaystackWebhookPayload,
 	PaystackWebhookPayload
 > = {
-	match: matchPaystackWebhook,
+	match: matchPaystackEvent,
 	handler: async (ctx, request) => {
 		const verification = verifyPaystackWebhook(request, ctx.key);
 		if (!verification.valid) {
