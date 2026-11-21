@@ -4104,6 +4104,15 @@
                 ]
               },
               {
+                "group": "Parsio",
+                "pages": [
+                  "plugins/parsio/overview",
+                  "plugins/parsio/api",
+                  "plugins/parsio/database",
+                  "plugins/parsio/webhooks"
+                ]
+              },
+              {
                 "group": "PDF-API.io",
                 "pages": [
                   "plugins/pdfapi/overview",
