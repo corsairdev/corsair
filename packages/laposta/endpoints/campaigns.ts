@@ -78,7 +78,7 @@ export const campaigns = {
 		// unknown because raw API response is unvalidated before Zod parsing.
 		const raw = await makeLapostaRequest<unknown>('/campaign', ctx.key, {
 			method: 'POST',
-			body: parsedInput,
+			body: withCampaignListIds(parsedInput),
 		});
 		return CreateCampaignOutputSchema.parse(raw);
 	},
@@ -94,7 +94,7 @@ export const campaigns = {
 		const raw = await makeLapostaRequest<unknown>(
 			`/campaign/${encodeURIComponent(campaign_id)}`,
 			ctx.key,
-			{ method: 'POST', body },
+			{ method: 'POST', body: withCampaignListIds(body) },
 		);
 		return UpdateCampaignOutputSchema.parse(raw);
 	},
@@ -208,3 +208,23 @@ export const campaigns = {
 		return SendTestCampaignOutputSchema.parse(raw);
 	},
 };
+
+/**
+ * Whole lists stay `list_ids[]=<id>`. With segments, Laposta takes a keyed form:
+ * `list_ids[0]=<list>` for a whole list and `list_ids[<list>][]=<segment>` per segment
+ * (checked against the live API on 11-21).
+ */
+function withCampaignListIds<
+	T extends { list_ids?: (string | Record<string, string[]>)[] },
+>(body: T): Omit<T, 'list_ids'> & { list_ids?: unknown } {
+	const { list_ids } = body;
+	if (!list_ids || list_ids.every((entry) => typeof entry === 'string')) {
+		return body;
+	}
+	const keyed: Record<string, string | string[]> = {};
+	list_ids.forEach((entry, index) => {
+		if (typeof entry === 'string') keyed[String(index)] = entry;
+		else Object.assign(keyed, entry);
+	});
+	return { ...body, list_ids: keyed };
+}

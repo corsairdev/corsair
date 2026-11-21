@@ -871,6 +871,21 @@ export type GetCampaignHistoryOutput = z.infer<
 	typeof GetCampaignHistoryOutputSchema
 >;
 
+/**
+ * Campaign recipients: a whole list by ID, or a list ID mapped to the segment IDs to send to.
+ */
+const CampaignListIdsSchema = z
+	.array(
+		z.union([
+			z.string().min(1),
+			z.record(z.string().min(1), z.array(z.string().min(1)).min(1)),
+		]),
+	)
+	.min(1)
+	.describe(
+		"List IDs, or { '<list_id>': ['<segment_id>', ...] } entries to send to segments of a list",
+	);
+
 export const CreateCampaignInputSchema = z
 	.object({
 		type: z.literal('regular'),
@@ -881,7 +896,7 @@ export const CreateCampaignInputSchema = z
 			.object({ name: z.string().min(1).max(255), email: z.string().email() })
 			.strict(),
 		reply_to: z.string().email().optional(),
-		list_ids: z.array(z.string().min(1)).min(1),
+		list_ids: CampaignListIdsSchema,
 		stats: z.object({ ga: z.boolean() }).strict().optional(),
 	})
 	.strict();
@@ -905,7 +920,7 @@ export const UpdateCampaignInputSchema = z
 			.refine(({ name, email }) => name !== undefined || email !== undefined)
 			.optional(),
 		reply_to: z.string().email().optional(),
-		list_ids: z.array(z.string().min(1)).min(1).optional(),
+		list_ids: CampaignListIdsSchema.optional(),
 		stats: z.object({ ga: z.boolean() }).strict().optional(),
 	})
 	.strict()

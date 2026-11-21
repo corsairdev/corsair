@@ -520,6 +520,22 @@ const endpointCases: EndpointCase[] = [
 		},
 	},
 	{
+		name: 'campaigns.create with a segment of one list and a whole second list',
+		method: 'POST',
+		path: '/v2/campaign',
+		response: { campaign },
+		run: () =>
+			api.campaigns.create({
+				type: 'regular',
+				name: 'Monthly news',
+				subject: 'Updates',
+				from: { name: 'Example', email: 'sender@example.net' },
+				list_ids: ['list-2', { 'list-1': ['segment-1', 'segment-2'] }],
+			}),
+		form: { 'list_ids[0]': 'list-2' },
+		formRepeated: { 'list_ids[list-1][]': ['segment-1', 'segment-2'] },
+	},
+	{
 		name: 'campaigns.get',
 		method: 'GET',
 		path: '/v2/campaign/campaign-1',
@@ -534,6 +550,18 @@ const endpointCases: EndpointCase[] = [
 		run: () =>
 			api.campaigns.update({ campaign_id: 'campaign-1', subject: 'Updated' }),
 		form: { subject: 'Updated' },
+	},
+	{
+		name: 'campaigns.update with segment recipients',
+		method: 'POST',
+		path: '/v2/campaign/campaign-1',
+		response: { campaign },
+		run: () =>
+			api.campaigns.update({
+				campaign_id: 'campaign-1',
+				list_ids: [{ 'list-1': ['segment-1'] }],
+			}),
+		formRepeated: { 'list_ids[list-1][]': ['segment-1'] },
 	},
 	{
 		name: 'campaigns.delete',
