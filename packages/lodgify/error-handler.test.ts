@@ -70,6 +70,11 @@ describe('Lodgify errorHandlers', () => {
 
 		const err422 = apiError(422, 'Unprocessable Entity');
 		expect(route(err422)).toBe('BAD_REQUEST_ERROR');
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(
+				apiError(422, '429 rate limit text'),
+			),
+		).toBe(false);
 		await expect(errorHandlers.BAD_REQUEST_ERROR.handler()).resolves.toEqual({
 			maxRetries: 0,
 		});

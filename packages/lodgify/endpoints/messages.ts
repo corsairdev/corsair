@@ -8,26 +8,20 @@ import {
 
 export const list: LodgifyEndpoints['messages.list'] = async (ctx, input) => {
 	const parsedInput = LodgifyEndpointInputSchemas['messages.list'].parse(input);
-	const query: Record<string, string | number | boolean | undefined> = {};
-	if (parsedInput.page !== undefined) query.page = parsedInput.page;
-	if (parsedInput.size !== undefined) query.size = parsedInput.size;
-	if (parsedInput.thread_id !== undefined)
-		query.thread_id = parsedInput.thread_id;
-	if (parsedInput.booking_id !== undefined)
-		query.booking_id = parsedInput.booking_id;
 
 	// `unknown` because provider API response is untrusted until parsed by Zod schema
-	const response: unknown = await makeLodgifyRequest('/v2/messages', ctx.key, {
-		method: 'GET',
-		query,
-	});
+	const response: unknown = await makeLodgifyRequest(
+		`/v2/messaging/${encodeURIComponent(parsedInput.threadGuid)}`,
+		ctx.key,
+		{ method: 'GET' },
+	);
 
 	const parsed = LodgifyEndpointOutputSchemas['messages.list'].parse(response);
 
 	await logEventFromContext(
 		ctx,
 		'lodgify.messages.list',
-		{ count: parsed.items.length },
+		{ count: parsed.length },
 		'completed',
 	);
 
@@ -36,11 +30,13 @@ export const list: LodgifyEndpoints['messages.list'] = async (ctx, input) => {
 
 export const send: LodgifyEndpoints['messages.send'] = async (ctx, input) => {
 	const parsedInput = LodgifyEndpointInputSchemas['messages.send'].parse(input);
+	const { inboxType, id, ...message } = parsedInput;
+	const path = `/v1/reservation/${inboxType}/${encodeURIComponent(String(id))}/messages`;
 
 	// `unknown` because provider API response is untrusted until parsed by Zod schema
-	const response: unknown = await makeLodgifyRequest('/v2/messages', ctx.key, {
+	const response: unknown = await makeLodgifyRequest(path, ctx.key, {
 		method: 'POST',
-		body: parsedInput,
+		body: [message],
 	});
 
 	const parsed = LodgifyEndpointOutputSchemas['messages.send'].parse(response);
@@ -48,7 +44,7 @@ export const send: LodgifyEndpoints['messages.send'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'lodgify.messages.send',
-		{ success: true },
+		{ inboxType, reservationId: id },
 		'completed',
 	);
 

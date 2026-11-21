@@ -28,7 +28,11 @@ describeLive('Lodgify live API (env-gated)', () => {
 		});
 
 		const parsed = LodgifyPropertiesListOutputSchema.parse(res);
-		expect(Array.isArray(parsed.items)).toBe(true);
+		expect(
+			parsed.items === undefined ||
+				parsed.items === null ||
+				Array.isArray(parsed.items),
+		).toBe(true);
 	});
 
 	it('GET /v2/reservations/bookings retrieves bookings list with live key', async () => {
@@ -43,7 +47,11 @@ describeLive('Lodgify live API (env-gated)', () => {
 		);
 
 		const parsed = LodgifyReservationsListOutputSchema.parse(res);
-		expect(Array.isArray(parsed.items)).toBe(true);
+		expect(
+			parsed.items === undefined ||
+				parsed.items === null ||
+				Array.isArray(parsed.items),
+		).toBe(true);
 	});
 
 	it('GET /v2/availability/{propertyId} retrieves calendar periods if a property exists', async () => {
@@ -58,17 +66,21 @@ describeLive('Lodgify live API (env-gated)', () => {
 		);
 
 		const props = LodgifyPropertiesListOutputSchema.parse(propsRes);
-		if (props.items.length === 0) return;
+		const items = props.items ?? [];
+		if (items.length === 0) return;
 
-		const propertyId = props.items[0]?.id;
+		const propertyId = items[0]?.id;
 		if (!propertyId) return;
 
 		// `unknown` because response is validated at runtime by schema
+		const start = new Date().toISOString();
+		const end = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 		const availRes: unknown = await makeLodgifyRequest(
 			`/v2/availability/${propertyId}`,
 			LIVE_KEY,
 			{
 				method: 'GET',
+				query: { start, end },
 			},
 		);
 

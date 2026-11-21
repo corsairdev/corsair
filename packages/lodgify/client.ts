@@ -29,97 +29,32 @@ export const LODGIFY_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	headerNames: { retryAfter: 'retry-after' },
 };
 
-const SENSITIVE_FIELD_NAMES = new Set([
-	'apikey',
-	'api_key',
-	'key',
-	'token',
-	'secret',
-	'password',
-	'authorization',
-	'xapikey',
-	'x-apikey',
-]);
-
-function isSensitiveField(field: string): boolean {
-	const normalized = field.toLowerCase().replace(/[-_]/g, '');
-	return SENSITIVE_FIELD_NAMES.has(normalized);
+function clearObject(value: object): void {
+	for (const key of Reflect.ownKeys(value)) {
+		Reflect.deleteProperty(value, key);
+	}
 }
 
-// `unknown` because request and response payloads are arbitrary JSON values traversed recursively
-function sanitizeValue(value: unknown, secrets: string[]): unknown {
-	if (typeof value === 'string') {
-		let result = value;
-		for (const secret of secrets) {
-			if (secret.length >= 4) {
-				result = result.split(secret).join('[REDACTED]');
-			}
-		}
-		return result;
-	}
-	if (Array.isArray(value)) {
-		// `unknown` because array elements may be of any JSON value
-		return value.map((item: unknown) => sanitizeValue(item, secrets));
-	}
-	if (value !== null && typeof value === 'object') {
-		// `unknown` because record values need recursive sanitization
-		const record = value as Record<string, unknown>;
-		const sanitized: Record<string, unknown> = {};
-		for (const [k, v] of Object.entries(record)) {
-			if (isSensitiveField(k)) {
-				sanitized[k] = '[REDACTED]';
-			} else {
-				sanitized[k] = sanitizeValue(v, secrets);
-			}
-		}
-		return sanitized;
-	}
-	return value;
-}
-
-// `unknown` because untrusted error is checked at runtime
-export function sanitizeApiError<T>(error: T, apiKey?: string): T {
+// `unknown` because the provider's error body is untrusted and may contain guest data.
+export function sanitizeApiError<T>(error: T, _apiKey?: string): T {
 	if (!(error instanceof ApiError)) return error;
 
-	const secrets: string[] = [];
-	if (apiKey && apiKey.length >= 4) {
-		secrets.push(apiKey);
-	}
-
-	if (typeof error.message === 'string') {
-		error.message = sanitizeValue(error.message, secrets) as string;
-	}
-
-	if (typeof error.url === 'string') {
-		error.url = error.url.split('?')[0] ?? error.url;
-	}
-
+	// Keep Corsair's ApiError instance, status and Retry-After intact. Its diagnostic
+	// payloads can echo guest PII, so remove payload fields and replace free text.
+	error.message = `Lodgify request failed (HTTP ${error.status})`;
+	error.stack = `${error.name}: Lodgify request failed (HTTP ${error.status})`;
 	if (error.request) {
-		if (typeof error.request.url === 'string') {
-			error.request.url = error.request.url.split('?')[0] ?? error.request.url;
-		}
-		if (error.request.headers) {
-			// `unknown` because header values can be arbitrary primitives
-			error.request.headers = sanitizeValue(
-				error.request.headers,
-				secrets,
-			) as Record<string, string>;
-		}
-		if (error.request.body) {
-			// `unknown` because body shape is dynamic
-			error.request.body = sanitizeValue(error.request.body, secrets) as
-				| Record<string, unknown>
-				| undefined;
+		if (error.request.headers) clearObject(error.request.headers);
+		if (error.request.body && typeof error.request.body === 'object') {
+			clearObject(error.request.body);
+		} else {
+			Reflect.deleteProperty(error.request, 'body');
 		}
 	}
-
-	if (error.body) {
-		// `unknown` because response body shape is dynamic
-		error.body = sanitizeValue(error.body, secrets);
-	}
-
-	if (error.stack) {
-		error.stack = sanitizeValue(error.stack, secrets) as string;
+	if (error.body && typeof error.body === 'object') {
+		clearObject(error.body);
+	} else {
+		Reflect.deleteProperty(error, 'body');
 	}
 
 	return error;
@@ -130,8 +65,8 @@ export async function makeLodgifyRequest<T>(
 	apiKey?: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		// `unknown` because endpoint request body is validated by input schemas before send
-		body?: Record<string, unknown> | unknown;
+		// `unknown` because JSON request bodies vary by operation and schemas validate them first.
+		body?: unknown;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
@@ -177,9 +112,8 @@ export async function makeLodgifyRequest<T>(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) throw sanitizeApiError(error, apiKey);
-		if (error instanceof Error) {
-			throw new LodgifyAPIError(error.message);
-		}
+		if (error instanceof Error)
+			throw new LodgifyAPIError('Lodgify request failed');
 		throw new LodgifyAPIError('Unknown Lodgify error');
 	}
 }

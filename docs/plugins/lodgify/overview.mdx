@@ -1,16 +1,16 @@
 ---
 title: "Lodgify plugin"
 sidebarTitle: "Overview"
-description: "Manage vacation rental properties, room types, reservations, guest communications, quotes, and availability calendars via the Lodgify API."
+description: "Manage vacation rental properties, rooms, rates, availability, bookings, enquiries, guest details, and messages through Lodgify's documented REST API."
 ---
 
 Use **Lodgify** through Corsair: one client, typed API calls.
 
-Lodgify API endpoints require authentication via an account API key passed in the `X-ApiKey` header. API access is available on Lodgify Pro and Enterprise tiers. The tenant must configure their API key before authenticated calls can be made.
+Lodgify API endpoints require an account API key passed in the `X-ApiKey` header. API access is available on Lodgify Pro and Enterprise tiers. If a key is missing, Corsair throws `AuthMissingError` with a connect link for the caller to display. Guest records are embedded in booking and enquiry operations; Lodgify does not document a standalone guest collection. Webhook payloads are documented, but webhook support is outside this PR's requested scope.
 
 **What you get:**
 
-- 10 typed API operations
+- 24 typed API operations
 
 ## Setup
 
@@ -104,15 +104,22 @@ await tenant.lodgify.api.properties.list({ page: 1, size: 10 });
 ```
 
 
-**Create a reservation**
+**Create a booking**
 
 ```ts
 const tenant = corsair.withTenant('acme');
 await tenant.lodgify.api.reservations.create({
 	property_id: 101,
-	arrival: '2026-06-01',
-	departure: '2026-06-07',
-	guest: { first_name: 'Jane', last_name: 'Doe', email: 'jane@example.com' },
+	arrival: '2026-06-01T00:00:00Z',
+	departure: '2026-06-07T00:00:00Z',
+	rooms: [{
+		room_type_id: 201,
+		guest_breakdown: { adults: 2 },
+	}],
+	guest: {
+		guest_name: { first_name: 'Jane', last_name: 'Doe' },
+		email: 'jane@example.com',
+	},
 });
 ```
 

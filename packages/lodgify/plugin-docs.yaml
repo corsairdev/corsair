@@ -1,11 +1,14 @@
 displayName: Lodgify
-description: Manage vacation rental properties, room types, reservations, guest communications, quotes, and availability calendars via the Lodgify API.
+description: Manage vacation rental properties, rooms, rates, availability, bookings, enquiries, guest details, and messages through Lodgify's documented REST API.
 domain: lodgify.com
 overviewNote: >-
-  Lodgify API endpoints require authentication via an account API key passed in
-  the `X-ApiKey` header. API access is available on Lodgify Pro and Enterprise
-  tiers. The tenant must configure their API key before authenticated calls can
-  be made.
+  Lodgify API endpoints require an account API key passed in the `X-ApiKey`
+  header. API access is available on Lodgify Pro and Enterprise tiers. If a key
+  is missing, Corsair throws `AuthMissingError` with a connect link for the
+  caller to display. Guest records are embedded in booking and enquiry
+  operations; Lodgify does not document a standalone guest collection. Webhook
+  payloads are documented, but webhook support is outside this PR's requested
+  scope.
 examples:
   read:
     path: properties.list
@@ -15,14 +18,19 @@ examples:
       size: 10
   write:
     path: reservations.create
-    title: Create a reservation
+    title: Create a booking
     args:
       property_id: 101
-      arrival: '2026-06-01'
-      departure: '2026-06-07'
+      arrival: '2026-06-01T00:00:00Z'
+      departure: '2026-06-07T00:00:00Z'
+      rooms:
+        - room_type_id: 201
+          guest_breakdown:
+            adults: 2
       guest:
-        first_name: Jane
-        last_name: Doe
+        guest_name:
+          first_name: Jane
+          last_name: Doe
         email: jane@example.com
 apiExamples:
   properties.list:
@@ -33,60 +41,169 @@ apiExamples:
     id: 101
   properties.getRooms:
     id: 101
+  properties.getDeleted:
+    deletedSince: '2026-01-01T00:00:00Z'
+  properties.getAddons:
+    id: 101
+    start: '2026-06-01T00:00:00Z'
+    end: '2026-06-10T00:00:00Z'
+    rid: 201
+  properties.getPayments:
+    id: 101
   reservations.list:
     page: 1
     size: 10
     includeCount: true
+    includeTransactions: false
+  reservations.listInbox:
+    offset: 0
+    limit: 10
+    propertyId: 101
   reservations.get:
     id: 501
+  reservations.getEnquiry:
+    id: 502
   reservations.create:
     property_id: 101
-    arrival: '2026-06-01'
-    departure: '2026-06-07'
+    arrival: '2026-06-01T00:00:00Z'
+    departure: '2026-06-07T00:00:00Z'
+    rooms:
+      - room_type_id: 201
+        guest_breakdown:
+          adults: 2
     guest:
-      first_name: Jane
-      last_name: Doe
+      guest_name:
+        first_name: Jane
+        last_name: Doe
       email: jane@example.com
-    room_types:
-      - id: 201
-        people: 2
-    total_amount: 1200
+  reservations.createEnquiry:
+    guest_breakdown:
+      adults: 2
+    property_id: 101
+    guest:
+      guest_name:
+        first_name: Jane
+      email: jane@example.com
+  reservations.unreadCount: {}
   availability.get:
     propertyId: 101
-    from: '2026-06-01'
-    to: '2026-06-10'
-  quotes.calculate:
+    from: '2026-06-01T00:00:00Z'
+    to: '2026-06-10T00:00:00Z'
+  availability.getAll:
+    from: '2026-06-01T00:00:00Z'
+    to: '2026-06-10T00:00:00Z'
+  availability.getRoomType:
+    propertyId: 101
+    roomTypeId: 201
+    from: '2026-06-01T00:00:00Z'
+    to: '2026-06-10T00:00:00Z'
+  availability.set:
+    propertyId: 101
+    roomTypeId: 201
+    period_start: '2026-06-01T00:00:00Z'
+    period_end: '2026-06-10T00:00:00Z'
+    available: 2
+  rates.calendar:
+    houseId: 101
+    roomTypeId: 201
+    startDate: '2026-06-01'
+    endDate: '2026-06-10'
+  rates.calendarSimple:
+    houseId: 101
+    roomTypeId: 201
+    startDate: '2026-06-01'
+    endDate: '2026-06-10'
+  rates.settings:
+    houseId: 101
+  rates.update:
     property_id: 101
-    arrival: '2026-06-01'
-    departure: '2026-06-05'
-    guests: 2
+    room_type_id: 201
+    rates:
+      - is_default: true
+        price_per_day: 150
+        min_stay: 2
+        max_stay: 30
+        price_per_additional_guest: 10
+        additional_guests_starts_from: 3
+  quotes.calculate:
+    propertyId: 101
+    arrival: '2026-06-01T00:00:00Z'
+    departure: '2026-06-05T00:00:00Z'
+    roomTypes:
+      - id: 201
+        guest_breakdown:
+          adults: 2
   messages.list:
-    page: 1
-    size: 10
-    thread_id: thread-123
-  messages.send:
-    message: Welcome to your stay! Check-in instructions have been sent.
-    thread_id: thread-123
-    subject: Check-in instructions
+    threadGuid: 550e8400-e29b-41d4-a716-446655440000
+  messages.send: {}
 apiNotes:
   properties.list: >-
-    Returns a paged list of properties. Query parameters `page` and `size` control
-    pagination, and `includeCount` includes the total count.
+    Returns a page of properties using Lodgify v2 pagination parameters. Optional
+    `wid`, `updatedSince`, `includeCount`, and `includeInOut` parameters are forwarded.
   properties.get: >-
-    Returns detailed configuration and settings for a specific vacation rental property by ID.
+    Returns property details. Optional `wid` and `includeInOut` parameters are
+    forwarded to Lodgify.
   properties.getRooms: >-
-    Returns the room types and units configured for the specified property.
+    Returns room-type details for the property. Optional website-localized `wid`
+    is forwarded to Lodgify.
+  properties.getDeleted: >-
+    Returns integer property IDs deleted since the optional `deletedSince` date.
+  properties.getAddons: >-
+    Returns available add-ons for the property. Optional stay dates and room type
+    narrow the add-ons returned.
+  properties.getPayments: >-
+    Returns the payment settings available to bookings for the specified property.
   reservations.list: >-
-    Returns bookings filtered by `stayFilter` (Upcoming, Current, Historic, All) and updated timestamp.
+    V2 booking pagination uses `page` and `size`; supported filters include
+    `stayFilter`, `stayFilterDate`, `updatedSince`, `trash`, and response detail
+    flags.
+  reservations.listInbox: >-
+    The v1 inbox returns a paged result with `offset`, `limit` (maximum 50),
+    `total`, `next`, and `previous`. Results may include bookings and enquiries.
   reservations.get: >-
-    Returns complete booking details including guest information and stay dates for a specific reservation.
+    Returns v2 booking details, including embedded guest and room information.
+  reservations.getEnquiry: >-
+    Returns v1 enquiry details and its embedded guest record.
   reservations.create: >-
-    Creates a new reservation or booking on the specified property.
+    Creates a v1 booking and returns its integer ID. Optional `from` upgrades an
+    existing enquiry and is sent as a query parameter. A guest with `guest_name`
+    and at least one room with `guest_breakdown` are required by the API model.
+  reservations.createEnquiry: >-
+    Creates a v1 enquiry and returns its integer ID. Lodgify requires
+    `guest_breakdown`; guest details are nested in the documented `guest` model.
+  reservations.unreadCount: >-
+    Returns the integer count from the v1 `/reservation/not_read` endpoint.
   availability.get: >-
-    Returns the calendar availability periods and booking states for the specified property over a date range.
+    Reads all room-type calendars for one property. Input `from` and `to` map to
+    the documented `start` and `end` query parameters; both are required.
+  availability.getAll: >-
+    Reads calendars for all properties with required `start` and `end` query
+    parameters. `includeDetails` is optional.
+  availability.getRoomType: >-
+    Reads one room-type calendar for a property. Input `from` and `to` map to
+    the documented `start` and `end` query parameters.
+  availability.set: >-
+    Updates the number of available units for a room type via the documented v1
+    `POST /availability/{propertyId}/{roomTypeId}/set` body.
+  rates.calendar: >-
+    Requires house, room-type, start-date, and end-date query parameters; the end
+    date is inclusive in Lodgify's documented contract.
+  rates.calendarSimple: >-
+    Returns the simplified v1 nightly calendar. Use `rates.calendar` for the
+    v2 response, which also includes rate settings and additional pricing fields.
+  rates.settings: >-
+    Returns documented booking, fee, tax, and promotion settings. The API's
+    `houseId` query parameter is optional.
+  rates.update: >-
+    Posts v1 ranged-rate data to `/rates/savewithoutavailability`; default rates
+    cannot include date bounds and date ranges use an exclusive end date.
   quotes.calculate: >-
-    Calculates stay rates, grand totals, and extra fees for a requested date range and guest count.
+    Uses v2 `GET /quote/{propertyId}`. Room and add-on lists are encoded as
+    zero-indexed bracket query fields; at least one room type is required.
   messages.list: >-
-    Retrieves guest messaging threads and conversations.
+    Retrieves a single v2 messaging thread by UUID. The provider does not
+    document a `/v2/messages` collection route.
   messages.send: >-
-    Sends a message to a guest or messaging thread.
+    Sends one v1 message to either a booking or an enquiry. The required
+    `inboxType` selects the documented path; the request body is a one-element
+    array. The API documents a 200 response without a body.

@@ -116,39 +116,42 @@ describe('makeLodgifyRequest', () => {
 		const rawError = new ApiError(
 			{
 				method: 'POST',
-				url: '/v2/reservations/bookings?token=12345',
+				url: '/v2/reservations/bookings',
 				body: { apikey: secretKey, guest: { name: 'Alice' } },
 				headers: { 'X-ApiKey': secretKey },
 			},
 			{
-				url: 'https://api.lodgify.com/v2/reservations/bookings?token=12345',
+				url: 'https://api.lodgify.com/v2/reservations/bookings',
 				ok: false,
-				status: 400,
-				statusText: 'Bad Request',
+				status: 429,
+				statusText: 'Too Many Requests',
 				body: {
 					message: `Invalid request with key ${secretKey}`,
 					secret: 'hidden-secret',
 				},
 			},
 			`Error with key ${secretKey}`,
+			{ retryAfter: 3500 },
 		);
 
 		const sanitized = sanitizeApiError(rawError, secretKey);
 
-		expect(sanitized.message).not.toContain(secretKey);
-		expect(sanitized.message).toContain('[REDACTED]');
+		expect(sanitized.message).toBe('Lodgify request failed (HTTP 429)');
+		expect(sanitized.stack).not.toContain(secretKey);
+		expect(sanitized.stack).not.toContain('Alice');
+		expect(sanitized.status).toBe(429);
+		expect(sanitized.retryAfter).toBe(3500);
 		expect(sanitized.url).toBe(
 			'https://api.lodgify.com/v2/reservations/bookings',
 		);
 		expect(sanitized.request.url).toBe('/v2/reservations/bookings');
 		expect(sanitized).toBe(rawError);
-		expect((sanitized.request.body as Record<string, unknown>).apikey).toBe(
-			'[REDACTED]',
-		);
-		// `unknown` because body may be of any shape
-		const body = sanitized.body as Record<string, unknown>;
-		expect(body.message).toContain('[REDACTED]');
-		expect(body.secret).toBe('[REDACTED]');
+		expect(sanitized.request.body).toBeUndefined();
+		expect(sanitized.request.headers).toEqual({});
+		expect(sanitized.body).toEqual({});
+		expect(JSON.stringify(sanitized)).not.toContain('Alice');
+		expect(JSON.stringify(sanitized)).not.toContain('guest@example.com');
+		expect(JSON.stringify(sanitized)).not.toContain(secretKey);
 	});
 
 	it('wraps generic non-ApiError in LodgifyAPIError', async () => {
@@ -161,8 +164,9 @@ describe('makeLodgifyRequest', () => {
 		).catch((caught: unknown) => caught);
 
 		expect(error).toBeInstanceOf(LodgifyAPIError);
-		expect((error as LodgifyAPIError).message).toBe(
-			'Network connection failed',
-		);
+		if (!(error instanceof LodgifyAPIError)) {
+			throw new Error('Expected the generic Lodgify error');
+		}
+		expect(error.message).toBe('Lodgify request failed');
 	});
 });

@@ -3512,6 +3512,14 @@
                 ]
               },
               {
+                "group": "Lodgify",
+                "pages": [
+                  "plugins/lodgify/overview",
+                  "plugins/lodgify/api",
+                  "plugins/lodgify/database"
+                ]
+              },
+              {
                 "group": "Logo.dev",
                 "pages": [
                   "plugins/logodev/overview",
