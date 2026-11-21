@@ -4120,6 +4120,14 @@
                 ]
               },
               {
+                "group": "PDF4me",
+                "pages": [
+                  "plugins/pdf4me/overview",
+                  "plugins/pdf4me/api",
+                  "plugins/pdf4me/database"
+                ]
+              },
+              {
                 "group": "PDFLess",
                 "pages": [
                   "plugins/pdfless/overview",
