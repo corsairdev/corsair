@@ -93,8 +93,14 @@ describe('verifyParsioWebhook', () => {
 });
 
 describe('matchParsioWebhook', () => {
-	it('matches the documented document envelope', () => {
-		expect(matchParsioWebhook(rawRequest(parsedDocument) as never)).toBe(true);
+	it('matches a signed delivery with the documented doc_id', () => {
+		expect(matchParsioWebhook(rawRequest(parsedDocument, 'sig') as never)).toBe(
+			true,
+		);
+	});
+
+	it("does not claim an unsigned body with a doc_id (another provider's, on the shared route)", () => {
+		expect(matchParsioWebhook(rawRequest(parsedDocument) as never)).toBe(false);
 	});
 
 	it('does not match bodies without doc_id, or arrays', () => {

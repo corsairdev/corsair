@@ -389,8 +389,6 @@ export function parsio<const T extends ParsioPluginOptions>(
 	} satisfies InternalParsioPlugin;
 }
 
-export { ParsioAPIError } from './client';
-
 export type {
 	Mailbox,
 	ParsioDocument,

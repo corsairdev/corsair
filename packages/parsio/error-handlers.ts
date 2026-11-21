@@ -1,15 +1,19 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { ParsioAPIError } from './client';
+import { ApiError } from 'corsair/http';
 
 function statusOf(error: Error): number | undefined {
-	return error instanceof ParsioAPIError ? error.status : undefined;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 // The client retries a 429 up to three times through core, honouring
-// Retry-After. No RATE_LIMIT_ERROR handler is needed here: DEFAULT adds no
-// retries after the client has used its attempts.
+// Retry-After. RATE_LIMIT_ERROR returns maxRetries 0 so a caller's root 429
+// handler cannot restart those attempts (R8: one retry layer).
 // Documented statuses (verified live): 401 Unauthorized; 400 validation.
 export const errorHandlers = {
+	RATE_LIMIT_ERROR: {
+		match: (error: Error) => statusOf(error) === 429,
+		handler: async () => ({ maxRetries: 0 }),
+	},
 	AUTH_ERROR: {
 		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
@@ -25,8 +29,8 @@ export const errorHandlers = {
 	// bill twice, and Parsio documents no idempotency contract.
 	SERVER_ERROR: {
 		match: (error: Error) =>
-			error instanceof ParsioAPIError &&
-			error.method === 'GET' &&
+			error instanceof ApiError &&
+			error.request.method === 'GET' &&
 			(error.status ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,

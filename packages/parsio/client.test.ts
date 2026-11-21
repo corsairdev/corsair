@@ -1,9 +1,6 @@
 import { inspect } from 'node:util';
-import {
-	describeParsioError,
-	makeParsioRequest,
-	ParsioAPIError,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describeParsioError, makeParsioRequest } from './client';
 import { parsedDocument, unauthorized } from './test-fixtures';
 
 const API_KEY = 'prsio-test-key';
@@ -29,10 +26,10 @@ function respond(
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<ParsioAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(ParsioAPIError);
-	if (!(error instanceof ParsioAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -121,7 +118,7 @@ describe('makeParsioRequest', () => {
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toContain('Unauthorized');
-		expect(error.name).toBe('ParsioAPIError');
+		expect(error.name).toBe('ApiError');
 	});
 
 	it('keeps no request body on the rebuilt error', async () => {

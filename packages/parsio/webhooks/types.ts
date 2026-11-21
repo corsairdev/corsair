@@ -96,18 +96,22 @@ export type ParsioWebhookPayload = z.infer<typeof ParsioWebhookPayloadSchema>;
 // ── Matching ───────────────────────────────────────────────────────────────
 
 /**
- * Parsio sends every event type to the one endpoint of a webhook, so
- * matching only needs the documented document shape (doc_id is the anchor).
- * A body parsed by processWebhook is an object here (readBodyRecord returns
- * null otherwise).
+ * Parsio sends every event type to the one endpoint of a webhook. A
+ * delivery is matched on its signature header plus the documented doc_id
+ * anchor: a bare doc_id could be another provider's body on the shared
+ * route, and an unsigned delivery fails verification anyway.
  */
 export function matchParsioWebhook(request: RawWebhookRequest): boolean {
 	const body = request.body;
 	if (body === null || typeof body !== 'object' || Array.isArray(body)) {
 		return false;
 	}
+	const signed = Object.entries(request.headers ?? {}).some(
+		([name, value]) =>
+			name.toLowerCase() === PARSIO_SIGNATURE_HEADER && Boolean(value),
+	);
 	// unknown: the delivery body is untyped until the schema parses it; the
 	// matcher only checks for the documented doc_id anchor.
 	const record = body as Record<string, unknown>;
-	return typeof record.doc_id === 'string';
+	return signed && typeof record.doc_id === 'string';
 }
