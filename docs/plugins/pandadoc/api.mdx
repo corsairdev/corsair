@@ -355,7 +355,7 @@ Place new fields on a document
 **Risk:** `write`
 
 ```ts
-await corsair.pandadoc.api.documents.createFields({ id: "RsXrKarV524iCpjci9CMGa", fields: [{ type: "signature", layout: { page: 1, position: { offset_x: 10, offset_y: 20, anchor_point: "top_left" }, style: { width: 10, height: 5 } } }] });
+await corsair.pandadoc.api.documents.createFields({ id: "RsXrKarV524iCpjci9CMGa", fields: [{ type: "signature", layout: { page: 1, position: { offset_x: 10, offset_y: 20, anchor_point: "topleft" }, style: { width: 10, height: 5 } } }] });
 ```
 
 **Input**
@@ -752,7 +752,7 @@ Answers 204 with no body.
 
 `documents.send`
 
-Send a document to its recipients for signing; emails go out that cannot be recalled
+Send a document to its recipients for signing; the signing emails cannot be recalled (silent: true sends without emails)
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -767,12 +767,12 @@ await corsair.pandadoc.api.documents.send({ id: "RsXrKarV524iCpjci9CMGa", messag
 | `id` | `string` | Yes | Document id |
 | `message` | `string` | No | Email body for the recipients |
 | `subject` | `string` | No | Email subject for the recipients |
-| `silent` | `boolean` | No | Send without email notifications to the recipients and the sender, and without scheduled reminders; leave false for recipients to get the signing email |
+| `silent` | `boolean` | No | Send without email notifications to the recipients and the sender, and without scheduled reminders (approval notifications still go out); leave false for recipients to get the signing email |
 | `reply_to` | `string` | No | Reply-to email address |
 | `sender` | `object` | No | Send as another workspace member, by email or membership_id |
 | `forwarding_settings` | `object` | No | Control whether recipients can forward the document |
 
-Sends the document to its recipients by email. This cannot be recalled.
+Sends the document to its recipients by email (silent: true sends without emails or reminders; approval notifications still go out). This cannot be recalled.
 
 <AccordionGroup>
 <Accordion title="sender full type">
@@ -1131,7 +1131,7 @@ await corsair.pandadoc.api.templates.list({ q: "nda", count: 25 });
 | `deleted` | `boolean` | No | Return only deleted templates |
 | `shared` | `boolean` | No | Return templates shared with the workspace |
 | `tag` | `string` | No | Filter by tag |
-| `fields` | `boolean` | No | Include template fields in the response |
+| `fields` | `content_date_modified[]` | No | Extra fields to include, sent comma-separated; the API documents content_date_modified |
 
 
 
