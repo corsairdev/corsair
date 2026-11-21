@@ -18,7 +18,7 @@ pnpm add @corsair-dev/penpot
 | `comments.list` | `penpot.api.comments.list` | `read` | List the comments of a thread |
 | `comments.threadCreate` | `penpot.api.comments.threadCreate` | `write` | Open a comment thread on a file page |
 | `comments.threadGet` | `penpot.api.comments.threadGet` | `read` | Read one comment thread |
-| `comments.threadsList` | `penpot.api.comments.threadsList` | `read` | List comment threads of a file or team |
+| `comments.threadsList` | `penpot.api.comments.threadsList` | `read` | List the comment threads of a file |
 | `files.create` | `penpot.api.files.create` | `write` | Create a design file in a project |
 | `files.delete` | `penpot.api.files.delete` | `destructive` | Delete a design file |
 | `files.duplicate` | `penpot.api.files.duplicate` | `write` | Duplicate a design file |

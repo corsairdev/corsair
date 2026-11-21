@@ -81,11 +81,18 @@ afterEach(() => {
 });
 
 describe('teams', () => {
-	it('list calls get-teams-for-profile with no body', async () => {
+	it('get sends the team id (get-team takes id or fileId)', async () => {
+		respond(team);
+		await invoke(Teams.get, { id: team.id });
+		expectRpc('get-team');
+		expect(JSON.parse(lastRequest().body as string)).toEqual({ id: team.id });
+	});
+
+	it('list calls get-teams with no body', async () => {
 		respond([team]);
 		const teams = (await invoke(Teams.list, {})) as unknown[]; // unknown: team records are provider-shaped
 		expect(teams).toHaveLength(1);
-		expectRpc('get-teams-for-profile');
+		expectRpc('get-teams');
 		expect(lastRequest().body).toBeUndefined();
 	});
 
@@ -145,6 +152,15 @@ describe('projects', () => {
 		expectRpc('rename-project');
 	});
 
+	it('rename answers the id and new name when the RPC answers an empty body (live)', async () => {
+		respond(undefined);
+		const result = await invoke(Projects.rename, {
+			id: project.id,
+			name: 'Renamed',
+		});
+		expect(result).toEqual({ id: project.id, name: 'Renamed' });
+	});
+
 	it('delete echoes the id', async () => {
 		respond(null);
 		const result = (await invoke(Projects.remove, { id: project.id })) as {
@@ -159,6 +175,11 @@ describe('projects', () => {
 		respond(project);
 		await invoke(Projects.duplicate, { id: project.id, name: 'Copy' });
 		expectRpc('duplicate-project');
+		// The RPC names the source projectId (spec + live).
+		expect(JSON.parse(lastRequest().body as string)).toEqual({
+			projectId: project.id,
+			name: 'Copy',
+		});
 	});
 });
 
@@ -219,10 +240,18 @@ describe('files', () => {
 		respond(shareLink);
 		const link = (await invoke(Files.shareLinkCreate, {
 			fileId: file.id,
-			whoComment: 'team',
+			pages: [commentThread.pageId as string],
+			whoComment: 'all',
 		})) as { id?: string };
 		expect(link.id).toBe(shareLink.id);
 		expectRpc('create-share-link');
+		// The RPC requires both audiences and the pages (live-checked).
+		expect(JSON.parse(lastRequest().body as string)).toEqual({
+			fileId: file.id,
+			pages: [commentThread.pageId],
+			whoComment: 'all',
+			whoInspect: 'team',
+		});
 
 		respond(null);
 		await invoke(Files.shareLinkDelete, { id: shareLink.id });
@@ -240,11 +269,11 @@ describe('comments', () => {
 		});
 	});
 
-	it('threadsList falls back to teamId', async () => {
+	it('threadsList sends only the fileId (a teamId alone answers 404 live)', async () => {
 		respond([commentThread]);
-		await invoke(Comments.threadsList, { teamId: team.id });
+		await invoke(Comments.threadsList, { fileId: file.id });
 		expect(JSON.parse(lastRequest().body as string)).toEqual({
-			teamId: team.id,
+			fileId: file.id,
 		});
 	});
 
@@ -263,9 +292,15 @@ describe('comments', () => {
 		await invoke(Comments.threadCreate, {
 			fileId: file.id,
 			pageId: commentThread.pageId as string,
+			position: { x: 10, y: 20 },
 			content: 'New thread',
 		});
 		expectRpc('create-comment-thread');
+		// position and frameId are required; the root frame is the zero uuid.
+		expect(JSON.parse(lastRequest().body as string)).toMatchObject({
+			position: { x: 10, y: 20 },
+			frameId: '00000000-0000-0000-0000-000000000000',
+		});
 	});
 
 	it('list and create call their RPCs', async () => {
@@ -293,6 +328,28 @@ describe('webhooks', () => {
 		})) as unknown[];
 		expect(webhooks).toHaveLength(1);
 		expectRpc('get-webhooks');
+	});
+
+	it('list turns the parsed uri object the API answers into a URL string', async () => {
+		respond([
+			{
+				...webhookSubscription,
+				uri: {
+					scheme: 'https',
+					user: null,
+					password: null,
+					host: 'lug.dev',
+					port: null,
+					path: '/hooks/penpot',
+					query: null,
+					fragment: null,
+				},
+			},
+		]);
+		const webhooks = (await invoke(Webhooks.list, {
+			teamId: team.id,
+		})) as { uri: string }[];
+		expect(webhooks[0]?.uri).toBe('https://lug.dev/hooks/penpot');
 	});
 
 	it('create and update call their RPCs', async () => {

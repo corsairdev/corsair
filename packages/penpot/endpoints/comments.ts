@@ -5,6 +5,9 @@ import {
 	PenpotEndpointOutputSchemas as Outputs,
 } from './types';
 
+/** Penpot's id for a page's root frame. */
+const ROOT_FRAME_ID = '00000000-0000-0000-0000-000000000000';
+
 export const threadsList: PenpotEndpoints['commentsThreadsList'] = (
 	ctx,
 	input,
@@ -19,10 +22,7 @@ export const threadsList: PenpotEndpoints['commentsThreadsList'] = (
 		input,
 		() => 'get-comment-threads',
 		{
-			body: ({ fileId, teamId }) => {
-				if (fileId !== undefined) return { fileId };
-				return { teamId: teamId as string };
-			},
+			body: ({ fileId }) => ({ fileId }),
 			log: (_, threads) => ({ count: threads.length }),
 		},
 	);
@@ -57,7 +57,11 @@ export const threadCreate: PenpotEndpoints['commentsThreadCreate'] = (
 		input,
 		() => 'create-comment-thread',
 		{
-			body: (input) => input,
+			// The RPC requires a frame; the page root frame has the zero uuid.
+			body: ({ frameId, ...rest }) => ({
+				...rest,
+				frameId: frameId ?? ROOT_FRAME_ID,
+			}),
 			log: (_, thread) => ({ threadId: thread.id ?? undefined }),
 		},
 	);

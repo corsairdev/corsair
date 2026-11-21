@@ -39,8 +39,6 @@ import { matchPenpotWebhook, PenpotEventSchema } from './webhooks/types';
 export type PenpotPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	/** Base URL of the Penpot instance; defaults to the public penpot.app. */
-	baseUrl?: string;
 	webhookSecret?: string;
 	hooks?: InternalPenpotPlugin['hooks'];
 	webhookHooks?: InternalPenpotPlugin['webhookHooks'];
@@ -350,7 +348,7 @@ const penpotEndpointMeta = {
 	},
 	'comments.threadsList': {
 		riskLevel: 'read',
-		description: 'List comment threads of a file or team',
+		description: 'List the comment threads of a file',
 	},
 	'comments.threadGet': {
 		riskLevel: 'read',

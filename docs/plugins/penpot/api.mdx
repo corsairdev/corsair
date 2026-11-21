@@ -10,41 +10,6 @@ description: "API reference for the Penpot plugin in Corsair: every `penpot.api.
 
 ## Access Tokens
 
-### create
-
-`accessTokens.create`
-
-Create an API access token; the token value is shown only once
-
-**Risk:** `write`
-
-```ts
-await corsair.penpot.api.accessTokens.create({ name: "CI token" });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `name` | `string` | Yes | Token name |
-| `expiration` | `number` | No | Expiration duration in seconds |
-
-The token value is shown once in the answer and never again.
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | UUID |
-| `name` | `string \| null` | No | Token name |
-| `token` | `string \| null` | No | The token value; shown only once at creation |
-
-
-
----
-
 ### delete
 
 `accessTokens.delete`
@@ -196,7 +161,7 @@ Open a comment thread on a file page
 **Risk:** `write`
 
 ```ts
-await corsair.penpot.api.comments.threadCreate({ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", pageId: "bf2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c63", content: "Can we tighten the spacing here?" });
+await corsair.penpot.api.comments.threadCreate({ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", pageId: "bf2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c63", position: { x: 120, y: 80 }, content: "Can we tighten the spacing here?" });
 ```
 
 **Input**
@@ -205,8 +170,21 @@ await corsair.penpot.api.comments.threadCreate({ fileId: "7f2a1c3d-4e5f-6a7b-8c9
 |------|------|----------|-------------|
 | `fileId` | `string` | Yes | File the thread is opened on |
 | `pageId` | `string` | Yes | Page the thread sits on |
-| `frameId` | `string` | No | Frame the thread is attached to |
+| `frameId` | `string` | No | Frame the thread is attached to; the page root frame when unset |
+| `position` | `object` | Yes | Where the thread pin sits on the page |
 | `content` | `string` | Yes | Thread opening comment content |
+
+<AccordionGroup>
+<Accordion title="position full type">
+
+```ts
+{
+  x: number,
+  y: number
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -261,7 +239,7 @@ await corsair.penpot.api.comments.threadGet({ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0
 
 `comments.threadsList`
 
-List comment threads of a file or team
+List the comment threads of a file
 
 **Risk:** `read`
 
@@ -273,10 +251,9 @@ await corsair.penpot.api.comments.threadsList({ fileId: "7f2a1c3d-4e5f-6a7b-8c9d
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `fileId` | `string` | No | List threads of this file |
-| `teamId` | `string` | No | List threads of this team |
+| `fileId` | `string` | Yes | List threads of this file |
 
-Give fileId or teamId; the API rejects a call with neither.
+Takes a fileId; the RPC answers 404 when called with only a team.
 
 
 
@@ -479,7 +456,7 @@ Create a share link for a file
 **Risk:** `write`
 
 ```ts
-await corsair.penpot.api.files.shareLinkCreate({ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", whoComment: "team" });
+await corsair.penpot.api.files.shareLinkCreate({ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", pages: ["bf2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c63"], whoComment: "team" });
 ```
 
 **Input**
@@ -487,8 +464,9 @@ await corsair.penpot.api.files.shareLinkCreate({ fileId: "7f2a1c3d-4e5f-6a7b-8c9
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `fileId` | `string` | Yes | File id to share |
-| `whoComment` | `everyone \| team \| signed` | No | Who can comment on the share link |
-| `whoInspect` | `everyone \| team \| signed` | No | Who can inspect the share link |
+| `pages` | `string[]` | Yes | Page ids the link shows (files.get answers them in data.pages) |
+| `whoComment` | `all \| team` | No | Who can comment through the link; team when unset |
+| `whoInspect` | `all \| team` | No | Who can inspect through the link; team when unset |
 
 
 
@@ -821,6 +799,8 @@ await corsair.penpot.api.projects.rename({ id: "6f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b
 | `id` | `string` | Yes | Project id |
 | `name` | `string` | Yes | New project name |
 
+The RPC answers an empty body; the plugin answers the id and the new name.
+
 
 
 **Output**
@@ -828,8 +808,7 @@ await corsair.penpot.api.projects.rename({ id: "6f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | UUID |
-| `name` | `string \| null` | No | Project name |
-| `teamId` | `string \| null` | No | Team the project belongs to |
+| `name` | `string \| null` | No | The new project name |
 
 
 
@@ -909,12 +888,17 @@ Read one team
 **Risk:** `read`
 
 ```ts
-await corsair.penpot.api.teams.get({});
+await corsair.penpot.api.teams.get({ id: "5f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d" });
 ```
 
-**Input:** _empty object_
+**Input**
 
-The get-team RPC takes no documented body; the result comes from the token profile context.
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Team id |
+
+Takes the team id.
+
 
 
 **Output**
@@ -984,7 +968,7 @@ await corsair.penpot.api.webhooks.create({ teamId: "5f2a1c3d-4e5f-6a7b-8c9d-0e1f
 | `uri` | `string` | Yes | Endpoint deliveries are posted to |
 | `mtype` | `application/json \| application/transit+json` | Yes | Payload format of the deliveries |
 
-mtype picks the delivery payload format: application/json or application/transit+json.
+mtype picks the delivery payload format: application/json or application/transit+json. Penpot calls the URI on create and refuses one that does not answer (500 webhook-validation).
 
 
 

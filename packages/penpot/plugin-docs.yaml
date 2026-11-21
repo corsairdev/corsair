@@ -1,7 +1,7 @@
 # Display copy for the docs, the catalog, corsair.dev and Hub.
 # `pnpm validate:plugins` fails until the TODO is replaced.
 displayName: "Penpot"
-description: "Penpot is the open-source design tool. This plugin manages teams, projects and design files over the RPC API, creates file snapshots and share links, reads and writes comment threads, configures team webhooks, and manages the account's API access tokens."
+description: "Penpot is the open-source design tool. This plugin manages teams, projects and design files over the RPC API, creates file snapshots and share links, reads and writes comment threads, configures team webhooks, and lists and revokes the account's API access tokens."
 domain: penpot.app
 recommendedAuth: api_key
 overviewNote: >
@@ -9,8 +9,8 @@ overviewNote: >
   access tokens; the plugin sends it as `Authorization: Token <token>` and
   asks for plain JSON with `Accept: application/json` (without that header
   Penpot answers in transit format). Every operation is a single RPC: a POST
-  to /api/rpc/command/<name> on your Penpot instance. For self-hosted
-  instances pass the instance host as baseUrl in the plugin options.
+  to /api/rpc/command/<name> on design.penpot.app. Self-hosted instances
+  are not supported yet.
 
   Penpot documents request schemas only, so output objects are kept loose;
   ids are UUIDs. The API reference lives at
@@ -43,7 +43,7 @@ apiExamples:
   teams.create:
     call: '{ name: "Design Guild" }'
   teams.get:
-    call: '{}'
+    call: '{ id: "5f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d" }'
   teams.delete:
     call: '{ id: "5f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d" }'
   projects.listAll:
@@ -75,7 +75,7 @@ apiExamples:
   files.snapshotsDelete:
     call: '{ id: "8f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c60" }'
   files.shareLinkCreate:
-    call: '{ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", whoComment: "team" }'
+    call: '{ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", pages: ["bf2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c63"], whoComment: "team" }'
   files.shareLinkDelete:
     call: '{ id: "9f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c61" }'
   comments.threadsList:
@@ -83,7 +83,7 @@ apiExamples:
   comments.threadGet:
     call: '{ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", id: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c62" }'
   comments.threadCreate:
-    call: '{ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", pageId: "bf2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c63", content: "Can we tighten the spacing here?" }'
+    call: '{ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", pageId: "bf2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c63", position: { x: 120, y: 80 }, content: "Can we tighten the spacing here?" }'
   comments.list:
     call: '{ threadId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c62" }'
   comments.create:
@@ -102,11 +102,12 @@ apiExamples:
     call: '{ id: "ef2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c66" }'
 apiNotes:
   teams.list: 'Returns the teams of the authenticated profile.'
-  teams.get: 'The get-team RPC takes no documented body; the result comes from the token profile context.'
+  teams.get: 'Takes the team id.'
+  projects.rename: 'The RPC answers an empty body; the plugin answers the id and the new name.'
   projects.listAll: 'Returns every project the profile can see across teams.'
   files.get: 'The answer includes the full file data tree.'
-  comments.threadsList: 'Give fileId or teamId; the API rejects a call with neither.'
+  comments.threadsList: 'Takes a fileId; the RPC answers 404 when called with only a team.'
   comments.create: 'Content is capped at 750 characters.'
-  webhooks.create: 'mtype picks the delivery payload format: application/json or application/transit+json.'
+  webhooks.create: 'mtype picks the delivery payload format: application/json or application/transit+json. Penpot calls the URI on create and refuses one that does not answer (500 webhook-validation).'
   webhooks.delete: 'Deliveries stop until the webhook is created again.'
   accessTokens.delete: 'Revoking a token immediately breaks apps using it.'

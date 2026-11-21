@@ -62,6 +62,7 @@ export const rename: PenpotEndpoints['projectsRename'] = (ctx, input) =>
 		() => 'rename-project',
 		{
 			body: (input) => input,
+			shape: (raw, { id, name }) => raw ?? { id, name },
 			log: (_, project) => ({ projectId: project.id ?? undefined }),
 		},
 	);
@@ -94,7 +95,7 @@ export const duplicate: PenpotEndpoints['projectsDuplicate'] = (ctx, input) =>
 		input,
 		() => 'duplicate-project',
 		{
-			body: (input) => input,
+			body: ({ id, name }) => ({ projectId: id, name }),
 			log: (_, project) => ({ projectId: project.id ?? undefined }),
 		},
 	);

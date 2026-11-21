@@ -1,19 +1,19 @@
 ---
 title: "Penpot plugin"
 sidebarTitle: "Overview"
-description: "Penpot is the open-source design tool. This plugin manages teams, projects and design files over the RPC API, creates file snapshots and share links, reads and writes comment threads, configures team webhooks, and manages the account's API access tokens."
+description: "Penpot is the open-source design tool. This plugin manages teams, projects and design files over the RPC API, creates file snapshots and share links, reads and writes comment threads, configures team webhooks, and lists and revokes the account's API access tokens."
 ---
 
 Use **Penpot** through Corsair: one client, typed API calls, and incoming webhooks.
 
-Authenticate with an access token generated under Account settings &gt; API access tokens; the plugin sends it as `Authorization: Token <token>` and asks for plain JSON with `Accept: application/json` (without that header Penpot answers in transit format). Every operation is a single RPC: a POST to /api/rpc/command/&lt;name&gt; on your Penpot instance. For self-hosted instances pass the instance host as baseUrl in the plugin options.
+Authenticate with an access token generated under Account settings &gt; API access tokens; the plugin sends it as `Authorization: Token <token>` and asks for plain JSON with `Accept: application/json` (without that header Penpot answers in transit format). Every operation is a single RPC: a POST to /api/rpc/command/&lt;name&gt; on design.penpot.app. Self-hosted instances are not supported yet.
 Penpot documents request schemas only, so output objects are kept loose; ids are UUIDs. The API reference lives at https://design.penpot.app/api/_doc (auto-generated from source).
 Webhook deliveries from Penpot carry no signature header — the help center documents no signing scheme — so the plugin accepts them on the documented envelope shape (an event key with a payload) and says so plainly; add your own verification at the route level if you need stronger guarantees.
 The RPC surface has ~150 operations; this plugin covers the teams, projects, files (including snapshots and share links), comments, webhooks and access-token groups. Fonts, media objects, invitations, members, organizations and exports are documented by Penpot but not part of this plugin.
 
 **What you get:**
 
-- 32 typed API operations
+- 31 typed API operations
 - 1 incoming webhook event types
 
 ## Setup

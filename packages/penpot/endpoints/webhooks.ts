@@ -1,9 +1,33 @@
+import { asRecord } from 'corsair/core';
 import type { PenpotEndpoints } from '..';
 import { call, shapeDeleted } from './call';
 import {
 	PenpotEndpointInputSchemas as Inputs,
 	PenpotEndpointOutputSchemas as Outputs,
 } from './types';
+
+/**
+ * get-webhooks answers each uri as a parsed object ({ scheme, host, port,
+ * path, query, ... }, live 2026-11-21) while create answers a string; the
+ * list is given the string form too.
+ */
+// unknown: one webhook record of the list, checked by the output schema next.
+export function withUriString(webhook: unknown): unknown {
+	const record = asRecord(webhook);
+	const uri = asRecord(record?.uri);
+	if (!record || !uri || typeof uri.host !== 'string') return webhook;
+	const part = (key: string) =>
+		typeof uri[key] === 'string' || typeof uri[key] === 'number'
+			? String(uri[key])
+			: '';
+	const port = part('port') ? `:${part('port')}` : '';
+	const query = part('query') ? `?${part('query')}` : '';
+	const fragment = part('fragment') ? `#${part('fragment')}` : '';
+	return {
+		...record,
+		uri: `${part('scheme') || 'https'}://${uri.host}${port}${part('path')}${query}${fragment}`,
+	};
+}
 
 export const list: PenpotEndpoints['webhooksList'] = (ctx, input) =>
 	call(
@@ -17,6 +41,7 @@ export const list: PenpotEndpoints['webhooksList'] = (ctx, input) =>
 		() => 'get-webhooks',
 		{
 			body: ({ teamId }) => ({ teamId }),
+			shape: (raw) => (Array.isArray(raw) ? raw.map(withUriString) : raw),
 			log: (_, webhooks) => ({ count: webhooks.length }),
 		},
 	);

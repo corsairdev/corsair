@@ -75,8 +75,8 @@ describe('input validation', () => {
 		await rejects(Teams.create, { name: 'x'.repeat(251) }, '250');
 	});
 
-	it('rejects a threadsList with neither fileId nor teamId', async () => {
-		await rejects(Comments.threadsList, {}, 'fileId or teamId');
+	it('rejects a threadsList without a fileId', async () => {
+		await rejects(Comments.threadsList, { teamId: 'x' }, 'fileId');
 	});
 
 	it('rejects a comment over 750 characters', async () => {

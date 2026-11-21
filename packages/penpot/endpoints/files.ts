@@ -158,7 +158,13 @@ export const shareLinkCreate: PenpotEndpoints['filesShareLinkCreate'] = (
 		input,
 		() => 'create-share-link',
 		{
-			body: (input) => input,
+			// The RPC requires both audiences.
+			body: ({ fileId, pages, whoComment, whoInspect }) => ({
+				fileId,
+				pages,
+				whoComment: whoComment ?? 'team',
+				whoInspect: whoInspect ?? 'team',
+			}),
 			log: (_, link) => ({ shareLinkId: link.id ?? undefined }),
 		},
 	);

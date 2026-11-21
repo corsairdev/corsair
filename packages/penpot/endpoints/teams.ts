@@ -14,7 +14,7 @@ export const list: PenpotEndpoints['teamsList'] = (ctx, input) =>
 			output: Outputs.teamsList,
 		},
 		input,
-		() => 'get-teams-for-profile',
+		() => 'get-teams',
 		{ body: () => undefined, log: (_, teams) => ({ count: teams.length }) },
 	);
 
@@ -44,7 +44,10 @@ export const get: PenpotEndpoints['teamsGet'] = (ctx, input) =>
 		},
 		input,
 		() => 'get-team',
-		{ body: () => ({}), log: (_, team) => ({ teamId: team.id ?? undefined }) },
+		{
+			body: ({ id }) => ({ id }),
+			log: (_, team) => ({ teamId: team.id ?? undefined }),
+		},
 	);
 
 export const remove: PenpotEndpoints['teamsDelete'] = (ctx, input) =>

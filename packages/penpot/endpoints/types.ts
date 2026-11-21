@@ -121,8 +121,8 @@ export const CreateTeamOutputSchema = TeamSchema.describe(
 export type CreateTeamOutput = z.infer<typeof CreateTeamOutputSchema>;
 
 export const GetTeamInputSchema = z
-	.object({})
-	.describe('Input for reading one team (the RPC takes no documented body)');
+	.object({ id: uuid.describe('Team id') })
+	.describe('Input for reading one team');
 export type GetTeamInput = z.infer<typeof GetTeamInputSchema>;
 
 export const GetTeamOutputSchema = TeamSchema.describe('The team');
@@ -182,9 +182,15 @@ export const RenameProjectInputSchema = z
 	.describe('Rename a project');
 export type RenameProjectInput = z.infer<typeof RenameProjectInputSchema>;
 
-export const RenameProjectOutputSchema = ProjectSchema.describe(
-	'The project as renamed',
-);
+// rename-project answers an empty body (live, 2026-11-21); the plugin
+// echoes the id and the new name.
+export const RenameProjectOutputSchema = z
+	.object({
+		id: uuid,
+		name: z.string().nullish().describe('The new project name'),
+	})
+	.loose()
+	.describe('The project id and its new name');
 export type RenameProjectOutput = z.infer<typeof RenameProjectOutputSchema>;
 
 export const DeleteProjectInputSchema = z
@@ -322,14 +328,20 @@ export type DeleteSnapshotOutput = z.infer<typeof DeleteSnapshotOutputSchema>;
 export const CreateShareLinkInputSchema = z
 	.object({
 		fileId: uuid.describe('File id to share'),
+		pages: z
+			.array(uuid)
+			.min(1)
+			.describe(
+				'Page ids the link shows (files.get answers them in data.pages)',
+			),
 		whoComment: z
-			.enum(['everyone', 'team', 'signed'])
+			.enum(['all', 'team'])
 			.optional()
-			.describe('Who can comment on the share link'),
+			.describe('Who can comment through the link; team when unset'),
 		whoInspect: z
-			.enum(['everyone', 'team', 'signed'])
+			.enum(['all', 'team'])
 			.optional()
-			.describe('Who can inspect the share link'),
+			.describe('Who can inspect through the link; team when unset'),
 	})
 	.describe('Create a share link for a file');
 export type CreateShareLinkInput = z.infer<typeof CreateShareLinkInputSchema>;
@@ -365,17 +377,9 @@ export type DeleteShareLinkOutput = z.infer<typeof DeleteShareLinkOutputSchema>;
 
 export const ListThreadsInputSchema = z
 	.object({
-		fileId: uuid.optional().describe('List threads of this file'),
-		teamId: uuid.optional().describe('List threads of this team'),
-	})
-	.superRefine((input, ctx) => {
-		if (!input.fileId && !input.teamId) {
-			ctx.addIssue({
-				code: 'custom',
-				path: ['fileId'],
-				message: 'Give fileId or teamId to list comment threads',
-			});
-		}
+		// get-comment-threads with only a teamId answers 404 (live), so the
+		// file is required.
+		fileId: uuid.describe('List threads of this file'),
 	})
 	.describe('Input for listing comment threads');
 export type ListThreadsInput = z.infer<typeof ListThreadsInputSchema>;
@@ -401,8 +405,22 @@ export const CreateThreadInputSchema = z
 	.object({
 		fileId: uuid.describe('File the thread is opened on'),
 		pageId: uuid.describe('Page the thread sits on'),
-		frameId: uuid.optional().describe('Frame the thread is attached to'),
-		content: z.string().min(1).describe('Thread opening comment content'),
+		frameId: uuid
+			.optional()
+			.describe(
+				'Frame the thread is attached to; the page root frame when unset',
+			),
+		position: z
+			.object({
+				x: z.number().describe('X on the page'),
+				y: z.number().describe('Y on the page'),
+			})
+			.describe('Where the thread pin sits on the page'),
+		content: z
+			.string()
+			.min(1)
+			.max(750)
+			.describe('Thread opening comment content'),
 	})
 	.describe('Open a comment thread on a file');
 export type CreateThreadInput = z.infer<typeof CreateThreadInputSchema>;
