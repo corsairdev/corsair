@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	account_exceptions: {
 		description: 'List of accounts exempted from the transaction lock.',
 		type: 'array',
@@ -262,9 +262,9 @@ export const schemas: Record<string, JsonValue> = {
 		type: 'array',
 		items: { type: 'string' },
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'get_transaction_lock',
 		group: 'transactionLocking',
@@ -524,4 +524,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.accountants.UPDATE'],
 		riskLevel: 'destructive',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

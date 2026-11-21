@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	accept_retainer: {
 		description:
 			'Boolean flag indicating whether a retainer invoice should be automatically created if the customer accepts this estimate. When set to <code>true</code>, a retainer invoice is generated upon acceptance, streamlining the process for upfront payments or deposits. Allowed values: <code>true</code> and <code>false</code>.',
@@ -1668,9 +1668,9 @@ export const schemas: Record<string, JsonValue> = {
 		description: "Zip code of the customer's billing address.",
 		type: 'string',
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_estimate',
 		group: 'estimates',
@@ -3008,4 +3008,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.estimates.DELETE'],
 		riskLevel: 'destructive',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	ancestors: {
 		description: 'Ancestor categories of this category.',
 		type: 'array',
@@ -312,9 +312,9 @@ export const schemas: Record<string, JsonValue> = {
 		description: 'Whether the category is visible.',
 		type: 'boolean',
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'list_categories',
 		group: 'categories',
@@ -647,4 +647,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.categories.DELETE', 'ZohoBooks.items.DELETE'],
 		riskLevel: 'destructive',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

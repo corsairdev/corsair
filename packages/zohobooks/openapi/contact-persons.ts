@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	communication_preference: {
 		description: 'Preferred modes of communication for the contact person.',
 		type: 'object',
@@ -282,9 +282,9 @@ export const schemas: Record<string, JsonValue> = {
 			},
 		},
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_contact_person',
 		group: 'contactPersons',
@@ -533,4 +533,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.contacts.CREATE'],
 		riskLevel: 'write',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

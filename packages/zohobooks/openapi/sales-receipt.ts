@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	'create-a-sales-receipt-request': {
 		required: ['customer_id', 'payment_mode'],
 		type: 'object',
@@ -339,9 +339,9 @@ export const schemas: Record<string, JsonValue> = {
 			salesreceipt: { $ref: '#/components/schemas/salesreceipt-response' },
 		},
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_sales_receipt',
 		group: 'salesReceipt',
@@ -667,4 +667,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.invoices.CREATE'],
 		riskLevel: 'destructive',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

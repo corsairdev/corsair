@@ -1,6 +1,15 @@
 export type JsonScalar = string | number | boolean | null;
 
-export type JsonValue = JsonScalar | JsonValue[] | { [key: string]: JsonValue };
+export type JsonValue =
+	| JsonScalar
+	| readonly JsonValue[]
+	| { readonly [key: string]: JsonValue };
+
+export type ZohoBooksBinaryFile = {
+	filename: string;
+	contentType: string;
+	base64: string;
+};
 
 export type ZohoBooksRegion =
 	| 'us'
@@ -34,18 +43,18 @@ export type ZohoBooksOperationDefinition = {
 	summary: string;
 	description: string;
 	docsUrl: string;
-	parameters: ZohoBooksOperationParameter[];
+	parameters: readonly ZohoBooksOperationParameter[];
 	request?: {
 		mediaType: string;
 		required: boolean;
 		schema?: JsonValue;
 	};
-	responses: Array<{
+	responses: readonly {
 		status: string;
 		contentType: string;
 		schema?: JsonValue;
-	}>;
-	scopes: string[];
+	}[];
+	scopes: readonly string[];
 };
 
 export type ZohoBooksExcludedOperationDefinition =

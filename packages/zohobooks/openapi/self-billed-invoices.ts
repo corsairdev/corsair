@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	'create-a-self-billed-invoice-request': {
 		type: 'object',
 		required: ['bill_number', 'vendor_id', 'line_items', 'entity_type'],
@@ -914,9 +914,9 @@ export const schemas: Record<string, JsonValue> = {
 			},
 		},
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_self_billed_invoice',
 		group: 'selfBilledInvoices',
@@ -1234,4 +1234,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.bills.CREATE'],
 		riskLevel: 'write',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

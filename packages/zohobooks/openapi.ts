@@ -184,7 +184,55 @@ import type {
 	ZohoBooksOperationDefinition,
 } from './schema/openapi-types';
 
-export const openApiSchemas: Record<string, Record<string, JsonValue>> = {
+type OpenApiSchemaContracts = {
+	bankAccounts: typeof bankAccountsSchemas;
+	bankRules: typeof bankRulesSchemas;
+	bankTransactions: typeof bankTransactionsSchemas;
+	baseCurrencyAdjustment: typeof baseCurrencyAdjustmentSchemas;
+	bills: typeof billsSchemas;
+	categories: typeof categoriesSchemas;
+	chartOfAccounts: typeof chartOfAccountsSchemas;
+	contactPersons: typeof contactPersonsSchemas;
+	contacts: typeof contactsSchemas;
+	creditNotes: typeof creditNotesSchemas;
+	currency: typeof currencySchemas;
+	customModules: typeof customModulesSchemas;
+	customerDebitNotes: typeof customerDebitNotesSchemas;
+	customerPayments: typeof customerPaymentsSchemas;
+	deliveryChallans: typeof deliveryChallansSchemas;
+	estimates: typeof estimatesSchemas;
+	expenses: typeof expensesSchemas;
+	fixedAssets: typeof fixedAssetsSchemas;
+	integration: typeof integrationSchemas;
+	invoices: typeof invoicesSchemas;
+	items: typeof itemsSchemas;
+	journals: typeof journalsSchemas;
+	locations: typeof locationsSchemas;
+	openingBalance: typeof openingBalanceSchemas;
+	organizations: typeof organizationsSchemas;
+	pricelists: typeof pricelistsSchemas;
+	projects: typeof projectsSchemas;
+	purchaseOrder: typeof purchaseOrderSchemas;
+	purchaseReturns: typeof purchaseReturnsSchemas;
+	recurringBills: typeof recurringBillsSchemas;
+	recurringExpenses: typeof recurringExpensesSchemas;
+	recurringInvoices: typeof recurringInvoicesSchemas;
+	registers: typeof registersSchemas;
+	reportingTags: typeof reportingTagsSchemas;
+	retainerInvoices: typeof retainerInvoicesSchemas;
+	salesOrder: typeof salesOrderSchemas;
+	salesReceipt: typeof salesReceiptSchemas;
+	selfBilledInvoices: typeof selfBilledInvoicesSchemas;
+	tasks: typeof tasksSchemas;
+	taxes: typeof taxesSchemas;
+	timeEntries: typeof timeEntriesSchemas;
+	transactionLocking: typeof transactionLockingSchemas;
+	users: typeof usersSchemas;
+	vendorCredits: typeof vendorCreditsSchemas;
+	vendorPayments: typeof vendorPaymentsSchemas;
+};
+
+export const openApiSchemaContracts: OpenApiSchemaContracts = {
 	bankAccounts: bankAccountsSchemas,
 	bankRules: bankRulesSchemas,
 	bankTransactions: bankTransactionsSchemas,
@@ -232,7 +280,60 @@ export const openApiSchemas: Record<string, Record<string, JsonValue>> = {
 	vendorPayments: vendorPaymentsSchemas,
 };
 
-export const zohoBooksOperations: readonly ZohoBooksOperationDefinition[] = [
+export const openApiSchemas: Record<
+	string,
+	Record<string, JsonValue>
+> = openApiSchemaContracts;
+
+type ZohoBooksOperationContracts = readonly [
+	...typeof bankAccountsOperations,
+	...typeof bankRulesOperations,
+	...typeof bankTransactionsOperations,
+	...typeof baseCurrencyAdjustmentOperations,
+	...typeof billsOperations,
+	...typeof categoriesOperations,
+	...typeof chartOfAccountsOperations,
+	...typeof contactPersonsOperations,
+	...typeof contactsOperations,
+	...typeof creditNotesOperations,
+	...typeof currencyOperations,
+	...typeof customModulesOperations,
+	...typeof customerDebitNotesOperations,
+	...typeof customerPaymentsOperations,
+	...typeof deliveryChallansOperations,
+	...typeof estimatesOperations,
+	...typeof expensesOperations,
+	...typeof fixedAssetsOperations,
+	...typeof integrationOperations,
+	...typeof invoicesOperations,
+	...typeof itemsOperations,
+	...typeof journalsOperations,
+	...typeof locationsOperations,
+	...typeof openingBalanceOperations,
+	...typeof organizationsOperations,
+	...typeof pricelistsOperations,
+	...typeof projectsOperations,
+	...typeof purchaseOrderOperations,
+	...typeof purchaseReturnsOperations,
+	...typeof recurringBillsOperations,
+	...typeof recurringExpensesOperations,
+	...typeof recurringInvoicesOperations,
+	...typeof registersOperations,
+	...typeof reportingTagsOperations,
+	...typeof retainerInvoicesOperations,
+	...typeof salesOrderOperations,
+	...typeof salesReceiptOperations,
+	...typeof selfBilledInvoicesOperations,
+	...typeof tasksOperations,
+	...typeof taxesOperations,
+	...typeof timeEntriesOperations,
+	...typeof transactionLockingOperations,
+	...typeof usersOperations,
+	...typeof vendorCreditsOperations,
+	...typeof vendorPaymentsOperations,
+];
+
+export const zohoBooksOperationContracts: ZohoBooksOperationContracts = [
 	...bankAccountsOperations,
 	...bankRulesOperations,
 	...bankTransactionsOperations,
@@ -279,6 +380,9 @@ export const zohoBooksOperations: readonly ZohoBooksOperationDefinition[] = [
 	...vendorCreditsOperations,
 	...vendorPaymentsOperations,
 ];
+
+export const zohoBooksOperations: readonly ZohoBooksOperationDefinition[] =
+	zohoBooksOperationContracts;
 
 export const zohoBooksOAuthScopes: readonly string[] = [
 	'ZohoBooks.accountants.CREATE',

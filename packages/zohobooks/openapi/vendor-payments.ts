@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	ach_gw_transaction_id: {
 		description: 'ID of the ACH Payment Transaction',
 		type: 'string',
@@ -852,9 +852,9 @@ export const schemas: Record<string, JsonValue> = {
 			},
 		},
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_vendor_payment',
 		group: 'vendorPayments',
@@ -1631,4 +1631,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.vendorpayments.READ'],
 		riskLevel: 'read',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

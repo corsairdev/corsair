@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	account_id: { description: 'Account ID of the Bank', type: 'string' },
 	account_ids: {
 		description:
@@ -504,9 +504,9 @@ export const schemas: Record<string, JsonValue> = {
 		'x-node_available_in': ['uk'],
 		'x-node_unavailable_in': [],
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'list_bank_account_rules',
 		group: 'bankRules',
@@ -974,4 +974,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.banking.DELETE'],
 		riskLevel: 'destructive',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	abn: {
 		description: 'Australian Business Number (ABN) of the vendor.',
 		type: 'string',
@@ -876,9 +876,9 @@ export const schemas: Record<string, JsonValue> = {
 		type: 'string',
 	},
 	vendor_name: { description: 'Name of the Vendor', type: 'string' },
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_recurring_bill',
 		group: 'recurringBills',
@@ -1663,4 +1663,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.bills.READ'],
 		riskLevel: 'read',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

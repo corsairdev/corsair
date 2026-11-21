@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	additional_field1: {
 		description:
 			'Paypal payment method. Allowed Values: <code>standard</code> and <code>adaptive</code>',
@@ -1371,9 +1371,9 @@ export const schemas: Record<string, JsonValue> = {
 		description: "Zip code of the customer's billing address.",
 		type: 'string',
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_recurring_invoice',
 		group: 'recurringInvoices',
@@ -2375,4 +2375,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.invoices.CREATE'],
 		riskLevel: 'write',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

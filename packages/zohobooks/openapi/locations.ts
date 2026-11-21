@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	address: {
 		type: 'object',
 		properties: {
@@ -239,9 +239,9 @@ export const schemas: Record<string, JsonValue> = {
 	user_id: { description: 'User ID', type: 'string' },
 	user_ids: { description: 'Comma separated user ids.', type: 'string' },
 	user_name: { description: 'User Name', type: 'string' },
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'enable_locations',
 		group: 'locations',
@@ -519,4 +519,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.settings.CREATE'],
 		riskLevel: 'write',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

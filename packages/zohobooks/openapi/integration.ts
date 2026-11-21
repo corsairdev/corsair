@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	contact_id: { description: 'Contact ID of the contact', type: 'string' },
 	data: {
 		type: 'object',
@@ -46,9 +46,9 @@ export const schemas: Record<string, JsonValue> = {
 		type: 'object',
 		properties: { item_id: { $ref: '#/components/schemas/item_id' } },
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'import_customer_using_crm_account_id',
 		group: 'integration',
@@ -205,4 +205,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.settings.CREATE'],
 		riskLevel: 'write',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

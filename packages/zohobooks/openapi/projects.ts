@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	'activate-project-response': {
 		type: 'object',
 		properties: {
@@ -1121,9 +1121,9 @@ export const schemas: Record<string, JsonValue> = {
 			properties: { user_id: { $ref: '#/components/schemas/user_id' } },
 		},
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_project',
 		group: 'projects',
@@ -2162,4 +2162,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.projects.DELETE'],
 		riskLevel: 'destructive',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

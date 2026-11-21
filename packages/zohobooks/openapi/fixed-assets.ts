@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	accumulated_dep_value: {
 		description: 'Accumulated depreciation value of the fixed asset',
 		type: 'number',
@@ -716,9 +716,9 @@ export const schemas: Record<string, JsonValue> = {
 			message: { type: 'string', readOnly: true },
 		},
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_fixed_asset',
 		group: 'fixedAssets',
@@ -1466,4 +1466,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.fixedasset.DELETE'],
 		riskLevel: 'destructive',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

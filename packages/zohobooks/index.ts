@@ -5,6 +5,7 @@ import type {
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
+	EndpointTree,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -15,6 +16,7 @@ import type {
 } from 'corsair/core';
 import { getOAuthAccessToken } from 'corsair/core';
 import { zohoBooksOAuthAuthUrl, zohoBooksOAuthTokenUrl } from './client';
+import type { ZohoBooksEndpointKeyTree } from './endpoints/generated';
 import {
 	zohoBooksEndpointMeta,
 	zohoBooksEndpointSchemas,
@@ -30,13 +32,9 @@ const zohoBooksWebhookSchemas = {} satisfies RequiredPluginWebhookSchemas<
 	typeof zohoBooksWebhooks
 >;
 const zohoBooksEndpointMetaValidated =
-	zohoBooksEndpointMeta satisfies RequiredPluginEndpointMeta<
-		typeof zohoBooksEndpointsNested
-	>;
+	zohoBooksEndpointMeta satisfies RequiredPluginEndpointMeta<ZohoBooksEndpointKeyTree>;
 const zohoBooksEndpointSchemasValidated =
-	zohoBooksEndpointSchemas satisfies RequiredPluginEndpointSchemas<
-		typeof zohoBooksEndpointsNested
-	>;
+	zohoBooksEndpointSchemas satisfies RequiredPluginEndpointSchemas<ZohoBooksEndpointKeyTree>;
 
 export const zohoBooksAuthConfig = {
 	oauth_2: {},
@@ -48,7 +46,7 @@ export type ZohoBooksPluginOptions = {
 	region?: ZohoBooksRegion;
 	hooks?: InternalZohoBooksPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
-	permissions?: PluginPermissionsConfig<typeof zohoBooksEndpointsNested>;
+	permissions?: PluginPermissionsConfig<ZohoBooksEndpointKeyTree>;
 };
 
 export type ZohoBooksContext = CorsairPluginContext<
@@ -73,11 +71,11 @@ export type BaseZohoBooksPlugin<T extends ZohoBooksPluginOptions> =
 	CorsairPlugin<
 		'zohobooks',
 		typeof ZohoBooksSchema,
-		typeof zohoBooksEndpointsNested,
+		EndpointTree,
 		typeof zohoBooksWebhooks,
 		T,
 		typeof defaultAuthType
-	>;
+	> & { endpoints?: typeof zohoBooksEndpointsNested };
 
 export type InternalZohoBooksPlugin =
 	BaseZohoBooksPlugin<ZohoBooksPluginOptions>;
@@ -138,12 +136,18 @@ export function zohobooks<const T extends ZohoBooksPluginOptions>(
 export type {
 	JsonScalar,
 	JsonValue,
+	ZohoBooksBinaryFile,
 	ZohoBooksBinaryOutput,
 	ZohoBooksOperationDefinition,
 	ZohoBooksOperationInput,
 	ZohoBooksOperationOutput,
 	ZohoBooksRegion,
 } from './schema/openapi-types';
+export type {
+	ZohoBooksOperationId,
+	ZohoBooksOperationInputFor,
+	ZohoBooksOperationOutputFor,
+} from './schema/operation-types';
 
 export type ZohoBooksEndpoints = ZohoBooksBoundEndpoints;
 export type ZohoBooksWebhooks = ZohoBooksBoundWebhooks;

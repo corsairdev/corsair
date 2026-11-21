@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	'create-a-pricebook-request': {
 		required: ['name', 'pricebook_type', 'sales_or_purchase_type'],
 		type: 'object',
@@ -331,9 +331,9 @@ export const schemas: Record<string, JsonValue> = {
 			pricebook: { $ref: '#/components/schemas/pricebook' },
 		},
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_pricebook',
 		group: 'pricelists',
@@ -577,4 +577,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.settings.CREATE'],
 		riskLevel: 'write',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

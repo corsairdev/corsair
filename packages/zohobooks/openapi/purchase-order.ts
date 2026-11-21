@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	account_id: {
 		description:
 			'Unique identifier of the accounting account for the line item. Mandatory for non-inventory items/services. Determines expense categorization in general ledger. Note: This value is a set of numeric characters.',
@@ -1521,9 +1521,9 @@ export const schemas: Record<string, JsonValue> = {
 		type: 'string',
 	},
 	zip: { description: 'ZIP Code of the Address', type: 'string' },
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_purchase_order',
 		group: 'purchaseOrder',
@@ -2582,6 +2582,7 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 					$ref: '#/components/schemas/get-a-purchase-order-attachment-response',
 				},
 			},
+			{ status: '200', contentType: '*/*' },
 		],
 		scopes: ['ZohoBooks.purchaseorders.READ'],
 		riskLevel: 'read',
@@ -2939,4 +2940,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.purchaseorders.UPDATE'],
 		riskLevel: 'destructive',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

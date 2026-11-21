@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	cost_rate: {
 		description: 'Hourly cost rate',
 		type: 'number',
@@ -253,9 +253,9 @@ export const schemas: Record<string, JsonValue> = {
 		type: 'string',
 	},
 	user_type: { type: 'string', description: 'Type of the user.' },
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_user',
 		group: 'users',
@@ -614,4 +614,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.settings.CREATE'],
 		riskLevel: 'write',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

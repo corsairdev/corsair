@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	'add-attachment-to-a-sales-order-response': {
 		type: 'object',
 		properties: {
@@ -1854,9 +1854,9 @@ export const schemas: Record<string, JsonValue> = {
 		type: 'string',
 	},
 	zip: { description: 'ZIP Code of the Address', type: 'string' },
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_sales_order',
 		group: 'salesOrder',
@@ -3179,6 +3179,7 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 					$ref: '#/components/schemas/get-a-sales-order-attachment-response',
 				},
 			},
+			{ status: '200', contentType: '*/*' },
 		],
 		scopes: ['ZohoBooks.salesorders.READ'],
 		riskLevel: 'read',
@@ -3526,4 +3527,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.salesorders.DELETE'],
 		riskLevel: 'destructive',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

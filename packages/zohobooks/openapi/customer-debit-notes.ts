@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	contact_persons: {
 		type: 'array',
 		items: { type: 'string' },
@@ -296,9 +296,9 @@ export const schemas: Record<string, JsonValue> = {
 			invoice: { $ref: '#/components/schemas/debit_note' },
 		},
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_customer_debit_note',
 		group: 'customerDebitNotes',
@@ -683,4 +683,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.invoices.DELETE'],
 		riskLevel: 'destructive',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

@@ -7,7 +7,7 @@ import {
 	zohoBooksOAuthAuthUrl,
 	zohoBooksOAuthTokenUrl,
 } from './client';
-import { zohoBooksOperations } from './openapi';
+import { openApiSchemas, zohoBooksOperations } from './openapi';
 import type {
 	JsonValue,
 	ZohoBooksOperationDefinition,
@@ -49,11 +49,22 @@ const accountsDomains: Record<ZohoBooksRegion, string> = {
 	ae: 'accounts.zoho.ae',
 };
 
+type JsonObject = { readonly [key: string]: JsonValue };
+
+function isJsonObject(value: JsonValue | undefined): value is JsonObject {
+	return (
+		value !== undefined &&
+		typeof value === 'object' &&
+		value !== null &&
+		!Array.isArray(value)
+	);
+}
+
 function valueForSchema(
 	parameter: ZohoBooksOperationDefinition['parameters'][number],
 ): JsonValue {
 	const schema = parameter.schema;
-	if (schema && typeof schema === 'object' && !Array.isArray(schema)) {
+	if (isJsonObject(schema)) {
 		const enumValues = schema.enum;
 		if (Array.isArray(enumValues) && enumValues.length > 0)
 			return enumValues[0] ?? null;
@@ -64,6 +75,49 @@ function valueForSchema(
 	if (parameter.name === 'organization_id' || parameter.name.endsWith('_id'))
 		return '999999999999999';
 	return 'sample';
+}
+
+function resolveSchema(
+	operation: ZohoBooksOperationDefinition,
+	schemaInput: JsonValue | undefined,
+): JsonValue | undefined {
+	if (schemaInput === undefined || !isJsonObject(schemaInput))
+		return schemaInput;
+	const reference = schemaInput.$ref;
+	if (typeof reference !== 'string') return schemaInput;
+	const name = reference.match(/^#\/components\/schemas\/([^/]+)$/)?.[1];
+	return name ? openApiSchemas[operation.group]?.[name] : undefined;
+}
+
+function isBinarySchema(
+	operation: ZohoBooksOperationDefinition,
+	schemaInput: JsonValue | undefined,
+	depth = 0,
+): boolean {
+	if (depth > 12 || schemaInput === undefined) return false;
+	const schema = resolveSchema(operation, schemaInput);
+	if (!isJsonObject(schema)) return false;
+	if (schema.format === 'binary') return true;
+	if (isBinarySchema(operation, schema.items, depth + 1)) return true;
+	for (const key of ['oneOf', 'anyOf', 'allOf']) {
+		const branches = schema[key];
+		if (
+			Array.isArray(branches) &&
+			branches.some((branch) => isBinarySchema(operation, branch, depth + 1))
+		)
+			return true;
+	}
+	return false;
+}
+
+function binaryBodyFieldNames(
+	operation: ZohoBooksOperationDefinition,
+): string[] {
+	const schema = resolveSchema(operation, operation.request?.schema);
+	if (!isJsonObject(schema) || !isJsonObject(schema.properties)) return [];
+	return Object.entries(schema.properties)
+		.filter(([, propertySchema]) => isBinarySchema(operation, propertySchema))
+		.map(([key]) => key);
 }
 
 function makeInput(
@@ -97,6 +151,41 @@ function makeInput(
 					}
 				: {};
 	}
+	const binaryBodyFields = binaryBodyFieldNames(operation);
+	if (binaryBodyFields.length > 0) {
+		input.body = {
+			...(isJsonObject(input.body) ? input.body : {}),
+			...Object.fromEntries(
+				binaryBodyFields.map((name) => [
+					name,
+					{
+						filename: 'receipt.pdf',
+						contentType: 'application/pdf',
+						base64: 'JVBERi0xLjQK',
+					},
+				]),
+			),
+		};
+	}
+	const binaryQueryParameters = operation.parameters.filter(
+		(parameter) =>
+			parameter.in === 'query' && isBinarySchema(operation, parameter.schema),
+	);
+	if (binaryQueryParameters.length > 0) {
+		input.query = {
+			...(input.query ?? {}),
+			...Object.fromEntries(
+				binaryQueryParameters.map((parameter) => [
+					parameter.name,
+					{
+						filename: 'receipt.pdf',
+						contentType: 'application/pdf',
+						base64: 'JVBERi0xLjQK',
+					},
+				]),
+			),
+		};
+	}
 	return input;
 }
 
@@ -107,6 +196,17 @@ function requiresBinary(operation: ZohoBooksOperationDefinition): boolean {
 			(response.contentType !== 'application/x-empty' &&
 				!response.contentType.includes('json')),
 	);
+}
+
+function binaryQueryParameterNames(
+	operation: ZohoBooksOperationDefinition,
+): string[] {
+	return operation.parameters
+		.filter(
+			(parameter) =>
+				parameter.in === 'query' && isBinarySchema(operation, parameter.schema),
+		)
+		.map((parameter) => parameter.name);
 }
 
 function mockResponse(operation: ZohoBooksOperationDefinition): Response {
@@ -216,18 +316,208 @@ describe('Zoho Books HTTP client', () => {
 			expect(new Headers(requestInit?.headers).get('authorization')).toBe(
 				'Zoho-oauthtoken test-access-token',
 			);
+			const binaryQueryNames = binaryQueryParameterNames(operation);
+			const binaryBodyNames = binaryBodyFieldNames(operation);
 			for (const key of Object.keys(input.query ?? {})) {
-				expect(url.searchParams.has(key)).toBe(true);
+				if (binaryQueryNames.includes(key)) {
+					expect(url.searchParams.has(key)).toBe(false);
+				} else {
+					expect(url.searchParams.has(key)).toBe(true);
+				}
 			}
-			if (operation.request?.mediaType === 'multipart/form-data') {
+			const multipart =
+				operation.request?.mediaType === 'multipart/form-data' ||
+				binaryQueryNames.some((name) => input.query?.[name] !== undefined) ||
+				binaryBodyNames.some(
+					(name) => isJsonObject(input.body) && input.body[name] !== undefined,
+				);
+			if (multipart) {
 				expect(requestInit?.body).toBeInstanceOf(FormData);
+				expect(
+					new Headers(requestInit?.headers).get('content-type'),
+				).toBeNull();
 				const form = requestInit?.body;
-				if (form instanceof FormData) expect(form.has('attachment')).toBe(true);
+				if (form instanceof FormData) {
+					const fileNames = [
+						...binaryQueryNames.filter(
+							(name) => input.query?.[name] !== undefined,
+						),
+						...binaryBodyNames.filter(
+							(name) =>
+								isJsonObject(input.body) && input.body[name] !== undefined,
+						),
+					];
+					for (const name of fileNames) {
+						const file = form.get(name);
+						expect(file).toBeInstanceOf(Blob);
+						if (file instanceof Blob) {
+							expect(file.size).toBe(9);
+							expect(file.type).toBe('application/pdf');
+							expect(
+								Array.from(new Uint8Array(await file.arrayBuffer())),
+							).toEqual([37, 80, 68, 70, 45, 49, 46, 52, 10]);
+						}
+					}
+					if (operation.request?.mediaType === 'multipart/form-data')
+						expect(form.has('attachment')).toBe(true);
+					if (
+						operation.request?.mediaType !== 'multipart/form-data' &&
+						isJsonObject(input.body)
+					) {
+						const jsonBody = Object.fromEntries(
+							Object.entries(input.body).filter(
+								([name]) => !binaryBodyNames.includes(name),
+							),
+						);
+						if (Object.keys(jsonBody).length > 0)
+							expect(form.get('JSONString')).toBe(JSON.stringify(jsonBody));
+					}
+				}
 			} else if (input.body !== undefined) {
 				expect(requestInit?.body).toBe(JSON.stringify(input.body));
 			}
 			fetchSpy.mockClear();
 		}
+	});
+
+	it('sends file bytes as multipart parts and preserves JSON arguments in JSONString', async () => {
+		const file = {
+			filename: 'receipt.pdf',
+			contentType: 'application/pdf',
+			base64: 'JVBERi0xLjQK',
+		};
+		const createBill = zohoBooksOperations.find(
+			(operation) => operation.id === 'create_bill',
+		);
+		if (!createBill) throw new Error('The bill creation operation is missing.');
+		activeOperation = createBill;
+		const billBody = { vendor_id: '999999999999999', bill_number: 'BILL-42' };
+		await makeZohoBooksRequest(
+			{ key: 'test-access-token', options: { region: 'us' } },
+			createBill,
+			{
+				query: {
+					organization_id: '999999999999999',
+					attachment: file,
+				},
+				body: billBody,
+			},
+		);
+		let requestInit = fetchSpy.mock.calls.at(-1)?.[1];
+		let form = requestInit?.body;
+		expect(form).toBeInstanceOf(FormData);
+		if (!(form instanceof FormData))
+			throw new Error('Zoho Books did not receive a multipart bill request.');
+		expect(form.get('JSONString')).toBe(JSON.stringify(billBody));
+		let upload = form.get('attachment');
+		expect(upload).toBeInstanceOf(Blob);
+		if (!(upload instanceof Blob))
+			throw new Error('The bill file part is missing.');
+		expect(Array.from(new Uint8Array(await upload.arrayBuffer()))).toEqual([
+			37, 80, 68, 70, 45, 49, 46, 52, 10,
+		]);
+		expect(new Headers(requestInit?.headers).get('content-type')).toBeNull();
+
+		fetchSpy.mockClear();
+		const emailContact = zohoBooksOperations.find(
+			(operation) => operation.id === 'email_contact',
+		);
+		if (!emailContact)
+			throw new Error('The contact email operation is missing.');
+		activeOperation = emailContact;
+		const emailBody = {
+			to_mail_ids: ['agent@sample.invalid'],
+			subject: 'Receipt',
+			body: 'Please see the attached receipt.',
+			attachments: file,
+		};
+		await makeZohoBooksRequest(
+			{ key: 'test-access-token', options: { region: 'us' } },
+			emailContact,
+			{
+				pathParams: { contact_id: '999999999999999' },
+				query: { organization_id: '999999999999999' },
+				body: emailBody,
+			},
+		);
+		requestInit = fetchSpy.mock.calls.at(-1)?.[1];
+		form = requestInit?.body;
+		expect(form).toBeInstanceOf(FormData);
+		if (!(form instanceof FormData))
+			throw new Error('Zoho Books did not receive a multipart email request.');
+		expect(form.get('JSONString')).toBe(
+			JSON.stringify({
+				to_mail_ids: emailBody.to_mail_ids,
+				subject: emailBody.subject,
+				body: emailBody.body,
+			}),
+		);
+		upload = form.get('attachments');
+		expect(upload).toBeInstanceOf(Blob);
+		if (!(upload instanceof Blob))
+			throw new Error('The email file part is missing.');
+		expect(Array.from(new Uint8Array(await upload.arrayBuffer()))).toEqual([
+			37, 80, 68, 70, 45, 49, 46, 52, 10,
+		]);
+		expect(new Headers(requestInit?.headers).get('content-type')).toBeNull();
+
+		fetchSpy.mockClear();
+		const addRetainerAttachment = zohoBooksOperations.find(
+			(operation) => operation.id === 'add_retainer_invoice_attachment',
+		);
+		if (!addRetainerAttachment)
+			throw new Error('The retainer invoice attachment operation is missing.');
+		activeOperation = addRetainerAttachment;
+		await makeZohoBooksRequest(
+			{ key: 'test-access-token', options: { region: 'us' } },
+			addRetainerAttachment,
+			{
+				pathParams: { retainerinvoice_id: '999999999999999' },
+				query: { organization_id: '999999999999999' },
+				body: { can_send_in_mail: true, attachment: file },
+			},
+		);
+		requestInit = fetchSpy.mock.calls.at(-1)?.[1];
+		form = requestInit?.body;
+		expect(form).toBeInstanceOf(FormData);
+		if (!(form instanceof FormData))
+			throw new Error(
+				'Zoho Books did not receive a multipart attachment request.',
+			);
+		expect(form.get('JSONString')).toBe(
+			JSON.stringify({ can_send_in_mail: true }),
+		);
+		upload = form.get('attachment');
+		expect(upload).toBeInstanceOf(Blob);
+		if (!(upload instanceof Blob))
+			throw new Error('The retainer file part is missing.');
+		expect(Array.from(new Uint8Array(await upload.arrayBuffer()))).toEqual([
+			37, 80, 68, 70, 45, 49, 46, 52, 10,
+		]);
+		expect(new Headers(requestInit?.headers).get('content-type')).toBeNull();
+	});
+
+	it('accepts both binary files and documented JSON metadata from bill attachment reads', async () => {
+		const operation = zohoBooksOperations.find(
+			(candidate) => candidate.id === 'get_bill_attachment',
+		);
+		if (!operation) throw new Error('The bill attachment read is missing.');
+		activeOperation = operation;
+		fetchSpy.mockResolvedValueOnce(
+			new Response(JSON.stringify({ code: 0, message: 'success' }), {
+				status: 200,
+				headers: { 'content-type': 'application/json' },
+			}),
+		);
+		const output = await makeZohoBooksRequest(
+			{ key: 'test-access-token', options: { region: 'us' } },
+			operation,
+			{
+				pathParams: { bill_id: '999999999999999' },
+				query: { organization_id: '999999999999999' },
+			},
+		);
+		expect(output).toEqual({ code: 0, message: 'success' });
 	});
 
 	it('stops reading a binary response once it exceeds the plugin size limit', async () => {

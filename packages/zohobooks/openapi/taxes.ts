@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	applied_filter: {
 		description: 'The filer applied for sorting',
 		type: 'string',
@@ -713,9 +713,9 @@ export const schemas: Record<string, JsonValue> = {
 		description: 'Check if Subscriptions should be updated',
 		type: 'boolean',
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_tax',
 		group: 'taxes',
@@ -1483,4 +1483,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.settings.DELETE'],
 		riskLevel: 'destructive',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

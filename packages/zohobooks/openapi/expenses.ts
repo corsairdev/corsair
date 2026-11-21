@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	account_id: {
 		description:
 			'ID of the expense account. Note: This value is a set of numeric characters.',
@@ -1206,9 +1206,9 @@ export const schemas: Record<string, JsonValue> = {
 			'ID of the vendor the expense is made. Note: This value is a set of numeric characters.',
 		type: 'string',
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_expense',
 		group: 'expenses',
@@ -1855,6 +1855,7 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 					$ref: '#/components/schemas/get-an-expense-receipt-response',
 				},
 			},
+			{ status: '200', contentType: '*/*' },
 		],
 		scopes: ['ZohoBooks.expenses.READ'],
 		riskLevel: 'read',
@@ -1993,4 +1994,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.expenses.CREATE'],
 		riskLevel: 'write',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

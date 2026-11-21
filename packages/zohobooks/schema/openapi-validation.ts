@@ -7,6 +7,12 @@ import type {
 	ZohoBooksOperationInput,
 	ZohoBooksOperationOutput,
 } from './openapi-types';
+import type {
+	ZohoBooksOperationFor,
+	ZohoBooksOperationId,
+	ZohoBooksOperationInputFor,
+	ZohoBooksOperationOutputFor,
+} from './operation-types';
 
 type JsonObject = { [key: string]: JsonValue };
 
@@ -239,8 +245,34 @@ function validateSchema(
 			}
 		}
 		const additionalProperties = record.additionalProperties;
+		const patternProperties = getObject(record.patternProperties);
 		for (const [key, propertyValue] of Object.entries(value)) {
 			if (properties?.[key] !== undefined || required?.includes(key)) continue;
+			const matchingPatterns = Object.entries(patternProperties ?? {}).filter(
+				([pattern]) => {
+					try {
+						return new RegExp(pattern).test(key);
+					} catch {
+						return false;
+					}
+				},
+			);
+			if (matchingPatterns.length > 0) {
+				if (
+					matchingPatterns.some(
+						([, patternSchema]) =>
+							!validateSchema(
+								operation,
+								patternSchema,
+								propertyValue,
+								strictRequestObjects,
+								depth + 1,
+							),
+					)
+				)
+					return false;
+				continue;
+			}
 			if (additionalProperties === false) return false;
 			if (isJsonValue(additionalProperties)) {
 				if (
@@ -444,12 +476,37 @@ export function parseZohoBooksInput(
 	return schema.parse(input);
 }
 
+export function parseZohoBooksTypedInput<Id extends ZohoBooksOperationId>(
+	operation: ZohoBooksOperationFor<Id>,
+	input: ZohoBooksOperationInputFor<Id>,
+): ZohoBooksOperationInputFor<Id> {
+	const schema = ZohoBooksEndpointInputSchemas[operation.id];
+	if (!schema) throw new Error(`Missing input schema for ${operation.id}`);
+	schema.parse(input);
+	return input;
+}
+
 export function parseZohoBooksOutput(
 	operation: ZohoBooksOperationDefinition,
 	output: ZohoBooksOperationOutput,
 ): ZohoBooksOperationOutput {
 	const schema = ZohoBooksEndpointOutputSchemas[operation.id];
 	if (!schema) throw new Error(`Missing output schema for ${operation.id}`);
+	return schema.parse(output);
+}
+
+export function parseZohoBooksTypedOutput<Id extends ZohoBooksOperationId>(
+	operation: ZohoBooksOperationFor<Id>,
+	output: ZohoBooksOperationOutput,
+): ZohoBooksOperationOutputFor<Id> {
+	const schema = z.custom<ZohoBooksOperationOutputFor<Id>>(
+		// `unknown` is narrowed by the provider operation's response contract.
+		(value): value is ZohoBooksOperationOutputFor<Id> =>
+			isJsonValue(value) && validateOperationOutput(operation, value),
+		{
+			message: `Response does not match the documented ${operation.method} ${operation.path} contract.`,
+		},
+	);
 	return schema.parse(output);
 }
 

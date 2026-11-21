@@ -3,13 +3,19 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	api_name: { description: 'API name of the field', type: 'string' },
 	applied_filter: { type: 'string' },
 	approvers_list: { description: 'List of approvers', type: 'string' },
 	'bulk-update-custom-module-request': {
 		required: ['record_name'],
 		type: 'object',
+		additionalProperties: false,
+		patternProperties: {
+			'^cf_[A-Za-z0-9_]+$': {
+				oneOf: [{ type: 'string' }, { type: 'number' }, { type: 'boolean' }],
+			},
+		},
 		properties: {
 			cf_debt_amount: { $ref: '#/components/schemas/cf_debt_amount' },
 			module_record_id: { $ref: '#/components/schemas/module_record_ids' },
@@ -64,6 +70,12 @@ export const schemas: Record<string, JsonValue> = {
 	'create-custom-modules-request': {
 		required: ['record_name'],
 		type: 'object',
+		additionalProperties: false,
+		patternProperties: {
+			'^cf_[A-Za-z0-9_]+$': {
+				oneOf: [{ type: 'string' }, { type: 'number' }, { type: 'boolean' }],
+			},
+		},
 		properties: {
 			record_name: { $ref: '#/components/schemas/record_name' },
 			cf_debt_amount: { $ref: '#/components/schemas/cf_debt_amount' },
@@ -534,6 +546,12 @@ export const schemas: Record<string, JsonValue> = {
 	'update-custom-module-request': {
 		required: ['record_name'],
 		type: 'object',
+		additionalProperties: false,
+		patternProperties: {
+			'^cf_[A-Za-z0-9_]+$': {
+				oneOf: [{ type: 'string' }, { type: 'number' }, { type: 'boolean' }],
+			},
+		},
 		properties: {
 			record_name: { $ref: '#/components/schemas/record_name' },
 			cf_debt_amount: { $ref: '#/components/schemas/cf_debt_amount' },
@@ -726,9 +744,9 @@ export const schemas: Record<string, JsonValue> = {
 		description: 'Formatted value of the Field',
 		type: 'string',
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'list_custom_modules',
 		group: 'customModules',
@@ -1355,4 +1373,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.custommodules.ALL'],
 		riskLevel: 'destructive',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

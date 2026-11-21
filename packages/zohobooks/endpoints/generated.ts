@@ -2224,6 +2224,18 @@ export const zohoBooksEndpointsNested = {
 	},
 } as const;
 
+type EndpointKeyTree<Tree> = {
+	[Key in keyof Tree]: Tree[Key] extends (...args: never[]) => unknown
+		? () => Promise<void>
+		: Tree[Key] extends object
+			? EndpointKeyTree<Tree[Key]>
+			: never;
+};
+
+export type ZohoBooksEndpointKeyTree = EndpointKeyTree<
+	typeof zohoBooksEndpointsNested
+>;
+
 export const zohoBooksEndpointSchemas = {
 	'bankAccounts.createBankAccount': {
 		input: ZohoBooksEndpointInputSchemas['create_bank_account'],
@@ -5967,7 +5979,7 @@ export const zohoBooksEndpointSchemas = {
 		input: ZohoBooksEndpointInputSchemas['get_vendor_payment_email_content'],
 		output: ZohoBooksEndpointOutputSchemas['get_vendor_payment_email_content'],
 	},
-} satisfies RequiredPluginEndpointSchemas<typeof zohoBooksEndpointsNested>;
+} satisfies RequiredPluginEndpointSchemas<ZohoBooksEndpointKeyTree>;
 
 export const zohoBooksEndpointMeta = {
 	'bankAccounts.createBankAccount': {
@@ -9554,4 +9566,4 @@ export const zohoBooksEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get vendor payment email content. Zoho Books API v3.',
 	},
-} satisfies RequiredPluginEndpointMeta<typeof zohoBooksEndpointsNested>;
+} as const satisfies RequiredPluginEndpointMeta<ZohoBooksEndpointKeyTree>;

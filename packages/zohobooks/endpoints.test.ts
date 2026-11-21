@@ -1,9 +1,17 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import * as core from 'corsair/core';
+import { parse as parseYaml } from 'yaml';
 import * as client from './client';
-import { createZohoBooksOperationEndpoint } from './endpoints/factory';
+import { createZohoBooksRuntimeOperationEndpoint } from './endpoints/factory';
 import { zohoBooksEndpointMeta } from './endpoints/generated';
+import type { ZohoBooksEndpoints } from './index';
 import { zohobooks } from './index';
-import { openApiSchemas, zohoBooksOperations } from './openapi';
+import {
+	openApiSchemas,
+	zohoBooksExcludedOperations,
+	zohoBooksOperations,
+} from './openapi';
 import type {
 	JsonValue,
 	ZohoBooksOperationDefinition,
@@ -11,16 +19,127 @@ import type {
 	ZohoBooksOperationOutput,
 } from './schema/openapi-types';
 import { ZohoBooksEndpointInputSchemas } from './schema/openapi-validation';
+import type {
+	ZohoBooksOperationInputFor,
+	ZohoBooksOperationOutputFor,
+} from './schema/operation-types';
 
 type JsonRecord = { [key: string]: JsonValue };
 
 const requestSpy = jest.spyOn(client, 'makeZohoBooksRequest');
 const eventSpy = jest.spyOn(core, 'logEventFromContext');
 
+type CreateBankAccountInput = Parameters<
+	ZohoBooksEndpoints['bankAccounts']['createBankAccount']
+>[0];
+const validBankAccountInput: CreateBankAccountInput = {
+	query: { organization_id: '999999999999999' },
+	body: { account_name: 'Operating', account_type: 'bank' },
+};
+void validBankAccountInput;
+const invalidBankAccountInput: CreateBankAccountInput = {
+	query: { organization_id: '999999999999999' },
+	body: {
+		account_name: 'Operating',
+		account_type: 'bank',
+		// @ts-expect-error createBankAccount rejects undocumented body fields at compile time.
+		unrecognized_field: true,
+	},
+};
+void invalidBankAccountInput;
+
+type BillAttachmentInput = ZohoBooksOperationInputFor<'get_bill_attachment'>;
+const validBillAttachmentInput: BillAttachmentInput = {
+	pathParams: { bill_id: '460000000098765' },
+	query: { organization_id: '999999999999999' },
+};
+void validBillAttachmentInput;
+
+type CreateBillInput = ZohoBooksOperationInputFor<'create_bill'>;
+const validCreateBillInput: CreateBillInput = {
+	query: {
+		organization_id: '999999999999999',
+		attachment: {
+			filename: 'bill.pdf',
+			contentType: 'application/pdf',
+			base64: 'JVBERi0xLjQK',
+		},
+	},
+	body: { vendor_id: '999999999999999', bill_number: 'BILL-42' },
+};
+void validCreateBillInput;
+const invalidCreateBillInput: CreateBillInput = {
+	query: { organization_id: '999999999999999' },
+	// @ts-expect-error create_bill requires both vendor_id and bill_number when body is supplied.
+	body: { vendor_id: '999999999999999' },
+};
+void invalidCreateBillInput;
+
+type BillAttachmentOutput = ZohoBooksOperationOutputFor<'get_bill_attachment'>;
+function readBillAttachmentOutput(output: BillAttachmentOutput): string {
+	if (typeof output !== 'object' || output === null) return '';
+	if (
+		'kind' in output &&
+		output.kind === 'binary' &&
+		typeof output.contentType === 'string'
+	)
+		return output.contentType;
+	return 'message' in output && typeof output.message === 'string'
+		? output.message
+		: '';
+}
+void readBillAttachmentOutput;
+
+type CreateCustomModuleRecordInput = Parameters<
+	ZohoBooksEndpoints['customModules']['createCustomModuleRecord']
+>[0];
+const validCustomModuleRecordInput: CreateCustomModuleRecordInput = {
+	pathParams: { module_name: 'cm_assets' },
+	query: { organization_id: '999999999999999' },
+	body: {
+		record_name: 'Laptop',
+		cf_serial_number: 'SN-42',
+		cf_purchase_price: 1500,
+		cf_is_leased: false,
+	},
+};
+void validCustomModuleRecordInput;
+const invalidCustomModuleRecordInput: CreateCustomModuleRecordInput = {
+	pathParams: { module_name: 'cm_assets' },
+	query: { organization_id: '999999999999999' },
+	body: {
+		record_name: 'Laptop',
+		// @ts-expect-error module-defined fields must use Zoho's cf_ API-name prefix.
+		serial_number: 'SN-42',
+	},
+};
+void invalidCustomModuleRecordInput;
+const invalidCustomModuleValue: CreateCustomModuleRecordInput = {
+	pathParams: { module_name: 'cm_assets' },
+	query: { organization_id: '999999999999999' },
+	body: {
+		record_name: 'Laptop',
+		// @ts-expect-error custom-module fields only accept scalar values.
+		cf_extended_data: { nested: true },
+	},
+};
+void invalidCustomModuleValue;
+
+function isJsonRecord(value: JsonValue | undefined): value is JsonRecord {
+	return (
+		value !== undefined &&
+		typeof value === 'object' &&
+		value !== null &&
+		!Array.isArray(value)
+	);
+}
+
+function isUnknownRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
 function objectValue(value: JsonValue | undefined): JsonRecord | undefined {
-	return typeof value === 'object' && value !== null && !Array.isArray(value)
-		? value
-		: undefined;
+	return isJsonRecord(value) ? value : undefined;
 }
 
 function stringValue(value: JsonValue | undefined): string | undefined {
@@ -39,6 +158,27 @@ function resolveSchema(
 	const reference = stringValue(object?.$ref);
 	const name = reference?.match(/^#\/components\/schemas\/([^/]+)$/)?.[1];
 	return name ? openApiSchemas[operation.group]?.[name] : schema;
+}
+
+function isBinarySchema(
+	operation: ZohoBooksOperationDefinition,
+	schemaInput: JsonValue | undefined,
+	depth = 0,
+): boolean {
+	if (depth > 12 || schemaInput === undefined) return false;
+	const schema = objectValue(resolveSchema(operation, schemaInput));
+	if (!schema) return false;
+	if (schema.format === 'binary') return true;
+	if (isBinarySchema(operation, schema.items, depth + 1)) return true;
+	for (const key of ['oneOf', 'anyOf', 'allOf']) {
+		if (
+			arrayValue(schema[key])?.some((part) =>
+				isBinarySchema(operation, part, depth + 1),
+			)
+		)
+			return true;
+	}
+	return false;
 }
 
 function sampleValue(
@@ -138,6 +278,7 @@ function sampleValue(
 
 function makeInput(
 	operation: ZohoBooksOperationDefinition,
+	includeOptionalBinaryInputs = true,
 ): ZohoBooksOperationInput {
 	const input: ZohoBooksOperationInput = {};
 	for (const location of ['path', 'query', 'header'] as const) {
@@ -158,17 +299,46 @@ function makeInput(
 			]),
 		);
 	}
+	const binaryQueryParameters = operation.parameters.filter(
+		(parameter) =>
+			parameter.in === 'query' &&
+			isBinarySchema(operation, parameter.schema) &&
+			(includeOptionalBinaryInputs || parameter.required),
+	);
+	if (binaryQueryParameters.length > 0) {
+		input.query = {
+			...(input.query ?? {}),
+			...Object.fromEntries(
+				binaryQueryParameters.map((parameter) => [
+					parameter.name,
+					{
+						filename: 'receipt.pdf',
+						contentType: 'application/pdf',
+						base64: 'JVBERi0xLjQK',
+					},
+				]),
+			),
+		};
+	}
 	if (operation.request?.schema) {
 		const body = sampleValue(operation, operation.request.schema, 'body');
 		const bodyObject = objectValue(body);
-		if (operation.request.mediaType === 'multipart/form-data' && bodyObject) {
+		if (bodyObject) {
 			const requestSchema = objectValue(
 				resolveSchema(operation, operation.request.schema),
+			);
+			const requiredBodyFields = new Set(
+				(arrayValue(requestSchema?.required) ?? []).filter(
+					(value): value is string => typeof value === 'string',
+				),
 			);
 			for (const [name, propertySchema] of Object.entries(
 				objectValue(requestSchema?.properties) ?? {},
 			)) {
-				if (objectValue(propertySchema)?.format === 'binary') {
+				if (
+					isBinarySchema(operation, propertySchema) &&
+					(includeOptionalBinaryInputs || requiredBodyFields.has(name))
+				) {
 					bodyObject[name] = {
 						filename: 'receipt.pdf',
 						contentType: 'application/pdf',
@@ -235,7 +405,15 @@ describe('Zoho Books operation endpoints', () => {
 		expect(scopes).toHaveLength(1);
 		expect(String(scopes[0]).split(',')).toHaveLength(81);
 		expect(Object.keys(plugin.webhooks ?? {})).toHaveLength(0);
+		expect(zohoBooksOperations).toHaveLength(884);
+		expect(zohoBooksExcludedOperations).toHaveLength(1);
+		expect(zohoBooksExcludedOperations[0]?.id).toBe('all_tag_options');
 		expect(Object.keys(plugin.endpointSchemas ?? {})).toHaveLength(884);
+		expect(Object.keys(zohoBooksEndpointMeta).sort()).toEqual(
+			zohoBooksOperations
+				.map((operation) => `${operation.group}.${operation.name}`)
+				.sort(),
+		);
 	});
 
 	it('validates, dispatches, parses, and safely logs every documented operation', async () => {
@@ -253,7 +431,7 @@ describe('Zoho Books operation endpoints', () => {
 
 			const output = makeOutput(operation);
 			requestSpy.mockResolvedValueOnce(output);
-			const endpoint = createZohoBooksOperationEndpoint(operation.id);
+			const endpoint = createZohoBooksRuntimeOperationEndpoint(operation.id);
 			await expect(endpoint(context, parsedInput.data)).resolves.toEqual(
 				output,
 			);
@@ -276,6 +454,113 @@ describe('Zoho Books operation endpoints', () => {
 			await expect(endpoint(context, invalidInput)).rejects.toThrow();
 			expect(requestSpy).not.toHaveBeenCalled();
 		}
+	});
+
+	it('keeps every published API example valid against its operation input schema', () => {
+		// `unknown` because both YAML and embedded JSON are author-controlled text until parsed.
+		const docsConfig: unknown = parseYaml(
+			readFileSync(join(__dirname, 'plugin-docs.yaml'), 'utf8'),
+		);
+		if (
+			!isUnknownRecord(docsConfig) ||
+			!isUnknownRecord(docsConfig.apiExamples)
+		)
+			throw new Error('plugin-docs.yaml has no API examples map.');
+
+		const operationsByName = new Map(
+			zohoBooksOperations.map((operation) => [
+				`${operation.group}.${operation.name}`,
+				operation,
+			]),
+		);
+		const invalidExamples: string[] = [];
+		for (const [name, rawExample] of Object.entries(docsConfig.apiExamples)) {
+			const operation = operationsByName.get(name);
+			if (!operation || !isUnknownRecord(rawExample)) {
+				invalidExamples.push(`${name}: unknown operation or malformed example`);
+				continue;
+			}
+			let args: unknown = rawExample.args;
+			if (typeof rawExample.call === 'string') {
+				try {
+					args = JSON.parse(rawExample.call);
+				} catch {
+					invalidExamples.push(`${name}: call must contain valid JSON`);
+					continue;
+				}
+			}
+			const schema = ZohoBooksEndpointInputSchemas[operation.id];
+			if (!schema || !schema.safeParse(args).success)
+				invalidExamples.push(`${name}: args do not match ${operation.id}`);
+		}
+		expect(invalidExamples).toEqual([]);
+	});
+
+	it('accepts module-defined cf_ fields while keeping custom-module records strict', () => {
+		const pathParams = { module_name: 'cm_assets' };
+		const query = { organization_id: '999999999999999' };
+		const create = ZohoBooksEndpointInputSchemas.create_custom_module_record;
+		const update = ZohoBooksEndpointInputSchemas.update_custom_module_record;
+		const bulkUpdate =
+			ZohoBooksEndpointInputSchemas.bulk_update_custom_module_records;
+		if (!create || !update || !bulkUpdate)
+			throw new Error('Custom module record input schemas are missing.');
+		const recordBody = {
+			record_name: 'Laptop',
+			cf_debt_amount: 250,
+			cf_serial_number: 'SN-42',
+			cf_is_leased: false,
+		};
+
+		expect(
+			create.safeParse({ pathParams, query, body: recordBody }).success,
+		).toBe(true);
+		expect(
+			update.safeParse({
+				pathParams: { ...pathParams, module_id: '123' },
+				query,
+				body: recordBody,
+			}).success,
+		).toBe(true);
+		expect(
+			bulkUpdate.safeParse({ pathParams, query, body: recordBody }).success,
+		).toBe(true);
+		expect(
+			create.safeParse({
+				pathParams,
+				query,
+				body: { record_name: 'Laptop', serial_number: 'SN-42' },
+			}).success,
+		).toBe(false);
+		expect(
+			create.safeParse({
+				pathParams,
+				query,
+				body: { record_name: 'Laptop', cf_serial_number: { invalid: true } },
+			}).success,
+		).toBe(false);
+		expect(
+			create.safeParse({
+				pathParams,
+				query,
+				body: { record_name: 'Laptop', cf_debt_amount: 'not-a-number' },
+			}).success,
+		).toBe(false);
+	});
+
+	it('accepts JSON metadata when Zoho returns it from a bill attachment read', async () => {
+		const operation = zohoBooksOperations.find(
+			(candidate) => candidate.id === 'get_bill_attachment',
+		);
+		if (!operation) throw new Error('The bill attachment read is missing.');
+		requestSpy.mockResolvedValueOnce({ code: 0, message: 'success' });
+		const endpoint = createZohoBooksRuntimeOperationEndpoint(operation.id);
+		await expect(
+			endpoint(context, {
+				pathParams: { bill_id: '999999999999999' },
+				query: { organization_id: '999999999999999' },
+			}),
+		).resolves.toEqual({ code: 0, message: 'success' });
 	});
 
 	it('marks irreversible financial actions as destructive', () => {

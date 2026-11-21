@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	'add-attachment-to-a-retainer-invoice-request': {
 		type: 'object',
 		properties: {
@@ -1226,9 +1226,9 @@ export const schemas: Record<string, JsonValue> = {
 		},
 	},
 	zip: { type: 'string' },
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_retainer_invoice',
 		group: 'retainerInvoices',
@@ -1921,6 +1921,7 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 					$ref: '#/components/schemas/get-a-retainer-invoice-attachment-response',
 				},
 			},
+			{ status: '200', contentType: '*/*' },
 		],
 		scopes: ['ZohoBooks.invoices.READ'],
 		riskLevel: 'read',
@@ -2318,4 +2319,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.invoices.CREATE'],
 		riskLevel: 'write',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

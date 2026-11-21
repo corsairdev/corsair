@@ -6,6 +6,7 @@ import type {
 	RateLimitConfig,
 } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import { openApiSchemas } from './openapi';
 import type {
 	JsonValue,
 	ZohoBooksOperationDefinition,
@@ -150,6 +151,76 @@ function encodeQueryParameter(
 	return value;
 }
 
+function isBinaryParameter(
+	parameter: ZohoBooksOperationDefinition['parameters'][number],
+): boolean {
+	return (
+		parameter.schema !== undefined &&
+		isZohoBooksJsonObject(parameter.schema) &&
+		parameter.schema.format === 'binary'
+	);
+}
+
+function resolveSchemaReference(
+	operation: ZohoBooksOperationDefinition,
+	schema: JsonValue,
+): JsonValue | undefined {
+	if (!isZohoBooksJsonObject(schema) || typeof schema.$ref !== 'string')
+		return schema;
+	const name = schema.$ref.match(/^#\/components\/schemas\/([^/]+)$/)?.[1];
+	if (!name) return undefined;
+	// `unknown` because group schemas come from the provider-generated registry.
+	const groupSchemas: unknown = Reflect.get(openApiSchemas, operation.group);
+	if (!isJsonValue(groupSchemas) || !isZohoBooksJsonObject(groupSchemas))
+		return undefined;
+	return groupSchemas[name];
+}
+
+function isBinarySchema(
+	operation: ZohoBooksOperationDefinition,
+	schemaInput: JsonValue,
+	depth = 0,
+): boolean {
+	if (depth > 16 || !isZohoBooksJsonObject(schemaInput)) return false;
+	const schema = resolveSchemaReference(operation, schemaInput);
+	if (!schema || !isZohoBooksJsonObject(schema)) return false;
+	if (schema.format === 'binary') return true;
+	if (
+		isJsonValue(schema.items) &&
+		isBinarySchema(operation, schema.items, depth + 1)
+	)
+		return true;
+	for (const key of ['oneOf', 'anyOf', 'allOf']) {
+		const branches = schema[key];
+		if (
+			Array.isArray(branches) &&
+			branches.some(
+				(branch) =>
+					isJsonValue(branch) && isBinarySchema(operation, branch, depth + 1),
+			)
+		)
+			return true;
+	}
+	return false;
+}
+
+function binaryBodyFieldNames(
+	operation: ZohoBooksOperationDefinition,
+): Set<string> {
+	const requestSchema = operation.request?.schema;
+	if (requestSchema === undefined) return new Set();
+	const resolved = resolveSchemaReference(operation, requestSchema);
+	if (!resolved || !isZohoBooksJsonObject(resolved)) return new Set();
+	const properties = resolved.properties;
+	if (properties === undefined || !isZohoBooksJsonObject(properties))
+		return new Set();
+	return new Set(
+		Object.entries(properties)
+			.filter(([, schema]) => isBinarySchema(operation, schema))
+			.map(([key]) => key),
+	);
+}
+
 function requestQuery(
 	operation: ZohoBooksOperationDefinition,
 	input: ZohoBooksOperationInput,
@@ -160,6 +231,7 @@ function requestQuery(
 		const parameter = operation.parameters.find(
 			(candidate) => candidate.in === 'query' && candidate.name === key,
 		);
+		if (parameter && isBinaryParameter(parameter)) continue;
 		query[key] = parameter ? encodeQueryParameter(parameter, value) : value;
 	}
 	return query;
@@ -196,11 +268,26 @@ function decodeBase64(value: string): Uint8Array {
 }
 
 function toFormData(
+	operation: ZohoBooksOperationDefinition,
 	input: ZohoBooksOperationInput,
 ): Record<string, string | Blob> | undefined {
-	if (!input.body || !isZohoBooksJsonObject(input.body)) return undefined;
+	const bodyIsMultipart =
+		operation.request?.mediaType === 'multipart/form-data';
+	const binaryBodyFields = binaryBodyFieldNames(operation);
+	const binaryQueryParameters = operation.parameters.filter(
+		(parameter) =>
+			parameter.in === 'query' &&
+			isBinaryParameter(parameter) &&
+			input.query?.[parameter.name] !== undefined,
+	);
+	if (
+		!bodyIsMultipart &&
+		binaryQueryParameters.length === 0 &&
+		binaryBodyFields.size === 0
+	)
+		return undefined;
 	const formData: Record<string, string | Blob> = {};
-	for (const [key, value] of Object.entries(input.body)) {
+	const appendValue = (key: string, value: JsonValue, isBinary: boolean) => {
 		if (isZohoBooksJsonObject(value)) {
 			const filename = value.filename;
 			const contentType = value.contentType;
@@ -213,10 +300,41 @@ function toFormData(
 				formData[key] = new File([decodeBase64(base64)], filename, {
 					type: contentType,
 				});
-				continue;
+				return;
 			}
 		}
+		if (isBinary && typeof value === 'string') {
+			formData[key] = new Blob([value]);
+			return;
+		}
 		formData[key] = typeof value === 'string' ? value : JSON.stringify(value);
+	};
+	if (
+		bodyIsMultipart &&
+		input.body !== undefined &&
+		isZohoBooksJsonObject(input.body)
+	) {
+		for (const [key, value] of Object.entries(input.body))
+			appendValue(key, value, binaryBodyFields.has(key));
+	} else if (
+		(binaryQueryParameters.length > 0 || binaryBodyFields.size > 0) &&
+		input.body !== undefined &&
+		isZohoBooksJsonObject(input.body)
+	) {
+		// Zoho's multipart APIs carry non-file JSON arguments in the JSONString part.
+		const jsonBody = Object.fromEntries(
+			Object.entries(input.body).filter(([key]) => !binaryBodyFields.has(key)),
+		);
+		if (Object.keys(jsonBody).length > 0)
+			formData.JSONString = JSON.stringify(jsonBody);
+		for (const key of binaryBodyFields) {
+			const value = input.body[key];
+			if (value !== undefined) appendValue(key, value, true);
+		}
+	}
+	for (const parameter of binaryQueryParameters) {
+		const value = input.query?.[parameter.name];
+		if (value !== undefined) appendValue(parameter.name, value, true);
 	}
 	return formData;
 }
@@ -417,13 +535,27 @@ export async function makeZohoBooksRequest(
 			Authorization: `Zoho-oauthtoken ${ctx.key}`,
 		},
 	};
+	const hasBinaryQueryInput = operation.parameters.some(
+		(parameter) =>
+			parameter.in === 'query' &&
+			isBinaryParameter(parameter) &&
+			input.query?.[parameter.name] !== undefined,
+	);
+	const hasBinaryBodyInput = [...binaryBodyFieldNames(operation)].some(
+		(name) =>
+			input.body !== undefined &&
+			isZohoBooksJsonObject(input.body) &&
+			input.body[name] !== undefined,
+	);
 	const requestOptions: ApiRequestOptions = {
 		method: operation.method,
 		url: operation.path,
 		path: input.pathParams,
 		query: requestQuery(operation, input),
-		...(operation.request?.mediaType === 'multipart/form-data'
-			? { formData: toFormData(input) }
+		...(operation.request?.mediaType === 'multipart/form-data' ||
+		hasBinaryQueryInput ||
+		hasBinaryBodyInput
+			? { formData: toFormData(operation, input) }
 			: input.body !== undefined
 				? { body: input.body, mediaType: operation.request?.mediaType }
 				: {}),

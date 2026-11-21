@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	'action-delivery-challan-response': {
 		type: 'object',
 		properties: {
@@ -624,9 +624,9 @@ export const schemas: Record<string, JsonValue> = {
 			attention: { description: 'Attention.', type: 'string' },
 		},
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'list_delivery_challans',
 		group: 'deliveryChallans',
@@ -1409,4 +1409,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.deliverychallans.UPDATE'],
 		riskLevel: 'write',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];

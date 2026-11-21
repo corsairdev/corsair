@@ -3,7 +3,7 @@ import type {
 	ZohoBooksOperationDefinition,
 } from '../schema/openapi-types';
 
-export const schemas: Record<string, JsonValue> = {
+export const schemas = {
 	ach_payment_initiated: {
 		type: 'boolean',
 		description:
@@ -3748,9 +3748,9 @@ export const schemas: Record<string, JsonValue> = {
 		description: "Zip code of the customer's billing address.",
 		type: 'string',
 	},
-};
+} as const satisfies Record<string, JsonValue>;
 
-export const operations: readonly ZohoBooksOperationDefinition[] = [
+export const operations = [
 	{
 		id: 'create_invoice',
 		group: 'invoices',
@@ -5589,6 +5589,7 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 					$ref: '#/components/schemas/get-an-invoice-attachment-response',
 				},
 			},
+			{ status: '200', contentType: '*/*' },
 		],
 		scopes: ['ZohoBooks.invoices.READ'],
 		riskLevel: 'read',
@@ -8972,4 +8973,4 @@ export const operations: readonly ZohoBooksOperationDefinition[] = [
 		scopes: ['ZohoBooks.invoices.CREATE'],
 		riskLevel: 'destructive',
 	},
-];
+] as const satisfies readonly ZohoBooksOperationDefinition[];
