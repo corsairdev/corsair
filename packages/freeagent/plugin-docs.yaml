@@ -401,7 +401,7 @@ apiExamples:
                                                  }
                              },
       "journalSets.update":  {
-                                  "id":  "1",
+                                  "id":  "37",
                                   "journal_set":  {
                                                       "journal_entries":  [
                                                                               {
