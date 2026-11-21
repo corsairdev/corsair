@@ -125,8 +125,8 @@ const ListEnvelopeSchema = z
 	.object({
 		status: z.string().describe('success'),
 		// unknown: the data array's element type differs per endpoint, so the
-	// shared envelope keeps it open and each endpoint extends it.
-	data: z.array(z.unknown()),
+		// shared envelope keeps it open and each endpoint extends it.
+		data: z.array(z.unknown()),
 		page: PaginationSchema,
 	})
 	.loose()
