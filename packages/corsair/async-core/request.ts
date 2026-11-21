@@ -289,8 +289,10 @@ const getResponseBody = async (
 					return await response.text();
 				}
 			}
-		} catch (error) {
-			console.error(error);
+		} catch {
+			// The parser's error message can quote part of the body, which may
+			// hold provider or customer data, so it is not logged.
+			console.error(`Could not parse the ${response.status} response body`);
 		}
 	}
 	return undefined;
