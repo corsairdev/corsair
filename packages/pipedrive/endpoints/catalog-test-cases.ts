@@ -1038,7 +1038,15 @@ export const PipedriveCatalogTestCases = {
 				interval: 'quarterly',
 			},
 		},
-		response: { success: true, data: { goal: { id: 'x' } } },
+		response: {
+			success: true,
+			data: {
+				goal: {
+					id: 'x',
+					duration: { start: '2026-01-01', end: null },
+				},
+			},
+		},
 		expected: {
 			method: 'POST',
 			path: '/goals',
@@ -1073,7 +1081,17 @@ export const PipedriveCatalogTestCases = {
 				'period.end': '2026-01-01',
 			},
 		},
-		response: { success: true, data: { goals: [{ id: 'x' }] } },
+		response: {
+			success: true,
+			data: {
+				goals: [
+					{
+						id: 'x',
+						duration: { start: '2026-01-01', end: null },
+					},
+				],
+			},
+		},
 		expected: {
 			method: 'GET',
 			path: '/goals/find',
@@ -1108,7 +1126,15 @@ export const PipedriveCatalogTestCases = {
 				interval: 'quarterly',
 			},
 		},
-		response: { success: true, data: { goal: { id: 'x' } } },
+		response: {
+			success: true,
+			data: {
+				goal: {
+					id: 'x',
+					duration: { start: '2026-01-01', end: null },
+				},
+			},
+		},
 		expected: {
 			method: 'PUT',
 			path: '/goals/x',
@@ -1145,7 +1171,16 @@ export const PipedriveCatalogTestCases = {
 				timezone: 'x',
 			},
 		},
-		response: { success: true, data: { progress: 1 } },
+		response: {
+			success: true,
+			data: {
+				progress: 1,
+				goal: {
+					id: 'x',
+					duration: { start: '2026-01-01', end: null },
+				},
+			},
+		},
 		expected: {
 			method: 'GET',
 			path: '/goals/x/results',

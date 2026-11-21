@@ -216,6 +216,34 @@ describe('Pipedrive endpoint schemas', () => {
 		).toBe(false);
 	});
 
+	it('accepts open-ended durations in every goal response shape', () => {
+		const openEndedGoal = {
+			id: 'x',
+			duration: { start: '2026-01-01', end: null },
+		};
+		const cases = [
+			['apiV1.goals.addGoal', { success: true, data: { goal: openEndedGoal } }],
+			[
+				'apiV1.goals.getGoals',
+				{ success: true, data: { goals: [openEndedGoal] } },
+			],
+			[
+				'apiV1.goals.updateGoal',
+				{ success: true, data: { goal: openEndedGoal } },
+			],
+			[
+				'apiV1.goals.getGoalResult',
+				{ success: true, data: { progress: 1, goal: openEndedGoal } },
+			],
+		] as const;
+
+		for (const [key, response] of cases) {
+			expect(PipedriveCatalog[key].output.safeParse(response).success).toBe(
+				true,
+			);
+		}
+	});
+
 	it('accepts and bounds documented deal-list filters and pagination', () => {
 		expect(
 			PipedriveEndpointInputSchemas.dealList.parse({

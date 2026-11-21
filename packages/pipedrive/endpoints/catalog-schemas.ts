@@ -4923,7 +4923,7 @@ export const PipedriveCatalog = {
 								duration: z
 									.object({
 										start: z.string().optional(),
-										end: z.string().optional(),
+										end: z.string().nullable().optional(),
 									})
 									.passthrough()
 									.optional(),
@@ -5077,7 +5077,7 @@ export const PipedriveCatalog = {
 										duration: z
 											.object({
 												start: z.string().optional(),
-												end: z.string().optional(),
+												end: z.string().nullable().optional(),
 											})
 											.passthrough()
 											.optional(),
@@ -5203,7 +5203,7 @@ export const PipedriveCatalog = {
 								duration: z
 									.object({
 										start: z.string().optional(),
-										end: z.string().optional(),
+										end: z.string().nullable().optional(),
 									})
 									.passthrough()
 									.optional(),
@@ -5307,7 +5307,7 @@ export const PipedriveCatalog = {
 								duration: z
 									.object({
 										start: z.string().optional(),
-										end: z.string().optional(),
+										end: z.string().nullable().optional(),
 									})
 									.passthrough()
 									.optional(),

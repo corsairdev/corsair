@@ -5585,7 +5585,7 @@ POST https://api.pipedrive.com/v1/goals. The official OpenAPI x-token-cost is 10
     interval?: string,
     duration?: {
       start?: string,
-      end?: string
+      end?: string | null
     },
     expected_outcome?: {
       target?: number,
@@ -5722,7 +5722,7 @@ GET https://api.pipedrive.com/v1/goals/&#123;id&#125;/results. The official Open
     interval?: string,
     duration?: {
       start?: string,
-      end?: string
+      end?: string | null
     },
     expected_outcome?: {
       target?: number,
@@ -5815,7 +5815,7 @@ GET https://api.pipedrive.com/v1/goals/find. The official OpenAPI x-token-cost i
     interval?: string,
     duration?: {
       start?: string,
-      end?: string
+      end?: string | null
     },
     expected_outcome?: {
       target?: number,
@@ -5928,7 +5928,7 @@ PUT https://api.pipedrive.com/v1/goals/&#123;id&#125;. The official OpenAPI x-to
     interval?: string,
     duration?: {
       start?: string,
-      end?: string
+      end?: string | null
     },
     expected_outcome?: {
       target?: number,
