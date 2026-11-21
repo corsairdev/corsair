@@ -11080,5 +11080,21 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-21",
+    "package": "@corsair-dev/parallel",
+    "dir": "packages/parallel",
+    "name": "Parallel",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2654,
+        "title": "Flights, hotels and shopping search, inbound webhooks, managed pricing"
+      }
+    ]
   }
 ]
