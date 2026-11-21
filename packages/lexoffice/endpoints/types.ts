@@ -98,7 +98,8 @@ const VoucherListResponseItemSchema = z.object({
 	voucherType: z.string(),
 	voucherStatus: z.string(),
 	voucherNumber: z.string().nullable().optional(),
-	voucherDate: z.string(),
+	// Unchecked vouchers (a file upload still in OCR) have no voucherDate yet.
+	voucherDate: z.string().nullable().optional(),
 	createdDate: z.string().optional(),
 	updatedDate: z.string().optional(),
 	dueDate: z.string().nullable().optional(),
