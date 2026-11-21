@@ -123,7 +123,7 @@
             "key": "fileId",
             "optional": true,
             "type": "string",
-            "description": "Where the host saved the file, in place of its content, when it was over the limit. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
           }
         ]
       }

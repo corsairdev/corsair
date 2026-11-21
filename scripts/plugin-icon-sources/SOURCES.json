@@ -592,10 +592,14 @@
   },
   "snowflake": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/snowflake.svg",
-    "note": "\u00ae removed"
+    "note": "® removed"
   },
   "sourcegraph": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/sourcegraph.svg"
+  },
+  "storeganise": {
+    "from": "https://media.brand.dev/56c63f51-5ee7-4712-8f4e-a5167d04ebd2.svg",
+    "note": "found with the context.dev Brand API for storeganise.com"
   },
   "storyblok": {
     "from": "https://media.brand.dev/3c796387-03c2-4b40-9bcd-9a88db2b39d2.svg",

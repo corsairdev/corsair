@@ -12,6 +12,10 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import {
+	createManagedPricingCredentialCache,
+	resolveManagedPricingApiKey,
+} from 'corsair/hub';
 import { tryGetStoredKey } from './client';
 import {
 	litescrapeEndpointMeta as generatedEndpointMeta,
@@ -27,7 +31,7 @@ import { LitescrapeSchema } from './schema';
 
 export type LitescrapePluginOptions = {
 	/** Litescrape web-data API: search engines, maps, shopping, social, jobs and real estate. */
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'api_key' | 'managed_pricing'>;
 	key?: string;
 	hooks?: InternalLitescrapePlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -75,6 +79,10 @@ export const litescrapeAuthConfig = {
 	api_key: {},
 } as const satisfies PluginAuthConfig;
 
+// Short-lived keys Hub mints for Corsair's own LiteScrape account, one per
+// metered operation, cached until they expire.
+const litescrapeManagedPricingCache = createManagedPricingCredentialCache();
+
 export type BaseLitescrapePlugin<T extends LitescrapePluginOptions> =
 	CorsairPlugin<
 		'litescrape',
@@ -99,6 +107,14 @@ export function litescrape<const T extends LitescrapePluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	// managed_pricing runs on Corsair's key, which core gets from Hub without
+	// asking the keyBuilder, so an explicit key would be dropped silently and
+	// the call billed to Corsair credits. The two can't both apply.
+	if (options.authType === 'managed_pricing' && options.key) {
+		throw new Error(
+			"litescrape: `key` can't be used with authType 'managed_pricing', which runs on Corsair's LiteScrape key. Drop `key`, or use authType 'api_key' to call LiteScrape with your own key.",
+		);
+	}
 	return {
 		id: 'litescrape',
 		authConfig: litescrapeAuthConfig,
@@ -125,20 +141,33 @@ export function litescrape<const T extends LitescrapePluginOptions>(
 				DEFAULT: callerDefault || builtInDefault,
 			};
 		})(),
-		// Returns the stored LiteScrape key (or the explicit option). When no
-		// key is configured this throws AuthMissingError so core creates the
+		// Returns the explicit option, a key Hub mints on Corsair's account
+		// (managed_pricing), or the stored LiteScrape key. When no key is
+		// configured this throws AuthMissingError so core creates the
 		// account-connect prompt for the tenant.
 		keyBuilder: async (ctx: LitescrapeKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint') {
+			if (source === 'endpoint' && ctx.authType === 'managed_pricing') {
+				return resolveManagedPricingApiKey(ctx, {
+					plugin: 'litescrape',
+					cache: litescrapeManagedPricingCache,
+					operation: ctx.meteredOperationId,
+				});
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const storedKey = await tryGetStoredKey(() => ctx.keys?.get_api_key());
 				if (!storedKey) {
 					throw new AuthMissingError('litescrape', 'api_key');
 				}
 				return storedKey;
+			}
+
+			if (source === 'endpoint') {
+				throw new AuthMissingError('litescrape', ctx.authType ?? 'api_key');
 			}
 
 			return '';
