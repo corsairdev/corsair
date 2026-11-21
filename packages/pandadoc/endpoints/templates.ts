@@ -26,7 +26,7 @@ export const list: PandadocEndpoints['templatesList'] = (ctx, input) =>
 				deleted: query.deleted,
 				shared: query.shared,
 				tag: query.tag,
-				fields: query.fields,
+				fields: query.fields?.join(','),
 			},
 		}),
 		{ log: (_, page) => ({ count: page.results.length }) },

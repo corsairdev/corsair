@@ -58,7 +58,7 @@ apiExamples:
   documents.listFields:
     call: '{ id: "RsXrKarV524iCpjci9CMGa" }'
   documents.createFields:
-    call: '{ id: "RsXrKarV524iCpjci9CMGa", fields: [{ type: "signature", layout: { page: 1, position: { offset_x: 10, offset_y: 20, anchor_point: "top_left" }, style: { width: 10, height: 5 } } }] }'
+    call: '{ id: "RsXrKarV524iCpjci9CMGa", fields: [{ type: "signature", layout: { page: 1, position: { offset_x: 10, offset_y: 20, anchor_point: "topleft" }, style: { width: 10, height: 5 } } }] }'
   documents.move:
     call: '{ id: "RsXrKarV524iCpjci9CMGa", folderId: "Zugfh5DZNREisAVyLcVyCJ" }'
   templates.list:
@@ -94,7 +94,7 @@ apiExamples:
 apiNotes:
   documents.list: 'Status filters are numeric codes (0 = document.draft, 1 = document.sent, 2 = document.completed, 3 = document.uploaded, 4 = document.error, 5 = document.viewed, 6 = document.waiting_approval). Metadata filters take the documented `metadata_key=value` format, one array entry per filter.'
   documents.create: 'Two creation bodies: from a template (template_uuid plus recipients) or from a public HTTPS PDF (url plus name). The answer is 201 with the document in document.create_pending while it renders.'
-  documents.send: 'Sends the document to its recipients by email. This cannot be recalled.'
+  documents.send: 'Sends the document to its recipients by email (silent: true sends without emails or reminders; approval notifications still go out). This cannot be recalled.'
   documents.delete: 'Answers 204 with no body. With forever: true the document is deleted permanently instead of moved to deleted documents.'
   documents.download: 'Answers a PDF; while the document is still rendering the API answers 202 and the operation reports pending: true instead of an empty file.'
   documents.downloadProtected: 'Answers the flattened PDF of a completed document; 202 while it renders, reported as pending: true.'

@@ -253,7 +253,7 @@ const pandadocEndpointMeta = {
 	'documents.send': {
 		riskLevel: 'destructive',
 		description:
-			'Send a document to its recipients for signing; emails go out that cannot be recalled',
+			'Send a document to its recipients for signing; the signing emails cannot be recalled (silent: true sends without emails)',
 		irreversible: true,
 	},
 	'documents.update': {

@@ -364,7 +364,7 @@ describe('templates', () => {
 			count: 10,
 			q: 'nda',
 			shared: true,
-			fields: true,
+			fields: ['content_date_modified'],
 		});
 
 		const sent = lastRequest();
@@ -372,7 +372,7 @@ describe('templates', () => {
 		expect(sent.query['count']).toBe('10');
 		expect(sent.query['q']).toBe('nda');
 		expect(sent.query['shared']).toBe('true');
-		expect(sent.query['fields']).toBe('true');
+		expect(sent.query['fields']).toBe('content_date_modified');
 	});
 
 	it('get reads template details', async () => {

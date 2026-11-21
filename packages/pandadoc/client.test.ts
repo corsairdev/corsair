@@ -271,5 +271,11 @@ describe('maskEmails', () => {
 			keep: 1,
 		});
 		expect(maskEmails(42)).toBe(42);
+		expect(maskEmails('Invalid phone +1 5555550100 for 2 recipients')).toBe(
+			'Invalid phone +1 [number] for 2 recipients',
+		);
+		expect(maskEmails('Invalid phone +15555550100')).toBe(
+			'Invalid phone [number]',
+		);
 	});
 });

@@ -94,10 +94,16 @@ export function safeErrorBody(body: unknown): unknown {
 // unknown: error bodies are arbitrary JSON; the same shape comes back.
 export function maskEmails<T>(value: T): T {
 	if (typeof value === 'string') {
-		// Token by token, no backtracking regex: any word with an @ is masked.
+		// Token by token, no backtracking regex: any word with an @ is masked,
+		// and so is any word holding 7+ digits (a phone number a validation
+		// error echoes back).
 		return value
 			.split(/(\s+)/)
-			.map((token) => (token.includes('@') ? '[email]' : token))
+			.map((token) => {
+				if (token.includes('@')) return '[email]';
+				if ((token.match(/\d/g)?.length ?? 0) >= 7) return '[number]';
+				return token;
+			})
 			.join('') as T;
 	}
 	if (Array.isArray(value)) return value.map((item) => maskEmails(item)) as T;

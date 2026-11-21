@@ -414,7 +414,7 @@ export const SendDocumentInputSchema = z
 			.boolean()
 			.optional()
 			.describe(
-				'Send without email notifications to the recipients and the sender, and without scheduled reminders; leave false for recipients to get the signing email',
+				'Send without email notifications to the recipients and the sender, and without scheduled reminders (approval notifications still go out); leave false for recipients to get the signing email',
 			),
 		reply_to: z.string().email().optional().describe('Reply-to email address'),
 		sender: z
@@ -771,9 +771,11 @@ export const ListTemplatesInputSchema = z
 			.describe('Return templates shared with the workspace'),
 		tag: z.string().optional().describe('Filter by tag'),
 		fields: z
-			.boolean()
+			.array(z.enum(['content_date_modified']))
 			.optional()
-			.describe('Include template fields in the response'),
+			.describe(
+				'Extra fields to include, sent comma-separated; the API documents content_date_modified',
+			),
 	})
 	.describe('Query parameters for listing templates');
 export type ListTemplatesInput = z.infer<typeof ListTemplatesInputSchema>;
