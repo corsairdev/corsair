@@ -604,7 +604,7 @@ await corsair.pingdom.api.checks.create({ name: "api", host: "example.com", type
 | `notifyAgainEvery` | `number` | No | Re-notify every N failures |
 | `notifyWhenBackup` | `boolean` | No | Send an alert when the check recovers |
 | `tags` | `string` | No | Comma-separated tags for filtering |
-| `probeFilters` | `string[]` | No | Probe region filters, e.g. [&#123;"region":"EU"&#125;] or [&#123;"region":"NA"&#125;] |
+| `probeFilters` | `string[]` | No | Probe region filters, e.g. ["region: EU"] or ["region: NA"] |
 | `ipv6` | `boolean` | No | Test over IPv6 |
 | `responseTimeThreshold` | `number` | No | Response time threshold in ms |
 | `customMessage` | `string` | No | Custom alert message |
@@ -844,7 +844,7 @@ await corsair.pingdom.api.checks.update({ checkId: 100, name: "renamed" });
 | `notifyAgainEvery` | `number` | No | Re-notify every N failures |
 | `notifyWhenBackup` | `boolean` | No | Send an alert when the check recovers |
 | `tags` | `string` | No | Comma-separated tags for filtering |
-| `probeFilters` | `string[]` | No | Probe region filters, e.g. [&#123;"region":"EU"&#125;] or [&#123;"region":"NA"&#125;] |
+| `probeFilters` | `string[]` | No | Probe region filters, e.g. ["region: EU"] or ["region: NA"] |
 | `ipv6` | `boolean` | No | Test over IPv6 |
 | `responseTimeThreshold` | `number` | No | Response time threshold in ms |
 | `customMessage` | `string` | No | Custom alert message |
