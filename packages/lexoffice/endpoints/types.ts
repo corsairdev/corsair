@@ -967,15 +967,13 @@ export const VouchersGetInputSchema = z
 	.strict();
 export type VouchersGetInput = z.infer<typeof VouchersGetInputSchema>;
 
-export const VoucherDetailsSchema = z.object({
+const VoucherDetailsCommonFields = {
 	id: z.string(),
 	organizationId: z.string().optional(),
 	createdDate: z.string().optional(),
 	updatedDate: z.string().optional(),
 	type: z.string(),
-	voucherStatus: z.string(),
 	voucherNumber: z.string().nullable().optional(),
-	voucherDate: z.string(),
 	shippingDate: z.string().nullable().optional(),
 	dueDate: z.string().nullable().optional(),
 	totalGrossAmount: z.number().nullable().optional(),
@@ -985,10 +983,24 @@ export const VoucherDetailsSchema = z.object({
 	contactId: z.string().nullable().optional(),
 	contactName: z.string().nullable().optional(),
 	remark: z.string().nullable().optional(),
-	voucherItems: z.array(VoucherItemSchema),
 	files: z.array(z.string()).optional(),
 	version: z.number(),
-});
+};
+
+export const VoucherDetailsSchema = z.union([
+	z.object({
+		...VoucherDetailsCommonFields,
+		voucherStatus: z.literal('unchecked'),
+		voucherDate: z.string().nullable().optional(),
+		voucherItems: z.array(VoucherItemSchema).nullable().optional(),
+	}),
+	z.object({
+		...VoucherDetailsCommonFields,
+		voucherStatus: z.string().refine((status) => status !== 'unchecked'),
+		voucherDate: z.string(),
+		voucherItems: z.array(VoucherItemSchema),
+	}),
+]);
 export type VoucherDetails = z.infer<typeof VoucherDetailsSchema>;
 
 export const VoucherCreateItemSchema = z
@@ -1136,11 +1148,12 @@ export const PaymentsGetInputSchema = z
 export type PaymentsGetInput = z.infer<typeof PaymentsGetInputSchema>;
 
 export const PaymentInformationSchema = z.object({
-	openAmount: z.string(),
+	openAmount: z.union([z.number(), z.string()]),
 	currency: z.string(),
 	paymentStatus: z.string(),
 	voucherType: z.string(),
 	voucherStatus: z.string(),
+	paidDate: z.iso.datetime({ offset: true }).optional(),
 	paymentItems: z.array(
 		z.object({
 			paymentItemType: z.string(),

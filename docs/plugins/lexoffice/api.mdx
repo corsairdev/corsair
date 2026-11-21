@@ -1864,11 +1864,12 @@ Retrieves payment status for a voucher ID; the API documents this operation as r
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `openAmount` | `string` | Yes | — |
+| `openAmount` | `number \| string` | Yes | — |
 | `currency` | `string` | Yes | — |
 | `paymentStatus` | `string` | Yes | — |
 | `voucherType` | `string` | Yes | — |
 | `voucherStatus` | `string` | Yes | — |
+| `paidDate` | `string` | No | — |
 | `paymentItems` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -2115,7 +2116,7 @@ Create a new bookkeeping voucher
 **Risk:** `destructive`
 
 ```ts
-await corsair.lexoffice.api.vouchers.create({ type: 'purchaseinvoice', voucherNumber: 'PUR-2026-001', voucherDate: '2026-01-01', totalGrossAmount: 119, totalTaxAmount: 19, taxType: 'net', useCollectiveContact: true, voucherItems: [{ amount: 100, taxAmount: 19, taxRatePercent: 19, categoryId: '8f8664a8-fd86-11e1-a21f-0800200c9a66' }] });
+await corsair.lexoffice.api.vouchers.create({ type: 'purchaseinvoice', voucherNumber: 'PUR-2026-001', voucherDate: '2026-01-01', totalGrossAmount: 119, totalTaxAmount: 19, taxType: 'net', useCollectiveContact: true, voucherItems: [{ amount: 100, taxAmount: 19, taxRatePercent: 19, categoryId: 'efa82f49-fd85-11e1-a21f-0800200c9a66' }] });
 ```
 
 **Input**
@@ -2139,7 +2140,7 @@ await corsair.lexoffice.api.vouchers.create({ type: 'purchaseinvoice', voucherNu
 | `files` | `string[]` | No | — |
 | `version` | `number` | No | — |
 
-For an open voucher, supply voucherNumber, totalGrossAmount, totalTaxAmount, each item's taxAmount, and either contactId or useCollectiveContact: true. If both contact fields are supplied, Lexware ignores contactId when useCollectiveContact is true. Version is omitted unless explicitly provided because the provider's create documentation conflicts about its initial value.
+For an open voucher, supply voucherNumber, totalGrossAmount, totalTaxAmount, each item's taxAmount, and either contactId or useCollectiveContact: true. If both contact fields are supplied, Lexware ignores contactId when useCollectiveContact is true. The purchase example uses the documented "Reisen (für Selbständige)" expense category; select an appropriate outgo category from postingCategories.list for the actual expense. Version is omitted unless explicitly provided because the provider's create documentation conflicts about its initial value.
 
 <AccordionGroup>
 <Accordion title="voucherItems full type">
@@ -2191,45 +2192,68 @@ await corsair.lexoffice.api.vouchers.get({ id: 'v-00000000-0000-4000-8000-000000
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `organizationId` | `string` | No | — |
-| `createdDate` | `string` | No | — |
-| `updatedDate` | `string` | No | — |
-| `type` | `string` | Yes | — |
-| `voucherStatus` | `string` | Yes | — |
-| `voucherNumber` | `string \| null` | No | — |
-| `voucherDate` | `string` | Yes | — |
-| `shippingDate` | `string \| null` | No | — |
-| `dueDate` | `string \| null` | No | — |
-| `totalGrossAmount` | `number \| null` | No | — |
-| `totalTaxAmount` | `number \| null` | No | — |
-| `taxType` | `string \| null` | No | — |
-| `useCollectiveContact` | `boolean` | No | — |
-| `contactId` | `string \| null` | No | — |
-| `contactName` | `string \| null` | No | — |
-| `remark` | `string \| null` | No | — |
-| `voucherItems` | `object[]` | Yes | — |
-| `files` | `string[]` | No | — |
-| `version` | `number` | Yes | — |
+**Output:** `object`
 
 <AccordionGroup>
-<Accordion title="voucherItems full type">
+<Accordion title="Output full type">
 
 ```ts
 {
-  amount: number,
-  taxAmount?: number,
-  taxRatePercent: number,
-  categoryId: string
-}[]
+  id: string,
+  organizationId?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  type: string,
+  voucherNumber?: string | null,
+  shippingDate?: string | null,
+  dueDate?: string | null,
+  totalGrossAmount?: number | null,
+  totalTaxAmount?: number | null,
+  taxType?: string | null,
+  useCollectiveContact?: boolean,
+  contactId?: string | null,
+  contactName?: string | null,
+  remark?: string | null,
+  files?: string[],
+  version: number,
+  voucherStatus: unchecked,
+  voucherDate?: string | null,
+  voucherItems?: {
+    amount: number,
+    taxAmount?: number,
+    taxRatePercent: number,
+    categoryId: string
+  }[] | null
+} | {
+  id: string,
+  organizationId?: string,
+  createdDate?: string,
+  updatedDate?: string,
+  type: string,
+  voucherNumber?: string | null,
+  shippingDate?: string | null,
+  dueDate?: string | null,
+  totalGrossAmount?: number | null,
+  totalTaxAmount?: number | null,
+  taxType?: string | null,
+  useCollectiveContact?: boolean,
+  contactId?: string | null,
+  contactName?: string | null,
+  remark?: string | null,
+  files?: string[],
+  version: number,
+  voucherStatus: string,
+  voucherDate: string,
+  voucherItems: {
+    amount: number,
+    taxAmount?: number,
+    taxRatePercent: number,
+    categoryId: string
+  }[]
+}
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -2322,7 +2346,7 @@ Update a bookkeeping voucher including its assigned files
 **Risk:** `destructive`
 
 ```ts
-await corsair.lexoffice.api.vouchers.update({ id: 'v-00000000-0000-4000-8000-000000000001', version: 1, files: [], type: 'purchaseinvoice', voucherNumber: 'PUR-2026-001', voucherDate: '2026-01-01', totalGrossAmount: 119, totalTaxAmount: 19, taxType: 'net', useCollectiveContact: true, voucherItems: [{ amount: 100, taxAmount: 19, taxRatePercent: 19, categoryId: '8f8664a8-fd86-11e1-a21f-0800200c9a66' }] });
+await corsair.lexoffice.api.vouchers.update({ id: 'v-00000000-0000-4000-8000-000000000001', version: 1, files: [], type: 'purchaseinvoice', voucherNumber: 'PUR-2026-001', voucherDate: '2026-01-01', totalGrossAmount: 119, totalTaxAmount: 19, taxType: 'net', useCollectiveContact: true, voucherItems: [{ amount: 100, taxAmount: 19, taxRatePercent: 19, categoryId: 'efa82f49-fd85-11e1-a21f-0800200c9a66' }] });
 ```
 
 **Input**

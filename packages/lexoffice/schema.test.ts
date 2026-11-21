@@ -371,6 +371,86 @@ describe('Lexoffice endpoint schemas', () => {
 			files: ['a8691b5d-2393-4317-888d-bcd5d564f7d1'],
 		};
 		expect(VoucherDetailsSchema.safeParse(voucherDetails).success).toBe(true);
+		const uncheckedWithoutDateAndItems = VoucherDetailsSchema.parse({
+			id: 'v-unchecked',
+			type: 'purchaseinvoice',
+			voucherStatus: 'unchecked',
+			version: 0,
+		});
+		expect('voucherDate' in uncheckedWithoutDateAndItems).toBe(false);
+		expect('voucherItems' in uncheckedWithoutDateAndItems).toBe(false);
+		const uncheckedWithNullDateAndItems = VoucherDetailsSchema.parse({
+			id: 'v-unchecked',
+			type: 'purchaseinvoice',
+			voucherStatus: 'unchecked',
+			voucherDate: null,
+			voucherItems: null,
+			version: 0,
+		});
+		expect(uncheckedWithNullDateAndItems.voucherDate).toBeNull();
+		expect(uncheckedWithNullDateAndItems.voucherItems).toBeNull();
+		expect(
+			VoucherDetailsSchema.safeParse({
+				...voucherDetails,
+				voucherStatus: 'unchecked',
+				voucherDate: null,
+			}).success,
+		).toBe(true);
+		expect(
+			VoucherDetailsSchema.safeParse({
+				...voucherDetails,
+				voucherStatus: 'unchecked',
+				voucherItems: null,
+			}).success,
+		).toBe(true);
+		const { voucherDate, voucherItems, ...uncheckedWithoutDetails } = {
+			...voucherDetails,
+			voucherStatus: 'unchecked',
+		};
+		expect(voucherDate).toBe('2026-01-01');
+		expect(voucherItems).toHaveLength(1);
+		expect(
+			VoucherDetailsSchema.safeParse(uncheckedWithoutDetails).success,
+		).toBe(true);
+		const { voucherDate: _uncheckedVoucherDate, ...uncheckedWithoutDate } = {
+			...voucherDetails,
+			voucherStatus: 'unchecked',
+		};
+		const { voucherItems: _uncheckedVoucherItems, ...uncheckedWithoutItems } = {
+			...voucherDetails,
+			voucherStatus: 'unchecked',
+		};
+		expect(_uncheckedVoucherDate).toBe('2026-01-01');
+		expect(_uncheckedVoucherItems).toHaveLength(1);
+		expect(VoucherDetailsSchema.safeParse(uncheckedWithoutDate).success).toBe(
+			true,
+		);
+		expect(VoucherDetailsSchema.safeParse(uncheckedWithoutItems).success).toBe(
+			true,
+		);
+		expect(
+			VoucherDetailsSchema.safeParse({
+				...voucherDetails,
+				voucherDate: null,
+			}).success,
+		).toBe(false);
+		expect(
+			VoucherDetailsSchema.safeParse({
+				...voucherDetails,
+				voucherItems: null,
+			}).success,
+		).toBe(false);
+		const { voucherDate: _voucherDate, ...voucherWithoutDate } = voucherDetails;
+		const { voucherItems: _voucherItems, ...voucherWithoutItems } =
+			voucherDetails;
+		expect(_voucherDate).toBe('2026-01-01');
+		expect(_voucherItems).toHaveLength(1);
+		expect(VoucherDetailsSchema.safeParse(voucherWithoutDate).success).toBe(
+			false,
+		);
+		expect(VoucherDetailsSchema.safeParse(voucherWithoutItems).success).toBe(
+			false,
+		);
 
 		expect(
 			VouchersListResponseSchema.safeParse({
@@ -451,6 +531,36 @@ describe('Lexoffice endpoint schemas', () => {
 				],
 			}).success,
 		).toBe(true);
+		expect(
+			PaymentInformationSchema.parse({
+				openAmount: 200,
+				currency: 'EUR',
+				paymentStatus: 'openRevenue',
+				voucherType: 'invoice',
+				voucherStatus: 'open',
+				paymentItems: [],
+			}).openAmount,
+		).toBe(200);
+		const paidPayment = PaymentInformationSchema.parse({
+			openAmount: 0,
+			currency: 'EUR',
+			paymentStatus: 'balanced',
+			voucherType: 'invoice',
+			voucherStatus: 'paid',
+			paidDate: '2023-07-14T13:42:02.123+02:00',
+			paymentItems: [],
+		});
+		expect(paidPayment.paidDate).toBe('2023-07-14T13:42:02.123+02:00');
+		expect(
+			PaymentInformationSchema.parse({
+				openAmount: '10.00',
+				currency: 'EUR',
+				paymentStatus: 'openRevenue',
+				voucherType: 'invoice',
+				voucherStatus: 'open',
+				paymentItems: [],
+			}).paidDate,
+		).toBeUndefined();
 		expect(PostingCategoriesListInputSchema.safeParse({}).success).toBe(true);
 		expect(
 			PostingCategoriesListResponseSchema.safeParse([

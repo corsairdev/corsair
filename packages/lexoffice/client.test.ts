@@ -7,7 +7,9 @@ import {
 	LEXOFFICE_NO_TRANSPORT_RETRIES,
 	makeLexofficeRequest,
 	sanitizeApiError,
+	toLexofficeFileResponse,
 } from './client';
+import { FileDownloadResponseSchema } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 
 jest.mock('corsair/http', () => {
@@ -37,6 +39,26 @@ beforeEach(() => {
 });
 
 describe('makeLexofficeRequest', () => {
+	it('uses a non-empty fallback for binary downloads without Content-Type', () => {
+		const result = toLexofficeFileResponse({
+			bytes: new Uint8Array([0, 255, 17]),
+			contentType: null,
+		});
+
+		expect(FileDownloadResponseSchema.parse(result)).toEqual({
+			kind: 'binary',
+			contentType: 'application/octet-stream',
+			base64: 'AP8R',
+			sizeBytes: 3,
+		});
+		expect(
+			toLexofficeFileResponse({
+				bytes: new Uint8Array([1]),
+				contentType: 'application/pdf',
+			}).contentType,
+		).toBe('application/pdf');
+	});
+
 	it('uses the v1 base URL and Authorization: Bearer header', async () => {
 		mockedRequest.mockResolvedValue({ organizationId: 'org-123' });
 

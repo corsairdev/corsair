@@ -157,7 +157,7 @@ export function toLexofficeFileResponse(response: BinaryResponse): {
 } {
 	return {
 		kind: 'binary',
-		contentType: response.contentType ?? '',
+		contentType: response.contentType ?? 'application/octet-stream',
 		base64: Buffer.from(response.bytes).toString('base64'),
 		sizeBytes: response.bytes.byteLength,
 	};
