@@ -1833,7 +1833,7 @@ await corsair.metaads.api.ads.create({
 | `status` | `ACTIVE \| PAUSED` | No | — |
 | `idempotencyKey` | `string` | No | — |
 
-Use an existing creative ID or an inline creative with object_story_spec. New ads enter review and can deliver after approval; this consequential write isn't automatically retried.
+Use an existing creative ID or the documented inline AdCreative envelope: the creative form field contains a nested creative object with name and object_story_spec. New ads enter review and can deliver after approval; this consequential write isn't automatically retried.
 
 <AccordionGroup>
 <Accordion title="creativeSpec full type">

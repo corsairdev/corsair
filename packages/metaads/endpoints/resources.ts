@@ -1353,6 +1353,7 @@ export const adsCreate = operation({
 			{
 				name: input.name,
 				adset_id: input.adSetId,
+				// Meta's Ad Account ads edge requires this AdCreative envelope for inline specs.
 				creative:
 					input.creativeId !== undefined
 						? { creative_id: input.creativeId }

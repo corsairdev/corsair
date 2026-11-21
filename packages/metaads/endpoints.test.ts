@@ -1242,6 +1242,7 @@ const cases: Case[] = [
 			});
 		},
 	},
+	// Meta's documented inline AdCreative envelope is nested under the creative form field.
 	{
 		name: 'ads.create',
 		path: '/act_123/ads',
