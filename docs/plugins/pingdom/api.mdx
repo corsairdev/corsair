@@ -1,0 +1,1781 @@
+---
+title: "Pingdom API reference"
+sidebarTitle: "API"
+description: "API reference for the Pingdom plugin in Corsair: every `pingdom.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Alerting
+
+### contacts.create
+
+`alerting.contacts.create`
+
+Create an alerting contact with notification targets
+
+**Risk:** `write`
+
+```ts
+await corsair.pingdom.api.alerting.contacts.create({ name: "John Doe", notificationTargets: [{ email: "john@example.com", severity: "H" }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Contact name |
+| `paused` | `boolean` | No | Create the contact paused |
+| `notificationTargets` | `object[]` | Yes | Notification targets; each takes email or number (+countryCode) and an optional severity |
+
+notificationTargets each take email or number with countryCode, plus an optional severity (H, M or L).
+
+<AccordionGroup>
+<Accordion title="notificationTargets full type">
+
+```ts
+{
+  severity?: string,
+  countryCode?: string,
+  number?: string,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### contacts.delete
+
+`alerting.contacts.delete`
+
+Delete an alerting contact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pingdom.api.alerting.contacts.delete({ contactId: 111250 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `number` | Yes | The contact id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | Deletion result |
+
+
+
+---
+
+### contacts.get
+
+`alerting.contacts.get`
+
+Read one alerting contact
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.alerting.contacts.get({ contactId: 111250 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `number` | Yes | The contact id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object \| null` | No | The contact |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  paused?: boolean | null,
+  type?: string | null,
+  notification_targets?: {
+    severity?: string | null,
+    country_code?: string | null,
+    number?: string | null,
+    email?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### contacts.list
+
+`alerting.contacts.list`
+
+List the alerting contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.alerting.contacts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contacts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  paused?: boolean | null,
+  type?: string | null,
+  notification_targets?: {
+    severity?: string | null,
+    country_code?: string | null,
+    number?: string | null,
+    email?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### contacts.update
+
+`alerting.contacts.update`
+
+Modify an alerting contact
+
+**Risk:** `write`
+
+```ts
+await corsair.pingdom.api.alerting.contacts.update({ contactId: 111250, name: "John Doe", paused: true, notificationTargets: [{ email: "john@example.com" }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `number` | Yes | The contact id |
+| `name` | `string` | Yes | Contact name |
+| `paused` | `boolean` | Yes | Whether alerts are paused |
+| `notificationTargets` | `object[]` | Yes | Notification targets; each takes email or number (+countryCode) and an optional severity |
+
+<AccordionGroup>
+<Accordion title="notificationTargets full type">
+
+```ts
+{
+  severity?: string,
+  countryCode?: string,
+  number?: string,
+  email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact` | `object \| null` | No | The contact |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  paused?: boolean | null,
+  type?: string | null,
+  notification_targets?: {
+    severity?: string | null,
+    country_code?: string | null,
+    number?: string | null,
+    email?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### teams.create
+
+`alerting.teams.create`
+
+Create an alerting team
+
+**Risk:** `write`
+
+```ts
+await corsair.pingdom.api.alerting.teams.create({ name: "API Team", memberIds: [12345, 54321] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Team name |
+| `memberIds` | `number[]` | Yes | Contact ids of the team members |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="team full type">
+
+```ts
+{
+  id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### teams.delete
+
+`alerting.teams.delete`
+
+Delete an alerting team
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pingdom.api.alerting.teams.delete({ teamId: 63 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `number` | Yes | The team id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | Deletion result |
+
+
+
+---
+
+### teams.get
+
+`alerting.teams.get`
+
+Read one alerting team
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.alerting.teams.get({ teamId: 63 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `number` | Yes | The team id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team` | `object \| null` | No | The team |
+
+<AccordionGroup>
+<Accordion title="team full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  members?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### teams.list
+
+`alerting.teams.list`
+
+List the alerting teams
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.alerting.teams.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teams` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="teams full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  members?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### teams.update
+
+`alerting.teams.update`
+
+Modify an alerting team
+
+**Risk:** `write`
+
+```ts
+await corsair.pingdom.api.alerting.teams.update({ teamId: 63, name: "Engineering", memberIds: [111250] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `number` | Yes | The team id |
+| `name` | `string` | Yes | Team name |
+| `memberIds` | `number[]` | Yes | Contact ids of the team members |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team` | `object \| null` | No | The team |
+
+<AccordionGroup>
+<Accordion title="team full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  members?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Analysis
+
+### get
+
+`analysis.get`
+
+Read one raw root cause analysis
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.analysis.get({ checkId: 100, analysisId: 123 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkId` | `number` | Yes | The check id |
+| `analysisId` | `number` | Yes | The analysis id |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`analysis.list`
+
+List the latest root cause analyses of a check
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.analysis.list({ checkId: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkId` | `number` | Yes | The check id |
+| `limit` | `number` | No | Maximum analyses returned |
+| `offset` | `number` | No | Offset for pagination |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `analysis` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="analysis full type">
+
+```ts
+{
+  id?: number | null,
+  time?: number | null,
+  rootcause?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Checks
+
+### create
+
+`checks.create`
+
+Create an uptime check of any documented type
+
+**Risk:** `write`
+
+```ts
+await corsair.pingdom.api.checks.create({ name: "api", host: "example.com", type: "http", typeSettings: { url: "/health", encryption: true }, resolution: "5" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Check name |
+| `host` | `string` | Yes | Target host |
+| `type` | `http \| httpcustom \| tcp \| ping \| dns \| udp \| smtp \| pop3 \| imap` | Yes | Type of check |
+| `typeSettings` | `Record<string, any>` | No | Type-specific settings as flat body fields, per the check type docs: http takes url/encryption/port/shouldcontain/shouldnotcontain/postdata/requestheaders/verify_certificate/ssl_down_days_before; tcp takes port/encryption/stringtoexpect; dns takes nameserver/expectedip; udp/smtp/pop3/imap take port/stringtoexpect |
+| `paused` | `boolean` | No | Create or leave the check paused |
+| `resolution` | `1 \| 5 \| 15 \| 30 \| 60` | Yes | Test interval in minutes (1, 5, 15, 30 or 60) |
+| `userIds` | `number[]` | No | User ids to alert |
+| `teamIds` | `number[]` | No | Team ids to alert |
+| `integrationIds` | `number[]` | No | Integration ids to alert |
+| `sendNotificationWhenDown` | `number` | No | Alert after this many consecutive failures |
+| `notifyAgainEvery` | `number` | No | Re-notify every N failures |
+| `notifyWhenBackup` | `boolean` | No | Send an alert when the check recovers |
+| `tags` | `string` | No | Comma-separated tags for filtering |
+| `probeFilters` | `Record<string, any>[]` | No | Probe region filters, e.g. [&#123;"region":"EU"&#125;] or [&#123;"region":"NA"&#125;] |
+| `ipv6` | `boolean` | No | Test over IPv6 |
+| `responseTimeThreshold` | `number` | No | Response time threshold in ms |
+| `customMessage` | `string` | No | Custom alert message |
+
+type is one of http, httpcustom, tcp, ping, dns, udp, smtp, pop3, imap; typeSettings carries the flat type-specific fields from the docs (http: url, encryption, port, shouldcontain, shouldnotcontain, postdata, requestheaders, verify_certificate, ssl_down_days_before; tcp: port, encryption, stringtoexpect; dns: nameserver, expectedip).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `check` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="check full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`checks.delete`
+
+Delete a check
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pingdom.api.checks.delete({ checkId: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkId` | `number` | Yes | The check id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | Deletion result |
+
+
+
+---
+
+### deleteMulti
+
+`checks.deleteMulti`
+
+Delete several checks at once
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pingdom.api.checks.deleteMulti({ checkIds: [1, 2, 3] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkIds` | `number[]` | Yes | Ids of the checks to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | Deletion result |
+
+
+
+---
+
+### get
+
+`checks.get`
+
+Read one check with its type settings
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.checks.get({ checkId: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkId` | `number` | Yes | The check id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `check` | `object` | Yes | A Pingdom check with its settings |
+
+<AccordionGroup>
+<Accordion title="check full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  hostname?: string | null,
+  type?: Record<string, any> | null,
+  created?: number | null,
+  paused?: any | null,
+  resolution?: number | null,
+  send_notification_when_down?: number | null,
+  notify_again_every?: number | null,
+  notify_when_backup?: boolean | null,
+  userids?: number[] | null,
+  teamids?: number[] | null,
+  integrationids?: number[] | null,
+  tags?: any | null,
+  probe_filters?: any[] | null,
+  ipv6?: boolean | null,
+  status?: string | null,
+  lasterrortime?: number | null,
+  lasttesttime?: number | null,
+  lastresponsetime?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`checks.list`
+
+List the checks with paging and tag filters
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.checks.list({ includeTags: true, limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Maximum checks returned |
+| `offset` | `number` | No | Offset for pagination |
+| `showEncryption` | `boolean` | No | Include encryption state for http checks |
+| `includeTags` | `boolean` | No | Include tags |
+| `includeSeverity` | `boolean` | No | Include severity of the latest error |
+| `tags` | `string` | No | Comma-separated tag filter |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="checks full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  type?: any | null,
+  hostname?: string | null,
+  lasterrortime?: number | null,
+  lasttesttime?: number | null,
+  lastresponsetime?: number | null,
+  lastdownstart?: number | null,
+  lastdownend?: number | null,
+  created?: number | null,
+  paused?: any | null,
+  resolution?: number | null,
+  status?: string | null,
+  tags?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`checks.update`
+
+Modify the settings of one check
+
+**Risk:** `write`
+
+```ts
+await corsair.pingdom.api.checks.update({ checkId: 100, name: "renamed" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkId` | `number` | Yes | The check id |
+| `name` | `string` | No | New check name |
+| `host` | `string` | No | New target host |
+| `type` | `http \| httpcustom \| tcp \| ping \| dns \| udp \| smtp \| pop3 \| imap` | No | New type of check |
+| `typeSettings` | `Record<string, any>` | No | Type-specific settings as flat body fields |
+| `paused` | `boolean` | No | Create or leave the check paused |
+| `resolution` | `1 \| 5 \| 15 \| 30 \| 60` | Yes | Test interval in minutes (1, 5, 15, 30 or 60) |
+| `userIds` | `number[]` | No | User ids to alert |
+| `teamIds` | `number[]` | No | Team ids to alert |
+| `integrationIds` | `number[]` | No | Integration ids to alert |
+| `sendNotificationWhenDown` | `number` | No | Alert after this many consecutive failures |
+| `notifyAgainEvery` | `number` | No | Re-notify every N failures |
+| `notifyWhenBackup` | `boolean` | No | Send an alert when the check recovers |
+| `tags` | `string` | No | Comma-separated tags for filtering |
+| `probeFilters` | `Record<string, any>[]` | No | Probe region filters, e.g. [&#123;"region":"EU"&#125;] or [&#123;"region":"NA"&#125;] |
+| `ipv6` | `boolean` | No | Test over IPv6 |
+| `responseTimeThreshold` | `number` | No | Response time threshold in ms |
+| `customMessage` | `string` | No | Custom alert message |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | Modification result |
+
+
+
+---
+
+### updateMulti
+
+`checks.updateMulti`
+
+Pause or re-time multiple checks at once
+
+**Risk:** `write`
+
+```ts
+await corsair.pingdom.api.checks.updateMulti({ paused: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `paused` | `boolean` | No | Pause (true) or unpause (false) |
+| `resolution` | `1 \| 5 \| 15 \| 30 \| 60` | Yes | New test interval in minutes |
+
+Pauses or unpauses every check, or changes the resolution of every check, in one call.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | Modification result |
+
+
+
+---
+
+## Maintenance
+
+### create
+
+`maintenance.create`
+
+Create a maintenance window
+
+**Risk:** `write`
+
+```ts
+await corsair.pingdom.api.maintenance.create({ description: "Deploy window", from: 1700000000, to: 1700003600, recurrence: "weekly", checks: [100] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string` | Yes | Description |
+| `from` | `number` | Yes | Window start, UNIX time; only future allowed (use 1 for now) |
+| `to` | `number` | Yes | Window end, UNIX time; only future allowed (use 1 for now) |
+| `recurrence` | `none \| daily \| weekly \| monthly` | Yes | Recurrence interval |
+| `recurring` | `0 \| 1` | Yes | Whether the window recurs (1) or is one-off (0) |
+| `effectiveTo` | `number` | No | When the recurrence stops, UNIX time (0 = never) |
+| `checks` | `number[]` | No | Check ids the window covers |
+| `teams` | `number[]` | No | Team ids the window covers |
+| `contacts` | `number[]` | No | Contact ids the window covers |
+
+recurrence is none, daily, weekly or monthly; from and to must be in the future (use 1 for now); effectiveTo 0 means the recurrence never stops.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maintenance` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="maintenance full type">
+
+```ts
+{
+  id?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`maintenance.delete`
+
+Delete a maintenance window
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pingdom.api.maintenance.delete({ id: 777 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The maintenance window id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | Deletion result |
+
+
+
+---
+
+### deleteMulti
+
+`maintenance.deleteMulti`
+
+Delete several maintenance windows at once
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pingdom.api.maintenance.deleteMulti({ windowIds: [1, 2] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `windowIds` | `number[]` | Yes | Ids of the windows to delete |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | Deletion result |
+
+
+
+---
+
+### get
+
+`maintenance.get`
+
+Read one maintenance window
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.maintenance.get({ id: 777 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The maintenance window id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maintenance` | `object \| null` | No | The window |
+
+<AccordionGroup>
+<Accordion title="maintenance full type">
+
+```ts
+{
+  id?: number | null,
+  description?: string | null,
+  from?: number | null,
+  to?: number | null,
+  recurrence?: string | null,
+  recurring?: boolean | null,
+  effective_to?: number | null,
+  checks?: number[] | null,
+  teams?: number[] | null,
+  contacts?: number[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`maintenance.list`
+
+List the maintenance windows
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.maintenance.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Maximum windows returned |
+| `offset` | `number` | No | Offset for pagination |
+| `orderBy` | `string` | No | Ordering column |
+| `order` | `asc \| desc` | No | Ordering direction |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maintenance` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="maintenance full type">
+
+```ts
+{
+  id?: number | null,
+  description?: string | null,
+  from?: number | null,
+  to?: number | null,
+  recurrence?: string | null,
+  recurring?: boolean | null,
+  effective_to?: number | null,
+  checks?: number[] | null,
+  teams?: number[] | null,
+  contacts?: number[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`maintenance.update`
+
+Modify a maintenance window
+
+**Risk:** `write`
+
+```ts
+await corsair.pingdom.api.maintenance.update({ id: 777, description: "Changed" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The maintenance window id |
+| `description` | `string` | No | New description |
+| `from` | `number` | No | New start, UNIX time |
+| `to` | `number` | No | New end, UNIX time |
+| `recurrence` | `none \| daily \| weekly \| monthly` | No | New recurrence |
+| `recurring` | `boolean` | No | New recurring flag |
+| `effectiveTo` | `number` | No | New recurrence stop, UNIX time |
+| `checks` | `number[]` | No | New check ids |
+| `teams` | `number[]` | No | New team ids |
+| `contacts` | `number[]` | No | New contact ids |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | Modification result |
+
+
+
+---
+
+## Occurrences
+
+### delete
+
+`occurrences.delete`
+
+Delete a maintenance occurrence
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pingdom.api.occurrences.delete({ id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The occurrence id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | Deletion result |
+
+
+
+---
+
+### get
+
+`occurrences.get`
+
+Read one maintenance occurrence
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.occurrences.get({ id: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The occurrence id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maintenance_occurrence` | `object \| null` | No | The occurrence |
+
+<AccordionGroup>
+<Accordion title="maintenance_occurrence full type">
+
+```ts
+{
+  id?: number | null,
+  maintenance_id?: number | null,
+  from?: number | null,
+  to?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`occurrences.list`
+
+List maintenance occurrences
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.occurrences.list({ maintenanceId: 777 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maintenanceId` | `number` | No | Only occurrences of this window |
+| `from` | `number` | No | Start of the period, UNIX time |
+| `to` | `number` | No | End of the period, UNIX time |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maintenance_occurrences` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="maintenance_occurrences full type">
+
+```ts
+{
+  id?: number | null,
+  maintenance_id?: number | null,
+  from?: number | null,
+  to?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`occurrences.update`
+
+Move a maintenance occurrence
+
+**Risk:** `write`
+
+```ts
+await corsair.pingdom.api.occurrences.update({ id: 3, from: 1700000000, to: 1700003600 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The occurrence id |
+| `from` | `number` | No | New start, UNIX time (only future allowed) |
+| `to` | `number` | No | New end, UNIX time (only future allowed) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | Deletion result |
+
+
+
+---
+
+## Results
+
+### list
+
+`results.list`
+
+List the raw test results of a check
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.results.list({ checkId: 100, from: 1700000000, status: "down", limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkId` | `number` | Yes | The check id |
+| `from` | `number` | No | Start of the period, UNIX time |
+| `to` | `number` | No | End of the period, UNIX time |
+| `probes` | `string` | No | Comma-separated probe ids to filter on |
+| `status` | `up \| down \| unconfirmed \| unknown` | No | Result status filter |
+| `limit` | `number` | No | Maximum results returned |
+| `offset` | `number` | No | Offset for pagination |
+| `includeAnalysis` | `boolean` | No | Include root cause analysis links |
+| `maxResponse` | `number` | No | Maximum response time filter |
+| `minResponse` | `number` | No | Minimum response time filter |
+
+status filters to up, down, unconfirmed or unknown; probes takes a comma-separated probe id list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  probeid?: number | null,
+  time?: number | null,
+  status?: up | down | unconfirmed | unknown | null,
+  responsetime?: number | null,
+  probedesc?: string | null,
+  probeip?: string | null,
+  version?: string | null,
+  activelytested?: boolean | null,
+  checkid?: number | null,
+  checkname?: string | null,
+  hostname?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Summaries
+
+### average
+
+`summaries.average`
+
+Read the average time and uptime summary of a check
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.summaries.average({ checkId: 100, byCountry: true, includeUptime: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkId` | `number` | Yes | The check id |
+| `from` | `number` | No | Start of the period, UNIX time |
+| `to` | `number` | No | End of the period, UNIX time |
+| `probes` | `string` | No | Comma-separated probe ids to filter on |
+| `includeUptime` | `boolean` | No | Include uptime |
+| `byCountry` | `boolean` | No | Group by country |
+| `byProbe` | `boolean` | No | Group by probe |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `summary` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="summary full type">
+
+```ts
+{
+  responsetime?: any | null,
+  status?: any | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### hoursOfDay
+
+`summaries.hoursOfDay`
+
+Read the per-hour response time summary
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.summaries.hoursOfDay({ checkId: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkId` | `number` | Yes | The check id |
+| `from` | `number` | No | Start of the period, UNIX time |
+| `to` | `number` | No | End of the period, UNIX time |
+| `probes` | `string` | No | Comma-separated probe ids to filter on |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `summary` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="summary full type">
+
+```ts
+{
+  hours?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### outage
+
+`summaries.outage`
+
+Read the status change history of a check
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.summaries.outage({ checkId: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkId` | `number` | Yes | The check id |
+| `from` | `number` | No | Start of the period, UNIX time |
+| `to` | `number` | No | End of the period, UNIX time |
+| `probes` | `string` | No | Comma-separated probe ids to filter on |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `summary` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="summary full type">
+
+```ts
+{
+  state?: string | null,
+  outages?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### performance
+
+`summaries.performance`
+
+Read the per-interval performance summary
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.summaries.performance({ checkId: 100, resolution: "week" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkId` | `number` | Yes | The check id |
+| `from` | `number` | No | Start of the period, UNIX time |
+| `to` | `number` | No | End of the period, UNIX time |
+| `resolution` | `day \| week \| month` | No | Interval resolution |
+| `includeUptime` | `boolean` | No | Include uptime |
+| `probes` | `string` | No | Comma-separated probe ids to filter on |
+| `order` | `asc \| desc` | No | Interval order |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `summary` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="summary full type">
+
+```ts
+{
+  weeks?: any[] | null,
+  hours?: any[] | null,
+  days?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### probes
+
+`summaries.probes`
+
+Read the per-probe test counts of a check
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.summaries.probes({ checkId: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkId` | `number` | Yes | The check id |
+| `from` | `number` | No | Start of the period, UNIX time |
+| `to` | `number` | No | End of the period, UNIX time |
+| `probes` | `string` | No | Comma-separated probe ids to filter on |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `summary` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="summary full type">
+
+```ts
+{
+  probes?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tools
+
+### getCredits
+
+`tools.getCredits`
+
+Read the account check slots and SMS credits
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.tools.getCredits({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="credits full type">
+
+```ts
+{
+  checklimit?: number | null,
+  availablechecks?: number | null,
+  useddefault?: number | null,
+  usedtransaction?: number | null,
+  availablesms?: number | null,
+  availablesmstests?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getReference
+
+`tools.getReference`
+
+Read region, timezone and format references
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.tools.getReference({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** _empty object_
+
+
+---
+
+### listActions
+
+`tools.listActions`
+
+List the alert actions across checks
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.tools.listActions({ checkId: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `checkId` | `number` | No | Only actions for this check |
+| `from` | `number` | No | Start of the period, UNIX time |
+| `to` | `number` | No | End of the period, UNIX time |
+| `limit` | `number` | No | Maximum actions returned |
+| `offset` | `number` | No | Offset for pagination |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `actions` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="actions full type">
+
+```ts
+{
+  alerts: {
+    username?: string | null,
+    userid?: number | null,
+    checkid?: number | null,
+    checkname?: string | null,
+    time?: number | null,
+    via?: email | sms | twitter | apns | agcm | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProbes
+
+`tools.listProbes`
+
+List the Pingdom probe servers
+
+**Risk:** `read`
+
+```ts
+await corsair.pingdom.api.tools.listProbes({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `probes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="probes full type">
+
+```ts
+{
+  id?: number | null,
+  country?: string | null,
+  city?: string | null,
+  name?: string | null,
+  active?: boolean | null,
+  hostname?: string | null,
+  ip?: string | null,
+  ipv6?: string | null,
+  region?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### runSingle
+
+`tools.runSingle`
+
+Run a one-off check against a host
+
+**Risk:** `write`
+
+```ts
+await corsair.pingdom.api.tools.runSingle({ host: "example.com" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | Target host to test |
+| `publicName` | `string` | No | Name shown on the public status page |
+| `resolution` | `1 \| 5 \| 15 \| 30 \| 60` | Yes | Test interval for the created check in minutes |
+| `integrationIds` | `number[]` | No | Integration ids to alert |
+| `userIds` | `number[]` | No | User ids to alert |
+| `teamIds` | `number[]` | No | Team ids to alert |
+
+Performs a single test without creating a check; the answer carries status, responsetime and the probe that ran it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="result full type">
+
+```ts
+{
+  status?: string | null,
+  responsetime?: number | null,
+  statusdesc?: string | null,
+  statusdesclong?: string | null,
+  probeid?: number | null,
+  probedesc?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
