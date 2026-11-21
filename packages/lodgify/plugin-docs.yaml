@@ -8,7 +8,10 @@ overviewNote: >-
   caller to display. Guest records are embedded in booking and enquiry
   operations; Lodgify does not document a standalone guest collection. Webhook
   payloads are documented, but webhook support is outside this PR's requested
-  scope.
+  scope. Webhook management routes are also excluded because issue #2613 leaves
+  webhook support unchecked. Payment-link creation is omitted because the v1/v2
+  request amount uses an OpenAPI Money schema with no properties; no amount
+  structure is guessed.
 examples:
   read:
     path: properties.list
@@ -33,6 +36,13 @@ examples:
           last_name: Doe
         email: jane@example.com
 apiExamples:
+  countries.list: {}
+  countries.get:
+    code: US
+  currencies.list: {}
+  currencies.get:
+    code: USD
+  channels.inventory: {}
   properties.list:
     page: 1
     size: 10
@@ -41,6 +51,16 @@ apiExamples:
     id: 101
   properties.getRooms:
     id: 101
+  properties.listV1:
+    wid: 7
+  properties.getV1:
+    id: 101
+    maxDate: '2026-12-01T00:00:00Z'
+    wid: 7
+  properties.getRoomV1:
+    id: 101
+    rid: 201
+    wid: 7
   properties.getDeleted:
     deletedSince: '2026-01-01T00:00:00Z'
   properties.getAddons:
@@ -85,6 +105,96 @@ apiExamples:
         first_name: Jane
       email: jane@example.com
   reservations.unreadCount: {}
+  reservations.getBookingV1:
+    id: 501
+  reservations.updateBooking:
+    id: 501
+    booking:
+      status: Tentative
+      note: Arrival details supplied by guest
+  reservations.deleteBooking:
+    id: 501
+  reservations.deleteEnquiry:
+    id: 502
+  reservations.createCallMeBack:
+    date: '2026-06-01'
+    time: 15
+    guest_breakdown:
+      adults: 2
+    property_id: 101
+  reservations.createQuote:
+    id: 501
+    is_policy_active: true
+    promotion_code: SUMMER
+    add_ons:
+      - add_on_id: 301
+        units: 1
+    room_types:
+      - room_type_id: 201
+  reservations.getQuote:
+    id: 501
+  reservations.getPaymentLinkV1:
+    id: 501
+  reservations.getPaymentLink:
+    id: 501
+  reservations.recoverBooking:
+    id: 501
+  reservations.recoverEnquiry:
+    id: 502
+  reservations.reopenBooking:
+    id: 501
+  reservations.declineBooking:
+    id: 501
+  reservations.tentativeBooking:
+    id: 501
+    requestPayment: false
+  reservations.bookBooking:
+    id: 501
+    requestPayment: false
+  reservations.declineEnquiry:
+    id: 502
+  reservations.reopenEnquiry:
+    id: 502
+  reservations.deleteMany:
+    - id: 501
+      type: Booking
+    - id: 502
+      type: Enquiry
+  reservations.requestPayment:
+    id: 501
+  reservations.checkInV1:
+    id: 501
+    time: '15:00'
+  reservations.checkOutV1:
+    id: 501
+    time: '11:00'
+  reservations.markManyReplied:
+    - id: 501
+      type: Booking
+    - id: 502
+      type: Enquiry
+  reservations.markManyNotReplied:
+    - id: 501
+      type: Booking
+  reservations.markBookingReplied:
+    id: 501
+  reservations.markEnquiryReplied:
+    id: 502
+  reservations.markBookingNotReplied:
+    id: 501
+  reservations.markEnquiryNotReplied:
+    id: 502
+  reservations.checkIn:
+    id: 501
+    time: '15:00'
+  reservations.checkOut:
+    id: 501
+    time: '11:00'
+  reservations.getExternalBookings:
+    id: 501
+  reservations.updateKeyCodes:
+    id: 501
+    rooms: []
   availability.get:
     propertyId: 101
     from: '2026-06-01T00:00:00Z'
@@ -103,6 +213,19 @@ apiExamples:
     period_start: '2026-06-01T00:00:00Z'
     period_end: '2026-06-10T00:00:00Z'
     available: 2
+  availability.getLegacyAll:
+    periodStart: '2026-06-01T00:00:00Z'
+    periodEnd: '2026-06-10T00:00:00Z'
+    includeBookingIds: true
+  availability.getLegacyProperty:
+    propertyId: 101
+    periodStart: '2026-06-01T00:00:00Z'
+    periodEnd: '2026-06-10T00:00:00Z'
+  availability.getLegacyRoomType:
+    propertyId: 101
+    roomTypeId: 201
+    periodStart: '2026-06-01T00:00:00Z'
+    periodEnd: '2026-06-10T00:00:00Z'
   rates.calendar:
     houseId: 101
     roomTypeId: 201
@@ -133,6 +256,14 @@ apiExamples:
       - id: 201
         guest_breakdown:
           adults: 2
+  quotes.calculateV1:
+    propertyId: 101
+    arrival: '2026-06-01T00:00:00Z'
+    departure: '2026-06-05T00:00:00Z'
+    roomTypes:
+      - id: 201
+        guest_breakdown:
+          adults: 2
   messages.list:
     threadGuid: 550e8400-e29b-41d4-a716-446655440000
   messages.send:
@@ -150,6 +281,19 @@ apiNotes:
   properties.getRooms: >-
     Returns room-type details for the property. Optional website-localized `wid`
     is forwarded to Lodgify.
+  properties.listV1: >-
+    Returns the legacy v1 completed-property list. The API does not document
+    pagination for this operation.
+  properties.getV1: >-
+    Returns the legacy v1 property model. `maxDate` and `wid` are optional query
+    parameters.
+  properties.getRoomV1: >-
+    Returns one legacy room record. The room path parameter is named `rid` in
+    the v1 contract; optional `wid` is forwarded. The amenities value schema is
+    absent from OpenAPI and is therefore preserved as an opaque map.
+  channels.inventory: >-
+    The route is named `/v1/channel/xml`, and Lodgify's OpenAPI defines a
+    ChannelIndexDto JSON representation as well as XML. The client requests JSON.
   properties.getDeleted: >-
     Returns integer property IDs deleted since the optional `deletedSince` date.
   properties.getAddons: >-
@@ -160,23 +304,105 @@ apiNotes:
   reservations.list: >-
     V2 booking pagination uses `page` and `size`; supported filters include
     `stayFilter`, `stayFilterDate`, `updatedSince`, `trash`, and response detail
-    flags.
+    flags. Lodgify's OpenAPI Money values are empty closed objects and are
+    validated as documented.
   reservations.listInbox: >-
     The v1 inbox returns a paged result with `offset`, `limit` (maximum 50),
     `total`, `next`, and `previous`. Results may include bookings and enquiries.
   reservations.get: >-
-    Returns v2 booking details, including embedded guest and room information.
+    Returns the strict v2 BookingDto, including embedded guest, room, quote,
+    transaction, and check-in/out information. Money values use the documented
+    empty closed object schema.
+  reservations.getBookingV1: >-
+    Returns full legacy v1 booking details, including guest and check-in/out
+    fields. Key-code values are returned to the caller but never logged.
   reservations.getEnquiry: >-
     Returns v1 enquiry details and its embedded guest record.
   reservations.create: >-
     Creates a v1 booking and returns its integer ID. Optional `from` upgrades an
-    existing enquiry and is sent as a query parameter. A guest with `guest_name`
-    and at least one room with `guest_breakdown` are required by the API model.
+    existing enquiry and is sent as a query parameter. Lodgify documents at
+    least one room; each provided room requires `guest_breakdown`. A provided
+    guest object requires `guest_name`.
   reservations.createEnquiry: >-
     Creates a v1 enquiry and returns its integer ID. Lodgify requires
     `guest_breakdown`; guest details are nested in the documented `guest` model.
   reservations.unreadCount: >-
     Returns the integer count from the v1 `/reservation/not_read` endpoint.
+  reservations.updateBooking: >-
+    Sends only fields present in the strict `booking` object. Lodgify notes that
+    not every booking field can be updated through this endpoint.
+  reservations.deleteBooking: >-
+    Moves a booking to the trash; use `recoverBooking` to restore it.
+  reservations.deleteEnquiry: >-
+    Moves an enquiry to the trash; use `recoverEnquiry` to restore it.
+  reservations.createCallMeBack: >-
+    Creates an enquiry and emails the owner. The scheduled hour uses a 0–23
+    integer, and `guest_breakdown` is required.
+  reservations.createQuote: >-
+    Creates a quote and returns its integer ID. The optional `custom_fee_amount`
+    Money1 field is not exposed because Lodgify's OpenAPI schema has no fields.
+  reservations.getQuote: >-
+    Returns the current v1 booking quote. Lodgify defines Money amounts as empty
+    closed objects in OpenAPI; the output validates that exact documented shape.
+  reservations.getPaymentLinkV1: >-
+    Returns the current v1 quote payment link. The URL is not included in logs.
+  reservations.getPaymentLink: >-
+    Returns the next v2 booking payment link. The URL is not included in logs.
+  reservations.recoverBooking: >-
+    Restores a booking previously moved to the trash.
+  reservations.recoverEnquiry: >-
+    Restores an enquiry previously moved to the trash.
+  reservations.reopenBooking: >-
+    Reopens the booking and may make previously reserved availability bookable.
+  reservations.declineBooking: >-
+    Sets a booking status to Declined.
+  reservations.tentativeBooking: >-
+    Sets a booking status to Tentative. Optional `requestPayment` is sent as a
+    query parameter.
+  reservations.bookBooking: >-
+    Sets a booking to Booked and updates availability. Optional `requestPayment`
+    is sent as a query parameter.
+  reservations.declineEnquiry: >-
+    Sets an enquiry status to Declined.
+  reservations.reopenEnquiry: >-
+    Sets an enquiry status to Open.
+  reservations.deleteMany: >-
+    Accepts an array of booking/enquiry `{ id, type }` entries and moves them to
+    the trash.
+  reservations.requestPayment: >-
+    Requests payment and triggers an email to the guest.
+  reservations.checkInV1: >-
+    Sends `{ time }` to the legacy v1 route. The time is interpreted in the
+    property's local timezone.
+  reservations.checkOutV1: >-
+    Sends `{ time }` to the legacy v1 route. The time is interpreted in the
+    property's local timezone.
+  reservations.markManyReplied: >-
+    Accepts an array of booking/enquiry `{ id, type }` entries and marks them
+    replied.
+  reservations.markManyNotReplied: >-
+    Accepts an array of booking/enquiry `{ id, type }` entries and marks them
+    not replied.
+  reservations.markBookingReplied: >-
+    Marks one booking as replied.
+  reservations.markEnquiryReplied: >-
+    Marks one enquiry as replied.
+  reservations.markBookingNotReplied: >-
+    Marks one booking as not replied.
+  reservations.markEnquiryNotReplied: >-
+    Marks one enquiry as not replied.
+  reservations.checkIn: >-
+    Sends `{ time }` to the v2 route. The time is interpreted in the property's
+    local timezone.
+  reservations.checkOut: >-
+    Sends `{ time }` to the v2 route. The time is interpreted in the property's
+    local timezone.
+  reservations.getExternalBookings: >-
+    Returns external-channel records for the booking; provider content is not
+    logged.
+  reservations.updateKeyCodes: >-
+    Updates access key codes by room type. Returned or submitted codes are not
+    included in event logs.
   availability.get: >-
     Reads all room-type calendars for one property. Input `from` and `to` map to
     the documented `start` and `end` query parameters; both are required.
@@ -189,9 +415,21 @@ apiNotes:
   availability.set: >-
     Updates the number of available units for a room type via the documented v1
     `POST /availability/{propertyId}/{roomTypeId}/set` body.
+  availability.getLegacyAll: >-
+    Reads the v1 availability period list for all properties. Required dates are
+    `periodStart` and `periodEnd`; other documented filters use Lodgify's exact
+    query casing.
+  availability.getLegacyProperty: >-
+    Reads v1 availability for all room types in a property using the same
+    required date range and optional filters.
+  availability.getLegacyRoomType: >-
+    Reads v1 availability for one room type using the same required date range
+    and optional filters.
   rates.calendar: >-
     Requires house, room-type, start-date, and end-date query parameters; the end
-    date is inclusive in Lodgify's documented contract.
+    date is inclusive in Lodgify's documented contract. Price fields use the
+    provider's Money type, which is an empty closed object in OpenAPI; the plugin
+    validates that shape rather than inventing amount/currency fields.
   rates.calendarSimple: >-
     Returns the simplified v1 nightly calendar. Use `rates.calendar` for the
     v2 response, which also includes rate settings and additional pricing fields.
@@ -204,6 +442,9 @@ apiNotes:
   quotes.calculate: >-
     Uses v2 `GET /quote/{propertyId}`. Room and add-on lists are encoded as
     zero-indexed bracket query fields; at least one room type is required.
+  quotes.calculateV1: >-
+    Uses v1 `GET /quote/{propertyId}` with the same documented zero-indexed room
+    and add-on query convention. At least one room type is required.
   messages.list: >-
     Retrieves a single v2 messaging thread by UUID. The provider does not
     document a `/v2/messages` collection route.
@@ -211,3 +452,13 @@ apiNotes:
     Sends one v1 message to either a booking or an enquiry. The required
     `inboxType` selects the documented path; the request body is a one-element
     array. The API documents a 200 response without a body.
+  countries.list: >-
+    Returns the v1 country-code collection. Lodgify documents no pagination
+    parameters for this reference list.
+  countries.get: >-
+    Looks up one v1 country by its path code.
+  currencies.list: >-
+    Returns the v1 currency collection, including the documented decimal_places
+    field. Lodgify documents no pagination parameters for this reference list.
+  currencies.get: >-
+    Looks up one v1 currency by its path code.

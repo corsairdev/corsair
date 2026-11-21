@@ -190,3 +190,85 @@ export const getPayments: LodgifyEndpoints['properties.getPayments'] = async (
 	);
 	return parsed;
 };
+
+export const listV1: LodgifyEndpoints['properties.listV1'] = async (
+	ctx,
+	input,
+) => {
+	const parsedInput =
+		LodgifyEndpointInputSchemas['properties.listV1'].parse(input);
+	const query: Record<string, string | number | boolean | undefined> = {};
+	if (parsedInput.wid !== undefined) query.wid = parsedInput.wid;
+	// `unknown` because provider JSON is untrusted until parsed by the output schema.
+	const response: unknown = await makeLodgifyRequest(
+		'/v1/properties',
+		ctx.key,
+		{
+			method: 'GET',
+			query,
+		},
+	);
+	const parsed =
+		LodgifyEndpointOutputSchemas['properties.listV1'].parse(response);
+	await logEventFromContext(
+		ctx,
+		'lodgify.properties.listV1',
+		{ count: parsed.length },
+		'completed',
+	);
+	return parsed;
+};
+
+export const getV1: LodgifyEndpoints['properties.getV1'] = async (
+	ctx,
+	input,
+) => {
+	const parsedInput =
+		LodgifyEndpointInputSchemas['properties.getV1'].parse(input);
+	const query: Record<string, string | number | boolean | undefined> = {};
+	if (parsedInput.maxDate !== undefined) query.maxDate = parsedInput.maxDate;
+	if (parsedInput.wid !== undefined) query.wid = parsedInput.wid;
+	// `unknown` because provider JSON is untrusted until parsed by the output schema.
+	const response: unknown = await makeLodgifyRequest(
+		`/v1/properties/${encodeURIComponent(String(parsedInput.id))}`,
+		ctx.key,
+		{ method: 'GET', query },
+	);
+	const parsed =
+		LodgifyEndpointOutputSchemas['properties.getV1'].parse(response);
+	await logEventFromContext(
+		ctx,
+		'lodgify.properties.getV1',
+		{ propertyId: parsedInput.id },
+		'completed',
+	);
+	return parsed;
+};
+
+export const getRoomV1: LodgifyEndpoints['properties.getRoomV1'] = async (
+	ctx,
+	input,
+) => {
+	const parsedInput =
+		LodgifyEndpointInputSchemas['properties.getRoomV1'].parse(input);
+	const query: Record<string, string | number | boolean | undefined> = {};
+	if (parsedInput.wid !== undefined) query.wid = parsedInput.wid;
+	const path = `/v1/properties/${encodeURIComponent(String(parsedInput.id))}/rooms/${encodeURIComponent(String(parsedInput.rid))}`;
+	// `unknown` because provider JSON is untrusted until parsed by the output schema.
+	const response: unknown = await makeLodgifyRequest(path, ctx.key, {
+		method: 'GET',
+		query,
+	});
+	const parsed =
+		LodgifyEndpointOutputSchemas['properties.getRoomV1'].parse(response);
+	await logEventFromContext(
+		ctx,
+		'lodgify.properties.getRoomV1',
+		{
+			propertyId: parsedInput.id,
+			roomId: parsedInput.rid,
+		},
+		'completed',
+	);
+	return parsed;
+};

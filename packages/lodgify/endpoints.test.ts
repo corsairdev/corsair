@@ -2,6 +2,8 @@ import { logEventFromContext } from 'corsair/core';
 import * as client from './client';
 import {
 	Availability,
+	Channels,
+	Global,
 	Messages,
 	Properties,
 	Quotes,
@@ -71,6 +73,70 @@ describe('Lodgify endpoint registry sync', () => {
 });
 
 describe('properties endpoints', () => {
+	it('global country and currency reference operations use documented v1 routes', async () => {
+		mockedRequest.mockResolvedValueOnce([
+			{ code: 'US', name: 'United States' },
+		]);
+		await Global.countriesList(ctx, {});
+		expect(mockedRequest).toHaveBeenNthCalledWith(1, '/v1/countries', ctx.key, {
+			method: 'GET',
+		});
+
+		mockedRequest.mockResolvedValueOnce({ code: 'US', name: 'United States' });
+		await Global.countryGet(ctx, { code: 'US' });
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			2,
+			'/v1/countries/US',
+			ctx.key,
+			{
+				method: 'GET',
+			},
+		);
+
+		mockedRequest.mockResolvedValueOnce([
+			{ id: 1, code: 'USD', decimal_places: 2 },
+		]);
+		await Global.currenciesList(ctx, {});
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			3,
+			'/v1/currencies',
+			ctx.key,
+			{
+				method: 'GET',
+			},
+		);
+
+		mockedRequest.mockResolvedValueOnce({ id: 1, code: 'USD' });
+		await Global.currencyGet(ctx, { code: 'USD' });
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			4,
+			'/v1/currencies/USD',
+			ctx.key,
+			{
+				method: 'GET',
+			},
+		);
+	});
+
+	it('channels.inventory parses Lodgify channel mapping JSON', async () => {
+		mockedRequest.mockResolvedValue({
+			name: 'Channel',
+			properties: {
+				property: [{ id: 101, room_types: { room_type: [{ id: 201 }] } }],
+			},
+		});
+		await Channels.inventory(ctx, {});
+		expect(mockedRequest).toHaveBeenCalledWith('/v1/channel/xml', ctx.key, {
+			method: 'GET',
+		});
+		expect(mockedLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'lodgify.channels.inventory',
+			{ propertyCount: 1 },
+			'completed',
+		);
+	});
+
 	it('properties.list sends query parameters and returns property list', async () => {
 		const mockResponse = {
 			count: 1,
@@ -111,6 +177,45 @@ describe('properties endpoints', () => {
 			'lodgify.properties.list',
 			{ count: 1 },
 			'completed',
+		);
+	});
+
+	it('legacy v1 property endpoints preserve their route-specific query contracts', async () => {
+		mockedRequest.mockResolvedValueOnce([{ id: 101, name: 'Rental' }]);
+		await Properties.listV1(ctx, { wid: 7 });
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			1,
+			'/v1/properties',
+			ctx.key,
+			{
+				method: 'GET',
+				query: { wid: 7 },
+			},
+		);
+
+		mockedRequest.mockResolvedValueOnce({ id: 101, name: 'Rental' });
+		await Properties.getV1(ctx, {
+			id: 101,
+			maxDate: '2026-12-01T00:00:00Z',
+			wid: 7,
+		});
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			2,
+			'/v1/properties/101',
+			ctx.key,
+			{
+				method: 'GET',
+				query: { maxDate: '2026-12-01T00:00:00Z', wid: 7 },
+			},
+		);
+
+		mockedRequest.mockResolvedValueOnce({ id: 201, name: 'Bedroom' });
+		await Properties.getRoomV1(ctx, { id: 101, rid: 201, wid: 7 });
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			3,
+			'/v1/properties/101/rooms/201',
+			ctx.key,
+			{ method: 'GET', query: { wid: 7 } },
 		);
 	});
 
@@ -227,11 +332,11 @@ describe('reservations endpoints', () => {
 				{
 					id: 501,
 					property_id: 101,
-					status: 'Confirmed',
+					status: 'Booked',
 					arrival: '2026-07-01',
 					departure: '2026-07-07',
-					total_amount: 1500,
-					currency: 'USD',
+					total_amount: {},
+					currency_code: 'USD',
 				},
 			],
 		};
@@ -294,7 +399,7 @@ describe('reservations endpoints', () => {
 		const mockResponse = {
 			id: 501,
 			property_id: 101,
-			status: 'Confirmed',
+			status: 'Booked',
 			arrival: '2026-07-01',
 			departure: '2026-07-07',
 		};
@@ -404,6 +509,309 @@ describe('reservations endpoints', () => {
 			},
 		);
 	});
+
+	it('legacy booking update, delete, call-back and quote creation use documented contracts', async () => {
+		mockedRequest.mockResolvedValueOnce({
+			id: 501,
+			guest: { guest_name: { first_name: 'Guest' } },
+		});
+		await Reservations.getBookingV1(ctx, { id: 501 });
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			1,
+			'/v1/reservation/booking/501',
+			ctx.key,
+			{
+				method: 'GET',
+			},
+		);
+
+		const booking = { status: 'Tentative', note: 'Arrival details' };
+		mockedRequest.mockResolvedValueOnce(undefined);
+		await Reservations.updateBooking(ctx, { id: 501, booking });
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			2,
+			'/v1/reservation/booking/501',
+			ctx.key,
+			{
+				method: 'PUT',
+				body: booking,
+			},
+		);
+
+		mockedRequest.mockResolvedValueOnce(undefined);
+		await Reservations.deleteBooking(ctx, { id: 501 });
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			3,
+			'/v1/reservation/booking/501',
+			ctx.key,
+			{
+				method: 'DELETE',
+			},
+		);
+
+		mockedRequest.mockResolvedValueOnce(undefined);
+		await Reservations.deleteEnquiry(ctx, { id: 502 });
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			4,
+			'/v1/reservation/enquiry/502',
+			ctx.key,
+			{
+				method: 'DELETE',
+			},
+		);
+
+		const callMeBack = {
+			date: '2026-06-01',
+			time: 15,
+			guest_breakdown: { adults: 2 },
+			property_id: 101,
+		};
+		mockedRequest.mockResolvedValueOnce(503);
+		await Reservations.createCallMeBack(ctx, callMeBack);
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			5,
+			'/v1/reservation/callmeback',
+			ctx.key,
+			{
+				method: 'POST',
+				body: callMeBack,
+			},
+		);
+
+		const quote = {
+			id: 501,
+			is_policy_active: true,
+			promotion_code: 'SUMMER',
+			add_ons: [{ add_on_id: 301, units: 1 }],
+			room_types: [{ room_type_id: 201 }],
+		};
+		mockedRequest.mockResolvedValueOnce(504);
+		await Reservations.createQuote(ctx, quote);
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			6,
+			'/v1/reservation/booking/501/quote',
+			ctx.key,
+			{
+				method: 'POST',
+				body: {
+					is_policy_active: true,
+					promotion_code: 'SUMMER',
+					add_ons: [{ add_on_id: 301, units: 1 }],
+					room_types: [{ room_type_id: 201 }],
+				},
+			},
+		);
+	});
+
+	it('retrieves v1 and v2 payment links without logging the returned URLs', async () => {
+		mockedRequest.mockResolvedValueOnce({ url: 'https://pay.example.test/v1' });
+		await Reservations.getPaymentLinkV1(ctx, { id: 501 });
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			1,
+			'/v1/reservation/booking/501/quote/paymentLink',
+			ctx.key,
+			{ method: 'GET' },
+		);
+
+		mockedRequest.mockResolvedValueOnce({ url: 'https://pay.example.test/v2' });
+		await Reservations.getPaymentLink(ctx, { id: 501 });
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			2,
+			'/v2/reservations/bookings/501/quote/paymentLink',
+			ctx.key,
+			{ method: 'GET' },
+		);
+		expect(mockedLogEvent).not.toHaveBeenCalledWith(
+			ctx,
+			expect.any(String),
+			expect.objectContaining({ url: expect.any(String) }),
+			expect.any(String),
+		);
+	});
+
+	it('reservations.getQuote retrieves strict v1 quote details', async () => {
+		mockedRequest.mockResolvedValue({
+			id: 700,
+			amount_gross: {},
+			amount_net: {},
+			room_type_items: [],
+		});
+		await Reservations.getQuote(ctx, { id: 501 });
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/v1/reservation/booking/501/quote',
+			ctx.key,
+			{ method: 'GET', query: undefined },
+		);
+	});
+
+	it('routes booking and enquiry lifecycle operations, including requestPayment filters', async () => {
+		mockedRequest.mockResolvedValue(undefined);
+		await Reservations.recoverBooking(ctx, { id: 501 });
+		await Reservations.recoverEnquiry(ctx, { id: 502 });
+		await Reservations.reopenBooking(ctx, { id: 501 });
+		await Reservations.declineBooking(ctx, { id: 501 });
+		await Reservations.tentativeBooking(ctx, { id: 501, requestPayment: true });
+		await Reservations.bookBooking(ctx, { id: 501, requestPayment: false });
+		await Reservations.declineEnquiry(ctx, { id: 502 });
+		await Reservations.reopenEnquiry(ctx, { id: 502 });
+		await Reservations.requestPayment(ctx, { id: 501 });
+		expect(
+			mockedRequest.mock.calls.map(([path, , options]) => [path, options]),
+		).toEqual([
+			[
+				'/v1/reservation/booking/501/recover',
+				{ method: 'PUT', query: undefined },
+			],
+			[
+				'/v1/reservation/enquiry/502/recover',
+				{ method: 'PUT', query: undefined },
+			],
+			[
+				'/v1/reservation/booking/501/reopen',
+				{ method: 'PUT', query: undefined },
+			],
+			[
+				'/v1/reservation/booking/501/decline',
+				{ method: 'PUT', query: undefined },
+			],
+			[
+				'/v1/reservation/booking/501/tentative',
+				{ method: 'PUT', query: { requestPayment: true } },
+			],
+			[
+				'/v1/reservation/booking/501/book',
+				{ method: 'PUT', query: { requestPayment: false } },
+			],
+			[
+				'/v1/reservation/enquiry/502/decline',
+				{ method: 'PUT', query: undefined },
+			],
+			[
+				'/v1/reservation/enquiry/502/reopen',
+				{ method: 'PUT', query: undefined },
+			],
+			[
+				'/v1/reservation/booking/501/request_payment',
+				{ method: 'PUT', query: undefined },
+			],
+		]);
+	});
+
+	it('marks replied state in individual and batch operations', async () => {
+		mockedRequest.mockResolvedValue(undefined);
+		const batch = [
+			{ id: 501, type: 'Booking' as const },
+			{ id: 502, type: 'Enquiry' as const },
+		];
+		await Reservations.deleteMany(ctx, batch);
+		await Reservations.markManyReplied(ctx, batch);
+		await Reservations.markManyNotReplied(ctx, batch);
+		await Reservations.markBookingReplied(ctx, { id: 501 });
+		await Reservations.markEnquiryReplied(ctx, { id: 502 });
+		await Reservations.markBookingNotReplied(ctx, { id: 501 });
+		await Reservations.markEnquiryNotReplied(ctx, { id: 502 });
+		expect(
+			mockedRequest.mock.calls.map(([path, , options]) => [path, options]),
+		).toEqual([
+			['/v1/reservation/delete', { method: 'POST', body: batch }],
+			['/v1/reservation/replied', { method: 'POST', body: batch }],
+			['/v1/reservation/not_replied', { method: 'POST', body: batch }],
+			[
+				'/v1/reservation/booking/501/replied',
+				{ method: 'PUT', query: undefined },
+			],
+			[
+				'/v1/reservation/enquiry/502/replied',
+				{ method: 'PUT', query: undefined },
+			],
+			[
+				'/v1/reservation/booking/501/not_replied',
+				{ method: 'PUT', query: undefined },
+			],
+			[
+				'/v1/reservation/enquiry/502/not_replied',
+				{ method: 'PUT', query: undefined },
+			],
+		]);
+	});
+
+	it('sets check-in/out, reads external bookings and updates key codes', async () => {
+		mockedRequest.mockResolvedValueOnce(undefined);
+		await Reservations.checkInV1(ctx, { id: 501, time: '15:00' });
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			1,
+			'/v1/reservation/booking/501/checkin',
+			ctx.key,
+			{
+				method: 'PUT',
+				body: { time: '15:00' },
+			},
+		);
+		mockedRequest.mockResolvedValueOnce(undefined);
+		await Reservations.checkOutV1(ctx, { id: 501, time: '11:00' });
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			2,
+			'/v1/reservation/booking/501/checkout',
+			ctx.key,
+			{
+				method: 'PUT',
+				body: { time: '11:00' },
+			},
+		);
+		mockedRequest.mockResolvedValueOnce(undefined);
+		await Reservations.checkIn(ctx, { id: 501, time: '15:00' });
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			3,
+			'/v2/reservations/bookings/501/checkin',
+			ctx.key,
+			{
+				method: 'PUT',
+				body: { time: '15:00' },
+			},
+		);
+		mockedRequest.mockResolvedValueOnce(undefined);
+		await Reservations.checkOut(ctx, { id: 501, time: '11:00' });
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			4,
+			'/v2/reservations/bookings/501/checkout',
+			ctx.key,
+			{
+				method: 'PUT',
+				body: { time: '11:00' },
+			},
+		);
+
+		mockedRequest.mockResolvedValueOnce({
+			external_bookings: [{ created_at: '2026-06-01T00:00:00Z' }],
+		});
+		await Reservations.getExternalBookings(ctx, { id: 501 });
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			5,
+			'/v2/reservations/bookings/501/externalBookings',
+			ctx.key,
+			{
+				method: 'GET',
+			},
+		);
+
+		const rooms = [{ room_type_id: 201, key_code: '5892' }];
+		mockedRequest.mockResolvedValueOnce({ rooms });
+		await Reservations.updateKeyCodes(ctx, { id: 501, rooms });
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			6,
+			'/v2/reservations/bookings/501/keyCodes',
+			ctx.key,
+			{
+				method: 'PUT',
+				body: { rooms },
+			},
+		);
+		expect(
+			mockedLogEvent.mock.calls.some(([, , payload]) =>
+				JSON.stringify(payload).includes('5892'),
+			),
+		).toBe(false);
+	});
 });
 
 describe('availability endpoints', () => {
@@ -508,6 +916,90 @@ describe('availability endpoints', () => {
 			},
 		);
 	});
+
+	it('legacy v1 availability reads map input options to documented query names', async () => {
+		const period = {
+			property_id: 101,
+			room_type_id: 201,
+			period_start: '2026-06-01T00:00:00Z',
+			period_end: '2026-06-10T00:00:00Z',
+			available: 1,
+			total_units: 1,
+			is_available: true,
+		};
+		mockedRequest.mockResolvedValueOnce([period]);
+		await Availability.getLegacyAll(ctx, {
+			periodStart: '2026-06-01T00:00:00Z',
+			periodEnd: '2026-06-10T00:00:00Z',
+			combineRoomTypes: true,
+			bookingsOnly: false,
+			includeBookingIds: true,
+			modifiedSince: '2026-05-01T00:00:00Z',
+		});
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			1,
+			'/v1/availability',
+			ctx.key,
+			{
+				method: 'GET',
+				query: {
+					periodStart: '2026-06-01T00:00:00Z',
+					periodEnd: '2026-06-10T00:00:00Z',
+					CombineRoomTypes: true,
+					BookingsOnly: false,
+					IncludeBookingIds: true,
+					ModifiedSince: '2026-05-01T00:00:00Z',
+				},
+			},
+		);
+
+		mockedRequest.mockResolvedValueOnce([period]);
+		await Availability.getLegacyProperty(ctx, {
+			propertyId: 101,
+			periodStart: '2026-06-01T00:00:00Z',
+			periodEnd: '2026-06-10T00:00:00Z',
+		});
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			2,
+			'/v1/availability/101',
+			ctx.key,
+			{
+				method: 'GET',
+				query: {
+					periodStart: '2026-06-01T00:00:00Z',
+					periodEnd: '2026-06-10T00:00:00Z',
+					CombineRoomTypes: undefined,
+					BookingsOnly: undefined,
+					IncludeBookingIds: undefined,
+					ModifiedSince: undefined,
+				},
+			},
+		);
+
+		mockedRequest.mockResolvedValueOnce([period]);
+		await Availability.getLegacyRoomType(ctx, {
+			propertyId: 101,
+			roomTypeId: 201,
+			periodStart: '2026-06-01T00:00:00Z',
+			periodEnd: '2026-06-10T00:00:00Z',
+		});
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			3,
+			'/v1/availability/101/201',
+			ctx.key,
+			{
+				method: 'GET',
+				query: {
+					periodStart: '2026-06-01T00:00:00Z',
+					periodEnd: '2026-06-10T00:00:00Z',
+					CombineRoomTypes: undefined,
+					BookingsOnly: undefined,
+					IncludeBookingIds: undefined,
+					ModifiedSince: undefined,
+				},
+			},
+		);
+	});
 });
 
 describe('rates endpoints', () => {
@@ -535,7 +1027,7 @@ describe('rates endpoints', () => {
 			{
 				date: '2026-06-01',
 				is_default: false,
-				prices: [{ price_per_day: 150 }],
+				prices: [{ price_per_day: {} }],
 			},
 		]);
 		await Rates.calendarSimple(ctx, {
@@ -641,6 +1133,32 @@ describe('quotes endpoints', () => {
 			{ propertyId: 101, count: 1 },
 			'completed',
 		);
+	});
+
+	it('quotes.calculateV1 encodes the documented legacy query format', async () => {
+		mockedRequest.mockResolvedValue([
+			{ rate_type: { name: 'Standard' }, total: 900 },
+		]);
+		await Quotes.calculateV1(ctx, {
+			propertyId: 101,
+			arrival: '2026-06-01T00:00:00Z',
+			departure: '2026-06-05T00:00:00Z',
+			roomTypes: [{ id: 201, guest_breakdown: { adults: 2 } }],
+			addOns: [{ id: 301, units: 1 }],
+			promotionCode: 'SUMMER',
+		});
+		expect(mockedRequest).toHaveBeenCalledWith('/v1/quote/101', ctx.key, {
+			method: 'GET',
+			query: {
+				arrival: '2026-06-01T00:00:00Z',
+				departure: '2026-06-05T00:00:00Z',
+				'roomTypes[0].Id': 201,
+				'roomTypes[0].guest_breakdown.adults': 2,
+				'addOns[0].Id': 301,
+				'addOns[0].Units': 1,
+				promotionCode: 'SUMMER',
+			},
+		});
 	});
 });
 

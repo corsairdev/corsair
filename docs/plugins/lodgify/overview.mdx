@@ -6,11 +6,11 @@ description: "Manage vacation rental properties, rooms, rates, availability, boo
 
 Use **Lodgify** through Corsair: one client, typed API calls.
 
-Lodgify API endpoints require an account API key passed in the `X-ApiKey` header. API access is available on Lodgify Pro and Enterprise tiers. If a key is missing, Corsair throws `AuthMissingError` with a connect link for the caller to display. Guest records are embedded in booking and enquiry operations; Lodgify does not document a standalone guest collection. Webhook payloads are documented, but webhook support is outside this PR's requested scope.
+Lodgify API endpoints require an account API key passed in the `X-ApiKey` header. API access is available on Lodgify Pro and Enterprise tiers. If a key is missing, Corsair throws `AuthMissingError` with a connect link for the caller to display. Guest records are embedded in booking and enquiry operations; Lodgify does not document a standalone guest collection. Webhook payloads are documented, but webhook support is outside this PR's requested scope. Webhook management routes are also excluded because issue #2613 leaves webhook support unchecked. Payment-link creation is omitted because the v1/v2 request amount uses an OpenAPI Money schema with no properties; no amount structure is guessed.
 
 **What you get:**
 
-- 24 typed API operations
+- 67 typed API operations
 
 ## Setup
 
