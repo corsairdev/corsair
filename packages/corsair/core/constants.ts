@@ -321,6 +321,7 @@ export const BaseProviders = [
 	'godial',
 	'gong',
 	'googleaddressvalidation',
+	'googleadmin',
 	'googleads',
 	'googleanalytics',
 	'googlebigquery',
@@ -646,6 +647,7 @@ export const BaseProviders = [
 	'sympla',
 	'synthflowai',
 	'taggun',
+	'tailscale',
 	'talenthr',
 	'tapfiliate',
 	'tally',
@@ -1069,6 +1071,7 @@ export const ProviderDisplayNames = {
 	godial: 'GoDial',
 	gong: 'Gong',
 	googleaddressvalidation: 'Google Address Validation',
+	googleadmin: 'Google Admin',
 	googleads: 'Google Ads',
 	googleanalytics: 'Google Analytics',
 	googlebigquery: 'Google BigQuery',
@@ -1394,6 +1397,7 @@ export const ProviderDisplayNames = {
 	sympla: 'Sympla',
 	synthflowai: 'Synthflow AI',
 	taggun: 'Taggun',
+	tailscale: 'Tailscale',
 	talenthr: 'TalentHR',
 	tapfiliate: 'Tapfiliate',
 	tally: 'Tally',
@@ -1824,6 +1828,7 @@ export type AllProviders =
 	| 'godial'
 	| 'gong'
 	| 'googleaddressvalidation'
+	| 'googleadmin'
 	| 'googleads'
 	| 'googleanalytics'
 	| 'googlebigquery'
@@ -2149,6 +2154,7 @@ export type AllProviders =
 	| 'sympla'
 	| 'synthflowai'
 	| 'taggun'
+	| 'tailscale'
 	| 'talenthr'
 	| 'tapfiliate'
 	| 'tally'
