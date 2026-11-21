@@ -1,0 +1,146 @@
+---
+title: "Tailscale plugin"
+sidebarTitle: "Overview"
+description: "Run a tailnet from an agent: list and approve devices, mint tagged, ephemeral auth keys for new nodes, read, validate and safely update the policy file (ACLs and grants, with etag checks and ACL tests), publish internal apps and MCP servers as Tailscale Services, and manage DNS, users, invites, webhooks, posture attributes and the configuration audit log (93 operations)."
+---
+
+Use **Tailscale** through Corsair: one client, typed API calls.
+
+Connect with an API access token (expires after at most 90 days) or, better for a team, an OAuth client secret (tskey-client-...), which never expires and carries only the scopes it was given. Every call addresses the tailnet the key belongs to unless `tailnet` is set. Change the policy file with `policyFile.validate` first, then `policyFile.set` with the etag from `policyFile.get`.
+
+**What you get:**
+
+- 93 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/tailscale better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/tailscale better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/tailscale better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/tailscale better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { tailscale } from '@corsair-dev/tailscale';
+
+export const corsair = createCorsair({
+	plugins: [
+		tailscale(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Tailscale API key before the first call: `pnpm corsair setup --plugin=tailscale --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+tailscale()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'tailscale',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List tagged servers**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.tailscale.api.devices.list({
+	filters: {
+		tags: ['tag:mcp'],
+	},
+});
+```
+
+
+**Mint an auth key for an agent node**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.tailscale.api.keys.create({
+	description: 'agent node',
+	expirySeconds: 3600,
+	capabilities: {
+		devices: {
+			create: {
+				reusable: false,
+				ephemeral: true,
+				preauthorized: true,
+				tags: ['tag:agent'],
+			},
+		},
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/tailscale/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/tailscale/api">
+    Every `tailscale.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

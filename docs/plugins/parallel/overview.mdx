@@ -1,14 +1,25 @@
 ---
 title: "Parallel plugin"
 sidebarTitle: "Overview"
-description: "Search, extract, run research tasks, monitor changes, and generate grounded responses with Parallel."
+description: "Search the web, images, places, flights, hotels and products, extract pages, run research tasks and FindAll lists, monitor changes, and generate grounded responses with Parallel."
 ---
 
-Use **Parallel** through Corsair: one client, typed API calls.
+Use **Parallel** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Create a key in the Parallel console (https://platform.parallel.ai) and send it as the `x-api-key` header.
+
+Things to know before you send:
+
+- **Search APIs.** `search.search` (web pages and excerpts), `images.search`, `places.search`, `flights.search`, `hotels.search` and `shopping.search` are synchronous and priced per request. `flights.search` takes IATA codes (`SFO`, `NYC`) and returns itineraries linked to the airline's booking page; `hotels.search` returns properties with each seller's offers; `shopping.search` returns products linked to store pages, with the market set by `advanced_settings.location` (`us` by default).
+- **`fetch_policy.as_of`** asks for results as the web stood on a date. Parallel enables it per account: without access it answers 422 "as_of is not enabled".
+- **Tasks, FindAll and Monitors run in the background.** `tasks.createRun`, `findall.createRun` and `monitors.create` return an id at once; read the result later or pass a `webhook`. A monitor keeps running on its schedule, and billing, until `monitors.cancel`.
+- **Managed pricing.** With `authType: 'managed_pricing'` the calls run on Corsair's Parallel account and are billed in Corsair credits. Only the operations Corsair prices run that way; the rest (background runs, monitors, memory) are refused and nothing is charged.
+- **Inbound webhooks.** Parallel signs every delivery the Standard Webhooks way (`webhook-id`, `webhook-timestamp`, `webhook-signature: v1,<base64>`) with your account's webhook secret from Settings → Webhooks. Set `webhookSecret`, or store it with `keys.set_webhook_signature`. Verification needs the untouched request body, and deliveries more than five minutes old are refused. Events: `taskRun.status`, `findall.candidateGenerated`, `findall.candidateMatched`, `findall.candidateEnriched`, `findall.runCompleted`, `findall.runCancelled`, `findall.runFailed`, `monitor.eventDetected`, `monitor.executionCompleted` and `monitor.executionFailed`. Subscribe a FindAll run with the `findall.*` event names, not `task_run.status`.
 
 **What you get:**
 
-- 35 typed API operations
+- 38 typed API operations
+- 10 incoming webhook event types
 
 ## Setup
 
@@ -112,11 +123,20 @@ await tenant.parallel.api.chat.create({});
 
 See the full list on the [API](/plugins/parallel/api) page.
 
+## Webhooks
+
+This plugin registers **10** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/parallel/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/parallel/api">
     Every `parallel.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/parallel/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.

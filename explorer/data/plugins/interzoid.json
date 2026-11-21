@@ -1,0 +1,5001 @@
+{
+  "id": "interzoid",
+  "displayName": "Interzoid",
+  "description": "Data matching, entity resolution, data quality, validation, enrichment, and normalization cloud APIs.",
+  "npmPackageName": "@corsair-dev/interzoid",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 75,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "interzoid.api.intelligence.getBuildingProfile",
+      "shortPath": "intelligence.getBuildingProfile",
+      "description": "Retrieve commercial building intelligence, class, square footage, and tenants",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "PropertyAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "BuildingClass",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "YearBuilt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TotalSquareFootage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FloorCount",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PrimaryTenants",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PropertyManager",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "OwnershipEntity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RecentRenovations",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ParkingRatio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TransitAccess",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "BuildingReferenceURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getBusinessInfo",
+      "shortPath": "intelligence.getBusinessInfo",
+      "description": "Retrieve comprehensive business intelligence and firmographic profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CompanyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CompanyURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CompanyLocation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CompanyDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Revenue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "NumberEmployees",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "NAICS",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TopExecutive",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TopExecutiveTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getBusinessInfoDomain",
+      "shortPath": "intelligence.getBusinessInfoDomain",
+      "description": "Resolve company name, ticker, or brand into primary internet domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getBusinessInfoName",
+      "shortPath": "intelligence.getBusinessInfoName",
+      "description": "Resolve domain or brand name into standard company name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CompanyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getBuyingSignals",
+      "shortPath": "intelligence.getBuyingSignals",
+      "description": "Retrieve real-time B2B purchase intent signals and expansion indicators",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CompanyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Industry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CompanySize",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LeadershipChanges",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FundingEvents",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "HiringSignals",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TechnologyChanges",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ExpansionSignals",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PainPointIndicators",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "BudgetIndicators",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SignalStrengthScore",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RecommendedTiming",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "KeyDecisionMakers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getCompanyVerification",
+      "shortPath": "intelligence.getCompanyVerification",
+      "description": "Verify the legitimacy, existence, and reputability of a company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Score",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Reasoning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getCompetitorAnalysis",
+      "shortPath": "intelligence.getCompetitorAnalysis",
+      "description": "Retrieve structured competitive intelligence, advantages, and market dynamics",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CompanyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Industry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MarketPosition",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TopCompetitors",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IndirectCompetitors",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CompetitiveAdvantages",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CompetitiveWeaknesses",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MarketDynamics",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "StrategicOutlook",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getCustomData",
+      "shortPath": "intelligence.getCustomData",
+      "description": "Query custom AI-powered dataset attributes specified by topic and requested columns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "topic",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string",
+            "description": "The record to look up for this topic, such as a company name. Interzoid refuses a call without it."
+          },
+          {
+            "key": "output",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "model",
+            "optional": true,
+            "type": "string",
+            "description": "Interzoid AI model, such as `model-a` (1 credit). The `-premium` models cost 10 to 25 credits per call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getCustomsDutyRates",
+      "shortPath": "intelligence.getCustomsDutyRates",
+      "description": "Retrieve international customs duty rates based on origin, destination, and HS code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "string",
+            "description": "Optional; Interzoid picks its default when omitted."
+          },
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hscode",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "OriginCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DestinationCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CountryCodeISO2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "HSCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "HSCodeDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MFNAppliedRate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DutyBasis",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ApplicablePreferentialRate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TradeRemedyDuties",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SafeguardMeasures",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ImportVATOrGST",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SpecialOrAdditionalTaxes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DeMinimisThreshold",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RestrictionsNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EffectivePeriod",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CustomsAuthorityReferenceURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getEsgProfile",
+      "shortPath": "intelligence.getEsgProfile",
+      "description": "Retrieve ESG, carbon scope emissions, and corporate sustainability intelligence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CompanyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CompanyURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ESGRiskRating",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EnvironmentalScore",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SocialScore",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "GovernanceScore",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CarbonEmissionsScopes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "NetZeroTarget",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RenewableEnergyPercent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ESGControversies",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SustainabilityFrameworks",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ESGReferenceURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getEuVatRates",
+      "shortPath": "intelligence.getEuVatRates",
+      "description": "Retrieve European VAT tax rates, standard/reduced categories, and thresholds",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CountryName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CountryCodeISO2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TaxSystem",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TaxSystemLocalName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "StandardRate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ReducedRates",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SuperReducedRate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ZeroRatedCategories",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ExemptCategories",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TerritorialExceptions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EUMemberStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RegistrationThreshold",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TaxAuthorityReferenceURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getExecutiveProfile",
+      "shortPath": "intelligence.getExecutiveProfile",
+      "description": "Retrieve executive profile details based on company name and title",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CompanyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CompanyURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ExecutiveName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ExecutiveTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LinkedInURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "BiographyURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getFacilitiesProfile",
+      "shortPath": "intelligence.getFacilitiesProfile",
+      "description": "Retrieve corporate facilities and real estate portfolio intelligence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CompanyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CompanyURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "HeadquartersLocation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TotalFacilityCount",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TotalSquareFootage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "OwnedLeasedMix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FacilityTypeBreakdown",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TopGeographicMarkets",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RecentOpenings",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RecentClosures",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "WorkPolicy",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FacilitiesReferenceURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getGovContracts",
+      "shortPath": "intelligence.getGovContracts",
+      "description": "Retrieve US federal government contracting intelligence and major awards",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CompanyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CompanyURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LifetimeContractValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TTMContractValue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TopAwardingAgencies",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ActiveContractVehicles",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SetAsideStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RecentMajorAwards",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PrimeSubMix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TopNAICSCodes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CAGECode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SAMReferenceURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getIndustryCodes",
+      "shortPath": "intelligence.getIndustryCodes",
+      "description": "Retrieve NAICS and SIC industry classification codes for a company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CompanyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PrimaryIndustry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "NAICSCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "NAICSCodeTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SICCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SICCodeTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Sector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Subsector",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IndustryDefinition",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ConfidenceScore",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getIrsPerDiemRates",
+      "shortPath": "intelligence.getIrsPerDiemRates",
+      "description": "Retrieve official IRS per diem reimbursement rates for travel",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Jurisdiction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "JurisdictionLevel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LookupType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "State",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "County",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "City",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IRSClassification",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TotalPerDiem",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LodgingAllowance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MealsIncidentalAllowance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IncidentalExpensesOnlyRate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EffectivePeriod",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IRSReferenceURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getMuniIssuerProfile",
+      "shortPath": "intelligence.getMuniIssuerProfile",
+      "description": "Retrieve municipal bond issuer profiles and credit diligence intelligence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "IssuerName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IssuerType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "State",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Population",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IssuerProfile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TypicalSecurityTypes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "GeneralCreditStanding",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "OutstandingDebtOverview",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "NotableEvents",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PensionAndOPEBNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "KeyRevenueSources",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EMMAReferenceURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MSRBReferenceURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getNearestCoffeeShops",
+      "shortPath": "intelligence.getNearestCoffeeShops",
+      "description": "Find nearest coffee shops and proximity data for a location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "SearchLocation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Shop1Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Shop1Address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Shop1Distance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Shop1Rating",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Shop1Hours",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Shop2Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Shop2Address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Shop2Distance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Shop2Rating",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Shop2Hours",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Shop3Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Shop3Address",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Shop3Distance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Shop3Rating",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Shop3Hours",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getParentCompanyInfo",
+      "shortPath": "intelligence.getParentCompanyInfo",
+      "description": "Retrieve corporate ownership and ultimate parent company intelligence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CompanyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CompanyURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ParentCompany",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ParentCompanyLocation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ParentCompanyURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ParentCompanyDescription",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ParentCompanyReferenceURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getPrivateCompanyDealIntel",
+      "shortPath": "intelligence.getPrivateCompanyDealIntel",
+      "description": "Retrieve venture capital and private equity deal intelligence for private firms",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CompanyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FoundedYear",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Headquarters",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Industry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LatestValuation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TotalFundingRaised",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FundingRounds",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "KeyInvestors",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EmployeeCountEstimate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RevenueEstimate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "GrowthMetrics",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RecentDealsAndExits",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ComparableCompanies",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DataConfidenceNotes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getProductRecallInfo",
+      "shortPath": "intelligence.getProductRecallInfo",
+      "description": "Retrieve consumer safety recall intelligence for products and brands",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ProductName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Brand",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RecallDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RecallingAgency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RecallReason",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SeverityLevel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "UnitsAffected",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RemedyAction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RecallStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AdditionalDetails",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getPropertyHistory",
+      "shortPath": "intelligence.getPropertyHistory",
+      "description": "Retrieve historical real estate property sales, deeds, and mortgages",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "PropertyAddress",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PropertyType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LastSaleDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LastSalePrice",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PriorTransactions",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PricePerSqFtTrajectory",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "OwnershipChain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DeedTypes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MortgageHistory",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CurrentOwner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AssessorParcelNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PropertyReferenceURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getSalesUseTaxRates",
+      "shortPath": "intelligence.getSalesUseTaxRates",
+      "description": "Retrieve US sales and use tax rates by address, zip code, or city",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Jurisdiction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "JurisdictionLevel",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LookupType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "State",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "County",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "City",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "StateRate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CountyRate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CityRate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DistrictSpecialRate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CombinedRate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RateEffectiveDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TaxAuthorityReferenceURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getSicCodes",
+      "shortPath": "intelligence.getSicCodes",
+      "description": "Retrieve primary and secondary SIC codes with SEC filing provenance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CompanyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PrimarySICCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PrimarySICCodeTitle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PrimarySICBasis",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AdditionalSICCodes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AdditionalSICCodeTitles",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SICSourceType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SICSourceReferenceURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ConfidenceScore",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getStockInfo",
+      "shortPath": "intelligence.getStockInfo",
+      "description": "Retrieve financial stock metrics, market cap, and analyst consensus for a ticker",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Ticker",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Exchange",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Website",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MarketCap",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CurrentPrice",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AnalystAssessment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PERatio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EPS",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getTechStack",
+      "shortPath": "intelligence.getTechStack",
+      "description": "Retrieve technology stack and web infrastructure detected for a domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "DomainName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CMSPlatform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FrontendFrameworks",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "BackendTechnologies",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "WebServer",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "HostingProvider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CDNProvider",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AnalyticsTools",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SecurityTechnologies",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EcommercePlatform",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AdditionalTechnologies",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getUniversityInfo",
+      "shortPath": "intelligence.getUniversityInfo",
+      "description": "Retrieve comprehensive higher education profile and statistics for a university",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "InstitutionName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "InstitutionType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FoundedYear",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TotalEnrollment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AcceptanceRate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TuitionInState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TuitionOutOfState",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "NotablePrograms",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "WebsiteURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EndowmentSize",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AthleticConference",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getUserXHandle",
+      "shortPath": "intelligence.getUserXHandle",
+      "description": "Lookup X/Twitter handle for a person, company, or team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ConfidenceScore",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getXLast3",
+      "shortPath": "intelligence.getXLast3",
+      "description": "Retrieve the latest three posts from an X/Twitter account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Tweet1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Tweet1Date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Tweet2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Tweet2Date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Tweet3",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Tweet3Date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.intelligence.getXUserProfile",
+      "shortPath": "intelligence.getXUserProfile",
+      "description": "Retrieve public profile statistics and bio for an X/Twitter handle",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "handle",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Handle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DisplayName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CreateDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Following",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Followers",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PostCount",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "WebsiteURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Location",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.matching.getAddressAndFullNameMatch",
+      "shortPath": "matching.getAddressAndFullNameMatch",
+      "description": "Generate a composite similarity key based on both address and full name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fullname",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "SimKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.matching.getAddressMatch",
+      "shortPath": "matching.getAddressMatch",
+      "description": "Generate a standard similarity key for street address matching and deduplication",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "SimKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Simkey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.matching.getAddressMatchAdvanced",
+      "shortPath": "matching.getAddressMatchAdvanced",
+      "description": "Generate an AI-powered similarity key for a street address to identify duplicates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "algorithm",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string",
+            "description": "ZIP code of the address; optional, makes the match more precise."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "SimKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.matching.getCityMatch",
+      "shortPath": "matching.getCityMatch",
+      "description": "Generate a similarity key for city name matching and deduplication",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "city",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "SimKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Simkey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.matching.getCompanyAndAddressMatch",
+      "shortPath": "matching.getCompanyAndAddressMatch",
+      "description": "Generate a composite similarity key based on both company name and street address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "SimKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.matching.getCompanyAndFullNameMatch",
+      "shortPath": "matching.getCompanyAndFullNameMatch",
+      "description": "Generate a composite similarity key based on both company name and individual full name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fullname",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "SimKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.matching.getCompanyMatch",
+      "shortPath": "matching.getCompanyMatch",
+      "description": "Generate a standard similarity key for company name matching and deduplication",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "SimKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Simkey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.matching.getCompanyMatchAdvanced",
+      "shortPath": "matching.getCompanyMatchAdvanced",
+      "description": "Generate an AI-powered similarity key for a company or organization name to identify duplicates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "algorithm",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "SimKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.matching.getCountryMatch",
+      "shortPath": "matching.getCountryMatch",
+      "description": "Generate a similarity key for country name matching and deduplication",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "SimKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Simkey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.matching.getFullNameMatch",
+      "shortPath": "matching.getFullNameMatch",
+      "description": "Generate an AI-powered similarity key for an individual full name to identify duplicates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fullname",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "SimKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.matching.getFullNameMatchScore",
+      "shortPath": "matching.getFullNameMatchScore",
+      "description": "Calculate a match similarity score between two individual names (0-100)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fullname1",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fullname2",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Score",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.matching.getFullNameParsedMatch",
+      "shortPath": "matching.getFullNameParsedMatch",
+      "description": "Generate a similarity key from separate first and last names",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "lastname",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "SimKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Simkey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.matching.getGlobalAddressMatch",
+      "shortPath": "matching.getGlobalAddressMatch",
+      "description": "Generate an AI-powered similarity key for global addresses worldwide",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "algorithm",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "SimKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.matching.getOrgMatchScore",
+      "shortPath": "matching.getOrgMatchScore",
+      "description": "Calculate a match similarity score between two organization names (0-100)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org1",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "org2",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Score",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.matching.getProductMatch",
+      "shortPath": "matching.getProductMatch",
+      "description": "Generate an AI-powered similarity key for product names to detect duplicate items",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "product",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "algorithm",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "SimKey",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.standardization.getCityStandard",
+      "shortPath": "standardization.getCityStandard",
+      "description": "Standardize a city name to its canonical form",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "city",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "algorithm",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "State or province of the city; optional, makes the result more precise."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CityStandard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.standardization.getCountryInfo",
+      "shortPath": "standardization.getCountryInfo",
+      "description": "Get standardized country metadata including ISO codes, currency, and calling code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "algorithm",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CountryStandard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TwoLetterCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ThreeLetterCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ThreeDigitCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CurrencyCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CurrencyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CurrencySubUnit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CurrencySymbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "InternetCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CallingCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.standardization.getCountryStandard",
+      "shortPath": "standardization.getCountryStandard",
+      "description": "Standardize a country name or alias to canonical form",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "country",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "algorithm",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "CountryStandard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.standardization.getOfficialName",
+      "shortPath": "standardization.getOfficialName",
+      "description": "Resolve commercial or colloquial brand name into official legal entity registration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "OfficialNameEnglish",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CommercialName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "OfficialNameLocal",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "OfficialNameLocalRomanized",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "LegalForm",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "EntityCategory",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CountryOfIncorporation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CountryCodeISO2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IncorporationRegistryName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RegistryIdentifier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AlsoKnownAs",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "OfficialDocumentationURL",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "SourceType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.standardization.getOrgStandard",
+      "shortPath": "standardization.getOrgStandard",
+      "description": "Standardize an organization name to its canonical English form",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Standard",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.standardization.getStateAbbreviation",
+      "shortPath": "standardization.getStateAbbreviation",
+      "description": "Standardize a US state or Canadian province name into its two-letter abbreviation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "state",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "algorithm",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "State",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Abbreviation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.utilities.convertCurrency",
+      "shortPath": "utilities.convertCurrency",
+      "description": "Convert an amount from one foreign currency into another",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "from",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Converted",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "Currency",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.utilities.getCurrencyRate",
+      "shortPath": "utilities.getCurrencyRate",
+      "description": "Retrieve live USD foreign exchange rate for a currency symbol",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "symbol",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Symbol",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Rate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.utilities.getEntityType",
+      "shortPath": "utilities.getEntityType",
+      "description": "Classify text into entity type (Location, Organization, Individual, or Text)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.utilities.getGender",
+      "shortPath": "utilities.getGender",
+      "description": "Infer the likely gender from an individual first name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Gender",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.utilities.getGlobalLatency",
+      "shortPath": "utilities.getGlobalLatency",
+      "description": "Measure website or API URL latency from a specified worldwide location",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "string",
+            "description": "Optional; Interzoid picks its default when omitted."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Origin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Seconds",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PageResponseStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Contents",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.utilities.getGlobalPageLoad",
+      "shortPath": "utilities.getGlobalPageLoad",
+      "description": "Measure browser page load performance from a specified global geography",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Origin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Seconds",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PageResponseStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Contents",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.utilities.getGlobalTime",
+      "shortPath": "utilities.getGlobalTime",
+      "description": "Retrieve current date and time for a global city or locale",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "locale",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ClockTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "CurrentDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CurrentTime",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Day",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Hour",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Minute",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Month",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MonthNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Second",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TimeStamp",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Weekday",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Year",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Zone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.utilities.getGlobalWeather",
+      "shortPath": "utilities.getGlobalWeather",
+      "description": "Retrieve current weather conditions for worldwide city locations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "TempF",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TempC",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Weather",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "WindSpeed",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "WindDir",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.utilities.getNameOrigin",
+      "shortPath": "utilities.getNameOrigin",
+      "description": "Infer the likely geographic country or region of origin from a personal name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Origin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.utilities.getRemainingCredits",
+      "shortPath": "utilities.getRemainingCredits",
+      "description": "Retrieve the remaining API credits balance for the active API license key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.utilities.getWeatherZipCode",
+      "shortPath": "utilities.getWeatherZipCode",
+      "description": "Retrieve current live weather conditions for a US ZIP code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zip",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "City",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "State",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TempF",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TempC",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Weather",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "WindMPH",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "WindDir",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RelativeHumidity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "VisibilityMiles",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PrecipitationLastHour",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "WindChill",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "HeatIndex",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.utilities.identifyLanguage",
+      "shortPath": "utilities.identifyLanguage",
+      "description": "Detect the natural language of a text string",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.utilities.translateToAny",
+      "shortPath": "utilities.translateToAny",
+      "description": "Translate text from any language into a specified target language",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.utilities.translateToEnglish",
+      "shortPath": "utilities.translateToEnglish",
+      "description": "Translate non-English text to English",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Result",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.validation.addressParse",
+      "shortPath": "validation.addressParse",
+      "description": "Parse a free-form address string into structured postal components",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "address",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "StreetNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PreDirection",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "StreetName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "StreetSuffix",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PostDirection",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "UnitType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "UnitNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "City",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "StateProvince",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PostalCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Special",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "BuildingName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AdditionalInformation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.validation.getAreaCode",
+      "shortPath": "validation.getAreaCode",
+      "description": "Retrieve geographic locale and city for a telephone area code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "areacode",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Abbreviation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AreaCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "Locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PrimaryCity",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.validation.getAreaCodeFromNumber",
+      "shortPath": "validation.getAreaCodeFromNumber",
+      "description": "Extract area code and locale information from a telephone number",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "number",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Abbreviation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AreaCode",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "Locale",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PrimaryCity",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.validation.getEmailDomainType",
+      "shortPath": "validation.getEmailDomainType",
+      "description": "Classify email domain into Business, Government, Education, Generic or Disposable; Unknown when Interzoid cannot tell",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "DomainType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.validation.getEmailInfo",
+      "shortPath": "validation.getEmailInfo",
+      "description": "Validate and enrich an email address with deliverability and demographic details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Response",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Info",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsGovernment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsEducational",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsOrganizational",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsDisposable",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsVulgar",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsGeneric",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Geolocation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "DomainOwner",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "XHandle",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Revenue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Employees",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "HeadquartersCountry",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "HeadquartersCity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Currency",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Rate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.validation.getEmailTrustScore",
+      "shortPath": "validation.getEmailTrustScore",
+      "description": "Compute a trust and quality score for an email address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Score",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Reasoning",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.validation.getGlobalNumberInfo",
+      "shortPath": "validation.getGlobalNumberInfo",
+      "description": "Retrieve demographic and geographic information for an international phone number",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "intlnumber",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Language1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "Language2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Language3",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Mobile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PrimaryCity",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "PrimaryLanguage",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Wealth",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.validation.getIpProfile",
+      "shortPath": "validation.getIpProfile",
+      "description": "Retrieve IP intelligence, geolocation, ASN, and reputation profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ASN",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "CIDR",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Hostname",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Geolocation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "AbuseContact",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Reputation",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.validation.getPhoneProfile",
+      "shortPath": "validation.getPhoneProfile",
+      "description": "Retrieve phone number intelligence, carrier, time zone, and risk assessment",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lookup",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Return the values in this language, as a two-letter code such as `fr`. English when omitted."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Normalized",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Country",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Organization",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Type",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Carrier",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "TimeZone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IsValid",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "RiskAssessment",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "interzoid.api.validation.getZipCodeInfo",
+      "shortPath": "validation.getZipCodeInfo",
+      "description": "Retrieve detailed demographics, city, state, and geographic data for a US ZIP code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "zip",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "AreaSquareMiles",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "City",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Code",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Credits",
+            "optional": true,
+            "type": "number | string"
+          },
+          {
+            "key": "ElderlyHouseholdPercent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "FarmerHouseholdPercent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IncomePercent100k",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IncomePercent200k",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "IncomePercent50k",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Latitude",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Longitude",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "MarriedHouseholdPercent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "Population",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "State",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "ZipCode",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
