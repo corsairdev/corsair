@@ -109,7 +109,7 @@ Email addresses the mailbox collected automatically.
 
 Parse HTML or text content asynchronously; poll documents.get for the result
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.parsio.api.documents.createAsync({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", text: "Order 42" });
@@ -122,7 +122,7 @@ await corsair.parsio.api.documents.createAsync({ mailboxId: "65d1c0e4b8f2b3c4d5e
 | `mailboxId` | `string` | Yes | Mailbox id that parses the document |
 | `html` | `string` | No | HTML content to parse; wins when both html and text are sent |
 | `text` | `string` | No | Plain text content to parse |
-| `__meta__` | `Record<string, any>` | No | Custom payload included in the parsed JSON as __meta__ |
+| `meta` | `Record<string, any>` | No | Custom payload; the parsed JSON returns it as __meta__ |
 
 Returns parsing_in_progress true with status parsing; the job wrapper follows it with documents.get until status is parsed.
 
@@ -151,10 +151,10 @@ Returns parsing_in_progress true with status parsing; the job wrapper follows it
 
 Parse HTML or text content and wait for the result; template and GPT parsers only, each parse consumes credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
-await corsair.parsio.api.documents.createSync({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", html: "<p>Order 42</p>", __meta__: { source: "api" } });
+await corsair.parsio.api.documents.createSync({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", html: "<p>Order 42</p>", meta: { source: "api" } });
 ```
 
 **Input**
@@ -164,7 +164,7 @@ await corsair.parsio.api.documents.createSync({ mailboxId: "65d1c0e4b8f2b3c4d5e6
 | `mailboxId` | `string` | Yes | Mailbox id that parses the document |
 | `html` | `string` | No | HTML content to parse; wins when both html and text are sent |
 | `text` | `string` | No | Plain text content to parse |
-| `__meta__` | `Record<string, any>` | No | Custom payload included in the parsed JSON as __meta__ |
+| `meta` | `Record<string, any>` | No | Custom payload; the parsed JSON returns it as __meta__ |
 
 Supported only by the template-based and GPT-powered parsers; when parsing_in_progress is true, poll documents.get.
 
@@ -290,7 +290,7 @@ per_page is capped at 500; status filters by document status.
 
 Queue a document for reprocessing; each reparse consumes credits
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.parsio.api.documents.reparse({ documentId: "65d1c0e4b8f2b3c4d5e6f7a8" });
@@ -358,7 +358,7 @@ Answers 204 with no body.
 
 Upload one file (max 50MB, ZIP supported) and parse it asynchronously
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.parsio.api.documents.uploadAsync({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", filename: "receipts.zip", contentBase64: "<base64>" });
@@ -399,7 +399,7 @@ One file per request, ZIP supported, max 50MB.
 
 Upload one file (max 20MB, no ZIP) and wait for the parsed result
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.parsio.api.documents.uploadSync({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", filename: "receipt.pdf", contentBase64: "<base64>" });

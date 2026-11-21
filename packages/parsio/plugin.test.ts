@@ -72,7 +72,7 @@ describe('parsio plugin', () => {
 		}
 	});
 
-	it('marks deletes destructive and parses as writes', () => {
+	it('marks deletes and credit-spending imports destructive', () => {
 		const meta = parsio({}).endpointMeta!;
 		for (const key of ['mailboxes.delete', 'webhooks.delete'] as const) {
 			expect(meta[key]).toMatchObject({
@@ -80,8 +80,16 @@ describe('parsio plugin', () => {
 				irreversible: true,
 			});
 		}
-		expect(meta['documents.createSync']).toMatchObject({ riskLevel: 'write' });
-		expect(meta['documents.uploadAsync']).toMatchObject({ riskLevel: 'write' });
+		// Imports and reparse spend parsing credits (R8 paid jobs).
+		for (const op of [
+			'documents.createSync',
+			'documents.createAsync',
+			'documents.uploadSync',
+			'documents.uploadAsync',
+			'documents.reparse',
+		] as const) {
+			expect(meta[op]).toMatchObject({ riskLevel: 'destructive' });
+		}
 		expect(meta['documents.get']).toMatchObject({ riskLevel: 'read' });
 	});
 

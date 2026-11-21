@@ -246,23 +246,23 @@ const parsioEndpointMeta = {
 		description: 'List the table fields configured in a mailbox',
 	},
 	'documents.createSync': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Parse HTML or text content and wait for the result; template and GPT parsers only, each parse consumes credits',
 	},
 	'documents.createAsync': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Parse HTML or text content asynchronously; poll documents.get for the result',
 		job: IMPORT_JOB,
 	},
 	'documents.uploadSync': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Upload one file (max 20MB, no ZIP) and wait for the parsed result',
 	},
 	'documents.uploadAsync': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Upload one file (max 50MB, ZIP supported) and parse it asynchronously',
 		job: IMPORT_JOB,
@@ -278,7 +278,7 @@ const parsioEndpointMeta = {
 			'Read one parsed document; this is the payload Parsio webhooks deliver',
 	},
 	'documents.reparse': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Queue a document for reprocessing; each reparse consumes credits',
 	},

@@ -214,12 +214,14 @@ const DocumentBodySchema = {
 		.optional()
 		.describe('HTML content to parse; wins when both html and text are sent'),
 	text: z.string().optional().describe('Plain text content to parse'),
-	__meta__: z
+	// Parsio takes meta on import and returns it as __meta__ in the parsed
+	// data (help.parsio.io, public API: parse HTML and text documents).
+	meta: z
 		// unknown: the custom payload is caller-defined and lands in the
 		// parsed JSON verbatim, so it stays an open record.
 		.record(z.string(), z.unknown())
 		.optional()
-		.describe('Custom payload included in the parsed JSON as __meta__'),
+		.describe('Custom payload; the parsed JSON returns it as __meta__'),
 };
 
 export const CreateDocumentSyncInputSchema = z
@@ -295,7 +297,7 @@ export const UploadDocumentSyncInputSchema = z
 			.string()
 			.min(1)
 			.refine((value) => {
-				const bytes = Math.floor((value.length * 3) / 4);
+				const bytes = Buffer.byteLength(value, 'base64');
 				return bytes <= 20 * 1024 * 1024;
 			}, 'Sync upload accepts at most 20MB')
 			.describe(
@@ -325,7 +327,7 @@ export const UploadDocumentAsyncInputSchema = z
 			.string()
 			.min(1)
 			.refine(
-				(value) => Math.floor((value.length * 3) / 4) <= MAX_UPLOAD_BYTES,
+				(value) => Buffer.byteLength(value, 'base64') <= MAX_UPLOAD_BYTES,
 				'Async upload accepts at most 50MB',
 			)
 			.describe(

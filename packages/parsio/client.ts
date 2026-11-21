@@ -25,6 +25,21 @@ const RATE_LIMIT_CONFIG: RateLimitConfig = {
  * `status` and `retryAfter` from it), rebuilt with only the method and the
  * path so request bodies and queries stay out of it.
  */
+/**
+ * Keeps only the diagnostic fields of a Parsio error ({ statusCode, error,
+ * message }), so nothing else the body might echo stays on the error.
+ */
+// unknown: the provider's error body, narrowed here.
+function diagnosticBody(body: unknown): unknown {
+	const record = asRecord(body);
+	if (!record) return undefined;
+	const kept: Record<string, unknown> = {};
+	for (const key of ['statusCode', 'error', 'message', 'detail']) {
+		if (record[key] !== undefined) kept[key] = record[key];
+	}
+	return kept;
+}
+
 function strippedApiError(
 	error: ApiError,
 	method: ApiRequestOptions['method'],
@@ -38,7 +53,7 @@ function strippedApiError(
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
-			body: error.body,
+			body: diagnosticBody(error.body),
 		},
 		message,
 		{ retryAfter: error.retryAfter },

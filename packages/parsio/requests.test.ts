@@ -210,6 +210,19 @@ describe('documents', () => {
 		expect(sent.query['status']).toBe('parsed');
 	});
 
+	it('uploads send a named file part with its media type', async () => {
+		respond('DOC_ID');
+		await invoke(Documents.uploadAsync, {
+			mailboxId: 'mbx_1',
+			filename: 'receipt.pdf',
+			contentBase64: Buffer.from('%PDF-1.4').toString('base64'),
+		});
+		const [, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
+		const file = (init.body as FormData).get('file') as File;
+		expect(file.name).toBe('receipt.pdf');
+		expect(file.type).toBe('application/pdf');
+	});
+
 	it('get reads one document', async () => {
 		respond(parsedDocument);
 		await invoke(Documents.get, { documentId: 'DOC_ID' });

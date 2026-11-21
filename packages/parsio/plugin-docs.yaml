@@ -55,7 +55,7 @@ apiExamples:
   mailboxes.tableFields:
     call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8" }'
   documents.createSync:
-    call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", html: "<p>Order 42</p>", __meta__: { source: "api" } }'
+    call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", html: "<p>Order 42</p>", meta: { source: "api" } }'
   documents.createAsync:
     call: '{ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8", text: "Order 42" }'
   documents.uploadSync:

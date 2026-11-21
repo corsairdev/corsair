@@ -161,6 +161,17 @@ describe('input validation', () => {
 		expect(doc.doc_id).toBe('DOC_ID');
 	});
 
+	it('accepts a sync upload of exactly 20 MB (base64 padding is not counted)', async () => {
+		respond(parsedDocument);
+		const exact = Buffer.alloc(20 * 1024 * 1024).toString('base64');
+		const doc = (await invoke(Documents.uploadSync, {
+			mailboxId: 'mbx_1',
+			filename: 'limit.pdf',
+			contentBase64: exact,
+		})) as { doc_id: string };
+		expect(doc.doc_id).toBe('DOC_ID');
+	});
+
 	it('rejects a per_page above the documented maximum', async () => {
 		await rejects(Documents.list, { mailboxId: 'mbx_1', per_page: 501 }, '500');
 	});
