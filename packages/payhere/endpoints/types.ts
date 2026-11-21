@@ -22,7 +22,7 @@ const LIST_META_SCHEMA = z
 	.loose();
 
 /** Wraps a paged result list in the documented { data, meta } envelope. */
-function pagedOutput(item: z.ZodTypeAny, label: string) {
+function pagedOutput<Item extends z.ZodType>(item: Item, label: string) {
 	return z
 		.object({
 			data: z.array(item).describe(`${label} on this page`),

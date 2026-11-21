@@ -110,10 +110,23 @@ export type PayhereWebhookPayload = z.infer<typeof PayhereEventSchema>;
 
 /**
  * Payhere sends every event type to the one endpoint configured in the
- * admin, so matching only needs the documented event key. A body parsed by
- * processWebhook is an object here (readBodyRecord returns null otherwise).
+ * admin. The event key alone is not enough to claim a delivery: Razorpay
+ * also posts `{ event: "payment.captured" }`. A body parsed by processWebhook
+ * is an object here (readBodyRecord returns null otherwise).
  */
-export function matchPayhereWebhook(request: RawWebhookRequest): boolean {
+export function matchPayhereEvent(request: RawWebhookRequest): boolean {
 	const body = readBodyRecord(request);
 	return body !== null && typeof body.event === 'string';
+}
+
+/**
+ * Plugin-level matcher for unhinted dispatch: a direct delivery must also
+ * carry Payhere's x-signature header. Hub-routed deliveries reach the event
+ * webhook through matchPayhereEvent, where the header can be absent.
+ */
+export function matchPayhereWebhook(request: RawWebhookRequest): boolean {
+	return (
+		headerValue(request.headers, PAYHERE_SIGNATURE_HEADER) !== undefined &&
+		matchPayhereEvent(request)
+	);
 }

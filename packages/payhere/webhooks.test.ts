@@ -2,6 +2,7 @@ import { createHmac } from 'node:crypto';
 import { webhookEvent } from './test-fixtures';
 import { event } from './webhooks';
 import {
+	matchPayhereEvent,
 	matchPayhereWebhook,
 	PAYHERE_SIGNATURE_HEADER,
 	PayhereWebhookPayloadSchema,
@@ -97,17 +98,33 @@ describe('verifyPayhereWebhook', () => {
 });
 
 describe('matchPayhereWebhook', () => {
-	it('matches the documented event envelope', () => {
-		expect(matchPayhereWebhook(rawRequest(webhookEvent) as never)).toBe(true);
+	it('matches a signed delivery with the documented event envelope', () => {
+		expect(matchPayhereWebhook(rawRequest(webhookEvent, 'abc') as never)).toBe(
+			true,
+		);
+	});
+
+	it('leaves an unsigned { event } body (Razorpay) to other plugins', () => {
+		expect(
+			matchPayhereWebhook(
+				rawRequest({ event: 'payment.captured', payload: {} }) as never,
+			),
+		).toBe(false);
 	});
 
 	it('does not match bodies without an event string', () => {
-		expect(matchPayhereWebhook(rawRequest({ payment: {} }) as never)).toBe(
-			false,
-		);
-		expect(matchPayhereWebhook(rawRequest([webhookEvent]) as never)).toBe(
-			false,
-		);
+		expect(
+			matchPayhereWebhook(rawRequest({ payment: {} }, 'abc') as never),
+		).toBe(false);
+		expect(
+			matchPayhereWebhook(rawRequest([webhookEvent], 'abc') as never),
+		).toBe(false);
+	});
+});
+
+describe('matchPayhereEvent', () => {
+	it('matches a Hub-routed delivery without the signature header', () => {
+		expect(matchPayhereEvent(rawRequest(webhookEvent) as never)).toBe(true);
 	});
 });
 

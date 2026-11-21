@@ -16,9 +16,9 @@ overviewNote: >
   plugin) so deliveries can be verified. Events include payment.success,
   payment.failed and subscription.cancelled.
 
-  This is the complete documented REST API of Payhere. Payment links,
-  embeds and the MCP server are client-side integrations, not REST
-  resources.
+  The plugin covers nine read and refund operations. Creating plans and
+  cancelling subscriptions (POST /api/v1/plans, DELETE
+  /api/v1/subscriptions/:id) are not wrapped yet.
 
   Every operation is described in the official docs:
   https://developers.payhere.co/docs/api-auth

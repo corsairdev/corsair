@@ -3,7 +3,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { PayhereContext } from '..';
 import type { PayhereWebhookPayload } from './types';
 import {
-	matchPayhereWebhook,
+	matchPayhereEvent,
 	PayhereWebhookPayloadSchema,
 	verifyPayhereWebhook,
 } from './types';
@@ -35,7 +35,7 @@ export const event: CorsairWebhook<
 	PayhereWebhookPayload,
 	PayhereWebhookPayload
 > = {
-	match: matchPayhereWebhook,
+	match: matchPayhereEvent,
 	handler: async (ctx, request) => {
 		const verification = verifyPayhereWebhook(request, ctx.key);
 		if (!verification.valid) {
