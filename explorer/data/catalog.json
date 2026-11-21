@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-21T07:10:07.858Z",
-  "corsairVersion": "0.2.20",
+  "generatedAt": "2026-11-21T11:21:41.575Z",
+  "corsairVersion": "0.2.21",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -7194,15 +7194,15 @@
     {
       "id": "parallel",
       "displayName": "Parallel",
-      "description": "Search, extract, run research tasks, monitor changes, and generate grounded responses with Parallel.",
+      "description": "Search the web, images, places, flights, hotels and products, extract pages, run research tasks and FindAll lists, monitor changes, and generate grounded responses with Parallel.",
       "npmPackageName": "@corsair-dev/parallel",
       "authTypes": [
         "api_key"
       ],
       "defaultAuthType": "api_key",
       "counts": {
-        "api": 35,
-        "webhooks": 0,
+        "api": 38,
+        "webhooks": 10,
         "db": 0
       }
     },
@@ -133355,6 +133355,18 @@
     {
       "pluginId": "parallel",
       "kind": "api",
+      "shortPath": "flights.search",
+      "haystack": "flights.search parallel.api.flights.search search one-way or round-trip flights with where to book them read"
+    },
+    {
+      "pluginId": "parallel",
+      "kind": "api",
+      "shortPath": "hotels.search",
+      "haystack": "hotels.search parallel.api.hotels.search search hotels and vacation rentals for a stay read"
+    },
+    {
+      "pluginId": "parallel",
+      "kind": "api",
       "shortPath": "images.search",
       "haystack": "images.search parallel.api.images.search search for images read"
     },
@@ -133445,6 +133457,12 @@
     {
       "pluginId": "parallel",
       "kind": "api",
+      "shortPath": "shopping.search",
+      "haystack": "shopping.search parallel.api.shopping.search search products to buy, linked to store product pages read"
+    },
+    {
+      "pluginId": "parallel",
+      "kind": "api",
       "shortPath": "tasks.addGroupRuns",
       "haystack": "tasks.addgroupruns parallel.api.tasks.addgroupruns add runs to a task group destructive"
     },
@@ -133489,6 +133507,66 @@
       "kind": "api",
       "shortPath": "tasks.getRunInput",
       "haystack": "tasks.getruninput parallel.api.tasks.getruninput get task run input read"
+    },
+    {
+      "pluginId": "parallel",
+      "kind": "webhook",
+      "shortPath": "findall.candidateEnriched",
+      "haystack": "findall.candidateenriched parallel.webhooks.findall.candidateenriched enrichment data was extracted for a findall candidate"
+    },
+    {
+      "pluginId": "parallel",
+      "kind": "webhook",
+      "shortPath": "findall.candidateGenerated",
+      "haystack": "findall.candidategenerated parallel.webhooks.findall.candidategenerated a findall run found a candidate and queued it for checking"
+    },
+    {
+      "pluginId": "parallel",
+      "kind": "webhook",
+      "shortPath": "findall.candidateMatched",
+      "haystack": "findall.candidatematched parallel.webhooks.findall.candidatematched a findall candidate met every match condition"
+    },
+    {
+      "pluginId": "parallel",
+      "kind": "webhook",
+      "shortPath": "findall.runCancelled",
+      "haystack": "findall.runcancelled parallel.webhooks.findall.runcancelled a findall run was cancelled"
+    },
+    {
+      "pluginId": "parallel",
+      "kind": "webhook",
+      "shortPath": "findall.runCompleted",
+      "haystack": "findall.runcompleted parallel.webhooks.findall.runcompleted a findall run completed"
+    },
+    {
+      "pluginId": "parallel",
+      "kind": "webhook",
+      "shortPath": "findall.runFailed",
+      "haystack": "findall.runfailed parallel.webhooks.findall.runfailed a findall run failed"
+    },
+    {
+      "pluginId": "parallel",
+      "kind": "webhook",
+      "shortPath": "monitor.eventDetected",
+      "haystack": "monitor.eventdetected parallel.webhooks.monitor.eventdetected a monitor run detected one or more events"
+    },
+    {
+      "pluginId": "parallel",
+      "kind": "webhook",
+      "shortPath": "monitor.executionCompleted",
+      "haystack": "monitor.executioncompleted parallel.webhooks.monitor.executioncompleted a monitor run completed without detecting events"
+    },
+    {
+      "pluginId": "parallel",
+      "kind": "webhook",
+      "shortPath": "monitor.executionFailed",
+      "haystack": "monitor.executionfailed parallel.webhooks.monitor.executionfailed a monitor run failed"
+    },
+    {
+      "pluginId": "parallel",
+      "kind": "webhook",
+      "shortPath": "taskRun.status",
+      "haystack": "taskrun.status parallel.webhooks.taskrun.status a task run finished, successfully or not"
     },
     {
       "pluginId": "parma",
