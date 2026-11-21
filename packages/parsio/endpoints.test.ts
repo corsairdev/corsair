@@ -181,7 +181,22 @@ describe('input validation', () => {
 describe('204 responses', () => {
 	it('rejects a mailbox delete that answers a body instead of the documented 204', async () => {
 		respond({ message: 'not really deleted' });
-		await rejects(Mailboxes.remove, { mailboxId: 'mbx_1' }, 'unexpected body');
+		await rejects(
+			Mailboxes.remove,
+			{ mailboxId: 'mbx_1' },
+			'unexpected answer',
+		);
+	});
+
+	it('accepts the true and {} answers a skip gets live', async () => {
+		for (const answer of [true, 'true', {}]) {
+			respond(answer);
+			const result = (await invoke(Documents.skipMany, {
+				mailboxId: 'mbx_1',
+				ids: ['DOC_ID'],
+			})) as { success: boolean };
+			expect(result.success).toBe(true);
+		}
 	});
 
 	it('accepts an empty 204 for a webhook delete', async () => {

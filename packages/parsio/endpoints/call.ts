@@ -47,7 +47,20 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 // unknown: raw is the untouched response body; any shape is possible until
 // the caller decides it is a failure.
 export function expectEmptyBody(raw: unknown, what: string): void {
-	if (raw !== undefined && raw !== null && raw !== '') {
-		throw new Error(`Parsio ${what}: unexpected body ${JSON.stringify(raw)}`);
+	// skip answers true (sent as text/html, so the text "true") or {} (live).
+	const emptyObject =
+		typeof raw === 'object' &&
+		raw !== null &&
+		!Array.isArray(raw) &&
+		Object.keys(raw).length === 0;
+	if (
+		raw !== undefined &&
+		raw !== null &&
+		raw !== '' &&
+		raw !== true &&
+		raw !== 'true' &&
+		!emptyObject
+	) {
+		throw new Error(`Parsio ${what}: unexpected answer (not an empty success)`);
 	}
 }

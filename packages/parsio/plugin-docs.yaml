@@ -94,7 +94,7 @@ apiNotes:
   documents.list: 'per_page is capped at 500; status filters by document status.'
   documents.reparse: 'Queues the document for reprocessing and consumes credits again.'
   documents.skipMany: 'Answers 204 with no body.'
-  webhooks.create: 'Events: doc.parsed, doc.parsed.flat, doc.fail, doc.received, table.parsed. table_id is required only for table.parsed. The signing secret is shown in the Parsio app.'
+  webhooks.create: 'Events: doc.parsed, doc.parsed.flat, doc.fail, doc.received, table.parsed. table_id is required only for table.parsed. The answer includes the webhook signing secret: store it with keys.set_webhook_signature. table_id is sent empty when unset (the API refuses it missing).'
   webhooks.update: 'Takes the webhook id as _id in the body.'
   webhooks.delete: 'Answers 204 with no body.'
   data.getParsed: 'Paged parsed data for the mailbox documents.'

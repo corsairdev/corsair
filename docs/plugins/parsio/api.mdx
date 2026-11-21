@@ -35,10 +35,21 @@ Paged parsed data for the mailbox documents.
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docs` | `object[]` | Yes | The parsed data records on this page |
+| `docIds` | `string[] \| null` | No | Ids of the documents on this page |
+| `totalDocs` | `number \| null` | No | Documents in total |
+| `limit` | `number \| null` | No | Page size |
+| `page` | `number \| null` | No | Current page |
+| `totalPages` | `number \| null` | No | Pages in total |
+| `hasNextPage` | `boolean \| null` | No | Whether another page follows |
+| `nextPage` | `number \| null` | No | Next page number |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="docs full type">
 
 ```ts
 {
@@ -47,6 +58,7 @@ Paged parsed data for the mailbox documents.
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -110,7 +122,7 @@ await corsair.parsio.api.documents.createAsync({ mailboxId: "65d1c0e4b8f2b3c4d5e
 | `mailboxId` | `string` | Yes | Mailbox id that parses the document |
 | `html` | `string` | No | HTML content to parse; wins when both html and text are sent |
 | `text` | `string` | No | Plain text content to parse |
-| `__meta__` | `Record<string, unknown>` | No | Custom payload included in the parsed JSON as __meta__ |
+| `__meta__` | `Record<string, any>` | No | Custom payload included in the parsed JSON as __meta__ |
 
 Returns parsing_in_progress true with status parsing; the job wrapper follows it with documents.get until status is parsed.
 
@@ -121,13 +133,13 @@ Returns parsing_in_progress true with status parsing; the job wrapper follows it
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `doc_id` | `string` | Yes | Document id |
-| `parsing_in_progress` | `boolean` | Yes | Whether parsing is still running |
-| `status` | `string` | Yes | Document status, e.g. parsing, parsed |
+| `parsing_in_progress` | `boolean \| null` | No | Whether parsing is still running |
+| `status` | `string \| null` | No | Document status, e.g. parsing, parsed |
 | `name` | `string \| null` | No | Document name; null while parsing |
 | `content_type` | `string \| null` | No | Media type of the source document |
 | `created_at` | `string \| null` | No | Creation timestamp |
 | `processed_at` | `string \| null` | No | When parsing finished |
-| `json` | `Record<string, unknown> \| null` | No | The parsed data |
+| `json` | `Record<string, any> \| null` | No | The parsed data |
 
 
 
@@ -152,7 +164,7 @@ await corsair.parsio.api.documents.createSync({ mailboxId: "65d1c0e4b8f2b3c4d5e6
 | `mailboxId` | `string` | Yes | Mailbox id that parses the document |
 | `html` | `string` | No | HTML content to parse; wins when both html and text are sent |
 | `text` | `string` | No | Plain text content to parse |
-| `__meta__` | `Record<string, unknown>` | No | Custom payload included in the parsed JSON as __meta__ |
+| `__meta__` | `Record<string, any>` | No | Custom payload included in the parsed JSON as __meta__ |
 
 Supported only by the template-based and GPT-powered parsers; when parsing_in_progress is true, poll documents.get.
 
@@ -163,13 +175,13 @@ Supported only by the template-based and GPT-powered parsers; when parsing_in_pr
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `doc_id` | `string` | Yes | Document id |
-| `parsing_in_progress` | `boolean` | Yes | Whether parsing is still running |
-| `status` | `string` | Yes | Document status, e.g. parsing, parsed |
+| `parsing_in_progress` | `boolean \| null` | No | Whether parsing is still running |
+| `status` | `string \| null` | No | Document status, e.g. parsing, parsed |
 | `name` | `string \| null` | No | Document name; null while parsing |
 | `content_type` | `string \| null` | No | Media type of the source document |
 | `created_at` | `string \| null` | No | Creation timestamp |
 | `processed_at` | `string \| null` | No | When parsing finished |
-| `json` | `Record<string, unknown> \| null` | No | The parsed data |
+| `json` | `Record<string, any> \| null` | No | The parsed data |
 
 
 
@@ -200,13 +212,13 @@ await corsair.parsio.api.documents.get({ documentId: "65d1c0e4b8f2b3c4d5e6f7a8" 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `doc_id` | `string` | Yes | Document id |
-| `parsing_in_progress` | `boolean` | Yes | Whether parsing is still running |
-| `status` | `string` | Yes | Document status, e.g. parsing, parsed |
+| `parsing_in_progress` | `boolean \| null` | No | Whether parsing is still running |
+| `status` | `string \| null` | No | Document status, e.g. parsing, parsed |
 | `name` | `string \| null` | No | Document name; null while parsing |
 | `content_type` | `string \| null` | No | Media type of the source document |
 | `created_at` | `string \| null` | No | Creation timestamp |
 | `processed_at` | `string \| null` | No | When parsing finished |
-| `json` | `Record<string, unknown> \| null` | No | The parsed data |
+| `json` | `Record<string, any> \| null` | No | The parsed data |
 
 
 
@@ -240,25 +252,34 @@ per_page is capped at 500; status filters by document status.
 
 
 
-**Output:** `object[]`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docs` | `object[]` | Yes | The documents on this page |
+| `totalDocs` | `number \| null` | No | Documents in total |
+| `limit` | `number \| null` | No | Page size |
+| `page` | `number \| null` | No | Current page |
+| `totalPages` | `number \| null` | No | Pages in total |
+| `hasNextPage` | `boolean \| null` | No | Whether another page follows |
+| `nextPage` | `number \| null` | No | Next page number |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="docs full type">
 
 ```ts
 {
-  doc_id: string,
-  parsing_in_progress: boolean,
-  status: string,
+  _id: string,
   name?: string | null,
-  content_type?: string | null,
+  status?: string | null,
+  type?: string | null,
   created_at?: string | null,
-  processed_at?: string | null,
-  json?: Record<string, unknown> | null
+  processed_at?: string | null
 }[]
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -289,14 +310,9 @@ Queues the document for reprocessing and consumes credits again.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `doc_id` | `string` | Yes | Document id |
-| `parsing_in_progress` | `boolean` | Yes | Whether parsing is still running |
-| `status` | `string` | Yes | Document status, e.g. parsing, parsed |
-| `name` | `string \| null` | No | Document name; null while parsing |
-| `content_type` | `string \| null` | No | Media type of the source document |
-| `created_at` | `string \| null` | No | Creation timestamp |
-| `processed_at` | `string \| null` | No | When parsing finished |
-| `json` | `Record<string, unknown> \| null` | No | The parsed data |
+| `doc_id` | `string` | Yes | The document queued for parsing again |
+| `queued` | `boolean` | Yes | Whether Parsio accepted the request |
+| `result` | `any` | No | What the API answered |
 
 
 
@@ -365,13 +381,13 @@ One file per request, ZIP supported, max 50MB.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `doc_id` | `string` | Yes | Document id |
-| `parsing_in_progress` | `boolean` | Yes | Whether parsing is still running |
-| `status` | `string` | Yes | Document status, e.g. parsing, parsed |
+| `parsing_in_progress` | `boolean \| null` | No | Whether parsing is still running |
+| `status` | `string \| null` | No | Document status, e.g. parsing, parsed |
 | `name` | `string \| null` | No | Document name; null while parsing |
 | `content_type` | `string \| null` | No | Media type of the source document |
 | `created_at` | `string \| null` | No | Creation timestamp |
 | `processed_at` | `string \| null` | No | When parsing finished |
-| `json` | `Record<string, unknown> \| null` | No | The parsed data |
+| `json` | `Record<string, any> \| null` | No | The parsed data |
 
 
 
@@ -406,13 +422,13 @@ One file per request, no ZIP, max 20MB; works with all parser types whose mailbo
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `doc_id` | `string` | Yes | Document id |
-| `parsing_in_progress` | `boolean` | Yes | Whether parsing is still running |
-| `status` | `string` | Yes | Document status, e.g. parsing, parsed |
+| `parsing_in_progress` | `boolean \| null` | No | Whether parsing is still running |
+| `status` | `string \| null` | No | Document status, e.g. parsing, parsed |
 | `name` | `string \| null` | No | Document name; null while parsing |
 | `content_type` | `string \| null` | No | Media type of the source document |
 | `created_at` | `string \| null` | No | Creation timestamp |
 | `processed_at` | `string \| null` | No | When parsing finished |
-| `json` | `Record<string, unknown> \| null` | No | The parsed data |
+| `json` | `Record<string, any> \| null` | No | The parsed data |
 
 
 
@@ -623,9 +639,9 @@ await corsair.parsio.api.mailboxes.update({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_id` | `string` | Yes | Mailbox id |
-| `name` | `string \| null` | No | Mailbox name |
-| `preset` | `string \| null` | No | Parser type or preset |
+| `isError` | `boolean \| null` | No | Whether Parsio refused it |
+| `errMsg` | `string \| null` | No | Why, when it did |
+| `errFields` | `Record<string, any> \| null` | No | Per-field errors |
 
 
 
@@ -656,7 +672,7 @@ await corsair.parsio.api.webhooks.create({ mailboxId: "65d1c0e4b8f2b3c4d5e6f7a8"
 | `enabled` | `boolean` | No | Whether deliveries are active |
 | `table_id` | `string` | No | Required only when the event is table.parsed |
 
-Events: doc.parsed, doc.parsed.flat, doc.fail, doc.received, table.parsed. table_id is required only for table.parsed. The signing secret is shown in the Parsio app.
+Events: doc.parsed, doc.parsed.flat, doc.fail, doc.received, table.parsed. table_id is required only for table.parsed. The answer includes the webhook signing secret: store it with keys.set_webhook_signature. table_id is sent empty when unset (the API refuses it missing).
 
 
 
@@ -812,11 +828,9 @@ Takes the webhook id as _id in the body.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `_id` | `string` | Yes | Webhook id |
-| `name` | `string \| null` | No | Webhook name |
-| `url` | `string \| null` | No | Endpoint deliveries are posted to |
-| `event` | `string \| null` | No | Event the webhook delivers |
-| `enabled` | `boolean \| null` | No | Whether deliveries are active |
+| `isError` | `boolean \| null` | No | Whether Parsio refused it |
+| `errMsg` | `string \| null` | No | Why, when it did |
+| `errFields` | `Record<string, any> \| null` | No | Per-field errors |
 
 
 

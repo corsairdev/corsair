@@ -60,6 +60,10 @@ export function describeParsioError(
 		(typeof record?.message === 'string' && record.message.length > 0
 			? record.message
 			: undefined) ??
+		// Validation errors list their messages (live, 2026-11-21).
+		(Array.isArray(record?.message) && record.message.length > 0
+			? record.message.filter((m) => typeof m === 'string').join('; ')
+			: undefined) ??
 		(typeof record?.detail === 'string' && record.detail.length > 0
 			? record.detail
 			: undefined) ??
@@ -82,6 +86,8 @@ export type ParsioRequest = {
 	body?: unknown;
 	/** Multipart form for the file upload endpoints. */
 	formData?: Record<string, string | Blob>;
+	/** Request timeout in ms; core's default is 20 s. Sync parsing waits longer. */
+	timeoutMs?: number;
 };
 
 // unknown: callers parse the response with the endpoint's zod output schema,
@@ -92,7 +98,7 @@ export type ParsioRequest = {
  */
 export async function makeParsioRequest(
 	apiKey: string,
-	{ method, path, query, body, formData }: ParsioRequest,
+	{ method, path, query, body, formData, timeoutMs }: ParsioRequest,
 	// unknown: callers parse the response with the endpoint's zod output
 	// schema, so the client cannot name a stricter return type.
 ): Promise<unknown> {
@@ -101,6 +107,7 @@ export async function makeParsioRequest(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		...(timeoutMs === undefined ? {} : { TIMEOUT: timeoutMs }),
 		HEADERS: {
 			Accept: 'application/json',
 			'X-API-Key': apiKey,

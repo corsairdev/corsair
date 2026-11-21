@@ -14,10 +14,17 @@ const isoDate = z
 export const DocumentSchema = z
 	.object({
 		doc_id: z.string().min(1).describe('Document id'),
+		// GET /docs/{id} answers neither doc_id nor this flag (live); the
+		// shaper fills doc_id from _id.
 		parsing_in_progress: z
 			.boolean()
+			.nullish()
 			.describe('Whether parsing is still running'),
-		status: z.string().min(1).describe('Document status, e.g. parsing, parsed'),
+		// Absent when the API answers only the new document's id.
+		status: z
+			.string()
+			.nullish()
+			.describe('Document status, e.g. parsing, parsed'),
 		name: z.string().nullish().describe('Document name; null while parsing'),
 		content_type: z
 			.string()
@@ -35,6 +42,34 @@ export const DocumentSchema = z
 	.loose()
 	.describe('A Parsio document with its parsed data');
 export type ParsioDocument = z.infer<typeof DocumentSchema>;
+
+/**
+ * Document answers come in three shapes (live, 2026-11-21): the documented
+ * object with doc_id, the stored record with _id (GET /docs/{id}), and a
+ * bare id string (async create and uploads). All become a document with a
+ * doc_id.
+ */
+// unknown: raw is the untouched response body; the output schema checks the result.
+export function shapeDocument(raw: unknown): unknown {
+	if (typeof raw === 'string' && raw.length > 0) return { doc_id: raw };
+	if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+		const record = raw as Record<string, unknown>;
+		if (record.doc_id === undefined && typeof record._id === 'string') {
+			return { ...record, doc_id: record._id };
+		}
+	}
+	return raw;
+}
+
+/** The pagination fields Parsio's list answers carry. */
+const pageFields = {
+	totalDocs: z.number().nullish().describe('Documents in total'),
+	limit: z.number().nullish().describe('Page size'),
+	page: z.number().nullish().describe('Current page'),
+	totalPages: z.number().nullish().describe('Pages in total'),
+	hasNextPage: z.boolean().nullish().describe('Whether another page follows'),
+	nextPage: z.number().nullish().describe('Next page number'),
+};
 
 // ── mailboxes ──────────────────────────────────────────────────────────────
 
@@ -132,9 +167,19 @@ export const UpdateMailboxInputSchema = z
 	.describe('Update mailbox settings');
 export type UpdateMailboxInput = z.infer<typeof UpdateMailboxInputSchema>;
 
-export const UpdateMailboxOutputSchema = MailboxSchema.describe(
-	'The mailbox as updated',
-);
+// The update RPC answers { isError, errMsg, errFields } (live).
+export const UpdateMailboxOutputSchema = z
+	.object({
+		isError: z.boolean().nullish().describe('Whether Parsio refused it'),
+		errMsg: z.string().nullish().describe('Why, when it did'),
+		// unknown: per-field error messages keyed by field name.
+		errFields: z
+			.record(z.string(), z.unknown())
+			.nullish()
+			.describe('Per-field errors'),
+	})
+	.loose()
+	.describe('The update result');
 export type UpdateMailboxOutput = z.infer<typeof UpdateMailboxOutputSchema>;
 
 export const DeleteMailboxInputSchema = z
@@ -322,8 +367,28 @@ export const ListDocumentsInputSchema = z
 export type ListDocumentsInput = z.infer<typeof ListDocumentsInputSchema>;
 
 export const ListDocumentsOutputSchema = z
-	.array(DocumentSchema)
-	.describe('The documents on this page');
+	.object({
+		docs: z
+			.array(
+				z
+					.object({
+						_id: z.string().describe('Document id'),
+						name: z.string().nullish().describe('Document name'),
+						status: z.string().nullish().describe('Document status'),
+						type: z.string().nullish().describe('Source type, e.g. html'),
+						created_at: z.string().nullish().describe('Creation timestamp'),
+						processed_at: z
+							.string()
+							.nullish()
+							.describe('When parsing finished'),
+					})
+					.loose(),
+			)
+			.describe('The documents on this page'),
+		...pageFields,
+	})
+	.loose()
+	.describe('A page of documents (the API answers a paginated object)');
 export type ListDocumentsOutput = z.infer<typeof ListDocumentsOutputSchema>;
 
 export const GetDocumentInputSchema = z
@@ -341,9 +406,14 @@ export const ReparseDocumentInputSchema = z
 	.describe('Queue a document for reprocessing');
 export type ReparseDocumentInput = z.infer<typeof ReparseDocumentInputSchema>;
 
-export const ReparseDocumentOutputSchema = DocumentSchema.describe(
-	'The document queued for reprocessing',
-);
+export const ReparseDocumentOutputSchema = z
+	.object({
+		doc_id: z.string().describe('The document queued for parsing again'),
+		queued: z.boolean().describe('Whether Parsio accepted the request'),
+		// unknown: the API answers a bare number it does not document.
+		result: z.unknown().optional().describe('What the API answered'),
+	})
+	.describe('The document queued for reprocessing');
 export type ReparseDocumentOutput = z.infer<typeof ReparseDocumentOutputSchema>;
 
 export const SkipDocumentsInputSchema = z
@@ -461,9 +531,10 @@ export const UpdateWebhookInputSchema = z
 	.describe('Update a webhook');
 export type UpdateWebhookInput = z.infer<typeof UpdateWebhookInputSchema>;
 
-export const UpdateWebhookOutputSchema = WebhookSchema.describe(
-	'The webhook as updated',
-);
+// The update answers { isError, errMsg, errFields } (live), like the
+// mailbox update.
+export const UpdateWebhookOutputSchema =
+	UpdateMailboxOutputSchema.describe('The update result');
 export type UpdateWebhookOutput = z.infer<typeof UpdateWebhookOutputSchema>;
 
 export const DeleteWebhooksInputSchema = z
@@ -494,16 +565,29 @@ export const GetParsedDataInputSchema = z
 export type GetParsedDataInput = z.infer<typeof GetParsedDataInputSchema>;
 
 export const GetParsedDataOutputSchema = z
-	.array(
-		z
-			.object({
-				doc_id: z.string().nullish().describe('Document id the data came from'),
-				// unknown: parsed data records carry the mailbox's parsed
-				// fields, so they stay open records.
-			})
-			.loose(),
-	)
-	.describe('The parsed data records of the mailbox');
+	.object({
+		docs: z
+			.array(
+				z
+					.object({
+						doc_id: z
+							.string()
+							.nullish()
+							.describe('Document id the data came from'),
+						// unknown: parsed data records carry the mailbox's parsed
+						// fields, so they stay open records.
+					})
+					.loose(),
+			)
+			.describe('The parsed data records on this page'),
+		docIds: z
+			.array(z.string())
+			.nullish()
+			.describe('Ids of the documents on this page'),
+		...pageFields,
+	})
+	.loose()
+	.describe('A page of parsed data (the API answers a paginated object)');
 export type GetParsedDataOutput = z.infer<typeof GetParsedDataOutputSchema>;
 
 export const ListEmailsInputSchema = z
@@ -585,7 +669,36 @@ export type ParsioEndpointOutputs = {
 };
 
 /** Decodes a base64 file input into the Blob the multipart body needs. */
-export function decodeFile(filename: string, contentBase64: string): Blob {
+const MEDIA_TYPES: Record<string, string> = {
+	pdf: 'application/pdf',
+	png: 'image/png',
+	jpg: 'image/jpeg',
+	jpeg: 'image/jpeg',
+	gif: 'image/gif',
+	tif: 'image/tiff',
+	tiff: 'image/tiff',
+	txt: 'text/plain',
+	csv: 'text/csv',
+	html: 'text/html',
+	htm: 'text/html',
+	eml: 'message/rfc822',
+	json: 'application/json',
+	xml: 'application/xml',
+	doc: 'application/msword',
+	docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+	xls: 'application/vnd.ms-excel',
+	xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+};
+
+/**
+ * The upload part carries the file name and a media type from its
+ * extension: Parsio refuses a nameless octet-stream part with "File is not
+ * allowed" (live, 2026-11-21).
+ */
+export function decodeFile(filename: string, contentBase64: string): File {
 	const bytes = Buffer.from(contentBase64, 'base64');
-	return new Blob([bytes], { type: 'application/octet-stream' });
+	const extension = filename.split('.').pop()?.toLowerCase() ?? '';
+	return new File([bytes], filename, {
+		type: MEDIA_TYPES[extension] ?? 'application/octet-stream',
+	});
 }

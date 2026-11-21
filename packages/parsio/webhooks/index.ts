@@ -58,7 +58,7 @@ export const event: CorsairWebhook<
 
 		await safeLog(ctx, 'parsio.webhook.event', {
 			documentId: parsed.data.doc_id,
-			status: parsed.data.status,
+			status: parsed.data.status ?? undefined,
 		});
 
 		return { success: true, data: parsed.data };

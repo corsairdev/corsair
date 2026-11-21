@@ -58,8 +58,8 @@ A parsed document Parsio delivered to a webhook subscription
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `doc_id` | `string` | Yes | Document id |
-| `parsing_in_progress` | `boolean` | Yes | Whether parsing is still running |
-| `status` | `string` | Yes | Document status, e.g. parsing, parsed |
+| `parsing_in_progress` | `boolean \| null` | No | Whether parsing is still running |
+| `status` | `string \| null` | No | Document status, e.g. parsing, parsed |
 | `name` | `string \| null` | No | Document name; null while parsing |
 | `content_type` | `string \| null` | No | Media type of the source document |
 | `created_at` | `string \| null` | No | Creation timestamp |
@@ -74,8 +74,8 @@ A parsed document Parsio delivered to a webhook subscription
 ```ts
 {
   doc_id: string,
-  parsing_in_progress: boolean,
-  status: string,
+  parsing_in_progress?: boolean | null,
+  status?: string | null,
   name?: string | null,
   content_type?: string | null,
   created_at?: string | null,

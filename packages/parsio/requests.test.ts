@@ -95,8 +95,9 @@ describe('mailboxes', () => {
 		});
 	});
 
-	it('update POSTs the settings to the mailbox path', async () => {
-		respond(mailbox);
+	it('update reads the current email_prefix first, which the API requires (live)', async () => {
+		respond({ ...mailbox, email_prefix: 'inbox-abc' });
+		respond({ isError: false, errMsg: '', errFields: {} });
 		await invoke(Mailboxes.update, {
 			mailboxId: 'mbx_1',
 			process_attachments: true,
@@ -105,7 +106,15 @@ describe('mailboxes', () => {
 		expectAuthenticated('/mailboxes/mbx_1', 'POST');
 		expect(JSON.parse(sent.body as string)).toEqual({
 			process_attachments: true,
+			email_prefix: 'inbox-abc',
 		});
+	});
+
+	it('update surfaces a refused update', async () => {
+		respond({ isError: true, errMsg: 'Prefix taken', errFields: {} });
+		await expect(
+			invoke(Mailboxes.update, { mailboxId: 'mbx_1', email_prefix: 'x' }),
+		).rejects.toThrow('Prefix taken');
 	});
 
 	it('delete DELETEs the mailbox', async () => {
@@ -177,14 +186,22 @@ describe('documents', () => {
 	});
 
 	it('list GETs the mailbox documents with its filters', async () => {
-		respond([parsedDocument]);
-		await invoke(Documents.list, {
+		respond({
+			docs: [{ _id: 'DOC_ID', name: 'invoice', status: 'parsed' }],
+			totalDocs: 1,
+			page: 2,
+			totalPages: 2,
+			hasNextPage: false,
+		});
+		const page = (await invoke(Documents.list, {
 			mailboxId: 'mbx_1',
 			page: 2,
 			per_page: 100,
 			from: '2026-04-01',
 			status: ['parsed'],
-		});
+		})) as { docs: { _id: string }[] };
+		// The API answers a paginated object (live), not a bare array.
+		expect(page.docs[0]?._id).toBe('DOC_ID');
 		const sent = lastRequest();
 		expectAuthenticated('/mailboxes/mbx_1/docs');
 		expect(sent.query['page']).toBe('2');
@@ -197,6 +214,23 @@ describe('documents', () => {
 		respond(parsedDocument);
 		await invoke(Documents.get, { documentId: 'DOC_ID' });
 		expectAuthenticated('/docs/DOC_ID');
+	});
+
+	it('get fills doc_id from the _id the live API answers', async () => {
+		respond({ _id: 'DOC_ID', status: 'parsed', json: { total: 42 } });
+		const doc = (await invoke(Documents.get, { documentId: 'DOC_ID' })) as {
+			doc_id: string;
+		};
+		expect(doc.doc_id).toBe('DOC_ID');
+	});
+
+	it('createAsync accepts the bare id string the live API answers', async () => {
+		respond('DOC_ID');
+		const doc = (await invoke(Documents.createAsync, {
+			mailboxId: 'mbx_1',
+			text: 'Order 7781',
+		})) as { doc_id: string };
+		expect(doc.doc_id).toBe('DOC_ID');
 	});
 
 	it('reparse POSTs to the parse route', async () => {
@@ -245,20 +279,31 @@ describe('webhooks', () => {
 		});
 		const sent = lastRequest();
 		expectAuthenticated('/webhooks/mbx_1', 'POST');
+		// table_id goes empty when unset: the API refuses it missing (live).
 		expect(JSON.parse(sent.body as string)).toEqual({
 			url: 'https://example.com/webhooks/parsio',
 			event: 'doc.parsed',
 			enabled: true,
+			table_id: '',
 		});
 	});
 
-	it('update POSTs the _id to /webhooks', async () => {
-		respond(webhook);
+	it('update POSTs the _id to /webhooks with the current url, event and table_id (required live)', async () => {
+		respond({
+			...webhook,
+			url: 'https://example.com/hook',
+			event: 'doc.parsed',
+			table_id: '',
+		});
+		respond({ isError: false, errMsg: '', errFields: {} });
 		await invoke(Webhooks.update, { webhookId: 'wh_1', enabled: false });
 		const sent = lastRequest();
 		expectAuthenticated('/webhooks', 'POST');
 		expect(JSON.parse(sent.body as string)).toEqual({
 			_id: 'wh_1',
+			url: 'https://example.com/hook',
+			event: 'doc.parsed',
+			table_id: '',
 			enabled: false,
 		});
 	});
@@ -276,7 +321,7 @@ describe('webhooks', () => {
 
 describe('data', () => {
 	it('getParsed GETs the parsed data with its filters', async () => {
-		respond([{ doc_id: 'DOC_ID' }]);
+		respond({ docs: [{ doc_id: 'DOC_ID' }], docIds: ['DOC_ID'], totalDocs: 1 });
 		await invoke(Data.getParsed, {
 			mailboxId: 'mbx_1',
 			page: 1,

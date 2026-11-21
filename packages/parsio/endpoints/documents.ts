@@ -4,6 +4,7 @@ import {
 	decodeFile,
 	ParsioEndpointInputSchemas as Inputs,
 	ParsioEndpointOutputSchemas as Outputs,
+	shapeDocument,
 } from './types';
 
 export const createSync: ParsioEndpoints['documentsCreateSync'] = (
@@ -21,13 +22,16 @@ export const createSync: ParsioEndpoints['documentsCreateSync'] = (
 		({ mailboxId, ...body }) => ({
 			method: 'POST',
 			path: `/mailboxes/${encodeURIComponent(mailboxId)}/doc-sync`,
+			// Parsio holds a sync parse until it finishes.
+			timeoutMs: 120_000,
 			body,
 		}),
 		{
+			shape: shapeDocument,
 			log: (_, doc) => ({
 				documentId: doc.doc_id,
-				status: doc.status,
-				inProgress: doc.parsing_in_progress,
+				status: doc.status ?? undefined,
+				inProgress: doc.parsing_in_progress ?? undefined,
 			}),
 		},
 	);
@@ -49,7 +53,13 @@ export const createAsync: ParsioEndpoints['documentsCreateAsync'] = (
 			path: `/mailboxes/${encodeURIComponent(mailboxId)}/doc`,
 			body,
 		}),
-		{ log: (_, doc) => ({ documentId: doc.doc_id, status: doc.status }) },
+		{
+			shape: shapeDocument,
+			log: (_, doc) => ({
+				documentId: doc.doc_id,
+				status: doc.status ?? undefined,
+			}),
+		},
 	);
 
 export const uploadSync: ParsioEndpoints['documentsUploadSync'] = (
@@ -67,13 +77,16 @@ export const uploadSync: ParsioEndpoints['documentsUploadSync'] = (
 		({ mailboxId, filename, contentBase64 }) => ({
 			method: 'POST',
 			path: `/mailboxes/${encodeURIComponent(mailboxId)}/upload-sync`,
+			// Parsio holds a sync parse until it finishes.
+			timeoutMs: 120_000,
 			formData: { file: decodeFile(filename, contentBase64), filename },
 		}),
 		{
+			shape: shapeDocument,
 			log: (_, doc) => ({
 				documentId: doc.doc_id,
-				status: doc.status,
-				inProgress: doc.parsing_in_progress,
+				status: doc.status ?? undefined,
+				inProgress: doc.parsing_in_progress ?? undefined,
 			}),
 		},
 	);
@@ -95,7 +108,13 @@ export const uploadAsync: ParsioEndpoints['documentsUploadAsync'] = (
 			path: `/mailboxes/${encodeURIComponent(mailboxId)}/upload`,
 			formData: { file: decodeFile(filename, contentBase64), filename },
 		}),
-		{ log: (_, doc) => ({ documentId: doc.doc_id, status: doc.status }) },
+		{
+			shape: shapeDocument,
+			log: (_, doc) => ({
+				documentId: doc.doc_id,
+				status: doc.status ?? undefined,
+			}),
+		},
 	);
 
 export const list: ParsioEndpoints['documentsList'] = (ctx, input) =>
@@ -112,7 +131,7 @@ export const list: ParsioEndpoints['documentsList'] = (ctx, input) =>
 			path: `/mailboxes/${encodeURIComponent(mailboxId)}/docs`,
 			query,
 		}),
-		{ log: (_, docs) => ({ count: docs.length }) },
+		{ log: (_, page) => ({ count: page.docs.length }) },
 	);
 
 export const get: ParsioEndpoints['documentsGet'] = (ctx, input) =>
@@ -128,7 +147,13 @@ export const get: ParsioEndpoints['documentsGet'] = (ctx, input) =>
 			method: 'GET',
 			path: `/docs/${encodeURIComponent(documentId)}`,
 		}),
-		{ log: (_, doc) => ({ documentId: doc.doc_id, status: doc.status }) },
+		{
+			shape: shapeDocument,
+			log: (_, doc) => ({
+				documentId: doc.doc_id,
+				status: doc.status ?? undefined,
+			}),
+		},
 	);
 
 export const reparse: ParsioEndpoints['documentsReparse'] = (ctx, input) =>
@@ -144,7 +169,15 @@ export const reparse: ParsioEndpoints['documentsReparse'] = (ctx, input) =>
 			method: 'POST',
 			path: `/docs/${encodeURIComponent(documentId)}/parse`,
 		}),
-		{ log: (_, doc) => ({ documentId: doc.doc_id, status: doc.status }) },
+		{
+			// The API answers a bare number (live); the document id is echoed.
+			shape: (raw, { documentId }) => ({
+				doc_id: documentId,
+				queued: true,
+				result: raw,
+			}),
+			log: (_, doc) => ({ documentId: doc.doc_id }),
+		},
 	);
 
 export const skipMany: ParsioEndpoints['documentsSkipMany'] = (ctx, input) =>

@@ -19,7 +19,7 @@ export const getParsed: ParsioEndpoints['dataGetParsed'] = (ctx, input) =>
 			path: `/mailboxes/${encodeURIComponent(mailboxId)}/parsed`,
 			query,
 		}),
-		{ log: (_, records) => ({ count: records.length }) },
+		{ log: (_, page) => ({ count: page.docs.length }) },
 	);
 
 export const listEmails: ParsioEndpoints['dataListEmails'] = (ctx, input) =>
