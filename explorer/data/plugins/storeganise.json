@@ -1,0 +1,420 @@
+{
+  "id": "storeganise",
+  "displayName": "Storeganise",
+  "description": "Storeganise is self-storage management software. This plugin reads sites, units, users, invoices, unit rentals, jobs and add-ons from the Admin API, updates unit-rental custom fields (access codes, overlock flags), and verifies the signed webhook deliveries Storeganise sends for system events.",
+  "npmPackageName": "@corsair-dev/storeganise",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 13,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "business_code"]
+    }
+  ],
+  "api": [
+    {
+      "path": "storeganise.api.addons.get",
+      "shortPath": "addons.get",
+      "description": "Read one add-on record with its operator credentials",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "addonId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storeganise.api.addons.list",
+      "shortPath": "addons.list",
+      "description": "List the add-ons installed on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, customFields?: Record<string, any> | null }[]"
+      }
+    },
+    {
+      "path": "storeganise.api.invoices.list",
+      "shortPath": "invoices.list",
+      "description": "List invoices, filtered by update time or fetched in batches of ids",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updatedAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Only records updated at or after this UTC time, formatted as YYYY-MM-DDTHH:MM:SS.000Z."
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Up to 50 record ids, sent comma-separated in one call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string }[]"
+      }
+    },
+    {
+      "path": "storeganise.api.jobs.get",
+      "shortPath": "jobs.get",
+      "description": "Read one job by the id a webhook delivery carries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "{ siteId?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storeganise.api.settings.get",
+      "shortPath": "settings.get",
+      "description": "Read the business settings, including the webhook secret",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "storeganise.api.sites.get",
+      "shortPath": "sites.get",
+      "description": "Read one storage site by id or code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "siteIdOrCode",
+            "optional": false,
+            "type": "string",
+            "description": "Site id or site code, e.g. \"central\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storeganise.api.sites.list",
+      "shortPath": "sites.list",
+      "description": "List storage sites, optionally filtered by a search term",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string",
+            "description": "Search filter, including custom fields, e.g. \"customField:foo\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, customFields?: Record<string, any> | null }[]"
+      }
+    },
+    {
+      "path": "storeganise.api.unitRentals.get",
+      "shortPath": "unitRentals.get",
+      "description": "Read one unit rental, embedding its unit, owner and custom fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "unitRentalId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated related records to embed, e.g. \"unit,owner,customFields\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "{ id: string, siteId?: string | null, typeId?: string | null, name?: string | null, length?: number | null, width?: number | null, height?: number | null, measure?: string | null, floor?: string | null, defaultDeposit?: number | null, defaultPrice?: number | null } | null"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id: string, email?: string | null } | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storeganise.api.unitRentals.list",
+      "shortPath": "unitRentals.list",
+      "description": "List unit rentals in batches of ids, embedding related records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Up to 50 record ids, sent comma-separated in one call."
+          },
+          {
+            "key": "include",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated related records to embed, e.g. \"unit,owner,customFields\"."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, unit?: { id: string, siteId?: string | null, typeId?: string | null, name?: string | null, length?: number | null, width?: number | null, height?: number | null, measure?: string | null, floor?: string | null, defaultDeposit?: number | null, defaultPrice?: number | null } | null, owner?: { id: string, email?: string | null } | null, customFields?: Record<string, any> | null }[]"
+      }
+    },
+    {
+      "path": "storeganise.api.unitRentals.update",
+      "shortPath": "unitRentals.update",
+      "description": "Set custom fields on a unit rental, such as access codes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "unitRentalId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "customFields",
+            "optional": false,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unit",
+            "optional": true,
+            "type": "{ id: string, siteId?: string | null, typeId?: string | null, name?: string | null, length?: number | null, width?: number | null, height?: number | null, measure?: string | null, floor?: string | null, defaultDeposit?: number | null, defaultPrice?: number | null } | null"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id: string, email?: string | null } | null"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storeganise.api.units.list",
+      "shortPath": "units.list",
+      "description": "List storage units with dimensions and default prices",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, siteId?: string | null, typeId?: string | null, name?: string | null, length?: number | null, width?: number | null, height?: number | null, measure?: string | null, floor?: string | null, defaultDeposit?: number | null, defaultPrice?: number | null }[]"
+      }
+    },
+    {
+      "path": "storeganise.api.users.get",
+      "shortPath": "users.get",
+      "description": "Read one user by id or email address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userIdOrEmail",
+            "optional": false,
+            "type": "string",
+            "description": "User id or email address."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storeganise.api.users.list",
+      "shortPath": "users.list",
+      "description": "List users, filtered by update time or fetched in batches of ids",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updatedAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Only records updated at or after this UTC time, formatted as YYYY-MM-DDTHH:MM:SS.000Z."
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string[]",
+            "description": "Up to 50 record ids, sent comma-separated in one call."
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, email?: string | null }[]"
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "storeganise.webhooks.storeganise.event",
+      "shortPath": "storeganise.event",
+      "description": "An event happened in the Storeganise system",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      },
+      "responseType": "{ id: string, created: string, type: string, data?: Record<string, any> | null }",
+      "usageExample": "storeganise({\n    webhookHooks: {\n        storeganise: {\n            event: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}
