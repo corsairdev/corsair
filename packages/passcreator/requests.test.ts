@@ -133,6 +133,12 @@ describe('passes', () => {
 		expect(JSON.parse(lastRequest().body as string)).toEqual({ voided: true });
 	});
 
+	it('update refuses empty properties without voided', async () => {
+		await expect(
+			invoke(Passes.update, { passUid: 'uid1', properties: {} }),
+		).rejects.toThrow();
+	});
+
 	it('update POSTs properties and voided together', async () => {
 		respond(undefined, 204);
 		await invoke(Passes.update, {

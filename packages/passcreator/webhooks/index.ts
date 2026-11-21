@@ -88,9 +88,8 @@ export const event: CorsairWebhook<
 			};
 		}
 
-		await safeLog(ctx, 'passcreator.webhook.event', {
-			passUid: data.data.identifier ?? data.data.passId ?? undefined,
-		});
+		// No pass identifiers in the event: they identify a customer's pass.
+		await safeLog(ctx, 'passcreator.webhook.event', { verified: true });
 
 		return { success: true, data: data.data };
 	},

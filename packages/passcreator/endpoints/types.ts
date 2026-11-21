@@ -183,7 +183,10 @@ export const UpdatePassInputSchema = z
 			),
 	})
 	.superRefine((input, ctx) => {
-		if (input.properties === undefined && input.voided === undefined) {
+		const hasProperties =
+			input.properties !== undefined &&
+			Object.keys(input.properties).length > 0;
+		if (!hasProperties && input.voided === undefined) {
 			ctx.addIssue({
 				code: 'custom',
 				path: ['properties'],
