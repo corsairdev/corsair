@@ -1,4 +1,5 @@
-import { describePiggyError, makePiggyRequest, PiggyAPIError } from './client';
+import { ApiError } from 'corsair/http';
+import { describePiggyError, makePiggyRequest } from './client';
 import { notFound, unauthenticated } from './test-fixtures';
 
 const TOKEN = 'pat-test-token';
@@ -16,10 +17,10 @@ function respond(body: unknown, status: number) {
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<PiggyAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(PiggyAPIError);
-	if (!(error instanceof PiggyAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -84,7 +85,8 @@ describe('makePiggyRequest', () => {
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toBe('Piggy 401: Unauthenticated.');
-		expect(error.method).toBe('GET');
+		expect(error.request.method).toBe('GET');
+		expect(error.name).toBe('ApiError');
 		expect(error.url).toBe('/api/v3/oauth/clients/contacts');
 	});
 
@@ -113,7 +115,7 @@ describe('makePiggyRequest', () => {
 		);
 		const printed = JSON.stringify(error.request);
 		expect(printed).not.toContain('secret@bikinibottom.sea');
-		expect(error.method).toBe('POST');
+		expect(error.request.method).toBe('POST');
 	});
 });
 

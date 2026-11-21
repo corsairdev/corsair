@@ -1,13 +1,17 @@
 import type { ErrorContext } from 'corsair/core';
-import { PiggyAPIError } from './client';
+import { ApiError } from 'corsair/http';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 
-function piggyError(method: string, status: number): PiggyAPIError {
-	return new PiggyAPIError(`Piggy ${status}`, {
-		method,
-		path: '/api/v3/oauth/clients/contacts',
-		status,
-	});
+function piggyError(
+	method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
+	status: number,
+): ApiError {
+	const url = '/api/v3/oauth/clients/contacts';
+	return new ApiError(
+		{ method, url },
+		{ url, ok: false, status, statusText: '', body: null },
+		`Piggy ${status}`,
+	);
 }
 
 function contextFor(error: Error): ErrorContext {
@@ -74,8 +78,7 @@ describe('mergeErrorHandlers', () => {
 	it('lets a caller handler run before the builtins it does not name', async () => {
 		const merged = mergeErrorHandlers(errorHandlers, {
 			TOO_MANY_REQUESTS: {
-				match: (error) =>
-					error instanceof PiggyAPIError && error.status === 429,
+				match: (error) => error instanceof ApiError && error.status === 429,
 				handler: async () => ({ maxRetries: 5 }),
 			},
 		});
