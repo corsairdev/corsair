@@ -586,10 +586,17 @@ describe('Pipedrive endpoint schemas', () => {
 				data: image,
 			}),
 		).toMatchObject({ id: 52, data: image });
+		// An agent's JSON carries a link or base64 in place of a Blob.
+		expect(
+			PipedriveEndpointInputSchemas.productImageUpload.parse({
+				id: 52,
+				data: { base64: 'aW1hZ2UgYnl0ZXM=', contentType: 'image/png' },
+			}),
+		).toMatchObject({ id: 52, data: { base64: 'aW1hZ2UgYnl0ZXM=' } });
 		expect(() =>
 			PipedriveEndpointInputSchemas.productImageUpload.parse({
 				id: 52,
-				data: 'base64',
+				data: 42,
 			}),
 		).toThrow(z.ZodError);
 	});

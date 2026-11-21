@@ -3,6 +3,7 @@ import { listTasks, updateReminder } from './tasks';
 import { GongTasksInputSchemas, GongTasksOutputSchemas } from './tasks-types';
 
 jest.mock('corsair/http', () => ({
+	...jest.requireActual('corsair/http'),
 	ApiError: class ApiError extends Error {},
 	request: jest.fn(),
 }));

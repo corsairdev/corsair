@@ -539,7 +539,8 @@ export const elorusEndpointMeta = {
 	},
 	'v12.bills_attachments_create': {
 		riskLevel: 'write',
-		description: 'Create a new attachment.',
+		description:
+			'Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'v12.bills_attachments_read': {
 		riskLevel: 'read',
@@ -607,7 +608,8 @@ export const elorusEndpointMeta = {
 	},
 	'v12.cashpayments_attachments_create': {
 		riskLevel: 'write',
-		description: 'Create a new attachment.',
+		description:
+			'Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'v12.cashpayments_attachments_read': {
 		riskLevel: 'read',
@@ -671,7 +673,8 @@ export const elorusEndpointMeta = {
 	},
 	'v12.cashreceipts_attachments_create': {
 		riskLevel: 'write',
-		description: 'Create a new attachment.',
+		description:
+			'Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'v12.cashreceipts_attachments_read': {
 		riskLevel: 'read',
@@ -731,7 +734,8 @@ export const elorusEndpointMeta = {
 	},
 	'v12.contacts_attachments_create': {
 		riskLevel: 'write',
-		description: 'Create a new attachment.',
+		description:
+			'Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'v12.contacts_attachments_read': {
 		riskLevel: 'read',
@@ -829,7 +833,8 @@ export const elorusEndpointMeta = {
 	},
 	'v12.creditnotes_attachments_create': {
 		riskLevel: 'write',
-		description: 'Create a new attachment.',
+		description:
+			'Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'v12.creditnotes_attachments_read': {
 		riskLevel: 'read',
@@ -935,7 +940,8 @@ export const elorusEndpointMeta = {
 	},
 	'v12.deliverynotes_attachments_create': {
 		riskLevel: 'write',
-		description: 'Create a new attachment.',
+		description:
+			'Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'v12.deliverynotes_attachments_read': {
 		riskLevel: 'read',
@@ -1064,7 +1070,8 @@ export const elorusEndpointMeta = {
 	},
 	'v12.estimates_attachments_create': {
 		riskLevel: 'write',
-		description: 'Create a new attachment.',
+		description:
+			'Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'v12.estimates_attachments_read': {
 		riskLevel: 'read',
@@ -1153,7 +1160,8 @@ export const elorusEndpointMeta = {
 	},
 	'v12.expenses_attachments_create': {
 		riskLevel: 'write',
-		description: 'Create a new attachment.',
+		description:
+			'Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'v12.expenses_attachments_read': {
 		riskLevel: 'read',
@@ -1333,7 +1341,8 @@ export const elorusEndpointMeta = {
 	},
 	'v12.invoices_attachments_create': {
 		riskLevel: 'write',
-		description: 'Create a new attachment.',
+		description:
+			'Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'v12.invoices_attachments_read': {
 		riskLevel: 'read',
@@ -1494,7 +1503,8 @@ export const elorusEndpointMeta = {
 	},
 	'v12.projects_attachments_create': {
 		riskLevel: 'write',
-		description: 'Create a new attachment.',
+		description:
+			'Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'v12.projects_attachments_read': {
 		riskLevel: 'read',
@@ -1670,7 +1680,8 @@ export const elorusEndpointMeta = {
 	},
 	'v12.suppliercredits_attachments_create': {
 		riskLevel: 'write',
-		description: 'Create a new attachment.',
+		description:
+			'Create a new attachment. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'v12.suppliercredits_attachments_read': {
 		riskLevel: 'read',

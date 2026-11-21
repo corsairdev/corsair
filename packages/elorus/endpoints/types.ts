@@ -1,4 +1,14 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
+
+// An attachment's file. An agent's arguments are JSON, so it sends a link or
+// base64, which the operation turns into bytes before the multipart upload; a
+// Blob or File still works from TypeScript.
+const ElorusAttachmentFileSchema = z
+	.union([FileInputSchema, z.instanceof(Blob)])
+	.describe(
+		'The file to attach, up to 3 MB: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…).',
+	);
 
 // OpenAPI leaves some success response payloads untyped or explicitly open; validate those as JSON.
 const ElorusUndocumentedJsonSchema = z.json();
@@ -12092,7 +12102,7 @@ const input_v12_bills_attachments_create = z
 		form: z
 			.object({
 				title: z.string().min(1).max(120).optional(),
-				file: z.instanceof(Blob),
+				file: ElorusAttachmentFileSchema,
 				primary: z.boolean().optional(),
 			})
 			.strict(),
@@ -12285,7 +12295,7 @@ const input_v12_cashpayments_attachments_create = z
 		form: z
 			.object({
 				title: z.string().min(1).max(120).optional(),
-				file: z.instanceof(Blob),
+				file: ElorusAttachmentFileSchema,
 			})
 			.strict(),
 		demo: z.boolean().optional(),
@@ -12456,7 +12466,7 @@ const input_v12_cashreceipts_attachments_create = z
 		form: z
 			.object({
 				title: z.string().min(1).max(120).optional(),
-				file: z.instanceof(Blob),
+				file: ElorusAttachmentFileSchema,
 			})
 			.strict(),
 		demo: z.boolean().optional(),
@@ -12615,7 +12625,7 @@ const input_v12_contacts_attachments_create = z
 		form: z
 			.object({
 				title: z.string().min(1).max(120).optional(),
-				file: z.instanceof(Blob),
+				file: ElorusAttachmentFileSchema,
 			})
 			.strict(),
 		demo: z.boolean().optional(),
@@ -12867,7 +12877,7 @@ const input_v12_creditnotes_attachments_create = z
 		form: z
 			.object({
 				title: z.string().min(1).max(120).optional(),
-				file: z.instanceof(Blob),
+				file: ElorusAttachmentFileSchema,
 			})
 			.strict(),
 		demo: z.boolean().optional(),
@@ -13137,7 +13147,7 @@ const input_v12_deliverynotes_attachments_create = z
 		form: z
 			.object({
 				title: z.string().min(1).max(120).optional(),
-				file: z.instanceof(Blob),
+				file: ElorusAttachmentFileSchema,
 			})
 			.strict(),
 		demo: z.boolean().optional(),
@@ -13495,7 +13505,7 @@ const input_v12_estimates_attachments_create = z
 		form: z
 			.object({
 				title: z.string().min(1).max(120).optional(),
-				file: z.instanceof(Blob),
+				file: ElorusAttachmentFileSchema,
 			})
 			.strict(),
 		demo: z.boolean().optional(),
@@ -13744,7 +13754,7 @@ const input_v12_expenses_attachments_create = z
 		form: z
 			.object({
 				title: z.string().min(1).max(120).optional(),
-				file: z.instanceof(Blob),
+				file: ElorusAttachmentFileSchema,
 				primary: z.boolean().optional(),
 			})
 			.strict(),
@@ -14197,7 +14207,7 @@ const input_v12_invoices_attachments_create = z
 		form: z
 			.object({
 				title: z.string().min(1).max(120).optional(),
-				file: z.instanceof(Blob),
+				file: ElorusAttachmentFileSchema,
 			})
 			.strict(),
 		demo: z.boolean().optional(),
@@ -14644,7 +14654,7 @@ const input_v12_projects_attachments_create = z
 		form: z
 			.object({
 				title: z.string().min(1).max(120).optional(),
-				file: z.instanceof(Blob),
+				file: ElorusAttachmentFileSchema,
 			})
 			.strict(),
 		demo: z.boolean().optional(),
@@ -15104,7 +15114,7 @@ const input_v12_suppliercredits_attachments_create = z
 		form: z
 			.object({
 				title: z.string().min(1).max(120).optional(),
-				file: z.instanceof(Blob),
+				file: ElorusAttachmentFileSchema,
 				primary: z.boolean().optional(),
 			})
 			.strict(),

@@ -927,7 +927,7 @@ await corsair.cloudlayer.api.storage.remove({ id: 'storage-id' });
 
 `template.toImage`
 
-Render a gallery or base64 Nunjucks template with caller data to an image using JSON or multipart upload; v2 async:false returns a completed JSON job. Docs: https://cloudlayer.io/docs/template-to-image/
+Render a gallery or base64 Nunjucks template with caller data to an image using JSON or multipart upload; v2 async:false returns a completed JSON job. A multipart upload takes the template file as a public link, base64 or a Blob; on Corsair, pass a Files id. Docs: https://cloudlayer.io/docs/template-to-image/
 
 **Risk:** `destructive`
 
@@ -986,7 +986,15 @@ V2 returns a JSON job; `async: false` waits for completion and returns the compl
   async?: boolean,
   storage?: boolean
 } | {
-  template: custom,
+  template: string | {
+    url: string,
+    filename?: string,
+    contentType?: string
+  } | {
+    base64: string,
+    filename?: string,
+    contentType?: string
+  } | custom,
   data: Record<string, JsonValue>
 }
 ```
@@ -1114,7 +1122,7 @@ The v1 response is binary and is returned as a base64-encoded `BinaryArtifact`. 
 
 `template.toPdf`
 
-Render a gallery or base64 Nunjucks template with caller data to a PDF using JSON or multipart upload; v2 async:false returns a completed JSON job. Docs: https://cloudlayer.io/docs/template-to-pdf/
+Render a gallery or base64 Nunjucks template with caller data to a PDF using JSON or multipart upload; v2 async:false returns a completed JSON job. A multipart upload takes the template file as a public link, base64 or a Blob; on Corsair, pass a Files id. Docs: https://cloudlayer.io/docs/template-to-pdf/
 
 **Risk:** `destructive`
 
@@ -1209,7 +1217,15 @@ V2 returns a JSON job; `async: false` waits for completion and returns the compl
   async?: boolean,
   storage?: boolean
 } | {
-  template: custom,
+  template: string | {
+    url: string,
+    filename?: string,
+    contentType?: string
+  } | {
+    base64: string,
+    filename?: string,
+    contentType?: string
+  } | custom,
   data: Record<string, JsonValue>
 }
 ```

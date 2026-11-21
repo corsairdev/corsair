@@ -737,14 +737,82 @@ describe('setFileSink', () => {
 		expect(sink).not.toHaveBeenCalled();
 	});
 
-	it('follows maxBytes: a caller-raised limit keeps the content inline', () => {
+	it("caps a raised maxBytes at the host's limit, and keeps it where no sink is set", () => {
+		const mid = new Uint8Array(FILE_OUTPUT_MAX_BYTES + 1);
+		const raised = { maxBytes: FILE_OUTPUT_MAX_BYTES * 2 };
+		expect(toFileOutput(mid, 'video/mp4', raised).contentBase64).toBeDefined();
+
 		const sink = jest.fn(() => 'held_1');
 		setFileSink(() => sink);
-		const mid = new Uint8Array(FILE_OUTPUT_MAX_BYTES + 1);
+		expect(toFileOutput(mid, 'video/mp4', raised)).toEqual({
+			contentType: 'video/mp4',
+			byteLength: mid.byteLength,
+			fileId: 'held_1',
+		});
+		expect(sink).toHaveBeenCalledTimes(1);
+
+		// A finder that has no sink for this call leaves the endpoint's limit alone.
+		setFileSink(() => undefined);
+		expect(toFileOutput(mid, 'video/mp4', raised).contentBase64).toBeDefined();
+	});
+
+	it("takes the host's inlineMaxBytes, and an endpoint's lower maxBytes still wins", () => {
+		const sink = jest.fn(() => 'held_1');
+		setFileSink(() => sink, { inlineMaxBytes: 100 });
+		expect(toFileOutput(new Uint8Array(101), 'image/png').fileId).toBe(
+			'held_1',
+		);
 		expect(
-			toFileOutput(mid, 'image/png', { maxBytes: FILE_OUTPUT_MAX_BYTES * 2 })
-				.contentBase64,
+			toFileOutput(new Uint8Array(100), 'image/png').contentBase64,
 		).toBeDefined();
-		expect(sink).not.toHaveBeenCalled();
+		expect(
+			toFileOutput(new Uint8Array(60), 'image/png', { maxBytes: 50 }).fileId,
+		).toBe('held_1');
+		expect(sink).toHaveBeenCalledTimes(2);
+		expect(() => setFileSink(() => sink, { inlineMaxBytes: 1.5 })).toThrow(
+			RangeError,
+		);
+	});
+
+	it('with everyFile, keeps a file that fits too and returns its content beside the id', () => {
+		const held: string[] = [];
+		const sink = jest.fn((file: { contentType: string }) => {
+			held.push(file.contentType);
+			return `held_${held.length}`;
+		});
+		setFileSink(() => sink, { everyFile: true });
+		expect(toFileOutput(PDF, 'application/pdf')).toEqual({
+			contentType: 'application/pdf',
+			byteLength: PDF.byteLength,
+			fileId: 'held_1',
+			contentBase64: Buffer.from(PDF).toString('base64'),
+		});
+		const csv = new TextEncoder().encode('a,b\n1,2\n');
+		expect(toFileOutput(csv, 'text/csv', { filename: 'rows.csv' })).toEqual({
+			contentType: 'text/csv',
+			byteLength: csv.byteLength,
+			filename: 'rows.csv',
+			fileId: 'held_2',
+			text: 'a,b\n1,2\n',
+		});
+		const big = new Uint8Array(FILE_OUTPUT_MAX_BYTES + 1);
+		expect(toFileOutput(big, 'video/mp4')).toEqual({
+			contentType: 'video/mp4',
+			byteLength: big.byteLength,
+			fileId: 'held_3',
+		});
+		expect(
+			toFileOutput(PDF, 'application/pdf', { includeContent: false }),
+		).toEqual({
+			contentType: 'application/pdf',
+			byteLength: PDF.byteLength,
+			contentOmitted: 'not_requested',
+		});
+		expect(sink).toHaveBeenCalledTimes(3);
+
+		setFileSink(() => () => null, { everyFile: true });
+		const declined = toFileOutput(PDF, 'application/pdf');
+		expect(declined.contentBase64).toBeDefined();
+		expect('fileId' in declined).toBe(false);
 	});
 });

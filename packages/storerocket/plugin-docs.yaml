@@ -1,0 +1,111 @@
+displayName: Storerocket
+description: >-
+  Storerocket is a store locator. This plugin reads the token profile and
+  projects, manages locations with opening hours, filters and custom fields
+  through the create, PATCH, PUT and DELETE contracts, and schedules
+  holiday special-hours rules with idempotency keys.
+domain: storerocket.io
+recommendedAuth: api_key
+overviewNote: >-
+  Tokens are created at storerocket.io/app/api-tokens and authenticate with
+  the Bearer scheme; the docs say not to use an X-API-Key header or a token
+  in the URL. Token permissions select what works: location:read for reads,
+  location:create, location:update and location:delete for writes, and
+  location operations also require the project's API access (Business plan).
+  The shared limit is 1,000 requests per minute; a 429 carries Retry-After
+  and this plugin waits it out. Location POST, PATCH and PUT have no
+  idempotency contract (the docs warn a retried POST can create a second
+  location), so only reads are replayed on a 5xx; special-hours POST and
+  PATCH accept an Idempotency-Key header. Location list reads paginate with
+  page and limit (1 to 100) and return links.next plus meta totals; keep the
+  same filters and include flags on every page. List filters use bracket
+  notation (city[eq]=Seattle) and only the documented field/operator
+  combinations are accepted. The legacy V1 location and lead API is not
+  covered; this plugin builds against the current v2 contract.
+examples:
+  read:
+    path: locations.list
+    title: List locations of a project
+  write:
+    path: locations.create
+    title: Create a location with a full week of hours
+apiExamples:
+  users.get: {}
+  projects.list: {}
+  locations.list:
+    call: >-
+      { projectId: "PROJECT_ID", limit: 25, includeHours: true, filters:
+      [{ field: "city", op: "eq", value: "Seattle" }] }
+  locations.get:
+    args:
+      projectId: PROJECT_ID
+      locationId: LOCATION_ID
+  locations.create:
+    args:
+      projectId: PROJECT_ID
+      name: Downtown Store
+      city: Seattle
+      phone: 555-0101
+      lat: 47.6062
+      lng: -122.3321
+  locations.update:
+    args:
+      projectId: PROJECT_ID
+      locationId: LOCATION_ID
+      phone: 555-0101
+  locations.replace:
+    args:
+      projectId: PROJECT_ID
+      locationId: LOCATION_ID
+      name: Downtown Store
+      city: Seattle
+  locations.delete:
+    args:
+      projectId: PROJECT_ID
+      locationId: LOCATION_ID
+  specialHours.list:
+    args:
+      projectId: PROJECT_ID
+  specialHours.get:
+    args:
+      projectId: PROJECT_ID
+      ruleId: k4ZqP0mE7d
+  specialHours.create:
+    call: >-
+      { projectId: "PROJECT_ID", name: "Thanksgiving", holiday_key:
+      "US:thanksgiving-day", start_date: "2026-11-26", hours: "closed",
+      repeats_yearly: true, applies_to: { type: "countries", values: ["US"]
+      }, idempotencyKey: "thanksgiving-2026-us" }
+  specialHours.update:
+    args:
+      projectId: PROJECT_ID
+      ruleId: k4ZqP0mE7d
+      note: Visitor centre closed for renovation
+  specialHours.delete:
+    args:
+      projectId: PROJECT_ID
+      ruleId: k4ZqP0mE7d
+apiNotes:
+  locations.create: >-
+    Name and city are required. Omit hours or send hours: {} for a
+    coming-soon location; a nonempty hours object must include all seven
+    days. Sending both coordinates avoids depending on the geocoder; check
+    the geocoding object in the response, whose status says whether the
+    address was found, only roughly matched, not found, or queued.
+  locations.update: >-
+    PATCH keeps everything you leave out. Send null to clear a field, hours:
+    null to remove the schedule, a null value in fields or callsToAction to
+    remove that attachment, and marker_id or location_type null to restore
+    the project default. Invalid input saves no part of the update.
+  locations.replace: >-
+    PUT keeps the existing contract: supplied fields and callsToAction
+    replace their attachments, omitted marker and type selections reset to
+    project defaults, and a nonempty hours object replaces the whole week.
+    Use PATCH when you want to preserve everything you leave out.
+  specialHours.create: >-
+    Requires name, start_date, hours and applies_to; a missing end_date
+    means the same day, and until_further_notice takes no end_date. The
+    hours value is "closed", "regular", "open_24_hours", or up to six
+    {opens, closes} ranges. repeats_yearly needs a yearly holiday_key on a
+    single day. The same Idempotency-Key with the same body replays the
+    first answer; with a different body it answers 409.

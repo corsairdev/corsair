@@ -162,7 +162,7 @@ const carboneEndpointMeta = {
 	'templates.download': {
 		riskLevel: 'read',
 		description:
-			'Tool to download a template from Carbone by template ID. Use when you need to retrieve the original template file.',
+			'Tool to download a template from Carbone by template ID. Use when you need to retrieve the original template file. On Corsair up to about 700 KB comes back inline as content and a larger file comes back as fileId, a Files id.',
 	},
 	'templates.update': {
 		riskLevel: 'write',

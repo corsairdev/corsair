@@ -1,0 +1,101 @@
+displayName: StatusCake
+description: Uptime monitoring with StatusCake - manage uptime, heartbeat, SSL, pagespeed and maintenance-window monitoring, contact groups and alert history. Read-only alerts, history and periods come back with their pagination links.
+domain: statuscake.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API token in the StatusCake account panel under Manage API keys. Things to know before you start:
+
+  - **Deletes and downtime alerts are real.** `uptime.delete`, `ssl.delete`, `pagespeed.delete`, `heartbeat.delete`, `maintenanceWindows.delete` and `contactGroups.delete` remove the resource immediately and cannot be undone; deleting a maintenance window resumes alerts at once.
+  - **Updates are partial.** PUT endpoints change only the fields you pass. The API reads an empty field as "clear it": `uptime.update` with `tags: []` removes every tag, while omitting `tags` leaves them alone.
+  - **Arrays in checks.** `tags`, `contact_groups`, `dns_ips` and `regions` are sent as repeated `field[]` parameters, the format StatusCake documents.
+  - **Two paging styles.** Resource lists (`uptime.list`, `ssl.list` and the rest) take `page` and `limit` and answer `metadata.page_count` and `total_count`. Record lists (`uptime.history`, `uptime.periods`, `uptime.alerts`, `pagespeed.history`) take `limit`, `before` and `after` Unix seconds, answer newest first, and put the continuation point in `links.next`, which is absent on the last page.
+  - **Rate limits.** Free accounts may make 60 requests per minute and every account has a burst limit of 5 per second. Responses carry `x-ratelimit-limit`, `x-ratelimit-remaining` and `x-ratelimit-reset` (seconds until the window lifts); the plugin retries a 429 up to three times, waiting the reset time. The quota is shared by every client using the account's tokens.
+  - **Bad tokens.** A wrong or deleted token is denied before the request reaches the API, so the error carries no body; the plugin reports it as an authentication failure.
+  - **No webhook receiver.** StatusCake sends alert callbacks to a contact group's `ping_url`, which `contactGroups.create` and `contactGroups.update` can set. The plugin does not receive those deliveries.
+examples:
+  read:
+    path: uptime.list
+    title: List down checks tagged production
+    args:
+      status: down
+      tags:
+        - production
+  write:
+    path: uptime.create
+    title: Create an HTTP uptime check every five minutes
+    args:
+      name: statuscake.com
+      test_type: HTTP
+      website_url: https://www.statuscake.com
+      check_rate: 300
+apiExamples:
+  contactGroups.list:
+    call: "{ page: 1, limit: 25 }"
+  contactGroups.create:
+    call: "{ name: 'DevOps', email_addresses: ['oncall@example.com'] }"
+  contactGroups.get:
+    call: "{ group_id: '123' }"
+  contactGroups.update:
+    call: "{ group_id: '123', name: 'DevOps primary' }"
+  contactGroups.delete:
+    call: "{ group_id: '123' }"
+  heartbeat.list:
+    call: "{ page: 1 }"
+  heartbeat.create:
+    call: "{ name: 'nightly backup', period: 86400, contact_groups: ['123'] }"
+  heartbeat.get:
+    call: "{ test_id: '123456' }"
+  heartbeat.update:
+    call: "{ test_id: '123456', paused: true }"
+  heartbeat.delete:
+    call: "{ test_id: '123456' }"
+  maintenanceWindows.list:
+    call: "{ state: 'pending' }"
+  maintenanceWindows.create:
+    call: "{ name: 'deploy window', start_at: '2026-12-01T02:00:00Z', end_at: '2026-12-01T04:00:00Z', timezone: 'Europe/London', tests: ['123456'] }"
+  maintenanceWindows.get:
+    call: "{ window_id: '42' }"
+  maintenanceWindows.update:
+    call: "{ window_id: '42', end_at: '2026-12-01T05:00:00Z' }"
+  maintenanceWindows.delete:
+    call: "{ window_id: '42' }"
+  pagespeed.list:
+    call: "{ page: 1 }"
+  pagespeed.create:
+    call: "{ name: 'marketing site', website_url: 'https://www.example.com', check_rate: 3600, region: 'UK', alert_slower: 3000 }"
+  pagespeed.get:
+    call: "{ test_id: '123456' }"
+  pagespeed.update:
+    call: "{ test_id: '123456', alert_slower: 2000 }"
+  pagespeed.delete:
+    call: "{ test_id: '123456' }"
+  pagespeed.history:
+    call: "{ test_id: '123456', limit: 100 }"
+  ssl.list:
+    call: "{ page: 1 }"
+  ssl.create:
+    call: "{ website_url: 'https://www.example.com', check_rate: 86400, alert_at: [30, 14, 7], alert_expiry: true }"
+  ssl.get:
+    call: "{ test_id: '123456' }"
+  ssl.update:
+    call: "{ test_id: '123456', alert_at: [21, 14, 7] }"
+  ssl.delete:
+    call: "{ test_id: '123456' }"
+  uptime.list:
+    call: "{ status: 'up', limit: 100 }"
+  uptime.create:
+    call: "{ name: 'statuscake.com', test_type: 'HTTP', website_url: 'https://www.statuscake.com', check_rate: 300, tags: ['production'] }"
+  uptime.get:
+    call: "{ test_id: '123456' }"
+  uptime.update:
+    call: "{ test_id: '123456', paused: true }"
+  uptime.delete:
+    call: "{ test_id: '123456' }"
+  uptime.alerts:
+    call: "{ test_id: '123456', limit: 50 }"
+  uptime.history:
+    call: "{ test_id: '123456', limit: 100 }"
+  uptime.periods:
+    call: "{ test_id: '123456', limit: 100 }"
+  locations.uptime: {}
+  locations.pagespeed: {}

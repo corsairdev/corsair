@@ -1,0 +1,261 @@
+displayName: Interzoid
+description: Data matching, entity resolution, data quality, validation, enrichment, and normalization cloud APIs.
+domain: interzoid.com
+recommendedAuth: api_key
+examples:
+  read:
+    path: matching.getCompanyMatchAdvanced
+    title: Generate company match similarity key
+    args:
+      company: IBM Corporation
+      algorithm: model-v4-wide
+  write:
+    path: standardization.getOrgStandard
+    title: Standardize a company name (Interzoid has no writes; every operation is a lookup)
+    args:
+      org: "ibm inc"
+overviewNote: |
+  Interzoid provides AI and algorithmic data matching keys (SimKeys), standardization, enrichment, and validation APIs.
+  An Interzoid API key (license) is required for authenticated operations.
+  Every API call consumes credits: standard calls generally cost one credit, while premium APIs and selected AI models can cost multiple credits. Review Interzoid's pricing and model-credit documentation before choosing paid operations.
+apiExamples:
+  matching.getCompanyMatchAdvanced:
+    args:
+      company: "IBM Corporation"
+      algorithm: "model-v4-wide"
+  matching.getFullNameMatch:
+    args:
+      fullname: "James Kelly"
+  matching.getAddressMatchAdvanced:
+    args:
+      address: "400 East Broadway"
+      algorithm: "model-v3-narrow"
+  matching.getAddressAndFullNameMatch:
+    args:
+      address: "100 Main St"
+      fullname: "James Kelly"
+  matching.getCompanyAndAddressMatch:
+    args:
+      company: "IBM Corp"
+      address: "1 New Orchard Road"
+  matching.getCompanyAndFullNameMatch:
+    args:
+      company: "IBM Corp"
+      fullname: "James Kelly"
+  matching.getGlobalAddressMatch:
+    args:
+      address: "Piazza del Colosseo, 1, Rome, Italy"
+  matching.getProductMatch:
+    args:
+      product: "Dell OptiPlex 7020 Desktop Computer"
+  matching.getOrgMatchScore:
+    args:
+      org1: "Amazon.com"
+      org2: "Amazon Inc."
+  matching.getFullNameMatchScore:
+    args:
+      fullname1: "James Kelly"
+      fullname2: "Jim Kelly"
+  matching.getCompanyMatch:
+    args:
+      company: "International Business Machines"
+  matching.getAddressMatch:
+    args:
+      address: "500 Oak Drive"
+  matching.getFullNameParsedMatch:
+    args:
+      firstname: "James"
+      lastname: "Kelly"
+  matching.getCityMatch:
+    args:
+      city: "San Francisco"
+  matching.getCountryMatch:
+    args:
+      country: "United States"
+  standardization.getOrgStandard:
+    args:
+      org: "b.o.a."
+  standardization.getCountryStandard:
+    args:
+      country: "Deutschland"
+  standardization.getCountryInfo:
+    args:
+      country: "France"
+  standardization.getStateAbbreviation:
+    args:
+      state: "California"
+  standardization.getCityStandard:
+    args:
+      city: "NYC"
+  standardization.getOfficialName:
+    args:
+      lookup: "Apple"
+  intelligence.getBusinessInfo:
+    args:
+      lookup: "Cisco"
+  intelligence.getParentCompanyInfo:
+    args:
+      lookup: "Informatica"
+  intelligence.getExecutiveProfile:
+    args:
+      lookup: "Amazon Web Services CEO"
+  intelligence.getBusinessInfoDomain:
+    args:
+      lookup: "Microsoft"
+  intelligence.getBusinessInfoName:
+    args:
+      lookup: "Microsoft"
+  intelligence.getCompanyVerification:
+    args:
+      lookup: "Microsoft Corporation"
+  intelligence.getStockInfo:
+    args:
+      lookup: "NVDA"
+  intelligence.getIndustryCodes:
+    args:
+      lookup: "Oracle Corporation"
+  intelligence.getSicCodes:
+    args:
+      lookup: "Safeway Inc."
+  intelligence.getUniversityInfo:
+    args:
+      lookup: "The Ohio State University"
+  intelligence.getProductRecallInfo:
+    args:
+      lookup: "Kirkland Signature Prosecco"
+  intelligence.getTechStack:
+    args:
+      lookup: "shopify.com"
+  intelligence.getCompetitorAnalysis:
+    args:
+      lookup: "Databricks"
+  intelligence.getBuyingSignals:
+    args:
+      lookup: "SpaceX"
+  intelligence.getPrivateCompanyDealIntel:
+    args:
+      lookup: "Anthropic"
+  intelligence.getNearestCoffeeShops:
+    args:
+      lookup: "Union Square, San Francisco"
+  intelligence.getUserXHandle:
+    args:
+      lookup: "San Francisco 49ers"
+  intelligence.getXUserProfile:
+    args:
+      handle: "lexfridman"
+  intelligence.getXLast3:
+    args:
+      handle: "Google"
+  intelligence.getEsgProfile:
+    args:
+      lookup: "Microsoft"
+  intelligence.getGovContracts:
+    args:
+      lookup: "Lockheed Martin"
+  intelligence.getFacilitiesProfile:
+    args:
+      lookup: "Amazon"
+  intelligence.getBuildingProfile:
+    args:
+      address: "415 Mission St, San Francisco, CA 94105"
+  intelligence.getPropertyHistory:
+    args:
+      address: "600 Montgomery St, San Francisco, CA 94111"
+  intelligence.getSalesUseTaxRates:
+    args:
+      lookup: "Beverly Hills, CA"
+  intelligence.getIrsPerDiemRates:
+    args:
+      lookup: "New York, NY"
+  intelligence.getEuVatRates:
+    args:
+      lookup: "Germany"
+  intelligence.getCustomsDutyRates:
+    args:
+      origin: "China"
+      lookup: "United States"
+      hscode: "8471.30.00"
+  intelligence.getMuniIssuerProfile:
+    args:
+      lookup: "State of California"
+  intelligence.getCustomData:
+    args:
+      topic: "detailed information about IBM"
+      lookup: "IBM"
+      output: "headquarters,ceo,website"
+  validation.getEmailInfo:
+    args:
+      email: "info@example.com"
+  validation.getEmailTrustScore:
+    args:
+      lookup: "contact@example.com"
+  validation.getEmailDomainType:
+    args:
+      email: "user@example.com"
+  validation.getIpProfile:
+    args:
+      lookup: "8.8.8.8"
+  validation.getPhoneProfile:
+    args:
+      lookup: "+16502530000"
+  validation.getGlobalNumberInfo:
+    args:
+      intlnumber: "+442071838750"
+  validation.getAreaCodeFromNumber:
+    args:
+      number: "415-555-1234"
+  validation.getAreaCode:
+    args:
+      areacode: "415"
+  validation.getZipCodeInfo:
+    args:
+      zip: "94105"
+  validation.addressParse:
+    args:
+      address: "922 N 5th St Ste 100A, Phoenix, AZ 85004"
+  utilities.getEntityType:
+    args:
+      text: "Argentina"
+  utilities.getGender:
+    args:
+      name: "Pierre"
+  utilities.getNameOrigin:
+    args:
+      name: "Pierre"
+  utilities.identifyLanguage:
+    args:
+      text: "Bonjour, comment allez-vous?"
+  utilities.translateToEnglish:
+    args:
+      text: "Bonjour"
+  utilities.translateToAny:
+    args:
+      text: "Hello"
+      to: "French"
+  utilities.getGlobalLatency:
+    args:
+      origin: "Singapore"
+      url: "https://example.com"
+  utilities.getGlobalPageLoad:
+    args:
+      origin: "London"
+      url: "https://example.com"
+  utilities.getCurrencyRate:
+    args:
+      symbol: "EUR"
+  utilities.convertCurrency:
+    args:
+      from: "USD"
+      to: "EUR"
+      amount: "100"
+  utilities.getWeatherZipCode:
+    args:
+      zip: "94105"
+  utilities.getGlobalWeather:
+    args:
+      location: "Madrid"
+  utilities.getGlobalTime:
+    args:
+      locale: "Tokyo"
+  utilities.getRemainingCredits: {}

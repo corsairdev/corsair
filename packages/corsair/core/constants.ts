@@ -321,9 +321,12 @@ export const BaseProviders = [
 	'godial',
 	'gong',
 	'googleaddressvalidation',
+	'googleadmin',
+	'googleads',
 	'googleanalytics',
 	'googlebigquery',
 	'googlecalendar',
+	'googlephotos',
 	'googleclassroom',
 	'googlecloudvision',
 	'googlecontacts',
@@ -332,6 +335,7 @@ export const BaseProviders = [
 	'googlemaps',
 	'googlemeet',
 	'googlesheets',
+	'googlesearchconsole',
 	'googleslides',
 	'googletasks',
 	'gorgias',
@@ -357,6 +361,7 @@ export const BaseProviders = [
 	'honeybadger',
 	'honeyhive',
 	'hookdeck',
+	'hotspotsystem',
 	'htmltoimage',
 	'hubplanner',
 	'hubspot',
@@ -377,6 +382,7 @@ export const BaseProviders = [
 	'instagram',
 	'instantly',
 	'intercom',
+	'interzoid',
 	'ip2proxy',
 	'ip2whois',
 	'jigsawstack',
@@ -391,6 +397,7 @@ export const BaseProviders = [
 	'kanbanize',
 	'keen',
 	'keenable',
+	'kernel',
 	'keyword',
 	'kibana',
 	'kickbox',
@@ -409,6 +416,7 @@ export const BaseProviders = [
 	'launchdarkly',
 	'leexi',
 	'leiga',
+	'lemlist',
 	'lemonsqueezy',
 	'lever',
 	'linear',
@@ -477,6 +485,7 @@ export const BaseProviders = [
 	'opengraph',
 	'openrouter',
 	'opensea',
+	'openseo',
 	'openweathermap',
 	'orbit',
 	'oura',
@@ -612,7 +621,12 @@ export const BaseProviders = [
 	'square',
 	'stackai',
 	'stackexchange',
+	'stannp',
 	'starton',
+	'statuscake',
+	'storeganise',
+	'storerocket',
+	'stormboard',
 	'stormglass',
 	'storyblok',
 	'strava',
@@ -633,6 +647,7 @@ export const BaseProviders = [
 	'sympla',
 	'synthflowai',
 	'taggun',
+	'tailscale',
 	'talenthr',
 	'tally',
 	'tapfiliate',
@@ -1056,9 +1071,12 @@ export const ProviderDisplayNames = {
 	godial: 'GoDial',
 	gong: 'Gong',
 	googleaddressvalidation: 'Google Address Validation',
+	googleadmin: 'Google Admin',
+	googleads: 'Google Ads',
 	googleanalytics: 'Google Analytics',
 	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
+	googlephotos: 'Google Photos',
 	googleclassroom: 'Google Classroom',
 	googlecloudvision: 'Google Cloud Vision',
 	googlecontacts: 'Google Contacts',
@@ -1067,6 +1085,7 @@ export const ProviderDisplayNames = {
 	googlemaps: 'Google Maps',
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
+	googlesearchconsole: 'Google Search Console',
 	googleslides: 'Google Slides',
 	googletasks: 'Google Tasks',
 	gorgias: 'Gorgias',
@@ -1092,6 +1111,7 @@ export const ProviderDisplayNames = {
 	honeybadger: 'Honeybadger',
 	honeyhive: 'HoneyHive',
 	hookdeck: 'Hookdeck',
+	hotspotsystem: 'HotspotSystem',
 	htmltoimage: 'HtmlToImage',
 	hubplanner: 'Hub Planner',
 	hubspot: 'HubSpot',
@@ -1112,6 +1132,7 @@ export const ProviderDisplayNames = {
 	instagram: 'Instagram',
 	instantly: 'Instantly',
 	intercom: 'Intercom',
+	interzoid: 'Interzoid',
 	ip2proxy: 'IP2Proxy',
 	ip2whois: 'IP2WHOIS',
 	jigsawstack: 'JigsawStack',
@@ -1126,6 +1147,7 @@ export const ProviderDisplayNames = {
 	kanbanize: 'Kanbanize',
 	keen: 'Keen',
 	keenable: 'Keenable',
+	kernel: 'Kernel',
 	keyword: 'Keyword',
 	kibana: 'Kibana',
 	kickbox: 'Kickbox',
@@ -1144,6 +1166,7 @@ export const ProviderDisplayNames = {
 	launchdarkly: 'LaunchDarkly',
 	leexi: 'Leexi',
 	leiga: 'Leiga',
+	lemlist: 'Lemlist',
 	lemonsqueezy: 'Lemon Squeezy',
 	lever: 'Lever',
 	linear: 'Linear',
@@ -1212,6 +1235,7 @@ export const ProviderDisplayNames = {
 	opengraph: 'OpenGraph.io',
 	openrouter: 'OpenRouter',
 	opensea: 'OpenSea',
+	openseo: 'OpenSEO',
 	openweathermap: 'OpenWeatherMap',
 	orbit: 'Orbit',
 	oura: 'Oura',
@@ -1347,7 +1371,12 @@ export const ProviderDisplayNames = {
 	square: 'Square',
 	stackai: 'StackAI',
 	stackexchange: 'Stack Exchange',
+	stannp: 'Stannp',
 	starton: 'Starton',
+	statuscake: 'StatusCake',
+	storeganise: 'Storeganise',
+	storerocket: 'Storerocket',
+	stormboard: 'Stormboard',
 	stormglass: 'Stormglass',
 	storyblok: 'Storyblok',
 	strava: 'Strava',
@@ -1368,6 +1397,7 @@ export const ProviderDisplayNames = {
 	sympla: 'Sympla',
 	synthflowai: 'Synthflow AI',
 	taggun: 'Taggun',
+	tailscale: 'Tailscale',
 	talenthr: 'TalentHR',
 	tally: 'Tally',
 	tapfiliate: 'Tapfiliate',
@@ -1798,9 +1828,12 @@ export type AllProviders =
 	| 'godial'
 	| 'gong'
 	| 'googleaddressvalidation'
+	| 'googleadmin'
+	| 'googleads'
 	| 'googleanalytics'
 	| 'googlebigquery'
 	| 'googlecalendar'
+	| 'googlephotos'
 	| 'googleclassroom'
 	| 'googlecloudvision'
 	| 'googlecontacts'
@@ -1809,6 +1842,7 @@ export type AllProviders =
 	| 'googlemaps'
 	| 'googlemeet'
 	| 'googlesheets'
+	| 'googlesearchconsole'
 	| 'googleslides'
 	| 'googletasks'
 	| 'gorgias'
@@ -1834,6 +1868,7 @@ export type AllProviders =
 	| 'honeybadger'
 	| 'honeyhive'
 	| 'hookdeck'
+	| 'hotspotsystem'
 	| 'htmltoimage'
 	| 'hubplanner'
 	| 'hubspot'
@@ -1854,6 +1889,7 @@ export type AllProviders =
 	| 'instagram'
 	| 'instantly'
 	| 'intercom'
+	| 'interzoid'
 	| 'ip2proxy'
 	| 'ip2whois'
 	| 'jigsawstack'
@@ -1868,6 +1904,7 @@ export type AllProviders =
 	| 'kanbanize'
 	| 'keen'
 	| 'keenable'
+	| 'kernel'
 	| 'keyword'
 	| 'kibana'
 	| 'kickbox'
@@ -1886,6 +1923,7 @@ export type AllProviders =
 	| 'launchdarkly'
 	| 'leexi'
 	| 'leiga'
+	| 'lemlist'
 	| 'lemonsqueezy'
 	| 'lever'
 	| 'linear'
@@ -1954,6 +1992,7 @@ export type AllProviders =
 	| 'opengraph'
 	| 'openrouter'
 	| 'opensea'
+	| 'openseo'
 	| 'openweathermap'
 	| 'orbit'
 	| 'oura'
@@ -2089,7 +2128,12 @@ export type AllProviders =
 	| 'square'
 	| 'stackai'
 	| 'stackexchange'
+	| 'stannp'
 	| 'starton'
+	| 'statuscake'
+	| 'storeganise'
+	| 'storerocket'
+	| 'stormboard'
 	| 'stormglass'
 	| 'storyblok'
 	| 'strava'
@@ -2110,6 +2154,7 @@ export type AllProviders =
 	| 'sympla'
 	| 'synthflowai'
 	| 'taggun'
+	| 'tailscale'
 	| 'talenthr'
 	| 'tally'
 	| 'tapfiliate'

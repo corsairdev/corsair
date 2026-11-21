@@ -1,3 +1,4 @@
+import { toFileOutput } from 'corsair/http';
 import type { GoogleSlidesEndpoints } from '..';
 import {
 	fetchDriveBytes,
@@ -385,6 +386,29 @@ export const presentationsCopy: GoogleSlidesEndpoints['presentationsCopy'] =
 			(parsed) => ({ presentationId: parsed.presentationId }),
 		);
 
+/**
+ * Most bytes of an export returned inline to a caller without a host. A host
+ * that keeps files (setFileSink) caps it at its own limit and gets a fileId.
+ */
+const EXPORT_MAX_BYTES = 100_000_000;
+
+/** The deck's Drive name, for the exported file's name; undefined if it can't be read. */
+async function presentationName(
+	ctx: Parameters<GoogleSlidesEndpoints['presentationsExport']>[0],
+	presentationId: string,
+): Promise<string | undefined> {
+	try {
+		const meta = await makeDriveRequest<{ name?: string }>(
+			`/files/${encodeURIComponent(presentationId)}`,
+			ctx,
+			{ query: { fields: 'name', supportsAllDrives: true } },
+		);
+		return meta.name || undefined;
+	} catch {
+		return undefined;
+	}
+}
+
 export const presentationsExport: GoogleSlidesEndpoints['presentationsExport'] =
 	async (ctx, input) =>
 		call(
@@ -406,12 +430,24 @@ export const presentationsExport: GoogleSlidesEndpoints['presentationsExport'] =
 					`/files/${encodeURIComponent(parsed.presentationId)}/export?mimeType=${encodeURIComponent(mimeType)}`,
 					{ accept: mimeType, timeout: 180_000 },
 				);
+				const name = await presentationName(ctx, parsed.presentationId);
+				// The file keeps its own key, data; the rest is core's file output, so
+				// a host that keeps files gets a fileId for a large export instead.
+				const { contentBase64, ...file } = toFileOutput(
+					new Uint8Array(buffer),
+					contentType.split(';')[0] || mimeType,
+					{
+						filename: `${name ?? parsed.presentationId}.${format}`,
+						maxBytes: EXPORT_MAX_BYTES,
+						text: false,
+					},
+				);
 				return {
 					presentationId: parsed.presentationId,
 					format,
 					mimeType: contentType.split(';')[0] ?? mimeType,
-					byteLength: buffer.byteLength,
-					data: buffer.toString('base64'),
+					...file,
+					...(contentBase64 !== undefined ? { data: contentBase64 } : {}),
 				};
 			},
 			(parsed) => ({

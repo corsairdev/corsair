@@ -5,6 +5,7 @@ import { gongRequest } from '../client';
 import type { GongCallsOutputs } from './calls-types';
 import type { GongFamilyContext } from './family-context';
 import { gongCredentials, gongEventPayload } from './family-context';
+import { CALL_MEDIA_MAX_BYTES, gongUploadPart } from './file-input';
 
 function credentials(ctx: GongFamilyContext) {
 	return gongCredentials(ctx);
@@ -104,7 +105,12 @@ export const addCallRecording: GongEndpoints['callsAddCallRecording'] = async (
 		credentials: gongCredentials(ctx),
 		method: 'PUT',
 		path: `/v2/calls/${encodeURIComponent(input.id)}/media`,
-		formData: { mediaFile: input.mediaFile },
+		formData: {
+			mediaFile: await gongUploadPart(input.mediaFile, {
+				maxBytes: CALL_MEDIA_MAX_BYTES,
+				fallbackName: 'recording',
+			}),
+		},
 	});
 	await logEventFromContext(
 		ctx,
