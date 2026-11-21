@@ -412,6 +412,7 @@ export const BaseProviders = [
 	'kontentai',
 	'krakenio',
 	'labs64netlicensing',
+	'laposta',
 	'launchdarkly',
 	'leexi',
 	'leiga',
@@ -1161,6 +1162,7 @@ export const ProviderDisplayNames = {
 	kontentai: 'Kontent.ai',
 	krakenio: 'Kraken.io',
 	labs64netlicensing: 'Labs64 NetLicensing',
+	laposta: 'Laposta',
 	launchdarkly: 'LaunchDarkly',
 	leexi: 'Leexi',
 	leiga: 'Leiga',
@@ -1917,6 +1919,7 @@ export type AllProviders =
 	| 'kontentai'
 	| 'krakenio'
 	| 'labs64netlicensing'
+	| 'laposta'
 	| 'launchdarkly'
 	| 'leexi'
 	| 'leiga'
