@@ -115,7 +115,8 @@ const ocrWebServiceEndpointMeta = {
 	},
 	'ocr.recognize': {
 		riskLevel: 'write',
-		description: 'OCR an image or document via REST processDocument',
+		description:
+			'OCR an image or document via REST processDocument. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof ocrWebServiceEndpointsNested

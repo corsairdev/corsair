@@ -1203,7 +1203,7 @@
     {
       "path": "saperly.api.customVoices.create",
       "shortPath": "customVoices.create",
-      "description": "Upload a custom voice sample",
+      "description": "Upload a custom voice sample. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -1226,7 +1226,8 @@
           {
             "key": "audio",
             "optional": false,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The voice sample audio: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…)."
           },
           {
             "key": "idempotencyKey",

@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { toFileOutput } from 'corsair/http';
 import { assertCarboneSuccess, makeCarboneRequest } from '../client';
 import type { CarboneEndpoints } from '../index';
 import type {
@@ -132,12 +133,31 @@ export const downloadTemplate: CarboneEndpoints['downloadTemplate'] = async (
 		'completed',
 	);
 
+	// The template keeps its own key, content; the rest is core's file output,
+	// so a host that keeps files gets a fileId for a large template instead.
+	// Carbone's client keeps no response headers, so the type is generic.
+	const { contentBase64, ...file } = toFileOutput(
+		new Uint8Array(content),
+		'application/octet-stream',
+		{
+			filename: input.templateId,
+			maxBytes: TEMPLATE_MAX_BYTES,
+			text: false,
+		},
+	);
 	return {
 		templateId: input.templateId,
-		content: content.toString('base64'),
+		...file,
+		...(contentBase64 !== undefined ? { content: contentBase64 } : {}),
 		success: true,
 	} satisfies DownloadTemplateOutput;
 };
+
+/**
+ * Most bytes of a template returned inline to a caller without a host. A host
+ * that keeps files (setFileSink) caps it at its own limit and gets a fileId.
+ */
+const TEMPLATE_MAX_BYTES = 100_000_000;
 
 export const updateTemplate: CarboneEndpoints['updateTemplate'] = async (
 	ctx,

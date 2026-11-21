@@ -1116,7 +1116,7 @@ await corsair.saperly.api.consent.revoke({});
 
 `customVoices.create`
 
-Upload a custom voice sample
+Upload a custom voice sample. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -1131,8 +1131,25 @@ await corsair.saperly.api.customVoices.create({});
 | `name` | `string` | Yes | — |
 | `language` | `string` | Yes | — |
 | `gender` | `male \| female \| neutral` | Yes | — |
-| `audio` | `custom` | Yes | — |
+| `audio` | `string \| object \| custom` | Yes | The voice sample audio: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). |
 | `idempotencyKey` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="audio full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 

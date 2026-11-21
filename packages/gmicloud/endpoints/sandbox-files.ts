@@ -1,10 +1,17 @@
 import { logEventFromContext } from 'corsair/core';
+import { toFileOutput } from 'corsair/http';
 import type { GmicloudEndpoints } from '..';
 import { downloadSandboxFile, makeGmicloudRequest } from '../client';
 import {
 	GmicloudEndpointInputSchemas,
 	GmicloudEndpointOutputSchemas,
 } from './types';
+
+/**
+ * Most bytes of a file returned inline to a caller without a host. A host that
+ * keeps files (setFileSink) caps it at its own limit and gets a fileId instead.
+ */
+const DOWNLOAD_MAX_BYTES = 100_000_000;
 
 export const download: GmicloudEndpoints['sandboxFilesDownload'] = async (
 	ctx,
@@ -19,9 +26,14 @@ export const download: GmicloudEndpoints['sandboxFilesDownload'] = async (
 	);
 	const result = GmicloudEndpointOutputSchemas.sandboxFilesDownload.parse({
 		path,
-		contentType,
+		// Core's file output: base64 inline, or a fileId from a host that keeps
+		// files once the file is too large to return inline.
+		...toFileOutput(new Uint8Array(bytes), contentType, {
+			filename: path.split('/').filter(Boolean).pop(),
+			maxBytes: DOWNLOAD_MAX_BYTES,
+			text: false,
+		}),
 		size: bytes.byteLength,
-		contentBase64: Buffer.from(bytes).toString('base64'),
 	});
 	await logEventFromContext(
 		ctx,

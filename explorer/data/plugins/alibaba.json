@@ -110,6 +110,16 @@
       "shortPath": "video.edit",
       "description": "Start a Wan 2.7 video editing task on an input video",
       "riskLevel": "write",
+      "job": {
+        "idPath": "output.task_id",
+        "status": {
+          "op": "tasks.get",
+          "idArg": "task_id",
+          "statusPath": "output.task_status",
+          "done": ["SUCCEEDED"],
+          "failed": ["FAILED", "CANCELED", "UNKNOWN"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -161,6 +171,16 @@
       "shortPath": "video.imageToVideo",
       "description": "Start a Wan 2.7 image-to-video task from a first frame, first and last frames, or a clip to continue",
       "riskLevel": "write",
+      "job": {
+        "idPath": "output.task_id",
+        "status": {
+          "op": "tasks.get",
+          "idArg": "task_id",
+          "statusPath": "output.task_status",
+          "done": ["SUCCEEDED"],
+          "failed": ["FAILED", "CANCELED", "UNKNOWN"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -212,6 +232,16 @@
       "shortPath": "video.referenceToVideo",
       "description": "Start a Wan 2.7 reference-to-video task from reference images, videos, and voices",
       "riskLevel": "write",
+      "job": {
+        "idPath": "output.task_id",
+        "status": {
+          "op": "tasks.get",
+          "idArg": "task_id",
+          "statusPath": "output.task_status",
+          "done": ["SUCCEEDED"],
+          "failed": ["FAILED", "CANCELED", "UNKNOWN"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -263,6 +293,16 @@
       "shortPath": "video.textToVideo",
       "description": "Start a Wan text-to-video task (Wan 3.0 also takes reference media, files, and links); returns a task id",
       "riskLevel": "write",
+      "job": {
+        "idPath": "output.task_id",
+        "status": {
+          "op": "tasks.get",
+          "idArg": "task_id",
+          "statusPath": "output.task_status",
+          "done": ["SUCCEEDED"],
+          "failed": ["FAILED", "CANCELED", "UNKNOWN"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [

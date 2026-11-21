@@ -14,6 +14,12 @@ const nextConfig: NextConfig = {
 				protocol: 'https',
 				hostname: 'cdn.sanity.io',
 			},
+			// corsair.dev/built-with: each project's screenshot, kept in the awesome-corsair repo.
+			{
+				protocol: 'https',
+				hostname: 'raw.githubusercontent.com',
+				pathname: '/corsairdev/awesome-corsair/main/data/shots/**',
+			},
 		],
 	},
 	async redirects() {

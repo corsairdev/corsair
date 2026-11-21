@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 import {
 	CarboneCategory,
@@ -160,12 +161,18 @@ export const DownloadTemplateInputSchema = z
 	.describe('Input parameters to download a template by ID');
 export type DownloadTemplateInput = z.infer<typeof DownloadTemplateInputSchema>;
 
-export const DownloadTemplateOutputSchema = z
-	.object({
+export const DownloadTemplateOutputSchema = FileOutputSchema.omit({
+	contentBase64: true,
+	text: true,
+})
+	.extend({
 		templateId: z.string().describe('ID of the downloaded template'),
 		content: z
 			.string()
-			.describe('Base64-encoded binary content of the retrieved template file'),
+			.optional()
+			.describe(
+				'Base64-encoded content of the template file. Missing when contentOmitted is set, or when a host kept a file too large to return inline (fileId).',
+			),
 		success: z
 			.boolean()
 			.describe('Indicates if template download was successful'),

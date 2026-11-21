@@ -1,0 +1,69 @@
+displayName: Google Search Console
+description: Query search performance and inspect indexing, mobile usability and rich results through the Google Search Console API.
+domain: search.google.com
+recommendedAuth: oauth_2
+overviewNote: |
+  The Search Console API reports on how Google sees a property: the queries and pages that earn clicks and impressions, what Google knows about a single URL, and the sitemaps submitted for it.
+
+  Calls are made with an OAuth token belonging to an account that has access to the property. The only scope this plugin needs is `https://www.googleapis.com/auth/webmasters`, which covers the reads and the sitemap writes.
+
+  Things to know before you call:
+
+  - **A property is named the way Search Console names it.** `https://example.com/` for a URL-prefix property, or `sc-domain:example.com` for a domain property. Both travel in the path, and the plugin encodes them.
+  - **Dates are Pacific Time.** `startDate` and `endDate` are `YYYY-MM-DD` in the API's own time zone, and the end date is included in the range.
+  - **`rowLimit` is 1 to 25,000, default 1,000.** There is no page token: page with `startRow`, and a `startRow` past the end answers a successful empty page.
+  - **Results are grouped by the dimensions you ask for, sorted by clicks descending.** `ctr` is a fraction, so `0.05` is 5%.
+  - **`HOUR` needs `dataState: 'HOURLY_ALL'`,** and hourly data only goes back 10 days. The plugin refuses the combination without the state rather than letting the API reject it.
+  - **`type` and `searchType` are the same setting.** Send one; the plugin rejects both.
+  - **A sitemap's `feedpath` is a full URL,** not a path, and it is submitted with a PUT that has no body. Google fetches it.
+  - **URL inspection has its own quota:** 2,000 per day and 600 per minute per site. Search Analytics allows 1,200 per minute per site, and a load-quota refusal asks for a 15 minute wait.
+  - **No inbound webhooks.** The API does not send any.
+references:
+  - title: Usage limits, including the per-site quotas for analytics and inspection
+    url: https://developers.google.com/webmaster-tools/limits
+  - title: searchanalytics.query, its dimensions, filters and ranges
+    url: https://developers.google.com/webmaster-tools/v1/searchanalytics/query
+  - title: urlInspection.index.inspect and the inspection result
+    url: https://developers.google.com/webmaster-tools/v1/urlInspection.index/inspect
+examples:
+  read:
+    path: searchanalytics.query
+    title: Read the top queries for a property over a month
+    args:
+      siteUrl: https://example.com/
+      startDate: "2026-10-01"
+      endDate: "2026-10-31"
+      dimensions:
+        - QUERY
+  write:
+    path: sitemaps.submit
+    title: Submit a sitemap
+    args:
+      siteUrl: https://example.com/
+      feedpath: https://example.com/sitemap.xml
+apiExamples:
+  searchanalytics.query:
+    call: "{ siteUrl: 'https://example.com/', startDate: '2026-10-01', endDate: '2026-10-31', dimensions: ['QUERY'], rowLimit: 100 }"
+  sites.list:
+    call: "{}"
+  sites.get:
+    call: "{ siteUrl: 'https://example.com/' }"
+  sites.add:
+    call: "{ siteUrl: 'https://example.com/' }"
+  sites.delete:
+    call: "{ siteUrl: 'https://example.com/' }"
+  sitemaps.list:
+    call: "{ siteUrl: 'https://example.com/' }"
+  sitemaps.get:
+    call: "{ siteUrl: 'https://example.com/', feedpath: 'https://example.com/sitemap.xml' }"
+  sitemaps.submit:
+    call: "{ siteUrl: 'https://example.com/', feedpath: 'https://example.com/sitemap.xml' }"
+  sitemaps.delete:
+    call: "{ siteUrl: 'https://example.com/', feedpath: 'https://example.com/sitemap.xml' }"
+  urlInspection.inspect:
+    call: "{ siteUrl: 'https://example.com/', inspectionUrl: 'https://example.com/pricing' }"
+apiNotes:
+  searchanalytics.query: 'Page with `startRow`; there is no page token. Results are sorted by clicks, descending. The HOUR dimension needs dataState HOURLY_ALL and covers only 10 days.'
+  sites.add: 'Adds a property the account already controls. It does not verify ownership.'
+  sitemaps.submit: '`feedpath` is the sitemap URL; Google fetches it. A PUT with no body.'
+  urlInspection.inspect: 'Its own quota: 2,000 per day and 600 per minute per site.'

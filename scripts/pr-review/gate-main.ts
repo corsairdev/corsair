@@ -127,6 +127,14 @@ const labels = gh([
 	.split('\n')
 	.filter(Boolean);
 
+// The description and draft state are read live too. The event payload keeps
+// the body from when the run was triggered, so a demo attached afterwards
+// still failed R4 on "Re-run failed jobs" (Deepline #2589, Vercel #2550,
+// Litescrape #2627); only a new push or close/reopen picked it up.
+const livePr = JSON.parse(
+	gh(['api', `repos/${repo}/pulls/${pr}`, '--jq', '{body, draft}']),
+) as { body: string | null; draft: boolean };
+
 const plugin = detectPlugin(changedFiles);
 const testFileCounts = Object.fromEntries(
 	touchedPlugins(changedFiles).map((p) => [
@@ -139,8 +147,8 @@ const tests = plugin
 	: { testFileCount: 0, assertionCount: 0 };
 const result = runGate({
 	changedFiles,
-	prBody: (event.pull_request.body as string) ?? '',
-	isDraft: event.pull_request.draft as boolean,
+	prBody: livePr.body ?? '',
+	isDraft: livePr.draft,
 	testFileCount: tests.testFileCount,
 	assertionCount: tests.assertionCount,
 	labels,

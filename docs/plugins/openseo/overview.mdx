@@ -1,0 +1,137 @@
+---
+title: "OpenSEO plugin"
+sidebarTitle: "Overview"
+description: "Open-source SEO platform with 85 operations: keyword research and metrics, live Google SERPs, domain and backlink analysis, rank tracking, local SEO and Google Business Profiles, site audits, AI visibility tracking across ChatGPT, Claude, Gemini and Perplexity, Search Console, Google Analytics, IndexNow and saved reports."
+---
+
+Use **OpenSEO** through Corsair: one client, typed API calls.
+
+Calls go to OpenSEO's hosted MCP server with an `oseo_` API key (OpenSEO &gt; Settings &gt; API keys). Most operations take a `projectId` from `projects.list`. Research lookups spend OpenSEO credits (the reply's `meta.creditsCharged`); `account.whoami` shows the balance. Search Console and Google Analytics operations read the Google accounts connected inside OpenSEO.
+
+**What you get:**
+
+- 85 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/openseo better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/openseo better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/openseo better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/openseo better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { openseo } from '@corsair-dev/openseo';
+
+export const corsair = createCorsair({
+	plugins: [
+		openseo(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the OpenSEO API key before the first call: `pnpm corsair setup --plugin=openseo --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+openseo()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'openseo',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Research keywords**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.openseo.api.keywords.research({
+	projectId: '6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31',
+	seeds: [{ seed: 'coffee subscription' }],
+	resultLimit: 150,
+});
+```
+
+
+**Save keywords to a project**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.openseo.api.keywords.save({
+	projectId: '6f1c2a9e-3b7d-4e58-9a14-2c8b5d7e0f31',
+	keywords: ['coffee subscription', 'best coffee beans'],
+	tags: ['subscriptions'],
+});
+```
+
+
+See the full list on the [API](/plugins/openseo/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/openseo/api">
+    Every `openseo.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

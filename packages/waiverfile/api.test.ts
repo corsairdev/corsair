@@ -86,7 +86,7 @@ describeIfKey('live WaiverFile API', () => {
 		const pdf = await Waivers.pdf(liveContext(), { waiverID });
 
 		expect(pdf.bytes).toBeGreaterThan(0);
-		const bytes = Buffer.from(pdf.content, 'base64');
+		const bytes = Buffer.from(pdf.content ?? '', 'base64');
 		expect(bytes.byteLength).toBe(pdf.bytes);
 		// Every PDF starts with %PDF-.
 		expect(bytes.subarray(0, 5).toString('utf8')).toBe('%PDF-');

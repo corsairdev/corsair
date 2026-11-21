@@ -1,0 +1,3657 @@
+---
+title: "Lemlist API reference"
+sidebarTitle: "API"
+description: "API reference for the Lemlist plugin in Corsair: every `lemlist.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Activities
+
+### deleteRecordingTranscript
+
+`activities.deleteRecordingTranscript`
+
+Delete call recording and transcript of an activity
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.activities.deleteRecordingTranscript({ activityId: 'act_123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `activityId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`activities.list`
+
+Retrieve outreach activities across team or campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.activities.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `v2` | No | — |
+| `type` | `emailsSent \| emailsOpened \| emailsClicked \| emailsReplied \| emailsExternalSent \| emailsExternalReceived \| emailsDone \| emailsIgnored \| emailsBounced \| emailsFailed \| emailsUnsubscribed \| emailsInterested \| emailsNotInterested \| snoozed \| annotated \| aircallDone \| aircallIgnored \| aircallCreated \| aircallEnded \| aircallInterested \| aircallNotInterested \| apiDone \| apiIgnored \| apiInterested \| apiNotInterested \| apiFailed \| apiUnsubscribed \| enrichmentDone \| enrichmentFailed \| enrichmentSkipped \| linkedinVisitDone \| linkedinVisitFailed \| linkedinVisitSkipped \| linkedinCommentLastPostDone \| linkedinCommentLastPostFailed \| linkedinCommentLastPostSkipped \| linkedinFollowDone \| linkedinFollowFailed \| linkedinFollowSkipped \| linkedinLikeLastPostDone \| linkedinLikeLastPostNoPost \| linkedinLikeLastPostFailed \| linkedinLikeLastPostSkipped \| linkedinInviteDone \| linkedinEndorseDone \| linkedinEndorseFailed \| linkedinEndorseSkipped \| linkedinSent \| linkedinInMailSent \| linkedinOpened \| linkedinInviteAccepted \| linkedinInviteFailed \| linkedinSendFailed \| linkedinInMailFailed \| linkedinInMailSkipped \| linkedinVoiceNoteDone \| linkedinVoiceNoteFailed \| linkedinWithdrawInvitationDone \| linkedinWithdrawInvitationFailed \| linkedinVoiceNoteReplied \| whatsappMessageSent \| whatsappMessageDelivered \| whatsappMessageOpened \| whatsappReplied \| whatsappMessageFailed \| whatsappDone \| whatsappIgnored \| whatsappVoiceNoteSent \| whatsappVoiceNoteDelivered \| whatsappVoiceNoteOpened \| whatsappVoiceNoteReplied \| whatsappVoiceNoteFailed \| whatsappVoiceNoteIgnored \| smsSent \| smsDone \| smsDelivered \| smsReplied \| smsIgnored \| smsFailed \| aiVariableDone \| aiVariableFailed \| linkedinReplied \| linkedinInterested \| linkedinNotInterested \| linkedinDone \| linkedinIgnored \| manualDone \| manualIgnored \| manualInterested \| manualNotInterested \| manualUnsubscribed \| scheduleCancelled \| paused \| stopped \| resumed \| skipped \| meetingBooked \| conditionChosen \| conditionalFailed \| sendToAnotherCampaign \| manualEmailQueued \| manualLinkedinSendQueued \| manualLinkedinVoiceNoteQueued \| manualLinkedinInviteQueued \| manualLinkedinCommentLastPostQueued \| manualWhatsappMessageQueued \| manualWhatsappVoiceNoteQueued \| outOfOffice \| mailinblackDetected \| entityUnsubscribed \| variableUnsubscribed \| entitySubscribed \| variableSubscribed` | No | — |
+| `campaignId` | `string` | No | — |
+| `isFirst` | `boolean` | No | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `leadId` | `string` | No | — |
+| `minDate` | `string` | No | — |
+| `maxDate` | `string` | No | — |
+| `startDate` | `string` | No | — |
+| `endDate` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  type: emailsSent | emailsOpened | emailsClicked | emailsReplied | emailsExternalSent | emailsExternalReceived | emailsDone | emailsIgnored | emailsBounced | emailsFailed | emailsUnsubscribed | emailsInterested | emailsNotInterested | snoozed | annotated | aircallDone | aircallIgnored | aircallCreated | aircallEnded | aircallInterested | aircallNotInterested | apiDone | apiIgnored | apiInterested | apiNotInterested | apiFailed | apiUnsubscribed | enrichmentDone | enrichmentFailed | enrichmentSkipped | linkedinVisitDone | linkedinVisitFailed | linkedinVisitSkipped | linkedinCommentLastPostDone | linkedinCommentLastPostFailed | linkedinCommentLastPostSkipped | linkedinFollowDone | linkedinFollowFailed | linkedinFollowSkipped | linkedinLikeLastPostDone | linkedinLikeLastPostNoPost | linkedinLikeLastPostFailed | linkedinLikeLastPostSkipped | linkedinInviteDone | linkedinEndorseDone | linkedinEndorseFailed | linkedinEndorseSkipped | linkedinSent | linkedinInMailSent | linkedinOpened | linkedinInviteAccepted | linkedinInviteFailed | linkedinSendFailed | linkedinInMailFailed | linkedinInMailSkipped | linkedinVoiceNoteDone | linkedinVoiceNoteFailed | linkedinWithdrawInvitationDone | linkedinWithdrawInvitationFailed | linkedinVoiceNoteReplied | whatsappMessageSent | whatsappMessageDelivered | whatsappMessageOpened | whatsappReplied | whatsappMessageFailed | whatsappDone | whatsappIgnored | whatsappVoiceNoteSent | whatsappVoiceNoteDelivered | whatsappVoiceNoteOpened | whatsappVoiceNoteReplied | whatsappVoiceNoteFailed | whatsappVoiceNoteIgnored | smsSent | smsDone | smsDelivered | smsReplied | smsIgnored | smsFailed | aiVariableDone | aiVariableFailed | linkedinReplied | linkedinInterested | linkedinNotInterested | linkedinDone | linkedinIgnored | manualDone | manualIgnored | manualInterested | manualNotInterested | manualUnsubscribed | scheduleCancelled | paused | stopped | resumed | skipped | meetingBooked | conditionChosen | conditionalFailed | sendToAnotherCampaign | manualEmailQueued | manualLinkedinSendQueued | manualLinkedinVoiceNoteQueued | manualLinkedinInviteQueued | manualLinkedinCommentLastPostQueued | manualWhatsappMessageQueued | manualWhatsappVoiceNoteQueued | outOfOffice | mailinblackDetected | entityUnsubscribed | variableUnsubscribed | entitySubscribed | variableSubscribed,
+  userId?: string,
+  userName?: string,
+  bot?: boolean,
+  createdAt?: string,
+  campaignId?: string,
+  campaignName?: string,
+  leadId?: string,
+  leadEmail?: string,
+  leadFirstName?: string,
+  leadLastName?: string,
+  leadCompanyName?: string,
+  contactId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Campaigns
+
+### addAbmLeads
+
+`campaigns.addAbmLeads`
+
+Add People Database contacts to an ABM campaign
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.campaigns.addAbmLeads({ campaignId: 'cam_1234567890abcdef', leadIds: ['123456'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `leadIds` | `string[]` | Yes | — |
+
+Requires the ABM beta. Input IDs are People Database IDs, and existing contacts on another company may be skipped.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  addedCount: number,
+  alreadyInCampaignCount: number,
+  skipped: {
+    leadId: string,
+    code: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### archive
+
+`campaigns.archive`
+
+Archive a campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.campaigns.archive({ campaignId: 'cam_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+
+
+
+---
+
+### create
+
+`campaigns.create`
+
+Create a new campaign with schedule and settings
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.campaigns.create({ name: 'Outreach Campaign' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `timezone` | `string` | No | — |
+| `emoji` | `string` | No | — |
+| `autoReview` | `boolean` | No | — |
+| `autoReviewConditions` | `(deliverable \| risky \| undeliverable \| unverified)[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `emoji` | `string` | No | — |
+| `autoReview` | `boolean` | No | — |
+| `sendUserIds` | `string[]` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  campaignId: string,
+  timezone: string | null,
+  senderStrategy: string,
+  general: {
+    labels: {
+      id: string,
+      name: string
+    }[],
+    sequenceId: string,
+    sequenceSharing: boolean,
+    unsubscribeMode: variable | contact,
+    addUnsubscribeLink: boolean,
+    unsubscribeLinkText: string
+  },
+  senders: {
+    espMatching: boolean,
+    espRouting: {
+      gmail?: any | gmail | outlook | other,
+      outlook?: any | gmail | outlook | other,
+      other?: any | gmail | outlook | other
+    } | null
+  },
+  schedule: {
+    isTimezoneBasedSchedule: boolean,
+    timezoneBasedScheduleId: string | null,
+    scheduleIds: string[],
+    holidayCountries: (US | FR | GB)[],
+    sendingPattern?: {
+      newLeadsPriorityRatio: number
+    }
+  },
+  tracking: {
+    trackOpens: boolean,
+    trackClicks: boolean,
+    trackReplies: boolean
+  },
+  automation: {
+    autoReview: boolean,
+    autoReviewConditions: (deliverable | risky | unknown | undeliverable | unverified)[]
+  },
+  onReplied: {
+    createNewTask: boolean,
+    campaignProgress: continue | pause | stop,
+    propagateProgressToCompany: boolean,
+    disableOutOfOffice: boolean
+  },
+  onLinkClicked: {
+    createNewTask: boolean,
+    campaignProgress: continue | pause | stop,
+    propagateProgressToCompany: boolean,
+    specificLinks: string[]
+  },
+  onMeetingBooked: {
+    campaignProgress: continue | pause | stop,
+    propagateProgressToCompany: boolean
+  },
+  aiFeatures: {
+    scoreReplies: boolean,
+    onInterestedReply: {
+      enabled: boolean,
+      pauseAllCampaignsForLead: boolean,
+      pauseCampaignForCompany: boolean,
+      pauseAllCampaignsForCompany: boolean
+    },
+    onNotInterestedReply: {
+      enabled: boolean,
+      pauseAllCampaignsForLead: boolean,
+      pauseCampaignForCompany: boolean,
+      pauseAllCampaignsForCompany: boolean
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### duplicate
+
+`campaigns.duplicate`
+
+Duplicate an existing campaign with sequences and schedules
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.campaigns.duplicate({ campaignId: 'cam_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `emoji` | `string` | No | — |
+| `autoReview` | `boolean` | No | — |
+| `sendUserIds` | `string[]` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  campaignId: string,
+  timezone: string | null,
+  senderStrategy: string,
+  general: {
+    labels: {
+      id: string,
+      name: string
+    }[],
+    sequenceId: string,
+    sequenceSharing: boolean,
+    unsubscribeMode: variable | contact,
+    addUnsubscribeLink: boolean,
+    unsubscribeLinkText: string
+  },
+  senders: {
+    espMatching: boolean,
+    espRouting: {
+      gmail?: any | gmail | outlook | other,
+      outlook?: any | gmail | outlook | other,
+      other?: any | gmail | outlook | other
+    } | null
+  },
+  schedule: {
+    isTimezoneBasedSchedule: boolean,
+    timezoneBasedScheduleId: string | null,
+    scheduleIds: string[],
+    holidayCountries: (US | FR | GB)[],
+    sendingPattern?: {
+      newLeadsPriorityRatio: number
+    }
+  },
+  tracking: {
+    trackOpens: boolean,
+    trackClicks: boolean,
+    trackReplies: boolean
+  },
+  automation: {
+    autoReview: boolean,
+    autoReviewConditions: (deliverable | risky | unknown | undeliverable | unverified)[]
+  },
+  onReplied: {
+    createNewTask: boolean,
+    campaignProgress: continue | pause | stop,
+    propagateProgressToCompany: boolean,
+    disableOutOfOffice: boolean
+  },
+  onLinkClicked: {
+    createNewTask: boolean,
+    campaignProgress: continue | pause | stop,
+    propagateProgressToCompany: boolean,
+    specificLinks: string[]
+  },
+  onMeetingBooked: {
+    campaignProgress: continue | pause | stop,
+    propagateProgressToCompany: boolean
+  },
+  aiFeatures: {
+    scoreReplies: boolean,
+    onInterestedReply: {
+      enabled: boolean,
+      pauseAllCampaignsForLead: boolean,
+      pauseCampaignForCompany: boolean,
+      pauseAllCampaignsForCompany: boolean
+    },
+    onNotInterestedReply: {
+      enabled: boolean,
+      pauseAllCampaignsForLead: boolean,
+      pauseCampaignForCompany: boolean,
+      pauseAllCampaignsForCompany: boolean
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### exportLeads
+
+`campaigns.exportLeads`
+
+Export leads from campaign with state filtering
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.campaigns.exportLeads({ campaignId: 'cam_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `format` | `json \| csv` | No | — |
+
+JSON output is an array; CSV output is returned as text. Use documented comma-separated state filters.
+
+
+
+**Output:** `Record<string, string \| number \| boolean \| null>[] \| string`
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Retrieve details of a specific campaign by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.campaigns.get({ campaignId: 'cam_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `updatedAt` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `emoji` | `string` | No | — |
+| `autoReview` | `boolean` | No | — |
+| `sendUserIds` | `string[]` | No | — |
+| `settings` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  campaignId: string,
+  timezone: string | null,
+  senderStrategy: string,
+  general: {
+    labels: {
+      id: string,
+      name: string
+    }[],
+    sequenceId: string,
+    sequenceSharing: boolean,
+    unsubscribeMode: variable | contact,
+    addUnsubscribeLink: boolean,
+    unsubscribeLinkText: string
+  },
+  senders: {
+    espMatching: boolean,
+    espRouting: {
+      gmail?: any | gmail | outlook | other,
+      outlook?: any | gmail | outlook | other,
+      other?: any | gmail | outlook | other
+    } | null
+  },
+  schedule: {
+    isTimezoneBasedSchedule: boolean,
+    timezoneBasedScheduleId: string | null,
+    scheduleIds: string[],
+    holidayCountries: (US | FR | GB)[],
+    sendingPattern?: {
+      newLeadsPriorityRatio: number
+    }
+  },
+  tracking: {
+    trackOpens: boolean,
+    trackClicks: boolean,
+    trackReplies: boolean
+  },
+  automation: {
+    autoReview: boolean,
+    autoReviewConditions: (deliverable | risky | unknown | undeliverable | unverified)[]
+  },
+  onReplied: {
+    createNewTask: boolean,
+    campaignProgress: continue | pause | stop,
+    propagateProgressToCompany: boolean,
+    disableOutOfOffice: boolean
+  },
+  onLinkClicked: {
+    createNewTask: boolean,
+    campaignProgress: continue | pause | stop,
+    propagateProgressToCompany: boolean,
+    specificLinks: string[]
+  },
+  onMeetingBooked: {
+    campaignProgress: continue | pause | stop,
+    propagateProgressToCompany: boolean
+  },
+  aiFeatures: {
+    scoreReplies: boolean,
+    onInterestedReply: {
+      enabled: boolean,
+      pauseAllCampaignsForLead: boolean,
+      pauseCampaignForCompany: boolean,
+      pauseAllCampaignsForCompany: boolean
+    },
+    onNotInterestedReply: {
+      enabled: boolean,
+      pauseAllCampaignsForLead: boolean,
+      pauseCampaignForCompany: boolean,
+      pauseAllCampaignsForCompany: boolean
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBatchStats
+
+`campaigns.getBatchStats`
+
+Retrieve performance statistics for multiple campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.campaigns.getBatchStats({ campaignIds: ['cam_1234567890abcdef'], startDate: '2025-01-01T00:00:00.000Z', endDate: '2025-01-31T23:59:59.999Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignIds` | `string[]` | Yes | — |
+| `startDate` | `string` | Yes | — |
+| `endDate` | `string` | Yes | — |
+| `sendUser` | `string` | No | — |
+| `ABSelected` | `A \| B` | No | — |
+| `channels` | `(email \| linkedin \| others)[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `errors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  campaignId?: string,
+  nbLeads?: number,
+  nbLeadsLaunched?: number,
+  nbLeadsReached?: number,
+  nbLeadsOpened?: number,
+  nbLeadsInteracted?: number,
+  nbLeadsAnswered?: number,
+  nbLeadsInterested?: number,
+  nbLeadsNotInterested?: number,
+  nbLeadsUnsubscribed?: number,
+  nbLeadsInterrupted?: number,
+  messagesSent?: number,
+  messagesNotSent?: number,
+  messagesBounced?: number,
+  delivered?: number,
+  opened?: number,
+  clicked?: number,
+  replied?: number,
+  invitationAccepted?: number,
+  meetingBooked?: number,
+  perChannel?: {
+    email?: {
+      sent?: number,
+      delivered?: number,
+      notDelivered?: number,
+      opened?: number,
+      clicked?: number,
+      replied?: number,
+      bounced?: number,
+      unsubscribed?: number
+    },
+    linkedin?: {
+      sent?: number,
+      delivered?: number,
+      notDelivered?: number,
+      opened?: number,
+      replied?: number,
+      invitationAccepted?: number,
+      breakdown?: {
+        sent: {
+          messages: number,
+          inMails: number,
+          voiceNotes: number
+        },
+        notDelivered: {
+          messages: number,
+          inMails: number,
+          voiceNotes: number
+        }
+      }
+    },
+    sms?: {
+      sent?: number,
+      delivered?: number,
+      notDelivered?: number,
+      replied?: number
+    },
+    whatsapp?: {
+      sent?: number,
+      delivered?: number,
+      notDelivered?: number,
+      opened?: number,
+      replied?: number
+    },
+    others?: {
+      unsubscribed?: number,
+      interested?: number,
+      notInterested?: number
+    }
+  },
+  steps?: {
+    index?: number,
+    sequenceId?: string,
+    sequenceStep?: number,
+    abTest?: string,
+    taskType?: email | linkedinVisit | linkedinInvite | linkedinSend | phone | manual | conditional,
+    conditionLabel?: string,
+    invited?: number,
+    invitationAccepted?: number,
+    sent?: number,
+    delivered?: number,
+    opened?: number,
+    clicked?: number,
+    replied?: number,
+    notDelivered?: number,
+    bounced?: number,
+    unsubscribed?: number
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  campaignId: string,
+  error: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getExportStatus
+
+`campaigns.getExportStatus`
+
+Check status of an asynchronous campaign export
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.campaigns.getExportStatus({ campaignId: 'cam_1234567890abcdef', exportId: 'axp_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `exportId` | `string` | Yes | — |
+
+Export status is retained for two hours; an export still pending after two hours answers 404, so stop polling and report it as failed. Files are available for 24 hours after completion.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `status` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  _id?: string,
+  id?: string,
+  teamId?: string,
+  campaignId?: string,
+  campaignName?: string,
+  status: pending | done | error,
+  startedAt?: string,
+  endedAt?: string,
+  progress?: number,
+  total?: number,
+  url?: string,
+  fileSize?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getReports
+
+`campaigns.getReports`
+
+Retrieve aggregated reports for one or multiple campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.campaigns.getReports({ campaignIds: 'cam_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignIds` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  name?: string,
+  totalCount?: number,
+  reviewedCount?: number,
+  inSequenceLeadCount?: number,
+  state?: string,
+  status?: string,
+  emailsSent?: number,
+  emailsOpened?: number,
+  emailsClicked?: number,
+  emailsReplied?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSettings
+
+`campaigns.getSettings`
+
+Retrieve all settings of a campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.campaigns.getSettings({ campaignId: 'cam_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+Requires the Lemlist Email Pro plan or higher.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `timezone` | `string \| null` | Yes | — |
+| `senderStrategy` | `string` | Yes | — |
+| `general` | `object` | Yes | — |
+| `senders` | `object` | Yes | — |
+| `schedule` | `object` | Yes | — |
+| `tracking` | `object` | Yes | — |
+| `automation` | `object` | Yes | — |
+| `onReplied` | `object` | Yes | — |
+| `onLinkClicked` | `object` | Yes | — |
+| `onMeetingBooked` | `object` | Yes | — |
+| `aiFeatures` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="general full type">
+
+```ts
+{
+  labels: {
+    id: string,
+    name: string
+  }[],
+  sequenceId: string,
+  sequenceSharing: boolean,
+  unsubscribeMode: variable | contact,
+  addUnsubscribeLink: boolean,
+  unsubscribeLinkText: string
+}
+```
+</Accordion>
+
+<Accordion title="senders full type">
+
+```ts
+{
+  espMatching: boolean,
+  espRouting: {
+    gmail?: any | gmail | outlook | other,
+    outlook?: any | gmail | outlook | other,
+    other?: any | gmail | outlook | other
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="schedule full type">
+
+```ts
+{
+  isTimezoneBasedSchedule: boolean,
+  timezoneBasedScheduleId: string | null,
+  scheduleIds: string[],
+  holidayCountries: (US | FR | GB)[],
+  sendingPattern?: {
+    newLeadsPriorityRatio: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="tracking full type">
+
+```ts
+{
+  trackOpens: boolean,
+  trackClicks: boolean,
+  trackReplies: boolean
+}
+```
+</Accordion>
+
+<Accordion title="automation full type">
+
+```ts
+{
+  autoReview: boolean,
+  autoReviewConditions: (deliverable | risky | unknown | undeliverable | unverified)[]
+}
+```
+</Accordion>
+
+<Accordion title="onReplied full type">
+
+```ts
+{
+  createNewTask: boolean,
+  campaignProgress: continue | pause | stop,
+  propagateProgressToCompany: boolean,
+  disableOutOfOffice: boolean
+}
+```
+</Accordion>
+
+<Accordion title="onLinkClicked full type">
+
+```ts
+{
+  createNewTask: boolean,
+  campaignProgress: continue | pause | stop,
+  propagateProgressToCompany: boolean,
+  specificLinks: string[]
+}
+```
+</Accordion>
+
+<Accordion title="onMeetingBooked full type">
+
+```ts
+{
+  campaignProgress: continue | pause | stop,
+  propagateProgressToCompany: boolean
+}
+```
+</Accordion>
+
+<Accordion title="aiFeatures full type">
+
+```ts
+{
+  scoreReplies: boolean,
+  onInterestedReply: {
+    enabled: boolean,
+    pauseAllCampaignsForLead: boolean,
+    pauseCampaignForCompany: boolean,
+    pauseAllCampaignsForCompany: boolean
+  },
+  onNotInterestedReply: {
+    enabled: boolean,
+    pauseAllCampaignsForLead: boolean,
+    pauseCampaignForCompany: boolean,
+    pauseAllCampaignsForCompany: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStats
+
+`campaigns.getStats`
+
+Retrieve performance statistics for a specific campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.campaigns.getStats({ campaignId: 'cam_1234567890abcdef', startDate: '2025-01-01T00:00:00.000Z', endDate: '2025-01-31T23:59:59.999Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `startDate` | `string` | Yes | — |
+| `endDate` | `string` | Yes | — |
+| `sendUser` | `string` | No | — |
+| `ABSelected` | `A \| B` | No | — |
+| `channels` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | No | — |
+| `nbLeads` | `number` | No | — |
+| `nbLeadsLaunched` | `number` | No | — |
+| `nbLeadsReached` | `number` | No | — |
+| `nbLeadsOpened` | `number` | No | — |
+| `nbLeadsInteracted` | `number` | No | — |
+| `nbLeadsAnswered` | `number` | No | — |
+| `nbLeadsInterested` | `number` | No | — |
+| `nbLeadsNotInterested` | `number` | No | — |
+| `nbLeadsUnsubscribed` | `number` | No | — |
+| `nbLeadsInterrupted` | `number` | No | — |
+| `messagesSent` | `number` | No | — |
+| `messagesNotSent` | `number` | No | — |
+| `messagesBounced` | `number` | No | — |
+| `delivered` | `number` | No | — |
+| `opened` | `number` | No | — |
+| `clicked` | `number` | No | — |
+| `replied` | `number` | No | — |
+| `invitationAccepted` | `number` | No | — |
+| `meetingBooked` | `number` | No | — |
+| `perChannel` | `object` | No | — |
+| `steps` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="perChannel full type">
+
+```ts
+{
+  email?: {
+    sent?: number,
+    delivered?: number,
+    notDelivered?: number,
+    opened?: number,
+    clicked?: number,
+    replied?: number,
+    bounced?: number,
+    unsubscribed?: number
+  },
+  linkedin?: {
+    sent?: number,
+    delivered?: number,
+    notDelivered?: number,
+    opened?: number,
+    replied?: number,
+    invitationAccepted?: number,
+    breakdown?: {
+      sent: {
+        messages: number,
+        inMails: number,
+        voiceNotes: number
+      },
+      notDelivered: {
+        messages: number,
+        inMails: number,
+        voiceNotes: number
+      }
+    }
+  },
+  sms?: {
+    sent?: number,
+    delivered?: number,
+    notDelivered?: number,
+    replied?: number
+  },
+  whatsapp?: {
+    sent?: number,
+    delivered?: number,
+    notDelivered?: number,
+    opened?: number,
+    replied?: number
+  },
+  others?: {
+    unsubscribed?: number,
+    interested?: number,
+    notInterested?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="steps full type">
+
+```ts
+{
+  index?: number,
+  sequenceId?: string,
+  sequenceStep?: number,
+  abTest?: string,
+  taskType?: email | linkedinVisit | linkedinInvite | linkedinSend | phone | manual | conditional,
+  conditionLabel?: string,
+  invited?: number,
+  invitationAccepted?: number,
+  sent?: number,
+  delivered?: number,
+  opened?: number,
+  clicked?: number,
+  replied?: number,
+  notDelivered?: number,
+  bounced?: number,
+  unsubscribed?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getStatutes
+
+`campaigns.getStatutes`
+
+Retrieve validation statutes and launch blockers for a campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.campaigns.getStatutes({ campaignId: 'cam_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `status` | `string` | Yes | — |
+| `statutes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="statutes full type">
+
+```ts
+{
+  type: issue | information,
+  level: 1 | 2 | 3,
+  message: string,
+  category?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+Retrieve a paginated list of all campaigns in team
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.campaigns.list({ limit: 10, version: 'v2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `version` | `v2` | No | — |
+| `page` | `number` | No | — |
+| `sortBy` | `createdAt` | No | — |
+| `sortOrder` | `asc \| desc` | No | — |
+| `status` | `running \| draft \| archived \| ended \| paused \| errors` | No | — |
+| `createdBy` | `string` | No | — |
+
+Returns one page as &#123; campaigns, pagination &#125;; use page and limit to walk the rest.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaigns` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="campaigns full type">
+
+```ts
+{
+  _id: string,
+  name: string,
+  status?: string,
+  createdAt?: string,
+  updatedAt?: string,
+  timezone?: string,
+  emoji?: string,
+  autoReview?: boolean,
+  sendUserIds?: string[],
+  settings?: {
+    campaignId: string,
+    timezone: string | null,
+    senderStrategy: string,
+    general: {
+      labels: {
+        id: string,
+        name: string
+      }[],
+      sequenceId: string,
+      sequenceSharing: boolean,
+      unsubscribeMode: variable | contact,
+      addUnsubscribeLink: boolean,
+      unsubscribeLinkText: string
+    },
+    senders: {
+      espMatching: boolean,
+      espRouting: {
+        gmail?: any | gmail | outlook | other,
+        outlook?: any | gmail | outlook | other,
+        other?: any | gmail | outlook | other
+      } | null
+    },
+    schedule: {
+      isTimezoneBasedSchedule: boolean,
+      timezoneBasedScheduleId: string | null,
+      scheduleIds: string[],
+      holidayCountries: (US | FR | GB)[],
+      sendingPattern?: {
+        newLeadsPriorityRatio: number
+      }
+    },
+    tracking: {
+      trackOpens: boolean,
+      trackClicks: boolean,
+      trackReplies: boolean
+    },
+    automation: {
+      autoReview: boolean,
+      autoReviewConditions: (deliverable | risky | unknown | undeliverable | unverified)[]
+    },
+    onReplied: {
+      createNewTask: boolean,
+      campaignProgress: continue | pause | stop,
+      propagateProgressToCompany: boolean,
+      disableOutOfOffice: boolean
+    },
+    onLinkClicked: {
+      createNewTask: boolean,
+      campaignProgress: continue | pause | stop,
+      propagateProgressToCompany: boolean,
+      specificLinks: string[]
+    },
+    onMeetingBooked: {
+      campaignProgress: continue | pause | stop,
+      propagateProgressToCompany: boolean
+    },
+    aiFeatures: {
+      scoreReplies: boolean,
+      onInterestedReply: {
+        enabled: boolean,
+        pauseAllCampaignsForLead: boolean,
+        pauseCampaignForCompany: boolean,
+        pauseAllCampaignsForCompany: boolean
+      },
+      onNotInterestedReply: {
+        enabled: boolean,
+        pauseAllCampaignsForLead: boolean,
+        pauseCampaignForCompany: boolean,
+        pauseAllCampaignsForCompany: boolean
+      }
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  totalRecords?: number,
+  currentPage?: number,
+  nextPage?: number,
+  totalPage?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pause
+
+`campaigns.pause`
+
+Pause a running campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.campaigns.pause({ campaignId: 'cam_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+
+
+
+---
+
+### setExportEmail
+
+`campaigns.setExportEmail`
+
+Email the campaign export download link to an address when the export completes
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.campaigns.setExportEmail({ campaignId: 'cam_1234567890abcdef', exportId: 'axp_1234567890abcdef', email: 'user@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `exportId` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+
+Lemlist emails the export's download link to this address when the export completes, so only use an address the account owner chose.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `status` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  _id?: string,
+  id?: string,
+  teamId?: string,
+  campaignId?: string,
+  campaignName?: string,
+  status: pending | done | error,
+  startedAt?: string,
+  endedAt?: string,
+  progress?: number,
+  total?: number,
+  url?: string,
+  fileSize?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### skipStepForEveryone
+
+`campaigns.skipStepForEveryone`
+
+Skip one sequence step for every lead in campaign
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.campaigns.skipStepForEveryone({ campaignId: 'cam_1234567890abcdef', stepId: 'stp_123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+
+A skipped step cannot be restored. Condition steps are not skippable.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skipped` | `boolean` | Yes | — |
+
+
+
+---
+
+### skipStepForLeads
+
+`campaigns.skipStepForLeads`
+
+Skip one sequence step for specific leads in campaign
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.campaigns.skipStepForLeads({ campaignId: 'cam_1234567890abcdef', stepId: 'stp_123456', leads: ['lea_123456'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+| `leads` | `string[]` | Yes | — |
+
+Accepts up to 100 lead IDs or emails per request; the deprecated single-lead operation remains available at leads.skipStep.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total` | `number` | Yes | — |
+| `skipped` | `number` | Yes | — |
+| `alreadySkipped` | `number` | Yes | — |
+| `notFound` | `string[]` | Yes | — |
+| `results` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  lead: string,
+  status: skipped | already_skipped | not_found
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`campaigns.start`
+
+Resume a paused campaign and allow its outreach messages to send
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.campaigns.start({ campaignId: 'cam_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+
+
+
+---
+
+### startExport
+
+`campaigns.startExport`
+
+Initiate asynchronous export of campaign statistics
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.campaigns.startExport({ campaignId: 'cam_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+Starts an asynchronous export. Poll the returned export ID until status is no longer pending; the download URL expires after 24 hours.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | No | — |
+| `id` | `string` | No | — |
+| `teamId` | `string` | No | — |
+| `campaignId` | `string` | No | — |
+| `campaignName` | `string` | No | — |
+| `status` | `pending \| done \| error` | Yes | — |
+| `startedAt` | `string` | No | — |
+| `endedAt` | `string` | No | — |
+| `progress` | `number` | No | — |
+| `total` | `number` | No | — |
+| `url` | `string` | No | — |
+| `fileSize` | `number` | No | — |
+
+
+
+---
+
+### unarchive
+
+`campaigns.unarchive`
+
+Restore an archived campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.campaigns.unarchive({ campaignId: 'cam_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `archived` | `boolean` | No | — |
+
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Update settings and configuration of a campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.campaigns.update({ campaignId: 'cam_1234567890abcdef', name: 'Updated Campaign Name' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `emoji` | `string` | No | — |
+| `sendUserIds` | `string[]` | No | — |
+| `stopOnEmailReplied` | `boolean` | No | — |
+| `stopOnMeetingBooked` | `boolean` | No | — |
+| `stopOnLinkClicked` | `boolean` | No | — |
+| `leadsPausedByInterest` | `boolean` | No | — |
+| `opportunityReplied` | `boolean` | No | — |
+| `opportunityClicked` | `boolean` | No | — |
+| `autoLeadInterest` | `boolean` | No | — |
+| `disableTrackOpen` | `boolean` | No | — |
+| `disableTrackClick` | `boolean` | No | — |
+| `disableTrackReply` | `boolean` | No | — |
+| `disableOutOfOffice` | `boolean` | No | — |
+| `sequenceSharing` | `boolean` | No | — |
+| `stopOnLinkClickedFilter` | `string` | No | — |
+| `autoReview` | `boolean` | No | — |
+| `autoReviewConditions` | `(deliverable \| risky \| undeliverable \| unverified)[]` | No | — |
+| `aiFeatures` | `object` | No | — |
+| `tracking` | `object` | No | — |
+| `onReplied` | `object` | No | — |
+| `onLinkClicked` | `object` | No | — |
+| `onMeetingBooked` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="aiFeatures full type">
+
+```ts
+{
+  scoreReplies?: boolean,
+  onInterestedReply?: {
+    enabled?: boolean,
+    pauseAllCampaignsForLead?: boolean,
+    pauseCampaignForCompany?: boolean,
+    pauseAllCampaignsForCompany?: boolean
+  },
+  onNotInterestedReply?: {
+    enabled?: boolean,
+    pauseAllCampaignsForLead?: boolean,
+    pauseCampaignForCompany?: boolean,
+    pauseAllCampaignsForCompany?: boolean
+  }
+}
+```
+</Accordion>
+
+<Accordion title="tracking full type">
+
+```ts
+{
+  trackOpens?: boolean,
+  trackClicks?: boolean,
+  trackReplies?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="onReplied full type">
+
+```ts
+{
+  createNewTask?: boolean,
+  campaignProgress?: continue | pause | stop,
+  propagateProgressToCompany?: boolean,
+  disableOutOfOffice?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="onLinkClicked full type">
+
+```ts
+{
+  createNewTask?: boolean,
+  campaignProgress?: continue | pause | stop,
+  propagateProgressToCompany?: boolean,
+  specificLinks?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="onMeetingBooked full type">
+
+```ts
+{
+  campaignProgress?: continue | pause | stop,
+  propagateProgressToCompany?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `emoji` | `string` | No | — |
+| `sendUsers` | `object[]` | No | — |
+| `stopOnEmailReplied` | `boolean` | No | — |
+| `stopOnMeetingBooked` | `boolean` | No | — |
+| `stopOnLinkClicked` | `boolean` | No | — |
+| `leadsPausedByInterest` | `boolean` | No | — |
+| `opportunityReplied` | `boolean` | No | — |
+| `opportunityClicked` | `boolean` | No | — |
+| `autoLeadInterest` | `boolean` | No | — |
+| `disableTrackOpen` | `boolean` | No | — |
+| `disableTrackClick` | `boolean` | No | — |
+| `disableTrackReply` | `boolean` | No | — |
+| `disableOutOfOffice` | `boolean` | No | — |
+| `sequenceSharing` | `boolean` | No | — |
+| `stopOnLinkClickedFilter` | `string` | No | — |
+| `aiFeatures` | `object` | No | — |
+| `tracking` | `object` | No | — |
+| `onReplied` | `object` | No | — |
+| `onLinkClicked` | `object` | No | — |
+| `onMeetingBooked` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sendUsers full type">
+
+```ts
+{
+  id: string,
+  mailboxes?: {
+    sendUserMailboxId: string,
+    email: string
+  }[],
+  phoneNumbers?: string[],
+  whatsappAccountIds?: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="aiFeatures full type">
+
+```ts
+{
+  scoreReplies: boolean,
+  onInterestedReply: {
+    enabled: boolean,
+    pauseAllCampaignsForLead: boolean,
+    pauseCampaignForCompany: boolean,
+    pauseAllCampaignsForCompany: boolean
+  },
+  onNotInterestedReply: {
+    enabled: boolean,
+    pauseAllCampaignsForLead: boolean,
+    pauseCampaignForCompany: boolean,
+    pauseAllCampaignsForCompany: boolean
+  }
+}
+```
+</Accordion>
+
+<Accordion title="tracking full type">
+
+```ts
+{
+  trackOpens: boolean,
+  trackClicks: boolean,
+  trackReplies: boolean
+}
+```
+</Accordion>
+
+<Accordion title="onReplied full type">
+
+```ts
+{
+  createNewTask: boolean,
+  campaignProgress: continue | pause | stop,
+  propagateProgressToCompany: boolean,
+  disableOutOfOffice: boolean
+}
+```
+</Accordion>
+
+<Accordion title="onLinkClicked full type">
+
+```ts
+{
+  createNewTask: boolean,
+  campaignProgress: continue | pause | stop,
+  propagateProgressToCompany: boolean,
+  specificLinks: string[]
+}
+```
+</Accordion>
+
+<Accordion title="onMeetingBooked full type">
+
+```ts
+{
+  campaignProgress: continue | pause | stop,
+  propagateProgressToCompany: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateSettings
+
+`campaigns.updateSettings`
+
+Update settings of a campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.campaigns.updateSettings({ campaignId: 'cam_1234567890abcdef', tracking: { trackOpens: false } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `senderStrategy` | `string` | No | — |
+| `general` | `object` | No | — |
+| `senders` | `object` | No | — |
+| `automation` | `object` | No | — |
+| `tracking` | `object` | No | — |
+| `onReplied` | `object` | No | — |
+| `onLinkClicked` | `object` | No | — |
+| `onMeetingBooked` | `object` | No | — |
+| `aiFeatures` | `object` | No | — |
+| `schedule` | `object` | No | — |
+
+Requires Email Pro; send only writable settings sections, and an empty update is rejected.
+
+<AccordionGroup>
+<Accordion title="general full type">
+
+```ts
+{
+  sequenceSharing?: boolean,
+  unsubscribeMode?: variable | contact,
+  addUnsubscribeLink?: boolean,
+  unsubscribeLinkText?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="senders full type">
+
+```ts
+{
+  espMatching?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="automation full type">
+
+```ts
+{
+  autoReview?: boolean,
+  autoReviewConditions?: (deliverable | risky | unknown | undeliverable | unverified)[]
+}
+```
+</Accordion>
+
+<Accordion title="tracking full type">
+
+```ts
+{
+  trackOpens?: boolean,
+  trackClicks?: boolean,
+  trackReplies?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="onReplied full type">
+
+```ts
+{
+  createNewTask?: boolean,
+  campaignProgress?: continue | pause | stop,
+  propagateProgressToCompany?: boolean,
+  disableOutOfOffice?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="onLinkClicked full type">
+
+```ts
+{
+  createNewTask?: boolean,
+  campaignProgress?: continue | pause | stop,
+  propagateProgressToCompany?: boolean,
+  specificLinks?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="onMeetingBooked full type">
+
+```ts
+{
+  campaignProgress?: continue | pause | stop,
+  propagateProgressToCompany?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="aiFeatures full type">
+
+```ts
+{
+  scoreReplies?: boolean,
+  onInterestedReply?: {
+    enabled?: boolean,
+    pauseAllCampaignsForLead?: boolean,
+    pauseCampaignForCompany?: boolean,
+    pauseAllCampaignsForCompany?: boolean
+  },
+  onNotInterestedReply?: {
+    enabled?: boolean,
+    pauseAllCampaignsForLead?: boolean,
+    pauseCampaignForCompany?: boolean,
+    pauseAllCampaignsForCompany?: boolean
+  }
+}
+```
+</Accordion>
+
+<Accordion title="schedule full type">
+
+```ts
+{
+  isTimezoneBasedSchedule?: boolean,
+  holidayCountries?: (US | FR | GB)[],
+  sendingPattern?: {
+    newLeadsPriorityRatio?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `timezone` | `string \| null` | Yes | — |
+| `senderStrategy` | `string` | Yes | — |
+| `general` | `object` | Yes | — |
+| `senders` | `object` | Yes | — |
+| `schedule` | `object` | Yes | — |
+| `tracking` | `object` | Yes | — |
+| `automation` | `object` | Yes | — |
+| `onReplied` | `object` | Yes | — |
+| `onLinkClicked` | `object` | Yes | — |
+| `onMeetingBooked` | `object` | Yes | — |
+| `aiFeatures` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="general full type">
+
+```ts
+{
+  labels: {
+    id: string,
+    name: string
+  }[],
+  sequenceId: string,
+  sequenceSharing: boolean,
+  unsubscribeMode: variable | contact,
+  addUnsubscribeLink: boolean,
+  unsubscribeLinkText: string
+}
+```
+</Accordion>
+
+<Accordion title="senders full type">
+
+```ts
+{
+  espMatching: boolean,
+  espRouting: {
+    gmail?: any | gmail | outlook | other,
+    outlook?: any | gmail | outlook | other,
+    other?: any | gmail | outlook | other
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="schedule full type">
+
+```ts
+{
+  isTimezoneBasedSchedule: boolean,
+  timezoneBasedScheduleId: string | null,
+  scheduleIds: string[],
+  holidayCountries: (US | FR | GB)[],
+  sendingPattern?: {
+    newLeadsPriorityRatio: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="tracking full type">
+
+```ts
+{
+  trackOpens: boolean,
+  trackClicks: boolean,
+  trackReplies: boolean
+}
+```
+</Accordion>
+
+<Accordion title="automation full type">
+
+```ts
+{
+  autoReview: boolean,
+  autoReviewConditions: (deliverable | risky | unknown | undeliverable | unverified)[]
+}
+```
+</Accordion>
+
+<Accordion title="onReplied full type">
+
+```ts
+{
+  createNewTask: boolean,
+  campaignProgress: continue | pause | stop,
+  propagateProgressToCompany: boolean,
+  disableOutOfOffice: boolean
+}
+```
+</Accordion>
+
+<Accordion title="onLinkClicked full type">
+
+```ts
+{
+  createNewTask: boolean,
+  campaignProgress: continue | pause | stop,
+  propagateProgressToCompany: boolean,
+  specificLinks: string[]
+}
+```
+</Accordion>
+
+<Accordion title="onMeetingBooked full type">
+
+```ts
+{
+  campaignProgress: continue | pause | stop,
+  propagateProgressToCompany: boolean
+}
+```
+</Accordion>
+
+<Accordion title="aiFeatures full type">
+
+```ts
+{
+  scoreReplies: boolean,
+  onInterestedReply: {
+    enabled: boolean,
+    pauseAllCampaignsForLead: boolean,
+    pauseCampaignForCompany: boolean,
+    pauseAllCampaignsForCompany: boolean
+  },
+  onNotInterestedReply: {
+    enabled: boolean,
+    pauseAllCampaignsForLead: boolean,
+    pauseCampaignForCompany: boolean,
+    pauseAllCampaignsForCompany: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Leads
+
+### addVariables
+
+`leads.addVariables`
+
+Add custom variables to a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.leads.addVariables({ leadId: 'lea_123456', variables: { company: 'Example Inc' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leadId` | `string` | Yes | — |
+| `variables` | `Record<string, string>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="warnings full type">
+
+```ts
+{
+  code: string,
+  message: string,
+  params?: Record<string, string | string[]>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createInCampaign
+
+`leads.createInCampaign`
+
+Create a new lead and add it to a campaign
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.leads.createInCampaign({ campaignId: 'cam_1234567890abcdef', email: 'lead@example.com', firstName: 'Jane' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `linkedinUrl` | `string` | No | — |
+| `picture` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `companyDomain` | `string` | No | — |
+| `contactOwner` | `string` | No | — |
+| `crmId` | `string` | No | — |
+| `icebreaker` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `deduplicate` | `boolean` | No | — |
+| `linkedinEnrichment` | `boolean` | No | — |
+| `findEmail` | `boolean` | No | — |
+| `verifyEmail` | `boolean` | No | — |
+| `findPhone` | `boolean` | No | — |
+| `updateStrategy` | `overwrite \| overwriteIgnoreEmpty \| fillEmptyOnly` | No | — |
+
+Needs an email or a LinkedIn URL. Always creates a new lead (a contact already in the campaign is refused), but the matched contact and company are updated with the fields you send; updateStrategy defaults to overwrite, use fillEmptyOnly to keep stored values. Additional string body keys are stored as custom variables. Enrichment query options (findEmail, verifyEmail, findPhone, linkedinEnrichment) consume credits.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `companyDomain` | `string` | No | — |
+| `isPaused` | `boolean` | No | — |
+| `campaignId` | `string` | No | — |
+| `contactId` | `string` | No | — |
+| `emailStatus` | `string` | No | — |
+| `state` | `string` | No | — |
+| `status` | `string` | No | — |
+| `variables` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### deleteFromCampaign
+
+`leads.deleteFromCampaign`
+
+Remove a lead from a campaign by ID (use leads.unsubscribeFromCampaign to unsubscribe)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.leads.deleteFromCampaign({ campaignId: 'cam_1234567890abcdef', leadId: 'lea_123456', action: 'remove' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `leadId` | `string` | Yes | — |
+| `action` | `remove` | Yes | — |
+
+Always sends action=remove, which deletes the lead from the campaign. To unsubscribe a lead instead, use leads.unsubscribeFromCampaign.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `companyDomain` | `string` | No | — |
+| `isPaused` | `boolean` | No | — |
+| `campaignId` | `string` | No | — |
+| `contactId` | `string` | No | — |
+| `emailStatus` | `string` | No | — |
+| `state` | `string` | No | — |
+| `status` | `string` | No | — |
+| `variables` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### deleteVariables
+
+`leads.deleteVariables`
+
+Erase custom variables of a lead
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.leads.deleteVariables({ leadId: 'lea_123456', variableNames: ['tempVar'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leadId` | `string` | Yes | — |
+| `variableNames` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="warnings full type">
+
+```ts
+{
+  code: string,
+  message: string,
+  params?: Record<string, string | string[]>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`leads.get`
+
+Retrieve lead by email address or lead ID
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.leads.get({ id: 'lea_123456', version: 'v2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `email` | `string` | No | — |
+| `version` | `v2` | No | — |
+
+Needs id or email; Lemlist uses the email when both are given.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  email?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  jobTitle?: string,
+  companyDomain?: string,
+  isPaused?: boolean,
+  campaignId?: string,
+  contactId?: string,
+  emailStatus?: string,
+  state?: string,
+  status?: string,
+  variables?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getByEmail
+
+`leads.getByEmail`
+
+Retrieve lead details by email address
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.leads.getByEmail({ email: 'lead@example.com', version: 'v2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `version` | `v2` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  email?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  jobTitle?: string,
+  companyDomain?: string,
+  isPaused?: boolean,
+  campaignId?: string,
+  contactId?: string,
+  emailStatus?: string,
+  state?: string,
+  status?: string,
+  variables?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCrmFilters
+
+`leads.getCrmFilters`
+
+Retrieve filters and list views from connected CRM
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.leads.getCrmFilters({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `lead \| contact \| report` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string | number,
+  name: string,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### importFromCrm
+
+`leads.importFromCrm`
+
+Import leads from connected CRM filter into campaign
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.leads.importFromCrm({ campaignId: 'cam_1234567890abcdef', filterId: '16' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `filterId` | `string \| number` | Yes | — |
+| `filterType` | `lead \| contact \| report` | No | — |
+| `userId` | `string` | No | — |
+| `deduplicate` | `boolean \| off \| all \| activeOnly` | No | — |
+| `enrichFeature` | `(find_email \| find_phone \| verify \| linkedin_enrichment)[] \| string` | No | — |
+
+Links the campaign to a filter once and imports asynchronously; requested enrichment features consume credits.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `importPending` | `true` | No | — |
+| `reason` | `campaign_paused \| campaign_archived \| campaign_crm_sync_paused` | No | — |
+
+
+
+---
+
+### listInCampaign
+
+`leads.listInCampaign`
+
+Retrieve leads from a specific campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.leads.listInCampaign({ campaignId: 'cam_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `state` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  email?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  jobTitle?: string,
+  companyDomain?: string,
+  isPaused?: boolean,
+  campaignId?: string,
+  contactId?: string,
+  emailStatus?: string,
+  state?: string,
+  status?: string,
+  variables?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### markInterested
+
+`leads.markInterested`
+
+Mark lead as interested across all campaigns
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.leads.markInterested({ leadIdOrEmail: 'lea_123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leadIdOrEmail` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  email?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  jobTitle?: string,
+  companyDomain?: string,
+  isPaused?: boolean,
+  campaignId?: string,
+  contactId?: string,
+  emailStatus?: string,
+  state?: string,
+  status?: string,
+  variables?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### markInterestedInCampaign
+
+`leads.markInterestedInCampaign`
+
+Mark lead as interested in a specific campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.leads.markInterestedInCampaign({ campaignId: 'cam_1234567890abcdef', leadIdOrEmail: 'lea_123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `leadIdOrEmail` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `companyDomain` | `string` | No | — |
+| `isPaused` | `boolean` | No | — |
+| `campaignId` | `string` | No | — |
+| `contactId` | `string` | No | — |
+| `emailStatus` | `string` | No | — |
+| `state` | `string` | No | — |
+| `status` | `string` | No | — |
+| `variables` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### markNotInterested
+
+`leads.markNotInterested`
+
+Mark lead as not interested across all campaigns
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.leads.markNotInterested({ leadIdOrEmail: 'lea_123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leadIdOrEmail` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  email?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  jobTitle?: string,
+  companyDomain?: string,
+  isPaused?: boolean,
+  campaignId?: string,
+  contactId?: string,
+  emailStatus?: string,
+  state?: string,
+  status?: string,
+  variables?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### markNotInterestedInCampaign
+
+`leads.markNotInterestedInCampaign`
+
+Mark lead as not interested in a specific campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.leads.markNotInterestedInCampaign({ campaignId: 'cam_1234567890abcdef', leadIdOrEmail: 'lea_123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `leadIdOrEmail` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `companyDomain` | `string` | No | — |
+| `isPaused` | `boolean` | No | — |
+| `campaignId` | `string` | No | — |
+| `contactId` | `string` | No | — |
+| `emailStatus` | `string` | No | — |
+| `state` | `string` | No | — |
+| `status` | `string` | No | — |
+| `variables` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### pause
+
+`leads.pause`
+
+Pause lead activity across campaigns or in a specific campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.leads.pause({ leadId: 'lea_123456', campaignId: 'cam_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leadId` | `string` | Yes | — |
+| `campaignId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  email?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  jobTitle?: string,
+  companyDomain?: string,
+  isPaused?: boolean,
+  campaignId?: string,
+  contactId?: string,
+  emailStatus?: string,
+  state?: string,
+  status?: string,
+  variables?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### personalizeStep
+
+`leads.personalizeStep`
+
+Personalize step message for a single lead
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.leads.personalizeStep({ campaignId: 'cam_1234567890abcdef', leadIdOrEmail: 'lea_123456', stepId: 'stp_123456', message: 'Hello {{firstName}}' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `leadIdOrEmail` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+| `variant` | `A \| B` | No | — |
+| `subject` | `string` | No | — |
+| `message` | `string` | No | — |
+| `cc` | `string[]` | No | — |
+| `plainText` | `boolean` | No | — |
+| `altMessage` | `string` | No | — |
+| `altMessagePremium` | `string` | No | — |
+
+Only supported message steps can be personalized, and a lead that has reached the step cannot be changed.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leadId` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+| `variant` | `A \| B` | Yes | — |
+| `emailTemplateId` | `string` | Yes | — |
+| `content` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  subject?: string,
+  message?: string,
+  cc?: string[],
+  plainText?: boolean,
+  altMessage?: string,
+  altMessagePremium?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### resetStepPersonalization
+
+`leads.resetStepPersonalization`
+
+Reset step personalization for a single lead
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.leads.resetStepPersonalization({ campaignId: 'cam_1234567890abcdef', leadIdOrEmail: 'lea_123456', stepId: 'stp_123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `leadIdOrEmail` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reset` | `boolean` | Yes | — |
+
+
+
+---
+
+### resume
+
+`leads.resume`
+
+Resume a paused lead in all campaigns or one campaign, allowing outreach to continue
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.leads.resume({ leadId: 'lea_123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leadId` | `string` | Yes | — |
+| `campaignId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  email?: string,
+  firstName?: string,
+  lastName?: string,
+  companyName?: string,
+  jobTitle?: string,
+  companyDomain?: string,
+  isPaused?: boolean,
+  campaignId?: string,
+  contactId?: string,
+  emailStatus?: string,
+  state?: string,
+  status?: string,
+  variables?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### review
+
+`leads.review`
+
+Manually launch a lead into its campaign, allowing outreach to begin
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.leads.review({ leadId: 'lea_123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leadId` | `string` | Yes | — |
+
+Launches a single lead and may start outreach. The API key user, campaign, AI variables, and sender must satisfy Lemlist's launch guards.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `launched` | `number` | Yes | — |
+
+
+
+---
+
+### skipStep
+
+`leads.skipStep`
+
+Skip one step of a running campaign for a single lead
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.leads.skipStep({ campaignId: 'cam_1234567890abcdef', leadIdOrEmail: 'lea_123456', stepId: 'stp_123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `leadIdOrEmail` | `string` | Yes | — |
+| `stepId` | `string` | Yes | — |
+
+Deprecated by Lemlist in favor of campaigns.skipStepForLeads; skips cannot be undone.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | No | — |
+
+
+
+---
+
+### unsubscribeFromCampaign
+
+`leads.unsubscribeFromCampaign`
+
+Unsubscribe a lead from a campaign by email
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.leads.unsubscribeFromCampaign({ campaignId: 'cam_1234567890abcdef', email: 'lead@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `companyDomain` | `string` | No | — |
+| `isPaused` | `boolean` | No | — |
+| `campaignId` | `string` | No | — |
+| `contactId` | `string` | No | — |
+| `emailStatus` | `string` | No | — |
+| `state` | `string` | No | — |
+| `status` | `string` | No | — |
+| `variables` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### updateInCampaign
+
+`leads.updateInCampaign`
+
+Update lead information in a campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.leads.updateInCampaign({ campaignId: 'cam_1234567890abcdef', leadId: 'lea_123456', companyName: 'Example Inc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+| `leadId` | `string` | Yes | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `preferredContactMethod` | `email \| linkedIn` | No | — |
+| `updateStrategy` | `overwrite \| overwriteIgnoreEmpty \| fillEmptyOnly` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `companyDomain` | `string` | No | — |
+| `isPaused` | `boolean` | No | — |
+| `campaignId` | `string` | No | — |
+| `contactId` | `string` | No | — |
+| `emailStatus` | `string` | No | — |
+| `state` | `string` | No | — |
+| `status` | `string` | No | — |
+| `variables` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### updateVariables
+
+`leads.updateVariables`
+
+Update custom variables of a lead
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.leads.updateVariables({ leadId: 'lea_123456', variables: { title: 'Head of Growth' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `leadId` | `string` | Yes | — |
+| `variables` | `Record<string, string>` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `warnings` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="warnings full type">
+
+```ts
+{
+  code: string,
+  message: string,
+  params?: Record<string, string | string[]>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Team
+
+### get
+
+`team.get`
+
+Retrieve team details and members
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.team.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `v2` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `userIds` | `string[]` | No | — |
+| `createdBy` | `string` | No | — |
+| `createdAt` | `string` | No | — |
+| `hooks` | `object[]` | No | — |
+| `users` | `object[]` | No | — |
+| `pictureId` | `string \| null` | No | — |
+| `customDomain` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="hooks full type">
+
+```ts
+{
+  _id?: string,
+  targetUrl?: string,
+  createdAt?: string,
+  type?: string,
+  campaignId?: string,
+  isFirst?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="users full type">
+
+```ts
+{
+  userId?: string,
+  name?: string,
+  email?: string,
+  role?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCredits
+
+`team.getCredits`
+
+Retrieve team remaining credits balance
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.team.getCredits({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `number` | Yes | — |
+| `details` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="details full type">
+
+```ts
+{
+  remaining?: {
+    total?: number,
+    freemium?: number,
+    subscription?: number,
+    gifted?: number,
+    paid?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCrmUsers
+
+`team.getCrmUsers`
+
+List team members connected to CRM
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.team.getCrmUsers({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  userId: string,
+  crm: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSenders
+
+`team.getSenders`
+
+Retrieve all team members and their associated campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.team.getSenders({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `state` | `running \| paused \| draft \| ended \| archived \| errors` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  userId: string,
+  campaigns?: {
+    _id?: string,
+    name?: string,
+    status?: string,
+    sendingChannels?: string[]
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Unsubscribes
+
+### bulkUnsubscribeVariables
+
+`unsubscribes.bulkUnsubscribeVariables`
+
+Bulk unsubscribe variables up to 10,000 items
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.unsubscribes.bulkUnsubscribeVariables({ values: ['lead@example.com'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `values` | `string[]` | Yes | — |
+
+The API accepts up to 10,000 values. It answered a summary object (message, count, values, skippedValues) in our tests, but its reference shows a plain text confirmation, so check for an object before reading the counts; text carries no per-value result.
+
+
+
+**Output:** `object \| string`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  message?: string,
+  count?: number,
+  values?: string[],
+  skippedValues?: string[]
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### exportContacts
+
+`unsubscribes.exportContacts`
+
+Export all contacts with their subscription status in CSV or JSON; filter for doNotContact true to get only opted-out contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.unsubscribes.exportContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `format` | `csv \| json` | No | — |
+
+Returns every contact with its subscription status, not only opted-out ones; filter on doNotContact true for a suppression list. CSV text by default or a JSON array with format=json.
+
+
+
+**Output:** `object[] \| string`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  doNotContact: boolean
+}[] | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### exportVariables
+
+`unsubscribes.exportVariables`
+
+Export unsubscribed variables in CSV or JSON format
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.unsubscribes.exportVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `format` | `csv \| json` | No | — |
+
+Returns CSV text by default or a JSON array with format=json.
+
+
+
+**Output:** `object[] \| string`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  value: string,
+  variable?: string,
+  source?: api | bounced | lead | user | abuse,
+  createdAt?: string
+}[] | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getContactStatus
+
+`unsubscribes.getContactStatus`
+
+Get subscription status of a contact
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.unsubscribes.getContactStatus({ contactId: 'ctc_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `doNotContact` | `boolean` | Yes | — |
+
+
+
+---
+
+### getVariable
+
+`unsubscribes.getVariable`
+
+Get unsubscribed status of a variable
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.unsubscribes.getVariable({ value: 'lead@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `variable` | `string` | No | — |
+| `source` | `api \| bounced \| lead \| user \| abuse` | No | — |
+| `createdAt` | `string` | No | — |
+
+
+
+---
+
+### listVariables
+
+`unsubscribes.listVariables`
+
+List unsubscribed variables (emails, domains, phones)
+
+**Risk:** `read`
+
+```ts
+await corsair.lemlist.api.unsubscribes.listVariables({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  _id: string,
+  value: string,
+  variable?: string,
+  source?: api | bounced | lead | user | abuse,
+  createdAt?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### resubscribeContact
+
+`unsubscribes.resubscribeContact`
+
+Re-subscribe a contact by ID
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.unsubscribes.resubscribeContact({ contactId: 'ctc_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### resubscribeVariable
+
+`unsubscribes.resubscribeVariable`
+
+Re-subscribe a variable to allow future outreach
+
+**Risk:** `write`
+
+```ts
+await corsair.lemlist.api.unsubscribes.resubscribeVariable({ value: 'lead@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `string` | Yes | — |
+
+Lemlist protects unsubscribe records whose source is LEAD or ABUSE from re-subscription.
+
+
+
+**Output:** `string`
+
+
+---
+
+### unsubscribeContact
+
+`unsubscribes.unsubscribeContact`
+
+Unsubscribe a contact by ID
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.unsubscribes.unsubscribeContact({ contactId: 'ctc_1234567890abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactId` | `string` | Yes | — |
+
+
+
+**Output:** `string`
+
+
+---
+
+### unsubscribeVariable
+
+`unsubscribes.unsubscribeVariable`
+
+Unsubscribe a single variable (email, domain, or phone)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.lemlist.api.unsubscribes.unsubscribeVariable({ value: 'lead@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_id` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `variable` | `string` | No | — |
+| `source` | `api \| bounced \| lead \| user \| abuse` | No | — |
+| `createdAt` | `string` | No | — |
+
+
+
+---
+

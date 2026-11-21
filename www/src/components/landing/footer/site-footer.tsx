@@ -148,6 +148,14 @@ export function SiteFooter() {
 							</li>
 							<li>
 								<Link
+									href="/built-with"
+									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
+								>
+									Built with Corsair
+								</Link>
+							</li>
+							<li>
+								<Link
 									href="/oss"
 									className="text-sm text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
 								>

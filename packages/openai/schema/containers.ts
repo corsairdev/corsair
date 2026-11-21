@@ -1,4 +1,6 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
+import { openaiFileInput } from './file-input';
 
 const ExpiresAfterSchema = z.object({
 	anchor: z.string(),
@@ -85,7 +87,7 @@ export type ContainersDeleteResponse = z.infer<
 export const ContainerFilesCreateInputSchema = z
 	.object({
 		containerId: z.string(),
-		file: z.union([z.instanceof(Blob), z.string()]).optional(),
+		file: openaiFileInput('The file to add to the container').optional(),
 		fileName: z.string().optional(),
 		fileId: z.string().optional(),
 	})
@@ -161,11 +163,10 @@ export const ContainerFilesRetrieveContentInputSchema = z.object({
 export type ContainerFilesRetrieveContentInput = z.infer<
 	typeof ContainerFilesRetrieveContentInputSchema
 >;
-export const ContainerFilesRetrieveContentResponseSchema = z.object({
-	containerId: z.string(),
-	fileId: z.string(),
-	contentBase64: z.string(),
-});
+export const ContainerFilesRetrieveContentResponseSchema =
+	FileOutputSchema.extend({
+		containerId: z.string(),
+	});
 export type ContainerFilesRetrieveContentResponse = z.infer<
 	typeof ContainerFilesRetrieveContentResponseSchema
 >;
