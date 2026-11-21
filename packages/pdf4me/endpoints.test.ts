@@ -131,6 +131,13 @@ describe('output parsing', () => {
 		]);
 	});
 
+	it('rejects a truncated JSON answer instead of returning it as a file', async () => {
+		respond(new TextEncoder().encode('{"jobId":'), 200, 'application/json');
+		await expect(
+			invoke(Pdf.compress, { docContent: 'AAAA', docName: 'in.pdf' }),
+		).rejects.toThrow('malformed JSON');
+	});
+
 	it('parses the JSON file answer shape', async () => {
 		respond(fileAnswer);
 		const file = (await invoke(Pdf.compress, {

@@ -160,13 +160,16 @@ function decodeAnswer(
 		// An empty answer is no file; never report one.
 		if (file.bytes.byteLength === 0) return { other: {} };
 		const text = Buffer.from(file.bytes).toString('utf8');
-		const looksJson =
-			(file.contentType ?? '').includes('json') || /^\s*[{[]/.test(text);
-		if (looksJson) {
+		const declaredJson = (file.contentType ?? '').includes('json');
+		if (declaredJson || /^\s*[{[]/.test(text)) {
 			try {
 				return { json: JSON.parse(text) as unknown };
 			} catch {
-				// Not JSON after all; it is the produced file.
+				// A body declared JSON that does not parse is a broken answer,
+				// not a file (R8: no made-up success). Otherwise it is the file.
+				if (declaredJson) {
+					throw new Error('PDF4me answered malformed JSON');
+				}
 			}
 		}
 		return { file: Buffer.from(file.bytes).toString('base64') };
