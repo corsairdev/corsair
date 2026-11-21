@@ -805,7 +805,7 @@ await corsair.piloterr.api.web.rendering({ query: "https://example.com", waitFor
 | `waitFor` | `string` | No | CSS or XPath selector to wait for before returning the rendered HTML |
 | `blockAds` | `boolean` | No | Block ad network requests during rendering |
 | `timeout` | `number` | No | Maximum seconds to wait for the page to load |
-| `returnPageSource` | `boolean` | No | Return &#123;"result": html&#125; instead of the raw HTML string |
+| `returnPageSource` | `boolean` | No | Ask for the exact page source instead of processed HTML; the answer is still the HTML string |
 | `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
 
 
@@ -851,7 +851,6 @@ await corsair.piloterr.api.web.screenshot({ url: "https://example.com", format: 
 | `blockUrls` | `string` | No | Comma-separated URL patterns to block |
 | `delay` | `number` | No | Delay in seconds before capturing |
 | `waitForSelector` | `string` | No | Element to wait for before capturing |
-| `fields` | `string` | No | Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored |
 
 Answers &#123; contentType, fileContent &#125; with the capture base64-encoded; format takes jpeg, jpg, pdf, png or webp and device one of the 19 documented emulations.
 

@@ -29,7 +29,15 @@ export function shapeScreenshotFile(raw: unknown): unknown {
 		bytes?: Uint8Array;
 		contentType?: string | null;
 	} | null;
-	if (file?.bytes) {
+	// An empty body or an HTML/JSON page is not a screenshot: return it
+	// as is so the output schema rejects it (R8: no made-up success).
+	const type = (file?.contentType ?? '').toLowerCase();
+	if (
+		file?.bytes &&
+		file.bytes.byteLength > 0 &&
+		!type.includes('html') &&
+		!type.includes('json')
+	) {
 		return {
 			contentType: file.contentType ?? undefined,
 			fileContent: Buffer.from(file.bytes).toString('base64'),
@@ -161,7 +169,9 @@ export const WebRenderingInputSchema = z
 		returnPageSource: z
 			.boolean()
 			.optional()
-			.describe('Return {"result": html} instead of the raw HTML string'),
+			.describe(
+				'Ask for the exact page source instead of processed HTML; the answer is still the HTML string',
+			),
 		...globalParams,
 	})
 	.describe('Input for rendering a JavaScript-heavy page');
@@ -248,7 +258,7 @@ export const WebScreenshotInputSchema = z
 			.string()
 			.optional()
 			.describe('Element to wait for before capturing'),
-		...globalParams,
+		// No fields filter: the answer is a binary file.
 	})
 	.describe('Input for capturing a webpage screenshot');
 export type WebScreenshotInput = z.infer<typeof WebScreenshotInputSchema>;
@@ -559,12 +569,16 @@ export const LinkedInCompanyInfoInputSchema = z
 	.object({
 		query: z
 			.string()
+			.trim()
+			.min(1)
 			.optional()
 			.describe(
 				'LinkedIn company slug, URL, numeric ID or school URL; mutually exclusive with domain',
 			),
 		domain: z
 			.string()
+			.trim()
+			.min(1)
 			.optional()
 			.describe(
 				'Company website domain for reverse lookup; mutually exclusive with query',
@@ -852,10 +866,14 @@ export const EmailFinderInputSchema = z
 			.describe('Full name of the person whose email to find'),
 		companyDomain: z
 			.string()
+			.trim()
+			.min(1)
 			.optional()
 			.describe('Company domain, e.g. piloterr.com or a full URL'),
 		companyName: z
 			.string()
+			.trim()
+			.min(1)
 			.optional()
 			.describe('Company name; domain is preferred when available'),
 		...globalParams,

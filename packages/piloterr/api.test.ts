@@ -29,10 +29,11 @@ describeIfKey('piloterr live smoke', () => {
 		expect(typeof usage.remaining).toBe('number');
 	});
 
-	it('reports a missing job as a not-found style status', async () => {
-		const job = await plugin.endpoints!.account.getJob(ctx, {
-			id: '00000000-nonexistent-job',
-		});
-		expect(job.status).toBeDefined();
+	it('rejects a missing job with a 404 (live: "Job or content not found")', async () => {
+		await expect(
+			plugin.endpoints!.account.getJob(ctx, {
+				id: '00000000-nonexistent-job',
+			}),
+		).rejects.toMatchObject({ status: 404 });
 	});
 });

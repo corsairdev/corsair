@@ -204,6 +204,14 @@ describe('output parsing', () => {
 describe('shapeScreenshotFile', () => {
 	it('passes plain-text answers through for the schema to reject', () => {
 		expect(shapeScreenshotFile('not a screenshot')).toBe('not a screenshot');
+		// An empty body or an HTML error page is not turned into a file.
+		const empty = { bytes: new Uint8Array(), contentType: 'image/png' };
+		expect(shapeScreenshotFile(empty)).toBe(empty);
+		const page = {
+			bytes: new TextEncoder().encode('<html>error</html>'),
+			contentType: 'text/html; charset=utf-8',
+		};
+		expect(shapeScreenshotFile(page)).toBe(page);
 	});
 
 	it('encodes binary bytes as base64', () => {
@@ -219,6 +227,15 @@ describe('shapeScreenshotFile', () => {
 });
 
 describe('input validation', () => {
+	it('rejects blank company identifiers', async () => {
+		await rejects(LinkedIn.companyInfo, { domain: '  ' }, 'Too small');
+		await rejects(
+			Email.finder,
+			{ query: 'Alex Martin', companyName: '' },
+			'Too small',
+		);
+	});
+
 	it('rejects a crawler call without a query', async () => {
 		await rejects(Web.crawler, {}, 'query');
 	});
