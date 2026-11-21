@@ -1,9 +1,6 @@
 import { inspect } from 'node:util';
-import {
-	describePayhipError,
-	makePayhipRequest,
-	PayhipAPIError,
-} from './client';
+import { ApiError } from 'corsair/http';
+import { describePayhipError, makePayhipRequest } from './client';
 import { authFail, coupon } from './test-fixtures';
 
 const API_KEY = 'ph-test-key';
@@ -30,10 +27,10 @@ function respond(
 }
 
 // unknown: a rejection can be any value until the instanceof check narrows it.
-async function failure(promise: Promise<unknown>): Promise<PayhipAPIError> {
+async function failure(promise: Promise<unknown>): Promise<ApiError> {
 	const error = await promise.catch((caught: unknown) => caught);
-	expect(error).toBeInstanceOf(PayhipAPIError);
-	if (!(error instanceof PayhipAPIError)) throw error;
+	expect(error).toBeInstanceOf(ApiError);
+	if (!(error instanceof ApiError)) throw error;
 	return error;
 }
 
@@ -55,34 +52,44 @@ afterEach(() => {
 });
 
 describe('makePayhipRequest', () => {
-	it('sends both credential headers; each route reads the one it needs', async () => {
+	it('sends only the account key on account routes', async () => {
 		respond({ data: coupon }, 200);
 
-		await makePayhipRequest(
-			API_KEY,
-			{ method: 'GET', path: '/api/v2/coupons', auth: 'account' },
-			PRODUCT_SECRET,
-		);
+		await makePayhipRequest(API_KEY, {
+			method: 'GET',
+			path: '/api/v2/coupons',
+			auth: 'account',
+		});
 
 		const sent = lastCall();
 		expect(sent.url).toBe('https://payhip.com/api/v2/coupons');
 		expect(sent.headers.get('payhip-api-key')).toBe(API_KEY);
+		expect(sent.headers.has('product-secret-key')).toBe(false);
+	});
+
+	it('sends only the product secret on license routes', async () => {
+		respond({ data: coupon }, 200);
+
+		await makePayhipRequest(PRODUCT_SECRET, {
+			method: 'GET',
+			path: '/api/v2/license/verify',
+			auth: 'product',
+		});
+
+		const sent = lastCall();
 		expect(sent.headers.get('product-secret-key')).toBe(PRODUCT_SECRET);
+		expect(sent.headers.has('payhip-api-key')).toBe(false);
 	});
 
 	it('sends form-encoded bodies, not JSON', async () => {
 		respond({ data: coupon }, 200);
 
-		await makePayhipRequest(
-			API_KEY,
-			{
-				method: 'POST',
-				path: '/api/v2/coupons',
-				auth: 'account',
-				form: { code: 'example123', percent_off: '25' },
-			},
-			undefined,
-		);
+		await makePayhipRequest(API_KEY, {
+			method: 'POST',
+			path: '/api/v2/coupons',
+			auth: 'account',
+			form: { code: 'example123', percent_off: '25' },
+		});
 
 		const sent = lastCall();
 		expect(String(sent.init.body)).toBe('code=example123&percent_off=25');
@@ -95,31 +102,28 @@ describe('makePayhipRequest', () => {
 		respond(authFail, 401);
 
 		const error = await failure(
-			makePayhipRequest(
-				API_KEY,
-				{ method: 'GET', path: '/api/v2/coupons', auth: 'account' },
-				undefined,
-			),
+			makePayhipRequest(API_KEY, {
+				method: 'GET',
+				path: '/api/v2/coupons',
+				auth: 'account',
+			}),
 		);
 		expect(error.status).toBe(401);
 		expect(error.message).toContain('failed to authenticate');
-		expect(error.name).toBe('PayhipAPIError');
+		expect(error.name).toBe('ApiError');
+		expect(error.request).toEqual({ method: 'GET', url: '/api/v2/coupons' });
 	});
 
 	it('keeps no request body on the rebuilt error', async () => {
 		respond(authFail, 401);
 
 		const error = await failure(
-			makePayhipRequest(
-				API_KEY,
-				{
-					method: 'PUT',
-					path: '/api/v2/license/disable',
-					auth: 'product',
-					form: { license_key: 'WTKP4-66NL5-HMKQW-GFSCZ' },
-				},
-				PRODUCT_SECRET,
-			),
+			makePayhipRequest(PRODUCT_SECRET, {
+				method: 'PUT',
+				path: '/api/v2/license/disable',
+				auth: 'product',
+				form: { license_key: 'WTKP4-66NL5-HMKQW-GFSCZ' },
+			}),
 		);
 		const printed = inspect(error);
 		expect(printed).not.toContain('WTKP4');
@@ -130,11 +134,11 @@ describe('makePayhipRequest', () => {
 		fetchMock.mockRejectedValueOnce(new Error('connection reset'));
 
 		await expect(
-			makePayhipRequest(
-				API_KEY,
-				{ method: 'GET', path: '/api/v2/coupons', auth: 'account' },
-				undefined,
-			),
+			makePayhipRequest(API_KEY, {
+				method: 'GET',
+				path: '/api/v2/coupons',
+				auth: 'account',
+			}),
 		).rejects.toThrow('connection reset');
 	});
 
@@ -142,11 +146,11 @@ describe('makePayhipRequest', () => {
 		respond({ message: 'Slow down' }, 429, { 'Retry-After': '0' });
 		respond({ data: { coupons: [coupon] } }, 200);
 
-		const result = await makePayhipRequest(
-			API_KEY,
-			{ method: 'GET', path: '/api/v2/coupons', auth: 'account' },
-			undefined,
-		);
+		const result = await makePayhipRequest(API_KEY, {
+			method: 'GET',
+			path: '/api/v2/coupons',
+			auth: 'account',
+		});
 		expect(result).toEqual({ data: { coupons: [coupon] } });
 		expect(fetchMock).toHaveBeenCalledTimes(2);
 	});

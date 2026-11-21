@@ -19,6 +19,10 @@ export const LicenseKeySchema = z
 			.nullish()
 			.describe('Email the customer bought the license with'),
 		uses: z.number().nullish().describe('Number of times the license was used'),
+		date: z
+			.string()
+			.nullish()
+			.describe('RFC 3339 datetime the license key was created'),
 	})
 	.loose()
 	.describe('A Payhip license key');
@@ -29,8 +33,9 @@ export const CouponSchema = z
 	.object({
 		id: z.number().describe('Coupon id'),
 		code: z.string().nullish().describe('Code the customer enters at checkout'),
+		// Open on output: a type Payhip adds later must not fail the read.
 		coupon_type: z
-			.enum(['single', 'multi', 'collection'])
+			.union([z.enum(['single', 'multi', 'collection']), z.string()])
 			.nullish()
 			.describe('What the coupon applies to'),
 		percent_off: z.number().nullish().describe('Percentage discount, 0-100'),

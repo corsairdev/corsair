@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { PayhipContext } from '..';
 import type { PayhipRequest } from '../client';
@@ -31,17 +31,18 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 	} = {},
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
-	// The plugin option wins over the stored product secret, matching how
-	// the webhook secret resolves.
-	const storedSecret = operation.productSecret
-		? (ctx.options?.productSecret ?? (await ctx.keys.get_product_secret_key()))
-		: null;
-	const productSecret = storedSecret ?? undefined;
-	const raw = await makePayhipRequest(
-		ctx.key,
-		toRequest(parsed),
-		productSecret,
-	);
+	// License calls authenticate with the product secret stored on the
+	// connection (R8: credentials come from stored credentials, never from
+	// options or input); coupon calls with the account key the binder resolved.
+	let credential = ctx.key;
+	if (operation.productSecret) {
+		const productSecret = await ctx.keys.get_product_secret_key();
+		if (!productSecret) {
+			throw new AuthMissingError('payhip', 'api_key');
+		}
+		credential = productSecret;
+	}
+	const raw = await makePayhipRequest(credential, toRequest(parsed));
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,
 	);

@@ -118,7 +118,7 @@ describe('license keys', () => {
 		expect(sent.path).toBe('/api/v2/license/verify');
 		expect(sent.query['license_key']).toBe('WTKP4-66NL5-HMKQW-GFSCZ');
 		expect(sent.headers.get('product-secret-key')).toBe(PRODUCT_SECRET);
-		expect(sent.headers.get('payhip-api-key')).toBe(API_KEY);
+		expect(sent.headers.has('payhip-api-key')).toBe(false);
 	});
 
 	it('disable PUTs the form-encoded license key', async () => {
@@ -153,5 +153,12 @@ describe('license keys', () => {
 			license_key: 'WTKP4-66NL5-HMKQW-GFSCZ',
 		});
 		expect(lastRequest().path).toBe('/api/v2/license/decrease');
+	});
+
+	it('refuses a license call when no product secret is stored', async () => {
+		await expect(
+			invoke(License.verify, { license_key: 'WTKP4' }, ''),
+		).rejects.toMatchObject({ name: 'AuthMissingError' });
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });

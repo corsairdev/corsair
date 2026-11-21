@@ -12,10 +12,12 @@ async function createClient() {
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'payhip', 'default');
 	const corsair = createCorsair({
-		plugins: [payhip({ key: 'ph-test-key', productSecret: 'prod-secret' })],
+		plugins: [payhip({ key: 'ph-test-key' })],
 		database: testDb.db,
 		kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
 	});
+	await corsair.payhip.keys.issue_new_dek();
+	await corsair.payhip.keys.set_product_secret_key('prod-secret');
 	return { corsair, testDb };
 }
 

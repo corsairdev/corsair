@@ -28,8 +28,6 @@ import { PayhipSchema } from './schema';
 export type PayhipPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	/** Per-product secret the license-key operations authenticate with. */
-	productSecret?: string;
 	hooks?: InternalPayhipPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof payhipEndpointsNested>;
@@ -206,8 +204,6 @@ export function payhip<const T extends PayhipPluginOptions>(
 		},
 	} satisfies InternalPayhipPlugin;
 }
-
-export { PayhipAPIError } from './client';
 
 export type {
 	Coupon,
