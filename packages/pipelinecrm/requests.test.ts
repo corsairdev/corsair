@@ -212,8 +212,11 @@ describe('people', () => {
 
 	it('listDeals and listNotes hang off the person id', async () => {
 		respond(dealsList);
-		await invoke(People.listDeals, { id: 900 });
-		expectCall({ path: '/api/v3/people/900/deals' });
+		await invoke(People.listDeals, { id: 900, page: 2, perPage: 50 });
+		expectCall({
+			path: '/api/v3/people/900/deals',
+			query: { page: '2', per_page: '50' },
+		});
 
 		respond(notesList);
 		await invoke(People.listNotes, { id: 900 });

@@ -418,6 +418,15 @@ export const IdInputSchema = z
 	.describe('Input with a record id');
 export type IdInput = z.infer<typeof IdInputSchema>;
 
+/** A record id plus paging, for the lists that hang off one record. */
+export const IdPageInputSchema = z
+	.object({
+		id: z.number().int().describe('The record id'),
+		...pagingParams,
+	})
+	.describe('The parent record id and paging');
+export type IdPageInput = z.infer<typeof IdPageInputSchema>;
+
 export const DeletedOutputSchema = z
 	.unknown()
 	.optional()
@@ -723,22 +732,22 @@ export const PipelineCrmEndpointInputSchemas = {
 	dealsUpdate: DealUpdateInputSchema,
 	dealsDelete: IdInputSchema,
 	dealsTotalsByStage: EmptyInputSchema,
-	dealsListNotes: IdInputSchema,
+	dealsListNotes: IdPageInputSchema,
 	peopleList: PeopleListInputSchema,
 	peopleCreate: PersonCreateInputSchema,
 	peopleGet: IdInputSchema,
 	peopleUpdate: PersonUpdateInputSchema,
 	peopleDelete: IdInputSchema,
 	peopleAutocomplete: PeopleAutocompleteInputSchema,
-	peopleListDeals: IdInputSchema,
-	peopleListNotes: IdInputSchema,
+	peopleListDeals: IdPageInputSchema,
+	peopleListNotes: IdPageInputSchema,
 	companiesList: CompaniesListInputSchema,
 	companiesCreate: CompanyCreateInputSchema,
 	companiesGet: IdInputSchema,
 	companiesUpdate: CompanyUpdateInputSchema,
 	companiesDelete: IdInputSchema,
 	companiesAutocomplete: CompaniesAutocompleteInputSchema,
-	companiesListPeople: IdInputSchema,
+	companiesListPeople: IdPageInputSchema,
 	notesList: NotesListInputSchema,
 	notesCreate: NoteCreateInputSchema,
 	notesGet: IdInputSchema,

@@ -163,7 +163,11 @@ export const listPeople: PipelineCrmEndpoints['companiesListPeople'] = (
 			output: Outputs.companiesListPeople,
 		},
 		input,
-		({ id }) => ({ method: 'GET', path: `${V3}/companies/${id}/people` }),
+		({ id, page, perPage }) => ({
+			method: 'GET',
+			path: `${V3}/companies/${id}/people`,
+			query: { page, per_page: perPage },
+		}),
 		{
 			log: (parsed, page_) => ({
 				companyId: parsed.id,

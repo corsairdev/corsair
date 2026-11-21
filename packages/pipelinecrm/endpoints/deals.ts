@@ -163,7 +163,11 @@ export const listNotes: PipelineCrmEndpoints['dealsListNotes'] = (ctx, input) =>
 			output: Outputs.dealsListNotes,
 		},
 		input,
-		({ id }) => ({ method: 'GET', path: `${V3}/deals/${id}/notes` }),
+		({ id, page, perPage }) => ({
+			method: 'GET',
+			path: `${V3}/deals/${id}/notes`,
+			query: { page, per_page: perPage },
+		}),
 		{
 			log: (parsed, page_) => ({
 				dealId: parsed.id,

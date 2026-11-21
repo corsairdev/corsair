@@ -166,7 +166,11 @@ export const listDeals: PipelineCrmEndpoints['peopleListDeals'] = (
 			output: Outputs.peopleListDeals,
 		},
 		input,
-		({ id }) => ({ method: 'GET', path: `${V3}/people/${id}/deals` }),
+		({ id, page, perPage }) => ({
+			method: 'GET',
+			path: `${V3}/people/${id}/deals`,
+			query: { page, per_page: perPage },
+		}),
 		{
 			log: (parsed, page_) => ({
 				personId: parsed.id,
@@ -187,7 +191,11 @@ export const listNotes: PipelineCrmEndpoints['peopleListNotes'] = (
 			output: Outputs.peopleListNotes,
 		},
 		input,
-		({ id }) => ({ method: 'GET', path: `${V3}/people/${id}/notes` }),
+		({ id, page, perPage }) => ({
+			method: 'GET',
+			path: `${V3}/people/${id}/notes`,
+			query: { page, per_page: perPage },
+		}),
 		{
 			log: (parsed, page_) => ({
 				personId: parsed.id,
