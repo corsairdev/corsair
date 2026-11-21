@@ -184,7 +184,6 @@ export const UserSchema = z
 	.object({
 		id: z.number().nullish().describe('User id'),
 		name: z.string().nullish().describe('Login name'),
-		cookie_id: z.string().nullish().describe('Session cookie id'),
 		last_activity: z.string().nullish().describe('Last activity timestamp'),
 		profile: z
 			.object({
@@ -209,10 +208,35 @@ export const UserSchema = z
 export type User = z.infer<typeof UserSchema>;
 
 /** An API token. */
+/**
+ * Masks credentials in account answers: a token keeps its last four
+ * characters, and the user's session cookie id is dropped.
+ */
+// unknown: raw is the response body (one record or a list).
+export function withoutSecrets(raw: unknown): unknown {
+	const clean = (item: unknown): unknown => {
+		if (!item || typeof item !== 'object' || Array.isArray(item)) return item;
+		const {
+			token,
+			cookie_id: _cookie,
+			...rest
+		} = item as Record<string, unknown>;
+		return typeof token === 'string'
+			? { ...rest, tokenEnding: token.slice(-4) }
+			: rest;
+	};
+	return Array.isArray(raw) ? raw.map(clean) : clean(raw);
+}
+
 export const TokenSchema = z
 	.object({
 		id: z.number().nullish().describe('Token id'),
-		token: z.string().nullish().describe('The API token value'),
+		// The API answers every token's full value, the connection's own
+		// included (live, 2026-11-21); only its last four characters are kept.
+		tokenEnding: z
+			.string()
+			.nullish()
+			.describe('Last four characters of the token, to tell tokens apart'),
 		description: z.string().nullish().describe('Token description'),
 		restricted: z
 			.boolean()

@@ -3,6 +3,7 @@ import { call } from './call';
 import {
 	PilvioEndpointInputSchemas as Inputs,
 	PilvioEndpointOutputSchemas as Outputs,
+	withoutSecrets,
 } from './types';
 
 const USER_RESOURCE = '/v1/user-resource';
@@ -17,7 +18,10 @@ export const getUser: PilvioEndpoints['userGet'] = (ctx, input) =>
 		},
 		input,
 		() => ({ method: 'GET', path: `${USER_RESOURCE}/user` }),
-		{ log: (_, user) => ({ userId: user.id ?? undefined }) },
+		{
+			shape: withoutSecrets,
+			log: (_, user) => ({ userId: user.id ?? undefined }),
+		},
 	);
 
 export const updateProfile: PilvioEndpoints['userUpdateProfile'] = (
@@ -54,7 +58,10 @@ export const listTokens: PilvioEndpoints['tokensList'] = (ctx, input) =>
 		},
 		input,
 		() => ({ method: 'GET', path: `${USER_RESOURCE}/token/list` }),
-		{ log: (_, tokens) => ({ count: tokens.length }) },
+		{
+			shape: withoutSecrets,
+			log: (_, tokens) => ({ count: tokens.length }),
+		},
 	);
 
 export const updateToken: PilvioEndpoints['tokensUpdate'] = (ctx, input) =>
@@ -76,7 +83,7 @@ export const updateToken: PilvioEndpoints['tokensUpdate'] = (ctx, input) =>
 				billing_account_id: billingAccountId,
 			},
 		}),
-		{ log: ({ tokenId }) => ({ tokenId }) },
+		{ shape: withoutSecrets, log: ({ tokenId }) => ({ tokenId }) },
 	);
 
 export const deleteToken: PilvioEndpoints['tokensDelete'] = (ctx, input) =>

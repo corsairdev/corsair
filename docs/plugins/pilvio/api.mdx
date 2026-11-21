@@ -31,7 +31,6 @@ await corsair.pilvio.api.account.getUser({});
 |------|------|----------|-------------|
 | `id` | `number \| null` | No | User id |
 | `name` | `string \| null` | No | Login name |
-| `cookie_id` | `string \| null` | No | Session cookie id |
 | `last_activity` | `string \| null` | No | Last activity timestamp |
 | `profile` | `object \| null` | No | Profile details |
 | `state` | `any \| null` | No | User state |
@@ -190,49 +189,6 @@ await corsair.pilvio.api.account.sshKeys.rename({ uuid: "3f8f4c5a-…", name: "p
 
 ---
 
-### tokens.create
-
-`account.tokens.create`
-
-Create an API token, optionally restricted to one billing account
-
-**Risk:** `write`
-
-```ts
-await corsair.pilvio.api.account.tokens.create({ description: "ci token", billingAccountId: 6, restricted: true });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `description` | `string` | No | Token description |
-| `billingAccountId` | `number` | No | Binds the token to one billing account (restricted) |
-| `restricted` | `boolean` | No | Restrict the token to billingAccountId |
-
-Set restricted with billingAccountId to bind the token to one billing account; the token value is answered once and never logged by the plugin.
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `number \| null` | No | Token id |
-| `token` | `string \| null` | No | The API token value |
-| `description` | `string \| null` | No | Token description |
-| `restricted` | `boolean \| null` | No | Whether the token is bound to one billing account |
-| `billing_account_id` | `number \| null` | No | Billing account a restricted token is bound to |
-| `user_id` | `number \| null` | No | Owner user id |
-| `consumer_id` | `string \| null` | No | Gateway consumer id |
-| `kong_id` | `string \| null` | No | Gateway token id |
-| `created_at` | `string \| null` | No | Creation timestamp |
-| `updated_at` | `string \| null` | No | Last update timestamp |
-
-
-
----
-
 ### tokens.delete
 
 `account.tokens.delete`
@@ -281,7 +237,7 @@ await corsair.pilvio.api.account.tokens.list({});
 ```ts
 {
   id?: number | null,
-  token?: string | null,
+  tokenEnding?: string | null,
   description?: string | null,
   restricted?: boolean | null,
   billing_account_id?: number | null,
@@ -326,7 +282,7 @@ await corsair.pilvio.api.account.tokens.update({ tokenId: 3, description: "rotat
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| null` | No | Token id |
-| `token` | `string \| null` | No | The API token value |
+| `tokenEnding` | `string \| null` | No | Last four characters of the token, to tell tokens apart |
 | `description` | `string \| null` | No | Token description |
 | `restricted` | `boolean \| null` | No | Whether the token is bound to one billing account |
 | `billing_account_id` | `number \| null` | No | Billing account a restricted token is bound to |
@@ -369,7 +325,6 @@ await corsair.pilvio.api.account.updateProfile({ firstName: "Cloudia", phoneNumb
 |------|------|----------|-------------|
 | `id` | `number \| null` | No | User id |
 | `name` | `string \| null` | No | Login name |
-| `cookie_id` | `string \| null` | No | Session cookie id |
 | `last_activity` | `string \| null` | No | Last activity timestamp |
 | `profile` | `object \| null` | No | Profile details |
 | `state` | `any \| null` | No | User state |
@@ -938,7 +893,7 @@ await corsair.pilvio.api.network.networks.list({});
 
 Create an S3 bucket with a globally unique name
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.pilvio.api.storage.buckets.create({ name: "pang1", billingAccountId: 129093 });
@@ -1112,7 +1067,7 @@ await corsair.pilvio.api.storage.buckets.update({ name: "pang1", billingAccountI
 
 Create a disk from empty, an OS image, a disk or a snapshot
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.pilvio.api.storage.disks.create({ sizeGb: 50, sourceImageType: "EMPTY", displayName: "DB data" });
@@ -1363,7 +1318,7 @@ await corsair.pilvio.api.storage.disks.update({ uuid: "05a61876-…", displayNam
 
 Create a virtual machine from an image or source
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.pilvio.api.vm.create({ name: "Ubuntu-22-04", osName: "ubuntu", osVersion: "22.04-lts", disks: 20, vcpu: 2, ram: 2048 });
@@ -1687,9 +1642,9 @@ Destructive: the VM is reinstalled with the new OS and existing data is replaced
 
 `vm.start`
 
-Start a stopped VM
+Start a stopped VM; billing for it resumes
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.pilvio.api.vm.start({ uuid: "fc880f74-cf03-4a7a-93da-74c506157023" });

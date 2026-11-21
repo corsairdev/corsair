@@ -83,6 +83,24 @@ afterEach(() => {
 });
 
 describe('account', () => {
+	it("token list keeps only each token's last four characters (live: full values)", async () => {
+		respond([
+			{ id: 3, token: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456', description: 'ci' },
+		]);
+		const tokens = (await invoke(Account.listTokens, {})) as Record<
+			string,
+			unknown
+		>[]; // unknown: token records are provider-shaped
+		expect(tokens[0]).not.toHaveProperty('token');
+		expect(tokens[0]?.tokenEnding).toBe('3456');
+	});
+
+	it('getUser drops the session cookie id', async () => {
+		respond({ id: 1, name: 'n', cookie_id: 'secret-cookie' });
+		const user = await invoke(Account.getUser, {});
+		expect(JSON.stringify(user)).not.toContain('secret-cookie');
+	});
+
 	it('getUser sends the apikey header', async () => {
 		respond(user);
 		await invoke(Account.getUser, {});
