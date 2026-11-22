@@ -11307,5 +11307,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/pilvio",
+    "dir": "packages/pilvio",
+    "name": "Pilvio",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
