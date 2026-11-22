@@ -10,10 +10,10 @@ Spondyr needs two credentials: the Subscription APIKey and the Application Token
 
 Things to know before you send:
 
-- **A 200 can mean the request failed.** Spondyr reports most failures with `APIStatus: "ERROR"` inside a normal response. The plugin throws `SpondyrOperationError` in that case, so a resolved promise means the request was accepted.
+- **A 200 can mean the request failed.** Spondyr reports most failures with `APIStatus: "ERROR"` inside a normal response. The plugin throws a 400 `ApiError` with Spondyr's `ErrorMessage` in that case, so a resolved promise means the request was accepted.
 - **Generate then deliver.** `correspondence.send` with `is_generate_only: true` generates the document without delivering it. `correspondence.deliver` then sends it, optionally to extra recipients.
-- **Status codes.** `SUBMITTED` and `MATCH` mean work is still in progress, `FINISH` and `FINISHPART` are terminal, and `NOMATCH` means no template matched the event. Poll `correspondence.status` with the `reference_id` that `send` returned.
-- **Templates come from uploaded content.** Call `templates.uploadContent` with the base64 file first, then pass its `reference_id` to `templates.create`. One upload can attach to a single template.
+- **Status codes.** `SUBMITTED` and `MATCH` mean work is still in progress, `FINISH` and `FINISHPART` are terminal, and `NOMATCH` means no template matched the event. Poll `correspondence.status`, passing the `ReferenceID` that `send` returned as `reference_id`.
+- **Templates come from uploaded content.** Call `templates.uploadContent` with the base64 file first, then pass the `ReferenceID` it returns as `template_content_reference_id` to `templates.create`. One upload can attach to a single template.
 - **Placeholders merge transaction data.** A Recipient's address fields and a Search Filter's tag may hold `{FieldName}` tokens that Spondyr fills from the transaction data.
 - **Errors are text.** A wrong credential arrives as a plain 400 with the reason in `ErrorMessage`, the same status a bad field gets. The plugin reads the message to tell them apart.
 - **No webhooks.** Spondyr calls a status callback URI you configure on the application, which this plugin does not receive. Poll `correspondence.status` or `batch.status` instead.

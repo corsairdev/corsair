@@ -16,7 +16,7 @@ description: "API reference for the Spondyr plugin in Corsair: every `spondyr.ap
 
 Generate correspondence for a list of data objects in one request, optionally merging shared data into each
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.spondyr.api.batch.send({ event_type: 'OrderPlaced', data: [{ Recipient: 'a@acme.com' }, { Recipient: 'b@acme.com' }], shared_data: { Message: 'Hello World!' } });
@@ -27,8 +27,8 @@ await corsair.spondyr.api.batch.send({ event_type: 'OrderPlaced', data: [{ Recip
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `event_type` | `string` | Yes | — |
-| `data` | `Record<string, string \| number \| boolean \| null>[]` | Yes | One entry per correspondence to generate |
-| `shared_data` | `Record<string, string \| number \| boolean \| null>` | No | Merged into every entry of `data` before processing |
+| `data` | `Record<string, JsonValue>[]` | Yes | One entry per correspondence to generate |
+| `shared_data` | `Record<string, JsonValue>` | No | Merged into every entry of `data` before processing |
 | `is_generate_only` | `boolean` | No | — |
 
 `shared_data` is merged into every entry of `data`. The response ReferenceID is for `batch.status`.
@@ -296,7 +296,7 @@ await corsair.spondyr.api.conditions.update({ transaction_type: 'Customer Orders
 
 Deliver correspondence that was generated with `is_generate_only`, optionally to extra recipients
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.spondyr.api.correspondence.deliver({ reference_id: 'c1a2b3-reference', original_recipients: 'All' });
@@ -356,7 +356,7 @@ Set `original_recipients` to "None" to deliver only to `new_recipients`. A targe
 
 Retry the templates that errored on a previous request
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.spondyr.api.correspondence.retry({ reference_id: 'c1a2b3-reference' });
@@ -472,7 +472,7 @@ Omit `event_type` to search every type. `page_size` is capped at 250.
 
 Generate correspondence from a Transaction Type and either deliver it or hold it for `correspondence.deliver`
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.spondyr.api.correspondence.send({ event_type: 'OrderPlaced', data: { OrderNumber: 12345 }, is_generate_only: true });
@@ -483,7 +483,7 @@ await corsair.spondyr.api.correspondence.send({ event_type: 'OrderPlaced', data:
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `event_type` | `string` | Yes | Event Type name; Spondyr resolves the Transaction Type from it |
-| `data` | `Record<string, string \| number \| boolean \| null>` | Yes | The document data, in the shape of the Transaction Type JSON sample |
+| `data` | `Record<string, JsonValue>` | Yes | The document data, in the shape of the Transaction Type JSON sample |
 | `is_generate_only` | `boolean` | No | When true the correspondence is generated but not delivered until `correspondence.deliver` is called |
 
 Pass `is_generate_only: true` to generate without delivering. The returned `ReferenceID` is what the status and deliver calls take.
@@ -537,7 +537,7 @@ await corsair.spondyr.api.correspondence.status({ reference_id: 'c1a2b3-referenc
 | `StatusCode` | `string \| null` | No | — |
 | `StatusName` | `string \| null` | No | — |
 | `Correspondence` | `object[] \| null` | No | — |
-| `Data` | `Record<string, string \| number \| boolean \| null> \| null` | No | — |
+| `Data` | `Record<string, JsonValue> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="Correspondence full type">
@@ -1027,6 +1027,7 @@ await corsair.spondyr.api.searchFilters.delete({ search: 'OrderNumber' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | The Transaction Type the Search Filter belongs to |
 | `search` | `string` | Yes | — |
 
 
@@ -1058,6 +1059,7 @@ await corsair.spondyr.api.searchFilters.get({ search: 'OrderNumber' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `transaction_type` | `string` | Yes | The Transaction Type the Search Filter belongs to |
 | `search` | `string` | Yes | — |
 
 This route takes only the name; it is not scoped by Transaction Type.
