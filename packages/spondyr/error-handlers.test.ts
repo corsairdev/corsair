@@ -1,10 +1,7 @@
+import { ApiError } from 'corsair/http';
 import { ZodError } from 'zod';
-import { SpondyrAPIError } from './client';
-import {
-	errorHandlers,
-	mergeErrorHandlers,
-	SpondyrOperationError,
-} from './error-handlers';
+import { assertApiStatus } from './endpoints/call';
+import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { badCredentials, noCredentials } from './test-fixtures';
 
 type HandlerName = keyof typeof errorHandlers;
@@ -25,9 +22,17 @@ async function strategy(error: Error) {
 function apiError(
 	status: number,
 	message = 'Spondyr failed',
-	options: { retryAfter?: number; method?: string } = {},
+	options: {
+		retryAfter?: number;
+		method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+	} = {},
 ) {
-	return new SpondyrAPIError(message, { status, ...options });
+	return new ApiError(
+		{ method: options.method ?? 'GET', url: 'Spondyr' },
+		{ url: 'Spondyr', ok: false, status, statusText: '', body: {} },
+		message,
+		{ retryAfter: options.retryAfter },
+	);
 }
 
 describe('Spondyr error handlers', () => {
@@ -92,9 +97,18 @@ describe('Spondyr error handlers', () => {
 	});
 
 	it('does not retry a body that said ERROR', () => {
-		expect(classify(new SpondyrOperationError('refused'))).toBe(
-			'VALIDATION_ERROR',
-		);
+		let refused: Error | undefined;
+		try {
+			assertApiStatus(
+				{ APIStatus: 'ERROR', ErrorMessage: 'refused' },
+				'correspondence.send',
+				{ method: 'POST', path: 'Spondyr' },
+			);
+		} catch (error) {
+			refused = error as Error;
+		}
+		expect(refused).toBeInstanceOf(ApiError);
+		expect(classify(refused as Error)).toBe('VALIDATION_ERROR');
 	});
 
 	it('retries a 5xx on a read', async () => {
@@ -119,8 +133,10 @@ describe('Spondyr error handlers', () => {
 		);
 	});
 
-	it('does not replay a 5xx whose method is unknown', () => {
-		expect(classify(apiError(500))).toBe('DEFAULT');
+	it('does not replay a 5xx on a delete', () => {
+		expect(
+			classify(apiError(500, 'Spondyr failed', { method: 'DELETE' })),
+		).toBe('DEFAULT');
 	});
 
 	it('leaves anything unrecognised to DEFAULT with no retry', async () => {
@@ -137,9 +153,7 @@ describe('Spondyr error handlers', () => {
 	it('still classifies the live error envelopes correctly', () => {
 		// The bodies came from the API, not from the docs.
 		for (const body of [badCredentials, noCredentials]) {
-			const error = new SpondyrAPIError(`Spondyr 400: ${body.ErrorMessage}`, {
-				status: 400,
-			});
+			const error = apiError(400, `Spondyr 400: ${body.ErrorMessage}`);
 			expect(classify(error)).toBe('AUTH_ERROR');
 		}
 	});

@@ -4,7 +4,7 @@
  * Waits for a promise that is expected to reject and returns the rejection.
  *
  * unknown: a promise can reject with any value, so the rejection reason has no
- * static type. Each caller narrows it: to a `SpondyrAPIError`, to a ZodError by
+ * static type. Each caller narrows it: to core's `ApiError`, to a ZodError by
  * its `name`, or to nothing at all.
  */
 export async function captureError(

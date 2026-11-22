@@ -1,7 +1,10 @@
+import { ApiError } from 'corsair/http';
 import { z } from 'zod';
 import { assertApiStatus, resolveCredentials } from './endpoints/call';
-import { SpondyrEndpointOutputSchemas } from './endpoints/types';
-import { SpondyrOperationError } from './error-handlers';
+import {
+	SpondyrEndpointInputSchemas as SpondyrEndpointInputSchemaFor,
+	SpondyrEndpointOutputSchemas,
+} from './endpoints/types';
 import {
 	batchStatus,
 	batchStatusPartial,
@@ -164,51 +167,54 @@ describe('wrong-shaped bodies fail loudly', () => {
 	});
 });
 
+const REQUEST = { method: 'GET', path: 'Templates' } as const;
+
 describe('assertApiStatus', () => {
 	it('throws with the provider message on an ERROR envelope', () => {
 		expect(() =>
 			assertApiStatus(
 				{ APIStatus: 'ERROR', ErrorMessage: 'No template matched' },
 				'correspondence.send',
+				REQUEST,
 			),
-		).toThrow(SpondyrOperationError);
+		).toThrow(ApiError);
 	});
 
 	it('names the operation that was refused', () => {
-		try {
+		expect(() =>
 			assertApiStatus(
 				{ APIStatus: 'ERROR', ErrorMessage: 'No template matched' },
 				'correspondence.send',
-			);
-		} catch (error) {
-			expect((error as Error).message).toContain('correspondence.send');
-			expect((error as Error).message).toContain('No template matched');
-		}
+				REQUEST,
+			),
+		).toThrow('correspondence.send was refused: No template matched');
 	});
 
 	it('passes an OK envelope', () => {
 		expect(() =>
-			assertApiStatus({ APIStatus: 'OK' }, 'templates.list'),
+			assertApiStatus({ APIStatus: 'OK' }, 'templates.list', REQUEST),
 		).not.toThrow();
 	});
 
 	it('passes a body with no APIStatus at all', () => {
 		expect(() =>
-			assertApiStatus({ Name: 'x' }, 'templates.list'),
+			assertApiStatus({ Name: 'x' }, 'templates.list', REQUEST),
 		).not.toThrow();
 	});
 
 	it('passes a non-object body', () => {
-		expect(() => assertApiStatus(null, 'templates.list')).not.toThrow();
-		expect(() => assertApiStatus('<html>', 'templates.list')).not.toThrow();
+		expect(() =>
+			assertApiStatus(null, 'templates.list', REQUEST),
+		).not.toThrow();
+		expect(() =>
+			assertApiStatus('<html>', 'templates.list', REQUEST),
+		).not.toThrow();
 	});
 
 	it('falls back to a plain message when ErrorMessage is missing', () => {
-		try {
-			assertApiStatus({ APIStatus: 'ERROR' }, 'templates.list');
-		} catch (error) {
-			expect((error as Error).message).toContain('no message given');
-		}
+		expect(() =>
+			assertApiStatus({ APIStatus: 'ERROR' }, 'templates.list', REQUEST),
+		).toThrow('no message given');
 	});
 });
 
@@ -255,6 +261,57 @@ describe('resolveCredentials', () => {
 				},
 				'k',
 			),
-		).rejects.toThrow(/Application Token is missing/);
+		).rejects.toMatchObject({ name: 'AuthMissingError' });
+	});
+});
+
+describe('credentials without a key manager', () => {
+	it('raises the missing-token error, not a TypeError, when ctx.keys is absent', async () => {
+		await expect(
+			resolveCredentials({ options: {} }, 'k'),
+		).rejects.toMatchObject({ name: 'AuthMissingError' });
+		await expect(
+			resolveCredentials({ options: { applicationToken: 't' } }, 'k'),
+		).resolves.toEqual({ apiKey: 'k', applicationToken: 't' });
+	});
+});
+
+describe('targeted Mail delivery', () => {
+	it('needs a postal address', () => {
+		const base = { reference_id: 'r1', original_recipients: 'None' };
+		const without = SpondyrEndpointInputSchemaFor.deliver.safeParse({
+			...base,
+			new_recipients: [{ TargetedDeliveryMethod: 'Mail', FirstName: 'Pat' }],
+		});
+		expect(without.success).toBe(false);
+		const withAddress = SpondyrEndpointInputSchemaFor.deliver.safeParse({
+			...base,
+			new_recipients: [
+				{
+					TargetedDeliveryMethod: 'Mail',
+					Address1: '1 Main St',
+					City: 'Springfield',
+					State: 'IL',
+					Zip: '62701',
+				},
+			],
+		});
+		expect(withAddress.success).toBe(true);
+	});
+});
+
+describe('document data', () => {
+	it("accepts Spondyr's own nested example: objects and loop arrays", () => {
+		const parsed = SpondyrEndpointInputSchemaFor.send.safeParse({
+			event_type: 'New Order',
+			data: {
+				OrderNumber: 'A-100',
+				Customer: { CustomerID: 7, FirstName: 'Jane' },
+				Details: [
+					{ ProductID: 1, Price: 9.5, Options: [{ Name: 'Size', Value: 'M' }] },
+				],
+			},
+		});
+		expect(parsed.success).toBe(true);
 	});
 });

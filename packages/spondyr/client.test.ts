@@ -1,9 +1,9 @@
 import { inspect } from 'node:util';
+import { ApiError } from 'corsair/http';
 import {
 	describeSpondyrError,
 	makeSpondyrRequest,
 	SPONDYR_API_BASE,
-	SpondyrAPIError,
 } from './client';
 import { badCredentials, noCredentials } from './test-fixtures';
 import { captureError } from './test-helpers';
@@ -38,7 +38,10 @@ function lastRequest() {
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
+	// Queued responses answer the expected calls; anything past them fails instead of reaching Spondyr.
+	fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(() => {
+		throw new Error('unexpected request to Spondyr');
+	});
 });
 
 afterEach(() => {
@@ -109,7 +112,7 @@ describe('makeSpondyrRequest', () => {
 		expect(sent.headers.get('content-type')).toBeNull();
 	});
 
-	it('turns a 400 into a SpondyrAPIError that carries the provider message', async () => {
+	it('turns a 400 into an ApiError that carries the provider message', async () => {
 		respond(badCredentials, 400);
 
 		const error = await captureError(
@@ -119,10 +122,11 @@ describe('makeSpondyrRequest', () => {
 			}),
 		);
 
-		expect(error).toBeInstanceOf(SpondyrAPIError);
-		expect((error as SpondyrAPIError).status).toBe(400);
-		expect((error as SpondyrAPIError).message).toContain('API Key is invalid');
-		expect((error as SpondyrAPIError).apiStatus).toBe('ERROR');
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).name).toBe('ApiError');
+		expect((error as ApiError).status).toBe(400);
+		expect((error as ApiError).message).toContain('API Key is invalid');
+		expect((error as ApiError).body).toMatchObject({ APIStatus: 'ERROR' });
 	});
 
 	it('reads the missing-credential message the same way', async () => {
@@ -135,9 +139,7 @@ describe('makeSpondyrRequest', () => {
 			}),
 		);
 
-		expect((error as SpondyrAPIError).message).toContain(
-			'API Key not specified',
-		);
+		expect((error as ApiError).message).toContain('API Key not specified');
 	});
 
 	it('keeps Retry-After so the rate-limit handler can honour it', async () => {
@@ -150,8 +152,8 @@ describe('makeSpondyrRequest', () => {
 			}),
 		);
 
-		expect((error as SpondyrAPIError).retryAfter).toBe(5000);
-		expect((error as SpondyrAPIError).isRateLimit).toBe(true);
+		expect((error as ApiError).retryAfter).toBe(5000);
+		expect((error as ApiError).status).toBe(429);
 	});
 
 	it('records the method so writes are not replayed on a 5xx', async () => {
@@ -165,7 +167,43 @@ describe('makeSpondyrRequest', () => {
 			}),
 		);
 
-		expect((error as SpondyrAPIError).method).toBe('POST');
+		expect((error as ApiError).request.method).toBe('POST');
+	});
+
+	it('redacts document data Spondyr quotes back in an error message', () => {
+		// Trimmed from a live status call made right after a send (11-23).
+		const message =
+			'An unexpected error was encountered!  Conversion failed when converting the nvarchar value \'{"OrderNumber":12345,"Customer":{"Email":"jane@example.com"}}\' to data type int.';
+		const described = describeSpondyrError(
+			404,
+			{ APIStatus: 'ERROR', ErrorMessage: message },
+			'x',
+		);
+		expect(described.message).not.toContain('jane@example.com');
+		expect(described.message).toContain("'<document data>' to data type int.");
+		expect(
+			describeSpondyrError(400, { ErrorMessage: "Name 'Order' exists" }, 'x')
+				.message,
+		).toBe("Spondyr 400: Name 'Order' exists");
+	});
+
+	it('keeps document data out of a failed request', async () => {
+		respond(badCredentials, 400);
+
+		const error = await captureError(
+			makeSpondyrRequest(CREDENTIALS, {
+				method: 'POST',
+				path: 'Spondyr',
+				body: {
+					EventType: 'New Order',
+					Data: { Customer_Email: 'jane@example.com' },
+				},
+			}),
+		);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect((error as ApiError).request.body).toBeUndefined();
+		expect(JSON.stringify(error)).not.toContain('jane@example.com');
 	});
 
 	it('never puts either credential in the message or its inspection', async () => {

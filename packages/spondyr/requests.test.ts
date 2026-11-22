@@ -639,15 +639,21 @@ describe('searchFilters', () => {
 		});
 	});
 
-	it('searchFilters.get GETs one by name, with no Transaction Type', async () => {
+	it('searchFilters.get GETs one by name and Transaction Type', async () => {
 		respond({ APIStatus: 'OK', ...searchFilter });
 
-		await invoke(SearchFiltersEndpoints.get, { search: 'OrderNumber' });
+		await invoke(SearchFiltersEndpoints.get, {
+			transaction_type: 'Customer Orders',
+			search: 'OrderNumber',
+		});
 
 		expectAuthenticated();
 		expect(lastRequest().path).toBe('/api/v1.0.0/Search');
-		// The documented route takes only the name.
-		expect(lastRequest().query).toEqual({ Search: 'OrderNumber' });
+		// The docs list only Search, but the live API answers "Transaction Type not specified!" without it.
+		expect(lastRequest().query).toEqual({
+			TransactionType: 'Customer Orders',
+			Search: 'OrderNumber',
+		});
 	});
 
 	it('searchFilters.create POSTs the tag template', async () => {
@@ -688,14 +694,20 @@ describe('searchFilters', () => {
 		});
 	});
 
-	it('searchFilters.delete DELETEs by name only', async () => {
+	it('searchFilters.delete DELETEs by name and Transaction Type', async () => {
 		respond(deleted);
 
-		await invoke(SearchFiltersEndpoints.delete, { search: 'OrderNumber' });
+		await invoke(SearchFiltersEndpoints.delete, {
+			transaction_type: 'Customer Orders',
+			search: 'OrderNumber',
+		});
 
 		expectAuthenticated();
 		expect(lastRequest().method).toBe('DELETE');
-		expect(lastRequest().query).toEqual({ Search: 'OrderNumber' });
+		expect(lastRequest().query).toEqual({
+			TransactionType: 'Customer Orders',
+			Search: 'OrderNumber',
+		});
 	});
 });
 
@@ -880,7 +892,7 @@ describe('a 200 is not proof the call worked', () => {
 			}),
 		);
 
-		expect((error as Error).name).toBe('SpondyrOperationError');
+		expect((error as Error).name).toBe('ApiError');
 		expect((error as Error).message).toContain('No template matched the event');
 	});
 
@@ -914,7 +926,7 @@ describe('a 200 is not proof the call worked', () => {
 			),
 		);
 
-		expect((error as Error).message).toContain('Application Token is missing');
+		expect((error as Error).name).toBe('AuthMissingError');
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });

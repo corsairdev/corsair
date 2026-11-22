@@ -130,17 +130,18 @@ describe('spondyr plugin definition', () => {
 		}
 	});
 
-	it('marks the send, deliver, retry and upload as writes', () => {
+	it('marks the operations that generate and deliver correspondence as destructive', () => {
 		const meta = plugin.endpointMeta ?? {};
+		// They email, fax, mail or text real recipients (R8: sends are destructive).
 		for (const name of [
 			'correspondence.send',
 			'correspondence.deliver',
 			'correspondence.retry',
 			'batch.send',
-			'templates.uploadContent',
 		] as const) {
-			expect(meta[name]?.riskLevel).toBe('write');
+			expect(meta[name]?.riskLevel).toBe('destructive');
 		}
+		expect(meta['templates.uploadContent']?.riskLevel).toBe('write');
 	});
 
 	it('has input and output schemas for every endpoint', () => {
