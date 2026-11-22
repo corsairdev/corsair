@@ -1,0 +1,126 @@
+displayName: Lexoffice
+description: Lexware Office accounting integration for contacts, vouchers, invoices, credit notes, payments, posting categories, and documents.
+overviewNote: |
+  Connect with an API key generated in the Lexware dashboard under Settings > Public API. Requests use the current https://api.lexware.io/v1 gateway. The plugin does not persist Lexware entities locally.
+examples:
+  read:
+    path: profile.get
+    title: Get organization profile
+    args: {}
+  write:
+    path: contacts.create
+    title: Create a new contact
+    args:
+      version: 0
+      roles:
+        customer: {}
+      person:
+        lastName: Mustermann
+apiExamples:
+  contacts.list:
+    page: 0
+    size: 25
+  contacts.get:
+    id: c-00000000-0000-4000-8000-000000000001
+  contacts.create:
+    version: 0
+    roles:
+      customer: {}
+    person:
+      lastName: Mustermann
+  contacts.update:
+    id: c-00000000-0000-4000-8000-000000000001
+    version: 1
+    roles:
+      customer: {}
+    person:
+      lastName: Mustermann
+  voucherlist.list:
+    call: "{ voucherType: 'invoice,creditnote', voucherStatus: 'any', page: 0, size: 25 }"
+  invoices.list:
+    page: 0
+    size: 25
+    voucherStatus: open
+  invoices.get:
+    id: i-00000000-0000-4000-8000-000000000001
+  invoices.create:
+    call: "{ voucherDate: '2026-01-01', address: { name: 'Acme Corp', countryCode: 'DE' }, lineItems: [{ type: 'custom', name: 'Consulting', quantity: 1, unitName: 'hour', unitPrice: { currency: 'EUR', netAmount: 100, taxRatePercentage: 19 } }], totalPrice: { currency: 'EUR' }, taxConditions: { taxType: 'net' }, shippingConditions: { shippingType: 'service', shippingDate: '2026-01-01' } }"
+  invoices.render:
+    id: i-00000000-0000-4000-8000-000000000001
+  invoices.download:
+    id: i-00000000-0000-4000-8000-000000000001
+  vouchers.list:
+    voucherNumber: PUR-2026-001
+    page: 0
+    size: 25
+  vouchers.get:
+    id: v-00000000-0000-4000-8000-000000000001
+  vouchers.create:
+    call: "{ type: 'purchaseinvoice', voucherNumber: 'PUR-2026-001', voucherDate: '2026-01-01', totalGrossAmount: 119, totalTaxAmount: 19, taxType: 'net', useCollectiveContact: true, voucherItems: [{ amount: 100, taxAmount: 19, taxRatePercent: 19, categoryId: 'efa82f49-fd85-11e1-a21f-0800200c9a66' }] }"
+  vouchers.update:
+    call: "{ id: 'v-00000000-0000-4000-8000-000000000001', version: 3, files: ['f-00000000-0000-4000-8000-000000000001'], type: 'purchaseinvoice', voucherNumber: 'PUR-2026-001', voucherDate: '2026-01-01', totalGrossAmount: 119, totalTaxAmount: 19, taxType: 'net', useCollectiveContact: true, voucherItems: [{ amount: 100, taxAmount: 19, taxRatePercent: 19, categoryId: 'efa82f49-fd85-11e1-a21f-0800200c9a66' }] }"
+  vouchers.attachFile:
+    call: "{ id: 'v-00000000-0000-4000-8000-000000000001', file: 'JVBERi0xLjQK', fileName: 'receipt.pdf', contentType: 'application/pdf' }"
+  profile.get: {}
+  creditNotes.list:
+    page: 0
+    size: 25
+    voucherStatus: open
+  creditNotes.get:
+    id: cn-00000000-0000-4000-8000-000000000001
+  creditNotes.create:
+    call: "{ voucherDate: '2026-01-01', address: { name: 'Acme Corp', countryCode: 'DE' }, lineItems: [{ type: 'custom', name: 'Credit', quantity: 1, unitName: 'piece', unitPrice: { currency: 'EUR', netAmount: 50, taxRatePercentage: 19 } }], totalPrice: { currency: 'EUR' }, taxConditions: { taxType: 'net' } }"
+  creditNotes.render:
+    id: cn-00000000-0000-4000-8000-000000000001
+  creditNotes.download:
+    id: cn-00000000-0000-4000-8000-000000000001
+  downPaymentInvoices.get:
+    id: dp-00000000-0000-4000-8000-000000000001
+  downPaymentInvoices.download:
+    id: dp-00000000-0000-4000-8000-000000000001
+  payments.get:
+    voucherId: i-00000000-0000-4000-8000-000000000001
+  postingCategories.list: {}
+  files.upload:
+    call: "{ file: 'JVBERi0xLjQK', fileName: 'receipt.pdf', contentType: 'application/pdf' }"
+  files.download:
+    id: file-00000000-0000-4000-8000-000000000001
+apiNotes:
+  voucherlist.list: |
+    voucherType and voucherStatus are required; use any or documented comma-separated values. Pagination is zero-based with a maximum size of 250. Invoice, credit-note, and down-payment invoice list operations use this route. `overdue` must be used on its own; it cannot be combined with other statuses.
+  vouchers.list: |
+    This convenience operation filters bookkeeping voucher types and voucherStatus=any through the current /voucherlist route. Lexware's older /vouchers?voucherNumber filter is deprecated.
+  invoices.render: |
+    Lexware marks this document-ID route deprecated. Prefer invoices.download, which returns the document bytes directly. Draft invoices have no downloadable document.
+  invoices.create: |
+    The operation can finalize a new invoice or pursue a preceding sales voucher; finalize and precedingSalesVoucherId are query parameters. Finalized invoices cannot be edited or deleted via the API. For custom, material, and service lines, name, quantity, unitName, and unitPrice are required; material/service lines also require id. Text lines accept only name and/or description. Net tax conditions require netAmount; gross tax conditions require grossAmount. Shipping conditions and their required dates are validated before sending. `service` and `delivery` need `shippingDate`; `serviceperiod` and `deliveryperiod` need both `shippingDate` and `shippingEndDate`; `none` takes neither.
+  invoices.download: |
+    Returns the file bytes in base64 form. Lexware supports */*, application/pdf, and application/xml for sales invoices; XRechnung PDF output is a preview only.
+  vouchers.create: |
+    For an open voucher, supply voucherNumber, totalGrossAmount, totalTaxAmount, each item's taxAmount, and either contactId or useCollectiveContact: true. If both contact fields are supplied, Lexware ignores contactId when useCollectiveContact is true. The purchase example uses the documented "Reisen (für Selbständige)" expense category; select an appropriate outgo category from postingCategories.list for the actual expense. Version is omitted unless explicitly provided because the provider's create documentation conflicts about its initial value. Leaving out `voucherStatus` creates an `open` voucher, which also needs `voucherDate` and at least one entry in `voucherItems`.
+  vouchers.update: |
+    Updates require the latest version and the existing files array. Lexware warns that omitting existing file IDs permanently deletes those files. voucherStatus can only be changed from unchecked to open; this operation is classified destructive. `voucherDate` is written as YYYY-MM-DD: take the date part of the timestamp `vouchers.get` returns (for example `2026-11-21` from `2026-11-21T00:00:00.000+01:00`) without converting it to UTC. Read the voucher first and pass its `version` and every file ID in `files`.
+  vouchers.attachFile: |
+    Uploads a file to an existing voucher. This request has no type form field; use files.upload to create a voucher from an uploaded receipt.
+  files.upload: |
+    Uses multipart form data with a file part and type=voucher. PDF, JPG, PNG, and XML are documented formats, with a 5 MB maximum. Upload creates a voucher whose OCR processing completes asynchronously. The official reference links to files/{id}/status but does not publish that route's contract, so status polling is excluded as undocumented.
+  files.download: |
+    Returns binary bytes as base64. This generic endpoint is intended for bookkeeping voucher files; use the sales-document file routes for invoices, credit notes, and down-payment invoices.
+  creditNotes.render: |
+    Lexware marks this document-ID route deprecated. Prefer creditNotes.download. Finalizing a credit note pursued from an invoice immediately reduces that invoice's open amount.
+  creditNotes.create: |
+    Credit notes can be finalized or pursued from an existing sales voucher; finalize and precedingSalesVoucherId are query parameters. A finalized credit note related to an invoice is immediately paid off and reduces the invoice's open amount. Credit notes do not support payment conditions, shipping conditions, or per-line discounts. For custom, material, and service lines, name, quantity, unitName, and unitPrice are required; material/service lines also require id.
+  creditNotes.download: |
+    Returns the file bytes in base64 form. Lexware supports */*, application/pdf, and application/xml for sales credit notes. For an XRechnung credit note, application/pdf returns only a preview; request application/xml for the e-invoice.
+  downPaymentInvoices.get: |
+    Down-payment invoices are read-only through this API. Their list metadata is available through voucherlist.list using voucherType=downpaymentinvoice.
+  downPaymentInvoices.download: |
+    Returns document bytes as base64. Draft down-payment invoices do not have a downloadable document. For an XRechnung down-payment invoice, application/pdf returns only a preview; request application/xml for the e-invoice.
+  payments.get: |
+    Retrieves payment status for a voucher ID; the API documents this operation as read-only.
+  profile.get: |
+    The response includes organization/account profile details and may include the account user's email as returned by the provider. The plugin does not log the response.
+  contacts.create: |
+    New contacts are created with version 0 when omitted and must have exactly one of person or company plus at least one role. Only one entry per address/contact list and one company contact person can be written. XRechnung contacts require both buyerReference and vendorNumberAtCustomer. Personal contact fields are never included in plugin event logs or propagated provider error details.
+  contacts.update: |
+    Updates require the current contact version. Personal contact fields are never included in plugin event logs or propagated provider error details. The same write rules as contacts.create apply: exactly one of person or company, and at least one role.
