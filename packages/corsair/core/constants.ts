@@ -46,6 +46,7 @@ export const BaseProviders = [
 	'ambee',
 	'ambientweather',
 	'amcards',
+	'amika',
 	'amplitude',
 	'anchorbrowser',
 	'anonyflow',
@@ -817,6 +818,7 @@ export const ProviderDisplayNames = {
 	ambee: 'Ambee',
 	ambientweather: 'Ambient Weather',
 	amcards: 'AMcards',
+	amika: 'Amika',
 	amplitude: 'Amplitude',
 	anchorbrowser: 'Anchor Browser',
 	anonyflow: 'Anonyflow',
@@ -1595,6 +1597,7 @@ export type AllProviders =
 	| 'ambee'
 	| 'ambientweather'
 	| 'amcards'
+	| 'amika'
 	| 'amplitude'
 	| 'anchorbrowser'
 	| 'anonyflow'

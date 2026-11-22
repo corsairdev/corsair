@@ -435,6 +435,14 @@
                 ]
               },
               {
+                "group": "Amika",
+                "pages": [
+                  "plugins/amika/overview",
+                  "plugins/amika/api",
+                  "plugins/amika/database"
+                ]
+              },
+              {
                 "group": "Amplitude",
                 "pages": [
                   "plugins/amplitude/overview",
