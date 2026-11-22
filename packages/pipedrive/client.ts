@@ -431,6 +431,10 @@ export async function makePipedriveBinaryRequest(
 		...options.headers,
 	});
 	if (authType === 'oauth_2') headers.set('Authorization', `Bearer ${apiKey}`);
+	// Pipedrive answers downloads with a 302 to a presigned S3 URL (live run 11-23). Hops off a
+	// Pipedrive host are followed over https without the token or any other request header.
+	const publicHeaders = new Headers({ Accept: 'application/octet-stream' });
+	let sendCredentials = true;
 	try {
 		const timeoutSignal = AbortSignal.timeout(20_000);
 		const visitedUrls = new Set([url]);
@@ -440,7 +444,7 @@ export async function makePipedriveBinaryRequest(
 		while (!response) {
 			const nextResponse = await fetch(currentUrl, {
 				method: options.method,
-				headers,
+				headers: sendCredentials ? headers : publicHeaders,
 				signal: timeoutSignal,
 				redirect: 'manual',
 			});
@@ -456,7 +460,12 @@ export async function makePipedriveBinaryRequest(
 			}
 			const nextUrl = new URL(location, currentUrl);
 			await nextResponse.body?.cancel().catch(() => undefined);
-			if (!isTrustedPipedriveRedirect(nextUrl)) {
+			const isPublicHttpsHop =
+				nextUrl.protocol === 'https:' &&
+				nextUrl.username === '' &&
+				nextUrl.password === '';
+			if (!isTrustedPipedriveRedirect(nextUrl)) sendCredentials = false;
+			if (!isPublicHttpsHop) {
 				throw new ApiError(
 					{ method: options.method, url: endpoint },
 					{
@@ -466,7 +475,7 @@ export async function makePipedriveBinaryRequest(
 						statusText: nextResponse.statusText,
 						body: { error: 'Pipedrive file download redirect was rejected' },
 					},
-					'Pipedrive file download redirected outside a trusted Pipedrive origin',
+					'Pipedrive file download redirected to a non-https location',
 				);
 			}
 			if (

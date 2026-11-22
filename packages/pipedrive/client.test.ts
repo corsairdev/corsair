@@ -138,12 +138,55 @@ describe('Pipedrive HTTP client', () => {
 		}
 	});
 
-	it('rejects cross-origin file redirects before forwarding the API token', async () => {
+	it('follows the presigned storage redirect without the API token', async () => {
+		const originalFetch = globalThis.fetch;
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValueOnce(
+				new Response(null, {
+					status: 302,
+					headers: {
+						Location:
+							'https://pipedrive-files.s3.eu-west-1.amazonaws.com/f/7?X-Amz-Signature=abc',
+					},
+				}),
+			)
+			.mockResolvedValueOnce(
+				new Response(new Uint8Array([80, 68]), {
+					status: 200,
+					headers: { 'Content-Type': 'text/plain' },
+				}),
+			);
+		globalThis.fetch = fetchMock;
+		try {
+			await expect(
+				makePipedriveBinaryRequest(
+					'/files/7/download',
+					'test-token',
+					'api_key',
+					{
+						method: 'GET',
+						apiVersion: 'v1',
+					},
+				),
+			).resolves.toMatchObject({ base64: 'UEQ=', byte_length: 2 });
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+			const first = new Headers(fetchMock.mock.calls[0]?.[1]?.headers);
+			const second = new Headers(fetchMock.mock.calls[1]?.[1]?.headers);
+			expect(first.get('x-api-token')).toBe('test-token');
+			expect(second.get('x-api-token')).toBeNull();
+			expect(second.get('authorization')).toBeNull();
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+	});
+
+	it('rejects a non-https file redirect and keeps the token out of the error', async () => {
 		const originalFetch = globalThis.fetch;
 		const fetchMock = jest.fn().mockResolvedValue(
 			new Response(null, {
 				status: 302,
-				headers: { Location: 'https://attacker.example.invalid/collect' },
+				headers: { Location: 'http://attacker.example.invalid/collect' },
 			}),
 		);
 		globalThis.fetch = fetchMock;
@@ -166,10 +209,6 @@ describe('Pipedrive HTTP client', () => {
 			);
 			expect(JSON.stringify(rejection)).not.toContain('test-token');
 			expect(fetchMock).toHaveBeenCalledTimes(1);
-			expect(fetchMock).toHaveBeenCalledWith(
-				expect.stringContaining('/files/7/download'),
-				expect.objectContaining({ redirect: 'manual' }),
-			);
 		} finally {
 			globalThis.fetch = originalFetch;
 		}
