@@ -42,7 +42,7 @@ export const zohoBooksAuthConfig = {
 
 export type ZohoBooksPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
-	/** Zoho Books data center. Defaults to US. China is excluded until Zoho documents its Books OAuth Accounts host. */
+	/** Zoho Books data center. Defaults to US. */
 	region?: ZohoBooksRegion;
 	hooks?: InternalZohoBooksPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;

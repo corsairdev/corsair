@@ -3,11 +3,9 @@ description: Manage organizations, contacts, invoices, bills, banking, projects,
 domain: zoho.com
 recommendedAuth: oauth_2
 overviewNote: >-
-  Zoho Books uses regional data centers. Supported region values are us (default), eu, in, au, jp, ca, sa, and ae. The
-  Books introduction lists the API domains. Zoho's Finance API-domain announcement lists the China Books API host
-  (www.zohoapis.com.cn/books/v3), but the Books OAuth guide's China multi-DC entry lists a Billing API base URI, not a
-  Books Accounts OAuth URL. The Books guide and official Books OpenAPI bundle do not identify a China Accounts OAuth
-  host. China is therefore excluded rather than inferring an OAuth host from another Zoho product.
+  Zoho Books uses regional data centers. Supported region values are us (default), eu, in, au, jp, ca, sa, ae, and cn.
+  API calls go to www.zohoapis.<domain>/books/v3 and sign-in to the matching accounts host (accounts.zohocloud.ca for
+  Canada, accounts.zoho.com.cn for China, as the Books OAuth guide's domain table lists).
   Each plugin instance has one supported region, so configure the Zoho OAuth client for that data center or use shared
   client credentials with Zoho multi-DC enabled. Access tokens use Authorization: Zoho-oauthtoken <token>, expire after
   one hour, and offline consent provides a refresh token. The plugin requests all 81 OAuth scopes present in the

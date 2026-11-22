@@ -24,6 +24,7 @@ const regions: ZohoBooksRegion[] = [
 	'ca',
 	'sa',
 	'ae',
+	'cn',
 ];
 const domains: Record<ZohoBooksRegion, string> = {
 	us: 'com',
@@ -34,6 +35,7 @@ const domains: Record<ZohoBooksRegion, string> = {
 	ca: 'ca',
 	sa: 'sa',
 	ae: 'ae',
+	cn: 'com.cn',
 };
 const accountsDomains: Record<ZohoBooksRegion, string> = {
 	us: 'accounts.zoho.com',
@@ -44,6 +46,7 @@ const accountsDomains: Record<ZohoBooksRegion, string> = {
 	ca: 'accounts.zohocloud.ca',
 	sa: 'accounts.zoho.sa',
 	ae: 'accounts.zoho.ae',
+	cn: 'accounts.zoho.com.cn',
 };
 
 type JsonObject = { readonly [key: string]: JsonValue };
@@ -251,9 +254,11 @@ describe('Zoho Books HTTP client', () => {
 		fetchSpy.mockRestore();
 	});
 
-	it('excludes China until Zoho documents a Books OAuth Accounts host', () => {
-		// Zoho publishes the China Books API domain, but no Books-specific OAuth host.
-		expect(regions.map(String)).not.toContain('cn');
+	it('signs China in on accounts.zoho.com.cn, like the Zoho Invoice plugin', () => {
+		expect(zohoBooksApiBase('cn')).toBe('https://www.zohoapis.com.cn/books/v3');
+		expect(zohoBooksOAuthTokenUrl('cn')).toBe(
+			'https://accounts.zoho.com.cn/oauth/v2/token',
+		);
 	});
 
 	it('uses the documented API and OAuth hosts for every data center', () => {

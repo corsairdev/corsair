@@ -28,6 +28,7 @@ const REGION_DOMAIN: Record<ZohoBooksRegion, string> = {
 	ca: 'ca',
 	sa: 'sa',
 	ae: 'ae',
+	cn: 'com.cn',
 };
 
 const REGION_ACCOUNTS_DOMAIN: Record<ZohoBooksRegion, string> = {
@@ -39,6 +40,7 @@ const REGION_ACCOUNTS_DOMAIN: Record<ZohoBooksRegion, string> = {
 	ca: 'accounts.zohocloud.ca',
 	sa: 'accounts.zoho.sa',
 	ae: 'accounts.zoho.ae',
+	cn: 'accounts.zoho.com.cn',
 };
 
 export const MAX_BINARY_RESPONSE_BYTES = 10 * 1024 * 1024;

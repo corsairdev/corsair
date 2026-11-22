@@ -11,7 +11,8 @@ export type ZohoBooksBinaryFile = {
 	base64: string;
 };
 
-// China has a documented Books API host but no verified Books OAuth Accounts host.
+// Zoho's Books OAuth guide lists the accounts domain per data center (China: .com.cn),
+// the same hosts the Zoho Invoice plugin uses.
 export type ZohoBooksRegion =
 	| 'us'
 	| 'eu'
@@ -20,7 +21,8 @@ export type ZohoBooksRegion =
 	| 'jp'
 	| 'ca'
 	| 'sa'
-	| 'ae';
+	| 'ae'
+	| 'cn';
 
 export type ZohoBooksOperationParameter = {
 	name: string;
