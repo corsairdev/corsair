@@ -4145,6 +4145,15 @@
                 ]
               },
               {
+                "group": "Parsio",
+                "pages": [
+                  "plugins/parsio/overview",
+                  "plugins/parsio/api",
+                  "plugins/parsio/database",
+                  "plugins/parsio/webhooks"
+                ]
+              },
+              {
                 "group": "Payhip",
                 "pages": [
                   "plugins/payhip/overview",
