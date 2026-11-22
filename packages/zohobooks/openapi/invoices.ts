@@ -6751,7 +6751,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.invoices.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'apply_pricebook_to_invoice',
@@ -7594,7 +7594,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.invoices.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'upload_invoice_digital_signature',
@@ -8546,7 +8546,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.invoices.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'cancel_invoices_einvoice',
@@ -8656,7 +8656,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.invoices.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'cancel_invoice_einvoice',

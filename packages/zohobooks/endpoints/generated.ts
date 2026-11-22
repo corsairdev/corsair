@@ -5297,7 +5297,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'Get credit note email content. Zoho Books API v3.',
 	},
 	'creditNotes.addCreditNoteDigitalSignature': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Add a digital signature to a credit note. Zoho Books API v3.',
 	},
 	'creditNotes.uploadCreditNoteDigitalSignature': {
@@ -5321,7 +5321,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'List credit note e-invoices. Zoho Books API v3.',
 	},
 	'creditNotes.pushCreditNotesEinvoice': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Push credit note e-invoices. Zoho Books API v3.',
 	},
 	'creditNotes.cancelCreditNotesEinvoice': {
@@ -5333,7 +5333,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'Get a credit note e-invoice. Zoho Books API v3.',
 	},
 	'creditNotes.pushCreditNoteEinvoice': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Push a credit note e-invoice. Zoho Books API v3.',
 	},
 	'creditNotes.cancelCreditNoteEinvoice': {
@@ -6090,7 +6090,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'Send an invoice via snail mail. Zoho Books API v3.',
 	},
 	'invoices.addInvoiceOnlinePaymentBankAccount': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Add a bank account for invoice online payments. Zoho Books API v3.',
 	},
@@ -6175,7 +6175,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'Get invoice signature template. Zoho Books API v3.',
 	},
 	'invoices.addInvoiceDigitalSignature': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Add a digital signature to an invoice. Zoho Books API v3.',
 	},
 	'invoices.uploadInvoiceDigitalSignature': {
@@ -6265,7 +6265,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'List invoice e-invoices. Zoho Books API v3.',
 	},
 	'invoices.pushInvoicesEinvoice': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Push invoice e-invoices. Zoho Books API v3.',
 	},
 	'invoices.cancelInvoicesEinvoice': {
@@ -6277,7 +6277,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'Get an invoice e-invoice. Zoho Books API v3.',
 	},
 	'invoices.pushInvoiceEinvoice': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Push an invoice e-invoice. Zoho Books API v3.',
 	},
 	'invoices.cancelInvoiceEinvoice': {
@@ -7480,7 +7480,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'Delete a Self-Billed Invoice. Zoho Books API v3.',
 	},
 	'selfBilledInvoices.pushSelfBilledInvoiceEinvoice': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Push a self-billed invoice e-invoice. Zoho Books API v3.',
 	},
 	'tasks.addTask': {

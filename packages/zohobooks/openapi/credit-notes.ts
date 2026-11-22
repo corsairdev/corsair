@@ -4451,7 +4451,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.creditnotes.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'upload_credit_note_digital_signature',
@@ -4700,7 +4700,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.invoices.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'cancel_credit_notes_einvoice',
@@ -4812,7 +4812,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.creditnotes.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'cancel_credit_note_einvoice',

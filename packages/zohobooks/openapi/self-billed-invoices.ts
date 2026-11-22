@@ -1232,6 +1232,6 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.bills.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 ] as const satisfies readonly ZohoBooksOperationDefinition[];
