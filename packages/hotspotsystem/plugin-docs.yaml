@@ -1,0 +1,86 @@
+displayName: HotspotSystem
+description: HotspotSystem hotspot management data - locations, customers, subscribers, vouchers and the sessions each one produced.
+domain: hotspotsystem.com
+recommendedAuth: api_key
+overviewNote: |
+  HotspotSystem runs Wi-Fi hotspots and reports who connected, how, and what they paid. This plugin wraps the v2 REST API.
+
+  Generate an API key in the Control Center under Tools & Settings > API Keys, then store it as the account's `api_key`. It is sent in the `sn-apikey` header. The docs also describe HTTP Basic with the key as the username and an empty password, which the plugin does not use, so the key never travels in the URL.
+
+  Things to know before you call:
+
+  - **Every operation is a read.** The documented API has 18 GET operations and no write, so nothing here changes state on the provider's side and every call is safe to retry.
+  - **The account-wide reads and the per-location reads are different operations, not a filter.** `customers.list` covers every location the key can see; `locations.customers` covers one. Both exist for customers, subscribers, vouchers and each of the four transaction types.
+  - **Paging uses `limit` and `offset`, and the next offset is in a response header.** Each list returns `next_offset` when the API's `Link` header names a next page, and omits it on the last page. Pass it back as `offset` to continue. The API cannot return the header and the body together through the shared client, so the paged reads use their own request that returns both.
+  - **`fields` and `sort` name properties of the response object.** `fields` narrows the response to a comma separated list, which the plugin takes as an array. `sort` takes one property name, with a leading `-` for descending. A name the resource does not have is refused by the API rather than ignored.
+  - **Dates are `2013-05-21 17:53:39` strings.** The notes page documents that format, and the transaction records use an ISO timestamp instead. Neither is converted, so both are `string` in the output.
+  - **A location ID can be a string or a number.** The Swagger types it as a string, while every transaction record returns `location_id` as a number, so the per-location operations accept either.
+  - **Some transaction fields are documented only as `TODO`.** The Swagger leaves every `MacTransaction`, `PaidTransaction`, `SocialTransaction` and `VoucherTransaction` field undocumented, so nothing on them is required and the values are passed through exactly as sent, including `smscountry`.
+  - **No pagination on `locations.options`.** It returns every location as `{ id, name }` with no `metadata` and no paging.
+  - **No inbound webhooks yet.** HotspotSystem can POST `customer.create`, `subscriber.create` and `transaction.*.create` events to a callback URL set up in the Control Center, signed with an HMAC-SHA256 header. This plugin does not register a webhook route for them, so new records are read with the list operations.
+references:
+  - title: API notes, authentication and the Link header
+    url: https://www.hotspotsystem.com/apidocs/api/notes/index.html
+  - title: API reference
+    url: https://www.hotspotsystem.com/apidocs/api/reference/
+  - title: Swagger file, v2.0
+    url: https://www.hotspotsystem.com/apidocs/src/hss_v2_swagger.json
+examples:
+  read:
+    path: locations.list
+    title: List the first ten locations with just their ID and name
+    args:
+      fields:
+        - id
+        - name
+      limit: 10
+  write:
+    path: customers.list
+    title: Read the account customers
+    args:
+      limit: 25
+apiExamples:
+  ping.check:
+    call: "{}"
+  me.get:
+    call: "{}"
+  locations.list:
+    call: "{ fields: ['id', 'name'], limit: 10, offset: 0 }"
+  locations.options:
+    call: "{}"
+  locations.customers:
+    call: "{ location_id: '42', limit: 25 }"
+  locations.subscribers:
+    call: "{ location_id: '42', limit: 25 }"
+  locations.vouchers:
+    call: "{ location_id: '42', limit: 25 }"
+  locations.paidTransactions:
+    call: "{ location_id: '42', limit: 25 }"
+  locations.voucherTransactions:
+    call: "{ location_id: '42', limit: 25 }"
+  locations.socialTransactions:
+    call: "{ location_id: '42', limit: 25 }"
+  locations.macTransactions:
+    call: "{ location_id: '42', limit: 25 }"
+  customers.list:
+    call: "{ limit: 25, offset: 0 }"
+  subscribers.list:
+    call: "{ limit: 25, offset: 0 }"
+  vouchers.list:
+    call: "{ limit: 25, offset: 0 }"
+  transactions.paid:
+    call: "{ limit: 25, offset: 0 }"
+  transactions.voucher:
+    call: "{ limit: 25, offset: 0 }"
+  transactions.social:
+    call: "{ limit: 25, offset: 0 }"
+  transactions.mac:
+    call: "{ limit: 25, offset: 0 }"
+apiNotes:
+  ping.check: 'Answers `{ ping: "pong" }`. The endpoint needs no key, but Corsair resolves one before every call, so a connected account is still required.'
+  me.get: 'Returns the resource owner as `{ userId, operator }`.'
+  locations.list: 'Returns `items` and `metadata.total_count`. `next_offset` is absent on the last page.'
+  locations.options: 'Returns `{ items }` with no `metadata` and no paging, for filling a picker.'
+  customers.list: 'A customer and a subscriber have the same documented properties, so both are the same shape here.'
+  transactions.mac: 'The Swagger documents every field of a MAC transaction as `TODO`, so nothing is required and the values are passed through as sent.'
+  vouchers.list: '`limit_tl`, `limit_dl` and `limit_ul` are bytes, and are -1 when the voucher has no location context.'

@@ -1,0 +1,1067 @@
+{
+  "id": "storerocket",
+  "displayName": "Storerocket",
+  "description": "Storerocket is a store locator. This plugin reads the token profile and projects, manages locations with opening hours, filters and custom fields through the create, PATCH, PUT and DELETE contracts, and schedules holiday special-hours rules with idempotency keys.",
+  "npmPackageName": "@corsair-dev/storerocket",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 13,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "storerocket.api.locations.create",
+      "shortPath": "locations.create",
+      "description": "Create a location; name and city are required",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug."
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_line_1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_line_2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "location_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Name of a location type in the project; null restores the default."
+          },
+          {
+            "key": "marker_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Integer ID of a marker in the project; null restores the default."
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "string | null",
+            "description": "Image URL or the project stored image name; null clears the cover."
+          },
+          {
+            "key": "visible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hours",
+            "optional": true,
+            "type": "{ name?: string, mon?: string | null, tue?: string | null, wed?: string | null, thu?: string | null, fri?: string | null, sat?: string | null, sun?: string | null, monday?: string | null, tuesday?: string | null, wednesday?: string | null, thursday?: string | null, friday?: string | null, saturday?: string | null, sunday?: string | null } | null"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Filter names; replaces the list, [] or null clears it."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Named custom fields, such as {\"Manager\":\"Sam\"}; a null value removes the attachment."
+          },
+          {
+            "key": "callsToAction",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Named calls to action, such as {\"Book\":\"https://example.com/book\"}; a null value removes the attachment."
+          },
+          {
+            "key": "facebook",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instagram",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "yelp",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "youtube",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tiktok",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, slug?: string | null, visible?: boolean | null, address?: string | null, address_line_1?: string | null, address_line_2?: string | null, display_address?: string | null, city?: string | null, state?: string | null, postcode?: string | null, country?: string | null, lat?: number | null, lng?: number | null, phone?: string | null, email?: string | null, url?: string | null, timezone?: string | null, location_type?: string | null, marker_id?: number | null, marker_url?: string | null, cover_image_url?: string | null, hours?: { name?: string | null, mon?: string | null, tue?: string | null, wed?: string | null, thu?: string | null, fri?: string | null, sat?: string | null, sun?: string | null } | null, filters?: any[] | null, fields?: { id?: string | null, name?: string | null, value?: any | null }[] | null, callsToAction?: { id?: string | null, title?: string | null, value?: string | null }[] | null, facebook?: string | null, instagram?: string | null, twitter?: string | null, yelp?: string | null, youtube?: string | null, tiktok?: string | null, socials?: { key?: string | null, label?: string | null, handle?: string | null, url?: string | null, icon?: string | null }[] | null, special_hours?: { window?: { from?: string | null, to?: string | null } | null, dates?: { name?: string | null, start_date?: string | null, end_date?: string | null, hours?: closed | regular | open_24_hours | string | { opens?: string | null, closes?: string | null }[] | null, note?: string | null }[] | null } | null }"
+          },
+          {
+            "key": "geocoding",
+            "optional": true,
+            "type": "{ status: found | approximate | not_found | unavailable | queued | string, match?: address | road | place | postcode | city | region | country | string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storerocket.api.locations.delete",
+      "shortPath": "locations.delete",
+      "description": "Delete a location from a project",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storerocket.api.locations.get",
+      "shortPath": "locations.get",
+      "description": "Read one location and its optional attached information",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "includeHours",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeSpecialHours",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeFilters",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeFields",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeCallsToAction",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, slug?: string | null, visible?: boolean | null, address?: string | null, address_line_1?: string | null, address_line_2?: string | null, display_address?: string | null, city?: string | null, state?: string | null, postcode?: string | null, country?: string | null, lat?: number | null, lng?: number | null, phone?: string | null, email?: string | null, url?: string | null, timezone?: string | null, location_type?: string | null, marker_id?: number | null, marker_url?: string | null, cover_image_url?: string | null, hours?: { name?: string | null, mon?: string | null, tue?: string | null, wed?: string | null, thu?: string | null, fri?: string | null, sat?: string | null, sun?: string | null } | null, filters?: any[] | null, fields?: { id?: string | null, name?: string | null, value?: any | null }[] | null, callsToAction?: { id?: string | null, title?: string | null, value?: string | null }[] | null, facebook?: string | null, instagram?: string | null, twitter?: string | null, yelp?: string | null, youtube?: string | null, tiktok?: string | null, socials?: { key?: string | null, label?: string | null, handle?: string | null, url?: string | null, icon?: string | null }[] | null, special_hours?: { window?: { from?: string | null, to?: string | null } | null, dates?: { name?: string | null, start_date?: string | null, end_date?: string | null, hours?: closed | regular | open_24_hours | string | { opens?: string | null, closes?: string | null }[] | null, note?: string | null }[] | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storerocket.api.locations.list",
+      "shortPath": "locations.list",
+      "description": "List locations with filters, include flags and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Page size from 1 to 100; the API defaults to 15."
+          },
+          {
+            "key": "includeHours",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeSpecialHours",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeFilters",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeFields",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "includeCallsToAction",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "{ field: name | address | city | state | country | postalCode, op: eq | ne | like, value: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, slug?: string | null, visible?: boolean | null, address?: string | null, address_line_1?: string | null, address_line_2?: string | null, display_address?: string | null, city?: string | null, state?: string | null, postcode?: string | null, country?: string | null, lat?: number | null, lng?: number | null, phone?: string | null, email?: string | null, url?: string | null, timezone?: string | null, location_type?: string | null, marker_id?: number | null, marker_url?: string | null, cover_image_url?: string | null, hours?: { name?: string | null, mon?: string | null, tue?: string | null, wed?: string | null, thu?: string | null, fri?: string | null, sat?: string | null, sun?: string | null } | null, filters?: any[] | null, fields?: { id?: string | null, name?: string | null, value?: any | null }[] | null, callsToAction?: { id?: string | null, title?: string | null, value?: string | null }[] | null, facebook?: string | null, instagram?: string | null, twitter?: string | null, yelp?: string | null, youtube?: string | null, tiktok?: string | null, socials?: { key?: string | null, label?: string | null, handle?: string | null, url?: string | null, icon?: string | null }[] | null, special_hours?: { window?: { from?: string | null, to?: string | null } | null, dates?: { name?: string | null, start_date?: string | null, end_date?: string | null, hours?: closed | regular | open_24_hours | string | { opens?: string | null, closes?: string | null }[] | null, note?: string | null }[] | null } | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ first?: string | null, last?: string | null, prev?: string | null, next?: string | null } | null"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ current_page?: number | null, from?: number | null, last_page?: number | null, path?: string | null, per_page?: number | null, to?: number | null, total?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storerocket.api.locations.replace",
+      "shortPath": "locations.replace",
+      "description": "Replace a location with the PUT contract; omitted markers and types reset to defaults",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug."
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_line_1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_line_2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "location_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Name of a location type in the project; null restores the default."
+          },
+          {
+            "key": "marker_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Integer ID of a marker in the project; null restores the default."
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "string | null",
+            "description": "Image URL or the project stored image name; null clears the cover."
+          },
+          {
+            "key": "visible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hours",
+            "optional": true,
+            "type": "{ name?: string, mon?: string | null, tue?: string | null, wed?: string | null, thu?: string | null, fri?: string | null, sat?: string | null, sun?: string | null, monday?: string | null, tuesday?: string | null, wednesday?: string | null, thursday?: string | null, friday?: string | null, saturday?: string | null, sunday?: string | null } | null"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Filter names; replaces the list, [] or null clears it."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Named custom fields, such as {\"Manager\":\"Sam\"}; a null value removes the attachment."
+          },
+          {
+            "key": "callsToAction",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Named calls to action, such as {\"Book\":\"https://example.com/book\"}; a null value removes the attachment."
+          },
+          {
+            "key": "facebook",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instagram",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "yelp",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "youtube",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tiktok",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, slug?: string | null, visible?: boolean | null, address?: string | null, address_line_1?: string | null, address_line_2?: string | null, display_address?: string | null, city?: string | null, state?: string | null, postcode?: string | null, country?: string | null, lat?: number | null, lng?: number | null, phone?: string | null, email?: string | null, url?: string | null, timezone?: string | null, location_type?: string | null, marker_id?: number | null, marker_url?: string | null, cover_image_url?: string | null, hours?: { name?: string | null, mon?: string | null, tue?: string | null, wed?: string | null, thu?: string | null, fri?: string | null, sat?: string | null, sun?: string | null } | null, filters?: any[] | null, fields?: { id?: string | null, name?: string | null, value?: any | null }[] | null, callsToAction?: { id?: string | null, title?: string | null, value?: string | null }[] | null, facebook?: string | null, instagram?: string | null, twitter?: string | null, yelp?: string | null, youtube?: string | null, tiktok?: string | null, socials?: { key?: string | null, label?: string | null, handle?: string | null, url?: string | null, icon?: string | null }[] | null, special_hours?: { window?: { from?: string | null, to?: string | null } | null, dates?: { name?: string | null, start_date?: string | null, end_date?: string | null, hours?: closed | regular | open_24_hours | string | { opens?: string | null, closes?: string | null }[] | null, note?: string | null }[] | null } | null }"
+          },
+          {
+            "key": "geocoding",
+            "optional": true,
+            "type": "{ status: found | approximate | not_found | unavailable | queued | string, match?: address | road | place | postcode | city | region | country | string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storerocket.api.locations.update",
+      "shortPath": "locations.update",
+      "description": "Update selected location fields; omissions keep their saved values",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug."
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_line_1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address_line_2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "display_address",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "postcode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lat",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "lng",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "location_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Name of a location type in the project; null restores the default."
+          },
+          {
+            "key": "marker_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Integer ID of a marker in the project; null restores the default."
+          },
+          {
+            "key": "cover",
+            "optional": true,
+            "type": "string | null",
+            "description": "Image URL or the project stored image name; null clears the cover."
+          },
+          {
+            "key": "visible",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hours",
+            "optional": true,
+            "type": "{ name?: string, mon?: string | null, tue?: string | null, wed?: string | null, thu?: string | null, fri?: string | null, sat?: string | null, sun?: string | null, monday?: string | null, tuesday?: string | null, wednesday?: string | null, thursday?: string | null, friday?: string | null, saturday?: string | null, sunday?: string | null } | null"
+          },
+          {
+            "key": "filters",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Filter names; replaces the list, [] or null clears it."
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Named custom fields, such as {\"Manager\":\"Sam\"}; a null value removes the attachment."
+          },
+          {
+            "key": "callsToAction",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Named calls to action, such as {\"Book\":\"https://example.com/book\"}; a null value removes the attachment."
+          },
+          {
+            "key": "facebook",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instagram",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "yelp",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "youtube",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "tiktok",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, slug?: string | null, visible?: boolean | null, address?: string | null, address_line_1?: string | null, address_line_2?: string | null, display_address?: string | null, city?: string | null, state?: string | null, postcode?: string | null, country?: string | null, lat?: number | null, lng?: number | null, phone?: string | null, email?: string | null, url?: string | null, timezone?: string | null, location_type?: string | null, marker_id?: number | null, marker_url?: string | null, cover_image_url?: string | null, hours?: { name?: string | null, mon?: string | null, tue?: string | null, wed?: string | null, thu?: string | null, fri?: string | null, sat?: string | null, sun?: string | null } | null, filters?: any[] | null, fields?: { id?: string | null, name?: string | null, value?: any | null }[] | null, callsToAction?: { id?: string | null, title?: string | null, value?: string | null }[] | null, facebook?: string | null, instagram?: string | null, twitter?: string | null, yelp?: string | null, youtube?: string | null, tiktok?: string | null, socials?: { key?: string | null, label?: string | null, handle?: string | null, url?: string | null, icon?: string | null }[] | null, special_hours?: { window?: { from?: string | null, to?: string | null } | null, dates?: { name?: string | null, start_date?: string | null, end_date?: string | null, hours?: closed | regular | open_24_hours | string | { opens?: string | null, closes?: string | null }[] | null, note?: string | null }[] | null } | null }"
+          },
+          {
+            "key": "geocoding",
+            "optional": true,
+            "type": "{ status: found | approximate | not_found | unavailable | queued | string, match?: address | road | place | postcode | city | region | country | string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storerocket.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List the projects the token can access",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, locations?: number | null, status?: string | null, plan?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storerocket.api.specialHours.create",
+      "shortPath": "specialHours.create",
+      "description": "Create a special-hours rule, with an optional idempotency key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "until_further_notice",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hours",
+            "optional": false,
+            "type": "closed | regular | open_24_hours | { opens: string, closes: string }[]"
+          },
+          {
+            "key": "repeats_yearly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "holiday_key",
+            "optional": true,
+            "type": "string",
+            "description": "Stable holiday identifier such as US:thanksgiving-day; needed for repeats_yearly."
+          },
+          {
+            "key": "holiday_region",
+            "optional": true,
+            "type": "string",
+            "description": "Where a repeating holiday date is read, e.g. AU-QLD."
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "applies_to",
+            "optional": false,
+            "type": "{ type: all | countries | regions | filters | locations, values?: string[] }"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string",
+            "description": "Sent as the Idempotency-Key header; the same key with the same body replays the first answer."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, holiday_key?: string | null, holiday_region?: string | null, start_date?: string | null, end_date?: string | null, until_further_notice?: boolean | null, hours?: closed | regular | open_24_hours | string | { opens?: string | null, closes?: string | null }[] | null, repeats_yearly?: boolean | null, note?: string | null, applies_to?: { type: all | countries | regions | filters | locations | string, values?: string[] | null } | null, source?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storerocket.api.specialHours.delete",
+      "shortPath": "specialHours.delete",
+      "description": "Delete a special-hours rule; locations fall back to weekly hours",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ruleId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storerocket.api.specialHours.get",
+      "shortPath": "specialHours.get",
+      "description": "Read one special-hours rule",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ruleId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, holiday_key?: string | null, holiday_region?: string | null, start_date?: string | null, end_date?: string | null, until_further_notice?: boolean | null, hours?: closed | regular | open_24_hours | string | { opens?: string | null, closes?: string | null }[] | null, repeats_yearly?: boolean | null, note?: string | null, applies_to?: { type: all | countries | regions | filters | locations | string, values?: string[] | null } | null, source?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storerocket.api.specialHours.list",
+      "shortPath": "specialHours.list",
+      "description": "List the holiday and special-hours rules of a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, holiday_key?: string | null, holiday_region?: string | null, start_date?: string | null, end_date?: string | null, until_further_notice?: boolean | null, hours?: closed | regular | open_24_hours | string | { opens?: string | null, closes?: string | null }[] | null, repeats_yearly?: boolean | null, note?: string | null, applies_to?: { type: all | countries | regions | filters | locations | string, values?: string[] | null } | null, source?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storerocket.api.specialHours.update",
+      "shortPath": "specialHours.update",
+      "description": "Change selected fields of a special-hours rule",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ruleId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "until_further_notice",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "hours",
+            "optional": true,
+            "type": "closed | regular | open_24_hours | { opens: string, closes: string }[]"
+          },
+          {
+            "key": "repeats_yearly",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "holiday_key",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "holiday_region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "applies_to",
+            "optional": true,
+            "type": "{ type: all | countries | regions | filters | locations, values?: string[] }"
+          },
+          {
+            "key": "idempotencyKey",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, holiday_key?: string | null, holiday_region?: string | null, start_date?: string | null, end_date?: string | null, until_further_notice?: boolean | null, hours?: closed | regular | open_24_hours | string | { opens?: string | null, closes?: string | null }[] | null, repeats_yearly?: boolean | null, note?: string | null, applies_to?: { type: all | countries | regions | filters | locations | string, values?: string[] | null } | null, source?: string | null, created_at?: string | null, updated_at?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "storerocket.api.users.get",
+      "shortPath": "users.get",
+      "description": "Read the profile associated with the token",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, email?: string | null, company?: string | null, profile_photo_url?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

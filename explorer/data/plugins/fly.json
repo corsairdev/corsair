@@ -1,0 +1,3282 @@
+{
+  "id": "fly",
+  "displayName": "Fly.io",
+  "description": "Manage Fly.io apps, Machines, volumes, secrets, certificates and IP addresses through Fly's public Machines REST API.",
+  "npmPackageName": "@corsair-dev/fly",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 54,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "fly.api.apps.create",
+      "shortPath": "apps.create",
+      "description": "Create an app in an organization. The app costs nothing until it has Machines or volumes.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Globally unique app name"
+          },
+          {
+            "key": "org_slug",
+            "optional": false,
+            "type": "string",
+            "description": "Organization slug, or 'personal' for your personal organization"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "string",
+            "description": "Private network to attach the app to; defaults to the org default"
+          },
+          {
+            "key": "enable_subdomains",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "idempotency_key",
+            "optional": true,
+            "type": "string",
+            "description": "Makes a retry of the same create return the same app"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.apps.delete",
+      "shortPath": "apps.delete",
+      "description": "Permanently delete an app with its Machines, volumes, secrets, certificates and IP addresses",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accepted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.apps.get",
+      "shortPath": "apps.get",
+      "description": "Get an app by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "internal_numeric_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "machine_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "volume_count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "network_cidr",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cname_target",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "app_role",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "pending | deployed | suspended | string | null"
+          },
+          {
+            "key": "organization",
+            "optional": true,
+            "type": "{ name?: string | null, slug?: string | null, internal_numeric_id?: number | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.apps.list",
+      "shortPath": "apps.list",
+      "description": "List the apps in an organization. Pass limit to page through results with next_cursor.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_slug",
+            "optional": false,
+            "type": "string",
+            "description": "Organization slug, or 'personal' for your personal organization"
+          },
+          {
+            "key": "app_role",
+            "optional": true,
+            "type": "string",
+            "description": "Only apps with this role"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "next_cursor from the previous page; requires limit"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "apps",
+            "optional": false,
+            "type": "{ id: string, name: string, internal_numeric_id?: number | null, machine_count?: number | null, volume_count?: number | null, network?: string | null, network_cidr?: string | null, cname_target?: string | null, app_role?: string | null, status?: pending | deployed | suspended | string | null, organization?: { name?: string | null, slug?: string | null, internal_numeric_id?: number | null } | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total_apps",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.certificates.check",
+      "shortPath": "certificates.check",
+      "description": "Look up a hostname's DNS now and re-validate its certificate",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "hostname",
+            "optional": false,
+            "type": "string",
+            "description": "Hostname, such as example.com or *.example.com"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hostname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "configured",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "acme_requested",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "dns_provider",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rate_limited_until",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "certificates",
+            "optional": true,
+            "type": "{ source?: custom | fly | string | null, status?: string | null, created_at?: string | null, expires_at?: string | null, issuer?: string | null, issued?: { certificate_authority?: string | null, expires_at?: string | null, type?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "dns_requirements",
+            "optional": true,
+            "type": "{ a?: string[] | null, aaaa?: string[] | null, cname?: string | null, acme_challenge?: { name?: string | null, target?: string | null } | null, ownership?: { name?: string | null, app_value?: string | null, org_value?: string | null } | null } | null"
+          },
+          {
+            "key": "validation",
+            "optional": true,
+            "type": "{ alpn_configured?: boolean | null, dns_configured?: boolean | null, http_configured?: boolean | null, ownership_txt_configured?: boolean | null } | null"
+          },
+          {
+            "key": "validation_errors",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null, remediation?: string | null, timestamp?: string | null }[] | null"
+          },
+          {
+            "key": "dns_records",
+            "optional": true,
+            "type": "{ a?: string[] | null, aaaa?: string[] | null, cname?: string[] | null, acme_challenge_cname?: string | null, ownership_txt?: string | null, resolved_addresses?: string[] | null, soa?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.certificates.delete",
+      "shortPath": "certificates.delete",
+      "description": "Remove a hostname and all its certificates from an app",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "hostname",
+            "optional": false,
+            "type": "string",
+            "description": "Hostname, such as example.com or *.example.com"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hostname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.certificates.get",
+      "shortPath": "certificates.get",
+      "description": "Get a certificate with the DNS records to create and its validation state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "hostname",
+            "optional": false,
+            "type": "string",
+            "description": "Hostname, such as example.com or *.example.com"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hostname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "configured",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "acme_requested",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "dns_provider",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rate_limited_until",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "certificates",
+            "optional": true,
+            "type": "{ source?: custom | fly | string | null, status?: string | null, created_at?: string | null, expires_at?: string | null, issuer?: string | null, issued?: { certificate_authority?: string | null, expires_at?: string | null, type?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "dns_requirements",
+            "optional": true,
+            "type": "{ a?: string[] | null, aaaa?: string[] | null, cname?: string | null, acme_challenge?: { name?: string | null, target?: string | null } | null, ownership?: { name?: string | null, app_value?: string | null, org_value?: string | null } | null } | null"
+          },
+          {
+            "key": "validation",
+            "optional": true,
+            "type": "{ alpn_configured?: boolean | null, dns_configured?: boolean | null, http_configured?: boolean | null, ownership_txt_configured?: boolean | null } | null"
+          },
+          {
+            "key": "validation_errors",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null, remediation?: string | null, timestamp?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.certificates.list",
+      "shortPath": "certificates.list",
+      "description": "List an app's custom-domain certificates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "string",
+            "description": "Hostname substring"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "certificates",
+            "optional": false,
+            "type": "{ hostname: string, status?: string | null, configured?: boolean | null, acme_requested?: boolean | null, acme_alpn_configured?: boolean | null, acme_dns_configured?: boolean | null, acme_http_configured?: boolean | null, ownership_txt_configured?: boolean | null, has_custom_certificate?: boolean | null, has_fly_certificate?: boolean | null, dns_provider?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "total_count",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.certificates.request",
+      "shortPath": "certificates.request",
+      "description": "Add a hostname to an app and request Fly-issued (ACME) certificates for it. Fly bills certificates beyond the free allowance.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "hostname",
+            "optional": false,
+            "type": "string",
+            "description": "Hostname, such as example.com or *.example.com"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hostname",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "configured",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "acme_requested",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "dns_provider",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "rate_limited_until",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "certificates",
+            "optional": true,
+            "type": "{ source?: custom | fly | string | null, status?: string | null, created_at?: string | null, expires_at?: string | null, issuer?: string | null, issued?: { certificate_authority?: string | null, expires_at?: string | null, type?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "dns_requirements",
+            "optional": true,
+            "type": "{ a?: string[] | null, aaaa?: string[] | null, cname?: string | null, acme_challenge?: { name?: string | null, target?: string | null } | null, ownership?: { name?: string | null, app_value?: string | null, org_value?: string | null } | null } | null"
+          },
+          {
+            "key": "validation",
+            "optional": true,
+            "type": "{ alpn_configured?: boolean | null, dns_configured?: boolean | null, http_configured?: boolean | null, ownership_txt_configured?: boolean | null } | null"
+          },
+          {
+            "key": "validation_errors",
+            "optional": true,
+            "type": "{ code?: string | null, message?: string | null, remediation?: string | null, timestamp?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.ipAssignments.create",
+      "shortPath": "ipAssignments.create",
+      "description": "Assign an IP address to an app. Dedicated IPv4 and egress addresses are billed monthly; shared_v4, v6 and private_v6 are free.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "v4 | v6 | shared_v4 | private_v6 | egress_v4 | egress_v6 | egress_pair"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string",
+            "description": "Required for egress types; v4 and v6 default to global"
+          },
+          {
+            "key": "service_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "string",
+            "description": "Only for private_v6"
+          },
+          {
+            "key": "org_slug",
+            "optional": true,
+            "type": "string",
+            "description": "Only for private_v6"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "service_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "egress",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "network",
+            "optional": true,
+            "type": "{ name?: string | null, org_slug?: string | null } | null"
+          },
+          {
+            "key": "ip_pair",
+            "optional": true,
+            "type": "{ v4?: string | null, v6?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.ipAssignments.delete",
+      "shortPath": "ipAssignments.delete",
+      "description": "Release an IP address from an app. A released address cannot be got back.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string",
+            "description": "IP address"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "released",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.ipAssignments.list",
+      "shortPath": "ipAssignments.list",
+      "description": "List an app's IP addresses, including its shared IPv4 and egress addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ips",
+            "optional": false,
+            "type": "{ ip?: string | null, region?: string | null, service_name?: string | null, shared?: boolean | null, egress?: boolean | null, created_at?: string | null, network?: { name?: string | null, org_slug?: string | null } | null, ip_pair?: { v4?: string | null, v6?: string | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.cordon",
+      "shortPath": "machines.cordon",
+      "description": "Cordon a Machine so Fly Proxy stops routing requests to it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.create",
+      "shortPath": "machines.create",
+      "description": "Create (and by default start) a Machine. Fly bills it while it runs and for its root filesystem.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string",
+            "description": "Region code such as iad, or a region group such as eu"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "{ image?: string, containers?: Record<string, any>[], guest?: { cpu_kind?: shared | performance, cpus?: number, memory_mb?: number, max_memory_mb?: number, kernel_args?: string[], host_dedication_id?: string, required_host_features?: string[] }, env?: Record<string, string>, metadata?: Record<string, string>, services?: { protocol?: tcp | udp, internal_port?: number, ports?: { port?: number, start_port?: number, end_port?: number, handlers?: string[], force_https?: boolean }[], autostart?: boolean, autostop?: boolean | off | stop | suspend, min_machines_running?: number }[], mounts?: { volume: string, path: string }[], restart?: { policy?: no | always | on-failure | spot-price, max_retries?: number }, auto_destroy?: boolean, schedule?: hourly | daily | weekly | monthly, stop_config?: { signal?: SIGHUP | SIGINT | SIGQUIT | SIGKILL | SIGUSR1 | SIGUSR2 | SIGTERM, timeout?: string } }"
+          },
+          {
+            "key": "min_secrets_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip_launch",
+            "optional": true,
+            "type": "boolean",
+            "description": "Create it stopped"
+          },
+          {
+            "key": "skip_secrets",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "lease_ttl",
+            "optional": true,
+            "type": "number",
+            "description": "Take a lease for this many seconds; the nonce comes back in nonce"
+          },
+          {
+            "key": "skip_service_registration",
+            "optional": true,
+            "type": "boolean",
+            "description": "Create it cordoned"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instance_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "private_ip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cordoned",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "host_status",
+            "optional": true,
+            "type": "ok | unknown | unreachable | string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{ image?: string | null, guest?: { cpu_kind?: string | null, cpus?: number | null, memory_mb?: number | null, max_memory_mb?: number | null } | null, env?: Record<string, string> | null, metadata?: Record<string, string> | null, auto_destroy?: boolean | null, schedule?: string | null, restart?: { policy?: string | null, max_retries?: number | null } | null, mounts?: { volume?: string | null, path?: string | null, name?: string | null, size_gb?: number | null }[] | null, services?: Record<string, any>[] | null } | null"
+          },
+          {
+            "key": "incomplete_config",
+            "optional": true,
+            "type": "{ image?: string | null, guest?: { cpu_kind?: string | null, cpus?: number | null, memory_mb?: number | null, max_memory_mb?: number | null } | null, env?: Record<string, string> | null, metadata?: Record<string, string> | null, auto_destroy?: boolean | null, schedule?: string | null, restart?: { policy?: string | null, max_retries?: number | null } | null, mounts?: { volume?: string | null, path?: string | null, name?: string | null, size_gb?: number | null }[] | null, services?: Record<string, any>[] | null } | null"
+          },
+          {
+            "key": "image_ref",
+            "optional": true,
+            "type": "{ registry?: string | null, repository?: string | null, tag?: string | null, digest?: string | null, labels?: Record<string, string> | null } | null"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, status?: string | null, source?: string | null, timestamp?: number | null, request?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "checks",
+            "optional": true,
+            "type": "{ name?: string | null, status?: passing | warning | critical | string | null, output?: string | null, updated_at?: string | null }[] | null"
+          },
+          {
+            "key": "lease",
+            "optional": true,
+            "type": "{ owner?: string | null, description?: string | null, expires_at?: number | null } | null"
+          },
+          {
+            "key": "nonce",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.createLease",
+      "shortPath": "machines.createLease",
+      "description": "Take (or, with lease_nonce, refresh) an exclusive lease on a Machine",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          },
+          {
+            "key": "ttl",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds; defaults to 60"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lease_nonce",
+            "optional": true,
+            "type": "string",
+            "description": "Nonce of a lease you hold on the Machine (sent as fly-machine-lease-nonce)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ nonce?: string | null, owner?: string | null, description?: string | null, expires_at?: number | null, version?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.delete",
+      "shortPath": "machines.delete",
+      "description": "Permanently destroy a Machine. It must be stopped unless force is true.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          },
+          {
+            "key": "force",
+            "optional": true,
+            "type": "boolean",
+            "description": "Kill it first if it is running"
+          },
+          {
+            "key": "lease_nonce",
+            "optional": true,
+            "type": "string",
+            "description": "Nonce of a lease you hold on the Machine (sent as fly-machine-lease-nonce)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.deleteMetadataKey",
+      "shortPath": "machines.deleteMetadataKey",
+      "description": "Delete one metadata key from a Machine",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.exec",
+      "shortPath": "machines.exec",
+      "description": "Run a command inside a running Machine and return its stdout, stderr and exit code",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          },
+          {
+            "key": "command",
+            "optional": false,
+            "type": "string[]",
+            "description": "Program and its arguments; run directly, not through a shell"
+          },
+          {
+            "key": "stdin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "container",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds; defaults to 10"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "stdout",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "stderr",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "exit_code",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "exit_signal",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.get",
+      "shortPath": "machines.get",
+      "description": "Get a Machine",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string",
+            "description": "Return this older version of the Machine"
+          },
+          {
+            "key": "include_leases",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instance_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "private_ip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cordoned",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "host_status",
+            "optional": true,
+            "type": "ok | unknown | unreachable | string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{ image?: string | null, guest?: { cpu_kind?: string | null, cpus?: number | null, memory_mb?: number | null, max_memory_mb?: number | null } | null, env?: Record<string, string> | null, metadata?: Record<string, string> | null, auto_destroy?: boolean | null, schedule?: string | null, restart?: { policy?: string | null, max_retries?: number | null } | null, mounts?: { volume?: string | null, path?: string | null, name?: string | null, size_gb?: number | null }[] | null, services?: Record<string, any>[] | null } | null"
+          },
+          {
+            "key": "incomplete_config",
+            "optional": true,
+            "type": "{ image?: string | null, guest?: { cpu_kind?: string | null, cpus?: number | null, memory_mb?: number | null, max_memory_mb?: number | null } | null, env?: Record<string, string> | null, metadata?: Record<string, string> | null, auto_destroy?: boolean | null, schedule?: string | null, restart?: { policy?: string | null, max_retries?: number | null } | null, mounts?: { volume?: string | null, path?: string | null, name?: string | null, size_gb?: number | null }[] | null, services?: Record<string, any>[] | null } | null"
+          },
+          {
+            "key": "image_ref",
+            "optional": true,
+            "type": "{ registry?: string | null, repository?: string | null, tag?: string | null, digest?: string | null, labels?: Record<string, string> | null } | null"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, status?: string | null, source?: string | null, timestamp?: number | null, request?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "checks",
+            "optional": true,
+            "type": "{ name?: string | null, status?: passing | warning | critical | string | null, output?: string | null, updated_at?: string | null }[] | null"
+          },
+          {
+            "key": "lease",
+            "optional": true,
+            "type": "{ owner?: string | null, description?: string | null, expires_at?: number | null } | null"
+          },
+          {
+            "key": "nonce",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.getLease",
+      "shortPath": "machines.getLease",
+      "description": "Get the lease currently held on a Machine",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ nonce?: string | null, owner?: string | null, description?: string | null, expires_at?: number | null, version?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.getMetadata",
+      "shortPath": "machines.getMetadata",
+      "description": "Get a Machine's metadata key/value pairs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, string>"
+      }
+    },
+    {
+      "path": "fly.api.machines.getMetadataKey",
+      "shortPath": "machines.getMetadataKey",
+      "description": "Get one metadata value of a Machine",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.list",
+      "shortPath": "machines.list",
+      "description": "List an app's Machines (all of them; use listForOrg to page through an organization)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "include_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "(created | started | stopped | suspended)[]",
+            "description": "Only Machines in these states"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "boolean",
+            "description": "Omit config, checks and events"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Only Machines whose metadata has these exact key/value pairs"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, state?: string | null, region?: string | null, instance_id?: string | null, version?: string | null, private_ip?: string | null, cordoned?: boolean | null, host_status?: ok | unknown | unreachable | string | null, created_at?: string | null, updated_at?: string | null, config?: { image?: string | null, guest?: { cpu_kind?: string | null, cpus?: number | null, memory_mb?: number | null, max_memory_mb?: number | null } | null, env?: Record<string, string> | null, metadata?: Record<string, string> | null, auto_destroy?: boolean | null, schedule?: string | null, restart?: { policy?: string | null, max_retries?: number | null } | null, mounts?: { volume?: string | null, path?: string | null, name?: string | null, size_gb?: number | null }[] | null, services?: Record<string, any>[] | null } | null, incomplete_config?: { image?: string | null, guest?: { cpu_kind?: string | null, cpus?: number | null, memory_mb?: number | null, max_memory_mb?: number | null } | null, env?: Record<string, string> | null, metadata?: Record<string, string> | null, auto_destroy?: boolean | null, schedule?: string | null, restart?: { policy?: string | null, max_retries?: number | null } | null, mounts?: { volume?: string | null, path?: string | null, name?: string | null, size_gb?: number | null }[] | null, services?: Record<string, any>[] | null } | null, image_ref?: { registry?: string | null, repository?: string | null, tag?: string | null, digest?: string | null, labels?: Record<string, string> | null } | null, events?: { id?: string | null, type?: string | null, status?: string | null, source?: string | null, timestamp?: number | null, request?: Record<string, any> | null }[] | null, checks?: { name?: string | null, status?: passing | warning | critical | string | null, output?: string | null, updated_at?: string | null }[] | null, lease?: { owner?: string | null, description?: string | null, expires_at?: number | null } | null, nonce?: string | null }[]"
+      }
+    },
+    {
+      "path": "fly.api.machines.listEvents",
+      "shortPath": "machines.listEvents",
+      "description": "List a Machine's recent events, newest first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 20"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, type?: string | null, status?: string | null, source?: string | null, timestamp?: number | null, request?: Record<string, any> | null }[]"
+      }
+    },
+    {
+      "path": "fly.api.machines.listForOrg",
+      "shortPath": "machines.listForOrg",
+      "description": "List the Machines of every app in an organization, page by page with next_cursor. Pass region: on 2026-11-16 Fly answered 400 \"misfired replay\" without it whenever the org had a Machine.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_slug",
+            "optional": false,
+            "type": "string",
+            "description": "Organization slug, or 'personal' for your personal organization"
+          },
+          {
+            "key": "include_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "(created | started | stopped | suspended)[]",
+            "description": "Only Machines in these states"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "updated_after",
+            "optional": true,
+            "type": "string",
+            "description": "RFC 3339 timestamp"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "machines",
+            "optional": false,
+            "type": "{ id: string, app_name?: string | null, name?: string | null, state?: string | null, region?: string | null, version?: string | null, private_ip?: string | null, created_at?: string | null, updated_at?: string | null, config?: { image?: string | null, guest?: { cpu_kind?: string | null, cpus?: number | null, memory_mb?: number | null, max_memory_mb?: number | null } | null, metadata?: Record<string, string> | null } | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_machine_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "error_regions",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.listProcesses",
+      "shortPath": "machines.listProcesses",
+      "description": "List the processes running on a started Machine",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          },
+          {
+            "key": "sort_by",
+            "optional": true,
+            "type": "cpu | pid | stime | rtime"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ pid?: number | null, command?: string | null, directory?: string | null, cpu?: number | null, rss?: number | null, rtime?: number | null, stime?: number | null, listen_sockets?: { address?: string | null, proto?: string | null }[] | null }[]"
+      }
+    },
+    {
+      "path": "fly.api.machines.listVersions",
+      "shortPath": "machines.listVersions",
+      "description": "List a Machine's configuration versions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ version: string, user_config?: Record<string, any> | null }[]"
+      }
+    },
+    {
+      "path": "fly.api.machines.releaseLease",
+      "shortPath": "machines.releaseLease",
+      "description": "Release a lease you hold on a Machine",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          },
+          {
+            "key": "lease_nonce",
+            "optional": false,
+            "type": "string",
+            "description": "Nonce of a lease you hold on the Machine (sent as fly-machine-lease-nonce)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ ok: boolean } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.restart",
+      "shortPath": "machines.restart",
+      "description": "Restart a Machine",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          },
+          {
+            "key": "signal",
+            "optional": true,
+            "type": "SIGHUP | SIGINT | SIGQUIT | SIGKILL | SIGUSR1 | SIGUSR2 | SIGTERM"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "string",
+            "description": "Go duration or seconds to wait before killing it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.setMetadataKey",
+      "shortPath": "machines.setMetadataKey",
+      "description": "Set one metadata key on a Machine",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          },
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "key",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.signal",
+      "shortPath": "machines.signal",
+      "description": "Send a Unix signal to a Machine's main process",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          },
+          {
+            "key": "signal",
+            "optional": false,
+            "type": "SIGABRT | SIGALRM | SIGFPE | SIGHUP | SIGILL | SIGINT | SIGKILL | SIGPIPE | SIGQUIT | SIGSEGV | SIGTERM | SIGTRAP | SIGUSR1 | SIGUSR2"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.start",
+      "shortPath": "machines.start",
+      "description": "Start a stopped or suspended Machine. Fly bills CPU and memory while it runs.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "previous_state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "migrated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "new_host",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.stop",
+      "shortPath": "machines.stop",
+      "description": "Stop a Machine, optionally with a signal and timeout",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          },
+          {
+            "key": "signal",
+            "optional": true,
+            "type": "SIGHUP | SIGINT | SIGQUIT | SIGKILL | SIGUSR1 | SIGUSR2 | SIGTERM"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "string",
+            "description": "Go duration to wait before killing it, such as 10s"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.suspend",
+      "shortPath": "machines.suspend",
+      "description": "Suspend a Machine so the next start can resume it from a memory snapshot",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.uncordon",
+      "shortPath": "machines.uncordon",
+      "description": "Uncordon a Machine so Fly Proxy routes requests to it again",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.update",
+      "shortPath": "machines.update",
+      "description": "Replace a Machine's whole configuration (image, size, services…). A larger size bills more.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          },
+          {
+            "key": "config",
+            "optional": false,
+            "type": "{ image?: string, containers?: Record<string, any>[], guest?: { cpu_kind?: shared | performance, cpus?: number, memory_mb?: number, max_memory_mb?: number, kernel_args?: string[], host_dedication_id?: string, required_host_features?: string[] }, env?: Record<string, string>, metadata?: Record<string, string>, services?: { protocol?: tcp | udp, internal_port?: number, ports?: { port?: number, start_port?: number, end_port?: number, handlers?: string[], force_https?: boolean }[], autostart?: boolean, autostop?: boolean | off | stop | suspend, min_machines_running?: number }[], mounts?: { volume: string, path: string }[], restart?: { policy?: no | always | on-failure | spot-price, max_retries?: number }, auto_destroy?: boolean, schedule?: hourly | daily | weekly | monthly, stop_config?: { signal?: SIGHUP | SIGINT | SIGQUIT | SIGKILL | SIGUSR1 | SIGUSR2 | SIGTERM, timeout?: string } }"
+          },
+          {
+            "key": "min_secrets_version",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "skip_launch",
+            "optional": true,
+            "type": "boolean",
+            "description": "Create it stopped"
+          },
+          {
+            "key": "skip_secrets",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "current_version",
+            "optional": true,
+            "type": "string",
+            "description": "Reject the update if the Machine changed since this version"
+          },
+          {
+            "key": "lease_nonce",
+            "optional": true,
+            "type": "string",
+            "description": "Nonce of a lease you hold on the Machine (sent as fly-machine-lease-nonce)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "instance_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "private_ip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cordoned",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "host_status",
+            "optional": true,
+            "type": "ok | unknown | unreachable | string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "config",
+            "optional": true,
+            "type": "{ image?: string | null, guest?: { cpu_kind?: string | null, cpus?: number | null, memory_mb?: number | null, max_memory_mb?: number | null } | null, env?: Record<string, string> | null, metadata?: Record<string, string> | null, auto_destroy?: boolean | null, schedule?: string | null, restart?: { policy?: string | null, max_retries?: number | null } | null, mounts?: { volume?: string | null, path?: string | null, name?: string | null, size_gb?: number | null }[] | null, services?: Record<string, any>[] | null } | null"
+          },
+          {
+            "key": "incomplete_config",
+            "optional": true,
+            "type": "{ image?: string | null, guest?: { cpu_kind?: string | null, cpus?: number | null, memory_mb?: number | null, max_memory_mb?: number | null } | null, env?: Record<string, string> | null, metadata?: Record<string, string> | null, auto_destroy?: boolean | null, schedule?: string | null, restart?: { policy?: string | null, max_retries?: number | null } | null, mounts?: { volume?: string | null, path?: string | null, name?: string | null, size_gb?: number | null }[] | null, services?: Record<string, any>[] | null } | null"
+          },
+          {
+            "key": "image_ref",
+            "optional": true,
+            "type": "{ registry?: string | null, repository?: string | null, tag?: string | null, digest?: string | null, labels?: Record<string, string> | null } | null"
+          },
+          {
+            "key": "events",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null, status?: string | null, source?: string | null, timestamp?: number | null, request?: Record<string, any> | null }[] | null"
+          },
+          {
+            "key": "checks",
+            "optional": true,
+            "type": "{ name?: string | null, status?: passing | warning | critical | string | null, output?: string | null, updated_at?: string | null }[] | null"
+          },
+          {
+            "key": "lease",
+            "optional": true,
+            "type": "{ owner?: string | null, description?: string | null, expires_at?: number | null } | null"
+          },
+          {
+            "key": "nonce",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.updateMetadata",
+      "shortPath": "machines.updateMetadata",
+      "description": "Set several metadata keys at once; an empty string removes a key. Keys not listed stay as they are.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "Record<string, string>"
+          },
+          {
+            "key": "machine_version",
+            "optional": true,
+            "type": "string",
+            "description": "Only apply if this is still the current version"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "updated",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.machines.wait",
+      "shortPath": "machines.wait",
+      "description": "Wait (up to 60 seconds) for a Machine to reach a state, such as started or stopped",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "machine_id",
+            "optional": false,
+            "type": "string",
+            "description": "Machine ID"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "(started | stopped | suspended | destroyed | failed | archived | settled)[]",
+            "description": "Defaults to started"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from_event_id",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ok",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "event_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.platform.regions",
+      "shortPath": "platform.regions",
+      "description": "List Fly regions with their location, capacity and whether they need a paid plan",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "Regions",
+            "optional": false,
+            "type": "{ code: string, name?: string | null, latitude?: number | null, longitude?: number | null, gateway_available?: boolean | null, mpg_available?: boolean | null, requires_paid_plan?: boolean | null, deprecated?: boolean | null, geo_region?: string | null, capacity?: number | null }[]"
+          },
+          {
+            "key": "nearest",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.secrets.delete",
+      "shortPath": "secrets.delete",
+      "description": "Delete one secret. Running Machines keep the old values until they are updated with min_secrets_version set to the returned version.",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Secret name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.secrets.get",
+      "shortPath": "secrets.get",
+      "description": "Get one secret's name and digest (not its value)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Secret name"
+          },
+          {
+            "key": "min_version",
+            "optional": true,
+            "type": "string",
+            "description": "Read at least this secrets version (from a set or delete)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "digest",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.secrets.list",
+      "shortPath": "secrets.list",
+      "description": "List an app's secrets: names and digests, never values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "min_version",
+            "optional": true,
+            "type": "string",
+            "description": "Read at least this secrets version (from a set or delete)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secrets",
+            "optional": false,
+            "type": "{ name: string, digest?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.secrets.set",
+      "shortPath": "secrets.set",
+      "description": "Create or overwrite one secret. An overwritten value cannot be recovered. Running Machines keep the old values until they are updated with min_secrets_version set to the returned version.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Secret name"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "digest",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.secrets.update",
+      "shortPath": "secrets.update",
+      "description": "Set and delete several secrets at once: a string sets one, null deletes it. Running Machines keep the old values until they are updated with min_secrets_version set to the returned version.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "values",
+            "optional": false,
+            "type": "Record<string, string | null>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "secrets",
+            "optional": true,
+            "type": "{ name: string, digest?: string | null, created_at?: string | null, updated_at?: string | null }[] | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.tokens.current",
+      "shortPath": "tokens.current",
+      "description": "Show which organization, apps and Machine the stored token is scoped to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tokens",
+            "optional": false,
+            "type": "{ token_id?: string | null, organization?: string | null, org_slug?: string | null, apps?: string[] | null, restricted_to_machine?: string | null, user?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.volumes.create",
+      "shortPath": "volumes.create",
+      "description": "Create a volume, empty or restored from a snapshot or another volume. Fly bills it by size.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "size_gb",
+            "optional": true,
+            "type": "number",
+            "description": "Required unless source_volume_id is set"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "encrypted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "fstype",
+            "optional": true,
+            "type": "ext4 | raw"
+          },
+          {
+            "key": "snapshot_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_volume_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "snapshot_retention",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "auto_backup_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "require_unique_zone",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "unique_zone_app_wide",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "compute",
+            "optional": true,
+            "type": "{ cpu_kind?: shared | performance, cpus?: number, memory_mb?: number, host_dedication_id?: string, required_host_features?: string[] }",
+            "description": "Size of the Machine that will mount it, for placement"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "zone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "size_gb",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "encrypted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "fstype",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "local | cache | string | null"
+          },
+          {
+            "key": "attached_machine_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attached_alloc_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "auto_backup_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "snapshot_retention",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "block_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocks_avail",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocks_free",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "bytes_total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "bytes_used",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "host_status",
+            "optional": true,
+            "type": "ok | unknown | unreachable | string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "required_host_features",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.volumes.createSnapshot",
+      "shortPath": "volumes.createSnapshot",
+      "description": "Take a snapshot of a volume now. Fly bills snapshot storage beyond the free allowance.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "volume_id",
+            "optional": false,
+            "type": "string",
+            "description": "Volume ID, such as vol_1234567890abcdef"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "volume_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "snapshot_id",
+            "optional": false,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": false,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.volumes.delete",
+      "shortPath": "volumes.delete",
+      "description": "Permanently destroy a volume and its data",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "volume_id",
+            "optional": false,
+            "type": "string",
+            "description": "Volume ID, such as vol_1234567890abcdef"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "zone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "size_gb",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "encrypted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "fstype",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "local | cache | string | null"
+          },
+          {
+            "key": "attached_machine_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attached_alloc_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "auto_backup_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "snapshot_retention",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "block_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocks_avail",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocks_free",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "bytes_total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "bytes_used",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "host_status",
+            "optional": true,
+            "type": "ok | unknown | unreachable | string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "required_host_features",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.volumes.extend",
+      "shortPath": "volumes.extend",
+      "description": "Grow a volume to a larger size. Volumes cannot shrink, and Fly bills the new size.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "volume_id",
+            "optional": false,
+            "type": "string",
+            "description": "Volume ID, such as vol_1234567890abcdef"
+          },
+          {
+            "key": "size_gb",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "volume",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, state?: string | null, region?: string | null, zone?: string | null, size_gb?: number | null, encrypted?: boolean | null, fstype?: string | null, type?: local | cache | string | null, attached_machine_id?: string | null, attached_alloc_id?: string | null, auto_backup_enabled?: boolean | null, snapshot_retention?: number | null, block_size?: number | null, blocks?: number | null, blocks_avail?: number | null, blocks_free?: number | null, bytes_total?: number | null, bytes_used?: number | null, host_status?: ok | unknown | unreachable | string | null, created_at?: string | null, required_host_features?: string[] | null }"
+          },
+          {
+            "key": "needs_restart",
+            "optional": true,
+            "type": "boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.volumes.get",
+      "shortPath": "volumes.get",
+      "description": "Get a volume",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "volume_id",
+            "optional": false,
+            "type": "string",
+            "description": "Volume ID, such as vol_1234567890abcdef"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "zone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "size_gb",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "encrypted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "fstype",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "local | cache | string | null"
+          },
+          {
+            "key": "attached_machine_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attached_alloc_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "auto_backup_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "snapshot_retention",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "block_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocks_avail",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocks_free",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "bytes_total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "bytes_used",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "host_status",
+            "optional": true,
+            "type": "ok | unknown | unreachable | string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "required_host_features",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.volumes.list",
+      "shortPath": "volumes.list",
+      "description": "List an app's volumes (all of them; use listForOrg to page through an organization)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "boolean",
+            "description": "Omit block and size details"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, state?: string | null, region?: string | null, zone?: string | null, size_gb?: number | null, encrypted?: boolean | null, fstype?: string | null, type?: local | cache | string | null, attached_machine_id?: string | null, attached_alloc_id?: string | null, auto_backup_enabled?: boolean | null, snapshot_retention?: number | null, block_size?: number | null, blocks?: number | null, blocks_avail?: number | null, blocks_free?: number | null, bytes_total?: number | null, bytes_used?: number | null, host_status?: ok | unknown | unreachable | string | null, created_at?: string | null, required_host_features?: string[] | null }[]"
+      }
+    },
+    {
+      "path": "fly.api.volumes.listForOrg",
+      "shortPath": "volumes.listForOrg",
+      "description": "List the volumes of every app in an organization, page by page with next_cursor",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "org_slug",
+            "optional": false,
+            "type": "string",
+            "description": "Organization slug, or 'personal' for your personal organization"
+          },
+          {
+            "key": "include_deleted",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated volume states, such as created"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "updated_after",
+            "optional": true,
+            "type": "string",
+            "description": "RFC 3339 timestamp"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "volumes",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, state?: string | null, region?: string | null, zone?: string | null, size_gb?: number | null, encrypted?: boolean | null, fstype?: string | null, type?: local | cache | string | null, attached_machine_id?: string | null, attached_alloc_id?: string | null, auto_backup_enabled?: boolean | null, snapshot_retention?: number | null, block_size?: number | null, blocks?: number | null, blocks_avail?: number | null, blocks_free?: number | null, bytes_total?: number | null, bytes_used?: number | null, host_status?: ok | unknown | unreachable | string | null, created_at?: string | null, required_host_features?: string[] | null, app_name?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "next_cursor",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_volume_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_updated_at",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "fly.api.volumes.listSnapshots",
+      "shortPath": "volumes.listSnapshots",
+      "description": "List a volume's snapshots",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "volume_id",
+            "optional": false,
+            "type": "string",
+            "description": "Volume ID, such as vol_1234567890abcdef"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, status?: string | null, digest?: string | null, size?: number | null, volume_size?: number | null, retention_days?: number | null, created_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "fly.api.volumes.update",
+      "shortPath": "volumes.update",
+      "description": "Change a volume's automatic snapshots and their retention. More snapshots kept means more billed snapshot storage.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "app_name",
+            "optional": false,
+            "type": "string",
+            "description": "Fly app name"
+          },
+          {
+            "key": "volume_id",
+            "optional": false,
+            "type": "string",
+            "description": "Volume ID, such as vol_1234567890abcdef"
+          },
+          {
+            "key": "auto_backup_enabled",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "snapshot_retention",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "zone",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "size_gb",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "encrypted",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "fstype",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "local | cache | string | null"
+          },
+          {
+            "key": "attached_machine_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "attached_alloc_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "auto_backup_enabled",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "snapshot_retention",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "block_size",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocks",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocks_avail",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "blocks_free",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "bytes_total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "bytes_used",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "host_status",
+            "optional": true,
+            "type": "ok | unknown | unreachable | string | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "required_host_features",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

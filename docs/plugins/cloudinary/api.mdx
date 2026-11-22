@@ -28,9 +28,26 @@ await corsair.cloudinary.api.adaptive.getAdaptiveStreamingProfiles({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -59,10 +76,27 @@ await corsair.cloudinary.api.analysis.getAnalysisTaskStatus({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `task_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -91,10 +125,27 @@ await corsair.cloudinary.api.asset.createAssetRelationsByAssetId({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `asset_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -121,11 +172,28 @@ await corsair.cloudinary.api.asset.createAssetRelationsByPublicId({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `string` | Yes | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `type` | `string` | Yes | — |
 | `public_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -152,10 +220,27 @@ await corsair.cloudinary.api.asset.deleteAssetRelationsByAssetId({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `asset_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -187,11 +272,28 @@ await corsair.cloudinary.api.asset.deleteAssetRelationsByPublicId({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `string` | Yes | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `type` | `string` | Yes | — |
 | `public_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -223,9 +325,26 @@ await corsair.cloudinary.api.asset.destroyAsset({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -257,9 +376,26 @@ await corsair.cloudinary.api.asset.destroyAssetById({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -291,9 +427,26 @@ await corsair.cloudinary.api.asset.updateAssetMetadata({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -328,7 +481,7 @@ await corsair.cloudinary.api.asset.updateAssetMetadata({});
 
 `asset.uploadAsset`
 
-Upload media asset
+Upload media asset. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -342,9 +495,26 @@ await corsair.cloudinary.api.asset.uploadAsset({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -395,9 +565,26 @@ await corsair.cloudinary.api.assets.searchAssets({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -459,9 +646,26 @@ await corsair.cloudinary.api.assets.searchVisualAssets({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -511,7 +715,7 @@ await corsair.cloudinary.api.assets.searchVisualAssets({});
 
 `chunk.uploadChunk`
 
-Upload a file chunk for large uploads (requires content_range and x_unique_upload_id)
+Upload a file chunk for large uploads (requires content_range and x_unique_upload_id). Takes the chunk as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -525,9 +729,26 @@ await corsair.cloudinary.api.chunk.uploadChunk({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -578,9 +799,26 @@ await corsair.cloudinary.api.cloudinary.pingCloudinaryServers({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -614,9 +852,26 @@ await corsair.cloudinary.api.config.getConfig({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -645,9 +900,26 @@ await corsair.cloudinary.api.context.manageContext({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -698,9 +970,26 @@ await corsair.cloudinary.api.create.createTrigger({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -738,13 +1027,30 @@ await corsair.cloudinary.api.datasource.searchDatasourceInMetadataField({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `external_id` | `string` | Yes | — |
 | `term` | `any` | No | — |
 | `max_results` | `any` | No | — |
 | `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -773,10 +1079,27 @@ await corsair.cloudinary.api.delete.deleteTrigger({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `trigger_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -810,9 +1133,26 @@ await corsair.cloudinary.api.derived.deleteDerivedResources({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -846,10 +1186,27 @@ await corsair.cloudinary.api.entries.deleteEntriesInMetadataFieldDatasource({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `external_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -881,10 +1238,27 @@ await corsair.cloudinary.api.entries.restoreEntriesInMetadataFieldDatasource({})
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `external_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -920,7 +1294,7 @@ await corsair.cloudinary.api.entries.restoreEntriesInMetadataFieldDatasource({})
 
 `file.uploadFileAutoDetect`
 
-Upload with auto resource type detection
+Upload with auto resource type detection. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.
 
 **Risk:** `write`
 
@@ -934,9 +1308,26 @@ await corsair.cloudinary.api.file.uploadFileAutoDetect({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -987,10 +1378,27 @@ await corsair.cloudinary.api.folder.createFolder({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `folder` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1024,10 +1432,27 @@ await corsair.cloudinary.api.folder.deleteFolder({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `folder` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1059,12 +1484,29 @@ await corsair.cloudinary.api.folder.showFolder({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `folder` | `string` | Yes | — |
 | `max_results` | `any` | No | — |
 | `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1111,11 +1553,28 @@ await corsair.cloudinary.api.folder.updateFolder({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `folder` | `string` | Yes | — |
 | `to_folder` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1151,13 +1610,30 @@ await corsair.cloudinary.api.folders.searchFolders({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `expression` | `any` | No | — |
 | `sort_by` | `any` | No | — |
 | `max_results` | `any` | No | — |
 | `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1204,9 +1680,26 @@ await corsair.cloudinary.api.folders.searchFoldersV2({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1255,9 +1748,26 @@ await corsair.cloudinary.api.generate.generateArchive({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1286,9 +1796,26 @@ await corsair.cloudinary.api.image.createImageFromText({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1339,7 +1866,7 @@ await corsair.cloudinary.api.images.listImages({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `type` | `any` | No | — |
@@ -1354,6 +1881,23 @@ await corsair.cloudinary.api.images.listImages({});
 | `moderation` | `any` | No | — |
 | `tags` | `any` | No | — |
 | `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1417,10 +1961,27 @@ await corsair.cloudinary.api.live.activateLiveStream({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `liveStreamId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1457,9 +2018,26 @@ await corsair.cloudinary.api.live.createLiveStream({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1496,10 +2074,27 @@ await corsair.cloudinary.api.live.createLiveStreamOutput({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `liveStreamId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1536,10 +2131,27 @@ await corsair.cloudinary.api.live.deleteLiveStream({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `liveStreamId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1571,11 +2183,28 @@ await corsair.cloudinary.api.live.deleteLiveStreamOutput({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `liveStreamId` | `string` | Yes | — |
 | `liveStreamOutputId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1607,10 +2236,27 @@ await corsair.cloudinary.api.live.getLiveStream({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `liveStreamId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1647,11 +2293,28 @@ await corsair.cloudinary.api.live.getLiveStreamOutput({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `liveStreamId` | `string` | Yes | — |
 | `liveStreamOutputId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1688,12 +2351,29 @@ await corsair.cloudinary.api.live.getLiveStreamOutputs({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `liveStreamId` | `string` | Yes | — |
 | `max_results` | `any` | No | — |
 | `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1747,11 +2427,28 @@ await corsair.cloudinary.api.live.getLiveStreams({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `max_results` | `any` | No | — |
 | `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1805,10 +2502,27 @@ await corsair.cloudinary.api.live.idleLiveStream({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `liveStreamId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1845,10 +2559,27 @@ await corsair.cloudinary.api.live.updateLiveStream({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `liveStreamId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1885,11 +2616,28 @@ await corsair.cloudinary.api.live.updateLiveStreamOutput({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `liveStreamId` | `string` | Yes | — |
 | `liveStreamOutputId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1928,9 +2676,26 @@ await corsair.cloudinary.api.mapping.createUploadMapping({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1963,10 +2728,27 @@ await corsair.cloudinary.api.mapping.deleteUploadMapping({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `folder` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1998,10 +2780,27 @@ await corsair.cloudinary.api.mapping.getUploadMappingDetails({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `folder` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2034,10 +2833,27 @@ await corsair.cloudinary.api.mapping.updateUploadMapping({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `folder` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2072,11 +2888,28 @@ await corsair.cloudinary.api.mappings.getUploadMappings({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `max_results` | `any` | No | — |
 | `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2124,9 +2957,26 @@ await corsair.cloudinary.api.metadata.createMetadataField({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2174,9 +3024,26 @@ await corsair.cloudinary.api.metadata.createMetadataRule({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2211,10 +3078,27 @@ await corsair.cloudinary.api.metadata.deleteMetadataField({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `external_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2246,10 +3130,27 @@ await corsair.cloudinary.api.metadata.deleteMetadataRule({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `metadata_rule_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2281,10 +3182,27 @@ await corsair.cloudinary.api.metadata.getMetadataFieldById({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `external_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2332,10 +3250,27 @@ await corsair.cloudinary.api.metadata.listMetadataFields({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `external_ids` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2385,9 +3320,26 @@ await corsair.cloudinary.api.metadata.listMetadataRules({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2433,10 +3385,27 @@ await corsair.cloudinary.api.metadata.orderMetadataFieldDatasource({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `external_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2484,10 +3453,27 @@ await corsair.cloudinary.api.metadata.reorderMetadataField({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `external_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2535,9 +3521,26 @@ await corsair.cloudinary.api.metadata.reorderMetadataFields({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2585,12 +3588,29 @@ await corsair.cloudinary.api.metadata.searchMetadataFieldDatasource({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `term` | `any` | No | — |
 | `max_results` | `any` | No | — |
 | `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2617,10 +3637,27 @@ await corsair.cloudinary.api.metadata.updateMetadataField({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `external_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2668,10 +3705,27 @@ await corsair.cloudinary.api.metadata.updateMetadataFieldDatasource({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `external_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2719,10 +3773,27 @@ await corsair.cloudinary.api.metadata.updateMetadataRule({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `metadata_rule_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2759,9 +3830,26 @@ await corsair.cloudinary.api.multi.createMultiResource({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2812,9 +3900,26 @@ await corsair.cloudinary.api.preset.createUploadPreset({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2848,10 +3953,27 @@ await corsair.cloudinary.api.preset.deleteUploadPreset({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2883,10 +4005,27 @@ await corsair.cloudinary.api.preset.getUploadPreset({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2920,10 +4059,27 @@ await corsair.cloudinary.api.preset.updateUploadPreset({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2959,11 +4115,28 @@ await corsair.cloudinary.api.presets.listUploadPresets({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `max_results` | `any` | No | — |
 | `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3012,7 +4185,7 @@ await corsair.cloudinary.api.raw.listRawFiles({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `type` | `any` | No | — |
@@ -3027,6 +4200,23 @@ await corsair.cloudinary.api.raw.listRawFiles({});
 | `moderation` | `any` | No | — |
 | `tags` | `any` | No | — |
 | `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3090,9 +4280,26 @@ await corsair.cloudinary.api.resource.explicitResource({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3141,9 +4348,26 @@ await corsair.cloudinary.api.resource.explodeResource({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3192,7 +4416,7 @@ await corsair.cloudinary.api.resource.getResourceByAssetId({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `asset_id` | `string` | Yes | — |
@@ -3201,6 +4425,23 @@ await corsair.cloudinary.api.resource.getResourceByAssetId({});
 | `moderations` | `any` | No | — |
 | `quality_analysis` | `any` | No | — |
 | `accessibility_analysis` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3249,7 +4490,7 @@ await corsair.cloudinary.api.resource.getResourceByPublicId({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `string` | Yes | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `type` | `string` | Yes | — |
@@ -3259,6 +4500,23 @@ await corsair.cloudinary.api.resource.getResourceByPublicId({});
 | `moderations` | `any` | No | — |
 | `quality_analysis` | `any` | No | — |
 | `accessibility_analysis` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3307,9 +4565,26 @@ await corsair.cloudinary.api.resource.listResourceTypes({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3341,9 +4616,26 @@ await corsair.cloudinary.api.resource.renameResource({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3392,10 +4684,27 @@ await corsair.cloudinary.api.resource.updateResourceByAssetId({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `asset_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3444,11 +4753,28 @@ await corsair.cloudinary.api.resource.updateResourceByPublicId({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `string` | Yes | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `type` | `string` | Yes | — |
 | `public_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3497,9 +4823,26 @@ await corsair.cloudinary.api.resource.updateResourceTags({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3528,9 +4871,26 @@ await corsair.cloudinary.api.resources.deleteResourcesByAssetId({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3562,10 +4922,27 @@ await corsair.cloudinary.api.resources.deleteResourcesByPublicId({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `string` | Yes | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `type` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3597,10 +4974,27 @@ await corsair.cloudinary.api.resources.deleteResourcesByTags({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `string` | Yes | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `tag` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3632,7 +5026,7 @@ await corsair.cloudinary.api.resources.getResourcesByAssetFolder({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `asset_folder` | `any` | No | — |
@@ -3643,6 +5037,23 @@ await corsair.cloudinary.api.resources.getResourcesByAssetFolder({});
 | `metadata` | `any` | No | — |
 | `moderations` | `any` | No | — |
 | `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3704,7 +5115,7 @@ await corsair.cloudinary.api.resources.getResourcesByContext({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `string` | Yes | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `key` | `any` | No | — |
@@ -3716,6 +5127,23 @@ await corsair.cloudinary.api.resources.getResourcesByContext({});
 | `tags` | `any` | No | — |
 | `moderations` | `any` | No | — |
 | `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3777,7 +5205,7 @@ await corsair.cloudinary.api.resources.getResourcesInModeration({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `string` | Yes | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `moderation_kind` | `string` | Yes | — |
@@ -3789,6 +5217,23 @@ await corsair.cloudinary.api.resources.getResourcesInModeration({});
 | `tags` | `any` | No | — |
 | `moderations` | `any` | No | — |
 | `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3850,7 +5295,7 @@ await corsair.cloudinary.api.resources.listResourcesByAssetIds({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `asset_ids` | `any` | No | — |
@@ -3859,6 +5304,23 @@ await corsair.cloudinary.api.resources.listResourcesByAssetIds({});
 | `moderations` | `any` | No | — |
 | `tags` | `any` | No | — |
 | `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3920,7 +5382,7 @@ await corsair.cloudinary.api.resources.listResourcesByExternalIds({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `external_ids` | `any` | No | — |
@@ -3929,6 +5391,23 @@ await corsair.cloudinary.api.resources.listResourcesByExternalIds({});
 | `moderations` | `any` | No | — |
 | `tags` | `any` | No | — |
 | `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3990,7 +5469,7 @@ await corsair.cloudinary.api.resources.listResourcesByTag({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `string` | Yes | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `tag` | `string` | Yes | — |
@@ -4000,6 +5479,23 @@ await corsair.cloudinary.api.resources.listResourcesByTag({});
 | `metadata` | `any` | No | — |
 | `moderations` | `any` | No | — |
 | `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4061,7 +5557,7 @@ await corsair.cloudinary.api.resources.listResourcesByType({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `string` | Yes | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `type` | `string` | Yes | — |
@@ -4076,6 +5572,23 @@ await corsair.cloudinary.api.resources.listResourcesByType({});
 | `moderation` | `any` | No | — |
 | `tags` | `any` | No | — |
 | `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4137,9 +5650,26 @@ await corsair.cloudinary.api.resources.publishResources({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4188,10 +5718,27 @@ await corsair.cloudinary.api.resources.restoreResources({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `string` | Yes | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `type` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4240,9 +5787,26 @@ await corsair.cloudinary.api.resources.restoreResourcesByAssetIds({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4293,11 +5857,28 @@ await corsair.cloudinary.api.root.getRootFolders({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `max_results` | `any` | No | — |
 | `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4346,9 +5927,26 @@ await corsair.cloudinary.api.slideshow.createSlideshow({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4399,9 +5997,26 @@ await corsair.cloudinary.api.sprite.generateSprite({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4430,9 +6045,26 @@ await corsair.cloudinary.api.streaming.createStreamingProfile({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4459,10 +6091,27 @@ await corsair.cloudinary.api.streaming.deleteStreamingProfile({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4494,10 +6143,27 @@ await corsair.cloudinary.api.streaming.getStreamingProfileDetails({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4524,10 +6190,27 @@ await corsair.cloudinary.api.streaming.updateStreamingProfile({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4556,12 +6239,29 @@ await corsair.cloudinary.api.tags.getTags({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `string` | Yes | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `prefix` | `any` | No | — |
 | `max_results` | `any` | No | — |
 | `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4606,10 +6306,27 @@ await corsair.cloudinary.api.transformation.createTransformation({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `name` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4644,10 +6361,27 @@ await corsair.cloudinary.api.transformation.getTransformation({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `transformation` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4684,10 +6418,27 @@ await corsair.cloudinary.api.transformation2.deleteTransformation2({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `transformation` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4719,10 +6470,27 @@ await corsair.cloudinary.api.transformation2.updateTransformation2({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `transformation` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4759,12 +6527,29 @@ await corsair.cloudinary.api.transformations.getTransformations({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `named` | `any` | No | — |
 | `max_results` | `any` | No | — |
 | `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4814,12 +6599,29 @@ await corsair.cloudinary.api.triggers.getTriggers({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `event_type` | `any` | No | — |
 | `max_results` | `any` | No | — |
 | `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4870,10 +6672,27 @@ await corsair.cloudinary.api.update.updateTrigger({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `trigger_id` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4911,10 +6730,27 @@ await corsair.cloudinary.api.usage.getUsage({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `date` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4954,7 +6790,7 @@ await corsair.cloudinary.api.video.getVideoViews({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `public_ids` | `any` | No | — |
@@ -4962,6 +6798,23 @@ await corsair.cloudinary.api.video.getVideoViews({});
 | `end_date` | `any` | No | — |
 | `max_results` | `any` | No | — |
 | `next_cursor` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4990,7 +6843,7 @@ await corsair.cloudinary.api.videos.listVideos({});
 |------|------|----------|-------------|
 | `query` | `Record<string, any>` | No | — |
 | `body` | `any` | No | — |
-| `file` | `custom` | No | — |
+| `file` | `string \| object \| custom` | No | The file to upload: a public URL, &#123;url, filename?, contentType?&#125;, or &#123;base64, filename?, contentType?&#125;; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Cloudinary fetches a URL or data URI itself; uploadChunk needs the chunk bytes, so a link there is downloaded first. |
 | `resource_type` | `image \| video \| raw \| auto` | No | — |
 | `upload_resource_type` | `image \| video \| raw \| auto` | No | — |
 | `type` | `any` | No | — |
@@ -5005,6 +6858,23 @@ await corsair.cloudinary.api.videos.listVideos({});
 | `moderation` | `any` | No | — |
 | `tags` | `any` | No | — |
 | `fields` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="file full type">
+
+```ts
+string | {
+  url: string,
+  filename?: string,
+  contentType?: string
+} | {
+  base64: string,
+  filename?: string,
+  contentType?: string
+} | custom
+```
+</Accordion>
+</AccordionGroup>
 
 
 

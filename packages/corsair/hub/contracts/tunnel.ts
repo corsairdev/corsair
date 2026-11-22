@@ -198,10 +198,16 @@ export type BrowserDeliveryPayload = {
 	expiresIn?: number;
 	/** OAuth scopes granted. */
 	scope?: string;
+	/** The connecting user's own token, when the provider issues one beside the app's. */
+	userAccessToken?: string;
 	/** Auth type the delivered tokens belong to — `managed` (default) or `oauth_2` (BYO). */
 	authType?: 'managed' | 'oauth_2';
 	/** Provider token-body identity (team, workspace_id, …) for the SDK resolver. */
 	providerData?: Record<string, unknown>;
+	/** Provider account identity for multi-account delivery (`deliveryMode: oauth.tokens`). */
+	account?: { id: string; label?: string };
+	/** Every account the hub holds for the plugin and tenant, oldest first (`deliveryMode: oauth.tokens`). */
+	accounts?: { id: string; label?: string }[];
 	/** SDK permission token to approve or deny (`deliveryMode: permission.*`). */
 	permissionToken?: string;
 	/** Hub page origin for iframe postMessage replies (legacy client bridge). */

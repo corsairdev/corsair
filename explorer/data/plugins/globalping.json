@@ -1,0 +1,290 @@
+{
+  "id": "globalping",
+  "displayName": "Globalping",
+  "description": "List Globalping probes, limits, and health, and create or read a measurement.",
+  "npmPackageName": "@corsair-dev/globalping",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 3
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "globalping.api.health.get",
+      "shortPath": "health.get",
+      "description": "Read the Globalping health check.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "health",
+            "optional": false,
+            "type": "{ id: string, status: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "globalping.api.limits.get",
+      "shortPath": "limits.get",
+      "description": "Read the current measurement rate limit.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": false,
+            "type": "{ id: string, type?: string, limit?: number, remaining?: number, reset?: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "globalping.api.measurements.create",
+      "shortPath": "measurements.create",
+      "description": "Start a ping, traceroute, dns, mtr or http test from Globalping probes, picked by location. Uses the hourly measurement allowance, then account credits.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "ping | traceroute | dns | mtr | http"
+          },
+          {
+            "key": "target",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "{ magic?: string, continent?: string, region?: string, country?: string, state?: string, city?: string, asn?: number, network?: string, tags?: string[], limit?: number }[] | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "measurementOptions",
+            "optional": true,
+            "type": "{ packets?: number, protocol?: ICMP | TCP | UDP | HTTP | HTTPS | HTTP2, port?: number, ipVersion?: 4 | 6, query?: { type: string }, resolver?: string, trace?: boolean, request?: { host?: string, path?: string, query?: string, method?: HEAD | GET | OPTIONS, headers?: Record<string, string> } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "measurement",
+            "optional": false,
+            "type": "{ id: string, probesCount?: number, type?: string, status?: string }"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ probe: { continent?: string, region?: string, country?: string, state?: string | null, city?: string, asn?: number, network?: string, latitude?: number, longitude?: number, tags?: string[] }, result: { status: string, rawOutput?: string | null, resolvedAddress?: string | null, resolvedHostname?: string | null, statusCode?: number, statusCodeName?: string, stats?: Record<string, number | null> } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "globalping.api.measurements.get",
+      "shortPath": "measurements.get",
+      "description": "Read a measurement by id with each probe's result. Poll until status is finished. Results are not stored.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "measurement",
+            "optional": false,
+            "type": "{ id: string, probesCount?: number, type?: string, status?: string }"
+          },
+          {
+            "key": "target",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ probe: { continent?: string, region?: string, country?: string, state?: string | null, city?: string, asn?: number, network?: string, latitude?: number, longitude?: number, tags?: string[] }, result: { status: string, rawOutput?: string | null, resolvedAddress?: string | null, resolvedHostname?: string | null, statusCode?: number, statusCodeName?: string, stats?: Record<string, number | null> } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "globalping.api.probes.list",
+      "shortPath": "probes.list",
+      "description": "List online Globalping probes. Probe rows are not stored.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "probes",
+            "optional": false,
+            "type": "{ version?: string, continent?: string, region?: string, country?: string, city?: string, network?: string, asn?: number }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "globalping.db.health.search",
+      "entityName": "health",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "globalping.db.limits.search",
+      "entityName": "limits",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "limit",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "remaining",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "reset",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    },
+    {
+      "path": "globalping.db.measurements.search",
+      "entityName": "measurements",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "probesCount",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "type",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "status",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

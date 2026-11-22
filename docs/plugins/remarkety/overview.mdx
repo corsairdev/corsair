@@ -10,7 +10,7 @@ The token comes from your Remarkety account and goes in the `X-Token` header. Th
 
 **`Accept: application/json` is load-bearing.** Sent without it, a failed call comes back as an HTML login page instead of the JSON error `{"message":"Missing or invalid API Key","status":"ERROR","guid":"…"}`. The plugin always sends it, and it keeps the `guid` on the error because that is what support asks for.
 
-**The store ID** is the short string on Settings > API Keys (for example `AbC123xy`); every store route takes it as `storeId`.
+**The store ID** is the short string on Settings &gt; API Keys (for example `AbC123xy`); every store route takes it as `storeId`.
 
 **Building a campaign takes two reads first:**
 

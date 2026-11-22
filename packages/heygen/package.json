@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/heygen",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "HeyGen plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",

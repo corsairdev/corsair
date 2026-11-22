@@ -1,0 +1,670 @@
+{
+  "id": "logodev",
+  "displayName": "Logo.dev",
+  "description": "Look up company logos and brand profiles (name, colors, socials, logo files) by domain, ticker, ISIN, crypto symbol or name, search brands by name, and manage brand update webhooks.",
+  "npmPackageName": "@corsair-dev/logodev",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 14,
+    "webhooks": 0,
+    "db": 2
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "logodev.api.account.get",
+      "shortPath": "account.get",
+      "description": "Get the plan and API credit balance. Not billed.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, plan?: string, credits?: { remaining?: number, monthly_allowance?: number, purchased?: number, renews_at?: string | null, can_buy_credits?: boolean } }"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ request_id?: string, resolution?: { type?: string, value?: string, method?: string }, pending?: { reason?: string, message?: string, retry_after_seconds?: number }, subscription?: { status?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "logodev.api.brands.get",
+      "shortPath": "brands.get",
+      "description": "Get a brand profile by its Logo.dev brand id. 5 API credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Brand id, as returned in data.id."
+          },
+          {
+            "key": "noSubscribe",
+            "optional": true,
+            "type": "boolean",
+            "description": "true skips the automatic subscription to this brand. Only matters when webhooks are on for the account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, id?: string, slug?: string, domain?: string, status?: string, name?: string, description?: string | null, indexed_at?: string | null, is_profane?: boolean, socials?: Record<string, string | null>, colors?: { r?: number, g?: number, b?: number, hex?: string }[], logo?: { object?: string, kind?: string, brand_id?: string, status?: string, url?: string, etag?: string, blurhash?: string | null, source?: { width?: number, height?: number, format?: string, has_transparency?: boolean, is_vector?: boolean }, last_updated_at?: string, expires_at?: string } | null, brandmark?: { object?: string, kind?: string, brand_id?: string, status?: string, url?: string, etag?: string, blurhash?: string | null, source?: { width?: number, height?: number, format?: string, has_transparency?: boolean, is_vector?: boolean }, last_updated_at?: string, expires_at?: string } | null, social_banners?: any[] }"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ request_id?: string, resolution?: { type?: string, value?: string, method?: string }, pending?: { reason?: string, message?: string, retry_after_seconds?: number }, subscription?: { status?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "logodev.api.brands.lookup",
+      "shortPath": "brands.lookup",
+      "description": "Look up a brand profile (name, description, colors, socials, logo) by domain, ticker, ISIN, crypto symbol or name. 5 API credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string",
+            "description": "Company domain, such as stripe.com."
+          },
+          {
+            "key": "ticker",
+            "optional": true,
+            "type": "string",
+            "description": "Stock ticker, such as AAPL."
+          },
+          {
+            "key": "isin",
+            "optional": true,
+            "type": "string",
+            "description": "ISIN, such as US0378331005."
+          },
+          {
+            "key": "crypto",
+            "optional": true,
+            "type": "string",
+            "description": "Crypto symbol, such as BTC."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Brand name. Logo.dev uses the top search match."
+          },
+          {
+            "key": "noSubscribe",
+            "optional": true,
+            "type": "boolean",
+            "description": "true skips the automatic subscription to this brand. Only matters when webhooks are on for the account."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, id?: string, slug?: string, domain?: string, status?: string, name?: string, description?: string | null, indexed_at?: string | null, is_profane?: boolean, socials?: Record<string, string | null>, colors?: { r?: number, g?: number, b?: number, hex?: string }[], logo?: { object?: string, kind?: string, brand_id?: string, status?: string, url?: string, etag?: string, blurhash?: string | null, source?: { width?: number, height?: number, format?: string, has_transparency?: boolean, is_vector?: boolean }, last_updated_at?: string, expires_at?: string } | null, brandmark?: { object?: string, kind?: string, brand_id?: string, status?: string, url?: string, etag?: string, blurhash?: string | null, source?: { width?: number, height?: number, format?: string, has_transparency?: boolean, is_vector?: boolean }, last_updated_at?: string, expires_at?: string } | null, social_banners?: any[] }"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ request_id?: string, resolution?: { type?: string, value?: string, method?: string }, pending?: { reason?: string, message?: string, retry_after_seconds?: number }, subscription?: { status?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "logodev.api.brands.search",
+      "shortPath": "brands.search",
+      "description": "Search brands by name and get each match with its domain and logo URL. Billed at 1 API credit per 1,000 searches.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Brand name to search for."
+          },
+          {
+            "key": "method",
+            "optional": true,
+            "type": "match | typeahead",
+            "description": "match for full names, typeahead for a prefix. Default match."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "How many brands to return, from 1 to 25. Default 10."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, name: string, domain: string, logo_url?: string }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ request_id?: string, resolution?: { type?: string, value?: string, method?: string }, pending?: { reason?: string, message?: string, retry_after_seconds?: number }, subscription?: { status?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "logodev.api.logos.fetch",
+      "shortPath": "logos.fetch",
+      "description": "Get a brand's logo as a temporary download URL with its size, format and blurhash. 2 API credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string",
+            "description": "Company domain, such as stripe.com."
+          },
+          {
+            "key": "ticker",
+            "optional": true,
+            "type": "string",
+            "description": "Stock ticker, such as AAPL."
+          },
+          {
+            "key": "isin",
+            "optional": true,
+            "type": "string",
+            "description": "ISIN, such as US0378331005."
+          },
+          {
+            "key": "crypto",
+            "optional": true,
+            "type": "string",
+            "description": "Crypto symbol, such as BTC."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Brand name. Logo.dev uses the top search match."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, kind?: string, brand_id?: string, status?: string, url?: string, etag?: string, blurhash?: string | null, source?: { width?: number, height?: number, format?: string, has_transparency?: boolean, is_vector?: boolean }, last_updated_at?: string, expires_at?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ request_id?: string, resolution?: { type?: string, value?: string, method?: string }, pending?: { reason?: string, message?: string, retry_after_seconds?: number }, subscription?: { status?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "logodev.api.logos.getBrandmark",
+      "shortPath": "logos.getBrandmark",
+      "description": "Get a brand's brandmark (the symbol without the name) as a temporary download URL. 3 API credits.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string",
+            "description": "Company domain, such as stripe.com."
+          },
+          {
+            "key": "ticker",
+            "optional": true,
+            "type": "string",
+            "description": "Stock ticker, such as AAPL."
+          },
+          {
+            "key": "isin",
+            "optional": true,
+            "type": "string",
+            "description": "ISIN, such as US0378331005."
+          },
+          {
+            "key": "crypto",
+            "optional": true,
+            "type": "string",
+            "description": "Crypto symbol, such as BTC."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Brand name. Logo.dev uses the top search match."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, kind?: string, brand_id?: string, status?: string, url?: string, etag?: string, blurhash?: string | null, source?: { width?: number, height?: number, format?: string, has_transparency?: boolean, is_vector?: boolean }, last_updated_at?: string, expires_at?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ request_id?: string, resolution?: { type?: string, value?: string, method?: string }, pending?: { reason?: string, message?: string, retry_after_seconds?: number }, subscription?: { status?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "logodev.api.subscriptions.get",
+      "shortPath": "subscriptions.get",
+      "description": "Check whether the account follows a brand's update events (paid plans).",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string",
+            "description": "Brand id, as returned in data.id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, id?: string, brand_id?: string, created_at?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ request_id?: string, resolution?: { type?: string, value?: string, method?: string }, pending?: { reason?: string, message?: string, retry_after_seconds?: number }, subscription?: { status?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "logodev.api.subscriptions.subscribe",
+      "shortPath": "subscriptions.subscribe",
+      "description": "Follow a brand's update events (paid plans with webhooks).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string",
+            "description": "Brand id, as returned in data.id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, id?: string, brand_id?: string, created_at?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ request_id?: string, resolution?: { type?: string, value?: string, method?: string }, pending?: { reason?: string, message?: string, retry_after_seconds?: number }, subscription?: { status?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "logodev.api.subscriptions.unsubscribe",
+      "shortPath": "subscriptions.unsubscribe",
+      "description": "Stop following a brand's update events.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string",
+            "description": "Brand id, as returned in data.id."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brandId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unsubscribed",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "logodev.api.webhookEndpoints.create",
+      "shortPath": "webhookEndpoints.create",
+      "description": "Register a URL to receive brand.updated and brand.indexed events (paid plans).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "HTTPS URL that receives the events."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_types",
+            "optional": true,
+            "type": "(brand.updated | brand.indexed)[]",
+            "description": "Event types to send. Omit or send [] for all of them."
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "true creates the endpoint switched off."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, id: string, url?: string, description?: string | null, disabled?: boolean, filter_types?: string[], created_at?: string, updated_at?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ request_id?: string, resolution?: { type?: string, value?: string, method?: string }, pending?: { reason?: string, message?: string, retry_after_seconds?: number }, subscription?: { status?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "logodev.api.webhookEndpoints.delete",
+      "shortPath": "webhookEndpoints.delete",
+      "description": "Delete a webhook endpoint. This cannot be undone.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook endpoint id, such as ep_…."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "logodev.api.webhookEndpoints.get",
+      "shortPath": "webhookEndpoints.get",
+      "description": "Get one webhook endpoint.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook endpoint id, such as ep_…."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, id: string, url?: string, description?: string | null, disabled?: boolean, filter_types?: string[], created_at?: string, updated_at?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ request_id?: string, resolution?: { type?: string, value?: string, method?: string }, pending?: { reason?: string, message?: string, retry_after_seconds?: number }, subscription?: { status?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "logodev.api.webhookEndpoints.list",
+      "shortPath": "webhookEndpoints.list",
+      "description": "List the team's webhook endpoints.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, id: string, url?: string, description?: string | null, disabled?: boolean, filter_types?: string[], created_at?: string, updated_at?: string }[]"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ request_id?: string, resolution?: { type?: string, value?: string, method?: string }, pending?: { reason?: string, message?: string, retry_after_seconds?: number }, subscription?: { status?: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "logodev.api.webhookEndpoints.update",
+      "shortPath": "webhookEndpoints.update",
+      "description": "Change a webhook endpoint's URL, description, event types or disabled state.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook endpoint id, such as ep_…."
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "filter_types",
+            "optional": true,
+            "type": "(brand.updated | brand.indexed)[]",
+            "description": "Event types to send. Omit or send [] for all of them."
+          },
+          {
+            "key": "disabled",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ object?: string, id: string, url?: string, description?: string | null, disabled?: boolean, filter_types?: string[], created_at?: string, updated_at?: string }"
+          },
+          {
+            "key": "metadata",
+            "optional": false,
+            "type": "{ request_id?: string, resolution?: { type?: string, value?: string, method?: string }, pending?: { reason?: string, message?: string, retry_after_seconds?: number }, subscription?: { status?: string } }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "logodev.db.brands.search",
+      "entityName": "brands",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "name",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "object",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "logoUrl",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "brandId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    },
+    {
+      "path": "logodev.db.images.search",
+      "entityName": "images",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "domain",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "brandId",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "format",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "width",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "height",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "etag",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        }
+      ]
+    }
+  ]
+}

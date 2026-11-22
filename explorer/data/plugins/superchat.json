@@ -1,0 +1,1283 @@
+{
+  "id": "superchat",
+  "displayName": "Superchat",
+  "description": "Multi-channel messaging from Superchat - manage contacts and contact lists, read conversations and their messages, and send text messages on WhatsApp, SMS, Instagram, Messenger, Telegram or email.",
+  "npmPackageName": "@corsair-dev/superchat",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 22,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "superchat.api.channels.get",
+      "shortPath": "channels.get",
+      "description": "Read one channel with its type, name and the inbox it belongs to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "channelId",
+            "optional": false,
+            "type": "string",
+            "description": "The channel id, as `mc_...`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "inbox_id",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.channels.list",
+      "shortPath": "channels.list",
+      "description": "List the channels in the workspace, optionally only those in one inbox; a channel id is what a message is sent from",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id to read records after."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id to read records before."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Objects per page, 1 to 100. Defaults to 50."
+          },
+          {
+            "key": "inbox_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only channels in this inbox."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: string | null, type?: string | null, name?: string | null, inbox_id?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ next_cursor?: string | null, previous_cursor?: string | null, next_url?: string | null, previous_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.contactLists.addContact",
+      "shortPath": "contactLists.addContact",
+      "description": "Add a contact to a contact list. The list is named in the body on this route, not in the path",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contactListId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.contactLists.create",
+      "shortPath": "contactLists.create",
+      "description": "Create a contact list that contacts can be added to",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.contactLists.delete",
+      "shortPath": "contactLists.delete",
+      "description": "Delete a contact list. Its membership goes with it, and this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactListId",
+            "optional": false,
+            "type": "string",
+            "description": "The contact list id, as `cl_...`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.contactLists.forContact",
+      "shortPath": "contactLists.forContact",
+      "description": "List the contact lists one contact belongs to, paged by cursor like the other lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id to read records after."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id to read records before."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Objects per page, 1 to 100. Defaults to 50."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, url?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ next_cursor?: string | null, previous_cursor?: string | null, next_url?: string | null, previous_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.contactLists.list",
+      "shortPath": "contactLists.list",
+      "description": "List the contact lists in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id to read records after."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id to read records before."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Objects per page, 1 to 100. Defaults to 50."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, url?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ next_cursor?: string | null, previous_cursor?: string | null, next_url?: string | null, previous_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.contactLists.removeContact",
+      "shortPath": "contactLists.removeContact",
+      "description": "Remove a contact from a contact list; the contact itself stays",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contactListId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact. At least one handle is required, and a handle is the email address or phone number that identifies them on a channel",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string | null",
+            "description": "Required; the value may be null."
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string | null",
+            "description": "Required; the value may be null."
+          },
+          {
+            "key": "gender",
+            "optional": false,
+            "type": "male | female | diverse | unknown | null",
+            "description": "Required; the value may be null."
+          },
+          {
+            "key": "custom_attributes",
+            "optional": true,
+            "type": "{ identifier?: string | null, type?: string | null, value?: any | null, attribute_id?: string | null }[] | null"
+          },
+          {
+            "key": "handles",
+            "optional": false,
+            "type": "{ id: string | null, type: mail | phone, value: string }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "male | female | diverse | unknown | null"
+          },
+          {
+            "key": "handles",
+            "optional": true,
+            "type": "{ id?: string | null, type?: mail | phone | null, value?: string | null }[] | null"
+          },
+          {
+            "key": "custom_attributes",
+            "optional": true,
+            "type": "{ identifier?: string | null, type?: string | null, value?: any | null, attribute_id?: string | null }[] | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact and their handles. Conversations that referenced them lose the link, and this cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string",
+            "description": "The Superchat contact id, as `ct_...`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Read one contact with their handles, gender and custom attribute values",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string",
+            "description": "The Superchat contact id, as `ct_...`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "male | female | diverse | unknown | null"
+          },
+          {
+            "key": "handles",
+            "optional": true,
+            "type": "{ id?: string | null, type?: mail | phone | null, value?: string | null }[] | null"
+          },
+          {
+            "key": "custom_attributes",
+            "optional": true,
+            "type": "{ identifier?: string | null, type?: string | null, value?: any | null, attribute_id?: string | null }[] | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts newest first, paging with a cursor id; set after or before, never both",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id to read records after."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id to read records before."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Objects per page, 1 to 100. Defaults to 50."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, first_name?: string | null, last_name?: string | null, gender?: male | female | diverse | unknown | null, handles?: { id?: string | null, type?: mail | phone | null, value?: string | null }[] | null, custom_attributes?: { identifier?: string | null, type?: string | null, value?: any | null, attribute_id?: string | null }[] | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ next_cursor?: string | null, previous_cursor?: string | null, next_url?: string | null, previous_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.contacts.search",
+      "shortPath": "contacts.search",
+      "description": "Search contacts by email, phone, Instagram or WhatsApp username, or a custom attribute; every expression has to match",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id to read records after."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id to read records before."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Objects per page, 1 to 100. Defaults to 50."
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "{ value: { field: mail | phone | instagram | whats_app_username | custom_attribute, operator: =, value: string, identifier?: string }[] }",
+            "description": "The expressions to match, sent as the route expects them."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, first_name?: string | null, last_name?: string | null, gender?: male | female | diverse | unknown | null, handles?: { id?: string | null, type?: mail | phone | null, value?: string | null }[] | null, custom_attributes?: { identifier?: string | null, type?: string | null, value?: any | null, attribute_id?: string | null }[] | null, created_at?: string | null, updated_at?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ next_cursor?: string | null, previous_cursor?: string | null, next_url?: string | null, previous_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Change a contact's names, gender, handles or custom attributes. The route requires first name, last name and gender, so all three are sent back",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": false,
+            "type": "string | null",
+            "description": "Required by the route; the value may be null."
+          },
+          {
+            "key": "last_name",
+            "optional": false,
+            "type": "string | null",
+            "description": "Required by the route."
+          },
+          {
+            "key": "gender",
+            "optional": false,
+            "type": "male | female | diverse | unknown | null",
+            "description": "Required by the route."
+          },
+          {
+            "key": "handles",
+            "optional": true,
+            "type": "{ id: string | null, type: mail | phone, value: string }[] | null"
+          },
+          {
+            "key": "custom_attributes",
+            "optional": true,
+            "type": "{ identifier?: string | null, type?: string | null, value?: any | null, attribute_id?: string | null }[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "gender",
+            "optional": true,
+            "type": "male | female | diverse | unknown | null"
+          },
+          {
+            "key": "handles",
+            "optional": true,
+            "type": "{ id?: string | null, type?: mail | phone | null, value?: string | null }[] | null"
+          },
+          {
+            "key": "custom_attributes",
+            "optional": true,
+            "type": "{ identifier?: string | null, type?: string | null, value?: any | null, attribute_id?: string | null }[] | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.conversations.get",
+      "shortPath": "conversations.get",
+      "description": "Read one conversation with its labels, assignees, linked contacts and snooze state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The conversation id, as `cv_...`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null } | null"
+          },
+          {
+            "key": "inbox",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "assigned_users",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "snoozed_until",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "time_window",
+            "optional": true,
+            "type": "{ start?: string | null, end?: string | null } | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.conversations.list",
+      "shortPath": "conversations.list",
+      "description": "List conversations with their status, channel, inbox and assigned users, paging with a cursor id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id to read records after."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id to read records before."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Objects per page, 1 to 100. Defaults to 50."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, status?: string | null, channel?: { id?: string | null, type?: string | null } | null, inbox?: { id?: string | null, name?: string | null } | null, labels?: any[] | null, assigned_users?: any[] | null, contacts?: any[] | null, snoozed_until?: string | null, time_window?: { start?: string | null, end?: string | null } | null, url?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ next_cursor?: string | null, previous_cursor?: string | null, next_url?: string | null, previous_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.conversations.messages",
+      "shortPath": "conversations.messages",
+      "description": "List the messages in one conversation, paging with a cursor id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The conversation id, as `cv_...`."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id to read records after."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id to read records before."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Objects per page, 1 to 100. Defaults to 50."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, status?: string | null, conversation_id?: string | null, in_reply_to?: string | null, content?: { type?: string | null, body?: string | null } | null, to?: any[] | { channel_id?: string | null } | null, from?: any | null, created_at?: string | null, updated_at?: string | null, direction?: string | null, url?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ next_cursor?: string | null, previous_cursor?: string | null, next_url?: string | null, previous_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.conversations.update",
+      "shortPath": "conversations.update",
+      "description": "Change a conversation's status, inbox, labels or assignees. Snoozing needs both a status of snoozed and a snoozed_until time",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "open | done | spam | archived | snoozed | null",
+            "description": "The values the PATCH route accepts."
+          },
+          {
+            "key": "inbox_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "snoozed_until",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "assigned_users",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "channel",
+            "optional": true,
+            "type": "{ id?: string | null, type?: string | null } | null"
+          },
+          {
+            "key": "inbox",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null } | null"
+          },
+          {
+            "key": "labels",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "assigned_users",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "contacts",
+            "optional": true,
+            "type": "any[] | null"
+          },
+          {
+            "key": "snoozed_until",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "time_window",
+            "optional": true,
+            "type": "{ start?: string | null, end?: string | null } | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.inboxes.get",
+      "shortPath": "inboxes.get",
+      "description": "Read one inbox with its name and workspace url",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inboxId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.inboxes.list",
+      "shortPath": "inboxes.list",
+      "description": "List the inboxes in the workspace",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id to read records after."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id to read records before."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Objects per page, 1 to 100. Defaults to 50."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, url?: string | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ next_cursor?: string | null, previous_cursor?: string | null, next_url?: string | null, previous_url?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.messages.get",
+      "shortPath": "messages.get",
+      "description": "Read one message with its content, direction and status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The message id, as `mc_...` or `me_...`."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "conversation_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "in_reply_to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "{ type?: string | null, body?: string | null } | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "any[] | { channel_id?: string | null } | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "superchat.api.messages.send",
+      "shortPath": "messages.send",
+      "description": "Send a text message on a channel to one recipient. This reaches a real person on WhatsApp, SMS or another channel, and the content has to suit that channel",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "to",
+            "optional": false,
+            "type": "{ identifier: string }[]",
+            "description": "The recipient: one entry, whose identifier is the handle on the target channel."
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "{ channel_id: string, name?: string | null }"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ type: text, body: string }",
+            "description": "A text message. The media, email and template content shapes are not typed by this plugin."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "conversation_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "in_reply_to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "{ type?: string | null, body?: string | null } | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "any[] | { channel_id?: string | null } | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "any | null"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "ISO 8601."
+          },
+          {
+            "key": "direction",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

@@ -51,6 +51,7 @@ export function normalizeHubConfig(input: HubConfigInput): HubConfig {
 		// only an explicit `tunnel: false` should opt out.
 		tunnel: input.tunnel,
 		runtimeProofKey: input.runtimeProofKey?.trim() || undefined,
+		multiAccount: input.multiAccount === true,
 	};
 }
 

@@ -1,8 +1,31 @@
 import { logEventFromContext } from 'corsair/core';
+import { toFileOutput } from 'corsair/http';
 import type { GeminiEndpoints } from '..';
 import { GEMINI_API_BASE, makeGeminiRequest } from '../client';
 import type { VideoFile, VideoOperation } from '../schema/videos';
 import type { GetVideosOperationResponse, WaitForVideoResponse } from './types';
+
+/**
+ * Where a Veo operation stands, as one value a job can be followed by. Done
+ * counts as SUCCEEDED only with the video file waitForVideo downloads (the
+ * first sample's video.uri), so a job never succeeds without one.
+ */
+export function videoOperationState(
+	operation: VideoOperation,
+): GetVideosOperationResponse['state'] {
+	if (operation.error) return 'FAILED';
+	if (!operation.done) return 'RUNNING';
+	return operation.response?.generateVideoResponse?.generatedSamples?.[0]?.video
+		?.uri
+		? 'SUCCEEDED'
+		: 'FAILED';
+}
+
+/**
+ * Most bytes of a video returned inline to a caller without a host. A host that
+ * keeps files (setFileSink) caps it at its own limit and gets a `fileId` instead.
+ */
+const VIDEO_MAX_BYTES = 100_000_000;
 
 type VideoFileResult =
 	| { ok: true; videoFile: VideoFile }
@@ -38,7 +61,7 @@ export const getVideosOperation: GeminiEndpoints['getVideosOperation'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeGeminiRequest<GetVideosOperationResponse>(
+	const response = await makeGeminiRequest<VideoOperation>(
 		`/${input.operationName}`,
 		ctx.key,
 		{ method: 'GET' },
@@ -51,7 +74,7 @@ export const getVideosOperation: GeminiEndpoints['getVideosOperation'] = async (
 		{ ...input },
 		response.error ? 'failed' : 'completed',
 	);
-	return response;
+	return { ...response, state: videoOperationState(response) };
 };
 
 async function fetchVideoFile(
@@ -72,10 +95,13 @@ async function fetchVideoFile(
 		};
 	}
 
-	const bytes = await videoResponse.arrayBuffer();
-	const contentBase64 = Buffer.from(bytes).toString('base64');
+	const bytes = new Uint8Array(await videoResponse.arrayBuffer());
 	const mimeType = videoResponse.headers.get('content-type') ?? 'video/mp4';
-	return { ok: true, videoFile: { mimeType, contentBase64 } };
+	const file = toFileOutput(bytes, mimeType, {
+		filename: 'video.mp4',
+		maxBytes: VIDEO_MAX_BYTES,
+	});
+	return { ok: true, videoFile: { mimeType, ...file } };
 }
 
 /** Logs the poll outcome with a status that actually matches what happened. */
@@ -103,7 +129,7 @@ export const waitForVideo: GeminiEndpoints['waitForVideo'] = async (
 ) => {
 	const deadline = Date.now() + input.timeoutMs;
 
-	let operation = await makeGeminiRequest<GetVideosOperationResponse>(
+	let operation = await makeGeminiRequest<VideoOperation>(
 		`/${input.operationName}`,
 		ctx.key,
 		{ method: 'GET' },
@@ -115,7 +141,7 @@ export const waitForVideo: GeminiEndpoints['waitForVideo'] = async (
 		Date.now() + input.pollIntervalMs <= deadline
 	) {
 		await new Promise((resolve) => setTimeout(resolve, input.pollIntervalMs));
-		operation = await makeGeminiRequest<GetVideosOperationResponse>(
+		operation = await makeGeminiRequest<VideoOperation>(
 			`/${input.operationName}`,
 			ctx.key,
 			{ method: 'GET' },

@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { makeOnedriveRequest } from './client';
+import { download, downloadByPath } from './endpoints/items';
 import type {
 	DriveGetQuotaResponse,
 	DriveGetRecentItemsResponse,
@@ -26,6 +27,7 @@ import type {
 	SubscriptionsListResponse,
 } from './endpoints/types';
 import { OnedriveEndpointOutputSchemas } from './endpoints/types';
+import type { OnedriveContext } from './index';
 
 const TEST_TOKEN = process.env.ONEDRIVE_ACCESS_TOKEN?.trim() ?? '';
 const hasCredentials = TEST_TOKEN.length > 0;
@@ -321,6 +323,72 @@ describeIf('OneDrive API Type Tests', () => {
 					});
 				} catch (error) {
 					console.warn(`Failed to delete test item ${id}:`, error);
+				}
+			}
+		});
+	});
+
+	// Through the endpoints an agent calls: a file with bytes that aren't UTF-8
+	// must come back exactly, and a CSV must come back as text.
+	describe('downloads', () => {
+		it('items.download and items.downloadByPath return a binary file byte for byte and a CSV as text', async () => {
+			const pdf = new Uint8Array([
+				0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34, 0x0a, 0xff, 0xfe, 0x00,
+				0x80, 0xc3, 0x28,
+			]);
+			const csv = 'id,name\n1,Zoë\n';
+			const stamp = Date.now();
+			const upload = async (name: string, body: Uint8Array) => {
+				const response = await fetch(
+					`https://graph.microsoft.com/v1.0/me/drive/root:/${name}:/content`,
+					{
+						method: 'PUT',
+						headers: {
+							Authorization: `Bearer ${TEST_TOKEN}`,
+							'Content-Type': 'application/octet-stream',
+						},
+						body,
+					},
+				);
+				expect(response.ok).toBe(true);
+				return ((await response.json()) as { id: string }).id;
+			};
+			const pdfName = `corsair-download-test-${stamp}.pdf`;
+			const csvName = `corsair-download-test-${stamp}.csv`;
+			const pdfId = await upload(pdfName, pdf);
+			const csvId = await upload(csvName, new TextEncoder().encode(csv));
+			try {
+				// unknown: the endpoints read only ctx.key, not a full plugin context.
+				const ctx = { key: TEST_TOKEN } as unknown as OnedriveContext;
+				const byId = await download(ctx, {
+					item_id: pdfId,
+					file_name: pdfName,
+				});
+				expect(OnedriveEndpointOutputSchemas.itemsDownload.parse(byId)).toEqual(
+					byId,
+				);
+				expect(byId.byteLength).toBe(pdf.byteLength);
+				expect(Buffer.from(byId.contentBase64 ?? '', 'base64')).toEqual(
+					Buffer.from(pdf),
+				);
+				const byPath = await downloadByPath(ctx, {
+					item_path: pdfName,
+					file_name: pdfName,
+				});
+				expect(Buffer.from(byPath.contentBase64 ?? '', 'base64')).toEqual(
+					Buffer.from(pdf),
+				);
+				// OneDrive serves a CSV as application/octet-stream; its name makes it text.
+				const gotCsv = await download(ctx, {
+					item_id: csvId,
+					file_name: csvName,
+				});
+				expect(gotCsv.text).toBe(csv);
+			} finally {
+				for (const id of [pdfId, csvId]) {
+					await makeOnedriveRequest(`me/drive/items/${id}`, TEST_TOKEN, {
+						method: 'DELETE',
+					}).catch(() => undefined);
 				}
 			}
 		});

@@ -1,0 +1,869 @@
+{
+  "id": "newrelic",
+  "displayName": "New Relic",
+  "description": "Read New Relic applications and metrics, search entities, list alert issues, manage alert policies and NRQL alert conditions, record deployment markers, and run NRQL queries through NerdGraph.",
+  "npmPackageName": "@corsair-dev/newrelic",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 18,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "newrelic.api.accounts.list",
+      "shortPath": "accounts.list",
+      "description": "List the accounts this key can reach, with the ids NRQL and issues take",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accounts",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.alerts.conditions",
+      "shortPath": "alerts.conditions",
+      "description": "List the APM, browser and mobile conditions in one policy; external service, synthetic and NRQL conditions are separate endpoints and are not covered",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "policyId",
+            "optional": false,
+            "type": "number",
+            "description": "Only conditions in this policy."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conditions",
+            "optional": false,
+            "type": "{ id?: number | null, type?: string | null, name?: string | null, enabled?: boolean | null, entities?: (string | number)[] | null, metric?: string | null, condition_scope?: string | null, terms?: { duration?: string | null, operator?: string | null, priority?: string | null, threshold?: string | null, time_function?: string | null }[] | null, user_defined?: Record<string, string> | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.alerts.createNrqlCondition",
+      "shortPath": "alerts.createNrqlCondition",
+      "description": "Add a static NRQL alert condition to a policy: the query, thresholds and how long they must hold",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "policyId",
+            "optional": false,
+            "type": "number",
+            "description": "The policy the condition joins."
+          },
+          {
+            "key": "condition",
+            "optional": false,
+            "type": "{ name: string, enabled?: boolean, runbook_url?: string, terms: { duration: string, operator: above | above_or_equals | below | below_or_equals | equal | not_equals, priority?: critical | warning, threshold: string, time_function: all | any }[], value_function: single_value | sum, nrql: { query: string, since_value?: string }, violation_time_limit_seconds?: number, signal?: Record<string, any>, expiration?: Record<string, any> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nrql_condition",
+            "optional": false,
+            "type": "{ id?: number | null, entity_guid?: string | null, type?: string | null, name?: string | null, enabled?: boolean | null, runbook_url?: string | null, value_function?: string | null, violation_time_limit_seconds?: number | null, terms?: { duration?: string | number | null, operator?: string | null, priority?: string | null, threshold?: string | number | null, time_function?: string | null }[] | null, nrql?: { query?: string | null, since_value?: string | number | null } | null, signal?: Record<string, any> | null, expiration?: Record<string, any> | null, data_account_id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.alerts.createPolicy",
+      "shortPath": "alerts.createPolicy",
+      "description": "Create an alert policy and choose whether incidents roll up per policy, per condition, or per condition and signal",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The policy name."
+          },
+          {
+            "key": "incident_preference",
+            "optional": true,
+            "type": "PER_POLICY | PER_CONDITION | PER_CONDITION_AND_TARGET",
+            "description": "How alerts roll up into incidents. Defaults at New Relic to PER_POLICY."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "policy",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, incident_preference?: string | null, created_at?: number | null, updated_at?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.alerts.deleteNrqlCondition",
+      "shortPath": "alerts.deleteNrqlCondition",
+      "description": "Delete a NRQL alert condition; New Relic has no restore call",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "conditionId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nrql_condition",
+            "optional": false,
+            "type": "{ id?: number | null, entity_guid?: string | null, type?: string | null, name?: string | null, enabled?: boolean | null, runbook_url?: string | null, value_function?: string | null, violation_time_limit_seconds?: number | null, terms?: { duration?: string | number | null, operator?: string | null, priority?: string | null, threshold?: string | number | null, time_function?: string | null }[] | null, nrql?: { query?: string | null, since_value?: string | number | null } | null, signal?: Record<string, any> | null, expiration?: Record<string, any> | null, data_account_id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.alerts.deletePolicy",
+      "shortPath": "alerts.deletePolicy",
+      "description": "Delete an alert policy and the conditions attached to it; New Relic has no restore call",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "policyId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "policy",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, incident_preference?: string | null, created_at?: number | null, updated_at?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.alerts.nrqlConditions",
+      "shortPath": "alerts.nrqlConditions",
+      "description": "List the static NRQL conditions in one policy, with their query, thresholds and signal settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "policyId",
+            "optional": false,
+            "type": "number",
+            "description": "Only NRQL conditions in this policy."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nrql_conditions",
+            "optional": false,
+            "type": "{ id?: number | null, entity_guid?: string | null, type?: string | null, name?: string | null, enabled?: boolean | null, runbook_url?: string | null, value_function?: string | null, violation_time_limit_seconds?: number | null, terms?: { duration?: string | number | null, operator?: string | null, priority?: string | null, threshold?: string | number | null, time_function?: string | null }[] | null, nrql?: { query?: string | null, since_value?: string | number | null } | null, signal?: Record<string, any> | null, expiration?: Record<string, any> | null, data_account_id?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.alerts.policies",
+      "shortPath": "alerts.policies",
+      "description": "List alert policies with their incident rollup preference",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Only policies with this name."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "policies",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, incident_preference?: string | null, created_at?: number | null, updated_at?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.alerts.updateNrqlCondition",
+      "shortPath": "alerts.updateNrqlCondition",
+      "description": "Replace a NRQL condition, e.g. to enable it or move its threshold; send the whole condition, since a partial body is refused",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "conditionId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "condition",
+            "optional": false,
+            "type": "{ name: string, enabled?: boolean, runbook_url?: string, terms: { duration: string, operator: above | above_or_equals | below | below_or_equals | equal | not_equals, priority?: critical | warning, threshold: string, time_function: all | any }[], value_function: single_value | sum, nrql: { query: string, since_value?: string }, violation_time_limit_seconds?: number, signal?: Record<string, any>, expiration?: Record<string, any> }",
+            "description": "The whole condition with your changes; New Relic replaces the stored one."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "nrql_condition",
+            "optional": false,
+            "type": "{ id?: number | null, entity_guid?: string | null, type?: string | null, name?: string | null, enabled?: boolean | null, runbook_url?: string | null, value_function?: string | null, violation_time_limit_seconds?: number | null, terms?: { duration?: string | number | null, operator?: string | null, priority?: string | null, threshold?: string | number | null, time_function?: string | null }[] | null, nrql?: { query?: string | null, since_value?: string | number | null } | null, signal?: Record<string, any> | null, expiration?: Record<string, any> | null, data_account_id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.alerts.updatePolicy",
+      "shortPath": "alerts.updatePolicy",
+      "description": "Rename an alert policy or change how its incidents roll up; both fields are sent, since New Relic replaces the policy",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "policyId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The policy name (current or new)."
+          },
+          {
+            "key": "incident_preference",
+            "optional": false,
+            "type": "PER_POLICY | PER_CONDITION | PER_CONDITION_AND_TARGET",
+            "description": "The incident roll-up (current or new)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "policy",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, incident_preference?: string | null, created_at?: number | null, updated_at?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.applications.get",
+      "shortPath": "applications.get",
+      "description": "Read one application by id with the same health, reporting and summary block",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "applicationId",
+            "optional": false,
+            "type": "number",
+            "description": "The application id, from applications.list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "application",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, language?: string | null, health_status?: string | null, reporting?: boolean | null, last_reported_at?: string | null, application_summary?: { response_time?: number | null, throughput?: number | null, error_rate?: number | null, apdex_target?: number | null, apdex_score?: number | null } | null, end_user_summary?: { response_time?: number | null, throughput?: number | null, error_rate?: number | null, apdex_target?: number | null, apdex_score?: number | null } | null, settings?: { app_apdex_threshold?: number | null, end_user_apdex_threshold?: number | null, enable_real_user_monitoring?: boolean | null, use_server_side_config?: boolean | null } | null, links?: { application_instances?: number[] | null, application_hosts?: number[] | null, servers?: number[] | null, alert_policy?: number | null } | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.applications.list",
+      "shortPath": "applications.list",
+      "description": "List applications with their health colour, whether they are reporting, and the summary metrics the UI shows",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Only applications whose name contains this text."
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string",
+            "description": "Only applications reporting from this host."
+          },
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "number[]",
+            "description": "Only these application ids."
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "REST v2 pages by number and reports the page count in a Link header, which this plugin cannot read. Pass a page explicitly to walk a long list."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "applications",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, language?: string | null, health_status?: string | null, reporting?: boolean | null, last_reported_at?: string | null, application_summary?: { response_time?: number | null, throughput?: number | null, error_rate?: number | null, apdex_target?: number | null, apdex_score?: number | null } | null, end_user_summary?: { response_time?: number | null, throughput?: number | null, error_rate?: number | null, apdex_target?: number | null, apdex_score?: number | null } | null, settings?: { app_apdex_threshold?: number | null, end_user_apdex_threshold?: number | null, enable_real_user_monitoring?: boolean | null, use_server_side_config?: boolean | null } | null, links?: { application_instances?: number[] | null, application_hosts?: number[] | null, servers?: number[] | null, alert_policy?: number | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.changeTracking.createDeployment",
+      "shortPath": "changeTracking.createDeployment",
+      "description": "Record a deployment marker (version, commit, changelog) on an entity; markers cannot be deleted",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "entityGuid",
+            "optional": false,
+            "type": "string",
+            "description": "The entity the deployment belongs to, e.g. an APM service."
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "string",
+            "description": "The version deployed, e.g. 1.4.2."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "changelog",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "commit",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deepLink",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deploymentType",
+            "optional": true,
+            "type": "BASIC | BLUE_GREEN | CANARY | OTHER | ROLLING | SHADOW"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number",
+            "description": "Epoch milliseconds; defaults to now."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deploymentId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "entityGuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "timestamp",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "changelog",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "commit",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deepLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "groupId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "deploymentType",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.entities.get",
+      "shortPath": "entities.get",
+      "description": "Read up to 25 entities by GUID with their type, reporting state, alert severity and tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "guids",
+            "optional": false,
+            "type": "string[]",
+            "description": "Entity GUIDs, from entities.search (at most 25)."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entities",
+            "optional": false,
+            "type": "{ guid?: string | null, name?: string | null, entityType?: string | null, domain?: string | null, type?: string | null, accountId?: number | null, reporting?: boolean | null, alertSeverity?: string | null, permalink?: string | null, tags?: { key?: string | null, values?: string[] | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.entities.search",
+      "shortPath": "entities.search",
+      "description": "Search monitored entities (services, hosts, browser apps, dashboards, monitors, alert conditions) with a filter such as type = 'APPLICATION'",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "An entity search filter, e.g. type = 'APPLICATION', domain = 'APM', name LIKE 'checkout', or accountId = 123. Combine with AND."
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "The nextCursor from the previous page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "entities",
+            "optional": false,
+            "type": "{ guid?: string | null, name?: string | null, entityType?: string | null, domain?: string | null, type?: string | null, accountId?: number | null, reporting?: boolean | null, alertSeverity?: string | null, permalink?: string | null, tags?: { key?: string | null, values?: string[] | null }[] | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.issues.list",
+      "shortPath": "issues.list",
+      "description": "List alert issues for an account, filtered by state, priority, entity or time window",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "states",
+            "optional": true,
+            "type": "(ACTIVATED | CREATED | CLOSED | DEACTIVATED)[]",
+            "description": "Only issues in these states."
+          },
+          {
+            "key": "priority",
+            "optional": true,
+            "type": "(CRITICAL | HIGH | MEDIUM | LOW)[]"
+          },
+          {
+            "key": "entityGuids",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "startTime",
+            "optional": true,
+            "type": "number",
+            "description": "Epoch milliseconds; with endTime, limits the window."
+          },
+          {
+            "key": "endTime",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issues",
+            "optional": false,
+            "type": "{ issueId?: string | null, title?: string[] | null, description?: string[] | null, priority?: string | null, state?: string | null, sources?: string[] | null, entityGuids?: string[] | null, entityNames?: string[] | null, policyIds?: (string | number)[] | null, conditionName?: string[] | null, totalIncidents?: number | null, createdAt?: number | null, activatedAt?: number | null, closedAt?: number | null, acknowledgedAt?: number | null, updatedAt?: number | null, deepLinkUrl?: string[] | null }[]"
+          },
+          {
+            "key": "nextCursor",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.metrics.get",
+      "shortPath": "metrics.get",
+      "description": "Read metric timeslices for an application over a time window, or one averaged value per metric with summarize",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "applicationId",
+            "optional": false,
+            "type": "number",
+            "description": "The application id, from applications.list."
+          },
+          {
+            "key": "names",
+            "optional": false,
+            "type": "string[]",
+            "description": "Metric names, sent as repeated `names[]` parameters, e.g. Apdex, Errors/all, WebTransaction."
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Start of the window. New Relic defaults to the last 30 minutes."
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "End of the window. Defaults to now."
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds per data point."
+          },
+          {
+            "key": "summarize",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return one averaged value for the window rather than the series."
+          },
+          {
+            "key": "values",
+            "optional": true,
+            "type": "string[]",
+            "description": "Only these value fields, e.g. average_value, call_count."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "metric_data",
+            "optional": false,
+            "type": "{ from?: string | null, to?: string | null, metrics?: { name?: string | null, timeslice?: number | null, values?: Record<string, number | null> | null, timeslices?: { from?: string | null, to?: string | null, values?: Record<string, number | null> | null }[] | null }[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "newrelic.api.query.nrql",
+      "shortPath": "query.nrql",
+      "description": "Run a NRQL query against one account through NerdGraph and return its rows and the time window New Relic actually ran over",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "region",
+            "optional": true,
+            "type": "us | eu",
+            "description": "Which data centre to call. Defaults to us; an EU account must pass eu, because a key is only valid in its own region."
+          },
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "number",
+            "description": "The New Relic account the query runs against."
+          },
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "A NRQL statement, e.g. SELECT count(*) FROM Transaction SINCE 1 hour ago."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ timeWindow?: { begin?: number | null, end?: number | null } | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

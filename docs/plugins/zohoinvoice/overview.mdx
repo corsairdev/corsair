@@ -1,0 +1,157 @@
+---
+title: "Zoho Invoice plugin"
+sidebarTitle: "Overview"
+description: "Create and send invoices and quotes, record payments, and manage customers and items in Zoho Invoice."
+---
+
+Use **Zoho Invoice** through Corsair: one client, typed API calls, local DB sync.
+
+Zoho Invoice uses regional data centers. Pass `region` (`us` default, plus `eu`, `in`, `au`, `jp`, `ca`, `cn`, `sa`) so the plugin uses the matching `www.zohoapis.*` API host and Zoho sign-in host (`accounts.zoho.*`, or `accounts.zohocloud.ca` for Canada):
+
+```ts
+zohoinvoice({ region: 'eu' })
+```
+
+Every call except `organizations.list` is scoped to one organization. `organizationId` is optional: the plugin uses the organization saved when the account connected, else the account's only organization. With several organizations, pass `organizationId` (from `organizations.list`).
+
+Create and update calls take Zoho's own fields in `body` (for example `contact_name`, `line_items`, `customer_id`), as in the Zoho Invoice API reference.
+
+**Risk.** `invoices.email`, `invoices.remind` and `estimates.email` email your customer, and `invoices.void` and the deletes can't be undone, so these are `destructive`. Estimates are called quotes in the Zoho Invoice UI.
+
+**What you get:**
+
+- 34 typed API operations
+- 5 synced entities (`customers`, `estimates`, `invoices`, `items`, `payments`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/zohoinvoice better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/zohoinvoice better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/zohoinvoice better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/zohoinvoice better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { zohoinvoice } from '@corsair-dev/zohoinvoice';
+
+export const corsair = createCorsair({
+	plugins: [
+		zohoinvoice(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Zoho Invoice OAuth app.
+
+```ts
+zohoinvoice()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'zohoinvoice',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Unpaid invoices**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinvoice.api.invoices.list({
+	query: { status: 'unpaid' },
+});
+```
+
+
+**Invoice a customer for one item**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.zohoinvoice.api.invoices.create({
+	body: {
+		customer_id: '460000000026049',
+		date: '2026-11-18',
+		line_items: [{ item_id: '460000000027009', quantity: 2 }],
+	},
+});
+```
+
+
+See the full list on the [API](/plugins/zohoinvoice/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.zohoinvoice.db.<entity>.search()` and `.list()`: `customers`, `estimates`, `invoices`, `items`, `payments`.
+
+See [Database](/plugins/zohoinvoice/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/zohoinvoice/api">
+    Every `zohoinvoice.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/zohoinvoice/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

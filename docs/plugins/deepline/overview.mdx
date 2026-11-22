@@ -1,0 +1,163 @@
+---
+title: "Deepline plugin"
+sidebarTitle: "Overview"
+description: "Find GTM tools, run and manage enrichment Plays and their triggers, deploy Monitors, manage provider credentials, secrets, notifications and billing through Deepline."
+---
+
+Use **Deepline** through Corsair: one client, typed API calls.
+
+1. Open [Deepline workspace settings](https://code.deepline.com/dashboard/settings) and select the workspace you want Corsair to use.
+2. Create a workspace API key and copy it into Corsair's Deepline connection. The key selects the workspace, so no workspace ID is required.
+3. Call `billing.balance` or `plays.list` to check the connection. Discovery and billing reads do not launch a Play.
+
+The plugin calls the HTTP API directly. Installing Deepline's CLI is optional for applications using Corsair.
+
+Every operation carries a risk level. Reads are `read`. Reversible configuration changes, such as Play settings, pins, notification rules and secret notes, are `write`. Operations that can spend credits or money, send messages, store credentials, stop work or delete something are `destructive`: `tools.execute`, `plays.run`, `runs.rerun`, `runs.resume`, `runs.stop`, `runs.stopAll`, `db.query`, `plays.delete`, `plays.clearHistory`, `plays.versions.publish`, `plays.triggers.update`, the `plays.share` publishing ops, `integrations.setCredentials`, `secrets.set`, `monitors.deploy`, `monitors.preview`, `monitors.update`, `monitors.delete`, `monitors.reactivate`, `monitors.start`, `monitors.stop`, `monitors.jobs.cancel`, `notifications.delete`, `notifications.test`, `notifications.dlq.update`, and every billing operation that charges or changes the plan. Describe the selected tool, Play or Monitor before approving a dispatch.
+
+**Execution recovery.** Pass a persisted `idempotencyKey` to `tools.execute`. If a response is lost, call `executions.getByKey` with the same key. A new key starts new work. Native tools return their output under `result`; provider tools can return `toolResponse`. The lookup preserves the original response status and recovery state, including `outcome_unknown`; a successful lookup does not mean the original execution succeeded.
+
+**Play runs.** `plays.run` and `runs.get` return one of three shapes. The run ID is at `run.id` in the compact run record (the default), at `package.run.id` in the full terminal wrapper (returned with `terminalStatus: 'full'` when the run finishes within `waitForCompletionMs`), and at `runId` in a status snapshot. Pass it unchanged to `runs.get`; Corsair handles URL encoding. The API does not document a Play-start idempotency key. After an uncertain submission, inspect `runs.history` before deciding whether to submit again. `maxCredits` caps that run's spend. The plugin does not automatically poll or resubmit a Play.
+
+**Saved rows.** `datasets.rows` reads the dataset namespace returned by the run, such as `result.rows`. Supply `runId` to export that execution's rows. Corsair rejects the response if Deepline cannot confirm the run scope or returns rows attributed to a different run. Without `runId`, this reads the mutable workspace dataset. Advance `offset` by the returned row count; stop on a short page. `datasets.history` exposes immutable row history and its coverage information. Empty or incomplete legacy history does not mean the run produced no rows.
+
+**Pagination.** Without `search`, `plays.list` enables the SDK's inventory pagination and accepts the returned `cursor`; keep the same filters between pages. With `search`, it maps to the SDK's `grep` parameter and returns every match in one response, without inventory pages. Tool search uses `offset` and `next_offset`; run history and child runs use cursors. Billing usage uses `recent_offset`, and the JSON ledger uses `cursor`. `runs.logs` continues from `lastSeq` as `afterSeq`. Retention loss remains visible in `logsTruncated`.
+
+**Billing.** Pending charges, unavailable balances and incomplete history stay explicit in responses. Never treat a missing amount as zero. The ledger needs workspace admin access.
+
+**Data handling.** The plugin records only operation names in Corsair events. It does not copy lead rows, search terms, inputs, logs or billing data into event payloads or local entities. HTTP errors retain their status and retry metadata but discard provider content that could echo personal data or credentials. Successful responses still contain the requested data.
+
+**Play lifecycle and triggers.** `plays.settings`, `plays.versions`, `plays.pin`, `plays.delete`, `plays.restore` and `plays.clearHistory` manage Plays the workspace owns; prebuilt Plays return 404 for settings, triggers and share pages. `plays.cost` takes the Play reference, such as `prebuilt/<name>`. `plays.versions.publish` makes a revision live. `plays.triggers.update` sets a cron schedule or an inbound webhook that starts the Play; a webhook can be unsigned, HMAC-signed or use Standard Webhooks, and it takes secret names, never secret values. Pass `null` to remove a trigger. Deepline does not push signed event webhooks to other services, so this plugin has no inbound webhook handlers; use Monitors and notifications to react to events.
+
+**Run control.** `runs.list` needs a `play`, `runId` or `status` filter. `runs.rerun` requires an `idempotencyKey`, sent as `Idempotency-Key`. Persist it before calling and reuse it after an uncertain result; the same key never starts a second run. `runs.stopAll` with `dryRun: true` lists the runs it would stop. `db.query` runs bounded SQL against the workspace's customer database and does not enforce read-only access.
+
+**Credentials and secrets.** `integrations.connectLink` and `integrations.startOAuth` return a URL for a person to finish in the browser. `integrations.setCredentials` and `secrets.set` store values that are never returned, logged or included in errors. Setting an existing secret name replaces it; Deepline has no delete route for secrets.
+
+**Billing changes.** `billing.topUp`, `billing.creditPurchases.create`, `billing.planTransitions.create` and `billing.autoRecharge.update` require a caller-supplied `idempotencyKey`. Reuse the same key when retrying; use `billing.creditPurchases.recover` to retire a purchase that never started. `billing.quote` and `billing.catalog` are free estimates.
+
+**Monitors and notifications.** `monitors.check` validates a definition for free; `monitors.deploy` with `dryRun: true` only validates. `monitors.preview` can spend credits and requires an `idempotencyKey`. Persist it before calling and reuse it after an uncertain result to recover the same preview without paying again. `monitors.test` validates a payload without dispatching anything. Notifications route Deepline events to Slack; `notifications.test` sends a real ping.
+
+**Coverage.** The plugin covers the public Runtime API plus the SDK's Play management, triggers, run control, Monitors, notifications, secrets, credentials and billing. It does not upload or bundle Play source code; author Plays with Deepline's CLI, then manage, publish and run them here. Views, hosted pages and workspace creation are not included. The ledger returns JSON; CSV export is available through Deepline's CLI.
+
+**What you get:**
+
+- 115 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/deepline better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/deepline better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/deepline better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/deepline better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { deepline } from '@corsair-dev/deepline';
+
+export const corsair = createCorsair({
+	plugins: [
+		deepline(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Deepline API key before the first call: `pnpm corsair setup --plugin=deepline --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+deepline()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'deepline',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Find company enrichment tools**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.deepline.api.tools.search({ q: 'company enrichment', limit: 5 });
+```
+
+
+**Start a reviewed Play with a credit cap**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.deepline.api.plays.run({
+	name: 'prebuilt/person-linkedin-to-email',
+	input: { linkedin_url: 'https://www.linkedin.com/in/example-person/' },
+	maxCredits: 5,
+});
+```
+
+
+See the full list on the [API](/plugins/deepline/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/deepline/api">
+    Every `deepline.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

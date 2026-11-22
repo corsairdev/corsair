@@ -1,3 +1,4 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 import { ArynDocSet } from '../schema/database';
 
@@ -191,9 +192,18 @@ export const PartitionOptionsSchema = z
 	})
 	.loose();
 
+// The document to upload. An agent sends JSON, so it passes a link or base64;
+// a Blob or File still works from TypeScript. file_url, beside it, is fetched
+// by Aryn itself.
+const ArynFileInputSchema = z
+	.union([FileInputSchema, z.instanceof(Blob)])
+	.describe(
+		'The document: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). Downloaded here and uploaded; file_url instead has Aryn fetch the link itself.',
+	);
+
 export const DocumentPartitionInputSchema = z
 	.object({
-		file: z.instanceof(Blob).optional(),
+		file: ArynFileInputSchema.optional(),
 		file_url: z.string().optional(),
 		options: PartitionOptionsSchema.optional(),
 	})
@@ -222,7 +232,7 @@ export type DocumentPartitionResponse = z.infer<
 export const DocumentSubmitAsyncAddInputSchema = z
 	.object({
 		docset_id: z.string(),
-		file: z.instanceof(Blob).optional(),
+		file: ArynFileInputSchema.optional(),
 		file_url: z.string().optional(),
 		options: PartitionOptionsSchema.optional(),
 	})

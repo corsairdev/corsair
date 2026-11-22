@@ -1,0 +1,3558 @@
+{
+  "id": "dopplermarketingautomation",
+  "displayName": "Doppler Marketing Automation",
+  "description": "Manage email marketing lists, subscribers, campaigns, automations, and reporting in Doppler.",
+  "npmPackageName": "@corsair-dev/dopplermarketingautomation",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 63,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "dopplermarketingautomation.api.automations.deliverabilityRate",
+      "shortPath": "automations.deliverabilityRate",
+      "description": "List automation deliverability",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scheduledTaskId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ actionId?: number | null, name?: string | null, subject?: string | null, subscriberId?: number | null, firstName?: string | null, lastName?: string | null, email?: string | null, _links?: { href: string | null, rel: string, description?: string }[], openings?: number | null, lastOpenedDate?: string | null, clicks?: number | null, lastClickedDate?: string | null, sentDate?: string | null, status?: string | null, statusDetail?: string | null, date?: string | null, linkId?: number | null, urlLink?: string | null, reason?: string | null, subreason?: string | null, unsubDate?: string | null }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.automations.linksTracking",
+      "shortPath": "automations.linksTracking",
+      "description": "List automation link tracking",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scheduledTaskId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ actionId?: number | null, name?: string | null, subject?: string | null, subscriberId?: number | null, firstName?: string | null, lastName?: string | null, email?: string | null, _links?: { href: string | null, rel: string, description?: string }[], openings?: number | null, lastOpenedDate?: string | null, clicks?: number | null, lastClickedDate?: string | null, sentDate?: string | null, status?: string | null, statusDetail?: string | null, date?: string | null, linkId?: number | null, urlLink?: string | null, reason?: string | null, subreason?: string | null, unsubDate?: string | null }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.automations.list",
+      "shortPath": "automations.list",
+      "description": "List automations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ scheduledTaskId?: number | null, status?: string | null, type?: string | null, name?: string | null, creationDate?: string | null, emailSentAmount?: number | null, _links?: { href: string | null, rel: string, description?: string }[] }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.automations.opensAndClicks",
+      "shortPath": "automations.opensAndClicks",
+      "description": "List automation opens and clicks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scheduledTaskId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ actionId?: number | null, name?: string | null, subject?: string | null, subscriberId?: number | null, firstName?: string | null, lastName?: string | null, email?: string | null, _links?: { href: string | null, rel: string, description?: string }[], openings?: number | null, lastOpenedDate?: string | null, clicks?: number | null, lastClickedDate?: string | null, sentDate?: string | null, status?: string | null, statusDetail?: string | null, date?: string | null, linkId?: number | null, urlLink?: string | null, reason?: string | null, subreason?: string | null, unsubDate?: string | null }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.automations.summary",
+      "shortPath": "automations.summary",
+      "description": "Get automation summary",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scheduledTaskId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scheduledTaskId",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalUnopenedMailCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalHardBouncedMailCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalSoftBouncedMailCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalDistinctOpenedMailCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalOpenedMailCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalDeliveryCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalSentCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalClickCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalUniqueClickCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalUniqueClickPerCampaignCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalClickThroughOpenRate",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalSocialUniqueClickCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalForwarded",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "totalUnsubscribersCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "lastClickedEmailDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "lastOpenedEmailDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "detail",
+            "optional": true,
+            "type": "{ actionId?: number | null, name?: string | null, subject?: string | null, unopenedMailCount?: number | null, hardBouncedMailCount?: number | null, softBouncedMailCount?: number | null, distinctOpenedMailCount?: number | null, openedMailCount?: number | null, deliveryCount?: number | null, sentCount?: number | null, clickCount?: number | null, uniqueClickCount?: number | null, uniqueClickPerCampaignCount?: number | null, clickThroughOpenRate?: number | null, socialUniqueClickCount?: number | null, forwarded?: number | null, unsubscribersCount?: number | null, lastClickedEmailDate?: string | null, lastOpenedEmailDate?: string | null }[] | null"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.automations.unsubscribeActivity",
+      "shortPath": "automations.unsubscribeActivity",
+      "description": "List automation unsubscribe activity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scheduledTaskId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ actionId?: number | null, name?: string | null, subject?: string | null, subscriberId?: number | null, firstName?: string | null, lastName?: string | null, email?: string | null, _links?: { href: string | null, rel: string, description?: string }[], openings?: number | null, lastOpenedDate?: string | null, clicks?: number | null, lastClickedDate?: string | null, sentDate?: string | null, status?: string | null, statusDetail?: string | null, date?: string | null, linkId?: number | null, urlLink?: string | null, reason?: string | null, subreason?: string | null, unsubDate?: string | null }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.approve",
+      "shortPath": "campaigns.approve",
+      "description": "Approve a campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Create a campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ campaignId?: number, name: string, fromName: string, fromEmail: string, subject: string, scheduledDate?: string | null, recipientsRequired?: boolean | null, contentRequired?: boolean | null, preheader?: string | null, replyTo?: string | null, textCampaign?: boolean | null, status?: draft | scheduled | shipping | shipped | string, _links?: { href: string | null, rel: string, description?: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          },
+          {
+            "key": "createdResourceId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.createShipping",
+      "shortPath": "campaigns.createShipping",
+      "description": "Send or schedule a campaign (emails its recipients)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "shipping",
+            "optional": false,
+            "type": "{ shippingId?: string | null, type: immediate | scheduled, scheduledDate?: string | null, status?: waiting | processing | sending | sent | closed | string | null, _links?: { href: string | null, rel: string, description?: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          },
+          {
+            "key": "createdResourceId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.delete",
+      "shortPath": "campaigns.delete",
+      "description": "Delete a campaign",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.deleteShipping",
+      "shortPath": "campaigns.deleteShipping",
+      "description": "Cancel a scheduled campaign delivery",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "shippingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.deleteTextAlternative",
+      "shortPath": "campaigns.deleteTextAlternative",
+      "description": "Delete campaign text alternative",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.deliveries",
+      "shortPath": "campaigns.deliveries",
+      "description": "List campaign deliveries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "continuationToken",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "subcriber | interactionDate"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ campaignId?: number, campaignName?: string, campaignSubject?: string, subscriberEmail?: string, deliveryStatus?: opened | notOpened | hardBounced | softBounced | string | null, lastOpenDate?: string, sentDate?: string, opensCount?: number, clicksCount?: number, isSendingNow?: boolean, campaignType?: string, _links?: { href: string | null, rel: string, description?: string }[] }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.get",
+      "shortPath": "campaigns.get",
+      "description": "Get a campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fromName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fromEmail",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "scheduledDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "recipientsRequired",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "contentRequired",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "preheader",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "textCampaign",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "draft | scheduled | shipping | shipped | string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.getContent",
+      "shortPath": "campaigns.getContent",
+      "description": "Get campaign HTML content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.getRecipients",
+      "shortPath": "campaigns.getRecipients",
+      "description": "Get campaign recipients",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lists",
+            "optional": true,
+            "type": "{ id: number, name?: string | null, _links?: { href: string | null, rel: string, description?: string }[] }[]"
+          },
+          {
+            "key": "segments",
+            "optional": true,
+            "type": "{ id: number, name?: string | null, _links?: { href: string | null, rel: string, description?: string }[] }[]"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.getShipping",
+      "shortPath": "campaigns.getShipping",
+      "description": "Get a scheduled campaign delivery",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "shippingId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shippingId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "immediate | scheduled"
+          },
+          {
+            "key": "scheduledDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "waiting | processing | sending | sent | closed | string | null"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.getSocial",
+      "shortPath": "campaigns.getSocial",
+      "description": "Get campaign social preferences",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "share",
+            "optional": false,
+            "type": "(facebook | twitter | googleplus | linkedin | pinterest | whatsapp)[]"
+          },
+          {
+            "key": "likes",
+            "optional": false,
+            "type": "(facebook | googleplus)[]"
+          },
+          {
+            "key": "facebookWallPost",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "facebookPagesPost",
+            "optional": false,
+            "type": "{ pageId: string }[]"
+          },
+          {
+            "key": "twitterPost",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "linkedInPost",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "rssPost",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "rssDescription",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.getTextAlternative",
+      "shortPath": "campaigns.getTextAlternative",
+      "description": "Get campaign text alternative",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "draft | scheduled | shipping | shipped"
+          },
+          {
+            "key": "scheduledDateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "scheduledDateTo",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ campaignId?: number, name: string, fromName: string, fromEmail: string, subject: string, scheduledDate?: string | null, recipientsRequired?: boolean | null, contentRequired?: boolean | null, preheader?: string | null, replyTo?: string | null, textCampaign?: boolean | null, status?: draft | scheduled | shipping | shipped | string, _links?: { href: string | null, rel: string, description?: string }[] }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.preview",
+      "shortPath": "campaigns.preview",
+      "description": "Preview campaign content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Accept",
+            "optional": true,
+            "type": "text/html | image/jpeg | image/png | image/svg+xml"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | custom"
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.resultsSummary",
+      "shortPath": "campaigns.resultsSummary",
+      "description": "Get campaign results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "totalRecipients",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "successFullDeliveries",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "timesForwarded",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalTimesOpened",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastOpenDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "uniqueClicks",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "uniqueOpens",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalUnopened",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalHardBounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalSoftBounces",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalClicks",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastClickDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalUnsubscribers",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "campaignStatus",
+            "optional": true,
+            "type": "draft | scheduled | shipping | shipped | string"
+          },
+          {
+            "key": "totalShipped",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.unsubscribed",
+      "shortPath": "campaigns.unsubscribed",
+      "description": "List campaign unsubscribers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ email: string, fields?: { name: string, value: string, predefined?: boolean, private?: boolean, readonly?: boolean, type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string, permissionHTML?: string }[], belongsToLists?: string[], listsHistory?: { date?: string, listId?: number, status?: added | deleted | string, _links?: { href: string | null, rel: string, description?: string }[] }[], unsubscribedDate?: string | null, unsubscriptionDate?: string | null, unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null, manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null, unsubscriptionComment?: string | null, status?: active | pending | unsubscribed | standBy | archived | string | null, canBeReactivated?: boolean | null, isBeingReactivated?: boolean | null, userId?: number, score?: number, _links?: { href: string | null, rel: string, description?: string }[] }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.update",
+      "shortPath": "campaigns.update",
+      "description": "Update a campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ campaignId?: number, name: string, fromName: string, fromEmail: string, subject: string, scheduledDate?: string | null, recipientsRequired?: boolean | null, contentRequired?: boolean | null, preheader?: string | null, replyTo?: string | null, textCampaign?: boolean | null, status?: draft | scheduled | shipping | shipped | string, _links?: { href: string | null, rel: string, description?: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.updateContent",
+      "shortPath": "campaigns.updateContent",
+      "description": "Update campaign HTML content",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Body",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.updateRecipients",
+      "shortPath": "campaigns.updateRecipients",
+      "description": "Update campaign recipients",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "{ lists?: { id: number, name?: string | null, _links?: { href: string | null, rel: string, description?: string }[] }[], segments?: { id: number, name?: string | null, _links?: { href: string | null, rel: string, description?: string }[] }[], _links?: { href: string | null, rel: string, description?: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.updateSocial",
+      "shortPath": "campaigns.updateSocial",
+      "description": "Update campaign social preferences",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "socialMediaPreferences",
+            "optional": false,
+            "type": "{ share: (facebook | twitter | googleplus | linkedin | pinterest | whatsapp)[], likes: (facebook | googleplus)[], facebookWallPost: boolean, facebookPagesPost: { pageId: string }[], twitterPost: boolean, linkedInPost: boolean, rssPost: boolean, rssDescription?: string | null, _links?: { href: string | null, rel: string, description?: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.campaigns.updateTextAlternative",
+      "shortPath": "campaigns.updateTextAlternative",
+      "description": "Update campaign text alternative",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "textAlternativeContent",
+            "optional": false,
+            "type": "{ text: string, _links?: { href: string | null, rel: string, description?: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.fields.list",
+      "shortPath": "fields.list",
+      "description": "List subscriber field definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ name: string, predefined: boolean, private: boolean, readonly: boolean, type: boolean | number | string | date | email | gender | country | consent | phone | permission | string, sample?: string | null, fieldId?: number | null, permissionHTML?: string | null, required?: boolean | null, allowedValues?: string[] | null, _links?: { href: string | null, rel: string, description?: string }[] }[]"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.home.account",
+      "shortPath": "home.account",
+      "description": "Get the account API home",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.home.get",
+      "shortPath": "home.get",
+      "description": "Get the API home",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.integrations.delete",
+      "shortPath": "integrations.delete",
+      "description": "Delete integration access",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integrationName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.integrations.get",
+      "shortPath": "integrations.get",
+      "description": "Get integration access",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integrationName",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.integrations.update",
+      "shortPath": "integrations.update",
+      "description": "Update integration access",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "integrationName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "thirdPartyAppAccess",
+            "optional": false,
+            "type": "{ accessToken?: string | null, refreshToken?: string | null, idAccount?: number | null, accountName?: string | null }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.lists.create",
+      "shortPath": "lists.create",
+      "description": "Create a subscriber list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "list",
+            "optional": false,
+            "type": "{ name: string, removeAssociation?: boolean }"
+          },
+          {
+            "key": "X-Doppler-List-Origin",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          },
+          {
+            "key": "createdResourceId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.lists.delete",
+      "shortPath": "lists.delete",
+      "description": "Delete a subscriber list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.lists.get",
+      "shortPath": "lists.get",
+      "description": "Get a subscriber list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "listId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "currentStatus",
+            "optional": true,
+            "type": "ready | draft | readyToSent | sent | importingSubscribers | exportingSubscribers | mergingDestination | mergingSource | cancelingExportingSubscribers | inCreationProcess | sending | inDeletingProcess | deleted | blocked | string"
+          },
+          {
+            "key": "subscribersCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "creationDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "deletedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "hasScheduledCampaigns",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hasFormsAssociated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hasSegmentsAssociated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hasEventsAssociated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "hasSynchronizationAssociated",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "removeAssociation",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.lists.list",
+      "shortPath": "lists.list",
+      "description": "List subscriber lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "active | inactive | all"
+          },
+          {
+            "key": "listName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ listId?: number, name: string, currentStatus?: ready | draft | readyToSent | sent | importingSubscribers | exportingSubscribers | mergingDestination | mergingSource | cancelingExportingSubscribers | inCreationProcess | sending | inDeletingProcess | deleted | blocked | string, subscribersCount?: number, creationDate?: string, deletedDate?: string, hasScheduledCampaigns?: boolean | null, hasFormsAssociated?: boolean | null, hasSegmentsAssociated?: boolean | null, hasEventsAssociated?: boolean | null, hasSynchronizationAssociated?: boolean, removeAssociation?: boolean, _links?: { href: string | null, rel: string, description?: string }[] }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.lists.update",
+      "shortPath": "lists.update",
+      "description": "Update a subscriber list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "list",
+            "optional": false,
+            "type": "{ name: string, removeAssociation?: boolean }"
+          },
+          {
+            "key": "X-Doppler-List-Origin",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.archive",
+      "shortPath": "subscribers.archive",
+      "description": "Archive a subscriber",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.associate",
+      "shortPath": "subscribers.associate",
+      "description": "Associate a subscriber with a list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscriber",
+            "optional": false,
+            "type": "{ email: string, fields?: { name: string, value: string, predefined?: boolean, private?: boolean, readonly?: boolean, type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string, permissionHTML?: string }[], belongsToLists?: string[], listsHistory?: { date?: string, listId?: number, status?: added | deleted | string, _links?: { href: string | null, rel: string, description?: string }[] }[], unsubscribedDate?: string | null, unsubscriptionDate?: string | null, unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null, manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null, unsubscriptionComment?: string | null, status?: active | pending | unsubscribed | standBy | archived | string | null, canBeReactivated?: boolean | null, isBeingReactivated?: boolean | null, userId?: number, score?: number, _links?: { href: string | null, rel: string, description?: string }[] }"
+          },
+          {
+            "key": "X-Doppler-Subscriber-Origin",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "allowReSubscription",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.create",
+      "shortPath": "subscribers.create",
+      "description": "Create or update a subscriber",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscriber",
+            "optional": false,
+            "type": "{ email: string, fields?: { name: string, value: string, predefined?: boolean, private?: boolean, readonly?: boolean, type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string, permissionHTML?: string }[], belongsToLists?: string[], listsHistory?: { date?: string, listId?: number, status?: added | deleted | string, _links?: { href: string | null, rel: string, description?: string }[] }[], unsubscribedDate?: string | null, unsubscriptionDate?: string | null, unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null, manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null, unsubscriptionComment?: string | null, status?: active | pending | unsubscribed | standBy | archived | string | null, canBeReactivated?: boolean | null, isBeingReactivated?: boolean | null, userId?: number, score?: number, _links?: { href: string | null, rel: string, description?: string }[] }"
+          },
+          {
+            "key": "X-Doppler-Subscriber-Origin",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.deliveries",
+      "shortPath": "subscribers.deliveries",
+      "description": "List subscriber campaign deliveries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ campaignId?: number, campaignName?: string, campaignSubject?: string, subscriberEmail?: string, deliveryStatus?: opened | notOpened | hardBounced | softBounced | string | null, lastOpenDate?: string, sentDate?: string, opensCount?: number, clicksCount?: number, isSendingNow?: boolean, campaignType?: string, _links?: { href: string | null, rel: string, description?: string }[] }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.doubleOptIn",
+      "shortPath": "subscribers.doubleOptIn",
+      "description": "Associate a subscriber using double opt-in (emails the subscriber)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscriber",
+            "optional": false,
+            "type": "{ email: string, fields?: { name: string, value: string, predefined?: boolean, private?: boolean, readonly?: boolean, type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string, permissionHTML?: string }[], belongsToLists?: string[], listsHistory?: { date?: string, listId?: number, status?: added | deleted | string, _links?: { href: string | null, rel: string, description?: string }[] }[], unsubscribedDate?: string | null, unsubscriptionDate?: string | null, unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null, manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null, unsubscriptionComment?: string | null, status?: active | pending | unsubscribed | standBy | archived | string | null, canBeReactivated?: boolean | null, isBeingReactivated?: boolean | null, userId?: number, score?: number, _links?: { href: string | null, rel: string, description?: string }[] }"
+          },
+          {
+            "key": "X-Doppler-Subscriber-Origin",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.exists",
+      "shortPath": "subscribers.exists",
+      "description": "Check whether a subscriber exists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "boolean"
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.get",
+      "shortPath": "subscribers.get",
+      "description": "Get a subscriber",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "{ name: string, value: string, predefined?: boolean, private?: boolean, readonly?: boolean, type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string, permissionHTML?: string }[]"
+          },
+          {
+            "key": "belongsToLists",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "listsHistory",
+            "optional": true,
+            "type": "{ date?: string, listId?: number, status?: added | deleted | string, _links?: { href: string | null, rel: string, description?: string }[] }[]"
+          },
+          {
+            "key": "unsubscribedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "unsubscriptionDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "unsubscriptionType",
+            "optional": true,
+            "type": "hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null"
+          },
+          {
+            "key": "manualUnsubscriptionReason",
+            "optional": true,
+            "type": "administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null"
+          },
+          {
+            "key": "unsubscriptionComment",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "active | pending | unsubscribed | standBy | archived | string | null"
+          },
+          {
+            "key": "canBeReactivated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isBeingReactivated",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "score",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.import",
+      "shortPath": "subscribers.import",
+      "description": "Import account subscribers",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscribers",
+            "optional": false,
+            "type": "{ items: { email: string, fields?: { name: string, value: string, predefined?: boolean, private?: boolean, readonly?: boolean, type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string, permissionHTML?: string }[] }[], fields: string[], callback?: string, enableEmailNotification?: boolean | null }"
+          },
+          {
+            "key": "X-Doppler-Subscriber-Origin",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          },
+          {
+            "key": "createdResourceId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.importCsv",
+      "shortPath": "subscribers.importCsv",
+      "description": "Import subscribers from CSV",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Body",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "X-Doppler-Subscriber-Origin",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          },
+          {
+            "key": "createdResourceId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.importToList",
+      "shortPath": "subscribers.importToList",
+      "description": "Import subscribers into a list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "subscribers",
+            "optional": false,
+            "type": "{ items: { email: string, fields?: { name: string, value: string, predefined?: boolean, private?: boolean, readonly?: boolean, type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string, permissionHTML?: string }[] }[], fields: string[], callback?: string, enableEmailNotification?: boolean | null }"
+          },
+          {
+            "key": "X-Doppler-Subscriber-Origin",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          },
+          {
+            "key": "createdResourceId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.importUnsubscribed",
+      "shortPath": "subscribers.importUnsubscribed",
+      "description": "Import unsubscribed subscribers",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscribers",
+            "optional": false,
+            "type": "{ items: { email: string, manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null, unsubscriptionComment?: string | null }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.list",
+      "shortPath": "subscribers.list",
+      "description": "List account subscribers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedAfter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "resumeFrom",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "withFieldType",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ email: string, fields?: { name: string, value: string, predefined?: boolean, private?: boolean, readonly?: boolean, type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string, permissionHTML?: string }[], belongsToLists?: string[], listsHistory?: { date?: string, listId?: number, status?: added | deleted | string, _links?: { href: string | null, rel: string, description?: string }[] }[], unsubscribedDate?: string | null, unsubscriptionDate?: string | null, unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null, manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null, unsubscriptionComment?: string | null, status?: active | pending | unsubscribed | standBy | archived | string | null, canBeReactivated?: boolean | null, isBeingReactivated?: boolean | null, userId?: number, score?: number, _links?: { href: string | null, rel: string, description?: string }[] }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.listByOrigin",
+      "shortPath": "subscribers.listByOrigin",
+      "description": "List subscribers by origin",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "origin",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "updatedAfter",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "withFieldType",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "withFieldName",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ email: string, fields?: { name: string, value: string, predefined?: boolean, private?: boolean, readonly?: boolean, type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string, permissionHTML?: string }[], belongsToLists?: string[], listsHistory?: { date?: string, listId?: number, status?: added | deleted | string, _links?: { href: string | null, rel: string, description?: string }[] }[], unsubscribedDate?: string | null, unsubscriptionDate?: string | null, unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null, manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null, unsubscriptionComment?: string | null, status?: active | pending | unsubscribed | standBy | archived | string | null, canBeReactivated?: boolean | null, isBeingReactivated?: boolean | null, userId?: number, score?: number, _links?: { href: string | null, rel: string, description?: string }[] }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.listForList",
+      "shortPath": "subscribers.listForList",
+      "description": "List subscribers in a list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ email: string, fields?: { name: string, value: string, predefined?: boolean, private?: boolean, readonly?: boolean, type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string, permissionHTML?: string }[], belongsToLists?: string[], listsHistory?: { date?: string, listId?: number, status?: added | deleted | string, _links?: { href: string | null, rel: string, description?: string }[] }[], unsubscribedDate?: string | null, unsubscriptionDate?: string | null, unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null, manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null, unsubscriptionComment?: string | null, status?: active | pending | unsubscribed | standBy | archived | string | null, canBeReactivated?: boolean | null, isBeingReactivated?: boolean | null, userId?: number, score?: number, _links?: { href: string | null, rel: string, description?: string }[] }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.listUnsubscribed",
+      "shortPath": "subscribers.listUnsubscribed",
+      "description": "List unsubscribed subscribers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ email: string, fields?: { name: string, value: string, predefined?: boolean, private?: boolean, readonly?: boolean, type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string, permissionHTML?: string }[], belongsToLists?: string[], listsHistory?: { date?: string, listId?: number, status?: added | deleted | string, _links?: { href: string | null, rel: string, description?: string }[] }[], unsubscribedDate?: string | null, unsubscriptionDate?: string | null, unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null, manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null, unsubscriptionComment?: string | null, status?: active | pending | unsubscribed | standBy | archived | string | null, canBeReactivated?: boolean | null, isBeingReactivated?: boolean | null, userId?: number, score?: number, _links?: { href: string | null, rel: string, description?: string }[] }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.permissionsHistory",
+      "shortPath": "subscribers.permissionsHistory",
+      "description": "Get subscriber permission history",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fieldName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ date?: string, originIP?: string, value?: string, _links?: { href: string | null, rel: string, description?: string }[] }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.removeFromList",
+      "shortPath": "subscribers.removeFromList",
+      "description": "Remove a subscriber from a list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "listId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.subscribers.unsubscribe",
+      "shortPath": "subscribers.unsubscribe",
+      "description": "Unsubscribe a subscriber from the account",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscriber",
+            "optional": false,
+            "type": "{ email: string, fields?: { name: string, value: string, predefined?: boolean, private?: boolean, readonly?: boolean, type?: boolean | number | string | date | email | gender | country | consent | phone | permission | string, permissionHTML?: string }[], belongsToLists?: string[], listsHistory?: { date?: string, listId?: number, status?: added | deleted | string, _links?: { href: string | null, rel: string, description?: string }[] }[], unsubscribedDate?: string | null, unsubscriptionDate?: string | null, unsubscriptionType?: hardBounce | softBounce | neverOpen | abuseLink | feedbackLoop | internalPolicies | manual | string | null, manualUnsubscriptionReason?: administrative | subscriberRequestNeverSubscribed | subscriberRequestNotInterestingContent | subscriberRequestIsSpam | subscriberRequestTooManyEmails | subscriberRequestOther | null, unsubscriptionComment?: string | null, status?: active | pending | unsubscribed | standBy | archived | string | null, canBeReactivated?: boolean | null, isBeingReactivated?: boolean | null, userId?: number, score?: number, _links?: { href: string | null, rel: string, description?: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.tasks.get",
+      "shortPath": "tasks.get",
+      "description": "Get a task",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "startDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "finishDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "taskType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "itemsProcessed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "unknown | standBy | inProgress | completed | failed | string | null"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.tasks.importErrors",
+      "shortPath": "tasks.importErrors",
+      "description": "List task import errors",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ errorCode?: string | null, email?: string | null, itemNumber?: number | null, actionTaken?: string | null }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.tasks.list",
+      "shortPath": "tasks.list",
+      "description": "List account tasks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ taskId?: string | null, startDate?: string | null, finishDate?: string | null, taskType?: string | null, itemsProcessed?: number | null, status?: unknown | standBy | inProgress | completed | failed | string | null, _links?: { href: string | null, rel: string, description?: string }[] }[]"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "itemsCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "currentPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "pagesCount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "lastPage",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a double opt-in template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": false,
+            "type": "{ dobleOptinTemplateId?: number, fromName: string, fromEmail: string, subject: string, name: string, preheader?: string | null, replyTo?: string | null, urlLanding: string, _links?: { href: string | null, rel: string, description?: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          },
+          {
+            "key": "createdResourceId",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Get a double opt-in template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dobleOptinTemplateId",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "fromName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fromEmail",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "preheader",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "replyTo",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "urlLanding",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "dopplermarketingautomation.api.templates.updateContent",
+      "shortPath": "templates.updateContent",
+      "description": "Update double opt-in template HTML",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "Body",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "_links",
+            "optional": true,
+            "type": "{ href: string | null, rel: string, description?: string }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

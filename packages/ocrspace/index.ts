@@ -104,7 +104,7 @@ const ocrSpaceEndpointMeta = {
 	'ocr.parse': {
 		riskLevel: 'read',
 		description:
-			'Extract text from an image or PDF supplied as exactly one of a URL, a file upload (pass a File so the filename is sent, or set filetype), or a base64 data URI',
+			'Extract text from an image or PDF supplied as exactly one of a URL, a file upload (pass a File so the filename is sent, or set filetype), or a base64 data URI. The file upload takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'account.conversions': {
 		riskLevel: 'read',

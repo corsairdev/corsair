@@ -110,6 +110,22 @@ export const alibabaEndpointSchemas = {
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
+// A Wan video task renders after the call that starts it returns. Status
+// values are the output schema's (endpoints/types.ts TaskStatus); jobs.test.ts
+// keeps them in step. PENDING and RUNNING are still going. UNKNOWN means the
+// task id no longer resolves (task ids expire after 24 hours), so the job
+// can't end any other way. The plugin has no cancel operation.
+const VIDEO_JOB = {
+	idPath: 'output.task_id',
+	status: {
+		op: 'tasks.get',
+		idArg: 'task_id',
+		statusPath: 'output.task_status',
+		done: ['SUCCEEDED'],
+		failed: ['FAILED', 'CANCELED', 'UNKNOWN'],
+	},
+} as const;
+
 const alibabaEndpointMeta = {
 	'image.generate': {
 		riskLevel: 'write',
@@ -120,20 +136,24 @@ const alibabaEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Start a Wan text-to-video task (Wan 3.0 also takes reference media, files, and links); returns a task id',
+		job: VIDEO_JOB,
 	},
 	'video.imageToVideo': {
 		riskLevel: 'write',
 		description:
 			'Start a Wan 2.7 image-to-video task from a first frame, first and last frames, or a clip to continue',
+		job: VIDEO_JOB,
 	},
 	'video.referenceToVideo': {
 		riskLevel: 'write',
 		description:
 			'Start a Wan 2.7 reference-to-video task from reference images, videos, and voices',
+		job: VIDEO_JOB,
 	},
 	'video.edit': {
 		riskLevel: 'write',
 		description: 'Start a Wan 2.7 video editing task on an input video',
+		job: VIDEO_JOB,
 	},
 	'tasks.get': {
 		riskLevel: 'read',

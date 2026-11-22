@@ -1,0 +1,2369 @@
+{
+  "id": "signpath",
+  "displayName": "SignPath",
+  "description": "Code signing through SignPath - browse and change projects, signing policies, artifact configurations and certificates, then submit artifacts and hashes for signing, poll their status, approve or deny them, and read the audit log.",
+  "npmPackageName": "@corsair-dev/signpath",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 34,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "organization_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "signpath.api.artifactConfigurations.activate",
+      "shortPath": "artifactConfigurations.activate",
+      "description": "Activate an artifact configuration; safe to repeat",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.artifactConfigurations.deactivate",
+      "shortPath": "artifactConfigurations.deactivate",
+      "description": "Deactivate an artifact configuration; safe to repeat",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.artifactConfigurations.getXml",
+      "shortPath": "artifactConfigurations.getXml",
+      "description": "Read an artifact configuration as XML, which is how SignPath stores and version-controls it",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "xml",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.artifactConfigurations.updateXml",
+      "shortPath": "artifactConfigurations.updateXml",
+      "description": "Replace an artifact configuration's XML; SignPath does not merge it, and existing signing requests keep the version they captured",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationXml",
+            "optional": false,
+            "type": "string",
+            "description": "The complete replacement document. SignPath does not merge it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.auditLog.listEvents",
+      "shortPath": "auditLog.listEvents",
+      "description": "Read organization audit log events from a cursor or a start time; this route is under the v1-pre preview path",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pass `pagination.nextCursor` from the previous page."
+          },
+          {
+            "key": "startTime",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 timestamp to read from, when you have no cursor."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "auditLogEvents",
+            "optional": false,
+            "type": "{ metadata: { eventName: string, eventVersion: number, organizationId: string, entityId: string, timestamp: string, actor: { id?: string | null, type: string, identity?: string | null, name?: string | null } }, entityMetadata: Record<string, any>, data: Record<string, any> }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ nextCursor?: string | null, nextLink?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.auditLog.listSigningRequestEvents",
+      "shortPath": "auditLog.listSigningRequestEvents",
+      "description": "Read only the signing request audit log events from a cursor or a start time; this route is under the v1-pre preview path",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string",
+            "description": "Pass `pagination.nextCursor` from the previous page."
+          },
+          {
+            "key": "startTime",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 timestamp to read from, when you have no cursor."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "auditLogEvents",
+            "optional": false,
+            "type": "{ metadata: { eventName: string, eventVersion: number, organizationId: string, entityId: string, timestamp: string, actor: { id?: string | null, type: string, identity?: string | null, name?: string | null } }, entityMetadata: Record<string, any>, data: Record<string, any> }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ nextCursor?: string | null, nextLink?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.certificates.get",
+      "shortPath": "certificates.get",
+      "description": "Read one certificate: its status, key algorithm, subject and X509 validity or GPG fingerprint",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "certificateSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "certificateId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "Valid | CsrPending | Inactive | Expired | PrivateKeyDeleted"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "X509 | GpgKey"
+          },
+          {
+            "key": "purpose",
+            "optional": true,
+            "type": "TestSigning | ReleaseSigning | null"
+          },
+          {
+            "key": "keyStoreId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "keyStoreKeyId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "keyAlgorithm",
+            "optional": true,
+            "type": "Rsa2048 | Rsa3072 | Rsa4096 | Rsa8192 | EcdsaNist256 | EcdsaNist384 | EcdsaNist521 | EcdsaBrainpoolP256r1 | EcdsaBrainpoolP384r1 | EcdsaBrainpoolP512r1 | Mldsa44 | Mldsa65 | Mldsa87 | null"
+          },
+          {
+            "key": "keyAlgorithmGroup",
+            "optional": false,
+            "type": "Rsa | Ecdsa | Mldsa"
+          },
+          {
+            "key": "x509CertificateData",
+            "optional": true,
+            "type": "{ creationMethod: SelfSigned | Csr | PfxImport | ImportedWithExistingKeyPair, subjectName: string, validFrom?: string | null, validTo?: string | null, subjectNameParts: { commonName: string, organization?: string | null, organizationalUnit?: string | null, countryCode?: string | null, stateOrProvince?: string | null, locality?: string | null, email?: string | null }, x509CertificateLink: string, x509CertificateChainLink?: string | null } | null"
+          },
+          {
+            "key": "gpgKeyData",
+            "optional": true,
+            "type": "{ userId: string, creationTime: string, expirationTime?: string | null, fingerprint: string, keyId: string, keyVersion: number, gpgPublicKeyLink: string } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.certificates.list",
+      "shortPath": "certificates.list",
+      "description": "List the organization's X509 and GPG certificates with status, algorithm and validity; this route does not page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "certificates",
+            "optional": false,
+            "type": "{ certificateId: string, name: string, slug: string, description?: string | null, status: Valid | CsrPending | Inactive | Expired | PrivateKeyDeleted, type: X509 | GpgKey, purpose?: TestSigning | ReleaseSigning | null, keyStoreId: string, keyStoreKeyId?: string | null, keyAlgorithm?: Rsa2048 | Rsa3072 | Rsa4096 | Rsa8192 | EcdsaNist256 | EcdsaNist384 | EcdsaNist521 | EcdsaBrainpoolP256r1 | EcdsaBrainpoolP384r1 | EcdsaBrainpoolP512r1 | Mldsa44 | Mldsa65 | Mldsa87 | null, keyAlgorithmGroup: Rsa | Ecdsa | Mldsa, x509CertificateData?: { creationMethod: SelfSigned | Csr | PfxImport | ImportedWithExistingKeyPair, subjectName: string, validFrom?: string | null, validTo?: string | null, subjectNameParts: { commonName: string, organization?: string | null, organizationalUnit?: string | null, countryCode?: string | null, stateOrProvince?: string | null, locality?: string | null, email?: string | null }, x509CertificateLink: string, x509CertificateChainLink?: string | null } | null, gpgKeyData?: { userId: string, creationTime: string, expirationTime?: string | null, fingerprint: string, keyId: string, keyVersion: number, gpgPublicKeyLink: string } | null }[]",
+            "description": "Every certificate in the organization; this route does not page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.organization.get",
+      "shortPath": "organization.get",
+      "description": "Read the organization name, subscription type and quota usage: active users, active projects, certificates, yearly signatures and artifact bytes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subscriptionType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "quotas",
+            "optional": false,
+            "type": "{ maxNumberOfActiveInteractiveUsers: { currentlyUsed: number, quota?: number | null }, maxNumberOfActiveProjects: { currentlyUsed: number, quota?: number | null }, maxNumberOfCertificates: Record<string, { currentlyUsed: number, quota?: number | null }>, yearlyMaxSizeOfArtifactsInBytes: { currentlyUsed: number, quota?: number | null }, yearlyMaxNumberOfIndividualSignatures: { currentlyUsed: number, quota?: number | null }, releaseArtifactRetentionTime?: string | null, testArtifactRetentionTime?: string | null, quotaPeriodStart: string, quotaPeriodEnd: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.projects.activate",
+      "shortPath": "projects.activate",
+      "description": "Activate a project so it accepts signing requests; safe to repeat",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string",
+            "description": "The project to read."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project with an artifact configuration; the project starts inactive, so activate it before submitting signing requests",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string",
+            "description": "Unique within the organization; used in every project path."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "readerIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Interactive users, CI users or groups allowed to read the project."
+          },
+          {
+            "key": "configuratorIds",
+            "optional": true,
+            "type": "string[]",
+            "description": "Participants allowed to change the project."
+          },
+          {
+            "key": "repositoryUrls",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "artifactConfigurationXml",
+            "optional": false,
+            "type": "string",
+            "description": "The artifact configuration itself, as XML. A project needs one."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "true"
+          },
+          {
+            "key": "artifactConfigurationXml",
+            "optional": false,
+            "type": "string",
+            "description": "Echoed back from the input."
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.projects.deactivate",
+      "shortPath": "projects.deactivate",
+      "description": "Deactivate a project, which blocks new signing requests until it is activated again; safe to repeat",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string",
+            "description": "The project to read."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Read one project with its artifact configurations, signing policies, trusted build system links, readers and configurators",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string",
+            "description": "The project to read."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "Valid | Inactive | Invalid"
+          },
+          {
+            "key": "repositoryUrls",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "artifactConfigurations",
+            "optional": false,
+            "type": "{ name: string, slug: string, description?: string | null, status: Valid | Pending | Invalid | Inactive, isDefault: boolean, artifactConfigurationXmlLink: string }[]"
+          },
+          {
+            "key": "signingPolicies",
+            "optional": false,
+            "type": "{ name: string, slug: string, description?: string | null, status: Valid | Inactive | Invalid, submitters: { id: string, name: string, identity?: string | null, type: InteractiveUser | CIUser | Group, isDirectorySynchronized: boolean, link: string }[], approvers: { id: string, name: string, identity?: string | null, type: InteractiveUser | CIUser | Group, isDirectorySynchronized: boolean, link: string }[], numberOfRequiredApprovals: number, purpose?: TestSigning | ReleaseSigning | null, certificateLink: string, disableMalwareScanning: boolean, verifiesTrustedBuildSystem: boolean, verifiesOriginPolicy: boolean, trustedBuildSystemVerification?: { requireTrustedBuildSystem?: boolean | null, originPolicyVerification?: { verifyOriginPolicy: boolean, allowedBranchNames?: string[] | null, allowedBuildDefinitions?: string[] | null } | null } | null, pipelinePolicies: { id: string, slug: string, name: string, type: string, status: string, level: string, link: string }[] }[]"
+          },
+          {
+            "key": "trustedBuildSystemLinks",
+            "optional": false,
+            "type": "{ name: string, slug: string, type: Custom | Predefined, status: Active | Inactive, link: string }[]"
+          },
+          {
+            "key": "readers",
+            "optional": false,
+            "type": "{ id: string, name: string, identity?: string | null, type: InteractiveUser | CIUser | Group, isDirectorySynchronized: boolean, link: string }[]"
+          },
+          {
+            "key": "configurators",
+            "optional": false,
+            "type": "{ id: string, name: string, identity?: string | null, type: InteractiveUser | CIUser | Group, isDirectorySynchronized: boolean, link: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List every project in the organization with its status and signing policies; this route does not page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projects",
+            "optional": false,
+            "type": "{ name: string, slug: string, description?: string | null, status: Valid | Inactive | Invalid, signingPolicies: { name: string, slug: string, description?: string | null, status: Valid | Inactive | Invalid }[] }[]",
+            "description": "Every project in the organization; this route does not page."
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.projects.setDefaultArtifactConfiguration",
+      "shortPath": "projects.setDefaultArtifactConfiguration",
+      "description": "Choose which artifact configuration a signing request uses when it names none",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.projects.update",
+      "shortPath": "projects.update",
+      "description": "Change a project name, description, repository URLs, readers or configurators; the body requires the slug, so pass the project's own slug to keep it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string",
+            "description": "The project to change."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "readerIds",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "configuratorIds",
+            "optional": true,
+            "type": "string[] | null"
+          },
+          {
+            "key": "repositoryUrls",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingPolicies.activate",
+      "shortPath": "signingPolicies.activate",
+      "description": "Activate a signing policy so it accepts submissions; safe to repeat",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingPolicies.create",
+      "shortPath": "signingPolicies.create",
+      "description": "Add a signing policy to a project; it is created inactive, so activate it before it accepts submissions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "certificateSlug",
+            "optional": false,
+            "type": "string",
+            "description": "The certificate this policy signs with."
+          },
+          {
+            "key": "submitterIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Participants who may submit signing requests under this policy."
+          },
+          {
+            "key": "disableMalwareScanning",
+            "optional": false,
+            "type": "boolean",
+            "description": "SignPath requires this field, so pass false to keep scanning on."
+          },
+          {
+            "key": "purpose",
+            "optional": true,
+            "type": "TestSigning | ReleaseSigning",
+            "description": "Whether the resulting signatures are test or release signatures. SignPath defaults it when omitted."
+          },
+          {
+            "key": "approval",
+            "optional": true,
+            "type": "{ approverIds: string[], numberOfRequiredApprovals: number }"
+          },
+          {
+            "key": "trustedBuildSystemVerification",
+            "optional": true,
+            "type": "{ requireTrustedBuildSystem: boolean, originPolicyVerification?: { verifyOriginPolicy: boolean, allowedBranchNames?: string[] | null, allowedBuildDefinitions?: string[] | null } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingPolicies.deactivate",
+      "shortPath": "signingPolicies.deactivate",
+      "description": "Deactivate a signing policy, which blocks new submissions under it; safe to repeat",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingPolicies.get",
+      "shortPath": "signingPolicies.get",
+      "description": "Read one signing policy: its certificate, submitters, approvers, required approval count and build system verification",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "Valid | Inactive | Invalid"
+          },
+          {
+            "key": "purpose",
+            "optional": true,
+            "type": "TestSigning | ReleaseSigning | null"
+          },
+          {
+            "key": "submitters",
+            "optional": false,
+            "type": "{ id: string, name: string, identity?: string | null, type: InteractiveUser | CIUser | Group, isDirectorySynchronized: boolean, link: string }[]"
+          },
+          {
+            "key": "approvers",
+            "optional": false,
+            "type": "{ id: string, name: string, identity?: string | null, type: InteractiveUser | CIUser | Group, isDirectorySynchronized: boolean, link: string }[]"
+          },
+          {
+            "key": "numberOfRequiredApprovals",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "certificateLink",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "disableMalwareScanning",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "verifiesTrustedBuildSystem",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "verifiesOriginPolicy",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "trustedBuildSystemVerification",
+            "optional": true,
+            "type": "{ requireTrustedBuildSystem?: boolean | null, originPolicyVerification?: { verifyOriginPolicy: boolean, allowedBranchNames?: string[] | null, allowedBuildDefinitions?: string[] | null } | null } | null"
+          },
+          {
+            "key": "pipelinePolicies",
+            "optional": false,
+            "type": "{ id: string, slug: string, name: string, type: string, status: string, level: string, link: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingPolicies.update",
+      "shortPath": "signingPolicies.update",
+      "description": "Replace a signing policy's certificate, submitters, approvals and verification settings; the body requires the slug, so pass the policy's own slug to keep it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string",
+            "description": "The policy to change."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "slug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "certificateSlug",
+            "optional": false,
+            "type": "string",
+            "description": "The certificate this policy signs with."
+          },
+          {
+            "key": "submitterIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Participants who may submit signing requests under this policy."
+          },
+          {
+            "key": "disableMalwareScanning",
+            "optional": false,
+            "type": "boolean",
+            "description": "SignPath requires this field, so pass false to keep scanning on."
+          },
+          {
+            "key": "purpose",
+            "optional": true,
+            "type": "TestSigning | ReleaseSigning",
+            "description": "Whether the resulting signatures are test or release signatures. SignPath defaults it when omitted."
+          },
+          {
+            "key": "approval",
+            "optional": true,
+            "type": "{ approverIds: string[], numberOfRequiredApprovals: number }"
+          },
+          {
+            "key": "trustedBuildSystemVerification",
+            "optional": true,
+            "type": "{ requireTrustedBuildSystem: boolean, originPolicyVerification?: { verifyOriginPolicy: boolean, allowedBranchNames?: string[] | null, allowedBuildDefinitions?: string[] | null } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingRequests.approve",
+      "shortPath": "signingRequests.approve",
+      "description": "Approve a signing request waiting for approval; SignPath accepts it once the policy's required approval count is reached",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingRequests.cancel",
+      "shortPath": "signingRequests.cancel",
+      "description": "Cancel a signing request that has not finished; a cancelled request cannot be resumed, so a new one has to be submitted",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingRequests.deny",
+      "shortPath": "signingRequests.deny",
+      "description": "Deny a signing request, which immediately marks it rejected; a denied request cannot be approved afterwards",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "denyReason",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingRequests.get",
+      "shortPath": "signingRequests.get",
+      "description": "Read one signing request with its status, workflow status, artifact links and verified origin when the build system provided one",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "WaitingForArtifactUpload | InProgress | WaitingForApproval | Completed | Failed | Denied | Canceled"
+          },
+          {
+            "key": "workflowStatus",
+            "optional": false,
+            "type": "Submitted | RetrievingArtifact | WaitingForArtifactUpload | WaitingForApproval | QueuedForMalwareScanning | ScanningForMalware | QueuedForProcessing | Processing | Completed | ProcessingFailed | MalwareScanFailed | MalwareDetected | ArtifactRetrievalFailed | Denied | Canceled"
+          },
+          {
+            "key": "malwareScanningStatus",
+            "optional": true,
+            "type": "Pending | Completed | Failed | DetectedMalware | NoMalwareScannerConfigured | DisabledBySigningPolicy | NotApplicableForFastSigningRequest | NotApplicableDueToCancellation | NotApplicableDueToArtifactRetrievalFailure | NotApplicableDueToDenial"
+          },
+          {
+            "key": "isFinalStatus",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unsignedArtifactLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signedArtifactLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "{ repositoryData?: { sourceControlManagementType: string, url: string, isPublicRepository?: boolean | null, branchName: string, commitId: string, webUrl?: string | null, commitWebUrl?: string | null } | null, buildData?: { url?: string | null, buildSettingsFile?: { fileName: string, downloadLink: string } | null } | null } | null"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "originalSigningRequestLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "artifactDescriptionXmlLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cancellationTimeoutInSeconds",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "cancellationReason",
+            "optional": true,
+            "type": "ManualRequest | GarbageCollection | Timeout | null"
+          },
+          {
+            "key": "webLink",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingRequests.getStatus",
+      "shortPath": "signingRequests.getStatus",
+      "description": "Read only a signing request's status and workflow status, which is the cheap poll while it waits for approval or processing",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequestId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "WaitingForArtifactUpload | InProgress | WaitingForApproval | Completed | Failed | Denied | Canceled"
+          },
+          {
+            "key": "workflowStatus",
+            "optional": false,
+            "type": "Submitted | RetrievingArtifact | WaitingForArtifactUpload | WaitingForApproval | QueuedForMalwareScanning | ScanningForMalware | QueuedForProcessing | Processing | Completed | ProcessingFailed | MalwareScanFailed | MalwareDetected | ArtifactRetrievalFailed | Denied | Canceled"
+          },
+          {
+            "key": "isFinalStatus",
+            "optional": false,
+            "type": "boolean",
+            "description": "True once the request reached a status it cannot leave."
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingRequests.list",
+      "shortPath": "signingRequests.list",
+      "description": "List signing requests with filters for project, policy, configuration, certificate, status and submission time; follow pagination.nextLink for the next page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "submittedAfter",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 timestamp; only requests submitted at or after it."
+          },
+          {
+            "key": "submittedBefore",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 8601 timestamp; only requests submitted before it."
+          },
+          {
+            "key": "projectSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "certificateSlug",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "signingRequestStatus",
+            "optional": true,
+            "type": "(WaitingForArtifactUpload | InProgress | WaitingForApproval | Completed | Failed | Denied | Canceled)[]"
+          },
+          {
+            "key": "nextLink",
+            "optional": true,
+            "type": "string",
+            "description": "Pass `pagination.nextLink` from the previous page to read the next one. The other filters are already encoded in it."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequests",
+            "optional": false,
+            "type": "{ signingRequestId: string, status: WaitingForArtifactUpload | InProgress | WaitingForApproval | Completed | Failed | Denied | Canceled, projectId: string, projectSlug: string, projectName: string, artifactConfigurationId: string, artifactConfigurationSlug: string, artifactConfigurationName: string, signingPolicyId: string, signingPolicySlug: string, signingPolicyName: string, certificateId: string, certificateSlug: string, certificateName: string, submittedAt: string, submittedById: string, submittedByIdentity?: string | null, submittedByName: string, signingRequestDetailsLink: string, cancellationTimeoutInSeconds?: number | null, cancellationReason?: ManualRequest | GarbageCollection | Timeout | null }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ nextLink?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingRequests.resubmit",
+      "shortPath": "signingRequests.resubmit",
+      "description": "Resubmit a completed signing request under another policy, which is how a test-signed artifact is promoted to release signing; returns the new request id from the Location header",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "originalSigningRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string",
+            "description": "Usually a different policy, for example a release policy after test signing."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "keepSnapshottedArtifactConfiguration",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use the artifact configuration captured when the original request was submitted, not the current one."
+          },
+          {
+            "key": "cancellationTimeoutInSeconds",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequestId",
+            "optional": false,
+            "type": "string | null",
+            "description": "The new signing request, from the Location header. Poll it with signingRequests.getStatus."
+          },
+          {
+            "key": "originalSigningRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resubmitted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingRequests.signHash",
+      "shortPath": "signingRequests.signHash",
+      "description": "Sign a hash with the policy's key and return the signature in the response, without an artifact or a waiting period",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to the project's default artifact configuration."
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string",
+            "description": "The policy whose certificate and approval rules apply."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancellationTimeoutInSeconds",
+            "optional": true,
+            "type": "number",
+            "description": "How long the request may wait before SignPath cancels it."
+          },
+          {
+            "key": "hash",
+            "optional": false,
+            "type": "string",
+            "description": "The hash to sign, base64 encoded."
+          },
+          {
+            "key": "signatureAlgorithm",
+            "optional": false,
+            "type": "Rsa | Ecdsa | HashMldsa"
+          },
+          {
+            "key": "rsaOptions",
+            "optional": true,
+            "type": "{ paddingMode: Pkcs1 | Pss, hashAlgorithmOid?: string | null, hashAlgorithmName?: Sha1 | Sha256 | Sha384 | Sha512 | null }"
+          },
+          {
+            "key": "ecdsaOptions",
+            "optional": true,
+            "type": "{ signatureFormat: Ieee | Asn1 }"
+          },
+          {
+            "key": "mldsaOptions",
+            "optional": true,
+            "type": "{ preHashAlgorithmOid?: string | null, preHashAlgorithmName?: Sha256 | Sha384 | Sha512 | null }"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ sourceProcess?: { commandLine?: string | null, user?: string | null } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "hashSigningData",
+            "optional": false,
+            "type": "{ hash: string }",
+            "description": "The hash SignPath signed, base64 encoded."
+          },
+          {
+            "key": "hashSigningResult",
+            "optional": false,
+            "type": "{ signature: string }"
+          },
+          {
+            "key": "webLink",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingRequests.signMessage",
+      "shortPath": "signingRequests.signMessage",
+      "description": "Sign a message with ML-DSA and return the signature in the response; PureMldsa is the only algorithm SignPath offers here",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to the project's default artifact configuration."
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string",
+            "description": "The policy whose certificate and approval rules apply."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancellationTimeoutInSeconds",
+            "optional": true,
+            "type": "number",
+            "description": "How long the request may wait before SignPath cancels it."
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "The message to sign, base64 encoded."
+          },
+          {
+            "key": "signatureAlgorithm",
+            "optional": false,
+            "type": "PureMldsa",
+            "description": "The only message signing algorithm SignPath supports."
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "{ sourceProcess?: { commandLine?: string | null, user?: string | null } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingData",
+            "optional": false,
+            "type": "{ message: string }",
+            "description": "The message SignPath signed, base64 encoded."
+          },
+          {
+            "key": "signingResult",
+            "optional": false,
+            "type": "{ signature: string }"
+          },
+          {
+            "key": "webLink",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingRequests.submitWithArtifact",
+      "shortPath": "signingRequests.submitWithArtifact",
+      "description": "Submit an artifact for signing, uploading the bytes in the same call; the request then waits for approval and processing",
+      "riskLevel": "destructive",
+      "job": {
+        "idPath": "signingRequestId",
+        "status": {
+          "op": "signingRequests.getStatus",
+          "idArg": "signingRequestId",
+          "statusPath": "status",
+          "done": ["Completed"],
+          "failed": ["Failed", "Denied", "Canceled"]
+        },
+        "cancel": {
+          "op": "signingRequests.cancel",
+          "idArg": "signingRequestId"
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to the project's default artifact configuration."
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string",
+            "description": "The policy whose certificate and approval rules apply."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancellationTimeoutInSeconds",
+            "optional": true,
+            "type": "number",
+            "description": "How long the request may wait before SignPath cancels it."
+          },
+          {
+            "key": "artifactBase64",
+            "optional": false,
+            "type": "string",
+            "description": "The unsigned artifact, base64 encoded."
+          },
+          {
+            "key": "artifactFileName",
+            "optional": false,
+            "type": "string",
+            "description": "SignPath uses the extension to pick the signing tool, so keep it accurate."
+          },
+          {
+            "key": "artifactContentType",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to `application/octet-stream`."
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Values for the artifact configuration's user-defined parameters, sent as `parameters.<name>` form fields."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "WaitingForArtifactUpload | InProgress | WaitingForApproval | Completed | Failed | Denied | Canceled"
+          },
+          {
+            "key": "workflowStatus",
+            "optional": false,
+            "type": "Submitted | RetrievingArtifact | WaitingForArtifactUpload | WaitingForApproval | QueuedForMalwareScanning | ScanningForMalware | QueuedForProcessing | Processing | Completed | ProcessingFailed | MalwareScanFailed | MalwareDetected | ArtifactRetrievalFailed | Denied | Canceled"
+          },
+          {
+            "key": "malwareScanningStatus",
+            "optional": true,
+            "type": "Pending | Completed | Failed | DetectedMalware | NoMalwareScannerConfigured | DisabledBySigningPolicy | NotApplicableForFastSigningRequest | NotApplicableDueToCancellation | NotApplicableDueToArtifactRetrievalFailure | NotApplicableDueToDenial"
+          },
+          {
+            "key": "isFinalStatus",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unsignedArtifactLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signedArtifactLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "{ repositoryData?: { sourceControlManagementType: string, url: string, isPublicRepository?: boolean | null, branchName: string, commitId: string, webUrl?: string | null, commitWebUrl?: string | null } | null, buildData?: { url?: string | null, buildSettingsFile?: { fileName: string, downloadLink: string } | null } | null } | null"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "originalSigningRequestLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "artifactDescriptionXmlLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cancellationTimeoutInSeconds",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "cancellationReason",
+            "optional": true,
+            "type": "ManualRequest | GarbageCollection | Timeout | null"
+          },
+          {
+            "key": "webLink",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingRequests.submitWithArtifactRetrievalLink",
+      "shortPath": "signingRequests.submitWithArtifactRetrievalLink",
+      "description": "Submit a signing request that points at an artifact SignPath downloads itself, which is the route for artifacts too large to upload",
+      "riskLevel": "destructive",
+      "job": {
+        "idPath": "signingRequestId",
+        "status": {
+          "op": "signingRequests.getStatus",
+          "idArg": "signingRequestId",
+          "statusPath": "status",
+          "done": ["Completed"],
+          "failed": ["Failed", "Denied", "Canceled"]
+        },
+        "cancel": {
+          "op": "signingRequests.cancel",
+          "idArg": "signingRequestId"
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to the project's default artifact configuration."
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string",
+            "description": "The policy whose certificate and approval rules apply."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancellationTimeoutInSeconds",
+            "optional": true,
+            "type": "number",
+            "description": "How long the request may wait before SignPath cancels it."
+          },
+          {
+            "key": "artifactUrl",
+            "optional": false,
+            "type": "string",
+            "description": "An HTTPS URL SignPath downloads the artifact from."
+          },
+          {
+            "key": "artifactFileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactSha256",
+            "optional": true,
+            "type": "string",
+            "description": "Verified after the download; lowercase hex."
+          },
+          {
+            "key": "httpHeaders",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Extra headers for the download, sent as `artifactRetrievalLink.httpHeaders.<name>` form fields. Values are visible in the SignPath UI."
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Values for the artifact configuration's user-defined parameters, sent as `parameters.<name>` form fields."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "WaitingForArtifactUpload | InProgress | WaitingForApproval | Completed | Failed | Denied | Canceled"
+          },
+          {
+            "key": "workflowStatus",
+            "optional": false,
+            "type": "Submitted | RetrievingArtifact | WaitingForArtifactUpload | WaitingForApproval | QueuedForMalwareScanning | ScanningForMalware | QueuedForProcessing | Processing | Completed | ProcessingFailed | MalwareScanFailed | MalwareDetected | ArtifactRetrievalFailed | Denied | Canceled"
+          },
+          {
+            "key": "malwareScanningStatus",
+            "optional": true,
+            "type": "Pending | Completed | Failed | DetectedMalware | NoMalwareScannerConfigured | DisabledBySigningPolicy | NotApplicableForFastSigningRequest | NotApplicableDueToCancellation | NotApplicableDueToArtifactRetrievalFailure | NotApplicableDueToDenial"
+          },
+          {
+            "key": "isFinalStatus",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unsignedArtifactLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signedArtifactLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "{ repositoryData?: { sourceControlManagementType: string, url: string, isPublicRepository?: boolean | null, branchName: string, commitId: string, webUrl?: string | null, commitWebUrl?: string | null } | null, buildData?: { url?: string | null, buildSettingsFile?: { fileName: string, downloadLink: string } | null } | null } | null"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "originalSigningRequestLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "artifactDescriptionXmlLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cancellationTimeoutInSeconds",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "cancellationReason",
+            "optional": true,
+            "type": "ManualRequest | GarbageCollection | Timeout | null"
+          },
+          {
+            "key": "webLink",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.signingRequests.submitWithoutArtifact",
+      "shortPath": "signingRequests.submitWithoutArtifact",
+      "description": "Submit a signing request before the artifact exists, returning the upload link the artifact must be delivered to",
+      "riskLevel": "destructive",
+      "job": {
+        "idPath": "signingRequestId",
+        "status": {
+          "op": "signingRequests.getStatus",
+          "idArg": "signingRequestId",
+          "statusPath": "status",
+          "done": ["Completed"],
+          "failed": ["Failed", "Denied", "Canceled"]
+        },
+        "cancel": {
+          "op": "signingRequests.cancel",
+          "idArg": "signingRequestId"
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": true,
+            "type": "string",
+            "description": "Defaults to the project's default artifact configuration."
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string",
+            "description": "The policy whose certificate and approval rules apply."
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "cancellationTimeoutInSeconds",
+            "optional": true,
+            "type": "number",
+            "description": "How long the request may wait before SignPath cancels it."
+          },
+          {
+            "key": "artifactId",
+            "optional": false,
+            "type": "string",
+            "description": "A name for the artifact SignPath will receive later. Upload the file to the `uploadLink` in the response; this plugin does not upload it."
+          },
+          {
+            "key": "artifactSha256",
+            "optional": false,
+            "type": "string",
+            "description": "Lowercase hex SHA-256 of the artifact that will be uploaded."
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Values for the artifact configuration's user-defined parameters, sent as `parameters.<name>` form fields."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signingRequestId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "WaitingForArtifactUpload | InProgress | WaitingForApproval | Completed | Failed | Denied | Canceled"
+          },
+          {
+            "key": "workflowStatus",
+            "optional": false,
+            "type": "Submitted | RetrievingArtifact | WaitingForArtifactUpload | WaitingForApproval | QueuedForMalwareScanning | ScanningForMalware | QueuedForProcessing | Processing | Completed | ProcessingFailed | MalwareScanFailed | MalwareDetected | ArtifactRetrievalFailed | Denied | Canceled"
+          },
+          {
+            "key": "malwareScanningStatus",
+            "optional": true,
+            "type": "Pending | Completed | Failed | DetectedMalware | NoMalwareScannerConfigured | DisabledBySigningPolicy | NotApplicableForFastSigningRequest | NotApplicableDueToCancellation | NotApplicableDueToArtifactRetrievalFailure | NotApplicableDueToDenial"
+          },
+          {
+            "key": "isFinalStatus",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "projectName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationSlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "artifactConfigurationName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicyId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicySlug",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "signingPolicyName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "unsignedArtifactLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "signedArtifactLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "origin",
+            "optional": true,
+            "type": "{ repositoryData?: { sourceControlManagementType: string, url: string, isPublicRepository?: boolean | null, branchName: string, commitId: string, webUrl?: string | null, commitWebUrl?: string | null } | null, buildData?: { url?: string | null, buildSettingsFile?: { fileName: string, downloadLink: string } | null } | null } | null"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, string> | null"
+          },
+          {
+            "key": "originalSigningRequestLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "artifactDescriptionXmlLink",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "cancellationTimeoutInSeconds",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "cancellationReason",
+            "optional": true,
+            "type": "ManualRequest | GarbageCollection | Timeout | null"
+          },
+          {
+            "key": "webLink",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "uploadLink",
+            "optional": false,
+            "type": "string",
+            "description": "The URL the artifact must be uploaded to. SignPath returns it only here."
+          }
+        ]
+      }
+    },
+    {
+      "path": "signpath.api.users.me",
+      "shortPath": "users.me",
+      "description": "Read the authenticated user: their id, role, status and whether they are a CI user or an interactive user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "identity",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "accountEmailAddress",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "role",
+            "optional": false,
+            "type": "RegularUser | GlobalReader | UserAdministrator | ProjectAdministrator | CertificateAdministrator | GlobalAdministrator | Support | DirectorySynchronizer"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "notificationEmailAddress",
+            "optional": false,
+            "type": "{ unconfirmedEmail?: string | null, confirmedEmail?: string | null }"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "Active | Inactive"
+          },
+          {
+            "key": "isInvitationPending",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "isDirectorySynchronized",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "userType",
+            "optional": false,
+            "type": "InteractiveUser | CIUser"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

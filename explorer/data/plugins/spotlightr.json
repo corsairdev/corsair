@@ -1,0 +1,625 @@
+{
+  "id": "spotlightr",
+  "displayName": "Spotlightr",
+  "description": "Host and manage videos, projects and embed domains, run course access, and read view analytics.",
+  "npmPackageName": "@corsair-dev/spotlightr",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 18,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "spotlightr.api.access.get",
+      "shortPath": "access.get",
+      "description": "Read a student access record for one course",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "course_id",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | string | null, email?: string | null }[] | { id?: number | string | null, email?: string | null }"
+      }
+    },
+    {
+      "path": "spotlightr.api.access.update",
+      "shortPath": "access.update",
+      "description": "Expire a student access record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "access_id",
+            "optional": false,
+            "type": "number",
+            "description": "Access record ID"
+          },
+          {
+            "key": "expire",
+            "optional": false,
+            "type": "boolean",
+            "description": "true expires the record now"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | number | {} | {}[] | null | undefined"
+      }
+    },
+    {
+      "path": "spotlightr.api.access.updateCode",
+      "shortPath": "access.updateCode",
+      "description": "Expire a gallery access code",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code_id",
+            "optional": false,
+            "type": "number",
+            "description": "Gallery access code ID"
+          },
+          {
+            "key": "expires",
+            "optional": false,
+            "type": "boolean",
+            "description": "true expires the code now"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | number | {} | {}[] | null | undefined"
+      }
+    },
+    {
+      "path": "spotlightr.api.assets.upload",
+      "shortPath": "assets.upload",
+      "description": "Upload an asset file to the account library. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "File to upload: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | number | {} | {}[] | null | undefined"
+      }
+    },
+    {
+      "path": "spotlightr.api.domains.add",
+      "shortPath": "domains.add",
+      "description": "Allow one more domain to embed your videos",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": false,
+            "type": "string",
+            "description": "Domain to allow, e.g. \"example.com\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | number | {} | {}[] | null | undefined"
+      }
+    },
+    {
+      "path": "spotlightr.api.domains.list",
+      "shortPath": "domains.list",
+      "description": "List the domains a video may be embedded on",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "(string | { domain?: string | null })[]"
+      }
+    },
+    {
+      "path": "spotlightr.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project to file videos under",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the project"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | number | {} | {}[] | null | undefined"
+      }
+    },
+    {
+      "path": "spotlightr.api.projects.list",
+      "shortPath": "projects.list",
+      "description": "List the projects (video groups) on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | string | null, name?: string | null }[]"
+      }
+    },
+    {
+      "path": "spotlightr.api.search.search",
+      "shortPath": "search.search",
+      "description": "Search videos, projects and other objects on the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Text to search for across the account"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[] | Record<string, {}[] | number | string>"
+      }
+    },
+    {
+      "path": "spotlightr.api.students.create",
+      "shortPath": "students.create",
+      "description": "Create a course or gallery student with an access record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Student's email address"
+          },
+          {
+            "key": "password",
+            "optional": false,
+            "type": "string",
+            "description": "Student's password"
+          },
+          {
+            "key": "course_id",
+            "optional": false,
+            "type": "number",
+            "description": "Course or gallery ID"
+          },
+          {
+            "key": "never",
+            "optional": false,
+            "type": "boolean",
+            "description": "true never expires; `expires` is then ignored"
+          },
+          {
+            "key": "unlocks",
+            "optional": false,
+            "type": "number",
+            "description": "0 for unlimited"
+          },
+          {
+            "key": "time",
+            "optional": false,
+            "type": "number",
+            "description": "0 for unlimited"
+          },
+          {
+            "key": "expires",
+            "optional": false,
+            "type": "string | 0000-00-00",
+            "description": "YYYY-MM-DD, or the literal \"0000-00-00\" the reference uses when `never` is true"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | number | {} | {}[] | null | undefined"
+      }
+    },
+    {
+      "path": "spotlightr.api.videos.create",
+      "shortPath": "videos.create",
+      "description": "Create a video from a hosted link or an uploaded file, optionally copying player settings from another video. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the video"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "Any hosted video link (YouTube, Vimeo, Drive); wins over `file`"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "Video file to upload, used when `url` is absent: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…). A link is fetched here, up to 25 MB; for a larger video pass its link as `url` and Spotlightr fetches it itself"
+          },
+          {
+            "key": "custom_s3",
+            "optional": true,
+            "type": "number",
+            "description": "0, or the ID of a custom storage integration"
+          },
+          {
+            "key": "hls",
+            "optional": true,
+            "type": "boolean",
+            "description": "Encode to HLS (true) or leave the source unsecured (false)"
+          },
+          {
+            "key": "video_group",
+            "optional": true,
+            "type": "number",
+            "description": "Project to file it under"
+          },
+          {
+            "key": "create",
+            "optional": true,
+            "type": "boolean",
+            "description": "true confirms the write; false is a dry run"
+          },
+          {
+            "key": "player_settings",
+            "optional": true,
+            "type": "number | string",
+            "description": "Another of your videos' numeric ID to copy player settings from"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | number | {} | {}[] | null | undefined"
+      }
+    },
+    {
+      "path": "spotlightr.api.videos.delete",
+      "shortPath": "videos.delete",
+      "description": "Delete one or more videos; there is no restore route",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_ids",
+            "optional": false,
+            "type": "(number | string)[]",
+            "description": "IDs of the videos to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | number | {} | {}[] | null | undefined"
+      }
+    },
+    {
+      "path": "spotlightr.api.videos.list",
+      "shortPath": "videos.list",
+      "description": "List videos (1000 a page), or one video by numeric ID, optionally narrowed to a project",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": true,
+            "type": "number | string",
+            "description": "Only this video (numeric ID)"
+          },
+          {
+            "key": "video_group",
+            "optional": true,
+            "type": "number",
+            "description": "Only videos in this project"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1; see last_page in the answer"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "videos",
+            "optional": false,
+            "type": "{ total?: number | null, per_page?: number | string | null, current_page?: number | null, last_page?: number | null, from?: number | null, to?: number | null, next_page_url?: string | null, prev_page_url?: string | null, data: { id?: number | string | null, name?: string | null, videoGroup?: number | string | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotlightr.api.videos.listTop",
+      "shortPath": "videos.listTop",
+      "description": "List the most-watched videos over a window of days",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "days",
+            "optional": true,
+            "type": "number",
+            "description": "Reporting window; default 30"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number",
+            "description": "How many to return; default 3"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | string | null, name?: string | null, videoGroup?: number | string | null }[]"
+      }
+    },
+    {
+      "path": "spotlightr.api.videos.metrics",
+      "shortPath": "videos.metrics",
+      "description": "Read a video load, play, watch and share counts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Numeric video ID, as videos.list returns it (the base64 ID in a watch URL is its encoded form and is not accepted)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "loads",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "watched",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "plays",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "playRate",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "completitionRate",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "shares",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spotlightr.api.videos.updateSettings",
+      "shortPath": "videos.updateSettings",
+      "description": "Change individual player settings on a video",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Numeric video ID, as videos.list returns it (the base64 ID in a watch URL is its encoded form and is not accepted)"
+          },
+          {
+            "key": "settings",
+            "optional": false,
+            "type": "Record<string, string | number | boolean | null>",
+            "description": "Only the keys to change"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | number | {} | {}[] | null | undefined"
+      }
+    },
+    {
+      "path": "spotlightr.api.videos.updateSource",
+      "shortPath": "videos.updateSource",
+      "description": "Point an existing video at a new source URL, replacing the old source",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Numeric ID of the video whose source is replaced"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "New URL for the source"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string | number | {} | {}[] | null | undefined"
+      }
+    },
+    {
+      "path": "spotlightr.api.videos.views",
+      "shortPath": "videos.views",
+      "description": "List a video views (30 a page), optionally for one known viewer or only those past one percent watched",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "video_id",
+            "optional": false,
+            "type": "number | string",
+            "description": "Numeric video ID, as videos.list returns it (the base64 ID in a watch URL is its encoded form and is not accepted)"
+          },
+          {
+            "key": "custom_viewer_id",
+            "optional": true,
+            "type": "string",
+            "description": "ID or email of a known viewer"
+          },
+          {
+            "key": "only_watched",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only views past 1% watched"
+          },
+          {
+            "key": "all_views",
+            "optional": true,
+            "type": "boolean",
+            "description": "Skip pagination"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1; 30 views a page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "current_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "last_page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "next_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "prev_page_url",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | string | null, customViewerID?: string | null, percentWatched?: number | null }[]"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "{ totalTime?: number | null } | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

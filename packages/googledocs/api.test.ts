@@ -468,11 +468,14 @@ describe('Google Docs endpoint routing (mocked HTTP)', () => {
 					headers: { Authorization: 'Bearer test-token' },
 				}),
 			);
-			expect(result).toEqual({
-				fileId: 'file9',
+			// The id is the input; fileId in the output is only where a host saved the file.
+			expect(result).toMatchObject({
 				mimeType: 'application/pdf',
+				contentType: 'application/pdf',
+				byteLength: pdfBytes.byteLength,
 				data: pdfBytes.toString('base64'),
 			});
+			expect(result.fileId).toBeUndefined();
 			fetchMock.mockRestore();
 		});
 
@@ -498,8 +501,12 @@ describe('Google Docs endpoint routing (mocked HTTP)', () => {
 				fileId: 'file9',
 			});
 
-			expect(fetchMock).toHaveBeenCalledTimes(2);
-			expect(fetchMock.mock.calls[1]?.[1]).toMatchObject({
+			// Two export requests (the 401, then the refreshed retry); the name lookup is separate.
+			const exportCalls = fetchMock.mock.calls.filter(([url]) =>
+				String(url).includes('/export?'),
+			);
+			expect(exportCalls).toHaveLength(2);
+			expect(exportCalls[1]?.[1]).toMatchObject({
 				headers: { Authorization: 'Bearer fresh-token' },
 			});
 			fetchMock.mockRestore();

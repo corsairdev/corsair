@@ -59,6 +59,11 @@ export async function encryptDEK(dek: string, kek: string): Promise<string> {
 	].join(':');
 }
 
+// Pure function of (kek, ciphertext), so memoizing is safe: a rotated DEK has
+// a new ciphertext and misses. Only successes are stored.
+const DEK_MEMO_MAX = 1024;
+const dekMemo = new Map<string, { kek: string; dek: string }>();
+
 /**
  * Decrypts a DEK using the Key Encryption Key (KEK).
  *
@@ -71,6 +76,17 @@ export async function decryptDEK(
 	encryptedDek: string,
 	kek: string,
 ): Promise<string> {
+	const hit = dekMemo.get(encryptedDek);
+	if (hit && hit.kek === kek) return hit.dek;
+	const dek = await unwrapDEK(encryptedDek, kek);
+	if (!dekMemo.has(encryptedDek) && dekMemo.size >= DEK_MEMO_MAX) {
+		dekMemo.delete(dekMemo.keys().next().value as string);
+	}
+	dekMemo.set(encryptedDek, { kek, dek });
+	return dek;
+}
+
+async function unwrapDEK(encryptedDek: string, kek: string): Promise<string> {
 	const [saltB64, ivB64, authTagB64, encryptedB64] = encryptedDek.split(':');
 
 	if (!saltB64 || !ivB64 || !authTagB64 || !encryptedB64) {
