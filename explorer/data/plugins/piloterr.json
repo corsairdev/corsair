@@ -1,0 +1,1638 @@
+{
+  "id": "piloterr",
+  "displayName": "Piloterr",
+  "description": "Piloterr is a scraping API for public web data. This plugin fetches and renders pages, captures screenshots, detects website technology, extracts contact details, scrapes Google search and news, reads LinkedIn companies, profiles, jobs and posts, and finds and verifies professional emails.",
+  "npmPackageName": "@corsair-dev/piloterr",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 19,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "piloterr.api.account.getJob",
+      "shortPath": "account.getJob",
+      "description": "Poll the status and result of an async job (free)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "The job_id returned by an endpoint called with is_async=true"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job ID"
+          },
+          {
+            "key": "success",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the job succeeded"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "Queued | Running | CompletedJob | Error | NotFound | BadRequest | string | null",
+            "description": "Job state; CompletedJob, Error, NotFound and BadRequest are terminal"
+          },
+          {
+            "key": "endpoint",
+            "optional": true,
+            "type": "string | null",
+            "description": "Endpoint the job runs"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "started_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Start timestamp"
+          },
+          {
+            "key": "completed_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Completion timestamp"
+          },
+          {
+            "key": "duration_ms",
+            "optional": true,
+            "type": "number | null",
+            "description": "Duration in milliseconds"
+          },
+          {
+            "key": "progress",
+            "optional": true,
+            "type": "number | null",
+            "description": "Progress from 0 to 100"
+          },
+          {
+            "key": "args",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Arguments the job was started with"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any | null",
+            "description": "The endpoint answer, once completed"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piloterr.api.account.usage",
+      "shortPath": "account.usage",
+      "description": "Read remaining quota, packs, credits and rate limits (free)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "remaining",
+            "optional": false,
+            "type": "number",
+            "description": "Total still available across all balances"
+          },
+          {
+            "key": "total_used",
+            "optional": false,
+            "type": "number",
+            "description": "Total consumed across all balances"
+          },
+          {
+            "key": "renewal_date",
+            "optional": true,
+            "type": "string | null",
+            "description": "Subscription renewal date (ISO 8601)"
+          },
+          {
+            "key": "period",
+            "optional": true,
+            "type": "{ start?: string | null, end?: string | null } | null",
+            "description": "Current billing period"
+          },
+          {
+            "key": "subscription",
+            "optional": true,
+            "type": "{ used?: number | null, total?: number | null, remaining?: number | null, percent_used?: number | null } | null",
+            "description": "Combined subscription quota plus packs"
+          },
+          {
+            "key": "packs",
+            "optional": true,
+            "type": "any | null",
+            "description": "One-time pack balances"
+          },
+          {
+            "key": "credits",
+            "optional": true,
+            "type": "{ given?: number | null, consumed?: number | null, remaining?: number | null } | null",
+            "description": "Credit ledger balances"
+          },
+          {
+            "key": "rate_limit",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Per-second and per-minute plan limits"
+          },
+          {
+            "key": "account",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Account name and slug"
+          },
+          {
+            "key": "api_key",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Key alias, active flag, category, expiry and quotas"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piloterr.api.email.analyzes",
+      "shortPath": "email.analyzes",
+      "description": "Analyze a domain email infrastructure and SPF records",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Bare domain to analyze, e.g. airbus.com"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "is_microsoft_365",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the domain uses Microsoft 365"
+          },
+          {
+            "key": "is_google_workspace",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the domain uses Google Workspace"
+          },
+          {
+            "key": "microsoft_365_domains",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Associated Microsoft 365 domains"
+          },
+          {
+            "key": "google_workspace_domains",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Associated Google Workspace domains"
+          },
+          {
+            "key": "domains",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "SPF and DNS records per associated domain"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piloterr.api.email.finder",
+      "shortPath": "email.finder",
+      "description": "Find a verified professional email by name and company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Full name of the person whose email to find"
+          },
+          {
+            "key": "companyDomain",
+            "optional": true,
+            "type": "string",
+            "description": "Company domain, e.g. piloterr.com or a full URL"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string",
+            "description": "Company name; domain is preferred when available"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "The found email address"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Verification status of the email"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "First name"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last name"
+          },
+          {
+            "key": "company_domain",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company domain"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piloterr.api.email.verify",
+      "shortPath": "email.verify",
+      "description": "Verify whether an email address is deliverable",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "The email address to verify"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "The verified email address"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "valid | invalid | unknown | catch_all | string | null",
+            "description": "Deliverability verdict: valid, invalid, unknown, catch_all"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piloterr.api.google.news",
+      "shortPath": "google.news",
+      "description": "Scrape Google News results for a query",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "News search query; supports Google operators"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (default 1)"
+          },
+          {
+            "key": "googleDomain",
+            "optional": true,
+            "type": "string",
+            "description": "Google domain to use, e.g. google.com or google.fr"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country code for the search, e.g. us"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string",
+            "description": "Language code for the search, e.g. en or en-gb"
+          },
+          {
+            "key": "cr",
+            "optional": true,
+            "type": "string",
+            "description": "Country restriction as country{XX} joined with |"
+          },
+          {
+            "key": "lr",
+            "optional": true,
+            "type": "string",
+            "description": "Language restriction as lang_{xx} joined with |"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: number | null, current?: number | null, per_page?: number | null, other_pages?: number[] | null, has_next_page?: boolean | null } | null",
+            "description": "Result pagination"
+          },
+          {
+            "key": "organic_results",
+            "optional": true,
+            "type": "{ link?: string | null, title?: string | null, domain?: string | null, source?: string | null, snippet?: string | null, position?: number | null, displayed_link?: string | null, snippet_matched?: any[] | null, date?: string | null }[] | null",
+            "description": "News listings, each with a date"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piloterr.api.google.search",
+      "shortPath": "google.search",
+      "description": "Scrape Google search results with filters and pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Search query; supports Google operators"
+          },
+          {
+            "key": "tbs",
+            "optional": true,
+            "type": "string",
+            "description": "Time-range filter, e.g. qdr:w for the last week"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "City or region the search originates from"
+          },
+          {
+            "key": "uule",
+            "optional": true,
+            "type": "string",
+            "description": "Google-encoded location string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (default 1)"
+          },
+          {
+            "key": "num",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page; deprecated by Google and may not apply"
+          },
+          {
+            "key": "safe",
+            "optional": true,
+            "type": "active | off",
+            "description": "SafeSearch filter"
+          },
+          {
+            "key": "googleDomain",
+            "optional": true,
+            "type": "string",
+            "description": "Google domain to use, e.g. google.com or google.fr"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country code for the search, e.g. us"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string",
+            "description": "Language code for the search, e.g. en or en-gb"
+          },
+          {
+            "key": "cr",
+            "optional": true,
+            "type": "string",
+            "description": "Country restriction as country{XX} joined with |"
+          },
+          {
+            "key": "lr",
+            "optional": true,
+            "type": "string",
+            "description": "Language restriction as lang_{xx} joined with |"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: number | null, current?: number | null, per_page?: number | null, other_pages?: number[] | null, has_next_page?: boolean | null } | null",
+            "description": "Result pagination"
+          },
+          {
+            "key": "organic_results",
+            "optional": true,
+            "type": "{ link?: string | null, title?: string | null, domain?: string | null, source?: string | null, snippet?: string | null, position?: number | null, displayed_link?: string | null, snippet_matched?: any[] | null, date?: string | null }[] | null",
+            "description": "Organic listings"
+          },
+          {
+            "key": "related_searches",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "Related searches"
+          },
+          {
+            "key": "knowledge_graph",
+            "optional": true,
+            "type": "any | null",
+            "description": "Knowledge graph, when present"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Parameters echoed back"
+          },
+          {
+            "key": "search_information",
+            "optional": true,
+            "type": "{ total_results?: any | null, time_taken_displayed?: any | null } | null",
+            "description": "Search metadata"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piloterr.api.google.searchAutocomplete",
+      "shortPath": "google.searchAutocomplete",
+      "description": "Fetch Google autocomplete suggestions for a query",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Partial or complete query to autocomplete"
+          },
+          {
+            "key": "cp",
+            "optional": true,
+            "type": "number",
+            "description": "Cursor position in the query the suggestions complete"
+          },
+          {
+            "key": "googleDomain",
+            "optional": true,
+            "type": "string",
+            "description": "Google domain to use, e.g. google.com or google.fr"
+          },
+          {
+            "key": "gl",
+            "optional": true,
+            "type": "string",
+            "description": "Two-letter country code for the search, e.g. us"
+          },
+          {
+            "key": "hl",
+            "optional": true,
+            "type": "string",
+            "description": "Language code for the search, e.g. en or en-gb"
+          },
+          {
+            "key": "cr",
+            "optional": true,
+            "type": "string",
+            "description": "Country restriction as country{XX} joined with |"
+          },
+          {
+            "key": "lr",
+            "optional": true,
+            "type": "string",
+            "description": "Language restriction as lang_{xx} joined with |"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "suggestions",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "Suggested completions, each with a value field"
+          },
+          {
+            "key": "search_parameters",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Parameters echoed back"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piloterr.api.linkedin.companyInfo",
+      "shortPath": "linkedin.companyInfo",
+      "description": "Read LinkedIn company firmographics by slug, URL, ID or domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "string",
+            "description": "LinkedIn company slug, URL, numeric ID or school URL; mutually exclusive with domain"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string",
+            "description": "Company website domain for reverse lookup; mutually exclusive with query"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "LinkedIn company ID"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company name"
+          },
+          {
+            "key": "company_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "LinkedIn company URL"
+          },
+          {
+            "key": "tagline",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company tagline"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company description"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company website"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string | null",
+            "description": "Industry"
+          },
+          {
+            "key": "founded",
+            "optional": true,
+            "type": "number | null",
+            "description": "Founding year"
+          },
+          {
+            "key": "staff_count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Employee count"
+          },
+          {
+            "key": "staff_range",
+            "optional": true,
+            "type": "string | null",
+            "description": "Employee range label"
+          },
+          {
+            "key": "follower_count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Follower count"
+          },
+          {
+            "key": "headquarter",
+            "optional": true,
+            "type": "{ city?: string | null, line1?: string | null, country?: string | null, postal_code?: string | null } | null",
+            "description": "Headquarters address"
+          },
+          {
+            "key": "locations",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Office locations"
+          },
+          {
+            "key": "specialities",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Specialities"
+          },
+          {
+            "key": "employees",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "Employee profiles"
+          },
+          {
+            "key": "posts",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "Recent posts"
+          },
+          {
+            "key": "logo_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Logo URL"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piloterr.api.linkedin.jobInfo",
+      "shortPath": "linkedin.jobInfo",
+      "description": "Read a LinkedIn job posting by ID or URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "LinkedIn numeric job ID or full job posting URL"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "LinkedIn job ID"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job title"
+          },
+          {
+            "key": "job_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job posting URL"
+          },
+          {
+            "key": "job_description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job description"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string | null",
+            "description": "Location label"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Structured address"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Industries"
+          },
+          {
+            "key": "functions",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Job functions"
+          },
+          {
+            "key": "list_date",
+            "optional": true,
+            "type": "string | null",
+            "description": "Posting date"
+          },
+          {
+            "key": "employment_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Employment type"
+          },
+          {
+            "key": "seniority_level",
+            "optional": true,
+            "type": "string | null",
+            "description": "Seniority level"
+          },
+          {
+            "key": "total_applicants",
+            "optional": true,
+            "type": "number | null",
+            "description": "Applicant count"
+          },
+          {
+            "key": "compensation_salary",
+            "optional": true,
+            "type": "string | null",
+            "description": "Salary range"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company name"
+          },
+          {
+            "key": "company_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company URL"
+          },
+          {
+            "key": "company_logo",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company logo"
+          },
+          {
+            "key": "recruiter",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Recruiter profile"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piloterr.api.linkedin.jobSearch",
+      "shortPath": "linkedin.jobSearch",
+      "description": "Search LinkedIn jobs with seniority, type and location filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keyword",
+            "optional": true,
+            "type": "string",
+            "description": "Job title or keyword; leave empty to match filters only"
+          },
+          {
+            "key": "experienceLevel",
+            "optional": true,
+            "type": "internship | entry_level | associate | mid_senior | director",
+            "description": "Seniority filter"
+          },
+          {
+            "key": "jobType",
+            "optional": true,
+            "type": "full_time | part_time | contract | temporary | internship | volunteer",
+            "description": "Employment type filter"
+          },
+          {
+            "key": "when",
+            "optional": true,
+            "type": "day | week | month",
+            "description": "Posting recency filter"
+          },
+          {
+            "key": "flexibility",
+            "optional": true,
+            "type": "remote | flexible | on_site",
+            "description": "Work arrangement filter"
+          },
+          {
+            "key": "distance",
+            "optional": true,
+            "type": "5 | 10 | 25 | 50 | 100",
+            "description": "Radius in miles from the geo_id location"
+          },
+          {
+            "key": "geoId",
+            "optional": true,
+            "type": "string",
+            "description": "LinkedIn geo ID (default 92000000, worldwide)"
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "string",
+            "description": "LinkedIn numeric company ID filter"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (default 1)"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": true,
+            "type": "{ id?: number | null, url?: string | null, title?: string | null, city?: string | null, country?: string | null, location?: string | null, geo_id?: string | null, list_date?: string | null, company_name?: string | null, company_url?: string | null }[]",
+            "description": "Job listings, up to 10 per page (absent when fields omits it)"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ next?: number | null, current?: number | null, per_page?: number | null, other_pages?: number[] | null, has_next_page?: boolean | null } | null",
+            "description": "Result pagination"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piloterr.api.linkedin.postInfo",
+      "shortPath": "linkedin.postInfo",
+      "description": "Read a LinkedIn post with its comments",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "LinkedIn numeric post ID or full post URL"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Post ID"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Post URL"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string | null",
+            "description": "Post text"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Author profile"
+          },
+          {
+            "key": "images",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Post images"
+          },
+          {
+            "key": "comments",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "First batch of comments; deep threads may be truncated"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piloterr.api.linkedin.profileInfo",
+      "shortPath": "linkedin.profileInfo",
+      "description": "Read a LinkedIn member profile by username, URL or member ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "LinkedIn username, profile URL or encoded member ID"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null",
+            "description": "LinkedIn username"
+          },
+          {
+            "key": "member_identifier",
+            "optional": true,
+            "type": "string | null",
+            "description": "Encoded member ID"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Full name"
+          },
+          {
+            "key": "headline",
+            "optional": true,
+            "type": "string | null",
+            "description": "Profile headline"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null",
+            "description": "Profile summary"
+          },
+          {
+            "key": "profile_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Profile URL"
+          },
+          {
+            "key": "photo_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Photo URL"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "any | null",
+            "description": "Address"
+          },
+          {
+            "key": "connection_count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Connection count"
+          },
+          {
+            "key": "follower_count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Follower count"
+          },
+          {
+            "key": "skills",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Skills"
+          },
+          {
+            "key": "experiences",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "Work experience entries"
+          },
+          {
+            "key": "educations",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "Education entries"
+          },
+          {
+            "key": "certifications",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Certifications"
+          },
+          {
+            "key": "languages",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Languages"
+          },
+          {
+            "key": "recommendations",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Recommendations"
+          },
+          {
+            "key": "articles",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "Published articles"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piloterr.api.web.crawler",
+      "shortPath": "web.crawler",
+      "description": "Fetch a public page with fast HTTP crawling, no JavaScript",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Public website URL to fetch; must include http:// or https://"
+          },
+          {
+            "key": "allowRedirects",
+            "optional": true,
+            "type": "boolean",
+            "description": "Follow HTTP redirects (default true); set false to inspect the redirect chain"
+          },
+          {
+            "key": "returnPageSource",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the exact HTML source instead of processed content (default false)"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "piloterr.api.web.emailPhoneExtractor",
+      "shortPath": "web.emailPhoneExtractor",
+      "description": "Extract emails, phone numbers and social profiles from a site",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Website URL to crawl for contact information; must include http:// or https://"
+          },
+          {
+            "key": "countryCode",
+            "optional": true,
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2 country code improving phone number parsing, e.g. FR"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "emails",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Found email addresses"
+          },
+          {
+            "key": "phone_numbers",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Found phone numbers"
+          },
+          {
+            "key": "contact_pages",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Pages the extractor found contacts on"
+          },
+          {
+            "key": "twitter_profiles",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "X/Twitter profiles"
+          },
+          {
+            "key": "linkedin_profiles",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "LinkedIn profiles"
+          },
+          {
+            "key": "instagram_profiles",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Instagram profiles"
+          },
+          {
+            "key": "facebook_profiles",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Facebook profiles"
+          },
+          {
+            "key": "youtube_channels",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "YouTube channels"
+          },
+          {
+            "key": "tiktok_profiles",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "TikTok profiles"
+          },
+          {
+            "key": "reddit_profiles",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Reddit profiles"
+          },
+          {
+            "key": "snapchat_profiles",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Snapchat profiles"
+          },
+          {
+            "key": "telegram_channels",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Telegram channels"
+          },
+          {
+            "key": "pinterest_profiles",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Pinterest profiles"
+          },
+          {
+            "key": "crunchbase_profiles",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Crunchbase profiles"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piloterr.api.web.rendering",
+      "shortPath": "web.rendering",
+      "description": "Render a JavaScript-heavy page in a headless browser",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Public website URL to render in a headless browser; must include http:// or https://"
+          },
+          {
+            "key": "waitInSeconds",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds to wait after page load before returning"
+          },
+          {
+            "key": "waitFor",
+            "optional": true,
+            "type": "string",
+            "description": "CSS or XPath selector to wait for before returning the rendered HTML"
+          },
+          {
+            "key": "blockAds",
+            "optional": true,
+            "type": "boolean",
+            "description": "Block ad network requests during rendering"
+          },
+          {
+            "key": "timeout",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum seconds to wait for the page to load"
+          },
+          {
+            "key": "returnPageSource",
+            "optional": true,
+            "type": "boolean",
+            "description": "Ask for the exact page source instead of processed HTML; the answer is still the HTML string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    },
+    {
+      "path": "piloterr.api.web.screenshot",
+      "shortPath": "web.screenshot",
+      "description": "Capture a webpage as an image or PDF file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The URL of the webpage to capture"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "jpeg | jpg | pdf | png | webp",
+            "description": "Output format of the screenshot"
+          },
+          {
+            "key": "device",
+            "optional": true,
+            "type": "galaxy_fold4 | galaxy_s23 | galaxy_s23_ultra | galaxy_s8 | huawei_mate_50_pro | huawei_p60_pro | ipad | iphone_12 | iphone_13_mini | iphone_13_pro_max | iphone_14_pro | iphone_14_pro_max | iphone_x | pixel_5 | pixel_6a | pixel_7_pro | redmi_note_11 | redmi_note_12_pro",
+            "description": "Device type to emulate"
+          },
+          {
+            "key": "fullPage",
+            "optional": true,
+            "type": "boolean",
+            "description": "Capture the entire page instead of the viewport"
+          },
+          {
+            "key": "fullPageScroll",
+            "optional": true,
+            "type": "boolean",
+            "description": "Scroll the page to load lazy elements before capturing"
+          },
+          {
+            "key": "fullPageScrollDuration",
+            "optional": true,
+            "type": "number",
+            "description": "Scroll duration in milliseconds before a full-page capture"
+          },
+          {
+            "key": "viewportWidth",
+            "optional": true,
+            "type": "number",
+            "description": "Viewport width in pixels"
+          },
+          {
+            "key": "viewportHeight",
+            "optional": true,
+            "type": "number",
+            "description": "Viewport height in pixels"
+          },
+          {
+            "key": "scaleFactor",
+            "optional": true,
+            "type": "number",
+            "description": "Scale factor for high-resolution screenshots"
+          },
+          {
+            "key": "imageQuality",
+            "optional": true,
+            "type": "string",
+            "description": "Custom image quality (jpeg and webp)"
+          },
+          {
+            "key": "selector",
+            "optional": true,
+            "type": "string",
+            "description": "Capture a specific element instead of the viewport"
+          },
+          {
+            "key": "cache",
+            "optional": true,
+            "type": "boolean",
+            "description": "Cache the response"
+          },
+          {
+            "key": "cacheTtl",
+            "optional": true,
+            "type": "number",
+            "description": "Cache TTL in seconds"
+          },
+          {
+            "key": "removeSelectors",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated elements to hide before capturing"
+          },
+          {
+            "key": "removeCookieBanners",
+            "optional": true,
+            "type": "boolean",
+            "description": "Remove cookie banners before capturing"
+          },
+          {
+            "key": "removeAds",
+            "optional": true,
+            "type": "boolean",
+            "description": "Remove ads before capturing"
+          },
+          {
+            "key": "blockResources",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated resource types to block, e.g. image,stylesheet,font"
+          },
+          {
+            "key": "blockUrls",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated URL patterns to block"
+          },
+          {
+            "key": "delay",
+            "optional": true,
+            "type": "number",
+            "description": "Delay in seconds before capturing"
+          },
+          {
+            "key": "waitForSelector",
+            "optional": true,
+            "type": "string",
+            "description": "Element to wait for before capturing"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": true,
+            "type": "string | null",
+            "description": "Image content type, e.g. image/png or application/pdf"
+          },
+          {
+            "key": "fileContent",
+            "optional": false,
+            "type": "string",
+            "description": "The captured file, base64-encoded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piloterr.api.web.technology",
+      "shortPath": "web.technology",
+      "description": "Detect the technology stack behind a website",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Website URL to analyze; must include http:// or https://"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "expert | simple",
+            "description": "expert (default) adds confidence scores, versions and descriptions; simple keeps names and status codes"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "cms",
+            "optional": true,
+            "type": "string | null",
+            "description": "Detected CMS"
+          },
+          {
+            "key": "urls",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Checked URLs with their status codes"
+          },
+          {
+            "key": "technologies",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Detected technologies; names in simple mode"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piloterr.api.web.webunlocker",
+      "shortPath": "web.webunlocker",
+      "description": "Unlock a bot-protected page on a whitelisted domain",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Public website URL to unlock; the target domain must be on the Piloterr whitelist"
+          },
+          {
+            "key": "allowRedirects",
+            "optional": true,
+            "type": "boolean",
+            "description": "Follow HTTP redirects (default true); set false to inspect the redirect chain"
+          },
+          {
+            "key": "returnPageSource",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the exact HTML source instead of processed content (default false)"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated fields to keep, with dot notation for nested objects; unknown names are ignored"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "string"
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

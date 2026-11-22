@@ -1,0 +1,1176 @@
+{
+  "id": "pdf4me",
+  "displayName": "PDF4me",
+  "description": "PDF4me is a PDF and document processing SaaS. This plugin merges, splits, compresses and organizes PDFs, converts them to Word and renders HTML to PDF, runs OCR, reads PDF metadata, extracts tables and form data, and polls asynchronous processing jobs. File answers come back base64-encoded.",
+  "npmPackageName": "@corsair-dev/pdf4me",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 12,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "pdf4me.api.convert.htmlToPdf",
+      "shortPath": "convert.htmlToPdf",
+      "description": "Render HTML content into a PDF",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "htmlContent",
+            "optional": false,
+            "type": "string",
+            "description": "HTML to render into a PDF; the plugin base64-encodes it"
+          },
+          {
+            "key": "docName",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the HTML source including .html, e.g. page.html"
+          },
+          {
+            "key": "layout",
+            "optional": true,
+            "type": "Portrait | Landscape",
+            "description": "Page layout"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "A0 | A1 | A2 | A3 | A4 | A5 | A6 | A7 | A8 | Legal | Tabloid | Statement | Executive",
+            "description": "Page format; A4 when unset"
+          },
+          {
+            "key": "scale",
+            "optional": true,
+            "type": "number",
+            "description": "Render scale; 0.8 when unset"
+          },
+          {
+            "key": "topMargin",
+            "optional": true,
+            "type": "string",
+            "description": "CSS length, e.g. 40px"
+          },
+          {
+            "key": "bottomMargin",
+            "optional": true,
+            "type": "string",
+            "description": "CSS length, e.g. 40px"
+          },
+          {
+            "key": "leftMargin",
+            "optional": true,
+            "type": "string",
+            "description": "CSS length, e.g. 40px"
+          },
+          {
+            "key": "rightMargin",
+            "optional": true,
+            "type": "string",
+            "description": "CSS length, e.g. 40px"
+          },
+          {
+            "key": "printBackground",
+            "optional": true,
+            "type": "boolean",
+            "description": "Print CSS backgrounds; true when unset"
+          },
+          {
+            "key": "displayHeaderFooter",
+            "optional": true,
+            "type": "boolean",
+            "description": "Show the header and footer; false when unset"
+          },
+          {
+            "key": "jobIdExt",
+            "optional": true,
+            "type": "string",
+            "description": "Your own reference for this call, stored with the API call log"
+          },
+          {
+            "key": "isAsync",
+            "optional": true,
+            "type": "boolean",
+            "description": "Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it)"
+          },
+          {
+            "key": "callBackUrl",
+            "optional": true,
+            "type": "string",
+            "description": "URL notified when an asynchronous job completes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null",
+            "description": "File name of the produced document"
+          },
+          {
+            "key": "fileContent",
+            "optional": true,
+            "type": "string | null",
+            "description": "The produced document, base64-encoded"
+          },
+          {
+            "key": "documents",
+            "optional": true,
+            "type": "{ fileName?: string | null, fileContent?: string | null }[]",
+            "description": "The produced documents, when the action makes several"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job id; poll it with jobs.status"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job state the API reports, e.g. Accepted"
+          },
+          {
+            "key": "statusUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "GetActionStatus URL for this job"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "The API message about the job"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdf4me.api.convert.ocrPdf",
+      "shortPath": "convert.ocrPdf",
+      "description": "Run OCR on a scanned PDF to make its text editable; the API answers a job, so poll jobs.status for the file",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docContent",
+            "optional": false,
+            "type": "string",
+            "description": "Source file: base64 content, a pdf4meblobid://<id> reference, or an https URL"
+          },
+          {
+            "key": "docName",
+            "optional": false,
+            "type": "string",
+            "description": "Source file name including its extension; the API dispatches on it"
+          },
+          {
+            "key": "qualityType",
+            "optional": true,
+            "type": "Draft | High",
+            "description": "OCR quality"
+          },
+          {
+            "key": "ocrWhenNeeded",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run OCR only when the document needs it"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Document language, e.g. English"
+          },
+          {
+            "key": "jobIdExt",
+            "optional": true,
+            "type": "string",
+            "description": "Your own reference for this call, stored with the API call log"
+          },
+          {
+            "key": "isAsync",
+            "optional": true,
+            "type": "boolean",
+            "description": "Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it)"
+          },
+          {
+            "key": "callBackUrl",
+            "optional": true,
+            "type": "string",
+            "description": "URL notified when an asynchronous job completes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null",
+            "description": "File name of the produced document"
+          },
+          {
+            "key": "fileContent",
+            "optional": true,
+            "type": "string | null",
+            "description": "The produced document, base64-encoded"
+          },
+          {
+            "key": "documents",
+            "optional": true,
+            "type": "{ fileName?: string | null, fileContent?: string | null }[]",
+            "description": "The produced documents, when the action makes several"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job id; poll it with jobs.status"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job state the API reports, e.g. Accepted"
+          },
+          {
+            "key": "statusUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "GetActionStatus URL for this job"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "The API message about the job"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdf4me.api.convert.pdfToWord",
+      "shortPath": "convert.pdfToWord",
+      "description": "Convert a PDF to a Word document; the API answers a job, so poll jobs.status for the file",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docContent",
+            "optional": false,
+            "type": "string",
+            "description": "Source file: base64 content, a pdf4meblobid://<id> reference, or an https URL"
+          },
+          {
+            "key": "docName",
+            "optional": false,
+            "type": "string",
+            "description": "Source file name including its extension; the API dispatches on it"
+          },
+          {
+            "key": "qualityType",
+            "optional": true,
+            "type": "Draft | High",
+            "description": "Conversion quality; other values are refused"
+          },
+          {
+            "key": "ocrWhenNeeded",
+            "optional": true,
+            "type": "boolean",
+            "description": "Run OCR on scanned pages"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Document language for OCR, e.g. English"
+          },
+          {
+            "key": "jobIdExt",
+            "optional": true,
+            "type": "string",
+            "description": "Your own reference for this call, stored with the API call log"
+          },
+          {
+            "key": "isAsync",
+            "optional": true,
+            "type": "boolean",
+            "description": "Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it)"
+          },
+          {
+            "key": "callBackUrl",
+            "optional": true,
+            "type": "string",
+            "description": "URL notified when an asynchronous job completes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null",
+            "description": "File name of the produced document"
+          },
+          {
+            "key": "fileContent",
+            "optional": true,
+            "type": "string | null",
+            "description": "The produced document, base64-encoded"
+          },
+          {
+            "key": "documents",
+            "optional": true,
+            "type": "{ fileName?: string | null, fileContent?: string | null }[]",
+            "description": "The produced documents, when the action makes several"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job id; poll it with jobs.status"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job state the API reports, e.g. Accepted"
+          },
+          {
+            "key": "statusUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "GetActionStatus URL for this job"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "The API message about the job"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdf4me.api.extract.pdfFormData",
+      "shortPath": "extract.pdfFormData",
+      "description": "Extract the values of filled PDF form fields",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docContent",
+            "optional": false,
+            "type": "string",
+            "description": "Source file: base64 content, a pdf4meblobid://<id> reference, or an https URL"
+          },
+          {
+            "key": "docName",
+            "optional": false,
+            "type": "string",
+            "description": "Source file name including its extension; the API dispatches on it"
+          },
+          {
+            "key": "jobIdExt",
+            "optional": true,
+            "type": "string",
+            "description": "Your own reference for this call, stored with the API call log"
+          },
+          {
+            "key": "isAsync",
+            "optional": true,
+            "type": "boolean",
+            "description": "Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it)"
+          },
+          {
+            "key": "callBackUrl",
+            "optional": true,
+            "type": "string",
+            "description": "URL notified when an asynchronous job completes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "formData",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Form field values keyed by field name"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdf4me.api.extract.tableFromPdf",
+      "shortPath": "extract.tableFromPdf",
+      "description": "Extract tables from a PDF",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docContent",
+            "optional": false,
+            "type": "string",
+            "description": "Source file: base64 content, a pdf4meblobid://<id> reference, or an https URL"
+          },
+          {
+            "key": "docName",
+            "optional": false,
+            "type": "string",
+            "description": "Source file name including its extension; the API dispatches on it"
+          },
+          {
+            "key": "jobIdExt",
+            "optional": true,
+            "type": "string",
+            "description": "Your own reference for this call, stored with the API call log"
+          },
+          {
+            "key": "isAsync",
+            "optional": true,
+            "type": "boolean",
+            "description": "Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it)"
+          },
+          {
+            "key": "callBackUrl",
+            "optional": true,
+            "type": "string",
+            "description": "URL notified when an asynchronous job completes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tableList",
+            "optional": true,
+            "type": "{ pageNumber?: number | null, table?: any[] | null }[] | null",
+            "description": "One entry per page with its table rows"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdf4me.api.jobs.status",
+      "shortPath": "jobs.status",
+      "description": "Poll a job (isAsync, or PDF-to-Word and OCR, which always run as jobs); a finished job answers its file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string",
+            "description": "Job id the async answer returned"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job id; poll it with jobs.status"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job state the API reports, e.g. Accepted"
+          },
+          {
+            "key": "statusUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "GetActionStatus URL for this job"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "The API message about the job"
+          },
+          {
+            "key": "isFinished",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "True once GetActionStatus answered the finished file"
+          },
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null",
+            "description": "File name of the result, once finished"
+          },
+          {
+            "key": "fileContent",
+            "optional": true,
+            "type": "string | null",
+            "description": "The result document, base64-encoded, once finished"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdf4me.api.pdf.compress",
+      "shortPath": "pdf.compress",
+      "description": "Compress a PDF with a documented profile (Max, Web, Print, Default)",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docContent",
+            "optional": false,
+            "type": "string",
+            "description": "Source file: base64 content, a pdf4meblobid://<id> reference, or an https URL"
+          },
+          {
+            "key": "docName",
+            "optional": false,
+            "type": "string",
+            "description": "Source file name including its extension; the API dispatches on it"
+          },
+          {
+            "key": "optimizeProfile",
+            "optional": true,
+            "type": "Max | Web | Print | Default",
+            "description": "Compression profile; Default is mapped to Max server-side; an unknown value fails with 400"
+          },
+          {
+            "key": "jobIdExt",
+            "optional": true,
+            "type": "string",
+            "description": "Your own reference for this call, stored with the API call log"
+          },
+          {
+            "key": "isAsync",
+            "optional": true,
+            "type": "boolean",
+            "description": "Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it)"
+          },
+          {
+            "key": "callBackUrl",
+            "optional": true,
+            "type": "string",
+            "description": "URL notified when an asynchronous job completes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null",
+            "description": "File name of the produced document"
+          },
+          {
+            "key": "fileContent",
+            "optional": true,
+            "type": "string | null",
+            "description": "The produced document, base64-encoded"
+          },
+          {
+            "key": "documents",
+            "optional": true,
+            "type": "{ fileName?: string | null, fileContent?: string | null }[]",
+            "description": "The produced documents, when the action makes several"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job id; poll it with jobs.status"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job state the API reports, e.g. Accepted"
+          },
+          {
+            "key": "statusUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "GetActionStatus URL for this job"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "The API message about the job"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdf4me.api.pdf.deletePages",
+      "shortPath": "pdf.deletePages",
+      "description": "Return a copy of a PDF without the given pages; the source file is not changed",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docContent",
+            "optional": false,
+            "type": "string",
+            "description": "Source file: base64 content, a pdf4meblobid://<id> reference, or an https URL"
+          },
+          {
+            "key": "docName",
+            "optional": false,
+            "type": "string",
+            "description": "Source file name including its extension; the API dispatches on it"
+          },
+          {
+            "key": "pageNumbers",
+            "optional": false,
+            "type": "number[] | string",
+            "description": "Pages to delete: [1, 3] or \"1,3,5-7\""
+          },
+          {
+            "key": "jobIdExt",
+            "optional": true,
+            "type": "string",
+            "description": "Your own reference for this call, stored with the API call log"
+          },
+          {
+            "key": "isAsync",
+            "optional": true,
+            "type": "boolean",
+            "description": "Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it)"
+          },
+          {
+            "key": "callBackUrl",
+            "optional": true,
+            "type": "string",
+            "description": "URL notified when an asynchronous job completes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null",
+            "description": "File name of the produced document"
+          },
+          {
+            "key": "fileContent",
+            "optional": true,
+            "type": "string | null",
+            "description": "The produced document, base64-encoded"
+          },
+          {
+            "key": "documents",
+            "optional": true,
+            "type": "{ fileName?: string | null, fileContent?: string | null }[]",
+            "description": "The produced documents, when the action makes several"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job id; poll it with jobs.status"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job state the API reports, e.g. Accepted"
+          },
+          {
+            "key": "statusUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "GetActionStatus URL for this job"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "The API message about the job"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdf4me.api.pdf.extractPages",
+      "shortPath": "pdf.extractPages",
+      "description": "Extract the given pages into a new PDF",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docContent",
+            "optional": false,
+            "type": "string",
+            "description": "Source file: base64 content, a pdf4meblobid://<id> reference, or an https URL"
+          },
+          {
+            "key": "docName",
+            "optional": false,
+            "type": "string",
+            "description": "Source file name including its extension; the API dispatches on it"
+          },
+          {
+            "key": "pageNumbers",
+            "optional": false,
+            "type": "number[] | string",
+            "description": "Pages to extract: [1, 3] or \"1,3,5-7\""
+          },
+          {
+            "key": "jobIdExt",
+            "optional": true,
+            "type": "string",
+            "description": "Your own reference for this call, stored with the API call log"
+          },
+          {
+            "key": "isAsync",
+            "optional": true,
+            "type": "boolean",
+            "description": "Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it)"
+          },
+          {
+            "key": "callBackUrl",
+            "optional": true,
+            "type": "string",
+            "description": "URL notified when an asynchronous job completes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null",
+            "description": "File name of the produced document"
+          },
+          {
+            "key": "fileContent",
+            "optional": true,
+            "type": "string | null",
+            "description": "The produced document, base64-encoded"
+          },
+          {
+            "key": "documents",
+            "optional": true,
+            "type": "{ fileName?: string | null, fileContent?: string | null }[]",
+            "description": "The produced documents, when the action makes several"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job id; poll it with jobs.status"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job state the API reports, e.g. Accepted"
+          },
+          {
+            "key": "statusUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "GetActionStatus URL for this job"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "The API message about the job"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdf4me.api.pdf.getInfo",
+      "shortPath": "pdf.getInfo",
+      "description": "Read PDF metadata: page count, dimensions, author and more",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docContent",
+            "optional": false,
+            "type": "string",
+            "description": "Source file: base64 content, a pdf4meblobid://<id> reference, or an https URL"
+          },
+          {
+            "key": "docName",
+            "optional": false,
+            "type": "string",
+            "description": "Source file name including its extension; the API dispatches on it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document title"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document subject"
+          },
+          {
+            "key": "author",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document author"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creating application"
+          },
+          {
+            "key": "producer",
+            "optional": true,
+            "type": "string | null",
+            "description": "Producing application"
+          },
+          {
+            "key": "keywords",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document keywords"
+          },
+          {
+            "key": "pageCount",
+            "optional": true,
+            "type": "number | null",
+            "description": "Number of pages"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number | null",
+            "description": "File size in bytes"
+          },
+          {
+            "key": "pdfVersion",
+            "optional": true,
+            "type": "string | null",
+            "description": "PDF version, e.g. 1.4"
+          },
+          {
+            "key": "pdfCompliance",
+            "optional": true,
+            "type": "string | null",
+            "description": "PDF/A compliance, if any"
+          },
+          {
+            "key": "documentId",
+            "optional": true,
+            "type": "string | null",
+            "description": "PDF document id"
+          },
+          {
+            "key": "isEncrypted",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the PDF is encrypted"
+          },
+          {
+            "key": "isLinearized",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the PDF is linearized"
+          },
+          {
+            "key": "isSigned",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the PDF is signed"
+          },
+          {
+            "key": "creationDate",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation date"
+          },
+          {
+            "key": "modDate",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification date"
+          },
+          {
+            "key": "pageHeightInMM",
+            "optional": true,
+            "type": "number | null",
+            "description": "First page height, mm"
+          },
+          {
+            "key": "pageWidthInMM",
+            "optional": true,
+            "type": "number | null",
+            "description": "First page width, mm"
+          },
+          {
+            "key": "orientation",
+            "optional": true,
+            "type": "string | null",
+            "description": "Orientation as the API spells it (Potrait, Landscape)"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdf4me.api.pdf.merge",
+      "shortPath": "pdf.merge",
+      "description": "Merge multiple PDFs into one; array order is the merge order",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docContent",
+            "optional": false,
+            "type": "string[]",
+            "description": "The PDFs to merge, base64-encoded; array order is the merge order"
+          },
+          {
+            "key": "docName",
+            "optional": false,
+            "type": "string",
+            "description": "Source file name including its extension; the API dispatches on it"
+          },
+          {
+            "key": "jobIdExt",
+            "optional": true,
+            "type": "string",
+            "description": "Your own reference for this call, stored with the API call log"
+          },
+          {
+            "key": "isAsync",
+            "optional": true,
+            "type": "boolean",
+            "description": "Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it)"
+          },
+          {
+            "key": "callBackUrl",
+            "optional": true,
+            "type": "string",
+            "description": "URL notified when an asynchronous job completes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null",
+            "description": "File name of the produced document"
+          },
+          {
+            "key": "fileContent",
+            "optional": true,
+            "type": "string | null",
+            "description": "The produced document, base64-encoded"
+          },
+          {
+            "key": "documents",
+            "optional": true,
+            "type": "{ fileName?: string | null, fileContent?: string | null }[]",
+            "description": "The produced documents, when the action makes several"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job id; poll it with jobs.status"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job state the API reports, e.g. Accepted"
+          },
+          {
+            "key": "statusUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "GetActionStatus URL for this job"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "The API message about the job"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pdf4me.api.pdf.split",
+      "shortPath": "pdf.split",
+      "description": "Split a PDF after a page, every N pages, after listed pages or by page ranges; the parts come back in documents",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docContent",
+            "optional": false,
+            "type": "string",
+            "description": "Source file: base64 content, a pdf4meblobid://<id> reference, or an https URL"
+          },
+          {
+            "key": "docName",
+            "optional": false,
+            "type": "string",
+            "description": "Source file name including its extension; the API dispatches on it"
+          },
+          {
+            "key": "splitAction",
+            "optional": true,
+            "type": "SplitAfterPage | RecurringSplitAfterPage | SplitSequence | SplitRanges",
+            "description": "How to split"
+          },
+          {
+            "key": "splitActionNumber",
+            "optional": true,
+            "type": "number",
+            "description": "Page to split after (SplitAfterPage) or every N pages (RecurringSplitAfterPage)"
+          },
+          {
+            "key": "splitSequence",
+            "optional": true,
+            "type": "number[]",
+            "description": "Pages to split after (SplitSequence)"
+          },
+          {
+            "key": "splitRanges",
+            "optional": true,
+            "type": "string",
+            "description": "Page ranges, one document each, e.g. \"1-2,3\" (SplitRanges)"
+          },
+          {
+            "key": "fileNaming",
+            "optional": true,
+            "type": "string",
+            "description": "How parts are named, e.g. NameAsPerOrder"
+          },
+          {
+            "key": "jobIdExt",
+            "optional": true,
+            "type": "string",
+            "description": "Your own reference for this call, stored with the API call log"
+          },
+          {
+            "key": "isAsync",
+            "optional": true,
+            "type": "boolean",
+            "description": "Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it)"
+          },
+          {
+            "key": "callBackUrl",
+            "optional": true,
+            "type": "string",
+            "description": "URL notified when an asynchronous job completes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileName",
+            "optional": true,
+            "type": "string | null",
+            "description": "File name of the produced document"
+          },
+          {
+            "key": "fileContent",
+            "optional": true,
+            "type": "string | null",
+            "description": "The produced document, base64-encoded"
+          },
+          {
+            "key": "documents",
+            "optional": true,
+            "type": "{ fileName?: string | null, fileContent?: string | null }[]",
+            "description": "The produced documents, when the action makes several"
+          },
+          {
+            "key": "jobId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job id; poll it with jobs.status"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Job state the API reports, e.g. Accepted"
+          },
+          {
+            "key": "statusUrl",
+            "optional": true,
+            "type": "string | null",
+            "description": "GetActionStatus URL for this job"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "The API message about the job"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

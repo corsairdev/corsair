@@ -1,0 +1,371 @@
+{
+  "id": "payhere",
+  "displayName": "Payhere",
+  "description": "Payhere is a Stripe-backed payment links platform. This plugin reads the account user, company and 30-day stats, lists customers, payments, plans and subscriptions, reads a customer with their payment history, issues full or partial refunds, and receives HMAC-verified payment and subscription webhooks.",
+  "npmPackageName": "@corsair-dev/payhere",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "payhere.api.company.get",
+      "shortPath": "company.get",
+      "description": "Read the company of the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, legal_name?: string | null, slug?: string | null, country_code?: string | null, currency?: string | null, stripe_connected?: boolean | null, gocardless_connected?: boolean | null }",
+            "description": "The Payhere company of the authenticated user"
+          }
+        ]
+      }
+    },
+    {
+      "path": "payhere.api.company.stats",
+      "shortPath": "company.stats",
+      "description": "Read the payment stats of the last 30 days with comparisons",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string",
+            "description": "Currency the stats are reported in"
+          },
+          {
+            "key": "payments_last_30",
+            "optional": false,
+            "type": "number",
+            "description": "Payment volume of the last 30 days"
+          },
+          {
+            "key": "payments_comparison",
+            "optional": false,
+            "type": "number",
+            "description": "Payment volume of the 30-60 days before, for comparison"
+          },
+          {
+            "key": "subscribers_last_30",
+            "optional": false,
+            "type": "number",
+            "description": "New subscribers of the last 30 days"
+          },
+          {
+            "key": "subscribers_comparison",
+            "optional": false,
+            "type": "number",
+            "description": "New subscribers of the 30-60 days before, for comparison"
+          },
+          {
+            "key": "payments_all_time",
+            "optional": false,
+            "type": "number",
+            "description": "Payment volume across all time"
+          }
+        ]
+      }
+    },
+    {
+      "path": "payhere.api.customers.get",
+      "shortPath": "customers.get",
+      "description": "Read one customer with their subscriptions and payment history",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "customerId",
+            "optional": false,
+            "type": "number",
+            "description": "Customer id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, email?: string | null, created_at?: string | null, updated_at?: string | null, subscriptions?: {}[] | null, payments?: {}[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "payhere.api.customers.list",
+      "shortPath": "customers.list",
+      "description": "List customers, most recent first, paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page; default 20, maximum 100"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name?: string | null, email?: string | null, created_at?: string | null, updated_at?: string | null }[]",
+            "description": "Customers on this page"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page?: number | null, next_page?: number | null, prev_page?: number | null, total_pages?: number | null, total_count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "payhere.api.payments.list",
+      "shortPath": "payments.list",
+      "description": "List payments, most recent first, paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page; default 20, maximum 100"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, hashid?: string | null, reference?: string | null, amount?: number | null, currency?: string | null, refund_amount?: number | null, card_brand?: string | null, status?: string | null, success?: boolean | null, created_at?: string | null }[]",
+            "description": "Payments on this page"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page?: number | null, next_page?: number | null, prev_page?: number | null, total_pages?: number | null, total_count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "payhere.api.plans.list",
+      "shortPath": "plans.list",
+      "description": "List the payment plans, paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page; default 20, maximum 100"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, payment_type?: string | null, name?: string | null, description?: string | null, price?: number | null, price_in_cents?: number | null, currency?: string | null, slug?: string | null, billing_interval?: string | null, hidden?: boolean | null }[]",
+            "description": "Plans on this page"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page?: number | null, next_page?: number | null, prev_page?: number | null, total_pages?: number | null, total_count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "payhere.api.refunds.create",
+      "shortPath": "refunds.create",
+      "description": "Refund a payment fully or partially; money leaves the account and the refund cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "payment_id",
+            "optional": false,
+            "type": "number",
+            "description": "Id of the payment to refund"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number",
+            "description": "Amount to refund, in the payment currency; decimals allowed (1.5 is $1.50 USD)"
+          },
+          {
+            "key": "reason",
+            "optional": false,
+            "type": "requested_by_customer | duplicate | fraudulent",
+            "description": "Reason for the refund"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "paymentId",
+            "optional": false,
+            "type": "number",
+            "description": "Refunded payment id"
+          },
+          {
+            "key": "amount",
+            "optional": false,
+            "type": "number",
+            "description": "Refunded amount"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the refund succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "payhere.api.subscriptions.list",
+      "shortPath": "subscriptions.list",
+      "description": "List subscriptions, most recent payment first, paged",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page; default 20, maximum 100"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, customer_id?: number | null, last_charged?: string | null, next_charge_at?: string | null, status?: string | null, billing_interval?: string | null, membership_plan_id?: number | null, provider?: string | null }[]",
+            "description": "Subscriptions on this page"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ current_page?: number | null, next_page?: number | null, prev_page?: number | null, total_pages?: number | null, total_count?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "payhere.api.user.get",
+      "shortPath": "user.get",
+      "description": "Read the authenticated Payhere user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, display_name?: string | null, email?: string | null }",
+            "description": "The authenticated Payhere user"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "payhere.webhooks.payhere.event",
+      "shortPath": "payhere.event",
+      "description": "A Payhere payment or subscription event delivery",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event",
+            "optional": false,
+            "type": "payment.success | payment.failed | subscription.cancelled | subscription.created | subscription.updated | string"
+          }
+        ]
+      },
+      "responseType": "{ event: payment.success | payment.failed | subscription.cancelled | subscription.created | subscription.updated | string }",
+      "usageExample": "payhere({\n    webhookHooks: {\n        payhere: {\n            event: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}
