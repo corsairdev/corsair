@@ -11226,5 +11226,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/laposta",
+    "dir": "packages/laposta",
+    "name": "Laposta",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/lexoffice",
+    "dir": "packages/lexoffice",
+    "name": "Lexoffice",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/listennotes",
+    "dir": "packages/listennotes",
+    "name": "Listen Notes",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
