@@ -18,7 +18,7 @@ beforeEach(() => {
 });
 
 describe('makeHunterioRequest', () => {
-	it('sends the key via X-API-KEY header and never in the query parameter', async () => {
+	it('sends the key as a Bearer token and never in the query parameter', async () => {
 		mockedRequest.mockResolvedValue({ data: {} });
 
 		await makeHunterioRequest('/leads', 'test-key-123', {
@@ -29,10 +29,10 @@ describe('makeHunterioRequest', () => {
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
 		const [config, requestOptions] = mockedRequest.mock.calls[0] ?? [];
 		expect(config).toMatchObject({ BASE: HUNTERIO_API_BASE });
-		expect(config?.HEADERS).toMatchObject({
-			'Content-Type': 'application/json',
-			'X-API-KEY': 'test-key-123',
+		expect(config?.HEADERS).toEqual({
+			Authorization: 'Bearer test-key-123',
 		});
+		expect(config?.HEADERS).not.toHaveProperty('X-API-KEY');
 		expect(config?.HEADERS).not.toHaveProperty('TOKEN');
 		expect(requestOptions).toMatchObject({
 			method: 'GET',
@@ -51,6 +51,23 @@ describe('makeHunterioRequest', () => {
 		expect(options).toEqual({ rateLimitConfig: HUNTERIO_RATE_LIMIT_CONFIG });
 		expect(HUNTERIO_RATE_LIMIT_CONFIG.maxRetries).toBe(0);
 		expect(HUNTERIO_RATE_LIMIT_CONFIG.isRateLimitError?.(403, {})).toBe(true);
+		expect(
+			HUNTERIO_RATE_LIMIT_CONFIG.isRateLimitError?.(403, {
+				errors: [{ id: 'too_many_requests', code: 403 }],
+			}),
+		).toBe(true);
+		// Permanent refusals share the 403 status but are not throttles.
+		for (const id of [
+			'no_signals_access',
+			'no_opportunities_access',
+			'optional_ai_features_off',
+		]) {
+			expect(
+				HUNTERIO_RATE_LIMIT_CONFIG.isRateLimitError?.(403, {
+					errors: [{ id, code: 403, details: 'Not on your plan.' }],
+				}),
+			).toBe(false);
+		}
 		expect(HUNTERIO_RATE_LIMIT_CONFIG.isRateLimitError?.(429, {})).toBe(false);
 	});
 
@@ -60,7 +77,7 @@ describe('makeHunterioRequest', () => {
 		await makeHunterioRequest('/account');
 
 		const [config, requestOptions] = mockedRequest.mock.calls[0] ?? [];
-		expect(config?.HEADERS).not.toHaveProperty('X-API-KEY');
+		expect(config?.HEADERS).not.toHaveProperty('Authorization');
 		expect(requestOptions?.query).not.toHaveProperty('api_key');
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
 	});
