@@ -1,0 +1,313 @@
+{
+  "id": "payhip",
+  "displayName": "Payhip",
+  "description": "Payhip is a digital products storefront. This plugin creates and manages discount coupons with the account API key, and verifies, enables, disables and counts software license keys with the per-product secret key. Coupon bodies are form-encoded as the API requires.",
+  "npmPackageName": "@corsair-dev/payhip",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 8,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "product_secret_key"]
+    }
+  ],
+  "api": [
+    {
+      "path": "payhip.api.coupons.create",
+      "shortPath": "coupons.create",
+      "description": "Create a discount coupon for one product, all products or a collection",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string",
+            "description": "Code the customer enters at checkout"
+          },
+          {
+            "key": "coupon_type",
+            "optional": false,
+            "type": "single | multi | collection",
+            "description": "What the coupon applies to"
+          },
+          {
+            "key": "percent_off",
+            "optional": true,
+            "type": "number",
+            "description": "Percentage discount; required unless amount_off is passed"
+          },
+          {
+            "key": "amount_off",
+            "optional": true,
+            "type": "number",
+            "description": "Fixed discount in cents; required unless percent_off is passed"
+          },
+          {
+            "key": "product_key",
+            "optional": true,
+            "type": "string",
+            "description": "Product key; required when coupon_type is single"
+          },
+          {
+            "key": "collection_id",
+            "optional": true,
+            "type": "string",
+            "description": "Collection id; required when coupon_type is collection"
+          },
+          {
+            "key": "start_date",
+            "optional": true,
+            "type": "string",
+            "description": "When the coupon becomes valid"
+          },
+          {
+            "key": "end_date",
+            "optional": true,
+            "type": "string",
+            "description": "When the coupon expires"
+          },
+          {
+            "key": "minimum_purchase_amount",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum cart total in cents before redemption"
+          },
+          {
+            "key": "usage_limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum redemptions"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string",
+            "description": "Administrative note, not visible to customers"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, code?: string | null, coupon_type?: single | multi | collection | string | null, percent_off?: number | null, amount_off?: number | null, start_date?: string | null, end_date?: string | null, product_key?: string | null, collection_id?: string | null, minimum_purchase_amount?: number | null, usage_limit?: number | null, notes?: string | null }",
+            "description": "A Payhip coupon"
+          }
+        ]
+      }
+    },
+    {
+      "path": "payhip.api.coupons.get",
+      "shortPath": "coupons.get",
+      "description": "Read one coupon by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "couponId",
+            "optional": false,
+            "type": "number",
+            "description": "Coupon id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, code?: string | null, coupon_type?: single | multi | collection | string | null, percent_off?: number | null, amount_off?: number | null, start_date?: string | null, end_date?: string | null, product_key?: string | null, collection_id?: string | null, minimum_purchase_amount?: number | null, usage_limit?: number | null, notes?: string | null }",
+            "description": "A Payhip coupon"
+          }
+        ]
+      }
+    },
+    {
+      "path": "payhip.api.coupons.list",
+      "shortPath": "coupons.list",
+      "description": "List the coupons of the account, paged by limit and offset",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Offset of the first result"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ coupons: { id: number, code?: string | null, coupon_type?: single | multi | collection | string | null, percent_off?: number | null, amount_off?: number | null, start_date?: string | null, end_date?: string | null, product_key?: string | null, collection_id?: string | null, minimum_purchase_amount?: number | null, usage_limit?: number | null, notes?: string | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "payhip.api.license.decreaseUsage",
+      "shortPath": "license.decreaseUsage",
+      "description": "Decrease the usage count of a license key (a deactivation)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "license_key",
+            "optional": false,
+            "type": "string",
+            "description": "The license key to change"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ license_key: string, enabled: boolean, product_link?: string | null, product_name?: string | null, variant_name?: string | null, variant_id?: string | null, buyer_email?: string | null, uses?: number | null, date?: string | null }",
+            "description": "A Payhip license key"
+          }
+        ]
+      }
+    },
+    {
+      "path": "payhip.api.license.disable",
+      "shortPath": "license.disable",
+      "description": "Disable a license key so it stops validating",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "license_key",
+            "optional": false,
+            "type": "string",
+            "description": "The license key to change"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ license_key: string, enabled: boolean, product_link?: string | null, product_name?: string | null, variant_name?: string | null, variant_id?: string | null, buyer_email?: string | null, uses?: number | null, date?: string | null }",
+            "description": "A Payhip license key"
+          }
+        ]
+      }
+    },
+    {
+      "path": "payhip.api.license.enable",
+      "shortPath": "license.enable",
+      "description": "Enable a license key that was disabled",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "license_key",
+            "optional": false,
+            "type": "string",
+            "description": "The license key to change"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ license_key: string, enabled: boolean, product_link?: string | null, product_name?: string | null, variant_name?: string | null, variant_id?: string | null, buyer_email?: string | null, uses?: number | null, date?: string | null }",
+            "description": "A Payhip license key"
+          }
+        ]
+      }
+    },
+    {
+      "path": "payhip.api.license.increaseUsage",
+      "shortPath": "license.increaseUsage",
+      "description": "Increase the usage count of a license key (an activation)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "license_key",
+            "optional": false,
+            "type": "string",
+            "description": "The license key to change"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ license_key: string, enabled: boolean, product_link?: string | null, product_name?: string | null, variant_name?: string | null, variant_id?: string | null, buyer_email?: string | null, uses?: number | null, date?: string | null }",
+            "description": "A Payhip license key"
+          }
+        ]
+      }
+    },
+    {
+      "path": "payhip.api.license.verify",
+      "shortPath": "license.verify",
+      "description": "Verify a license key against a product secret; read-only check",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "license_key",
+            "optional": false,
+            "type": "string",
+            "description": "The license key to verify"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ license_key: string, enabled: boolean, product_link?: string | null, product_name?: string | null, variant_name?: string | null, variant_id?: string | null, buyer_email?: string | null, uses?: number | null, date?: string | null }",
+            "description": "A Payhip license key"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
