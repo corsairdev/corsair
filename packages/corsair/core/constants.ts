@@ -516,6 +516,7 @@ export const BaseProviders = [
 	'pipelinecrm',
 	'placid',
 	'plain',
+	'piloterr',
 	'platerecognizer',
 	'ploid',
 	'pointagram',
@@ -1275,6 +1276,7 @@ export const ProviderDisplayNames = {
 	pipelinecrm: 'Pipeline CRM',
 	placid: 'Placid',
 	plain: 'Plain',
+	piloterr: 'Piloterr',
 	platerecognizer: 'Plate Recognizer',
 	ploid: 'Ploid',
 	pointagram: 'Pointagram',
@@ -2041,6 +2043,7 @@ export type AllProviders =
 	| 'pipelinecrm'
 	| 'placid'
 	| 'plain'
+	| 'piloterr'
 	| 'platerecognizer'
 	| 'ploid'
 	| 'pointagram'
