@@ -1,0 +1,2849 @@
+---
+title: "Laposta API reference"
+sidebarTitle: "API"
+description: "API reference for the Laposta plugin in Corsair: every `laposta.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Campaigns
+
+### create
+
+`campaigns.create`
+
+Create a regular email campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.laposta.api.campaigns.create({ type: 'regular', name: 'Monthly news', subject: 'Updates', from: { name: 'Example', email: 'sender@example.net' }, list_ids: ['list-1'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `regular` | Yes | — |
+| `name` | `string` | Yes | — |
+| `subject` | `string` | Yes | — |
+| `previewtext` | `string` | No | — |
+| `from` | `object` | Yes | — |
+| `reply_to` | `string` | No | — |
+| `list_ids` | `(string \| Record<string, string[]>)[]` | Yes | List IDs, or &#123; '&lt;list_id&gt;': ['&lt;segment_id&gt;', ...] &#125; entries to send to segments of a list |
+| `stats` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  name: string,
+  email: string
+}
+```
+</Accordion>
+
+<Accordion title="stats full type">
+
+```ts
+{
+  ga: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  account_id?: string | null,
+  campaign_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  type?: regular,
+  delivery_requested?: string | null,
+  delivery_requested_iso?: string | null,
+  delivery_started?: string | null,
+  delivery_started_iso?: string | null,
+  delivery_ended?: string | null,
+  delivery_ended_iso?: string | null,
+  name: string,
+  subject?: string | null,
+  previewtext?: string | null,
+  from?: {
+    name: string,
+    email: string
+  },
+  reply_to?: string | null,
+  list_ids?: Record<string, string[]>,
+  stats?: {
+    ga: string
+  },
+  web?: string | null,
+  screenshot?: Record<string, string>,
+  state?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`campaigns.delete`
+
+Delete an unsent or previously sent campaign
+
+**Risk:** `destructive`
+
+```ts
+await corsair.laposta.api.campaigns.delete({ campaign_id: 'campaign-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  account_id?: string | null,
+  campaign_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  type?: regular,
+  delivery_requested?: string | null,
+  delivery_requested_iso?: string | null,
+  delivery_started?: string | null,
+  delivery_started_iso?: string | null,
+  delivery_ended?: string | null,
+  delivery_ended_iso?: string | null,
+  name: string,
+  subject?: string | null,
+  previewtext?: string | null,
+  from?: {
+    name: string,
+    email: string
+  },
+  reply_to?: string | null,
+  list_ids?: Record<string, string[]>,
+  stats?: {
+    ga: string
+  },
+  web?: string | null,
+  screenshot?: Record<string, string>,
+  state?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Retrieve a specific campaign by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.campaigns.get({ campaign_id: 'campaign-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  account_id?: string | null,
+  campaign_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  type?: regular,
+  delivery_requested?: string | null,
+  delivery_requested_iso?: string | null,
+  delivery_started?: string | null,
+  delivery_started_iso?: string | null,
+  delivery_ended?: string | null,
+  delivery_ended_iso?: string | null,
+  name: string,
+  subject?: string | null,
+  previewtext?: string | null,
+  from?: {
+    name: string,
+    email: string
+  },
+  reply_to?: string | null,
+  list_ids?: Record<string, string[]>,
+  stats?: {
+    ga: string
+  },
+  web?: string | null,
+  screenshot?: Record<string, string>,
+  state?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get_content
+
+`campaigns.get_content`
+
+Retrieve the HTML and plaintext campaign content
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.campaigns.get_content({ campaign_id: 'campaign-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  account_id?: string | null,
+  campaign_id: string,
+  plaintext?: string | null,
+  html?: string | null,
+  import_url?: string | null,
+  report?: {
+    javascript?: boolean,
+    flash?: boolean,
+    no_unsubscribe?: boolean,
+    empty_unsubscribe?: boolean,
+    css?: string[],
+    images?: string[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### history
+
+`campaigns.history`
+
+Retrieve paginated events for a campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.campaigns.history({ campaign_id: 'campaign-1', limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+| `event_date_from` | `string \| string` | No | — |
+| `event_date_to` | `string \| string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `order_by` | `event_date` | No | — |
+| `order` | `desc \| asc` | No | — |
+
+Campaign history uses cursor pagination with a default limit of 100 and maximum of 1000. Keep the same filters and ordering when sending the next cursor.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | Yes | — |
+| `order` | `object` | Yes | — |
+| `filters` | `Record<string, string \| null>` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit: number,
+  has_more: boolean,
+  next_cursor: string | null
+}
+```
+</Accordion>
+
+<Accordion title="order full type">
+
+```ts
+{
+  order_by: string,
+  order: desc | asc
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  event: {
+    type: string,
+    timezone: string,
+    event_date: string,
+    event_date_iso: string,
+    campaign: {
+      campaign_id: string,
+      name: string,
+      from_automation: boolean,
+      deleted: boolean
+    },
+    list?: {
+      list_id: string,
+      name: string,
+      deleted: boolean
+    },
+    member?: {
+      member_id: string | null,
+      email: string | null,
+      deleted: boolean
+    },
+    details: {
+      source?: string | null,
+      source_url?: string | null,
+      unsubscribe_source?: string | null,
+      url?: string | null,
+      link_type?: string | null,
+      reason?: string | null,
+      automation_name?: string | null,
+      feedback_reason?: string | null,
+      feedback_comments?: string | null,
+      bounce_type?: string | null,
+      bounce_code?: string | number,
+      softbounce_count?: number,
+      softbounce_max_count?: number
+    } | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+Retrieve all email campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.campaigns.list({ status: 'draft', limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `draft \| sent` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+Use `limit` (1–1000) and `cursor` to page through campaigns. `status` may be `draft` or `sent`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  campaign: {
+    account_id?: string | null,
+    campaign_id: string,
+    timezone?: string | null,
+    created?: string | null,
+    created_iso?: string | null,
+    modified?: string | null,
+    modified_iso?: string | null,
+    type?: regular,
+    delivery_requested?: string | null,
+    delivery_requested_iso?: string | null,
+    delivery_started?: string | null,
+    delivery_started_iso?: string | null,
+    delivery_ended?: string | null,
+    delivery_ended_iso?: string | null,
+    name: string,
+    subject?: string | null,
+    previewtext?: string | null,
+    from?: {
+      name: string,
+      email: string
+    },
+    reply_to?: string | null,
+    list_ids?: Record<string, string[]>,
+    stats?: {
+      ga: string
+    },
+    web?: string | null,
+    screenshot?: Record<string, string>,
+    state?: string | null
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit: number,
+  has_more: boolean,
+  next_cursor: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### schedule
+
+`campaigns.schedule`
+
+Schedule campaign delivery to its configured recipients
+
+**Risk:** `destructive`
+
+```ts
+await corsair.laposta.api.campaigns.schedule({ campaign_id: 'campaign-1', delivery_requested: '2026-12-01 09:00:00' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+| `delivery_requested` | `string \| string` | Yes | — |
+
+Scheduling starts email delivery at the specified time; a campaign sent before may be rescheduled for members added since its previous send.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  account_id?: string | null,
+  campaign_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  type?: regular,
+  delivery_requested?: string | null,
+  delivery_requested_iso?: string | null,
+  delivery_started?: string | null,
+  delivery_started_iso?: string | null,
+  delivery_ended?: string | null,
+  delivery_ended_iso?: string | null,
+  name: string,
+  subject?: string | null,
+  previewtext?: string | null,
+  from?: {
+    name: string,
+    email: string
+  },
+  reply_to?: string | null,
+  list_ids?: Record<string, string[]>,
+  stats?: {
+    ga: string
+  },
+  web?: string | null,
+  screenshot?: Record<string, string>,
+  state?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`campaigns.send`
+
+Send a campaign to its configured recipients
+
+**Risk:** `destructive`
+
+```ts
+await corsair.laposta.api.campaigns.send({ campaign_id: 'campaign-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+
+This sends the campaign to configured recipients. A previously sent campaign may be sent again to members added since its previous send.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  account_id?: string | null,
+  campaign_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  type?: regular,
+  delivery_requested?: string | null,
+  delivery_requested_iso?: string | null,
+  delivery_started?: string | null,
+  delivery_started_iso?: string | null,
+  delivery_ended?: string | null,
+  delivery_ended_iso?: string | null,
+  name: string,
+  subject?: string | null,
+  previewtext?: string | null,
+  from?: {
+    name: string,
+    email: string
+  },
+  reply_to?: string | null,
+  list_ids?: Record<string, string[]>,
+  stats?: {
+    ga: string
+  },
+  web?: string | null,
+  screenshot?: Record<string, string>,
+  state?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send_test
+
+`campaigns.send_test`
+
+Send a campaign test email to the specified address
+
+**Risk:** `destructive`
+
+```ts
+await corsair.laposta.api.campaigns.send_test({ campaign_id: 'campaign-1', email: 'test@example.net' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+
+This sends an actual test email, and only works when content exists for a campaign that has not yet been sent.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  account_id?: string | null,
+  campaign_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  type?: regular,
+  delivery_requested?: string | null,
+  delivery_requested_iso?: string | null,
+  delivery_started?: string | null,
+  delivery_started_iso?: string | null,
+  delivery_ended?: string | null,
+  delivery_ended_iso?: string | null,
+  name: string,
+  subject?: string | null,
+  previewtext?: string | null,
+  from?: {
+    name: string,
+    email: string
+  },
+  reply_to?: string | null,
+  list_ids?: Record<string, string[]>,
+  stats?: {
+    ga: string
+  },
+  web?: string | null,
+  screenshot?: Record<string, string>,
+  state?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Update campaign metadata and recipients
+
+**Risk:** `write`
+
+```ts
+await corsair.laposta.api.campaigns.update({ campaign_id: 'campaign-1', subject: 'Updated subject' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `previewtext` | `string` | No | — |
+| `from` | `object` | No | — |
+| `reply_to` | `string` | No | — |
+| `list_ids` | `(string \| Record<string, string[]>)[]` | No | List IDs, or &#123; '&lt;list_id&gt;': ['&lt;segment_id&gt;', ...] &#125; entries to send to segments of a list |
+| `stats` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  name?: string,
+  email?: string
+}
+```
+</Accordion>
+
+<Accordion title="stats full type">
+
+```ts
+{
+  ga: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  account_id?: string | null,
+  campaign_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  type?: regular,
+  delivery_requested?: string | null,
+  delivery_requested_iso?: string | null,
+  delivery_started?: string | null,
+  delivery_started_iso?: string | null,
+  delivery_ended?: string | null,
+  delivery_ended_iso?: string | null,
+  name: string,
+  subject?: string | null,
+  previewtext?: string | null,
+  from?: {
+    name: string,
+    email: string
+  },
+  reply_to?: string | null,
+  list_ids?: Record<string, string[]>,
+  stats?: {
+    ga: string
+  },
+  web?: string | null,
+  screenshot?: Record<string, string>,
+  state?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update_content
+
+`campaigns.update_content`
+
+Set campaign content from HTML or an import URL
+
+**Risk:** `write`
+
+```ts
+await corsair.laposta.api.campaigns.update_content({ campaign_id: 'campaign-1', import_url: 'https://example.net/newsletter' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+| `html` | `string` | No | — |
+| `import_url` | `string` | No | — |
+| `inline_css` | `boolean` | No | — |
+
+Provide `html` or `import_url`. Laposta imports HTML from the URL when selected; if both are provided, the `html` value takes precedence. Only exported campaigns support content retrieval.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="campaign full type">
+
+```ts
+{
+  account_id?: string | null,
+  campaign_id: string,
+  plaintext?: string | null,
+  html?: string | null,
+  import_url?: string | null,
+  report?: {
+    javascript?: boolean,
+    flash?: boolean,
+    no_unsubscribe?: boolean,
+    empty_unsubscribe?: boolean,
+    css?: string[],
+    images?: string[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fields
+
+### create
+
+`fields.create`
+
+Create a new custom field for a mailing list
+
+**Risk:** `write`
+
+```ts
+await corsair.laposta.api.fields.create({ list_id: 'list-1', name: 'City', datatype: 'text', required: false, in_form: true, in_list: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `datatype` | `text \| numeric \| date \| select_single \| select_multiple` | Yes | — |
+| `datatype_display` | `select \| radio \| input \| textarea` | No | — |
+| `defaultvalue` | `string` | No | — |
+| `options` | `string[]` | No | — |
+| `required` | `boolean` | Yes | — |
+| `in_form` | `boolean` | Yes | — |
+| `in_list` | `boolean` | Yes | — |
+
+The `required`, `in_form`, and `in_list` booleans are mandatory. Select fields need at least one option.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="field full type">
+
+```ts
+{
+  field_id: string,
+  list_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  state?: active | deleted,
+  name: string,
+  tag?: string | null,
+  custom_name?: string | null,
+  defaultvalue?: string | null,
+  datatype: text | numeric | date | select_single | select_multiple | labels,
+  datatype_display?: select | radio | input | textarea | null,
+  options?: string[],
+  options_full?: {
+    id: number,
+    value: string
+  }[],
+  required: boolean,
+  in_form: boolean,
+  in_list: boolean,
+  is_email?: boolean,
+  autocomplete?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`fields.delete`
+
+Delete a custom field from a mailing list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.laposta.api.fields.delete({ list_id: 'list-1', field_id: 'field-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `field_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="field full type">
+
+```ts
+{
+  field_id: string,
+  list_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  state?: active | deleted,
+  name: string,
+  tag?: string | null,
+  custom_name?: string | null,
+  defaultvalue?: string | null,
+  datatype: text | numeric | date | select_single | select_multiple | labels,
+  datatype_display?: select | radio | input | textarea | null,
+  options?: string[],
+  options_full?: {
+    id: number,
+    value: string
+  }[],
+  required: boolean,
+  in_form: boolean,
+  in_list: boolean,
+  is_email?: boolean,
+  autocomplete?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`fields.get`
+
+Retrieve a specific custom field by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.fields.get({ list_id: 'list-1', field_id: 'field-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `field_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="field full type">
+
+```ts
+{
+  field_id: string,
+  list_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  state?: active | deleted,
+  name: string,
+  tag?: string | null,
+  custom_name?: string | null,
+  defaultvalue?: string | null,
+  datatype: text | numeric | date | select_single | select_multiple | labels,
+  datatype_display?: select | radio | input | textarea | null,
+  options?: string[],
+  options_full?: {
+    id: number,
+    value: string
+  }[],
+  required: boolean,
+  in_form: boolean,
+  in_list: boolean,
+  is_email?: boolean,
+  autocomplete?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`fields.list`
+
+Retrieve custom fields for a mailing list
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.fields.list({ list_id: 'list-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  field: {
+    field_id: string,
+    list_id: string,
+    timezone?: string | null,
+    created?: string | null,
+    created_iso?: string | null,
+    modified?: string | null,
+    state?: active | deleted,
+    name: string,
+    tag?: string | null,
+    custom_name?: string | null,
+    defaultvalue?: string | null,
+    datatype: text | numeric | date | select_single | select_multiple | labels,
+    datatype_display?: select | radio | input | textarea | null,
+    options?: string[],
+    options_full?: {
+      id: number,
+      value: string
+    }[],
+    required: boolean,
+    in_form: boolean,
+    in_list: boolean,
+    is_email?: boolean,
+    autocomplete?: string | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`fields.update`
+
+Update a custom field; changing its datatype removes stored values
+
+**Risk:** `destructive`
+
+```ts
+await corsair.laposta.api.fields.update({ list_id: 'list-1', field_id: 'field-1', required: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `field_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `datatype` | `text \| numeric \| date \| select_single \| select_multiple` | No | — |
+| `datatype_display` | `select \| radio \| input \| textarea` | No | — |
+| `options_full` | `Record<string, string> \| object[]` | No | — |
+| `defaultvalue` | `string` | No | — |
+| `required` | `boolean` | No | — |
+| `in_form` | `boolean` | No | — |
+| `in_list` | `boolean` | No | — |
+
+Laposta requires `options_full` to be sent as JSON and treats it as a complete replacement: include every option to keep, omitted IDs are deleted, and non-numeric keys such as `new-0` add options. Existing option IDs are numeric in field responses; array updates accept numeric IDs and temporary string IDs. Changing a field datatype removes its stored values.
+
+<AccordionGroup>
+<Accordion title="options_full full type">
+
+```ts
+Record<string, string> | {
+  id: number | string,
+  value: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="field full type">
+
+```ts
+{
+  field_id: string,
+  list_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  state?: active | deleted,
+  name: string,
+  tag?: string | null,
+  custom_name?: string | null,
+  defaultvalue?: string | null,
+  datatype: text | numeric | date | select_single | select_multiple | labels,
+  datatype_display?: select | radio | input | textarea | null,
+  options?: string[],
+  options_full?: {
+    id: number,
+    value: string
+  }[],
+  required: boolean,
+  in_form: boolean,
+  in_list: boolean,
+  is_email?: boolean,
+  autocomplete?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lists
+
+### create
+
+`lists.create`
+
+Create a new mailing list
+
+**Risk:** `write`
+
+```ts
+await corsair.laposta.api.lists.create({ name: 'Newsletter' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `locked` | `boolean` | No | — |
+| `remarks` | `string` | No | — |
+| `subscribe_notification_email` | `string` | No | — |
+| `unsubscribe_notification_email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="list full type">
+
+```ts
+{
+  list_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  state: active | deleted,
+  name: string,
+  locked?: boolean,
+  remarks?: string | null,
+  subscribe_notification_email?: string | null,
+  unsubscribe_notification_email?: string | null,
+  members?: {
+    active: number,
+    unsubscribed: number,
+    cleaned: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`lists.delete`
+
+Delete a mailing list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.laposta.api.lists.delete({ list_id: 'list-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="list full type">
+
+```ts
+{
+  list_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  state: active | deleted,
+  name: string,
+  locked?: boolean,
+  remarks?: string | null,
+  subscribe_notification_email?: string | null,
+  unsubscribe_notification_email?: string | null,
+  members?: {
+    active: number,
+    unsubscribed: number,
+    cleaned: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`lists.get`
+
+Retrieve a specific mailing list by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.lists.get({ list_id: 'list-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="list full type">
+
+```ts
+{
+  list_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  state: active | deleted,
+  name: string,
+  locked?: boolean,
+  remarks?: string | null,
+  subscribe_notification_email?: string | null,
+  unsubscribe_notification_email?: string | null,
+  members?: {
+    active: number,
+    unsubscribed: number,
+    cleaned: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`lists.list`
+
+Retrieve all mailing lists
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.lists.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  list: {
+    list_id: string,
+    timezone?: string | null,
+    created?: string | null,
+    created_iso?: string | null,
+    modified?: string | null,
+    modified_iso?: string | null,
+    state: active | deleted,
+    name: string,
+    locked?: boolean,
+    remarks?: string | null,
+    subscribe_notification_email?: string | null,
+    unsubscribe_notification_email?: string | null,
+    members?: {
+      active: number,
+      unsubscribed: number,
+      cleaned: number
+    }
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### purge_members
+
+`lists.purge_members`
+
+Permanently remove every active member from a mailing list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.laposta.api.lists.purge_members({ list_id: 'list-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="list full type">
+
+```ts
+{
+  list_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  state: active | deleted,
+  name: string,
+  locked?: boolean,
+  remarks?: string | null,
+  subscribe_notification_email?: string | null,
+  unsubscribe_notification_email?: string | null,
+  members?: {
+    active: number,
+    unsubscribed: number,
+    cleaned: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sync_members
+
+`lists.sync_members`
+
+Add, update, or bulk-unsubscribe members in a mailing list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.laposta.api.lists.sync_members({ list_id: 'list-1', actions: ['add'], members: [{ email: 'person@example.net' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `actions` | `(add \| update \| unsubscribe_excluded)[]` | No | — |
+| `mode` | `edit \| add \| add_and_edit` | No | — |
+| `members` | `object[]` | Yes | — |
+
+This bulk endpoint is available only to paid accounts and requires JSON. The `unsubscribe_excluded` action unsubscribes every current member omitted from the submitted list; double-check the complete member set before using it.
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  member_id?: string,
+  email?: string,
+  state?: active | unsubscribed,
+  source_url?: string,
+  custom_fields?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `report` | `object` | Yes | — |
+| `errors` | `object[]` | Yes | — |
+| `skipped` | `object[]` | Yes | — |
+| `edited` | `object[]` | Yes | — |
+| `added` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="report full type">
+
+```ts
+{
+  provided_count: number,
+  errors_count: number,
+  skipped_count: number,
+  edited_count: number,
+  added_count: number,
+  unsubscribed_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  provided_data: {
+    member_id?: string,
+    email?: string,
+    state?: active | unsubscribed,
+    source_url?: string,
+    custom_fields?: Record<string, any>
+  },
+  error: {
+    message: string,
+    code: number,
+    parameter?: string,
+    id?: string,
+    type?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="skipped full type">
+
+```ts
+{
+  provided_data: {
+    member_id?: string,
+    email?: string,
+    state?: active | unsubscribed,
+    source_url?: string,
+    custom_fields?: Record<string, any>
+  },
+  member?: {
+    member_id: string,
+    list_id: string,
+    email: string,
+    state: active | unsubscribed | unconfirmed | cleaned | deleted,
+    timezone?: string | null,
+    signup_date?: string | null,
+    signup_date_iso?: string | null,
+    modified?: string | null,
+    modified_iso?: string | null,
+    confirm_date?: string | null,
+    confirm_date_iso?: string | null,
+    ip?: string | null,
+    source_url?: string | null,
+    custom_fields?: Record<string, any>
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="edited full type">
+
+```ts
+{
+  provided_data: {
+    member_id?: string,
+    email?: string,
+    state?: active | unsubscribed,
+    source_url?: string,
+    custom_fields?: Record<string, any>
+  },
+  member?: {
+    member_id: string,
+    list_id: string,
+    email: string,
+    state: active | unsubscribed | unconfirmed | cleaned | deleted,
+    timezone?: string | null,
+    signup_date?: string | null,
+    signup_date_iso?: string | null,
+    modified?: string | null,
+    modified_iso?: string | null,
+    confirm_date?: string | null,
+    confirm_date_iso?: string | null,
+    ip?: string | null,
+    source_url?: string | null,
+    custom_fields?: Record<string, any>
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="added full type">
+
+```ts
+{
+  provided_data: {
+    member_id?: string,
+    email?: string,
+    state?: active | unsubscribed,
+    source_url?: string,
+    custom_fields?: Record<string, any>
+  },
+  member?: {
+    member_id: string,
+    list_id: string,
+    email: string,
+    state: active | unsubscribed | unconfirmed | cleaned | deleted,
+    timezone?: string | null,
+    signup_date?: string | null,
+    signup_date_iso?: string | null,
+    modified?: string | null,
+    modified_iso?: string | null,
+    confirm_date?: string | null,
+    confirm_date_iso?: string | null,
+    ip?: string | null,
+    source_url?: string | null,
+    custom_fields?: Record<string, any>
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`lists.update`
+
+Update an existing mailing list
+
+**Risk:** `write`
+
+```ts
+await corsair.laposta.api.lists.update({ list_id: 'list-1', name: 'Customers' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `locked` | `boolean` | No | — |
+| `remarks` | `string` | No | — |
+| `subscribe_notification_email` | `string` | No | — |
+| `unsubscribe_notification_email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="list full type">
+
+```ts
+{
+  list_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  state: active | deleted,
+  name: string,
+  locked?: boolean,
+  remarks?: string | null,
+  subscribe_notification_email?: string | null,
+  unsubscribe_notification_email?: string | null,
+  members?: {
+    active: number,
+    unsubscribed: number,
+    cleaned: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Members
+
+### create
+
+`members.create`
+
+Subscribe a member, which may send a confirmation email
+
+**Risk:** `destructive`
+
+```ts
+await corsair.laposta.api.members.create({ list_id: 'list-1', email: 'person@example.net', ip: '198.51.100.10' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `ip` | `string \| string` | Yes | — |
+| `source_url` | `string` | No | — |
+| `user_agent` | `string` | No | — |
+| `custom_fields` | `Record<string, any>` | No | — |
+| `options` | `object` | No | — |
+
+The `ip` is mandatory. On a double-opt-in list Laposta can send a confirmation email; `options.ignore_doubleoptin` disables that confirmation behavior.
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+  upsert?: boolean,
+  suppress_reactivation?: boolean,
+  suppress_email_notification?: boolean,
+  ignore_doubleoptin?: boolean,
+  spam_check?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+  member_id: string,
+  list_id: string,
+  email: string,
+  state: active | unsubscribed | unconfirmed | cleaned | deleted,
+  timezone?: string | null,
+  signup_date?: string | null,
+  signup_date_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  confirm_date?: string | null,
+  confirm_date_iso?: string | null,
+  ip?: string | null,
+  source_url?: string | null,
+  custom_fields?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`members.delete`
+
+Unsubscribe or delete a member from a list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.laposta.api.members.delete({ list_id: 'list-1', member_id: 'member-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `member_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+  member_id: string,
+  list_id: string,
+  email: string,
+  state: active | unsubscribed | unconfirmed | cleaned | deleted,
+  timezone?: string | null,
+  signup_date?: string | null,
+  signup_date_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  confirm_date?: string | null,
+  confirm_date_iso?: string | null,
+  ip?: string | null,
+  source_url?: string | null,
+  custom_fields?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`members.get`
+
+Retrieve a specific subscriber by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.members.get({ list_id: 'list-1', member_id: 'member-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `member_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+  member_id: string,
+  list_id: string,
+  email: string,
+  state: active | unsubscribed | unconfirmed | cleaned | deleted,
+  timezone?: string | null,
+  signup_date?: string | null,
+  signup_date_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  confirm_date?: string | null,
+  confirm_date_iso?: string | null,
+  ip?: string | null,
+  source_url?: string | null,
+  custom_fields?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### history
+
+`members.history`
+
+Retrieve a member event history with cursor pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.members.history({ list_id: 'list-1', member_id: 'member-1', limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `member_id` | `string` | Yes | — |
+| `campaign_id` | `string` | No | — |
+| `event_date_from` | `string \| string` | No | — |
+| `event_date_to` | `string \| string` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `order_by` | `event_date` | No | — |
+| `order` | `desc \| asc` | No | — |
+
+History uses cursor pagination with a default limit of 100 and maximum of 1000. Keep the same filters and order when sending the next cursor.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pagination` | `object` | Yes | — |
+| `order` | `object` | Yes | — |
+| `filters` | `Record<string, string \| null>` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit: number,
+  has_more: boolean,
+  next_cursor: string | null
+}
+```
+</Accordion>
+
+<Accordion title="order full type">
+
+```ts
+{
+  order_by: string,
+  order: desc | asc
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+  event: {
+    type: string,
+    timezone: string,
+    event_date: string,
+    event_date_iso: string,
+    campaign: {
+      campaign_id: string,
+      name: string,
+      from_automation?: boolean,
+      deleted?: boolean
+    } | null,
+    details: {
+      source?: string | null,
+      source_url?: string | null,
+      unsubscribe_source?: string | null,
+      url?: string | null,
+      link_type?: string | null,
+      reason?: string | null,
+      automation_name?: string | null,
+      feedback_reason?: string | null,
+      feedback_comments?: string | null,
+      bounce_type?: string | null,
+      bounce_code?: string | number,
+      softbounce_count?: number,
+      softbounce_max_count?: number
+    } | null
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`members.list`
+
+Retrieve subscribers for a mailing list
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.members.list({ list_id: 'list-1', state: 'active', limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `state` | `active \| unsubscribed \| cleaned` | No | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `order_by` | `string` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `search` | `string` | No | — |
+| `label` | `string` | No | — |
+
+Use `limit` (1–1000) and `cursor` to page. Pass `pagination.next_cursor` unchanged and retain the other filters. A plus sign in an email used as `member_id` is encoded as `%252B` in the path.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  member: {
+    member_id: string,
+    list_id: string,
+    email: string,
+    state: active | unsubscribed | unconfirmed | cleaned | deleted,
+    timezone?: string | null,
+    signup_date?: string | null,
+    signup_date_iso?: string | null,
+    modified?: string | null,
+    modified_iso?: string | null,
+    confirm_date?: string | null,
+    confirm_date_iso?: string | null,
+    ip?: string | null,
+    source_url?: string | null,
+    custom_fields?: Record<string, any>
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit: number,
+  has_more: boolean,
+  next_cursor: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`members.update`
+
+Update an existing subscriber
+
+**Risk:** `write`
+
+```ts
+await corsair.laposta.api.members.update({ list_id: 'list-1', member_id: 'member-1', state: 'unsubscribed' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `member_id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `state` | `active \| unsubscribed` | No | — |
+| `custom_fields` | `Record<string, any>` | No | — |
+
+Pass an empty array for a multiselect custom field to clear its current value. Laposta requires the field to be present in the form body with no assigned value.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `member` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="member full type">
+
+```ts
+{
+  member_id: string,
+  list_id: string,
+  email: string,
+  state: active | unsubscribed | unconfirmed | cleaned | deleted,
+  timezone?: string | null,
+  signup_date?: string | null,
+  signup_date_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  confirm_date?: string | null,
+  confirm_date_iso?: string | null,
+  ip?: string | null,
+  source_url?: string | null,
+  custom_fields?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reports
+
+### get
+
+`reports.get`
+
+Retrieve analytics and delivery report for a campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.reports.get({ campaign_id: 'campaign-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaign_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `report` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="report full type">
+
+```ts
+{
+  account_id: string,
+  campaign_id: string,
+  sent: number,
+  accepted: number,
+  cleaned: number,
+  complained: number,
+  hardbounced: number,
+  unsubscribed: number,
+  opened_unique: number,
+  clicked_unique: number,
+  webversion_unique: number,
+  accepted_ratio: number,
+  opened_ratio: number,
+  clicked_ratio: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`reports.list`
+
+Retrieve paginated delivery reports for campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.reports.list({ limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+Use `limit` (1–1000) and `cursor` to page through campaign reports.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `pagination` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  report: {
+    account_id: string,
+    campaign_id: string,
+    sent: number,
+    accepted: number,
+    cleaned: number,
+    complained: number,
+    hardbounced: number,
+    unsubscribed: number,
+    opened_unique: number,
+    clicked_unique: number,
+    webversion_unique: number,
+    accepted_ratio: number,
+    opened_ratio: number,
+    clicked_ratio: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  limit: number,
+  has_more: boolean,
+  next_cursor: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Segments
+
+### create
+
+`segments.create`
+
+Create a segment for a mailing list
+
+**Risk:** `write`
+
+```ts
+await corsair.laposta.api.segments.create({ list_id: 'list-1', name: 'Members at example.com', definition: '{"blocks":[{"rules":[{"input":{"subject":"domain","comparator":"equal","multi":"","text":"example.com"},"type":"members"}]}]}' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `definition` | `string` | Yes | Segment definition as a JSON string of blocks and rules, e.g. &#123;"blocks":[&#123;"rules":[...]&#125;]&#125;; read one from segments.get |
+
+The definition is a JSON string of selection blocks and rules, for example `{"blocks":[{"rules":[{"input":{"subject":"domain","comparator":"equal","multi":"","text":"example.com"},"type":"members"}]}]}`. Laposta rejects anything else with "definition is no valid JSON". The easiest way to get one is to build the segment in Laposta and read it with `segments.get`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="segment full type">
+
+```ts
+{
+  segment_id: string,
+  list_id: string,
+  name: string,
+  definition: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  state?: active | deleted
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`segments.delete`
+
+Permanently delete a mailing-list segment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.laposta.api.segments.delete({ list_id: 'list-1', segment_id: 'segment-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `segment_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="segment full type">
+
+```ts
+{
+  segment_id: string,
+  list_id: string,
+  name: string,
+  definition: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  state?: active | deleted
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`segments.get`
+
+Retrieve one mailing-list segment and its definition
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.segments.get({ list_id: 'list-1', segment_id: 'segment-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `segment_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="segment full type">
+
+```ts
+{
+  segment_id: string,
+  list_id: string,
+  name: string,
+  definition: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  state?: active | deleted
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`segments.list`
+
+Retrieve all segments belonging to a mailing list
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.segments.list({ list_id: 'list-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  segment: {
+    segment_id: string,
+    list_id: string,
+    name: string,
+    definition: string,
+    timezone?: string | null,
+    created?: string | null,
+    created_iso?: string | null,
+    modified?: string | null,
+    modified_iso?: string | null,
+    state?: active | deleted
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`segments.update`
+
+Change a segment name or definition
+
+**Risk:** `write`
+
+```ts
+await corsair.laposta.api.segments.update({ list_id: 'list-1', segment_id: 'segment-1', name: 'Local members' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `segment_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `definition` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segment` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="segment full type">
+
+```ts
+{
+  segment_id: string,
+  list_id: string,
+  name: string,
+  definition: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  state?: active | deleted
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook subscription for a mailing list
+
+**Risk:** `write`
+
+```ts
+await corsair.laposta.api.webhooks.create({ list_id: 'list-1', event: 'modified', url: 'https://example.net/hook', blocked: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `event` | `subscribed \| modified \| deactivated` | Yes | — |
+| `url` | `string` | Yes | — |
+| `blocked` | `boolean` | Yes | — |
+
+Creates a Laposta subscription that POSTs member events to the configured URL. This operation manages the subscription; it does not install an incoming request handler.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  webhook_id: string,
+  list_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  state: active | deleted,
+  event: subscribed | modified | deactivated,
+  url: string,
+  blocked: boolean,
+  secret: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Permanently delete a webhook subscription
+
+**Risk:** `destructive`
+
+```ts
+await corsair.laposta.api.webhooks.delete({ list_id: 'list-1', webhook_id: 'webhook-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `webhook_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  webhook_id: string,
+  list_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  state: active | deleted,
+  event: subscribed | modified | deactivated,
+  url: string,
+  blocked: boolean,
+  secret: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Retrieve a webhook subscription and its signing secret
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.webhooks.get({ list_id: 'list-1', webhook_id: 'webhook-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `webhook_id` | `string` | Yes | — |
+
+Laposta returns the webhook signing secret in the webhook object. Keep it private; the plugin does not include it in logs.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  webhook_id: string,
+  list_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  state: active | deleted,
+  event: subscribed | modified | deactivated,
+  url: string,
+  blocked: boolean,
+  secret: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhook subscriptions configured for a mailing list
+
+**Risk:** `read`
+
+```ts
+await corsair.laposta.api.webhooks.list({ list_id: 'list-1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  webhook: {
+    webhook_id: string,
+    list_id: string,
+    timezone?: string | null,
+    created?: string | null,
+    created_iso?: string | null,
+    modified?: string | null,
+    modified_iso?: string | null,
+    state: active | deleted,
+    event: subscribed | modified | deactivated,
+    url: string,
+    blocked: boolean,
+    secret: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Change a webhook subscription configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.laposta.api.webhooks.update({ list_id: 'list-1', webhook_id: 'webhook-1', blocked: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `list_id` | `string` | Yes | — |
+| `webhook_id` | `string` | Yes | — |
+| `event` | `subscribed \| modified \| deactivated` | No | — |
+| `url` | `string` | No | — |
+| `blocked` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhook full type">
+
+```ts
+{
+  webhook_id: string,
+  list_id: string,
+  timezone?: string | null,
+  created?: string | null,
+  created_iso?: string | null,
+  modified?: string | null,
+  modified_iso?: string | null,
+  state: active | deleted,
+  event: subscribed | modified | deactivated,
+  url: string,
+  blocked: boolean,
+  secret: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
