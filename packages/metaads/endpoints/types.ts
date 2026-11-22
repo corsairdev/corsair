@@ -2780,10 +2780,10 @@ export type MetaAdsEndpointOutputs = {
 	asyncRequestSetsCreate: z.infer<typeof AsyncRequestSetCreateSchema>;
 	asyncRequestSetsGet: z.infer<typeof AsyncRequestSetSchema>;
 	asyncRequestSetsUpdate: z.infer<typeof AsyncRequestSetUpdateSchema>;
-	asyncRequestSetsCancel: boolean;
+	asyncRequestSetsCancel: z.infer<typeof GraphBooleanResultSchema>;
 	asyncRequestsListForSet: z.infer<typeof AsyncRequestsListSchema>;
 	asyncRequestsListForAdSet: z.infer<typeof AsyncRequestsListSchema>;
-	asyncRequestsCancel: boolean;
+	asyncRequestsCancel: z.infer<typeof GraphBooleanResultSchema>;
 	insightsList: z.infer<typeof InsightsListSchema>;
 	insightsListForCampaign: z.infer<typeof InsightsListSchema>;
 	insightsListForAdSet: z.infer<typeof InsightsListSchema>;

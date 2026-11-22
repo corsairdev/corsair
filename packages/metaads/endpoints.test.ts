@@ -1227,6 +1227,7 @@ const cases: Case[] = [
 		name: 'ads.create',
 		path: '/act_123/ads',
 		method: 'POST',
+		redactBodyOnError: true,
 		body: {
 			name: 'Test ad',
 			adset_id: 'adset-1',
@@ -1250,6 +1251,7 @@ const cases: Case[] = [
 		name: 'ads.create',
 		path: '/act_123/ads',
 		method: 'POST',
+		redactBodyOnError: true,
 		body: {
 			name: 'Inline ad',
 			adset_id: 'adset-1',
@@ -1364,6 +1366,7 @@ const cases: Case[] = [
 		name: 'creatives.create',
 		path: '/act_123/adcreatives',
 		method: 'POST',
+		redactBodyOnError: true,
 		body: { name: 'Test creative', object_story_id: 'page_post' },
 		call: async () => {
 			await Creatives.create(ctx, {
@@ -1377,6 +1380,7 @@ const cases: Case[] = [
 		name: 'creatives.create',
 		path: '/act_123/adcreatives',
 		method: 'POST',
+		redactBodyOnError: true,
 		body: {
 			name: 'Link creative',
 			authorization_category: 'POLITICAL',

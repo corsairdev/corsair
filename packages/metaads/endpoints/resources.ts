@@ -1357,8 +1357,10 @@ export const adsCreate = operation({
 	path: (input) => `${accountPath(input.accountId)}/ads`,
 	input: MetaAdsEndpointInputSchemas.adsCreate,
 	output: MetaAdsMutationSchema,
-	request: (input) =>
-		keyedForm(
+	request: (input) => ({
+		// Creative specs carry links and ad text; keep them out of propagated errors.
+		redactBodyOnError: true,
+		...keyedForm(
 			{
 				name: input.name,
 				adset_id: input.adSetId,
@@ -1378,6 +1380,7 @@ export const adsCreate = operation({
 			},
 			input.idempotencyKey,
 		),
+	}),
 });
 export const adsUpdate = operation({
 	name: 'ads.update',
@@ -1418,8 +1421,10 @@ export const creativesCreate = operation({
 	path: (input) => `${accountPath(input.accountId)}/adcreatives`,
 	input: MetaAdsEndpointInputSchemas.creativesCreate,
 	output: MetaAdsMutationSchema,
-	request: (input) =>
-		keyedForm(
+	request: (input) => ({
+		// Creative specs carry links and ad text; keep them out of propagated errors.
+		redactBodyOnError: true,
+		...keyedForm(
 			input.objectStoryId !== undefined
 				? {
 						name: input.name,
@@ -1433,6 +1438,7 @@ export const creativesCreate = operation({
 					},
 			input.idempotencyKey,
 		),
+	}),
 });
 export const creativesUpdate = operation({
 	name: 'creatives.update',
