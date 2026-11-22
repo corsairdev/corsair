@@ -15,6 +15,12 @@
 // hour for 2 vCPUs), so a run costs a cent or two. AMIKA_LIVE_RIG_SIZE picks
 // the size (default: the provider's own default).
 //
+// With AMIKA_LIVE_RIGS=1 and AMIKA_LIVE_CLAUDE_CREDENTIAL=<name of a Claude
+// credential stored in Amika>, they also create a second rig with that
+// credential and talk to Claude Code in it through agentSessions.send: one
+// message, then a follow-up in the same session (Haiku, low effort, a few
+// cents of the credential's Anthropic usage).
+//
 // Calls go through createCorsair, so the plugin's error handlers and core's
 // retries apply as in production. Failing assertions never print a secret or
 // key value: those are checked as booleans.
@@ -40,6 +46,15 @@ if (hasKey && !rigsOn) {
 }
 const liveRigs = hasKey && rigsOn ? describe : describe.skip;
 const hostId = process.env.AMIKA_LIVE_HOST_ID?.trim() || undefined;
+const claudeCredential =
+	process.env.AMIKA_LIVE_CLAUDE_CREDENTIAL?.trim() || undefined;
+if (hasKey && rigsOn && !claudeCredential) {
+	console.warn(
+		'[amika] agent session tests skipped: set AMIKA_LIVE_CLAUDE_CREDENTIAL to the name of a Claude credential stored in Amika.',
+	);
+}
+const liveAgent =
+	hasKey && rigsOn && claudeCredential ? describe : describe.skip;
 const rigSize = process.env.AMIKA_LIVE_RIG_SIZE?.trim() || undefined;
 
 // Random, so two runs started at once never share a fixture name.
@@ -528,5 +543,100 @@ liveRigs('Amika live API: one rig, end to end', () => {
 			if (Date.now() - start > 3 * 60_000) throw new Error('rig not deleted');
 			await sleep(3_000);
 		}
+	});
+});
+
+liveAgent('Amika live API: Claude Code in a rig', () => {
+	jest.setTimeout(20 * 60_000);
+	const RIG = `${NAME}-agent`;
+	let rigId = '';
+
+	afterAll(async () => {
+		if (rigId) await api.rigs.delete({ id: rigId, by: 'id' }).catch(() => {});
+	});
+
+	it('checks that the stored Claude credential can authenticate', async () => {
+		const credentials = await api.agentCredentials.claude.list({});
+		const credential = credentials.find((c) => c?.name === claudeCredential);
+		expect(credential?.id).toBeTruthy();
+		const check = await api.agentCredentials.claude.check({
+			id: String(credential?.id),
+		});
+		expect(check.status).toBe('ok');
+	});
+
+	it('sends Claude Code a message in a new rig, then a follow-up in the same session', async () => {
+		const rig = await api.rigs.create({
+			name: RIG,
+			preset: 'coder',
+			amika_api_key: { mode: 'none' },
+			auto_stop_interval: 10,
+			agent_credentials: [
+				{ kind: 'claude', name: claudeCredential, type: 'api_key' },
+			],
+		});
+		rigId = String(rig.id ?? '');
+		let current = await api.rigs.get({ id: rigId, by: 'id' });
+		const start = Date.now();
+		while (current.status !== 'running' || current.setup_status === 'pending') {
+			if (Date.now() - start > 10 * 60_000)
+				throw new Error(`rig still ${current.status}`);
+			await sleep(5_000);
+			current = await api.rigs.get({ id: rigId, by: 'id' });
+		}
+
+		const word = `pong-${RUN}`;
+		const first = await api.agentSessions.send({
+			sandbox_id: rigId,
+			agent: 'claude',
+			model: 'haiku',
+			effort: 'low',
+			new_session: true,
+			message: `Reply with exactly this word and nothing else: ${word}`,
+		});
+		expect(first.is_error).toBe(false);
+		expect(first.sandbox_id).toBe(rigId);
+		expect(first.created_sandbox).toBe(false);
+		expect(String(first.response ?? '').includes(word)).toBe(true);
+		expect(typeof first.usage?.output_tokens).toBe('number');
+
+		const second = await api.agentSessions.send({
+			sandbox_id: rigId,
+			session_id: String(first.session_id ?? ''),
+			agent: 'claude',
+			model: 'haiku',
+			effort: 'low',
+			message:
+				'What exact word did you reply with in your previous message? Answer with that word only.',
+		});
+		expect(second.is_error).toBe(false);
+		expect(second.session_id).toBe(first.session_id);
+		expect(second.is_new_session).toBe(false);
+		// The second turn remembers the first: the session carries its context.
+		expect(String(second.response ?? '').includes(word)).toBe(true);
+
+		const session = await api.agentSessions.get({
+			id: String(first.session_id ?? ''),
+		});
+		expect((session.messages?.length ?? 0) >= 2).toBe(true);
+		expect(JSON.stringify(session.messages).includes(word)).toBe(true);
+		const listed = await api.agentSessions.list({ limit: 10 });
+		expect(
+			(listed.sessions ?? []).some((s) => s?.session_id === first.session_id),
+		).toBe(true);
+		const onRig = await api.rigs.sessions.list({ id: rigId, sandbox_by: 'id' });
+		expect(
+			JSON.stringify(onRig.sessions).includes(String(first.session_id)),
+		).toBe(true);
+		const latest = await api.rigs.sessions.getLatest({
+			id: rigId,
+			sandbox_by: 'id',
+		});
+		expect(JSON.stringify(latest).length > 2).toBe(true);
+	});
+
+	it('deletes the rig', async () => {
+		await api.rigs.delete({ id: rigId, by: 'id' });
+		rigId = '';
 	});
 });
