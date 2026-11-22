@@ -66,11 +66,11 @@ export function spondyrApiError(params: {
 				APIStatus: described.apiStatus,
 				ErrorMessage:
 					typeof record?.ErrorMessage === 'string'
-						? record.ErrorMessage
+						? redactEchoedData(record.ErrorMessage)
 						: undefined,
 			},
 		},
-		params.message ?? described.message,
+		redactEchoedData(params.message ?? described.message),
 		{
 			retryAfter: params.retryAfter,
 			rateLimitReset: params.rateLimit?.rateLimitReset,

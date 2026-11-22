@@ -5,6 +5,7 @@ import {
 	makeSpondyrRequest,
 	SPONDYR_API_BASE,
 } from './client';
+import { assertApiStatus } from './endpoints/call';
 import { badCredentials, noCredentials } from './test-fixtures';
 import { captureError } from './test-helpers';
 
@@ -185,6 +186,37 @@ describe('makeSpondyrRequest', () => {
 			describeSpondyrError(400, { ErrorMessage: "Name 'Order' exists" }, 'x')
 				.message,
 		).toBe("Spondyr 400: Name 'Order' exists");
+	});
+
+	it('redacts quoted document data in the error body and in a refused 200', async () => {
+		const echoed =
+			'Conversion failed when converting the nvarchar value \'{"Customer":{"Email":"jane@example.com"}}\' to data type int.';
+		respond({ APIStatus: 'ERROR', ErrorMessage: echoed }, 404);
+		const httpError = await captureError(
+			makeSpondyrRequest(CREDENTIALS, { method: 'GET', path: 'Spondyr' }),
+		);
+		expect(JSON.stringify((httpError as ApiError).body)).not.toContain(
+			'jane@example.com',
+		);
+		expect((httpError as ApiError).message).not.toContain('jane@example.com');
+
+		let refused: unknown; // unknown: whatever assertApiStatus throws.
+		try {
+			assertApiStatus(
+				{ APIStatus: 'ERROR', ErrorMessage: echoed },
+				'correspondence.status',
+				{
+					method: 'GET',
+					path: 'Spondyr',
+				},
+			);
+		} catch (error) {
+			refused = error;
+		}
+		expect((refused as ApiError).message).not.toContain('jane@example.com');
+		expect(JSON.stringify((refused as ApiError).body)).not.toContain(
+			'jane@example.com',
+		);
 	});
 
 	it('keeps document data out of a failed request', async () => {

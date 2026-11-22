@@ -546,13 +546,26 @@ export function spondyr<const T extends SpondyrPluginOptions>(
 		pluginWebhookMatcher: () => false,
 		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: SpondyrKeyBuilderContext, source) => {
+			// Spondyr needs the Application Token on every call. Checking it here (as Algolia does
+			// for its applicationId) turns a missing one into a connect link instead of an endpoint error.
+			const ensureApplicationToken = async () => {
+				if (options.applicationToken) return;
+				if (!(await ctx.keys?.get_application_token?.())) {
+					throw new AuthMissingError('spondyr', 'api_key');
+				}
+			};
+
 			if (source === 'endpoint' && options.key) {
+				await ensureApplicationToken();
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				if (res) return res;
+				if (res) {
+					await ensureApplicationToken();
+					return res;
+				}
 			}
 
 			throw new AuthMissingError('spondyr', ctx.authType ?? 'api_key');

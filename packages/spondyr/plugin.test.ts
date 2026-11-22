@@ -182,9 +182,18 @@ describe('spondyr key builder', () => {
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
-	it('resolves the key even when the token is missing, so the endpoint can report it', async () => {
-		// The token check belongs in the endpoint, where the message can name it.
+	it('throws AuthMissingError when the Application Token is missing, so core offers a connect link', async () => {
 		const plugin = spondyr();
+		await expect(
+			buildKey(plugin, keyContext('stored-key', null)),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		await expect(
+			buildKey(spondyr({ key: 'inline-key' }), keyContext(null, null)),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('accepts the Application Token from the plugin options', async () => {
+		const plugin = spondyr({ applicationToken: 'option-token' });
 		await expect(
 			buildKey(plugin, keyContext('stored-key', null)),
 		).resolves.toBe('stored-key');

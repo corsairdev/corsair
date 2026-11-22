@@ -78,10 +78,8 @@ export const get: SpondyrEndpoints['recipientsGet'] = async (ctx, input) =>
 			},
 		}),
 		{
-			log: (parsed) => ({
-				transaction_type: parsed.transaction_type,
-				recipient: parsed.recipient,
-			}),
+			// A Recipient's name can be a person's name, so only the Transaction Type is logged.
+			log: (parsed) => ({ transaction_type: parsed.transaction_type }),
 		},
 	);
 
