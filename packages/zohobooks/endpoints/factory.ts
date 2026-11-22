@@ -63,16 +63,21 @@ export function createZohoBooksRuntimeOperationEndpoint(
 	};
 }
 
+// One lookup table instead of a linear search per endpoint: 884 endpoints are created at import.
+const contractsById: ReadonlyMap<
+	string,
+	(typeof zohoBooksOperationContracts)[number]
+> = new Map(
+	zohoBooksOperationContracts.map((operation) => [operation.id, operation]),
+);
+
 function getOperation<Id extends ZohoBooksOperationId>(
 	operationId: Id,
 ): ZohoBooksOperationFor<Id> {
-	const operation = zohoBooksOperationContracts.find(
-		(candidate): candidate is ZohoBooksOperationFor<Id> =>
-			candidate.id === operationId,
-	);
-	if (!operation)
+	const operation = contractsById.get(operationId);
+	if (!operation || operation.id !== operationId)
 		throw new Error(`Unknown Zoho Books operation: ${operationId}`);
-	return operation;
+	return operation as ZohoBooksOperationFor<Id>;
 }
 
 export function createZohoBooksOperationEndpoint<

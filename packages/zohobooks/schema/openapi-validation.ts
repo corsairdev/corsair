@@ -412,60 +412,264 @@ function validateOperationOutput(
 			(response) => response.contentType === 'application/x-empty',
 		);
 	}
-	return jsonResponses.some(
-		(response) =>
-			!response.schema ||
-			validateSchema(operation, response.schema, value, false),
-	);
+	// Any JSON body is accepted: Zoho's published response schemas disagree with
+	// the live API (11-22: list `page_context` is documented as an array but is an
+	// object, `creditnotes` as an object but is an array, chart-of-accounts `depth`
+	// as a string but is a number), so checking them failed every invoice,
+	// estimate, expense and project list.
+	return true;
 }
 
-// `unknown` is narrowed by the type guard after checking this operation's contract.
-const inputValueSchema = z.custom<JsonValue>(isJsonValue, {
+// Input schemas name each path, query and header parameter and the request
+// body's fields, so `inspect` and the docs show agents what to send. The
+// operation's full OpenAPI check still runs as a refinement.
+const MAX_DISPLAY_DEPTH = 3;
+const MAX_DESCRIPTION_LENGTH = 300;
+
+// `unknown` is narrowed by `isJsonValue`; any JSON value is a valid untyped field.
+const jsonValueSchema = z.custom<JsonValue>(isJsonValue, {
 	message: 'Value must be JSON-compatible.',
 });
-const inputRecordSchema = z.record(z.string(), inputValueSchema);
-const operationInputShape = z
+
+const binaryFileSchema = z
 	.object({
-		pathParams: inputRecordSchema.optional(),
-		query: inputRecordSchema.optional(),
-		headers: inputRecordSchema.optional(),
-		body: inputValueSchema.optional(),
+		filename: z.string().min(1),
+		contentType: z.string().min(1),
+		base64: z.string().min(1),
 	})
 	.strict();
 
-export const ZohoBooksEndpointInputSchemas: Record<
-	string,
-	z.ZodType<ZohoBooksOperationInput>
-> = Object.fromEntries(
-	zohoBooksOperations.map((operation) => [
-		operation.id,
-		operationInputShape.superRefine((input, context) => {
-			if (!validateOperationInput(operation, input)) {
+function cleanDescription(text: JsonValue | undefined): string | undefined {
+	if (typeof text !== 'string') return undefined;
+	const plain = text
+		.replace(/<[^>]+>/g, ' ')
+		.replace(/&nbsp;/g, ' ')
+		.replace(/\s+/g, ' ')
+		.trim();
+	if (!plain) return undefined;
+	return plain.length > MAX_DESCRIPTION_LENGTH
+		? `${plain.slice(0, MAX_DESCRIPTION_LENGTH - 1)}…`
+		: plain;
+}
+
+function describe<T extends z.ZodType>(
+	schema: T,
+	description: string | undefined,
+): T {
+	return description ? schema.describe(description) : schema;
+}
+
+function displaySchema(
+	operation: ZohoBooksOperationDefinition,
+	schemaInput: JsonValue | undefined,
+	depth: number,
+): z.ZodType {
+	if (schemaInput === undefined || depth > MAX_DISPLAY_DEPTH)
+		return jsonValueSchema;
+	const schema = resolveSchema(operation, schemaInput);
+	const record = getObject(schema);
+	if (!record) return jsonValueSchema;
+	const description = cleanDescription(record.description);
+	let result: z.ZodType;
+	const enumValues = getArray(record.enum);
+	if (record.format === 'binary') {
+		result = z.union([binaryFileSchema, z.string()]);
+	} else if (
+		enumValues &&
+		enumValues.length > 0 &&
+		enumValues.every((value) => typeof value === 'string')
+	) {
+		const [first, ...rest] = enumValues.filter(
+			(value): value is string => typeof value === 'string',
+		);
+		result = z.enum([first ?? '', ...rest]);
+	} else if (record.type === 'string') {
+		result = z.string();
+	} else if (record.type === 'integer') {
+		result = z.number().int();
+	} else if (record.type === 'number') {
+		result = z.number();
+	} else if (record.type === 'boolean') {
+		result = z.boolean();
+	} else if (record.type === 'array') {
+		const items = record.items;
+		result = z.array(
+			isJsonValue(items)
+				? displaySchema(operation, items, depth + 1)
+				: jsonValueSchema,
+		);
+	} else if (getObject(record.properties)) {
+		result = objectDisplaySchema(operation, record, depth);
+	} else if (record.type === 'object') {
+		result = z.record(z.string(), jsonValueSchema);
+	} else {
+		result = jsonValueSchema;
+	}
+	if (record.nullable === true) result = result.nullable();
+	return describe(result, description);
+}
+
+function objectDisplaySchema(
+	operation: ZohoBooksOperationDefinition,
+	record: JsonObject,
+	depth: number,
+): z.ZodType {
+	const properties = getObject(record.properties) ?? {};
+	const required = new Set(
+		(getArray(record.required) ?? []).filter(
+			(entry): entry is string => typeof entry === 'string',
+		),
+	);
+	const shape: Record<string, z.ZodType> = {};
+	for (const [key, propertySchema] of Object.entries(properties)) {
+		const field = displaySchema(operation, propertySchema, depth + 1);
+		shape[key] = required.has(key) ? field : field.optional();
+	}
+	// Loose: the OpenAPI refinement decides which extra keys (such as cf_ fields) are allowed.
+	return z.object(shape).loose();
+}
+
+function parameterGroupSchema(
+	operation: ZohoBooksOperationDefinition,
+	location: ZohoBooksOperationDefinition['parameters'][number]['in'],
+): { schema: z.ZodType; required: boolean } {
+	const parameters = operation.parameters.filter(
+		(parameter) => parameter.in === location,
+	);
+	const shape: Record<string, z.ZodType> = {};
+	for (const parameter of parameters) {
+		const field = describe(
+			displaySchema(operation, parameter.schema, 1),
+			cleanDescription(parameter.description),
+		);
+		shape[parameter.name] = parameter.required ? field : field.optional();
+	}
+	return {
+		schema: z.object(shape).strict(),
+		required: parameters.some((parameter) => parameter.required),
+	};
+}
+
+function createInputSchema(
+	operation: ZohoBooksOperationDefinition,
+): z.ZodType<ZohoBooksOperationInput> {
+	const shape: Record<string, z.ZodType> = {};
+	for (const [key, location] of [
+		['pathParams', 'path'],
+		['query', 'query'],
+		['headers', 'header'],
+	] as const) {
+		const group = parameterGroupSchema(operation, location);
+		shape[key] = group.required ? group.schema : group.schema.optional();
+	}
+	if (operation.request) {
+		const body = operation.request.schema
+			? displaySchema(operation, operation.request.schema, 0)
+			: jsonValueSchema;
+		shape.body = operation.request.required ? body : body.optional();
+	}
+	return z
+		.object(shape)
+		.strict()
+		.superRefine((input, context) => {
+			if (
+				!isJsonValue(input) ||
+				!isJsonObject(input) ||
+				!validateOperationInput(operation, input)
+			) {
 				context.addIssue({
 					code: 'custom',
 					message: `Input does not match the documented ${operation.method} ${operation.path} contract.`,
 				});
 			}
-		}),
-	]),
-);
+		}) as z.ZodType<ZohoBooksOperationInput>;
+}
 
-export const ZohoBooksEndpointOutputSchemas: Record<
+function createOutputSchema(
+	operation: ZohoBooksOperationDefinition,
+): z.ZodType<ZohoBooksOperationOutput> {
+	return z.custom<ZohoBooksOperationOutput>(
+		// `unknown` because Zod checks provider response data before returning it.
+		(value): value is ZohoBooksOperationOutput =>
+			isJsonValue(value) && validateOperationOutput(operation, value),
+		{
+			message: `Response does not match the documented ${operation.method} ${operation.path} contract.`,
+		},
+	);
+}
+
+// Built on first use, one operation at a time: building all 884 at import
+// held ~9 MB of heap for an instance that may call two operations.
+const operationsById = new Map(
+	zohoBooksOperations.map((operation) => [operation.id, operation]),
+);
+const inputSchemaCache = new Map<string, z.ZodType<ZohoBooksOperationInput>>();
+const outputSchemaCache = new Map<
 	string,
 	z.ZodType<ZohoBooksOperationOutput>
-> = Object.fromEntries(
-	zohoBooksOperations.map((operation) => [
-		operation.id,
-		z.custom<ZohoBooksOperationOutput>(
-			// `unknown` because Zod checks provider response data before returning it.
-			(value): value is ZohoBooksOperationOutput =>
-				isJsonValue(value) && validateOperationOutput(operation, value),
-			{
-				message: `Response does not match the documented ${operation.method} ${operation.path} contract.`,
-			},
-		),
-	]),
-);
+>();
+
+function operationFor(id: string): ZohoBooksOperationDefinition {
+	const operation = operationsById.get(id);
+	if (!operation) throw new Error(`Unknown Zoho Books operation: ${id}`);
+	return operation;
+}
+
+export function getZohoBooksInputSchema(
+	id: string,
+): z.ZodType<ZohoBooksOperationInput> {
+	let schema = inputSchemaCache.get(id);
+	if (!schema) {
+		schema = createInputSchema(operationFor(id));
+		inputSchemaCache.set(id, schema);
+	}
+	return schema;
+}
+
+export function getZohoBooksOutputSchema(
+	id: string,
+): z.ZodType<ZohoBooksOperationOutput> {
+	let schema = outputSchemaCache.get(id);
+	if (!schema) {
+		schema = createOutputSchema(operationFor(id));
+		outputSchemaCache.set(id, schema);
+	}
+	return schema;
+}
+
+/** `input` and `output` are getters, so a schema is built only when something reads it. */
+export function zohoBooksSchemaEntry(id: string): {
+	readonly input: z.ZodType<ZohoBooksOperationInput>;
+	readonly output: z.ZodType<ZohoBooksOperationOutput>;
+} {
+	return {
+		get input() {
+			return getZohoBooksInputSchema(id);
+		},
+		get output() {
+			return getZohoBooksOutputSchema(id);
+		},
+	};
+}
+
+function lazyRecord<T>(build: (id: string) => T): Readonly<Record<string, T>> {
+	const record: Record<string, T> = {};
+	for (const { id } of zohoBooksOperations) {
+		Object.defineProperty(record, id, {
+			enumerable: true,
+			get: () => build(id),
+		});
+	}
+	return record;
+}
+
+/** Every operation's schemas by id. Reading a key builds that schema (then cached). */
+export const ZohoBooksEndpointInputSchemas: Readonly<
+	Record<string, z.ZodType<ZohoBooksOperationInput>>
+> = lazyRecord(getZohoBooksInputSchema);
+export const ZohoBooksEndpointOutputSchemas: Readonly<
+	Record<string, z.ZodType<ZohoBooksOperationOutput>>
+> = lazyRecord(getZohoBooksOutputSchema);
 
 export function parseZohoBooksInput(
 	operation: ZohoBooksOperationDefinition,
