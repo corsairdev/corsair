@@ -13517,13 +13517,18 @@ export const PipedriveCatalog = {
 									.object({
 										count: z.number().int().optional(),
 										deals_ids: z.array(z.number().int()).optional(),
+										// Currency map; Pipedrive sends [] when no deals match (live run 11-23).
 										values: z
-											.object({ CURRENCY_ID: z.number().int().optional() })
-											.passthrough()
+											.union([
+												z.record(z.string(), z.number()),
+												z.array(z.never()),
+											])
 											.optional(),
 										formatted_values: z
-											.object({ CURRENCY_ID: z.string().optional() })
-											.passthrough()
+											.union([
+												z.record(z.string(), z.string()),
+												z.array(z.never()),
+											])
 											.optional(),
 									})
 									.passthrough()
@@ -13532,13 +13537,18 @@ export const PipedriveCatalog = {
 									.object({
 										count: z.number().int().optional(),
 										deals_ids: z.array(z.number().int()).optional(),
+										// Currency map; Pipedrive sends [] when no deals match (live run 11-23).
 										values: z
-											.object({ CURRENCY_ID: z.number().int().optional() })
-											.passthrough()
+											.union([
+												z.record(z.string(), z.number()),
+												z.array(z.never()),
+											])
 											.optional(),
 										formatted_values: z
-											.object({ CURRENCY_ID: z.string().optional() })
-											.passthrough()
+											.union([
+												z.record(z.string(), z.string()),
+												z.array(z.never()),
+											])
 											.optional(),
 									})
 									.passthrough()
@@ -13547,13 +13557,18 @@ export const PipedriveCatalog = {
 									.object({
 										count: z.number().int().optional(),
 										deals_ids: z.array(z.number().int()).optional(),
+										// Currency map; Pipedrive sends [] when no deals match (live run 11-23).
 										values: z
-											.object({ CURRENCY_ID: z.number().int().optional() })
-											.passthrough()
+											.union([
+												z.record(z.string(), z.number()),
+												z.array(z.never()),
+											])
 											.optional(),
 										formatted_values: z
-											.object({ CURRENCY_ID: z.string().optional() })
-											.passthrough()
+											.union([
+												z.record(z.string(), z.string()),
+												z.array(z.never()),
+											])
 											.optional(),
 									})
 									.passthrough()
@@ -13562,13 +13577,18 @@ export const PipedriveCatalog = {
 									.object({
 										count: z.number().int().optional(),
 										deals_ids: z.array(z.number().int()).optional(),
+										// Currency map; Pipedrive sends [] when no deals match (live run 11-23).
 										values: z
-											.object({ CURRENCY_ID: z.number().int().optional() })
-											.passthrough()
+											.union([
+												z.record(z.string(), z.number()),
+												z.array(z.never()),
+											])
 											.optional(),
 										formatted_values: z
-											.object({ CURRENCY_ID: z.string().optional() })
-											.passthrough()
+											.union([
+												z.record(z.string(), z.string()),
+												z.array(z.never()),
+											])
 											.optional(),
 									})
 									.passthrough()
