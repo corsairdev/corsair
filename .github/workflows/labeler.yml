@@ -20,6 +20,6 @@ jobs:
           persist-credentials: false
           ref: ${{ github.event.pull_request.base.sha }}
       - run: node scripts/generate-labeler-config.mjs
-      - uses: actions/labeler@v5
+      - uses: actions/labeler@v7
         with:
           configuration-path: .github/labeler.generated.yml
