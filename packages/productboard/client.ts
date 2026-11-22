@@ -7,16 +7,6 @@ import type {
 import { ApiError, request } from 'corsair/http';
 import type { ProductboardJsonObject } from './endpoints/types';
 
-export class ProductboardAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'ProductboardAPIError';
-	}
-}
-
 export const PRODUCTBOARD_API_BASE = 'https://api.productboard.com/v2';
 
 const PRODUCTBOARD_RATE_LIMIT_CONFIG: RateLimitConfig = {
@@ -73,27 +63,79 @@ export async function makeProductboardRequest<T>(
 			rateLimitConfig: PRODUCTBOARD_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
-		// Rejection values have no declared type; instanceof narrows core API errors safely.
-		// Keep the original ApiError (and its status/retry metadata) for R8 while
-		// redacting provider and request data that can contain workspace content.
-		if (error instanceof ApiError) {
-			const safeStack = error.stack?.replace(
-				error.message,
-				'Productboard request failed',
-			);
-			Object.assign(error, {
-				message: 'Productboard request failed',
-				statusText: 'Productboard request failed',
-				body: {},
-				url: PRODUCTBOARD_API_BASE,
-				request: { method: requestOptions.method, url: '/[redacted]' },
-				...(safeStack ? { stack: safeStack } : {}),
-			});
-			throw error;
-		}
-		if (error instanceof Error) {
-			throw new ProductboardAPIError('Productboard request failed');
-		}
-		throw new ProductboardAPIError('Productboard request failed');
+		// Rejection values have no declared type; only core's ApiError is rebuilt.
+		if (!(error instanceof ApiError)) throw error;
+		const errors = safeProductboardErrors(error.body);
+		const summary = errors
+			.map((item) => item.title ?? item.code)
+			.filter((text): text is string => typeof text === 'string')
+			.join('; ');
+		// Rebuild without the request body, query and URL query (they carry workspace content)
+		// and without each error's `detail`, which can echo submitted values. Status, retry
+		// metadata, error codes, titles and field pointers stay.
+		throw new ApiError(
+			{ method, url: endpoint },
+			{
+				url: `${PRODUCTBOARD_API_BASE}${endpoint}`,
+				ok: false,
+				status: error.status,
+				statusText: `HTTP ${error.status}`,
+				body: {
+					...(typeof errorId(error.body) === 'string'
+						? { id: errorId(error.body) }
+						: {}),
+					errors,
+				},
+			},
+			`Productboard request failed with HTTP ${error.status}${summary ? `: ${summary}` : ''}`,
+			{
+				retryAfter: error.retryAfter,
+				rateLimitReset: error.rateLimitReset,
+				rateLimitRemaining: error.rateLimitRemaining,
+				rateLimitLimit: error.rateLimitLimit,
+			},
+		);
 	}
+}
+
+type SafeProductboardError = {
+	code?: string;
+	title?: string;
+	source?: { pointer?: string; parameter?: string };
+};
+
+// `unknown` because provider error bodies are untrusted JSON.
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+// `unknown` because provider error bodies are untrusted JSON.
+function errorId(body: unknown): string | undefined {
+	return isRecord(body) && typeof body.id === 'string' ? body.id : undefined;
+}
+
+// `unknown` because provider error bodies are untrusted JSON.
+function safeProductboardErrors(body: unknown): SafeProductboardError[] {
+	if (!isRecord(body) || !Array.isArray(body.errors)) return [];
+	return body.errors.filter(isRecord).map((item) => {
+		const source = isRecord(item.source) ? item.source : undefined;
+		return {
+			...(typeof item.code === 'string' ? { code: item.code } : {}),
+			...(typeof item.title === 'string' ? { title: item.title } : {}),
+			...(source &&
+			(typeof source.pointer === 'string' ||
+				typeof source.parameter === 'string')
+				? {
+						source: {
+							...(typeof source.pointer === 'string'
+								? { pointer: source.pointer }
+								: {}),
+							...(typeof source.parameter === 'string'
+								? { parameter: source.parameter }
+								: {}),
+						},
+					}
+				: {}),
+		};
+	});
 }

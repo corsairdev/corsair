@@ -23,7 +23,17 @@ function apiError(status: number, retryAfter?: number): ApiError {
 			ok: false,
 			status,
 			statusText: 'provider detail with sensitive context',
-			body: { detail: 'provider detail with sensitive context' },
+			body: {
+				id: 'error-occurrence-1',
+				errors: [
+					{
+						code: 'validation.invalidValue',
+						title: 'Invalid value',
+						detail: 'provider detail with sensitive context',
+						source: { pointer: '/data/fields/name' },
+					},
+				],
+			},
 		},
 		'provider detail with sensitive context',
 		retryAfter === undefined ? undefined : { retryAfter },
@@ -92,32 +102,45 @@ describe('makeProductboardRequest', () => {
 		expect(mockedRequest).not.toHaveBeenCalled();
 	});
 
-	it('redacts sensitive ApiError fields without replacing the original error', async () => {
-		const providerError = apiError(429, 4000);
-		mockedRequest.mockRejectedValue(providerError);
+	it('keeps status, retry data and error titles but drops request data and details', async () => {
+		mockedRequest.mockRejectedValue(apiError(429, 4000));
 		// Rejection values have no static type, so unknown is narrowed with instanceof below.
 		const received = await makeProductboardRequest('/notes', 'test-token', {
 			method: 'POST',
 			body: { data: { fields: { content: 'Private customer feedback' } } },
 		}).catch((error: unknown) => error);
 
-		expect(received).toBe(providerError);
 		expect(received).toBeInstanceOf(ApiError);
-		expect(received).toMatchObject({
-			status: 429,
-			retryAfter: 4000,
-			body: {},
-			statusText: 'Productboard request failed',
-			url: PRODUCTBOARD_API_BASE,
-			request: { method: 'POST', url: '/[redacted]' },
+		if (!(received instanceof ApiError)) throw new Error('Expected ApiError');
+		expect(received.status).toBe(429);
+		expect(received.retryAfter).toBe(4000);
+		expect(received.body).toEqual({
+			id: 'error-occurrence-1',
+			errors: [
+				{
+					code: 'validation.invalidValue',
+					title: 'Invalid value',
+					source: { pointer: '/data/fields/name' },
+				},
+			],
 		});
-		if (received instanceof ApiError) {
-			expect(received.request).not.toHaveProperty('body');
-			expect(received.request).not.toHaveProperty('query');
-			expect(received.message).not.toContain('sensitive');
-			expect(received.stack).not.toContain('sensitive');
-			expect(received.url).not.toContain('person@example.com');
-		}
+		expect(received.message).toBe(
+			'Productboard request failed with HTTP 429: Invalid value',
+		);
+		expect(received.request).not.toHaveProperty('body');
+		expect(received.request).not.toHaveProperty('query');
+		const serialized = JSON.stringify(received) + received.message;
+		expect(serialized).not.toContain('sensitive');
+		expect(serialized).not.toContain('person@example.com');
+		expect(serialized).not.toContain('Private customer feedback');
+	});
+
+	it('passes non-ApiError failures through unchanged', async () => {
+		const networkError = new TypeError('fetch failed');
+		mockedRequest.mockRejectedValue(networkError);
+		await expect(makeProductboardRequest('/teams', 'test-token')).rejects.toBe(
+			networkError,
+		);
 	});
 
 	it('retries 429 responses up to the configured bound and honors Retry-After', async () => {
