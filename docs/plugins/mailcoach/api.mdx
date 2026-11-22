@@ -3,6 +3,7 @@ title: "Mailcoach API reference"
 sidebarTitle: "API"
 description: "API reference for the Mailcoach plugin in Corsair: every `mailcoach.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
 ---
+
 <Info>
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
@@ -389,7 +390,7 @@ Has an additional 5 requests/second burst limit per team, in addition to the nor
 
 `campaigns.create`
 
-Create a campaign draft; this operation does not send it.
+Create a campaign draft. Without schedule_at it is not sent; with schedule_at Mailcoach schedules it to send at that time.
 
 **Risk:** `write`
 
@@ -419,7 +420,7 @@ await corsair.mailcoach.api.campaigns.create({
 | `add_subscriber_link_tags` | `boolean` | No | — |
 | `disable_webview` | `boolean` | No | — |
 
-Creates a draft; sending is a separate destructive operation. Use either template fields or inline HTML as appropriate.
+Creates a draft. Without schedule_at nothing is sent; with schedule_at Mailcoach schedules the send for that UTC time. Use either template fields or inline HTML as appropriate.
 
 
 
@@ -763,7 +764,7 @@ await corsair.mailcoach.api.campaigns.unsubscribes({ campaignUuid: '0762df4d-851
 
 `campaigns.update`
 
-Replace campaign settings; include all intended fields because omitted values can reset.
+Replace campaign settings; include all intended fields because omitted values can reset. Setting schedule_at schedules the campaign to send.
 
 **Risk:** `write`
 
@@ -781,7 +782,7 @@ await corsair.mailcoach.api.campaigns.update({
 | `campaignUuid` | `string` | Yes | — |
 | `body` | `object` | Yes | — |
 
-This is not a sparse patch: omitted content, segment, or scheduling values can reset. Resend the full intended draft settings. schedule_at uses UTC in YYYY-MM-DD HH:mm:ss form.
+This is not a sparse patch: omitted content, segment, or scheduling values can reset. Resend the full intended draft settings. schedule_at uses UTC in YYYY-MM-DD HH:mm:ss form and schedules the campaign to send.
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -1656,7 +1657,7 @@ Append CSV rows without repeating the header, then call start separately.
 ```ts
 {
   uuid: string,
-  status?: draft | pending | importing | completed | failed,
+  status?: string,
   email_list_uuid?: string,
   imported_subscribers_count?: number,
   error_count?: number
@@ -1714,7 +1715,7 @@ Creates a draft only. CSV imports bypass confirmation and can resubscribe or uns
 ```ts
 {
   uuid: string,
-  status?: draft | pending | importing | completed | failed,
+  status?: string,
   email_list_uuid?: string,
   imported_subscribers_count?: number,
   error_count?: number
@@ -1784,7 +1785,7 @@ await corsair.mailcoach.api.subscriberImports.get({ importUuid: '2ca0e737-b907-4
 ```ts
 {
   uuid: string,
-  status?: draft | pending | importing | completed | failed,
+  status?: string,
   email_list_uuid?: string,
   imported_subscribers_count?: number,
   error_count?: number
@@ -1831,7 +1832,7 @@ await corsair.mailcoach.api.subscriberImports.list({});
 ```ts
 {
   uuid: string,
-  status?: draft | pending | importing | completed | failed,
+  status?: string,
   email_list_uuid?: string,
   imported_subscribers_count?: number,
   error_count?: number
@@ -1937,7 +1938,7 @@ Only draft imports can be updated; resend both required fields.
 ```ts
 {
   uuid: string,
-  status?: draft | pending | importing | completed | failed,
+  status?: string,
   email_list_uuid?: string,
   imported_subscribers_count?: number,
   error_count?: number
@@ -2005,9 +2006,9 @@ await corsair.mailcoach.api.subscribers.addTags({
   email?: string,
   first_name?: string | null,
   last_name?: string | null,
-  extra_attributes?: Record<string, JsonValue>,
+  extra_attributes?: Record<string, JsonValue> | JsonValue[],
   tags?: string[],
-  status?: unconfirmed | subscribed | unsubscribed,
+  status?: string,
   subscribed_at?: string | null,
   unsubscribed_at?: string | null,
   created_at?: string,
@@ -2133,9 +2134,9 @@ await corsair.mailcoach.api.subscribers.get({ subscriberUuid: '2a0c72d9-f91a-4fd
   email?: string,
   first_name?: string | null,
   last_name?: string | null,
-  extra_attributes?: Record<string, JsonValue>,
+  extra_attributes?: Record<string, JsonValue> | JsonValue[],
   tags?: string[],
-  status?: unconfirmed | subscribed | unsubscribed,
+  status?: string,
   subscribed_at?: string | null,
   unsubscribed_at?: string | null,
   created_at?: string,
@@ -2211,9 +2212,9 @@ await corsair.mailcoach.api.subscribers.list({
   email?: string,
   first_name?: string | null,
   last_name?: string | null,
-  extra_attributes?: Record<string, JsonValue>,
+  extra_attributes?: Record<string, JsonValue> | JsonValue[],
   tags?: string[],
-  status?: unconfirmed | subscribed | unsubscribed,
+  status?: string,
   subscribed_at?: string | null,
   unsubscribed_at?: string | null,
   created_at?: string,
@@ -2292,9 +2293,9 @@ await corsair.mailcoach.api.subscribers.removeTags({
   email?: string,
   first_name?: string | null,
   last_name?: string | null,
-  extra_attributes?: Record<string, JsonValue>,
+  extra_attributes?: Record<string, JsonValue> | JsonValue[],
   tags?: string[],
-  status?: unconfirmed | subscribed | unsubscribed,
+  status?: string,
   subscribed_at?: string | null,
   unsubscribed_at?: string | null,
   created_at?: string,
@@ -2418,9 +2419,9 @@ This can restart an unsubscribed address. Supplied tags replace existing tags; o
   email?: string,
   first_name?: string | null,
   last_name?: string | null,
-  extra_attributes?: Record<string, JsonValue>,
+  extra_attributes?: Record<string, JsonValue> | JsonValue[],
   tags?: string[],
-  status?: unconfirmed | subscribed | unsubscribed,
+  status?: string,
   subscribed_at?: string | null,
   unsubscribed_at?: string | null,
   created_at?: string,
@@ -2541,9 +2542,9 @@ await corsair.mailcoach.api.subscribers.update({
   email?: string,
   first_name?: string | null,
   last_name?: string | null,
-  extra_attributes?: Record<string, JsonValue>,
+  extra_attributes?: Record<string, JsonValue> | JsonValue[],
   tags?: string[],
-  status?: unconfirmed | subscribed | unsubscribed,
+  status?: string,
   subscribed_at?: string | null,
   unsubscribed_at?: string | null,
   created_at?: string,
@@ -2594,7 +2595,7 @@ Creates a team-wide manual sending block.
 {
   uuid: string,
   email?: string,
-  reason?: hard_bounce | spam_complaint | manual,
+  reason?: string,
   created_at?: string,
   updated_at?: string
 }
@@ -2666,7 +2667,7 @@ await corsair.mailcoach.api.suppressions.get({ identifier: 'info@example.com' })
 {
   uuid: string,
   email?: string,
-  reason?: hard_bounce | spam_complaint | manual,
+  reason?: string,
   created_at?: string,
   updated_at?: string
 }
@@ -2734,7 +2735,7 @@ await corsair.mailcoach.api.suppressions.list({
 {
   uuid: string,
   email?: string,
-  reason?: hard_bounce | spam_complaint | manual,
+  reason?: string,
   created_at?: string,
   updated_at?: string
 }[]
@@ -3580,3 +3581,4 @@ await corsair.mailcoach.api.user.get({});
 
 
 ---
+
