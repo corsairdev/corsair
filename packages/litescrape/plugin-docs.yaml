@@ -1,2 +1,417 @@
 displayName: LiteScrape
-description: Search, maps, reviews and web-data scraping API (Google, Bing, DuckDuckGo, Apple, Yelp, Tripadvisor and app stores).
+description: "Web data API with 200 read operations across 70 sites: Google, Bing, Brave, Yahoo, Baidu, Naver and Yandex search; Google, Apple, Bing and DuckDuckGo maps and reviews; Amazon, Walmart, eBay and other shops; TikTok, Instagram, X, YouTube, LinkedIn and Reddit; job boards; real estate; and web page fetch and screenshots."
+overviewNote: "Every data operation is a read that spends one prepaid Litescrape call; failed calls are not billed. `keys.status` is free and shows the calls left. Pass `timeout` (seconds, up to 90) to bound a slow scrape."
+examples:
+  read:
+    path: google.search
+    title: Search Google
+    args: {"q": "python documentation", "num": 3, "fast_mode": true}
+  write:
+    path: amazon.product
+    title: Look up an Amazon product
+    args: {"asin": "B072MQ5BRX"}
+apiExamples:
+  airbnb.search:
+    args: {"q": "Austin, TX", "adults": 2, "amenities": "wifi", "page": 1}
+  aliexpress.product:
+    args: {"url": "https://www.aliexpress.com/item/1005008176579188.html"}
+  aliexpress.search:
+    args: {"query": "coffee mug"}
+  allkeyshop.product:
+    args: {"url": "https://www.allkeyshop.com/blog/buy-elden-ring-cd-key-compare-prices/"}
+  allkeyshop.search:
+    args: {"q": "elden ring", "page": 1}
+  amazon.autocomplete:
+    args: {"k": "coffee"}
+  amazon.product:
+    args: {"asin": "B072MQ5BRX"}
+  amazon.search:
+    args: {"k": "coffee"}
+  apartments.property:
+    args: {"url": "https://www.apartments.com/edison-austin-austin-tx/40n18nj/"}
+  apartments.search:
+    args: {"url": "https://www.apartments.com/austin-tx/"}
+  appleAppStore.product:
+    args: {"product_id": "570060128"}
+  appleAppStore.reviews:
+    args: {"product_id": "570060128"}
+  appleAppStore.search:
+    args: {"term": "coffee", "num": 3}
+  appleMaps.places:
+    args: {"muid": "4372355869446211302"}
+  appleMaps.reviews:
+    args: {"muid": "4560078147072908047"}
+  ashby.search:
+    args: {"board": "ashby", "q": "engineer"}
+  baidu.search:
+    args: {"q": "python documentation", "pn": 0, "rn": 10}
+  bestbuy.product:
+    args: {"url": "https://www.bestbuy.com/product/beats-studio-pro-wireless-noise-cancelling-over-the-ear-headphones-black/JJ8ZHR9K2T", "store_id": "7"}
+  bestbuy.search:
+    args: {"query": "headphones", "store_id": "7"}
+  bing.autocomplete:
+    args: {"q": "tesla"}
+  bing.images:
+    args: {"q": "red panda", "count": 10, "mkt": "en-US"}
+  bing.maps:
+    args: {"q": "coffee Austin Texas", "count": 3}
+  bing.product:
+    args: {"product_token": "eyJ2IjoxLCJ1cmwiOiJodHRwczovL3d3dy5iaW5nLmNvbS9zaG9wL2VudGl0eWRldGFpbHM_cT1jb2ZmZWUrbWFrZXImZmlsdGVycz1zY2VuYXJpbyUzYSUyMjE3JTIyK2dUeXBlJTNhJTIyMyUyMitnSWQlM2ElMjIwMDZBQjU2MEIzMUEyOTQyMjAzNjdGN0U1ODNFM0RFQiUyMitnSWRIYXNoJTNhJTIyMTA0ODI1NDc0JTIyK2dHbG9iYWxPZmZlcklkcyUzYSUyMjkwODEyNDYyNDEzJTIyK05vblNwb25zb3JlZE9mZmVyJTNhJTIydHJ1ZSUyMiZvcmlnaW5JR1VJRD01MjFCNkQ5QzBDNTA0MDFGQjY4QUU5QjMxN0QwMDk5MyZJRz01MjFCNkQ5QzBDNTA0MDFGQjY4QUU5QjMxN0QwMDk5MyZJSUQ9Y29tbWVyY2UuNjk4OCJ9"}
+  bing.search:
+    args: {"q": "python documentation"}
+  bing.shopping:
+    args: {"q": "coffee maker", "mkt": "en-US"}
+  bluesky.followers:
+    args: {"actor": "bsky.app", "limit": 2}
+  bluesky.posts:
+    args: {"actor": "bsky.app", "limit": 2}
+  bluesky.profile:
+    args: {"actor": "bsky.app"}
+  booking.detail:
+    args: {"checkin": "2027-01-14", "checkout": "2027-01-17", "adults": 2, "rooms": 1, "currency": "EUR", "language": "en-us", "url": "https://www.booking.com/hotel/gb/ibis-london-blackfriars.html"}
+  booking.rooms:
+    args: {"checkin": "2027-01-14", "checkout": "2027-01-17", "adults": 2, "rooms": 1, "currency": "EUR", "language": "en-us", "url": "https://www.booking.com/hotel/gb/ibis-london-blackfriars.html"}
+  booking.search:
+    args: {"checkin": "2027-01-14", "checkout": "2027-01-17", "adults": 2, "rooms": 1, "currency": "EUR", "language": "en-us", "destination": "London", "page": 1, "limit": 2}
+  brave.aiMode:
+    args: {"q": "How do rainbows form?", "country": "us", "language": "en", "safeSearch": "moderate", "units_of_measurement": "us"}
+  brave.search:
+    args: {"q": "python programming"}
+  copilot.chat:
+    args: {"messages": [{"role": "user", "content": "What is the weather near me right now?"}], "model": "copilot", "stream": false, "country": "US", "state": "CA"}
+  duckduckgo.maps:
+    args: {"q": "coffee", "lat": 30.2672, "lon": -97.7431}
+  duckduckgo.search:
+    args: {"q": "python documentation"}
+  ebay.product:
+    args: {"product_id": "305576857892"}
+  ebay.search:
+    args: {"_nkw": "lego star wars", "_ipg": 25}
+  ebay.seller:
+    args: {"seller_id": "antonline", "type": "store", "_ipg": 24}
+  etsy.product:
+    args: {"url": "https://www.etsy.com/listing/1510223855/the-libby-travel-mug-hand-thrown-ceramic"}
+  etsy.search:
+    args: {"query": "ceramic mug"}
+  eventbrite.search:
+    args: {"location": "tx--austin", "q": "music"}
+  facebook.hashtagPosts:
+    args: {"tag": "nasa", "limit": 20}
+  facebook.marketplaceBrowse:
+    args: {"location": "austin", "query": "bicycle", "radius_km": 20, "min_price": 10, "max_price": 200, "limit": 20}
+  facebook.pagePosts:
+    args: {"handle": "NASA"}
+  facebook.post:
+    args: {"url": "https://www.facebook.com/NASA/posts/1587860636042640/"}
+  facebook.reel:
+    args: {"url": "https://www.facebook.com/reel/1380134307388381/"}
+  facebook.searchPages:
+    args: {"query": "NASA", "limit": 15, "country": "US", "ad_type": "ALL"}
+  facebook.searchProfiles:
+    args: {"query": "Nasa", "limit": 12}
+  farmavazquez.product:
+    args: {"url": "https://www.farmavazquez.com/cerave-locion-protectora-invisible-hidratante-spf-30-177-ml-648758.html", "domain": "www.farmavazquez.com"}
+  farmavazquez.search:
+    args: {"q": "cerave", "page": 1, "domain": "www.farmavazquez.com"}
+  github.issues:
+    args: {"owner": "python", "repo": "cpython", "limit": 2}
+  github.releases:
+    args: {"owner": "pallets", "repo": "flask", "limit": 2}
+  github.repository:
+    args: {"owner": "python", "repo": "cpython"}
+  github.search:
+    args: {"q": "python", "limit": 2}
+  github.user:
+    args: {"username": "python"}
+  glassdoor.search:
+    args: {"q": "software engineer", "location_id": 1132348, "location_type": "C"}
+  google.ads:
+    args: {"q": "coffee maker", "location": "Austin, Texas, United States"}
+  google.aiMode:
+    args: {"q": "why is the sky blue", "hl": "en", "gl": "us"}
+  google.aiOverview:
+    args: {"q": "why is the sky blue"}
+  google.autocomplete:
+    args: {"q": "python"}
+  google.flights:
+    args: {"q": "Flights from JFK to LHR on 2027-01-14 returning 2027-01-17 for 2 adults", "currency": "USD", "limit": 10}
+  google.gemini:
+    args: {"prompt": "Explain why the sky is blue in one sentence.", "hl": "en"}
+  google.images:
+    args: {"q": "red panda", "num": 20, "hl": "en", "gl": "us", "license": "creative_commons"}
+  google.jobs:
+    args: {"q": "software engineer", "location": "Austin,Texas,United States"}
+  google.local:
+    args: {"q": "coffee Austin Texas", "hl": "en", "gl": "us"}
+  google.news:
+    args: {"q": "technology", "limit": 2}
+  google.patents:
+    args: {"q": "battery", "limit": 10}
+  google.reverseImageSearch:
+    args: {"image_url": "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png", "num": 5}
+  google.scholar:
+    args: {"q": "large language models", "limit": 2}
+  google.search:
+    args: {"q": "python documentation", "num": 3, "fast_mode": true}
+  google.shopping:
+    args: {"q": "coffee maker", "num": 3, "hl": "en", "gl": "us"}
+  google.shoppingMerchantUrls:
+    args: {"gl": "us", "hl": "en", "products": [{"gpcid": "2786756917538688235", "headline_offer_docid": "5148952067814683768", "merchant": "Target"}]}
+  google.shoppingProduct:
+    args: {"q": "coffee maker", "gpcid": "16418087637395758399"}
+  google.trends:
+    args: {"limit": 2}
+  googleMaps.contributorReviews:
+    args: {"contributor_id": "110382514725174877672", "limit": 2}
+  googleMaps.menu:
+    args: {"place_id": "ChIJPf0L06VZwokRD6L-7RV-7Yg"}
+  googleMaps.photoMeta:
+    args: {"data_id": "CIABIhAAQr6KrxiC_knILBjf2RxL", "hl": "en"}
+  googleMaps.photos:
+    args: {"data_id": "0x89c259a5d30bfd3d:0x88ed7e15edfea20f", "category": "by_owner"}
+  googleMaps.popularTimes:
+    args: {"place_id": "ChIJk2wKz7XHwoARxvQQWiJGyok"}
+  googleMaps.posts:
+    args: {"data_id": "0x88e5b787f92eb419:0x837211a455038baa"}
+  googleMaps.reviews:
+    args: {"data_id": "0x88e5b787f92eb419:0x837211a455038baa", "num": 2, "sort_by": "newestFirst"}
+  googleMaps.search:
+    args: {"q": "787 Coffee New York", "type": "search", "hl": "en", "gl": "us"}
+  googlePlay.apps:
+    args: {"q": "coffee", "hl": "en", "gl": "us"}
+  googlePlay.books:
+    args: {"q": "coffee", "hl": "en", "gl": "us"}
+  googlePlay.games:
+    args: {"q": "chess", "hl": "en", "gl": "us"}
+  googlePlay.movies:
+    args: {"q": "inception", "hl": "en", "gl": "us"}
+  googlePlay.product:
+    args: {"product_id": "com.duolingo"}
+  googlePlay.reviews:
+    args: {"product_id": "com.duolingo", "num": 3}
+  greenhouse.job:
+    args: {"board": "cloudflare", "job_id": 7695702}
+  greenhouse.jobs:
+    args: {"board": "cloudflare", "limit": 2}
+  hackernews.item:
+    args: {"id": 8863}
+  hackernews.stories:
+    args: {"limit": 2}
+  hackernews.user:
+    args: {"username": "pg", "limit": 2}
+  homedepot.product:
+    args: {"url": "https://www.homedepot.com/p/DEWALT-20V-MAX-Cordless-Drill-DCD771C2/204279858"}
+  homedepot.search:
+    args: {"query": "drill"}
+  homes.property:
+    args: {"url": "https://www.homes.com/property/7516-windrush-dr-austin-tx/x5zewgn876r6t/"}
+  homes.search:
+    args: {"url": "https://www.homes.com/austin-tx/"}
+  idealo.product:
+    args: {"url": "https://www.idealo.it/confronta-prezzi/207643424/apple-iphone-17.html"}
+  idealo.search:
+    args: {"q": "iphone", "page": 1}
+  ikea.product:
+    args: {"url": "https://www.ikea.com/us/en/p/billy-bookcase-white-20522046/", "store_id": "170"}
+  ikea.search:
+    args: {"query": "desk", "store_id": "170"}
+  indeed.search:
+    args: {"q": "software engineer", "location": "New York, NY"}
+  instagram.embed:
+    args: {"handle": "instagram"}
+  instagram.post:
+    args: {"url": "https://www.instagram.com/p/C8rKmYvsrck/"}
+  instagram.posts:
+    args: {"handle": "instagram"}
+  instagram.profile:
+    args: {"handle": "instagram"}
+  instagram.profilePostCount:
+    args: {"handle": "instagram"}
+  instagram.searchPopular:
+    args: {"query": "basketball"}
+  kroger.product:
+    args: {"url": "https://www.kroger.com/p/maxwell-house-original-roast-ground-coffee-canister/0004300009422", "store_id": "01600273"}
+  kroger.search:
+    args: {"query": "coffee", "store_id": "01600273"}
+  levels.search:
+    args: {"q": "software engineer"}
+  lever.jobs:
+    args: {"company": "spotify", "limit": 5}
+  linkedin.company:
+    args: {"company": "microsoft"}
+  linkedin.companyPosts:
+    args: {"company": "microsoft"}
+  linkedin.job:
+    args: {"job_id": "4465379983"}
+  linkedin.jobs:
+    args: {"q": "python"}
+  naturitas.product:
+    args: {"url": "https://www.naturitas.es/p/suplementos/sueno/melatonina-195-mg-180-comprimidos-naturitas-essentials"}
+  naturitas.search:
+    args: {"q": "suplementos", "page": 1}
+  naver.aiOverview:
+    args: {"query": "coffee"}
+  naver.search:
+    args: {"query": "coffee", "where": "nexearch"}
+  npm.package:
+    args: {"package": "requests"}
+  npm.search:
+    args: {"q": "react", "limit": 2}
+  pinterest.profile:
+    args: {"username": "pinterest"}
+  producthunt.launches:
+    args: {"limit": 2}
+  pypi.project:
+    args: {"project": "requests"}
+  realtor.property:
+    args: {"url": "https://www.realtor.com/realestateandhomes-detail/7901-Gilwice-Ln_Austin_TX_78744_M74493-23665"}
+  realtor.search:
+    args: {"url": "https://www.realtor.com/realestateandhomes-search/Austin_TX/", "limit": 5}
+  reddit.post:
+    args: {"url": "https://www.reddit.com/r/Python/comments/1xbnrhi/litellm_11070_on_pypi_is_compromised/", "limit": 3}
+  reddit.search:
+    args: {"q": "python", "limit": 3}
+  reddit.subredditPosts:
+    args: {"subreddit": "python", "limit": 3}
+  redfin.property:
+    args: {"url": "https://www.redfin.com/WA/Seattle/1120-8th-Ave-98101/unit-1603/home/14602"}
+  redfin.search:
+    args: {"region_id": 16163, "region_type": 6, "max_price": 800000, "min_beds": 2, "limit": 5}
+  remoteok.jobs:
+    args: {"limit": 2}
+  shopify.products:
+    args: {"store": "allbirds", "limit": 2}
+  soundcloud.track:
+    args: {"artist": "monstercat", "track": "pegboard-nerds-disconnected"}
+  spotify.item:
+    args: {"kind": "track", "id": "11dFghVXANMlKmJXsNCbNl"}
+  sprouts.product:
+    args: {"url": "https://shop.sprouts.com/store/sprouts/products/79995164-medium-roast-coffee-44oz", "store_id": "17650"}
+  sprouts.search:
+    args: {"query": "coffee", "store_id": "17650"}
+  stackoverflow.answers:
+    args: {"question_id": 11227809, "limit": 2}
+  stackoverflow.comments:
+    args: {"question_id": 11227809, "limit": 2}
+  stackoverflow.question:
+    args: {"question_id": 11227809}
+  stackoverflow.search:
+    args: {"q": "python", "limit": 2}
+  steam.app:
+    args: {"app_id": 620}
+  steam.search:
+    args: {"q": "portal"}
+  substack.posts:
+    args: {"publication": "lennysnewsletter", "limit": 5}
+  target.product:
+    args: {"url": "https://www.target.com/p/starbucks-fall-blend-medium-roast-ground-coffee-10oz/-/A-16185604", "store_id": "1448"}
+  target.search:
+    args: {"query": "coffee", "store_id": "1448"}
+  telegram.posts:
+    args: {"channel": "durov"}
+  tiktok.collectionVideos:
+    args: {"url": "https://www.tiktok.com/@kibblemaster808/collection/Want-to-go-7665668414573546258", "count": 3}
+  tiktok.commentReplies:
+    args: {"video_id": "7681307586901134622", "comment_id": "7681330380372558606", "count": 3}
+  tiktok.comments:
+    args: {"video_id": "7681307586901134622", "count": 3}
+  tiktok.followers:
+    args: {"handle": "tiktok", "count": 3}
+  tiktok.following:
+    args: {"handle": "tiktok", "count": 3}
+  tiktok.live:
+    args: {"room_id": "7693676830666705678"}
+  tiktok.profile:
+    args: {"handle": "tiktok"}
+  tiktok.profileVideos:
+    args: {"handle": "tiktok", "count": 3}
+  tiktok.searchHashtag:
+    args: {"hashtag": "python", "count": 3}
+  tiktok.searchSuggestions:
+    args: {"query": "coffee"}
+  tiktok.song:
+    args: {"clip_id": "7106686378527787818"}
+  tiktok.songVideos:
+    args: {"clip_id": "7106686378527787818", "count": 3}
+  tiktok.transcript:
+    args: {"url": "https://www.tiktok.com/@davidteathercodes/video/7106686413101468970"}
+  tiktok.trendingFeed:
+    args: {"count": 3}
+  tiktok.userLive:
+    args: {"handle": "tiktok"}
+  tiktok.video:
+    args: {"url": "https://www.tiktok.com/@davidteathercodes/video/7106686413101468970"}
+  tripadvisor.place:
+    args: {"place_id": 437641}
+  tripadvisor.reviews:
+    args: {"place_id": 437641, "num": 3}
+  tripadvisor.search:
+    args: {"q": "coffee Austin Texas"}
+  walmart.product:
+    args: {"url": "https://www.walmart.com/ip/5344812220"}
+  walmart.search:
+    args: {"query": "coffee"}
+  wayfair.product:
+    args: {"url": "https://www.wayfair.com/shop-product-type/pdp/george-oliver-caidence-2-drawer-writing-desk-with-solid-wood-legs-w005949248.html"}
+  wayfair.search:
+    args: {"query": "desk"}
+  web.fetch:
+    args: {"url": "https://example.com", "respond_with": "markdown"}
+  web.screenshot:
+    args: {"url": "https://example.com", "full_page": false}
+  wholefoods.product:
+    args: {"url": "https://www.wholefoodsmarket.com/product/groundwork-coffee-co-organic-cold-brew-coffee-concentrate-32-fz-b079ltr61q", "store_id": "10233"}
+  wholefoods.search:
+    args: {"query": "coffee", "store_id": "10233"}
+  wikipedia.article:
+    args: {"title": "Python (programming language)"}
+  wikipedia.search:
+    args: {"q": "Python", "limit": 2}
+  workday.jobs:
+    args: {"host": "nvidia.wd5.myworkdayjobs.com", "tenant": "nvidia", "board": "NVIDIAExternalCareerSite"}
+  x.community:
+    args: {"community_id": "1926186499399139650"}
+  x.communityPosts:
+    args: {"community_id": "1926186499399139650"}
+  x.post:
+    args: {"post_id": "2107894997538525580"}
+  x.profile:
+    args: {"username": "OpenAI"}
+  x.userPosts:
+    args: {"username": "OpenAI"}
+  yahoo.financeHistory:
+    args: {"symbol": "AAPL", "range": "5d"}
+  yahoo.images:
+    args: {"p": "coffee", "yahoo_domain": "search.yahoo.com", "b": 1}
+  yahoo.search:
+    args: {"p": "coffee", "yahoo_domain": "search.yahoo.com", "b": 1}
+  yandex.images:
+    args: {"text": "coffee"}
+  yandex.search:
+    args: {"text": "python documentation"}
+  yelp.place:
+    args: {"place_id": "arabica-brooklyn"}
+  yelp.reviews:
+    args: {"place_id": "dDz2erKJ_Z2HMur0tQ_iJA"}
+  yelp.search:
+    args: {"find_desc": "coffee", "find_loc": "Austin, TX"}
+  youtube.channel:
+    args: {"channel_id": "veritasium", "tab": "videos"}
+  youtube.comments:
+    args: {"video_id": "jNQXAC9IVRw"}
+  youtube.search:
+    args: {"q": "python tutorial", "type": "video"}
+  youtube.video:
+    args: {"video_id": "jNQXAC9IVRw"}
+  zillow.locations:
+    args: {"q": "Seattle, WA", "type": "regions", "limit": 5}
+  zillow.property:
+    args: {"url": "https://www.zillow.com/homedetails/743-N-74th-St-Seattle-WA-98103/48868689_zpid/"}
+  zillow.search:
+    args: {"q": "Seattle, WA", "max_price": 800000, "min_beds": 2}
+  ziprecruiter.search:
+    args: {"q": "software engineer", "location": "New York, NY"}
+  keys.status:
+    args: {}
+  keys.usage:
+    args: {"range": "7d"}

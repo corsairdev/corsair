@@ -1,0 +1,128 @@
+displayName: Listen Notes
+description: Podcast search, directory, playlist, and audience insights API for exploring and managing podcast data.
+examples:
+  read:
+    path: search.search
+    title: Search podcast episodes
+    args:
+      q: startup
+  write:
+    path: playlists.create
+    title: Create a podcast playlist
+    args:
+      name: Research queue
+apiExamples:
+  search.search:
+    q: startup
+  search.typeahead:
+    q: tech
+  search.searchEpisodeTitles:
+    q: Episode title
+  search.trendingSearches: {}
+  search.relatedSearches:
+    q: science
+  search.spellcheck:
+    q: tecnology
+  podcasts.get:
+    id: 4d3fe717742d4963a85562e9f84d8c79
+  podcasts.getEpisodes:
+    id: 4d3fe717742d4963a85562e9f84d8c79
+  podcasts.getRecommendations:
+    id: 4d3fe717742d4963a85562e9f84d8c79
+  podcasts.getBest:
+    genre_id: '127'
+  podcasts.getBatch:
+    ids: 4d3fe717742d4963a85562e9f84d8c79
+  podcasts.delete:
+    id: 4d3fe717742d4963a85562e9f84d8c79
+    reason: testing
+  podcasts.submit:
+    rss: https://feeds.example.com/show.xml
+  podcasts.refreshRss:
+    id: 4d3fe717742d4963a85562e9f84d8c79
+  podcasts.getAudience:
+    id: 4d3fe717742d4963a85562e9f84d8c79
+  podcasts.getByDomain:
+    domain_name: publisher.example
+  episodes.get:
+    id: 254444fa6cf64a43a95292a70eb6869b
+  episodes.getRecommendations:
+    id: 254444fa6cf64a43a95292a70eb6869b
+  episodes.getBatch:
+    ids: 254444fa6cf64a43a95292a70eb6869b
+  episodes.justListen: {}
+  genres.list: {}
+  regions.list: {}
+  languages.list: {}
+  curated.list: {}
+  curated.get:
+    id: e4a6865261f945aeb78f2ebcb3fd46fb
+  playlists.list: {}
+  playlists.get:
+    id: m1pe7z60bsw
+  playlists.create:
+    name: Research queue
+  playlists.update:
+    id: m1pe7z60bsw
+    name: Updated queue
+  playlists.delete:
+    id: m1pe7z60bsw
+  playlists.addItem:
+    id: m1pe7z60bsw
+    episode_id: 0123456789abcdef0123456789abcdef
+  playlists.updateItem:
+    id: m1pe7z60bsw
+    item_id: 23
+    notes: Revisit this episode
+  playlists.deleteItem:
+    id: m1pe7z60bsw
+    item_id: 23
+overviewNote: >-
+  Authenticated calls require an API key in the X-ListenAPI-Key header. Playlist mutations apply only to playlists owned by the API admin account. Confirm destructive requests before using them; the podcast-delete example uses the provider's `reason: testing` safeguard.
+apiNotes:
+  search.search: >-
+    Pass `next_offset` from a response as `offset` for pagination. Search results are limited by plan: FREE up to offset 30, PRO up to 300, and ENTERPRISE up to 10,000. `interviews_only` and `sponsored_only` are PRO/ENTERPRISE filters.
+  search.searchEpisodeTitles: >-
+    The response may contain `next_offset`, but the official OpenAPI request parameter list for this operation includes only `q`, `podcast_id`, and `podcast_id_type`; it does not document `offset`. The field is returned as provider metadata, not as a supported pagination cursor. Source: https://listen-api.listennotes.com/api/v2/openapi.json#/paths/~1search_episode_titles/get.
+  search.relatedSearches: >-
+    This endpoint is available only on Listen Notes PRO and ENTERPRISE plans.
+  search.spellcheck: >-
+    This endpoint is available only on Listen Notes PRO and ENTERPRISE plans.
+  podcasts.get: >-
+    The response includes up to 10 episodes. Use `next_episode_pub_date` from the response to paginate; an empty `episodes` array means there are no more.
+  podcasts.getEpisodes: >-
+    This convenience operation uses the documented `GET /podcasts/{id}` route and its `next_episode_pub_date` cursor; it is not a separate `/episodes` sub-route.
+  podcasts.getBest: >-
+    Pass `next_page_number` as `page` for pagination. `sort` accepts recent_added_first, oldest_added_first, recent_published_first, oldest_published_first, and listen_score.
+  podcasts.getBatch: >-
+    POSTs form-encoded selectors and supports up to 10 podcasts. This endpoint is available only on PRO and ENTERPRISE plans; supply at least one selector (`ids`, `rsses`, `itunes_ids`, or `spotify_ids`). With `show_latest_episodes: 1`, pass `next_episode_pub_date` from the response to paginate the latest episodes.
+  podcasts.delete: >-
+    This submits a podcast deletion request, which Listen Notes reviews within 12 hours. The provider documents `reason: testing` as a way to test without deleting; otherwise confirm the request before use.
+  podcasts.submit: >-
+    Submissions may be found, reviewed, or rejected by Listen Notes. An email is optional and is used only for the provider's acceptance notification.
+  podcasts.refreshRss: >-
+    Available on PRO and ENTERPRISE plans; each podcast can be refreshed at most once per hour and processing may take several minutes.
+  podcasts.getAudience: >-
+    Audience estimates are available only for some podcasts; an empty response is valid when the provider has no regional data.
+  podcasts.getByDomain: >-
+    Returns up to 10 podcasts per page. Pass `next_page_number` as `page` to continue.
+  episodes.get: >-
+    `show_transcript: 1` requests a transcript when available; transcript data requires a PRO or ENTERPRISE plan.
+  episodes.getBatch: >-
+    Supports up to 10 episode IDs and is available only on PRO and ENTERPRISE plans.
+  playlists.list: >-
+    `sort` supports `name_a_to_z` and `name_z_to_a`; `page` paginates through playlists.
+  playlists.get: >-
+    A playlist can hold both episodes and podcasts. Use `type` to choose the view and `last_timestamp_ms` from the response to paginate.
+  playlists.create: >-
+    Creates an empty playlist owned by the API admin. Playlist changes require ownership by that admin account; contributor membership is not sufficient.
+  playlists.update: >-
+    Updates at least one of name, description, visibility, or type. Switching to private rotates the playlist RSS secret.
+  playlists.delete: >-
+    Permanently deletes an owned playlist and its saved references. This cannot be undone; require an explicit confirmation before calling it.
+  playlists.addItem: >-
+    Supply exactly one 32-character episode ID or podcast ID. Existing active items are reused; the operation can restore deleted items.
+  playlists.updateItem: >-
+    Replaces item notes; an empty string clears them. Only playlists owned by the API admin can be modified.
+  playlists.deleteItem: >-
+    Removes the playlist reference (not the episode or podcast). Only playlists owned by the API admin can be modified.

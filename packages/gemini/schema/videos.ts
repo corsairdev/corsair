@@ -1,3 +1,4 @@
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 export const GEMINI_VIDEO_MODELS = ['veo-2.0-generate-001'] as const;
@@ -68,8 +69,7 @@ export const VideoOperationSchema = z.object({
 });
 export type VideoOperation = z.infer<typeof VideoOperationSchema>;
 
-export const VideoFileSchema = z.object({
+export const VideoFileSchema = FileOutputSchema.extend({
 	mimeType: z.string(),
-	contentBase64: z.string().describe('Base64-encoded video bytes'),
 });
 export type VideoFile = z.infer<typeof VideoFileSchema>;

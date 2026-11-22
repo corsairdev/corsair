@@ -330,6 +330,8 @@ const cases: Array<{
 			},
 			result: {
 				contentType: 'image/jpeg',
+				byteLength: 4,
+				filename: 'run-1-evt_1.jpg',
 				base64: 'iVBORw==',
 				sizeBytes: 4,
 			},

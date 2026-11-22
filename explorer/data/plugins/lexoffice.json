@@ -1,0 +1,2253 @@
+{
+  "id": "lexoffice",
+  "displayName": "Lexoffice",
+  "description": "Lexware Office accounting integration for contacts, vouchers, invoices, credit notes, payments, posting categories, and documents.",
+  "npmPackageName": "@corsair-dev/lexoffice",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 27,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "lexoffice.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a new customer or vendor contact in Lexoffice",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number",
+            "description": "Defaults to 0."
+          },
+          {
+            "key": "roles",
+            "optional": false,
+            "type": "{ customer?: {}, vendor?: {} }"
+          },
+          {
+            "key": "person",
+            "optional": true,
+            "type": "{ salutation?: string, firstName?: string, lastName: string }"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ name: string, taxNumber?: string, vatRegistrationId?: string, allowTaxFreeInvoices?: boolean, contactPersons?: { salutation?: string, firstName?: string, lastName: string, primary?: boolean, emailAddress?: string, phoneNumber?: string }[] }"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ billing?: { supplement?: string, street?: string, city?: string, zip?: string, countryCode: string }[], shipping?: { supplement?: string, street?: string, city?: string, zip?: string, countryCode: string }[] }"
+          },
+          {
+            "key": "emailAddresses",
+            "optional": true,
+            "type": "{ business?: string[], office?: string[], private?: string[], other?: string[] }"
+          },
+          {
+            "key": "phoneNumbers",
+            "optional": true,
+            "type": "{ business?: string[], office?: string[], mobile?: string[], private?: string[], fax?: string[], other?: string[] }"
+          },
+          {
+            "key": "xRechnung",
+            "optional": true,
+            "type": "{ buyerReference?: string, vendorNumberAtCustomer?: string }"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resourceUri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Retrieve a Lexoffice contact by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "{ customer?: { number?: number }, vendor?: { number?: number } }"
+          },
+          {
+            "key": "person",
+            "optional": true,
+            "type": "{ salutation?: string, firstName?: string, lastName: string }"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ name: string, taxNumber?: string, vatRegistrationId?: string, allowTaxFreeInvoices?: boolean, contactPersons?: { salutation?: string, firstName?: string, lastName: string, primary?: boolean, emailAddress?: string, phoneNumber?: string }[] }"
+          },
+          {
+            "key": "xRechnung",
+            "optional": true,
+            "type": "{ buyerReference?: string, vendorNumberAtCustomer?: string }"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ billing?: { supplement?: string, street?: string, city?: string, zip?: string, countryCode: string }[], shipping?: { supplement?: string, street?: string, city?: string, zip?: string, countryCode: string }[] }"
+          },
+          {
+            "key": "emailAddresses",
+            "optional": true,
+            "type": "{ business?: string[], office?: string[], private?: string[], other?: string[] }"
+          },
+          {
+            "key": "phoneNumbers",
+            "optional": true,
+            "type": "{ business?: string[], office?: string[], mobile?: string[], private?: string[], fax?: string[], other?: string[] }"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List and filter Lexoffice contacts with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "customer",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "vendor",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, organizationId?: string, version: number, roles?: { customer?: { number?: number }, vendor?: { number?: number } }, person?: { salutation?: string, firstName?: string, lastName: string }, company?: { name: string, taxNumber?: string, vatRegistrationId?: string, allowTaxFreeInvoices?: boolean, contactPersons?: { salutation?: string, firstName?: string, lastName: string, primary?: boolean, emailAddress?: string, phoneNumber?: string }[] }, xRechnung?: { buyerReference?: string, vendorNumberAtCustomer?: string }, addresses?: { billing?: { supplement?: string, street?: string, city?: string, zip?: string, countryCode: string }[], shipping?: { supplement?: string, street?: string, city?: string, zip?: string, countryCode: string }[] }, emailAddresses?: { business?: string[], office?: string[], private?: string[], other?: string[] }, phoneNumbers?: { business?: string[], office?: string[], mobile?: string[], private?: string[], fax?: string[], other?: string[] }, note?: string, archived?: boolean }[]"
+          },
+          {
+            "key": "first",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "last",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "totalPages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalElements",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "numberOfElements",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ property?: string, direction?: string, ignoreCase?: boolean, nullHandling?: string, ascending?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update an existing contact in Lexoffice",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "roles",
+            "optional": false,
+            "type": "{ customer?: {}, vendor?: {} }"
+          },
+          {
+            "key": "person",
+            "optional": true,
+            "type": "{ salutation?: string, firstName?: string, lastName: string }"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "{ name: string, taxNumber?: string, vatRegistrationId?: string, allowTaxFreeInvoices?: boolean, contactPersons?: { salutation?: string, firstName?: string, lastName: string, primary?: boolean, emailAddress?: string, phoneNumber?: string }[] }"
+          },
+          {
+            "key": "addresses",
+            "optional": true,
+            "type": "{ billing?: { supplement?: string, street?: string, city?: string, zip?: string, countryCode: string }[], shipping?: { supplement?: string, street?: string, city?: string, zip?: string, countryCode: string }[] }"
+          },
+          {
+            "key": "emailAddresses",
+            "optional": true,
+            "type": "{ business?: string[], office?: string[], private?: string[], other?: string[] }"
+          },
+          {
+            "key": "phoneNumbers",
+            "optional": true,
+            "type": "{ business?: string[], office?: string[], mobile?: string[], private?: string[], fax?: string[], other?: string[] }"
+          },
+          {
+            "key": "xRechnung",
+            "optional": true,
+            "type": "{ buyerReference?: string, vendorNumberAtCustomer?: string }"
+          },
+          {
+            "key": "note",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resourceUri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.creditNotes.create",
+      "shortPath": "creditNotes.create",
+      "description": "Create a credit note, optionally finalizing or pursuing it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "finalize",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "precedingSalesVoucherId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voucherDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "de | en"
+          },
+          {
+            "key": "printLayoutId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "{ contactId?: string, name?: string, supplement?: string, street?: string, city?: string, zip?: string, countryCode?: string }"
+          },
+          {
+            "key": "lineItems",
+            "optional": false,
+            "type": "{ type: custom | material | service | text, id?: string, name?: string, description?: string, quantity?: number, unitName?: string, unitPrice?: { currency: EUR, netAmount?: number, grossAmount?: number, taxRatePercentage: number } }[]"
+          },
+          {
+            "key": "totalPrice",
+            "optional": false,
+            "type": "{ currency: EUR, totalDiscountAbsolute?: number, totalDiscountPercentage?: number }"
+          },
+          {
+            "key": "taxConditions",
+            "optional": false,
+            "type": "{ taxType: net | gross | vatfree | intraCommunitySupply | constructionService13b | externalService13b | thirdPartyCountryService | thirdPartyCountryDelivery | photovoltaicEquipment, taxTypeNote?: string, taxSubType?: distanceSales | electronicServices | null }"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "introduction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "remark",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resourceUri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.creditNotes.download",
+      "shortPath": "creditNotes.download",
+      "description": "Download a credit note document as base64-encoded binary data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accept",
+            "optional": true,
+            "type": "*/* | application/pdf | application/xml"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sizeBytes",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.creditNotes.get",
+      "shortPath": "creditNotes.get",
+      "description": "Retrieve credit note details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "voucherStatus",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "voucherNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "voucherDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ contactId?: string | null, name?: string | null, supplement?: string | null, street?: string | null, city?: string | null, zip?: string | null, countryCode?: string | null, contactPerson?: string | null } | null"
+          },
+          {
+            "key": "electronicDocumentProfile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lineItems",
+            "optional": true,
+            "type": "{ id?: string | null, type: string, name?: string | null, description?: string | null, quantity?: number | null, unitName?: string | null, unitPrice?: { currency: string, netAmount?: number | null, grossAmount?: number | null, taxRatePercentage: number } | null, discountPercentage?: number | null, lineItemAmount?: number | null }[]"
+          },
+          {
+            "key": "totalPrice",
+            "optional": false,
+            "type": "{ currency: string, totalNetAmount?: number | null, totalGrossAmount?: number | null, totalTaxAmount?: number | null, totalDiscountAbsolute?: number | null, totalDiscountPercentage?: number | null }"
+          },
+          {
+            "key": "taxAmounts",
+            "optional": true,
+            "type": "{ taxRatePercentage: number, taxAmount: number, netAmount: number }[]"
+          },
+          {
+            "key": "taxConditions",
+            "optional": true,
+            "type": "{ taxType: string, taxTypeNote?: string | null, taxSubType?: string | null }"
+          },
+          {
+            "key": "relatedVouchers",
+            "optional": true,
+            "type": "{ id: string, voucherNumber?: string | null, voucherType: string }[]"
+          },
+          {
+            "key": "printLayoutId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "introduction",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "remark",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ documentFileId?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.creditNotes.list",
+      "shortPath": "creditNotes.list",
+      "description": "List credit notes with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voucherStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voucherDateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voucherDateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedDateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedDateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voucherNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, voucherType: string, voucherStatus: string, voucherNumber?: string | null, voucherDate?: string | null, createdDate?: string, updatedDate?: string, dueDate?: string | null, contactId?: string | null, contactName?: string | null, totalAmount?: number, openAmount?: number | null, currency?: string, archived?: boolean }[]"
+          },
+          {
+            "key": "first",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "last",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "totalPages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalElements",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "numberOfElements",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ property?: string, direction?: string, ignoreCase?: boolean, nullHandling?: string, ascending?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.creditNotes.render",
+      "shortPath": "creditNotes.render",
+      "description": "Use the deprecated credit-note document endpoint to retrieve a file ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentFileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.downPaymentInvoices.download",
+      "shortPath": "downPaymentInvoices.download",
+      "description": "Download a down-payment invoice document as base64 data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accept",
+            "optional": true,
+            "type": "*/* | application/pdf | application/xml"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sizeBytes",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.downPaymentInvoices.get",
+      "shortPath": "downPaymentInvoices.get",
+      "description": "Retrieve a down-payment invoice by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "voucherStatus",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "voucherNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "voucherDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ contactId?: string | null, name?: string | null, supplement?: string | null, street?: string | null, city?: string | null, zip?: string | null, countryCode?: string | null, contactPerson?: string | null } | null"
+          },
+          {
+            "key": "xRechnung",
+            "optional": true,
+            "type": "{ buyerReference?: string | null } | null"
+          },
+          {
+            "key": "electronicDocumentProfile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lineItems",
+            "optional": true,
+            "type": "{ id?: string | null, type: string, name?: string | null, description?: string | null, quantity?: number | null, unitName?: string | null, unitPrice?: { currency: string, netAmount?: number | null, grossAmount?: number | null, taxRatePercentage: number } | null, discountPercentage?: number | null, lineItemAmount?: number | null }[]"
+          },
+          {
+            "key": "totalPrice",
+            "optional": false,
+            "type": "{ currency: string, totalNetAmount?: number | null, totalGrossAmount?: number | null, totalTaxAmount?: number | null, totalDiscountAbsolute?: number | null, totalDiscountPercentage?: number | null }"
+          },
+          {
+            "key": "taxAmounts",
+            "optional": true,
+            "type": "{ taxRatePercentage: number, taxAmount: number, netAmount: number }[]"
+          },
+          {
+            "key": "taxConditions",
+            "optional": true,
+            "type": "{ taxType: string, taxTypeNote?: string | null, taxSubType?: string | null }"
+          },
+          {
+            "key": "paymentConditions",
+            "optional": true,
+            "type": "{ paymentTermLabel?: string | null, paymentTermLabelTemplate?: string | null, paymentTermDuration?: number | null, paymentDiscountConditions?: { discountPercentage: number, discountRange: number } | null } | null"
+          },
+          {
+            "key": "closingInvoice",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "claimedGrossAmount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "downPaymentDeductions",
+            "optional": true,
+            "type": "{ id: string, voucherType: string, title: string, voucherNumber: string, voucherDate: string, receivedGrossAmount: number, receivedNetAmount: number, receivedTaxAmount: number, taxRatePercentage: number }[] | null"
+          },
+          {
+            "key": "recurringTemplateId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "relatedVouchers",
+            "optional": true,
+            "type": "{ id: string, voucherNumber?: string | null, voucherType: string }[]"
+          },
+          {
+            "key": "printLayoutId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "shippingConditions",
+            "optional": true,
+            "type": "{ shippingDate?: string | null, shippingEndDate?: string | null, shippingType?: string } | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "introduction",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "remark",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ documentFileId?: string | null } | null"
+          },
+          {
+            "key": "closingInvoiceId",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.files.download",
+      "shortPath": "files.download",
+      "description": "Download a bookkeeping file as base64-encoded binary data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accept",
+            "optional": true,
+            "type": "*/* | application/pdf | application/xml | image/jpeg | image/png"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sizeBytes",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.files.upload",
+      "shortPath": "files.upload",
+      "description": "Upload a voucher file, which creates a bookkeeping voucher",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "application/pdf | image/jpeg | image/png | application/xml | text/xml"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "voucherId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.invoices.create",
+      "shortPath": "invoices.create",
+      "description": "Create an invoice in draft or finalized state",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "finalize",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "precedingSalesVoucherId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voucherDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "de | en"
+          },
+          {
+            "key": "printLayoutId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address",
+            "optional": false,
+            "type": "{ contactId?: string, name?: string, supplement?: string, street?: string, city?: string, zip?: string, countryCode?: string }"
+          },
+          {
+            "key": "lineItems",
+            "optional": false,
+            "type": "{ type: custom | material | service | text, id?: string, name?: string, description?: string, quantity?: number, unitName?: string, unitPrice?: { currency: EUR, netAmount?: number, grossAmount?: number, taxRatePercentage: number }, discountPercentage?: number }[]"
+          },
+          {
+            "key": "totalPrice",
+            "optional": false,
+            "type": "{ currency: EUR, totalDiscountAbsolute?: number, totalDiscountPercentage?: number }"
+          },
+          {
+            "key": "taxConditions",
+            "optional": false,
+            "type": "{ taxType: net | gross | vatfree | intraCommunitySupply | constructionService13b | externalService13b | thirdPartyCountryService | thirdPartyCountryDelivery | photovoltaicEquipment, taxTypeNote?: string, taxSubType?: distanceSales | electronicServices | null }"
+          },
+          {
+            "key": "paymentConditions",
+            "optional": true,
+            "type": "{ paymentTermLabel?: string, paymentTermDuration?: number, paymentDiscountConditions?: { discountPercentage: number, discountRange: number } }"
+          },
+          {
+            "key": "xRechnung",
+            "optional": true,
+            "type": "{ buyerReference: string }"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "introduction",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "remark",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shippingConditions",
+            "optional": false,
+            "type": "{ shippingDate?: string, shippingEndDate?: string, shippingType: service | serviceperiod | delivery | deliveryperiod | none }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resourceUri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.invoices.download",
+      "shortPath": "invoices.download",
+      "description": "Download an invoice document as base64-encoded binary data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "accept",
+            "optional": true,
+            "type": "*/* | application/pdf | application/xml"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "kind",
+            "optional": false,
+            "type": "binary"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "base64",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "sizeBytes",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.invoices.get",
+      "shortPath": "invoices.get",
+      "description": "Retrieve invoice details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "organizationId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "voucherStatus",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "voucherNumber",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "voucherDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "address",
+            "optional": true,
+            "type": "{ contactId?: string | null, name?: string | null, supplement?: string | null, street?: string | null, city?: string | null, zip?: string | null, countryCode?: string | null, contactPerson?: string | null } | null"
+          },
+          {
+            "key": "xRechnung",
+            "optional": true,
+            "type": "{ buyerReference?: string | null } | null"
+          },
+          {
+            "key": "electronicDocumentProfile",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "lineItems",
+            "optional": true,
+            "type": "{ id?: string | null, type: string, name?: string | null, description?: string | null, quantity?: number | null, unitName?: string | null, unitPrice?: { currency: string, netAmount?: number | null, grossAmount?: number | null, taxRatePercentage: number } | null, discountPercentage?: number | null, lineItemAmount?: number | null }[]"
+          },
+          {
+            "key": "totalPrice",
+            "optional": false,
+            "type": "{ currency: string, totalNetAmount?: number | null, totalGrossAmount?: number | null, totalTaxAmount?: number | null, totalDiscountAbsolute?: number | null, totalDiscountPercentage?: number | null }"
+          },
+          {
+            "key": "taxAmounts",
+            "optional": true,
+            "type": "{ taxRatePercentage: number, taxAmount: number, netAmount: number }[]"
+          },
+          {
+            "key": "taxConditions",
+            "optional": true,
+            "type": "{ taxType: string, taxTypeNote?: string | null, taxSubType?: string | null }"
+          },
+          {
+            "key": "paymentConditions",
+            "optional": true,
+            "type": "{ paymentTermLabel?: string | null, paymentTermLabelTemplate?: string | null, paymentTermDuration?: number | null, paymentDiscountConditions?: { discountPercentage: number, discountRange: number } | null } | null"
+          },
+          {
+            "key": "closingInvoice",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "claimedGrossAmount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "downPaymentDeductions",
+            "optional": true,
+            "type": "{ id: string, voucherType: string, title: string, voucherNumber: string, voucherDate: string, receivedGrossAmount: number, receivedNetAmount: number, receivedTaxAmount: number, taxRatePercentage: number }[] | null"
+          },
+          {
+            "key": "recurringTemplateId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "relatedVouchers",
+            "optional": true,
+            "type": "{ id: string, voucherNumber?: string | null, voucherType: string }[]"
+          },
+          {
+            "key": "printLayoutId",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "shippingConditions",
+            "optional": true,
+            "type": "{ shippingDate?: string | null, shippingEndDate?: string | null, shippingType?: string } | null"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "introduction",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "remark",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "{ documentFileId?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.invoices.list",
+      "shortPath": "invoices.list",
+      "description": "List outgoing invoices with pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voucherStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voucherDateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voucherDateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedDateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedDateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voucherNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, voucherType: string, voucherStatus: string, voucherNumber?: string | null, voucherDate?: string | null, createdDate?: string, updatedDate?: string, dueDate?: string | null, contactId?: string | null, contactName?: string | null, totalAmount?: number, openAmount?: number | null, currency?: string, archived?: boolean }[]"
+          },
+          {
+            "key": "first",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "last",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "totalPages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalElements",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "numberOfElements",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ property?: string, direction?: string, ignoreCase?: boolean, nullHandling?: string, ascending?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.invoices.render",
+      "shortPath": "invoices.render",
+      "description": "Use the deprecated invoice document endpoint to retrieve a file ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentFileId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.payments.get",
+      "shortPath": "payments.get",
+      "description": "Retrieve payment status and payment entries for a voucher",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voucherId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "openAmount",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "currency",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "paymentStatus",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "voucherType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "voucherStatus",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "paidDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "paymentItems",
+            "optional": false,
+            "type": "{ paymentItemType: string, postingDate: string, amount: number, currency: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.postingCategories.list",
+      "shortPath": "postingCategories.list",
+      "description": "List the available bookkeeping posting categories",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name: string, type: income | outgo, contactRequired: boolean, splitAllowed: boolean, groupName: string }[]"
+      }
+    },
+    {
+      "path": "lexoffice.api.profile.get",
+      "shortPath": "profile.get",
+      "description": "Retrieve organization and account profile details",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "organizationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "created",
+            "optional": true,
+            "type": "{ userId?: string, userName?: string, userEmail?: string, date?: string }"
+          },
+          {
+            "key": "connectionId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "taxType",
+            "optional": true,
+            "type": "net | gross | vatfree"
+          },
+          {
+            "key": "distanceSalesPrinciple",
+            "optional": true,
+            "type": "ORIGIN | DESTINATION"
+          },
+          {
+            "key": "businessFeatures",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "features",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "subscriptionStatus",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "smallBusiness",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.voucherlist.list",
+      "shortPath": "voucherlist.list",
+      "description": "Search all documented Lexware voucher types with paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voucherType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "voucherStatus",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voucherDateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voucherDateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedDateFrom",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedDateTo",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voucherNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, voucherType: string, voucherStatus: string, voucherNumber?: string | null, voucherDate?: string | null, createdDate?: string, updatedDate?: string, dueDate?: string | null, contactId?: string | null, contactName?: string | null, totalAmount?: number, openAmount?: number | null, currency?: string, archived?: boolean }[]"
+          },
+          {
+            "key": "first",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "last",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "totalPages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalElements",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "numberOfElements",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ property?: string, direction?: string, ignoreCase?: boolean, nullHandling?: string, ascending?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.vouchers.attachFile",
+      "shortPath": "vouchers.attachFile",
+      "description": "Upload a bookkeeping document to an existing voucher",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "fileName",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "application/pdf | image/jpeg | image/png | application/xml | text/xml"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.vouchers.create",
+      "shortPath": "vouchers.create",
+      "description": "Create a new bookkeeping voucher",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "salesinvoice | salescreditnote | purchaseinvoice | purchasecreditnote"
+          },
+          {
+            "key": "voucherStatus",
+            "optional": true,
+            "type": "open | unchecked"
+          },
+          {
+            "key": "voucherNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voucherDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "shippingDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalGrossAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "totalTaxAmount",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "taxType",
+            "optional": false,
+            "type": "net | gross | vatfree"
+          },
+          {
+            "key": "useCollectiveContact",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "remark",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voucherItems",
+            "optional": true,
+            "type": "{ amount: number, taxAmount: number, taxRatePercent: number, categoryId: string }[]"
+          },
+          {
+            "key": "files",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resourceUri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.vouchers.get",
+      "shortPath": "vouchers.get",
+      "description": "Retrieve voucher details by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, organizationId?: string, createdDate?: string, updatedDate?: string, type: string, voucherNumber?: string | null, shippingDate?: string | null, dueDate?: string | null, totalGrossAmount?: number | null, totalTaxAmount?: number | null, taxType?: string | null, useCollectiveContact?: boolean, contactId?: string | null, contactName?: string | null, remark?: string | null, files?: string[], version: number, voucherStatus: unchecked, voucherDate?: string | null, voucherItems?: { amount: number, taxAmount?: number, taxRatePercent: number, categoryId: string }[] | null } | { id: string, organizationId?: string, createdDate?: string, updatedDate?: string, type: string, voucherNumber?: string | null, shippingDate?: string | null, dueDate?: string | null, totalGrossAmount?: number | null, totalTaxAmount?: number | null, taxType?: string | null, useCollectiveContact?: boolean, contactId?: string | null, contactName?: string | null, remark?: string | null, files?: string[], version: number, voucherStatus: string, voucherDate: string, voucherItems: { amount: number, taxAmount?: number, taxRatePercent: number, categoryId: string }[] }"
+      }
+    },
+    {
+      "path": "lexoffice.api.vouchers.list",
+      "shortPath": "vouchers.list",
+      "description": "List bookkeeping vouchers with optional voucher number filter",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voucherNumber",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "{ id: string, voucherType: string, voucherStatus: string, voucherNumber?: string | null, voucherDate?: string | null, createdDate?: string, updatedDate?: string, dueDate?: string | null, contactId?: string | null, contactName?: string | null, totalAmount?: number, openAmount?: number | null, currency?: string, archived?: boolean }[]"
+          },
+          {
+            "key": "first",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "last",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "totalPages",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalElements",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "numberOfElements",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "size",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "number",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ property?: string, direction?: string, ignoreCase?: boolean, nullHandling?: string, ascending?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "lexoffice.api.vouchers.update",
+      "shortPath": "vouchers.update",
+      "description": "Update a bookkeeping voucher including its assigned files",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "salesinvoice | salescreditnote | purchaseinvoice | purchasecreditnote"
+          },
+          {
+            "key": "voucherStatus",
+            "optional": true,
+            "type": "open | unchecked"
+          },
+          {
+            "key": "voucherNumber",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "voucherDate",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "shippingDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "dueDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "totalGrossAmount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "totalTaxAmount",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "taxType",
+            "optional": false,
+            "type": "net | gross | vatfree"
+          },
+          {
+            "key": "useCollectiveContact",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "contactName",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "remark",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "voucherItems",
+            "optional": false,
+            "type": "{ amount: number, taxAmount: number, taxRatePercent: number, categoryId: string }[]"
+          },
+          {
+            "key": "files",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "resourceUri",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "createdDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "updatedDate",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

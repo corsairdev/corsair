@@ -1,3 +1,4 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 import * as R from './resources';
 
@@ -167,7 +168,13 @@ export const TextItEndpointInputSchemas = {
 	labelsCreate: names,
 	labelsUpdate: z.object({ ...uuid, name: text }),
 	labelsDelete: z.object(uuid),
-	mediaUpload: z.object({ file: z.instanceof(Blob) }),
+	mediaUpload: z.object({
+		file: z
+			.union([FileInputSchema, z.instanceof(Blob)])
+			.describe(
+				'The media file to attach to messages: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…).',
+			),
+	}),
 	messagesList: z.object({
 		...cursor,
 		...dates,

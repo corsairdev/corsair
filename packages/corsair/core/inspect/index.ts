@@ -123,6 +123,7 @@ function isOptionalish(typeName: string | undefined): boolean {
 		typeName === 'ZodOptional' ||
 		typeName === 'ZodNullable' ||
 		typeName === 'ZodDefault' ||
+		typeName === 'ZodPrefault' ||
 		typeName === 'ZodCatch'
 	);
 }
@@ -285,6 +286,7 @@ function zodToInlineType(schema: ZodTypeAny): string {
 			return `${inner ? zodToInlineType(inner) : 'unknown'} | null`;
 		}
 		case 'ZodDefault':
+		case 'ZodPrefault':
 		case 'ZodCatch': {
 			const inner = getZodInner(def);
 			return inner ? zodToInlineType(inner) : 'unknown';
@@ -474,6 +476,7 @@ function zodToFormSchema(schema: ZodTypeAny): FormFieldSchema {
 			};
 		}
 		case 'ZodDefault':
+		case 'ZodPrefault':
 		case 'ZodCatch': {
 			const inner = getZodInner(def);
 			return inner
@@ -606,6 +609,7 @@ function getSchemaLeafType(schema: ZodTypeAny): DbFieldType | null {
 		case 'ZodOptional':
 		case 'ZodNullable':
 		case 'ZodDefault':
+		case 'ZodPrefault':
 		case 'ZodCatch': {
 			const inner = getZodInner(def);
 			return inner ? getSchemaLeafType(inner) : null;
@@ -1121,7 +1125,9 @@ export function getSchema(
 
 				if (schemas?.input) {
 					parts.push(
-						`input ${formatDocSchemaShape(zodToDocSchemaShape(schemas.input))}`,
+						// 'input': a `.default()`/`.prefault()` field can be left out, and
+						// the agent should see it as optional with its default, as the docs do.
+						`input ${formatDocSchemaShape(zodToDocSchemaShape(schemas.input, 'input'))}`,
 					);
 				}
 				if (schemas?.output) {
@@ -1232,7 +1238,7 @@ function unwrapZodForDocs(schema: ZodTypeAny): ZodTypeAny {
 	}
 }
 
-/** The value a `.default()` on the way in supplies, if there is one. */
+/** The value a `.default()` or `.prefault()` on the way in supplies, if there is one. */
 // unknown: a default is whatever the field's own type is (number, string,
 // array, object); callers only JSON.stringify it.
 function findDefault(schema: ZodTypeAny): { value: unknown } | undefined {
@@ -1240,7 +1246,9 @@ function findDefault(schema: ZodTypeAny): { value: unknown } | undefined {
 	while (current) {
 		const def = getZodDef(current);
 		const typeName = getZodTypeName(def);
-		if (typeName === 'ZodDefault') {
+		// zod 4's .prefault() is a default applied before parsing: the field is
+		// just as optional, and its value is just as much the default.
+		if (typeName === 'ZodDefault' || typeName === 'ZodPrefault') {
 			const raw = def.defaultValue;
 			// zod 3 stores a function; zod 4 a value (read through a getter).
 			return { value: typeof raw === 'function' ? raw() : raw };
@@ -1256,11 +1264,19 @@ const MAX_DEFAULT_TEXT = 40;
 /** `Defaults to 10.` appended to an input description, unless it already says so. */
 function describeDefault(
 	description: string | undefined,
-	// unknown: the default from findDefault, any JSON value; it is only stringified.
+	// unknown: the default from findDefault; it is only stringified.
 	value: unknown,
 ): string | undefined {
 	if (description && /\bdefault/i.test(description)) return description;
-	const text = JSON.stringify(value);
+	// A .prefault() value has the input type, which need not be JSON (a BigInt
+	// for z.coerce.number(), a cycle): keep the description rather than throw
+	// and fail the plugin's docs.
+	let text: string | undefined;
+	try {
+		text = JSON.stringify(value);
+	} catch {
+		return description;
+	}
 	if (text === undefined || text.length > MAX_DEFAULT_TEXT) return description;
 	const sentence = `Defaults to ${text}.`;
 	if (!description) return sentence;

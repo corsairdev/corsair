@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/gemini",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Gemini plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -20,7 +20,7 @@
     "demo": "node ./scripts/demo.mjs"
   },
   "peerDependencies": {
-    "corsair": ">=0.1.0",
+    "corsair": ">=0.2.9",
     "zod": "^4.1.13"
   },
   "devDependencies": {

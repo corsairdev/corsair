@@ -3,6 +3,7 @@ import { listWorkspaces } from './workspaces';
 import { GongWorkspacesOutputSchemas } from './workspaces-types';
 
 jest.mock('corsair/http', () => ({
+	...jest.requireActual('corsair/http'),
 	ApiError: class ApiError extends Error {},
 	request: jest.fn(),
 }));

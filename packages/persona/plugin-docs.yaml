@@ -1,0 +1,133 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Persona"
+description: "Persona is an identity verification and KYC platform. This plugin manages accounts and inquiries, approves or declines inquiries, marks them for review, runs inquiry sessions and one-time links, reads inquiry templates, configures webhooks with signing-secret rotation, and verifies inbound webhook deliveries with HMAC-SHA256."
+domain: withpersona.com
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with the environment API key from the Persona dashboard
+  (sandbox or production); the plugin sends it as an Authorization Bearer
+  token and pins Persona-Version: 2023-01-05, the version its schemas
+  follow (override with the apiVersion option).
+
+  Every operation is a JSON:API call. Create and update bodies wrap fields in
+  data.attributes; tag, decision and link options go in meta. Answers carry
+  data (attribute keys in kebab-case, e.g. reference-id, created-at), plus
+  included resources, and lists carry links.next: pass its page[after] value
+  as pageAfter for the next page. Redactions, approvals and declines are
+  final. One-time links let a holder resume an inquiry or session; anyone
+  with the link can use it, so share it only with the intended holder.
+
+  Webhook deliveries carry a Persona-Signature header of
+  t=<unix time>,v1=<hex> sets: HMAC-SHA256 over "<t>.<raw body>" with the
+  webhook's secret, one set per active secret while it rotates. Sets whose
+  timestamp is more than 5 minutes from now are refused, so an old signed
+  delivery can't be replayed. webhooks.create
+  and webhooks.rotateSecret return the secret; store it with
+  keys.set_webhook_signature (or set webhookSecret on the plugin). The
+  delivery body is { data: { type: "event", attributes: { name, payload } } }.
+
+  The Persona API has 200+ operations; this plugin covers accounts,
+  inquiries, inquiry sessions, inquiry templates, and webhook management.
+  The verification sub-types (AAMVA, database businesses, government IDs),
+  lists, reports, transactions and devices are documented by Persona but not
+  part of this plugin.
+
+  Every operation is described in the official reference:
+  https://docs.withpersona.com/2023-01-05/api-reference
+examples:
+  read:
+    path: inquiries.get
+    title: Read an inquiry
+    args:
+      inquiryId: inq_ABC123
+  write:
+    path: inquiries.create
+    title: Create an inquiry
+    args:
+      attributes:
+        inquiry-template-id: itmpl_ABC123
+        reference-id: user-42
+apiExamples:
+  accounts.list:
+    call: '{ pageSize: 25 }'
+  accounts.get:
+    call: '{ accountId: "act_ABC123" }'
+  accounts.create:
+    call: '{ attributes: { "reference-id": "user-42", "name-first": "Jane", "email-address": "jane@example.com" } }'
+  accounts.update:
+    call: '{ accountId: "act_ABC123", attributes: { "name-last": "Example" } }'
+  accounts.redact:
+    call: '{ accountId: "act_ABC123" }'
+  accounts.search:
+    call: '{ query: { attribute: "reference-id", operator: "eq", value: "user-42" } }'
+  accounts.addTag:
+    call: '{ accountId: "act_ABC123", tagName: "vip" }'
+  accounts.removeTag:
+    call: '{ accountId: "act_ABC123", tagName: "vip" }'
+  inquiries.list:
+    call: '{ status: "completed", pageSize: 25 }'
+  inquiries.get:
+    call: '{ inquiryId: "inq_ABC123" }'
+  inquiries.create:
+    call: '{ attributes: { "inquiry-template-id": "itmpl_ABC123", "reference-id": "user-42" } }'
+  inquiries.update:
+    call: '{ inquiryId: "inq_ABC123", attributes: { note: "Updated" } }'
+  inquiries.redact:
+    call: '{ inquiryId: "inq_ABC123" }'
+  inquiries.approve:
+    call: '{ inquiryId: "inq_ABC123", comment: "Documents checked" }'
+  inquiries.decline:
+    call: '{ inquiryId: "inq_ABC123", comment: "Document mismatch" }'
+  inquiries.markForReview:
+    call: '{ inquiryId: "inq_ABC123" }'
+  inquiries.generateOneTimeLink:
+    call: '{ inquiryId: "inq_ABC123", expiresInSeconds: 3600 }'
+  inquiries.addTag:
+    call: '{ inquiryId: "inq_ABC123", tagName: "follow-up" }'
+  inquiries.removeTag:
+    call: '{ inquiryId: "inq_ABC123", tagName: "follow-up" }'
+  inquirySessions.create:
+    call: '{ inquiryId: "inq_ABC123" }'
+  inquirySessions.get:
+    call: '{ inquirySessionId: "iqse_ABC123" }'
+  inquirySessions.expire:
+    call: '{ inquirySessionId: "iqse_ABC123" }'
+  inquirySessions.expireAll:
+    call: '{ inquiryIds: ["inq_ABC123"] }'
+  inquirySessions.generateOneTimeLink:
+    call: '{ inquirySessionId: "iqse_ABC123" }'
+  inquiryTemplates.list:
+    call: '{}'
+  inquiryTemplates.get:
+    call: '{ inquiryTemplateId: "itmpl_ABC123" }'
+  inquiryTemplates.listVersions:
+    call: '{ inquiryTemplateId: "itmpl_ABC123" }'
+  webhooks.list:
+    call: '{}'
+  webhooks.create:
+    call: '{ attributes: { name: "Main", url: "https://example.com/webhooks/persona", "enabled-events": ["inquiry.approved", "inquiry.declined"] } }'
+  webhooks.get:
+    call: '{ webhookId: "wbh_ABC123" }'
+  webhooks.update:
+    call: '{ webhookId: "wbh_ABC123", attributes: { "enabled-events": ["inquiry.completed"] } }'
+  webhooks.enable:
+    call: '{ webhookId: "wbh_ABC123" }'
+  webhooks.disable:
+    call: '{ webhookId: "wbh_ABC123" }'
+  webhooks.archive:
+    call: '{ webhookId: "wbh_ABC123" }'
+  webhooks.rotateSecret:
+    call: '{ webhookId: "wbh_ABC123", expiresInSeconds: 3600 }'
+  webhooks.searchEvents:
+    call: '{ sort: { attribute: "updated_at", direction: "desc" }, page: { size: 10 } }'
+apiNotes:
+  accounts.redact: 'Answers the redacted account; redaction is permanent.'
+  accounts.search: 'query is a predicate tree: { attribute, operator, value } leaves combined with and/or/not.'
+  inquiries.create: 'Pass inquiry-template-id for itmpl_ templates, template-id for legacy tmpl_ flows, or inquiry-template-version-id; fields carries the template field values.'
+  inquiries.approve: 'Final decision; comment is kept for auditing.'
+  inquiries.decline: 'Final decision; comment is kept for auditing.'
+  inquiries.generateOneTimeLink: 'The link is in meta.one-time-link; anyone with it can resume the inquiry.'
+  inquirySessions.expireAll: 'Expires every session of the given inquiries and answers the expired sessions.'
+  webhooks.create: 'enabled-events lists Persona event names, e.g. inquiry.approved, inquiry.declined, or * for all. The answer carries the signing secret.'
+  webhooks.rotateSecret: 'The answer carries the new signing secret; store it with keys.set_webhook_signature. expiresInSeconds keeps the old one signing meanwhile.'

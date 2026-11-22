@@ -1,0 +1,143 @@
+---
+title: "Piggy plugin"
+sidebarTitle: "Overview"
+description: "Piggy (rebranded Leat) is a loyalty platform. This plugin manages contacts and their credit, prepaid and tier state, records direct points and reward redemptions with their reversals, issues and redeems vouchers and giftcards, reads promotions, loyalty programs and business profiles, and manages webhook subscriptions with signature-verified deliveries."
+---
+
+Use **Piggy** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Authenticate with a Personal Access Token created for a private app in the Piggy Business Dashboard Marketplace; the plugin sends it as an Authorization Bearer token. Resource paths sit under https://api.leat.com/api/v3/oauth/clients/.
+Piggy is the same product as Leat: the developer docs live at docs.leat.com (docs.piggy.eu redirects there) and the token is created in the Leat-branded dashboard. Answers carry a &#123; data, meta &#125; envelope; errors carry &#123; message, code, status_code &#125; with a numeric business code (e.g. 55031 Contact not found). Deletion and merge of contacts cannot be undone; reversal calls (points, rewards, vouchers) compensate a write and a transaction can be reversed once.
+Webhook deliveries carry an HMAC-SHA256 signature of the raw body in the Signature header, keyed with the subscription secret (or the account secret). Store the subscription secret with keys.set_webhook_signature (or set webhookSecret on the plugin). Piggy sends two envelope versions: V1 posts one event per request (deduplicate on uuid) and V2 posts a batch under events[] (deduplicate on events[].event_uuid); the receiver verifies the signature and branches on version, so one endpoint serves both.
+The API documents far more resources than this plugin covers (orders, bookings, unit transactions, prepaid transactions, portal sessions, stamp cards, referrals, tiers management, custom attributes, automations and more, all on the same shapes). The deprecated credit-receptions endpoints and the legacy shops paths are intentionally not part of this plugin.
+Every operation is described in the official reference: https://docs.leat.com/v3
+
+**What you get:**
+
+- 47 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/piggy better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/piggy better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/piggy better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/piggy better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { piggy } from '@corsair-dev/piggy';
+
+export const corsair = createCorsair({
+	plugins: [
+		piggy(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Piggy API key before the first call: `pnpm corsair setup --plugin=piggy --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+piggy()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'piggy',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a contact**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.piggy.api.contacts.get({ contactUuid: '1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c' });
+```
+
+
+**Find or create a contact**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.piggy.api.contacts.findOrCreate({ email: 'spongebob@bikinibottom.sea' });
+```
+
+
+See the full list on the [API](/plugins/piggy/api) page.
+
+## Webhooks
+
+This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/piggy/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/piggy/api">
+    Every `piggy.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/piggy/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -365,7 +365,8 @@ const stravaEndpointMeta = {
 	},
 	'uploads.create': {
 		riskLevel: 'write',
-		description: 'Upload an activity file (FIT, TCX, GPX)',
+		description:
+			'Upload an activity file (FIT, TCX, GPX). Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'uploads.get': {
 		riskLevel: 'read',
