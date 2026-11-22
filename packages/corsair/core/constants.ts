@@ -498,6 +498,7 @@ export const BaseProviders = [
 	'parallel',
 	'parma',
 	'parsehub',
+	'parsera',
 	'parseur',
 	'payhip',
 	'pdf4me',
@@ -1258,6 +1259,7 @@ export const ProviderDisplayNames = {
 	parallel: 'Parallel',
 	parma: 'Parma',
 	parsehub: 'ParseHub',
+	parsera: 'Parsera',
 	parseur: 'Parseur',
 	payhip: 'Payhip',
 	pdf4me: 'PDF4me',
@@ -2025,6 +2027,7 @@ export type AllProviders =
 	| 'parallel'
 	| 'parma'
 	| 'parsehub'
+	| 'parsera'
 	| 'parseur'
 	| 'payhip'
 	| 'pdf4me'
