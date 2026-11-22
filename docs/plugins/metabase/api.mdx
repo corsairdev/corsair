@@ -4152,6 +4152,8 @@ await corsair.metabase.api.ee.getContentDiagnosticsDuplicated({ "query": {  } })
 
 ```ts
 {
+  limit?: number,
+  offset?: number,
   include-personal-collections?: boolean,
   sort-column?: detected-at | entity-type | name | created-at | created-by | collection-name | duplicate-count,
   sort-direction?: desc | asc,
@@ -4259,6 +4261,8 @@ await corsair.metabase.api.ee.getContentDiagnosticsImbalanced({ "query": {  } })
 
 ```ts
 {
+  limit?: number,
+  offset?: number,
   include-personal-collections?: boolean,
   sort-column?: detected-at | entity-type | name | created-at | created-by | collection-name | content-count | finding-type,
   sort-direction?: desc | asc,
@@ -4359,6 +4363,8 @@ await corsair.metabase.api.ee.getContentDiagnosticsSlow({ "query": {  } });
 
 ```ts
 {
+  limit?: number,
+  offset?: number,
   include-personal-collections?: boolean,
   sort-column?: detected-at | entity-type | name | created-at | created-by | collection-name | duration-ms,
   sort-direction?: desc | asc,
@@ -4464,6 +4470,8 @@ await corsair.metabase.api.ee.getContentDiagnosticsStale({ "query": {  } });
 
 ```ts
 {
+  limit?: number,
+  offset?: number,
   include-personal-collections?: boolean,
   sort-column?: detected-at | entity-type | name | created-at | created-by | collection-name | last-active-at,
   sort-direction?: desc | asc,
@@ -5113,6 +5121,8 @@ await corsair.metabase.api.ee.getDependenciesGraphBreaking({ "query": {  } });
 
 ```ts
 {
+  limit?: number,
+  offset?: number,
   types?: transform | table | snippet | dashboard | sandbox | measure | card | document | segment | action | data-app | (transform | table | snippet | dashboard | sandbox | measure | card | document | segment | action | data-app)[],
   card-types?: question | metric | model | (question | metric | model)[],
   query?: string,
@@ -5261,6 +5271,8 @@ await corsair.metabase.api.ee.getDependenciesGraphUnreferenced({ "query": {  } }
 
 ```ts
 {
+  limit?: number,
+  offset?: number,
   types?: transform | table | snippet | dashboard | sandbox | measure | card | document | segment | action | data-app | (transform | table | snippet | dashboard | sandbox | measure | card | document | segment | action | data-app)[],
   card-types?: question | metric | model | (question | metric | model)[],
   query?: string,
@@ -5496,6 +5508,8 @@ await corsair.metabase.api.ee.getMetabotAnalyticsConversations({ "query": {  } }
 
 ```ts
 {
+  limit?: number,
+  offset?: number,
   sort_by?: created_at | title | message_count | total_tokens | cache_read_tokens | user | profile_id | ip_address | null,
   sort_dir?: asc | desc | null,
   user_id?: number | null,
@@ -5777,6 +5791,8 @@ await corsair.metabase.api.ee.getMfaAdminEnrolledUsers({ "query": {  } });
 
 ```ts
 {
+  limit?: number,
+  offset?: number,
   query?: string | null
 }
 ```
@@ -5867,6 +5883,8 @@ await corsair.metabase.api.ee.getMfaAdminUnenrolledUsers({ "query": {  } });
 
 ```ts
 {
+  limit?: number,
+  offset?: number,
   query?: string | null
 }
 ```
@@ -6416,6 +6434,8 @@ The official route description documents optional `status=ended` and `status=all
 
 ```ts
 {
+  limit?: number,
+  offset?: number,
   status?: ended | all
 }
 ```
@@ -6490,6 +6510,8 @@ await corsair.metabase.api.ee.getSupportAccessGrant({ "query": {  } });
 
 ```ts
 {
+  limit?: number,
+  offset?: number,
   ticket-number?: string | null,
   user-id?: number | null,
   include-revoked?: boolean | null
@@ -6816,6 +6838,8 @@ await corsair.metabase.api.ee.getTransformTestByIdRun({ "path": { "id": 1 }, "qu
 
 ```ts
 {
+  limit?: number,
+  offset?: number,
   statuses?: (started | passed | failed | error | timeout)[] | null,
   start-time?: string | null,
   end-time?: string | null
