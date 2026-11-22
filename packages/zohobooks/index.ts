@@ -153,6 +153,7 @@ export type {
 	ZohoBooksOperationId,
 	ZohoBooksOperationInputFor,
 	ZohoBooksOperationOutputFor,
+	ZohoBooksPageContext,
 } from './schema/operation-types';
 
 export type ZohoBooksEndpoints = ZohoBooksBoundEndpoints;

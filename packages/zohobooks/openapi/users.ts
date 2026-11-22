@@ -31,7 +31,8 @@ export const schemas = {
 		description: 'Time at which the user is created.',
 	},
 	custom_fields: {
-		type: 'string',
+		type: 'array',
+		items: { type: 'object' },
 		description: 'Custom fields added for the user.',
 	},
 	'delete-a-user-response': {

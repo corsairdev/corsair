@@ -78,12 +78,12 @@ type ObjectProperties<
 				[Key in Extract<
 					RequiredSchemaKeys<Schema>,
 					keyof Properties
-				>]-?: SchemaToType<Properties[Key], Group, [...CurrentDepth, 0]>;
+				>]-?: PropertyType<Key, Properties[Key], Group, CurrentDepth>;
 			} & {
 				[Key in Exclude<
 					keyof Properties,
 					RequiredSchemaKeys<Schema>
-				>]?: SchemaToType<Properties[Key], Group, [...CurrentDepth, 0]>;
+				>]?: PropertyType<Key, Properties[Key], Group, CurrentDepth>;
 			} & (Schema extends { patternProperties: infer Patterns }
 					? PatternProperties<Patterns, Group, CurrentDepth>
 					: {})
@@ -101,6 +101,27 @@ type ObjectProperties<
 					? Record<string, Value>
 					: Record<string, JsonValue>
 		: Record<string, JsonValue>;
+
+// Zoho's OpenAPI types every list `page_context` as an array; the live API returns one object (11-22).
+export type ZohoBooksPageContext = {
+	page?: number;
+	per_page?: number;
+	has_more_page?: boolean;
+	report_name?: string;
+	applied_filter?: string;
+	sort_column?: string;
+	sort_order?: string;
+	readonly [key: string]: JsonValue | undefined;
+};
+
+type PropertyType<
+	Key,
+	Schema,
+	Group extends OperationGroup,
+	CurrentDepth extends Depth,
+> = Key extends 'page_context'
+	? ZohoBooksPageContext
+	: SchemaToType<Schema, Group, [...CurrentDepth, 0]>;
 
 type SchemaToType<
 	Schema,

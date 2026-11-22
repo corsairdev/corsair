@@ -117,7 +117,7 @@ export const schemas = {
 			message: { type: 'string', readOnly: true },
 		},
 	},
-	depth: { type: 'string' },
+	depth: { type: 'integer' },
 	description: { description: 'Description of the account', type: 'string' },
 	documents: { type: 'array', items: { type: 'string' } },
 	entry_number: { type: 'string' },
@@ -166,7 +166,7 @@ export const schemas = {
 	},
 	is_child_present: {
 		description: 'Check if a child account is present for the Account',
-		type: 'string',
+		type: 'boolean',
 	},
 	is_involved_in_transaction: {
 		description: 'Check if account is involved in transaction',
