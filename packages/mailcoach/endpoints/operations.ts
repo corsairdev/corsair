@@ -436,7 +436,7 @@ export const MailcoachOperations = {
 		body: ({ body }) => body,
 		riskLevel: 'write',
 		description:
-			'Replace draft campaign settings; include all intended fields because omitted values (including a schedule) reset.',
+			'Replace campaign settings; include all intended fields because omitted values reset, including an existing schedule (use campaigns.schedule to keep one).',
 	}),
 	'campaigns.schedule': defineMailcoachOperation({
 		inputSchema: input['campaigns.schedule'],
