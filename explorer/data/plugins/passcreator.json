@@ -1,0 +1,896 @@
+{
+  "id": "passcreator",
+  "displayName": "Passcreator",
+  "description": "Passcreator is a wallet pass platform for Apple Wallet and Google Wallet. This plugin creates and updates passes from templates with personalised properties, delivers passes by email, pushes notifications to pass holders, reads pass statistics, copies templates, moves passes between templates (API v2), and manages webhook subscriptions whose deliveries carry verifiable ECDSA signatures.",
+  "npmPackageName": "@corsair-dev/passcreator",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 21,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "passcreator.api.passes.activeHistory",
+      "shortPath": "passes.activeHistory",
+      "description": "Read the history of active and inactive passes of a template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateUid",
+            "optional": false,
+            "type": "string",
+            "description": "Pass-template UID"
+          },
+          {
+            "key": "day",
+            "optional": true,
+            "type": "string",
+            "description": "First day of the history (YYYY-MM-DD); omit for the last seven days"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ date: string, active?: number | null, inactive?: number | null }[]"
+      }
+    },
+    {
+      "path": "passcreator.api.passes.create",
+      "shortPath": "passes.create",
+      "description": "Create a pass from a pass template with personalised properties",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passtemplate",
+            "optional": false,
+            "type": "string",
+            "description": "Pass-template UID the pass is created from"
+          },
+          {
+            "key": "properties",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Additional properties keyed by property name or ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass id"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass identifier (UUID, barcode value or user-provided ID)"
+          },
+          {
+            "key": "uniqueIdentifier",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass UID"
+          },
+          {
+            "key": "barcodeValue",
+            "optional": true,
+            "type": "string | null",
+            "description": "Barcode value"
+          },
+          {
+            "key": "linkToPassPage",
+            "optional": true,
+            "type": "string | null",
+            "description": "Link to the pass page in the wallet app"
+          },
+          {
+            "key": "passTemplate",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template name"
+          },
+          {
+            "key": "passTemplateGuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template UID"
+          },
+          {
+            "key": "createdOn",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "voided",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the pass is voided"
+          }
+        ]
+      }
+    },
+    {
+      "path": "passcreator.api.passes.delete",
+      "shortPath": "passes.delete",
+      "description": "Delete a pass",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passUid",
+            "optional": false,
+            "type": "string",
+            "description": "Pass UID, barcode value or user-provided ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passUid",
+            "optional": false,
+            "type": "string",
+            "description": "The pass the call was for"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the call succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "passcreator.api.passes.enableDownload",
+      "shortPath": "passes.enableDownload",
+      "description": "Enable the download of a pass",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passUid",
+            "optional": false,
+            "type": "string",
+            "description": "Pass UID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passUid",
+            "optional": false,
+            "type": "string",
+            "description": "Pass UID"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the enable succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "passcreator.api.passes.get",
+      "shortPath": "passes.get",
+      "description": "Read one pass by UID, barcode value or user-provided ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passUid",
+            "optional": false,
+            "type": "string",
+            "description": "Pass UID, barcode value or user-provided ID"
+          },
+          {
+            "key": "includeFieldMapping",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include the field mapping of the pass"
+          },
+          {
+            "key": "appConfigurationId",
+            "optional": true,
+            "type": "string",
+            "description": "Read the pass as a specific app configuration sees it"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass id"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass identifier (UUID, barcode value or user-provided ID)"
+          },
+          {
+            "key": "uniqueIdentifier",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass UID"
+          },
+          {
+            "key": "barcodeValue",
+            "optional": true,
+            "type": "string | null",
+            "description": "Barcode value"
+          },
+          {
+            "key": "linkToPassPage",
+            "optional": true,
+            "type": "string | null",
+            "description": "Link to the pass page in the wallet app"
+          },
+          {
+            "key": "passTemplate",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template name"
+          },
+          {
+            "key": "passTemplateGuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template UID"
+          },
+          {
+            "key": "createdOn",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "voided",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the pass is voided"
+          }
+        ]
+      }
+    },
+    {
+      "path": "passcreator.api.passes.list",
+      "shortPath": "passes.list",
+      "description": "List the passes of a pass template, paged by cursor and date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateUid",
+            "optional": false,
+            "type": "string",
+            "description": "Pass-template UID to list passes of"
+          },
+          {
+            "key": "start",
+            "optional": true,
+            "type": "number",
+            "description": "Offset of the first pass to return"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Number of passes per page (max 100)"
+          },
+          {
+            "key": "lastIdOfPriorPage",
+            "optional": true,
+            "type": "string",
+            "description": "Identifier of the last pass of the prior page, for cursor paging"
+          },
+          {
+            "key": "lastCreatedOnOfPriorPage",
+            "optional": true,
+            "type": "string",
+            "description": "createdOn of the last pass of the prior page, for cursor paging"
+          },
+          {
+            "key": "createdSince",
+            "optional": true,
+            "type": "string",
+            "description": "Only passes created after this date, e.g. \"2021-07-01 15:30\""
+          },
+          {
+            "key": "modifiedSince",
+            "optional": true,
+            "type": "string",
+            "description": "Only passes modified after this date, e.g. \"2021-07-01 15:30\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "{ start?: number | null, pageSize?: number | null, self?: string | null, next?: string | null } | null",
+            "description": "The query and its paging links"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total passes matching the query"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ passId?: string | null, identifier?: string | null, uniqueIdentifier?: string | null, barcodeValue?: string | null, linkToPassPage?: string | null, passTemplate?: string | null, passTemplateGuid?: string | null, createdOn?: string | null, voided?: boolean | null }[]",
+            "description": "The passes on this page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "passcreator.api.passes.pushNotification",
+      "shortPath": "passes.pushNotification",
+      "description": "Push a notification message to one pass holder; the message goes out and cannot be recalled",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passUid",
+            "optional": false,
+            "type": "string",
+            "description": "Pass UID"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "Text pushed to the pass holder (sent as pushNotificationText); may use {Property} placeholders"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passUid",
+            "optional": false,
+            "type": "string",
+            "description": "The pass the call was for"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the call succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "passcreator.api.passes.search",
+      "shortPath": "passes.search",
+      "description": "Search the passes of a template by content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateUid",
+            "optional": false,
+            "type": "string",
+            "description": "Pass-template UID to search in"
+          },
+          {
+            "key": "searchTerm",
+            "optional": false,
+            "type": "string",
+            "description": "Search term matched against pass content"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ passId?: string | null, identifier?: string | null, uniqueIdentifier?: string | null, barcodeValue?: string | null, linkToPassPage?: string | null, passTemplate?: string | null, passTemplateGuid?: string | null, createdOn?: string | null, voided?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "passcreator.api.passes.sendEmail",
+      "shortPath": "passes.sendEmail",
+      "description": "Send the pass to an email address; the email goes out and cannot be recalled",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passUid",
+            "optional": false,
+            "type": "string",
+            "description": "Pass UID, barcode value or user-provided ID"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "Email address the pass link is sent to"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passUid",
+            "optional": false,
+            "type": "string",
+            "description": "The pass the call was for"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the call succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "passcreator.api.passes.statistics",
+      "shortPath": "passes.statistics",
+      "description": "Read pass usage statistics of a template by day, week or month",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateUid",
+            "optional": false,
+            "type": "string",
+            "description": "Pass-template UID"
+          },
+          {
+            "key": "timeFrame",
+            "optional": true,
+            "type": "day | week | month",
+            "description": "Statistics granularity"
+          },
+          {
+            "key": "day",
+            "optional": true,
+            "type": "string",
+            "description": "The day to report, e.g. \"today\" or 2025-01-15"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "passcreator.api.passes.update",
+      "shortPath": "passes.update",
+      "description": "Update pass properties or mark the pass voided or not voided",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passUid",
+            "optional": false,
+            "type": "string",
+            "description": "Pass UID, barcode value or user-provided ID"
+          },
+          {
+            "key": "properties",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Additional properties to update"
+          },
+          {
+            "key": "voided",
+            "optional": true,
+            "type": "boolean",
+            "description": "Mark the pass voided (true) or not voided (false), as the mark-voided section documents"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passUid",
+            "optional": false,
+            "type": "string",
+            "description": "Updated pass UID"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the update succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "passcreator.api.passes.uris",
+      "shortPath": "passes.uris",
+      "description": "Read the resource URIs of a pass",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passUid",
+            "optional": false,
+            "type": "string",
+            "description": "Pass UID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "passcreator.api.templates.copy",
+      "shortPath": "templates.copy",
+      "description": "Copy a pass template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateUid",
+            "optional": false,
+            "type": "string",
+            "description": "Template UID to copy"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the copy"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description of the copy; defaults to the original"
+          },
+          {
+            "key": "organizationName",
+            "optional": true,
+            "type": "string",
+            "description": "Organization name of the copy; defaults to the original"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string | null",
+            "description": "UUID of the new template"
+          }
+        ]
+      }
+    },
+    {
+      "path": "passcreator.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete a pass template; the API refuses when scheduled tasks exist",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateUid",
+            "optional": false,
+            "type": "string",
+            "description": "Template UID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateUid",
+            "optional": false,
+            "type": "string",
+            "description": "Deleted template UID"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "passcreator.api.templates.fields",
+      "shortPath": "templates.fields",
+      "description": "Read the required and optional fields of a pass template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateUid",
+            "optional": false,
+            "type": "string",
+            "description": "Template UID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: string | null, name?: string | null, type?: string | null }[]"
+      }
+    },
+    {
+      "path": "passcreator.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List all pass templates of the account",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ identifier: string, name?: string | null }[]"
+      }
+    },
+    {
+      "path": "passcreator.api.templates.movePass",
+      "shortPath": "templates.movePass",
+      "description": "Move a pass to a different template of the same project (API v2)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "passUid",
+            "optional": false,
+            "type": "string",
+            "description": "Pass UID, barcode value or user-provided ID"
+          },
+          {
+            "key": "targetTemplateIdentifier",
+            "optional": false,
+            "type": "string",
+            "description": "UID of the template the pass moves to (same project and signing certificate)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the operation succeeded"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Human-readable result description"
+          },
+          {
+            "key": "statusCode",
+            "optional": true,
+            "type": "number | null",
+            "description": "HTTP status code of the response"
+          }
+        ]
+      }
+    },
+    {
+      "path": "passcreator.api.webhooks.getPublicKey",
+      "shortPath": "webhooks.getPublicKey",
+      "description": "Read the PEM public key that verifies webhook payload signatures",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "publicKey",
+            "optional": false,
+            "type": "string",
+            "description": "PEM-encoded public key used to verify webhook payload signatures"
+          }
+        ]
+      }
+    },
+    {
+      "path": "passcreator.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List the active webhook subscriptions, including pull-mode entries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ subscription_url?: string | null, target_url?: string | null, event?: string | null, pass_template?: string | null, pull_mode?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "passcreator.api.webhooks.subscribe",
+      "shortPath": "webhooks.subscribe",
+      "description": "Subscribe a URL to a webhook event, optionally scoped to one template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target_url",
+            "optional": false,
+            "type": "string",
+            "description": "Endpoint deliveries are posted to; the plugin adds this account's corsair_token query parameter, which the webhook handler requires"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "string",
+            "description": "Event to subscribe to, e.g. pass_created, pass_updated, pass_voided, pushnotification_registered, pass_template_created, pass_template_updated, app_scan_created"
+          },
+          {
+            "key": "pass_template",
+            "optional": true,
+            "type": "string",
+            "description": "Scope the subscription to one pass-template UID (sent in the path)"
+          },
+          {
+            "key": "subscription_url",
+            "optional": true,
+            "type": "string",
+            "description": "Optional URL that identifies this subscription"
+          },
+          {
+            "key": "retryEnabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Retry failed deliveries"
+          },
+          {
+            "key": "signPayload",
+            "optional": true,
+            "type": "boolean",
+            "description": "Sign deliveries (default true here: the receiver rejects unsigned ones)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accessToken",
+            "optional": true,
+            "type": "string | null",
+            "description": "Only returned with generateAccessToken"
+          }
+        ]
+      }
+    },
+    {
+      "path": "passcreator.api.webhooks.unsubscribe",
+      "shortPath": "webhooks.unsubscribe",
+      "description": "Unsubscribe a webhook; deliveries stop until it is subscribed again",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "target_url",
+            "optional": false,
+            "type": "string",
+            "description": "target_url the subscription was created with, including its corsair_token (as webhooks.list shows it)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the unsubscribe succeeded"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "passcreator.webhooks.passcreator.event",
+      "shortPath": "passcreator.event",
+      "description": "A signed Passcreator delivery; the result is the verified pass data from signedData",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "signature",
+            "optional": false,
+            "type": "string",
+            "description": "Hex ECDSA signature over signedData"
+          },
+          {
+            "key": "signedData",
+            "optional": false,
+            "type": "string",
+            "description": "The JSON string Passcreator signed: the pass data"
+          },
+          {
+            "key": "identifier",
+            "optional": true,
+            "type": "string | null",
+            "description": "Pass UUID"
+          },
+          {
+            "key": "uniqueIdentifier",
+            "optional": true,
+            "type": "string | null",
+            "description": "Unique pass identifier shown in the barcode"
+          }
+        ]
+      },
+      "responseType": "{ identifier?: string | null, passId?: string | null, uniqueIdentifier?: string | null, passTemplateGuid?: string | null }",
+      "usageExample": "passcreator({\n    webhookHooks: {\n        passcreator: {\n            event: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}
