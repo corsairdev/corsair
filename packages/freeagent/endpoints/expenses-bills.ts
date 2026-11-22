@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CapitalAssetWrite } from './capital-asset';
 import { lazyModule } from './lazy-module';
 import { defineOperation } from './operation';
 
@@ -123,7 +124,7 @@ function build() {
 			stock_item: z.string().url().optional(),
 			stock_altering_quantity: Decimal.optional(),
 			depreciation_schedule: z.string().optional(),
-			capital_asset: z.string().url().optional(),
+			capital_asset: z.union([z.string().url(), CapitalAssetWrite]).optional(),
 			project: z.string().url().optional(),
 			cis_deduction_rate: Decimal.optional(),
 		})
@@ -253,7 +254,7 @@ function build() {
 				reference: z.string().min(1),
 				dated_on: z.string().date(),
 				due_on: z.string().date(),
-				bill_items: z.array(BillItemCreate).min(1).max(40),
+				bill_items: z.array(BillItemCreate).max(40),
 			}),
 		})
 		.strict();
@@ -349,6 +350,7 @@ function build() {
 		.passthrough();
 	const ExpenseFields = z
 		.object({
+			capital_asset: CapitalAssetWrite.optional(),
 			user: z.string().url().optional(),
 			category: z.union([z.string().url(), z.literal('Mileage')]).optional(),
 			dated_on: z.string().date().optional(),
@@ -561,6 +563,15 @@ function build() {
 				method: 'POST',
 				path: () => '/v2/expenses',
 				body: (input) => ({ expenses: input.expenses }),
+				check: (input, output) => {
+					// FreeAgent answers one expense per submitted row, in order. A short answer
+					// can't be matched back to the rows, and some may have been created.
+					if (output.expenses.length !== input.expenses.length) {
+						throw new Error(
+							`FreeAgent returned ${output.expenses.length} expenses for ${input.expenses.length} submitted. Check which were created before retrying.`,
+						);
+					}
+				},
 			},
 		),
 		update: defineOperation(ExpenseUpdateInput, EmptyResponse, {

@@ -1,5 +1,7 @@
 import type { ZodType } from 'zod';
 
+// Handlers differ per operation; `never[]`/`unknown` let one map hold them all, and the
+// caller-facing types come from `pick`'s return type, not from this alias.
 type Handler = (...args: never[]) => unknown;
 
 /**
@@ -7,7 +9,8 @@ type Handler = (...args: never[]) => unknown;
  * operations runs (or a schema is read), instead of at import. The 170 added
  * operations cost ~25 MB of heap when built at import, in every process that
  * loads the plugin. Operation ids come from the module's metadata, which stays
- * eager because it is plain data.
+ * eager because it is plain data. Only `meta`'s keys ('resource.action') are
+ * read, so its values are typed `unknown`.
  */
 export function lazyModule<M>(build: () => M, meta: Record<string, unknown>) {
 	let built: M | undefined;
@@ -34,6 +37,8 @@ export function lazyModule<M>(build: () => M, meta: Record<string, unknown>) {
 					return handler(...args);
 				};
 			}
+			// Safe: every module's metadata has exactly one entry per handler (the registry
+			// test checks handlers, schemas and metadata line up), so the tree has E's keys.
 			return tree as E;
 		},
 		schemas<S extends Record<string, { input: ZodType; output: ZodType }>>(
@@ -55,6 +60,7 @@ export function lazyModule<M>(build: () => M, meta: Record<string, unknown>) {
 					},
 				};
 			}
+			// Same key set as the module's schema map, for the same reason as `tree` above.
 			return entries as S;
 		},
 	};

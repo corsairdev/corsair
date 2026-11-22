@@ -16,6 +16,8 @@ type OperationOptions<
 	// `unknown` is necessary because JSON request envelopes differ by resource.
 	body?: (input: z.infer<Input>) => Record<string, unknown>;
 	apiVersion?: string;
+	/** Runs on the parsed result; throw when the answer can't be trusted as complete. */
+	check?: (input: z.infer<Input>, output: z.infer<Output>) => void;
 	paginated?: {
 		data: Data;
 		combine: (
@@ -55,6 +57,8 @@ export function defineOperation<
 			body: options.body?.(parsed),
 			apiVersion: options.apiVersion,
 		});
-		return outputSchema.parse(response);
+		const output = outputSchema.parse(response);
+		options.check?.(parsed, output);
+		return output;
 	};
 }

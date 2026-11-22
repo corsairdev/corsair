@@ -1120,7 +1120,9 @@ apiNotes:
     returned to Draft with markDraft before deletion.
   bankTransactions.uploadStatement: >-
     Implements the documented JSON transaction-array statement import. The
-    alternate multipart file-upload mode is not exposed.
+    alternate multipart file-upload mode is not exposed. FreeAgent can answer
+    200 before the transactions appear, so check them with bankTransactions.list
+    for the same bank account before treating the import as done.
 overviewNote: >-
   Connect a FreeAgent OAuth 2.0 app (client ID and secret from dev.freeagent.com).
   Access tokens last an hour and refresh automatically. Pass sandbox: true to use

@@ -229,10 +229,12 @@ function build() {
 			}),
 		})
 		.strict();
+	// send_invitation emails a password-setup link: only users.create (destructive) takes it.
+	const UserUpdateFields = UserFields.omit({ send_invitation: true });
 	const UserUpdateInput = z
-		.object({ id: z.string().min(1), user: UserFields })
+		.object({ id: z.string().min(1), user: UserUpdateFields })
 		.strict();
-	const UserMeUpdateInput = z.object({ user: UserFields }).strict();
+	const UserMeUpdateInput = z.object({ user: UserUpdateFields }).strict();
 	const UserGetInput = z.object({ id: z.string().min(1) }).strict();
 	const UserListInput = z
 		.object({

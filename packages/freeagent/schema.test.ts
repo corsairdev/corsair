@@ -305,6 +305,57 @@ describe('FreeAgent schemas', () => {
 		}
 	});
 
+	it('takes a depreciation profile on asset purchases and keeps invitations off updates', () => {
+		const expense = {
+			user: 'https://api.freeagent.com/v2/users/1',
+			category: 'https://api.freeagent.com/v2/categories/602',
+			dated_on: '2026-11-23',
+			gross_value: '-1200.00',
+			description: 'Laptop',
+		};
+		const create = ExpensesBillsEndpointSchemas['expenses.create'].input;
+		expect(
+			create.safeParse({
+				expense: {
+					...expense,
+					capital_asset: {
+						depreciation_profile: {
+							method: 'straight_line',
+							asset_life_years: 3,
+						},
+					},
+				},
+			}).success,
+		).toBe(true);
+		expect(
+			create.safeParse({
+				expense: {
+					...expense,
+					capital_asset: { depreciation_profile: { method: 'straight_line' } },
+				},
+			}).success,
+		).toBe(false);
+		expect(
+			ExpensesBillsEndpointSchemas['bills.create'].input.safeParse({
+				bill: {
+					contact: 'https://api.freeagent.com/v2/contacts/1',
+					reference: 'NO-ITEMS',
+					dated_on: '2026-11-23',
+					due_on: '2026-12-23',
+					bill_items: [],
+				},
+			}).success,
+		).toBe(true);
+		for (const id of ['users.update', 'users.updateMe'] as const) {
+			const input = TimeUserEndpointSchemas[id].input;
+			const user = { first_name: 'Pat', send_invitation: true };
+			expect(
+				input.safeParse(id === 'users.update' ? { id: '1', user } : { user })
+					.success,
+			).toBe(false);
+		}
+	});
+
 	it('validates accounting, capital asset, landlord property, and stock contracts', () => {
 		expect(
 			AccountingEndpointSchemas['categories.create'].input.safeParse({

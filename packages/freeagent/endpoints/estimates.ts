@@ -55,6 +55,7 @@ function build() {
 
 	const EstimateItemFields = z
 		.object({
+			position: z.number().int().positive().optional(),
 			item_type: z
 				.enum([
 					'Hours',

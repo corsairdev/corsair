@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CapitalAssetWrite } from './capital-asset';
 import { lazyModule } from './lazy-module';
 import { defineOperation } from './operation';
 
@@ -105,6 +106,8 @@ function build() {
 			updated_at: z.string().optional(),
 			last_fetched_at: z.string().nullable().optional(),
 			status: z.string().optional(),
+			// Bank feed reads document `state` ("enabled").
+			state: z.string().optional(),
 		})
 		.passthrough();
 
@@ -262,6 +265,7 @@ function build() {
 	}).passthrough();
 	const ExplanationFields = z
 		.object({
+			capital_asset: CapitalAssetWrite.optional(),
 			bank_account: z.string().url().optional(),
 			bank_transaction: z.string().url().optional(),
 			ec_status: z.string().optional(),

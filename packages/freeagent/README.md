@@ -20,7 +20,7 @@ FreeAgent documents 25 items per page by default and a maximum `per_page` of 100
 
 All implemented requests use JSON over HTTPS, OAuth 2.0 bearer tokens, and the required `User-Agent`. FreeAgent supports XML as an alternate encoding of the same routes; this plugin uses JSON only. No global provider error envelope is invented because the official docs do not specify one.
 
-Failed POST/PUT/DELETE errors are rebuilt as `ApiError` instances with request and response payloads, query, and endpoint details omitted, because provider errors can echo customer data. The sanitized error preserves the HTTP status, status text, `Retry-After`, and rate-limit fields used by error handling. Read-only GET errors still pass through unchanged. The plugin does not log request/response bodies or customer records.
+Failed POST/PUT/DELETE errors are rebuilt as `ApiError` instances without the sent request body, so contact details, invoice lines and email text don't travel with the error. FreeAgent's error body and message, the request method, path and query (after core's redaction) and the URL remain, along with the HTTP status, status text, `Retry-After` and rate-limit fields. FreeAgent's validation messages name the failing field without echoing the submitted value. GET errors pass through unchanged. The plugin does not log request or response bodies; don't log raw errors either if they may hold customer data.
 
 <!-- ROUTE_MATRIX_START -->
 

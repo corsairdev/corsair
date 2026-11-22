@@ -444,7 +444,7 @@ export const CatalogEndpointMeta = {
 	},
 	'priceListItems.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete a price list item using the documented singular route',
+		description: 'Delete a price list item',
 	},
 	'salesTaxPeriods.list': {
 		riskLevel: 'read',

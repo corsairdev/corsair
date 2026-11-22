@@ -3723,6 +3723,33 @@ describe('FreeAgent endpoint registry and wire contracts', () => {
 		},
 	);
 
+	it('rejects a batch expense answer with fewer expenses than submitted', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					expenses: [{ url: 'https://api.freeagent.com/v2/expenses/1' }],
+				}),
+				{ status: 201, headers: { 'Content-Type': 'application/json' } },
+			),
+		);
+		const row = {
+			user: 'https://api.freeagent.com/v2/users/1',
+			category: 'https://api.freeagent.com/v2/categories/285',
+			dated_on: '2026-11-23',
+			gross_value: '-1.00',
+			description: 'Train ticket',
+		};
+		try {
+			await expect(
+				ExpensesBillsEndpoints.expenses.batchCreate(ctx, {
+					expenses: [row, { ...row, gross_value: '-2.00' }],
+				}),
+			).rejects.toThrow('returned 1 expenses for 2 submitted');
+		} finally {
+			fetchMock.mockRestore();
+		}
+	});
+
 	it('rejects invalid input for every operation before making a request', async () => {
 		const fetchMock = jest.spyOn(globalThis, 'fetch');
 		try {
