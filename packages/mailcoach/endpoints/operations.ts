@@ -425,7 +425,8 @@ export const MailcoachOperations = {
 		path: () => '/campaigns',
 		body: (requestBody) => requestBody,
 		riskLevel: 'write',
-		description: 'Create a campaign draft; this operation does not send it.',
+		description:
+			'Create a campaign draft. Without schedule_at it is not sent; with schedule_at Mailcoach schedules it to send at that time.',
 	}),
 	'campaigns.update': defineMailcoachOperation({
 		inputSchema: input['campaigns.update'],
@@ -435,7 +436,7 @@ export const MailcoachOperations = {
 		body: ({ body }) => body,
 		riskLevel: 'write',
 		description:
-			'Replace campaign settings; include all intended fields because omitted values can reset.',
+			'Replace campaign settings; include all intended fields because omitted values can reset. Setting schedule_at schedules the campaign to send.',
 	}),
 	'campaigns.delete': defineMailcoachOperation({
 		inputSchema: input['campaigns.delete'],

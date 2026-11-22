@@ -108,7 +108,7 @@ Successful `204 No Content` operations return `undefined`; no JSON body is parse
 
 ## Safety and scope notes
 
-- `campaigns.create` creates only a draft. `campaigns.send` sends to the campaign audience; `campaigns.sendTest` sends mail to the supplied test addresses.
+- `campaigns.create` creates a draft. With `schedule_at` (on create or update) Mailcoach schedules it to send at that time. `campaigns.send` sends to the campaign audience; `campaigns.sendTest` sends mail to the supplied test addresses.
 - `transactionalMails.send` supports `fake: true` for a no-delivery test and accepts either a saved template (`mail_name`) or inline content (`subject` plus `html` and/or `text`).
 - A subscriber import is a draft until `subscriberImports.start`. Imports bypass confirmation; the resubscribe and unsubscribe flags can affect existing contacts. Import only addresses with consent.
 - `subscribers.subscribe` can restart an unsubscribed address. Use `subscribers.update` for routine profile changes to opted-out contacts.

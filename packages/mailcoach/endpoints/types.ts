@@ -642,9 +642,11 @@ export const MailcoachEndpointInputSchemas = {
 					const addresses = value.split(',').map((address) => address.trim());
 					return (
 						addresses.length <= 10 &&
-						addresses.every((address) => address.length > 0)
+						addresses.every(
+							(address) => z.string().email().safeParse(address).success,
+						)
 					);
-				}, 'Provide one to ten comma-separated test recipients'),
+				}, 'Provide one to ten comma-separated test email addresses'),
 		})
 		.strict(),
 	'campaigns.send': z.object({ campaignUuid: UuidSchema }).strict(),
