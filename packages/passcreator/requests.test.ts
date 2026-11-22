@@ -7,6 +7,7 @@ import {
 	webhookSubscription,
 	writeResult,
 } from './test-fixtures';
+import { passcreatorWebhookToken } from './webhooks/types';
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -308,10 +309,25 @@ describe('webhooks', () => {
 		expectAuthenticated('/api/hook/subscribe', 'POST');
 		// signPayload defaults to true: the receiver rejects unsigned deliveries.
 		expect(JSON.parse(sent.body as string)).toEqual({
-			target_url: 'https://example.com/webhooks/passcreator',
+			target_url: `https://example.com/webhooks/passcreator?corsair_token=${passcreatorWebhookToken(API_KEY)}`,
 			event: 'pass_created',
 			signPayload: true,
 		});
+	});
+
+	it("subscribe keeps the target URL's own query and adds this account's token", async () => {
+		respond({}, 201);
+		await invoke(Webhooks.subscribe, {
+			target_url: 'https://example.com/hook?tenantId=t1&corsair_token=stale',
+			event: 'pass_created',
+		});
+		const target = new URL(
+			JSON.parse(lastRequest().body as string).target_url as string,
+		);
+		expect(target.searchParams.get('tenantId')).toBe('t1');
+		expect(target.searchParams.getAll('corsair_token')).toEqual([
+			passcreatorWebhookToken(API_KEY),
+		]);
 	});
 
 	it('subscribe scopes to a template through the path, not the body', async () => {

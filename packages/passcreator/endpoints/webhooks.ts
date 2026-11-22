@@ -1,4 +1,5 @@
 import type { PasscreatorEndpoints } from '..';
+import { withPasscreatorWebhookToken } from '../webhooks/types';
 import { call, expectEmpty } from './call';
 import {
 	PasscreatorEndpointInputSchemas as Inputs,
@@ -18,13 +19,18 @@ export const subscribe: PasscreatorEndpoints['webhooksSubscribe'] = (
 		},
 		input,
 		// A template-scoped subscription puts the template in the path; the
-		// body has no pass_template field.
-		({ pass_template, ...body }) => ({
+		// body has no pass_template field. The target URL gets this account's
+		// delivery token: Passcreator signs every account's deliveries with one
+		// platform key, so the token is what ties a delivery to this account.
+		({ pass_template, target_url, ...body }) => ({
 			method: 'POST',
 			path: pass_template
 				? `/api/hook/subscribe/${encodeURIComponent(pass_template)}`
 				: '/api/hook/subscribe',
-			body,
+			body: {
+				...body,
+				target_url: withPasscreatorWebhookToken(target_url, ctx.key),
+			},
 		}),
 		{
 			log: ({ event, pass_template }) => ({

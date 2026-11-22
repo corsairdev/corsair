@@ -718,14 +718,14 @@ await corsair.passcreator.api.webhooks.subscribe({ target_url: "https://example.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `target_url` | `string` | Yes | Endpoint deliveries are posted to |
+| `target_url` | `string` | Yes | Endpoint deliveries are posted to; the plugin adds this account's corsair_token query parameter, which the webhook handler requires |
 | `event` | `string` | Yes | Event to subscribe to, e.g. pass_created, pass_updated, pass_voided, pushnotification_registered, pass_template_created, pass_template_updated, app_scan_created |
 | `pass_template` | `string` | No | Scope the subscription to one pass-template UID (sent in the path) |
 | `subscription_url` | `string` | No | Optional URL that identifies this subscription |
 | `retryEnabled` | `boolean` | No | Retry failed deliveries |
 | `signPayload` | `boolean` | No | Sign deliveries (default true here: the receiver rejects unsigned ones) |
 
-Events include pass_created, pass_updated, pass_voided, pushnotification_registered, pass_template_created, pass_template_updated and app_scan_created; pass_template scopes the subscription to one template, and signPayload defaults to true so deliveries can be verified.
+Events include pass_created, pass_updated, pass_voided, pushnotification_registered, pass_template_created, pass_template_updated and app_scan_created; pass_template scopes the subscription to one template, and signPayload defaults to true so deliveries can be verified; the target URL gets this account's corsair_token, which the webhook handler requires.
 
 
 
@@ -748,14 +748,14 @@ Unsubscribe a webhook; deliveries stop until it is subscribed again
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.passcreator.api.webhooks.unsubscribe({ target_url: "https://example.com/webhooks/passcreator" });
+await corsair.passcreator.api.webhooks.unsubscribe({ target_url: "https://example.com/webhooks/passcreator?corsair_token=<token from webhooks.list>" });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `target_url` | `string` | Yes | target_url the subscription was created with |
+| `target_url` | `string` | Yes | target_url the subscription was created with, including its corsair_token (as webhooks.list shows it) |
 
 
 

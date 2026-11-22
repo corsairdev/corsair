@@ -7,6 +7,7 @@ import {
 	PasscreatorSignedDataSchema,
 	PasscreatorWebhookPayloadSchema,
 	verifyPasscreatorSignature,
+	verifyPasscreatorWebhookToken,
 } from './types';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
@@ -30,7 +31,9 @@ async function safeLog(
  * Deliveries carry their signature inside the payload (signature and
  * signedData fields, hex ECDSA), verified with the PEM public key from
  * GET /api/hook/publickey — fetched with the account key and cached, since
- * the key is not a per-account secret but a platform key.
+ * the key is not a per-account secret but a platform key. Because that key
+ * is shared by every Passcreator account, each delivery URL also carries a
+ * per-account token (see verifyPasscreatorWebhookToken).
  * https://developer.passcreator.com/en/webhooks/webhook-endpoints
  */
 export const event: CorsairWebhook<
@@ -56,6 +59,20 @@ export const event: CorsairWebhook<
 					error: verification.error ?? 'Webhook verification failed',
 				};
 			}
+		}
+
+		// Always, even when the Hub verified the signature: the signature is
+		// Passcreator's platform-wide one and does not say which account a
+		// delivery belongs to; the URL token does.
+		const apiKey =
+			ctx.options.key || (await ctx.keys.get_api_key()) || undefined;
+		const ownership = verifyPasscreatorWebhookToken(request.query, apiKey);
+		if (!ownership.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: ownership.error ?? 'Webhook delivery token rejected',
+			};
 		}
 
 		const parsed = PasscreatorWebhookPayloadSchema.safeParse(request.payload);

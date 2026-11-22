@@ -505,7 +505,12 @@ export type WebhookSubscription = z.infer<typeof WebhookSubscriptionSchema>;
 
 export const SubscribeWebhookInputSchema = z
 	.object({
-		target_url: z.string().url().describe('Endpoint deliveries are posted to'),
+		target_url: z
+			.string()
+			.url()
+			.describe(
+				"Endpoint deliveries are posted to; the plugin adds this account's corsair_token query parameter, which the webhook handler requires",
+			),
 		event: z
 			.string()
 			.min(1)
@@ -553,7 +558,9 @@ export const UnsubscribeWebhookInputSchema = z
 		target_url: z
 			.string()
 			.url()
-			.describe('target_url the subscription was created with'),
+			.describe(
+				'target_url the subscription was created with, including its corsair_token (as webhooks.list shows it)',
+			),
 	})
 	.describe('Unsubscribe a webhook by its target URL');
 

@@ -21,6 +21,11 @@ overviewNote: >
   Deliveries carry a `signedData` string and a hex ECDSA `signature` over it;
   verify them with the PEM public key from webhooks.getPublicKey (store it
   with keys.set_webhook_signature or set it as the plugin's webhookSecret).
+  That key is the same for every Passcreator account, so webhooks.subscribe
+  also adds a `corsair_token` query parameter to the target URL, derived from
+  the account's API key; the handler refuses deliveries whose URL lacks this
+  account's token. Create subscriptions through webhooks.subscribe (not the
+  Passcreator dashboard), and create them again after rotating the API key.
 
   Every operation is described in the official docs:
   https://developer.passcreator.com/en
@@ -75,7 +80,7 @@ apiExamples:
   webhooks.subscribe:
     call: '{ target_url: "https://example.com/webhooks/passcreator", event: "pass_created" }'
   webhooks.unsubscribe:
-    call: '{ target_url: "https://example.com/webhooks/passcreator" }'
+    call: '{ target_url: "https://example.com/webhooks/passcreator?corsair_token=<token from webhooks.list>" }'
   webhooks.list:
     call: '{}'
   webhooks.getPublicKey:
@@ -89,5 +94,5 @@ apiNotes:
   templates.fields: 'The zapierStyle field list; use these keys to personalise passes.'
   templates.delete: 'The API refuses with 400 while scheduled push notifications exist for the template.'
   templates.movePass: 'API v2. Both templates must belong to the same project and share a signing certificate.'
-  webhooks.subscribe: 'Events include pass_created, pass_updated, pass_voided, pushnotification_registered, pass_template_created, pass_template_updated and app_scan_created; pass_template scopes the subscription to one template, and signPayload defaults to true so deliveries can be verified.'
+  webhooks.subscribe: 'Events include pass_created, pass_updated, pass_voided, pushnotification_registered, pass_template_created, pass_template_updated and app_scan_created; pass_template scopes the subscription to one template, and signPayload defaults to true so deliveries can be verified; the target URL gets this account''s corsair_token, which the webhook handler requires.'
   webhooks.getPublicKey: 'Returns the PEM public key the deliveries are signed with; store it with keys.set_webhook_signature so the plugin verifies deliveries.'

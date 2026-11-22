@@ -1,4 +1,4 @@
-import { createVerify } from 'node:crypto';
+import { createHmac, createVerify, timingSafeEqual } from 'node:crypto';
 import type { RawWebhookRequest } from 'corsair/core';
 import { readBodyRecord } from 'corsair/core';
 import { z } from 'zod';
@@ -80,6 +80,74 @@ export function verifyPasscreatorSignature(
 			error: `Signature verification failed: ${(error as Error).message}`,
 		};
 	}
+}
+
+// ── Per-account delivery token ─────────────────────────────────────────────
+// Passcreator signs every customer's deliveries with one platform key, so a
+// valid signature proves a delivery came from Passcreator, not which account
+// it belongs to: a genuine delivery from one account would also verify at
+// another tenant's webhook URL. Each subscription therefore carries a token
+// in its target URL, derived from the account's own API key, and the handler
+// accepts only deliveries whose URL carries this account's token.
+
+/** Query parameter that carries the per-account delivery token. */
+export const PASSCREATOR_WEBHOOK_TOKEN_PARAM = 'corsair_token';
+
+/**
+ * The account's delivery token: HMAC-SHA256 of a fixed label keyed by the
+ * account's API key. It is stable while the key is, reveals nothing about the
+ * key, and differs for every account. Rotating the API key changes it, so
+ * subscriptions must be created again after a rotation.
+ */
+export function passcreatorWebhookToken(apiKey: string): string {
+	return createHmac('sha256', apiKey)
+		.update('corsair-passcreator-webhook-v1')
+		.digest('hex')
+		.slice(0, 40);
+}
+
+/** Adds (or replaces) the account's token on a subscription target URL. */
+export function withPasscreatorWebhookToken(
+	targetUrl: string,
+	apiKey: string,
+): string {
+	const url = new URL(targetUrl);
+	url.searchParams.set(
+		PASSCREATOR_WEBHOOK_TOKEN_PARAM,
+		passcreatorWebhookToken(apiKey),
+	);
+	return url.toString();
+}
+
+/** Checks the delivery URL's token against the account's token. */
+export function verifyPasscreatorWebhookToken(
+	query: Record<string, string | string[] | undefined> | undefined,
+	apiKey: string | undefined,
+): { valid: boolean; error?: string } {
+	if (!apiKey) {
+		return {
+			valid: false,
+			error:
+				'No Passcreator API key for this account; cannot check the delivery token',
+		};
+	}
+	const raw = query?.[PASSCREATOR_WEBHOOK_TOKEN_PARAM];
+	const presented = Array.isArray(raw) ? raw[0] : raw;
+	if (!presented) {
+		return {
+			valid: false,
+			error: `Delivery URL has no ${PASSCREATOR_WEBHOOK_TOKEN_PARAM}; create the subscription with webhooks.subscribe, which adds it`,
+		};
+	}
+	const expected = Buffer.from(passcreatorWebhookToken(apiKey));
+	const given = Buffer.from(presented);
+	if (given.length !== expected.length || !timingSafeEqual(given, expected)) {
+		return {
+			valid: false,
+			error: 'Delivery token does not belong to this account',
+		};
+	}
+	return { valid: true };
 }
 
 // ── Payload ────────────────────────────────────────────────────────────────
