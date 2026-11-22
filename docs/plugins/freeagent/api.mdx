@@ -873,7 +873,7 @@ await corsair.freeagent.api.bankTransactionExplanations.create({
   capital_asset?: {
     depreciation_profile: {
       method: straight_line | reducing_balance | no_depreciation,
-      frequency?: string,
+      frequency?: monthly | annually,
       asset_life_years?: number,
       annual_depreciation_percentage?: number
     }
@@ -1470,7 +1470,7 @@ await corsair.freeagent.api.bankTransactionExplanations.update({
   capital_asset?: {
     depreciation_profile: {
       method: straight_line | reducing_balance | no_depreciation,
-      frequency?: string,
+      frequency?: monthly | annually,
       asset_life_years?: number,
       annual_depreciation_percentage?: number
     }
@@ -2155,7 +2155,7 @@ await corsair.freeagent.api.bills.create({
     capital_asset?: string | {
       depreciation_profile: {
         method: straight_line | reducing_balance | no_depreciation,
-        frequency?: string,
+        frequency?: monthly | annually,
         asset_life_years?: number,
         annual_depreciation_percentage?: number
       }
@@ -2610,7 +2610,7 @@ Existing bill items can be deleted with their URL and _destroy: 1. This operatio
       capital_asset?: string | {
         depreciation_profile: {
           method: straight_line | reducing_balance | no_depreciation,
-          frequency?: string,
+          frequency?: monthly | annually,
           asset_life_years?: number,
           annual_depreciation_percentage?: number
         }
@@ -2636,7 +2636,7 @@ Existing bill items can be deleted with their URL and _destroy: 1. This operatio
       capital_asset?: string | {
         depreciation_profile: {
           method: straight_line | reducing_balance | no_depreciation,
-          frequency?: string,
+          frequency?: monthly | annually,
           asset_life_years?: number,
           annual_depreciation_percentage?: number
         }
@@ -7140,7 +7140,7 @@ The first-party API forum confirms a 201 response containing one expense per sub
   capital_asset?: {
     depreciation_profile: {
       method: straight_line | reducing_balance | no_depreciation,
-      frequency?: string,
+      frequency?: monthly | annually,
       asset_life_years?: number,
       annual_depreciation_percentage?: number
     }
@@ -7312,7 +7312,7 @@ await corsair.freeagent.api.expenses.create({
   capital_asset?: {
     depreciation_profile: {
       method: straight_line | reducing_balance | no_depreciation,
-      frequency?: string,
+      frequency?: monthly | annually,
       asset_life_years?: number,
       annual_depreciation_percentage?: number
     }
@@ -7812,7 +7812,7 @@ await corsair.freeagent.api.expenses.update({
   capital_asset?: {
     depreciation_profile: {
       method: straight_line | reducing_balance | no_depreciation,
-      frequency?: string,
+      frequency?: monthly | annually,
       asset_life_years?: number,
       annual_depreciation_percentage?: number
     }
