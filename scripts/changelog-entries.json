@@ -11102,5 +11102,21 @@
     "package": "cloud",
     "version": "0.2.21",
     "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/hunterio",
+    "dir": "packages/hunterio",
+    "name": "Hunter.io",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2655,
+        "title": "Add Briefing, Signals, Opportunities; fix auth, schemas, risk levels"
+      }
+    ]
   }
 ]
