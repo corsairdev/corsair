@@ -86,6 +86,8 @@ export const event: CorsairWebhook<
 
 		// Only signedData is authenticated, so the result is built from it,
 		// not from the outer fields a sender could change.
+		// unknown: JSON.parse output is untyped until PasscreatorSignedDataSchema
+		// parses it just below.
 		let signed: unknown;
 		try {
 			signed = JSON.parse(parsed.data.signedData);
