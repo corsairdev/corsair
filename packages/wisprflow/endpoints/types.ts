@@ -83,6 +83,7 @@ const GenerateTokenInputSchema = z.object({
 		.positive()
 		.describe('Token lifetime in seconds'),
 	metadata: z
+		// `unknown`: Wispr stores arbitrary caller metadata with the token and documents no shape for it.
 		.record(z.string(), z.unknown())
 		.optional()
 		.describe('Extra data stored with the token'),

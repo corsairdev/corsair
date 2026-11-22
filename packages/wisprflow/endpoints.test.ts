@@ -14,6 +14,7 @@ jest.mock('corsair/core', () => ({
 
 type Ctx = Parameters<typeof create>[0];
 
+// `unknown`: the fake database records whatever the endpoint stores.
 const upserts: Array<[string, unknown]> = [];
 
 // Safe: the endpoints read only `key` and `db.transcription`; the runtime builds the rest from a live database.
@@ -21,6 +22,7 @@ const ctx = {
 	key: 'fl-test',
 	db: {
 		transcription: {
+			// `unknown`: same fake database record.
 			upsertByEntityId: async (id: string, data: unknown) => {
 				upserts.push([id, data]);
 				return null;
@@ -39,6 +41,7 @@ const TRANSCRIPTION = {
 	generated_tokens: 9,
 };
 
+// `unknown`: test responses are arbitrary JSON, including malformed ones.
 function json(status: number, body: unknown) {
 	return new Response(JSON.stringify(body), {
 		status,
@@ -152,7 +155,7 @@ describe('Wispr Flow endpoints', () => {
 		expect(sent()).toMatchObject({ method: 'GET', url: `${BASE}/warmup_dash` });
 	});
 
-	it('tokens.generate returns the JWT but logs only the client and duration', async () => {
+	it('tokens.generate returns the JWT but logs only the duration', async () => {
 		const token = { access_token: 'eyJhbGciOi.secret', expires_in: 3600 };
 		fetchMock.mockResolvedValue(json(200, token));
 		const input = {
@@ -170,7 +173,7 @@ describe('Wispr Flow endpoints', () => {
 		expect(logEventFromContext).toHaveBeenCalledWith(
 			ctx,
 			'wisprflow.tokens.generate',
-			{ client_id: 'client123', duration_secs: 3600 },
+			{ duration_secs: 3600 },
 			'completed',
 		);
 	});
@@ -180,6 +183,47 @@ describe('Wispr Flow endpoints', () => {
 			generate(ctx, { client_id: 'client123', duration_secs: 0 }),
 		).rejects.toThrow();
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('keeps the request body out of a failed request and drops echoed input', async () => {
+		fetchMock.mockResolvedValueOnce(
+			json(503, { detail: 'Service unavailable' }),
+		);
+		const revokeError = await revoke(ctx, {
+			access_token: 'eyJhbGciOi.secret',
+		}).catch((e) => e);
+		expect(revokeError).toBeInstanceOf(ApiError);
+		expect(revokeError.status).toBe(503);
+		expect(revokeError.message).toBe('Service unavailable');
+		expect(JSON.stringify(revokeError.request)).not.toContain('eyJhbGciOi');
+		expect(revokeError.request.body).toBeUndefined();
+
+		fetchMock.mockResolvedValueOnce(
+			json(422, {
+				detail: [
+					{
+						loc: ['body', 'context', 'user_first_name'],
+						msg: 'Input should be a valid string',
+						input: 'Jane private',
+					},
+				],
+			}),
+		);
+		const createError = await create(ctx, {
+			audio: 'UklGRiQA',
+			context: { user_first_name: 'Jane private' },
+		}).catch((e) => e);
+		expect(createError.status).toBe(422);
+		expect(JSON.stringify(createError)).not.toContain('Jane private');
+		expect(JSON.stringify(createError.request)).not.toContain('UklGRiQA');
+		expect(createError.body).toEqual({
+			detail: [
+				{
+					loc: ['body', 'context', 'user_first_name'],
+					msg: 'Input should be a valid string',
+				},
+			],
+		});
 	});
 
 	it('tokens.revoke posts the token and never logs it', async () => {
@@ -215,6 +259,13 @@ describe('Wispr Flow endpoints', () => {
 			url: `${BASE}/revoke_client_tokens`,
 			body: { client_id: 'client123' },
 		});
+		// client_id can be an email address, so it stays out of the event log.
+		expect(logEventFromContext).toHaveBeenCalledWith(
+			ctx,
+			'wisprflow.tokens.revokeClient',
+			{},
+			'completed',
+		);
 
 		fetchMock.mockResolvedValueOnce(
 			json(404, { detail: 'No tokens found for this client' }),
@@ -321,6 +372,7 @@ describe('Wispr Flow through a Corsair client', () => {
 		try {
 			const error = await corsair.wisprflow.api.transcriptions
 				.warmup({})
+				// `unknown`: a rejection value is untyped until the assertion narrows it.
 				.catch((e: unknown) => e);
 
 			expect(error).toBeInstanceOf(ApiError);
