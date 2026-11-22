@@ -498,7 +498,7 @@ export const amikaEndpointMeta = {
 	'jobs.create': {
 		riskLevel: 'destructive',
 		description:
-			'Creates a job: a cron trigger and 1 to 20 shell steps. Each time the trigger fires, a job run runs the steps in order on a rig. Set enabled false to create it paused. An idempotencyKey is made for you when you leave it out.',
+			"Creates a job: a cron trigger and 1 to 20 shell steps. Each time the trigger fires, a job run runs the steps in order on one rig. Step 0 names the rig with exactly one of rig_id, rig_name, rig_ref or rig_create; later steps name none and run on step 0's rig. Set enabled false to create it paused. An idempotencyKey is made for you when you leave it out.",
 	},
 	'jobs.delete': {
 		riskLevel: 'destructive',
@@ -515,9 +515,9 @@ export const amikaEndpointMeta = {
 			'Lists jobs (scheduled commands on rigs) with their trigger, steps and next run.',
 	},
 	'jobs.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Updates a job: its trigger, steps or description; enabled false pauses it and true resumes it.',
+			'Updates a job: its trigger, steps or description; enabled false pauses it and true resumes it. New steps follow the jobs.create rule: only step 0 names a rig.',
 	},
 	'linear.settings.get': {
 		riskLevel: 'read',
@@ -558,30 +558,30 @@ export const amikaEndpointMeta = {
 			'Creates or updates a repository by repo_url: its setup script, image and environment for new rigs.',
 	},
 	'rigs.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Creates a rig: a devbox VM with a repo cloned, dependencies set up and agent credentials injected. Runs on Amika Cloud (billed per second), a connected cloud account, or one of your own hosts (host_id). Answers 202 while it boots; poll rigs.get until status is running and setup_status ok. By default the rig gets a new organization API key as AMIKA_API_KEY (amika_api_key changes that).',
+			'Creates a rig: a devbox VM with a repo cloned, dependencies set up and agent credentials injected. Runs on Amika Cloud (billed per second), a connected cloud account, or one of your own hosts (host_id). Answers 202 while it boots; poll rigs.get until status is running and setup_status ok (git-failed, setup-failed or sys-setup-failed means setup failed: stop waiting). By default the rig gets a new organization API key as AMIKA_API_KEY (amika_api_key changes that).',
 	},
 	'rigs.createSshSession': {
 		riskLevel: 'write',
 		description:
-			'Opens a direct WebSocket SSH session to a rig and returns its connection details. The rig is named by id or name (see `by`).',
+			'Opens a direct WebSocket SSH session to a rig and returns its connection details. Name the rig by id or name; `sandbox_by` says which (default: either).',
 	},
 	'rigs.createTerminalTicket': {
 		riskLevel: 'write',
 		description:
-			'Mints a single-use ticket for the web terminal of a rig. The rig is named by id or name (see `by`).',
+			'Mints a single-use ticket for the web terminal of a rig. Name the rig by id or name; `sandbox_by` says which (default: either).',
 	},
 	'rigs.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Deletes a rig and its disk. Anything not pushed or snapshotted is lost. The rig is named by id or name (see `by`).',
+			'Deletes a rig and its disk. Anything not pushed or snapshotted is lost. Name the rig by id or name; `by` says which (default: either).',
 	},
 	'rigs.get': {
 		riskLevel: 'read',
 		description:
-			'Reads one rig: status, setup status, provider, size, branch, services and timestamps. The rig is named by id or name (see `by`).',
+			'Reads one rig: status, setup status, provider, size, branch, services and timestamps. Name the rig by id or name; `by` says which (default: either).',
 	},
 	'rigs.getSlackConversation': {
 		riskLevel: 'read',
@@ -600,12 +600,12 @@ export const amikaEndpointMeta = {
 	'rigs.listIntegrations': {
 		riskLevel: 'read',
 		description:
-			'Lists the MCP integrations (Sentry, Linear, Pylon) attached to a rig at creation. The rig is named by id or name (see `by`).',
+			'Lists the MCP integrations (Sentry, Linear, Pylon) attached to a rig at creation. Name the rig by id or name; `sandbox_by` says which (default: either).',
 	},
 	'rigs.listLifecycleEvents': {
 		riskLevel: 'read',
 		description:
-			'Reads the control-plane event feed of a rig: created, setup steps, started, stopped, errors. The rig is named by id or name (see `by`).',
+			'Reads the control-plane event feed of a rig: created, setup steps, started, stopped, errors. Name the rig by id or name; `sandbox_by` says which (default: either).',
 	},
 	'rigs.services.create': {
 		riskLevel: 'write',
@@ -624,7 +624,7 @@ export const amikaEndpointMeta = {
 	'rigs.services.list': {
 		riskLevel: 'read',
 		description:
-			'Lists the live services of a rig: name, port and the URL that reaches it. The rig is named by id or name (see `by`).',
+			'Lists the live services of a rig: name, port and the URL that reaches it. Name the rig by id or name; `sandbox_by` says which (default: either).',
 	},
 	'rigs.services.replace': {
 		riskLevel: 'write',
@@ -634,7 +634,7 @@ export const amikaEndpointMeta = {
 	'rigs.sessions.create': {
 		riskLevel: 'write',
 		description:
-			'Creates a new, empty agent session on a rig for the named agent (no message is sent). The rig is named by id or name (see `by`).',
+			'Creates a new, empty agent session on a rig for the named agent (no message is sent). Name the rig by id or name; `sandbox_by` says which (default: either).',
 	},
 	'rigs.sessions.get': {
 		riskLevel: 'read',
@@ -643,26 +643,26 @@ export const amikaEndpointMeta = {
 	'rigs.sessions.getLatest': {
 		riskLevel: 'read',
 		description:
-			'Reads the most recent agent session on a rig. The rig is named by id or name (see `by`).',
+			'Reads the most recent agent session on a rig. Name the rig by id or name; `sandbox_by` says which (default: either).',
 	},
 	'rigs.sessions.list': {
 		riskLevel: 'read',
 		description:
-			'Lists the agent sessions on one rig. The rig is named by id or name (see `by`).',
+			'Lists the agent sessions on one rig. Name the rig by id or name; `sandbox_by` says which (default: either).',
 	},
 	'rigs.sessions.update': {
 		riskLevel: 'write',
 		description: 'Updates an agent session on a rig: its status or metadata.',
 	},
 	'rigs.start': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Starts a stopped rig; its filesystem is kept. Billing resumes while it runs. The rig is named by id or name (see `by`).',
+			'Starts a stopped rig; its filesystem is kept. Billing resumes while it runs. Name the rig by id or name; `by` says which (default: either).',
 	},
 	'rigs.stop': {
 		riskLevel: 'write',
 		description:
-			'Stops a running rig, keeping its filesystem, so it stops billing for compute. The rig is named by id or name (see `by`).',
+			'Stops a running rig, keeping its filesystem, so it stops billing for compute. Name the rig by id or name; `by` says which (default: either).',
 	},
 	'secrets.create': {
 		riskLevel: 'write',
@@ -741,7 +741,8 @@ export const amikaEndpointMeta = {
 			"Sets the organization's Slack defaults: the repository and agent a new Slack thread uses, and an optional system prompt.",
 	},
 	'snapshots.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Starts capturing a snapshot of a running rig (sandbox_ref names it). mode scrub_and_delete (default) removes injected secrets and deletes the source rig; full keeps both. Answers 202; poll snapshots.get for status.',
 	},

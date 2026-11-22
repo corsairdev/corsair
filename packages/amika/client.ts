@@ -144,11 +144,13 @@ export function withoutRequestData(error: ApiError): ApiError {
 			body: error.request.body === undefined ? undefined : REDACTED,
 			formData: undefined,
 			headers: undefined,
-			// Query values can be rig and job names: keep the keys only.
+			// Path and query values are rig, job and snapshot names (a customer's
+			// name, often): keep the keys only.
+			path: redactedValues(error.request.path),
 			query: redactedValues(error.request.query),
 		},
 		{
-			url: withoutQuery(error.url),
+			url: routeUrl(error.url, error.request.url),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
@@ -239,6 +241,8 @@ function sentStrings(request: ApiError['request']): SentString[] {
 	};
 	visit(request.body, 0, false);
 	visit(request.query, 0, false);
+	// A rig or job name in the path, at any length: Amika's 404 quotes it back.
+	visit(request.path, 0, true);
 	return [...found]
 		.map(([text, wholeWord]) => ({ text, wholeWord }))
 		.sort((a, b) => b.text.length - a.text.length);
@@ -287,6 +291,17 @@ function redactedValues(
 ): Record<string, string> | undefined {
 	if (query === undefined) return undefined;
 	return Object.fromEntries(Object.keys(query).map((key) => [key, REDACTED]));
+}
+
+/**
+ * The route the call took, without the caller's values:
+ * `https://…/rigs/customer-acme?by=name` → `https://…/rigs/{id}?[REDACTED]`.
+ */
+export function routeUrl(url: string, route: string | undefined): string {
+	if (typeof route !== 'string' || !route.startsWith('/')) {
+		return withoutQuery(url);
+	}
+	return `${AMIKA_API_BASE}${route}${url.includes('?') ? `?${REDACTED}` : ''}`;
 }
 
 /** `https://…/command-runs?rig=my-rig` → `https://…/command-runs?[REDACTED]`. */

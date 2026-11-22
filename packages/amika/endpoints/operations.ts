@@ -37,6 +37,34 @@ export function timeoutFor(id: string): number {
 	return 30 * SECOND;
 }
 
+const RIG_SELECTORS = ['rig_id', 'rig_name', 'rig_ref', 'rig_create'] as const;
+
+/**
+ * A job runs all its steps on one rig: step 0 names it with exactly one
+ * selector and later steps name none (Amika's JobStep contract). The spec
+ * can't say that per position, so it is checked here before sending.
+ */
+// `unknown` is necessary because steps are validated objects of open shape.
+export function jobStepsProblem(steps: unknown): string | undefined {
+	if (!Array.isArray(steps)) return undefined;
+	for (const [index, step] of steps.entries()) {
+		const record =
+			typeof step === 'object' && step !== null
+				? (step as Record<string, unknown>)
+				: {};
+		const named = RIG_SELECTORS.filter(
+			(key) => record[key] !== undefined && record[key] !== null,
+		).length;
+		if (index === 0 && named !== 1) {
+			return `steps.0: set exactly one of ${RIG_SELECTORS.join(', ')}`;
+		}
+		if (index > 0 && named > 0) {
+			return `steps.${index}: only step 0 names a rig; later steps run on its rig`;
+		}
+	}
+	return undefined;
+}
+
 type Issue = {
 	path: readonly PropertyKey[];
 	message: string;
@@ -100,6 +128,10 @@ export function createAmikaOperation<Id extends AmikaOperationId>(
 			throw new Error(
 				`Invalid input for amika ${id}: ${describeIssues(id, parsedInput.error.issues, 'input', 5)}`,
 			);
+		}
+		if (id === 'jobs.create' || id === 'jobs.update') {
+			const problem = jobStepsProblem(parsedInput.data.steps);
+			if (problem) throw new Error(`Invalid input for amika ${id}: ${problem}`);
 		}
 		// Send what was validated, not the caller's object.
 		// `unknown` is necessary because the fields differ per operation; each was just validated.

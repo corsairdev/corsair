@@ -470,12 +470,14 @@
             "enum": ["instabox"]
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,62}$"
           },
           "api_key": {
             "type": "string",
             "minLength": 1,
             "maxLength": 4096,
+            "pattern": "^[\\x20-\\x7e]+$",
             "description": "The provider API key. Stored encrypted; never returned."
           },
           "is_default": {
@@ -647,12 +649,14 @@
             "x-corsair-in": "query"
           },
           "name": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,62}$"
           },
           "api_key": {
             "type": "string",
             "minLength": 1,
             "maxLength": 4096,
+            "pattern": "^[\\x20-\\x7e]+$",
             "description": "Replace the stored provider API key."
           },
           "is_default": {
@@ -853,7 +857,8 @@
               "disabled_repo_env_var_names": {
                 "type": "array",
                 "items": {
-                  "type": "string"
+                  "type": "string",
+                  "pattern": "^[A-Z_][A-Z0-9_]*$"
                 }
               },
               "setup_script_text": {
@@ -952,6 +957,7 @@
           },
           "session": {
             "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
             "description": "FIFO lane on the rig. Runs in one session start in creation order, one at a time. Runs in different sessions run in parallel. Default `default`."
           },
           "command": {
@@ -1040,6 +1046,7 @@
           },
           "session": {
             "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
             "description": "Only runs in this session.",
             "x-corsair-in": "query"
           },
@@ -1168,6 +1175,7 @@
         "properties": {
           "id": {
             "type": "string",
+            "pattern": "^host_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "x-corsair-in": "path"
           }
         },
@@ -1196,7 +1204,8 @@
             "nullable": true
           },
           "secret": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[\\x21-\\x7e]{32,}$"
           },
           "sizes": {
             "type": "object",
@@ -1251,6 +1260,7 @@
         "properties": {
           "id": {
             "type": "string",
+            "pattern": "^host_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "x-corsair-in": "path"
           }
         },
@@ -1270,6 +1280,7 @@
         "properties": {
           "id": {
             "type": "string",
+            "pattern": "^host_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "x-corsair-in": "path"
           }
         },
@@ -1292,6 +1303,7 @@
         "properties": {
           "id": {
             "type": "string",
+            "pattern": "^host_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "x-corsair-in": "path"
           }
         },
@@ -1333,6 +1345,7 @@
         "properties": {
           "id": {
             "type": "string",
+            "pattern": "^host_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
             "x-corsair-in": "path"
           },
           "hostname": {
@@ -1343,7 +1356,8 @@
             "nullable": true
           },
           "secret": {
-            "type": "string"
+            "type": "string",
+            "pattern": "^[\\x21-\\x7e]{32,}$"
           },
           "sizes": {
             "type": "object",
@@ -1625,6 +1639,7 @@
           },
           "name": {
             "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
             "description": "Unique name in the organization."
           },
           "description": {
@@ -1793,6 +1808,7 @@
           },
           "name": {
             "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
             "description": "Unique name in the organization."
           },
           "description": {
@@ -2202,7 +2218,8 @@
           "disabled_repo_env_var_names": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^[A-Z_][A-Z0-9_]*$"
             }
           },
           "setup_script_text": {
@@ -4157,7 +4174,8 @@
                   "type": "string"
                 },
                 "revision": {
-                  "type": "string"
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{40}$"
                 }
               },
               "required": ["kind", "repository_url", "revision"],
@@ -4378,7 +4396,8 @@
           "type": "object",
           "properties": {
             "id": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^\\d+$"
             },
             "owner": {
               "type": "string",
@@ -4398,7 +4417,8 @@
           "additionalProperties": false
         },
         "source_sha": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
         },
         "git_ref": {
           "type": "string",
@@ -4463,7 +4483,8 @@
           "type": "object",
           "properties": {
             "id": {
-              "type": "string"
+              "type": "string",
+              "pattern": "^\\d+$"
             },
             "owner": {
               "type": "string",
@@ -4483,7 +4504,8 @@
           "additionalProperties": false
         },
         "installation_id": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^\\d+$"
         },
         "runner_name": {
           "type": "string",
@@ -4501,7 +4523,8 @@
           "maxItems": 64
         },
         "requested_for_job_id": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^\\d+$"
         }
       },
       "required": [
@@ -4610,17 +4633,20 @@
           "type": "string"
         },
         "connect_credential": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
         },
         "sandbox_id": {
           "type": "string",
           "minLength": 1
         },
         "ssh_user": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9._-]{0,31}$"
         },
         "host_public_key": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^ssh-ed25519 [A-Za-z0-9+/]+={0,3}(?: [^\\r\\n]+)?$"
         }
       },
       "required": [
@@ -4793,7 +4819,8 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^host_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
         },
         "hostname": {
           "type": "string"
@@ -4948,7 +4975,8 @@
                 "additionalProperties": false
               },
               "ssh_user": {
-                "type": "string"
+                "type": "string",
+                "pattern": "^[A-Za-z_][A-Za-z0-9._-]{0,31}$"
               }
             },
             "required": ["kind", "os", "snapshots", "sizes"]
@@ -5011,7 +5039,8 @@
       "type": "object",
       "properties": {
         "id": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^host_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
         },
         "status": {
           "type": "string",
@@ -5445,7 +5474,8 @@
             "disabled_repo_env_var_names": {
               "type": "array",
               "items": {
-                "type": "string"
+                "type": "string",
+                "pattern": "^[A-Z_][A-Z0-9_]*$"
               }
             },
             "setup_script_text": {
@@ -5542,248 +5572,9 @@
           "required": ["name"],
           "description": "Create a new rig with this `POST /rigs` body, then run on it. Returns 409 `sandbox_name_conflict` if the name is in use."
         },
-        "sandbox_id": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255,
-          "description": "Alias for `rig_id`."
-        },
-        "sandbox_name": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255,
-          "description": "Alias for `rig_name`."
-        },
-        "sandbox_ref": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 255,
-          "description": "Alias for `rig_ref`."
-        },
-        "sandbox_create": {
-          "type": "object",
-          "properties": {
-            "name": {
-              "type": "string"
-            },
-            "repo_url": {
-              "type": "string",
-              "minLength": 1
-            },
-            "git_url": {
-              "type": "string",
-              "minLength": 1
-            },
-            "github_url": {
-              "type": "string",
-              "minLength": 1
-            },
-            "branch": {
-              "type": "string",
-              "minLength": 1
-            },
-            "new_branch_name": {
-              "type": "string",
-              "minLength": 1
-            },
-            "provider": {
-              "type": "string",
-              "enum": [
-                "daytona",
-                "e2b",
-                "freestyle",
-                "vercel",
-                "instabox",
-                "smol",
-                "lume",
-                "amika-hostd",
-                "simulate"
-              ]
-            },
-            "host_id": {
-              "type": "string",
-              "minLength": 1
-            },
-            "cloud_account_id": {
-              "type": "string",
-              "minLength": 1,
-              "description": "Run the rig in this connected cloud account (by id). At most one of cloud_account_id, cloud_account_name, cloud_account_ref. Cannot be combined with host_id."
-            },
-            "cloud_account_name": {
-              "type": "string",
-              "minLength": 1,
-              "description": "Run the rig in the connected cloud account with this name; `amika` means Amika Cloud. `provider` narrows the name."
-            },
-            "cloud_account_ref": {
-              "type": "string",
-              "minLength": 1,
-              "description": "Run the rig in the connected cloud account with this id or name."
-            },
-            "runtime": {
-              "type": "string",
-              "minLength": 1,
-              "maxLength": 64,
-              "description": "With `host_id`, the host runtime to run the rig on (`smol`, `lume`). Omitted, the rig runs on its preset's default runtime on that host. Requires `host_id`."
-            },
-            "resources": {
-              "type": "object",
-              "properties": {
-                "vcpus": {
-                  "type": "integer",
-                  "minimum": 1,
-                  "maximum": 16
-                },
-                "memoryGib": {
-                  "type": "number",
-                  "minimum": 0.0625
-                },
-                "diskGib": {
-                  "type": "integer",
-                  "minimum": 1
-                }
-              },
-              "required": ["vcpus", "memoryGib", "diskGib"],
-              "additionalProperties": false,
-              "description": "With `host_id`, the rig's resources, in place of a named `size`: 1 to 16 vCPUs, at least 64 MiB of memory in whole MiB, and a disk of at least 1 GiB. Requires `host_id`, and cannot be combined with `size`."
-            },
-            "auto_stop_interval": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 10080
-            },
-            "auto_delete_interval": {
-              "type": "integer",
-              "minimum": -1,
-              "maximum": 10080
-            },
-            "amika_opencode_web": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "number"
-                },
-                {
-                  "nullable": true
-                }
-              ]
-            },
-            "env_vars": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
-            },
-            "secret_env_vars": {
-              "type": "object",
-              "additionalProperties": {
-                "type": "string",
-                "minLength": 1
-              }
-            },
-            "disabled_repo_env_var_names": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "setup_script_text": {
-              "type": "string"
-            },
-            "skip_setup_script": {
-              "type": "boolean"
-            },
-            "agent_credentials": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "kind": {
-                    "type": "string",
-                    "enum": ["claude", "codex"]
-                  },
-                  "name": {
-                    "type": "string",
-                    "minLength": 1
-                  },
-                  "type": {
-                    "type": "string",
-                    "enum": ["oauth", "api_key"]
-                  },
-                  "none": {
-                    "type": "boolean",
-                    "enum": [true]
-                  }
-                },
-                "required": ["kind"]
-              }
-            },
-            "preset": {
-              "type": "string",
-              "enum": ["coder", "coder-plus-docker", "macos-coder"]
-            },
-            "size": {
-              "type": "string",
-              "minLength": 1,
-              "description": "Providerless sandbox size (for example `a0.m`). Legacy names such as `m` and `medium` are also accepted. The provider is inferred from `provider` or the server default; when omitted, the size defaults to that provider's medium tier. With `host_id`, names one of the host's own sizes instead; a host rig with neither `size` nor `resources` gets 4 vCPUs, 8 GiB of memory and a 20 GiB disk."
-            },
-            "snapshot": {
-              "type": "string",
-              "nullable": true,
-              "minLength": 1
-            },
-            "integration_ids": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            },
-            "agent": {
-              "type": "string",
-              "enum": ["claude", "codex"]
-            },
-            "github_auth_mode": {
-              "type": "string",
-              "enum": ["pat", "app_token"]
-            },
-            "amika_api_key": {
-              "oneOf": [
-                {
-                  "type": "object",
-                  "properties": {
-                    "mode": {
-                      "type": "string",
-                      "enum": ["new"]
-                    },
-                    "scope": {
-                      "type": "string",
-                      "enum": ["org", "user"]
-                    }
-                  },
-                  "required": ["mode", "scope"],
-                  "additionalProperties": false
-                },
-                {
-                  "type": "object",
-                  "properties": {
-                    "mode": {
-                      "type": "string",
-                      "enum": ["none"]
-                    }
-                  },
-                  "required": ["mode"],
-                  "additionalProperties": false
-                }
-              ],
-              "description": "The Amika API key the rig gets as `AMIKA_API_KEY`. `{\"mode\": \"new\", \"scope\": \"org\"}` (default): a new organization key. `{\"mode\": \"new\", \"scope\": \"user\"}`: a new key for the calling user; a caller with no user cannot use it. `{\"mode\": \"none\"}`: no key, and `AMIKA_API_KEY` is not set. A new key is revoked when the rig is deleted."
-            }
-          },
-          "required": ["name"],
-          "description": "Alias for `rig_create`."
-        },
         "session": {
           "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,254}$",
           "description": "FIFO lane on the rig. Runs in one session start in creation order, one at a time. Runs in different sessions run in parallel. Default `default`."
         },
         "command": {
@@ -5809,12 +5600,6 @@
           "minLength": 1,
           "maxLength": 4096,
           "description": "Working directory of the command. Absolute, or relative to the agent directory (`AMIKA_AGENT_CWD`). Default: the agent directory."
-        },
-        "working_directory": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 4096,
-          "description": "Alias for `cwd`."
         }
       },
       "required": ["command", "timeout_ms"],
@@ -7400,7 +7185,8 @@
       "type": "object",
       "properties": {
         "ticket": {
-          "type": "string"
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]{43}$"
         },
         "org_id": {
           "type": "string"

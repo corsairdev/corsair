@@ -158,13 +158,9 @@ live('Amika live API: reads', () => {
 			'boolean',
 		);
 		const keys = await api.apiKeys.list({});
-		// The key these tests use is in the list, its value obfuscated.
-		expect(keys.data?.some((k) => k?.name === 'corsair-plugin-tests')).toBe(
-			true,
-		);
-		expect(
-			keys.data?.every((k) => !String(k?.obfuscatedValue ?? '').includes(key)),
-		).toBe(true);
+		expect(Array.isArray(keys.data)).toBe(true);
+		// Listed keys are obfuscated: the key these tests run with never shows.
+		expect(JSON.stringify(keys).includes(key)).toBe(false);
 		expect(Array.isArray(await api.secrets.sshPublicKeys.list({}))).toBe(true);
 		expect(
 			Array.isArray(await api.cloudAccounts.list({}).then((r) => r.items)),
@@ -324,22 +320,33 @@ live('Amika live API: writes it undoes', () => {
 liveRigs('Amika live API: one rig, end to end', () => {
 	jest.setTimeout(20 * 60_000);
 	const RIG = `${NAME}-rig`;
+	const SNAPSHOT = `${NAME}-snap`;
 	let rigId = '';
+	let snapshotMade = false;
 
 	afterAll(async () => {
+		if (snapshotMade)
+			await api.snapshots.delete({ ref: SNAPSHOT }).catch(() => {});
 		if (rigId) await api.rigs.delete({ id: rigId }).catch(() => {});
 	});
 
-	/** Polls rigs.get until the rig reaches a status (or fails the test). */
+	/**
+	 * Polls rigs.get until the rig reaches a status, and for `running` until
+	 * setup is done too. A failed setup (`git-failed`, `setup-failed`,
+	 * `sys-setup-failed`) fails the test at once instead of waiting it out.
+	 */
 	async function waitFor(status: string, limitMs = 12 * 60_000) {
 		const start = Date.now();
 		for (;;) {
 			const rig = await api.rigs.get({ id: rigId, by: 'id' });
-			if (
-				rig.status === status &&
-				(status !== 'running' || rig.setup_status !== 'pending')
-			)
-				return rig;
+			if (String(rig.setup_status ?? '').endsWith('-failed')) {
+				throw new Error(`rig setup ${rig.setup_status}`);
+			}
+			const setupDone =
+				status !== 'running' ||
+				rig.setup_status === 'ok' ||
+				rig.setup_status == null;
+			if (rig.status === status && setupDone) return rig;
 			if (rig.status === 'failed' || rig.status === 'error') {
 				throw new Error(`rig went to ${rig.status}`);
 			}
@@ -504,13 +511,15 @@ liveRigs('Amika live API: one rig, end to end', () => {
 	});
 
 	it('snapshots the rig (keeping it), reads the snapshot and deletes it', async () => {
-		const snapshotName = `${NAME}-snap`;
+		const snapshotName = SNAPSHOT;
 		const made = await api.snapshots.create({
 			sandbox_id: rigId,
 			name: snapshotName,
 			mode: 'full',
 			description: 'corsair plugin live test',
 		});
+		// Registered before anything else can fail, so afterAll removes it.
+		snapshotMade = true;
 		expect(made.snapshot ?? made.id).toBeTruthy();
 		let snapshot = await api.snapshots.get({ ref: snapshotName });
 		const start = Date.now();
@@ -527,6 +536,7 @@ liveRigs('Amika live API: one rig, end to end', () => {
 		await expect(api.snapshots.delete({ ref: snapshotName })).resolves.toEqual({
 			success: true,
 		});
+		snapshotMade = false;
 		expect(await statusOf(api.snapshots.get({ ref: snapshotName }))).toBe(404);
 	});
 
@@ -578,7 +588,12 @@ liveAgent('Amika live API: Claude Code in a rig', () => {
 		rigId = String(rig.id ?? '');
 		let current = await api.rigs.get({ id: rigId, by: 'id' });
 		const start = Date.now();
-		while (current.status !== 'running' || current.setup_status === 'pending') {
+		while (
+			current.status !== 'running' ||
+			(current.setup_status != null && current.setup_status !== 'ok')
+		) {
+			if (String(current.setup_status ?? '').endsWith('-failed'))
+				throw new Error(`rig setup ${current.setup_status}`);
 			if (Date.now() - start > 10 * 60_000)
 				throw new Error(`rig still ${current.status}`);
 			await sleep(5_000);

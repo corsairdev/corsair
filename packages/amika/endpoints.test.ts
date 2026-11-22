@@ -183,6 +183,41 @@ describe('routing', () => {
 		expect(mockedRequest.mock.calls[2]?.[0].body).toEqual(input);
 	});
 
+	it('refuses job steps that break the one-rig rule before sending', async () => {
+		const trigger = { kind: 'cron', schedule: '0 3 * * *' };
+		await expect(
+			endpointFor('jobs.create')(buildCtx(), {
+				name: 'nightly',
+				trigger,
+				steps: [
+					{ rig_ref: 'dev', command: 'pnpm i', timeout_ms: 60000 },
+					{ rig_ref: 'dev', command: 'pnpm test', timeout_ms: 60000 },
+				],
+			}),
+		).rejects.toThrow(
+			'Invalid input for amika jobs.create: steps.1: only step 0 names a rig; later steps run on its rig',
+		);
+		await expect(
+			endpointFor('jobs.update')(buildCtx(), {
+				job: 'nightly',
+				steps: [{ command: 'pnpm test', timeout_ms: 60000 }],
+			}),
+		).rejects.toThrow(
+			'Invalid input for amika jobs.update: steps.0: set exactly one of rig_id, rig_name, rig_ref, rig_create',
+		);
+		expect(mockedRequest).not.toHaveBeenCalled();
+		mockedRequest.mockResolvedValueOnce({ id: 'job_1', name: 'nightly' });
+		await endpointFor('jobs.create')(buildCtx(), {
+			name: 'nightly',
+			trigger,
+			steps: [
+				{ rig_ref: 'dev', command: 'pnpm i', timeout_ms: 60000 },
+				{ command: 'pnpm test', timeout_ms: 60000 },
+			],
+		});
+		expect(mockedRequest).toHaveBeenCalledTimes(1);
+	});
+
 	it('keeps body fields the spec does not list yet (Amika may add them first)', async () => {
 		mockedRequest.mockResolvedValueOnce({ id: 'r1', name: 'dev' });
 		await endpointFor('rigs.create')(buildCtx(), {

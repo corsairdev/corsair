@@ -196,10 +196,18 @@ describe('risk levels (PLUGIN_PR_RULES R8)', () => {
 		expect(meta['jobs.create']?.riskLevel).toBe('destructive');
 	});
 
-	it('marks creating, starting and stopping a rig a write (like Kernel browsers.create)', () => {
-		for (const id of ['rigs.create', 'rigs.start', 'rigs.stop']) {
-			expect([id, meta[id]?.riskLevel]).toEqual([id, 'write']);
+	it('marks booting or resuming a billed rig, and changing a schedule, destructive', () => {
+		for (const id of ['rigs.create', 'rigs.start', 'jobs.update']) {
+			expect([id, meta[id]?.riskLevel, meta[id]?.irreversible]).toEqual([
+				id,
+				'destructive',
+				undefined,
+			]);
 		}
+		// The default snapshot mode deletes the source rig.
+		expect(meta['snapshots.create']?.riskLevel).toBe('destructive');
+		expect(meta['snapshots.create']?.irreversible).toBe(true);
+		expect(meta['rigs.stop']?.riskLevel).toBe('write');
 	});
 
 	it('marks every GET and the credential check a read', () => {

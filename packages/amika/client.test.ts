@@ -206,8 +206,9 @@ describe('errors', () => {
 		expect(error.request.body).toBe('[REDACTED]');
 		expect(error.request.headers).toBeUndefined();
 		expect(error.request.query).toEqual({ rig: '[REDACTED]' });
+		// The route template, not the URL the values filled in.
 		expect(error.url).toBe(
-			'https://app.amika.dev/api/v0beta1/command-runs?[REDACTED]',
+			'https://app.amika.dev/api/v0beta1/secrets?[REDACTED]',
 		);
 		expect(JSON.stringify(error)).not.toContain(KEY);
 		expect(JSON.stringify(error)).not.toContain('customer-acme');
@@ -235,6 +236,39 @@ describe('errors', () => {
 			apiError({ message: 'bad value', received: 'secret-thing', value: 'x' }),
 		);
 		expect(error.body).toEqual({ message: 'bad value' });
+	});
+
+	it('keeps the route but not the rig name a call put in the path', () => {
+		const error = withoutRequestData(
+			new ApiError(
+				{
+					method: 'GET',
+					url: '/rigs/{id}',
+					path: { id: 'customer-acme' },
+					query: { by: 'name' },
+				},
+				{
+					url: 'https://app.amika.dev/api/v0beta1/rigs/customer-acme?by=name',
+					ok: false,
+					status: 404,
+					statusText: 'Not Found',
+					body: {
+						type: 'error',
+						error_code: 'sandbox_not_found',
+						message: 'Sandbox customer-acme not found',
+					},
+				},
+				'Not Found',
+			),
+		);
+		expect(error.url).toBe(
+			'https://app.amika.dev/api/v0beta1/rigs/{id}?[REDACTED]',
+		);
+		expect(error.request.path).toEqual({ id: '[REDACTED]' });
+		expect(error.message).toBe(
+			'Amika 404 sandbox_not_found: Sandbox [REDACTED] not found',
+		);
+		expect(JSON.stringify(error)).not.toContain('customer-acme');
 	});
 
 	it('cuts the query off a URL', () => {

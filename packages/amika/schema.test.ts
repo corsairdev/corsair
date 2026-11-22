@@ -205,6 +205,93 @@ describe('zod schemas', () => {
 		);
 	});
 
+	it("applies the spec's patterns to what a caller sends", () => {
+		const create = getAmikaInputSchema('rigs.create');
+		expect(
+			create.safeParse({
+				name: 'dev',
+				disabled_repo_env_var_names: ['APP_MODE'],
+			}).success,
+		).toBe(true);
+		expect(
+			create.safeParse({
+				name: 'dev',
+				disabled_repo_env_var_names: ['bad-name'],
+			}).success,
+		).toBe(false);
+		const host = getAmikaInputSchema('hosts.create');
+		expect(
+			host.safeParse({ hostname: 'studio-mac', secret: 'x'.repeat(31) })
+				.success,
+		).toBe(false);
+		expect(
+			host.safeParse({ hostname: 'studio-mac', secret: 'x'.repeat(32) })
+				.success,
+		).toBe(true);
+	});
+
+	it('honours an exclusive minimum written as a boolean (OpenAPI 3.0 style)', () => {
+		const list = getAmikaInputSchema('agentSessions.list');
+		expect(list.safeParse({ limit: 0 }).success).toBe(false);
+		expect(list.safeParse({ limit: 1 }).success).toBe(true);
+	});
+
+	it('refuses extra keys in an object the spec closes, and keeps open ones open', () => {
+		const create = getAmikaInputSchema('rigs.create');
+		expect(
+			create.safeParse({ name: 'dev', amika_api_key: { mode: 'none' } })
+				.success,
+		).toBe(true);
+		expect(
+			create.safeParse({
+				name: 'dev',
+				amika_api_key: { mode: 'new', scope: 'org' },
+			}).success,
+		).toBe(true);
+		expect(
+			create.safeParse({
+				name: 'dev',
+				amika_api_key: { mode: 'none', scope: 'org' },
+			}).success,
+		).toBe(false);
+	});
+
+	it('reads integer response fields as integers', () => {
+		const events = getAmikaOutputSchema('commandRuns.listEvents');
+		expect(events.safeParse({ items: [], next_sequence: 2 }).success).toBe(
+			true,
+		);
+		expect(events.safeParse({ items: [], next_sequence: 1.5 }).success).toBe(
+			false,
+		);
+	});
+
+	it('drops alias fields at every level, a job step included', () => {
+		// `unknown` because the walk covers raw JSON Schema documents.
+		const aliases: string[] = [];
+		const visit = (value: unknown, path: string) => {
+			if (Array.isArray(value)) return value.forEach((v) => visit(v, path));
+			if (typeof value !== 'object' || value === null) return;
+			for (const [key, inner] of Object.entries(value)) {
+				if (
+					key === 'description' &&
+					typeof inner === 'string' &&
+					inner.startsWith('Alias for')
+				) {
+					aliases.push(path);
+				}
+				visit(inner, `${path}.${key}`);
+			}
+		};
+		visit(amikaManifest, '');
+		expect(aliases).toEqual([]);
+		const step = amikaDefinitions.JobStep as {
+			properties: Record<string, unknown>;
+		};
+		expect(Object.keys(step.properties)).not.toContain('working_directory');
+		expect(Object.keys(step.properties)).toContain('cwd');
+	});
+
 	it('refuses unknown keys on routes without a body', () => {
 		expect(
 			getAmikaInputSchema('rigs.get').safeParse({

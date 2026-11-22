@@ -6,7 +6,7 @@ description: "Give an agent its own coding agents: create rigs (isolated devbox 
 
 Use **Amika** through Corsair: one client, typed API calls.
 
-Connect with an Amika API key (app.amika.dev → Settings → API Keys, or `amika auth api-key create`). rigs.create answers before the rig has booted: poll rigs.get until status is running. commandRuns.create queues a command; read its output with commandRuns.listEvents. agentSessions.send needs a Claude or Codex credential stored in Amika first (agentCredentials.claude.create).
+Connect with an Amika API key (app.amika.dev → Settings → API Keys, or `amika auth api-key create`). rigs.create answers before the rig has booted: poll rigs.get until status is running and setup_status is ok, and stop if setup_status ends in -failed. commandRuns.create queues a command; read its output with commandRuns.listEvents. agentSessions.send needs a Claude or Codex credential stored in Amika first (agentCredentials.claude.create).
 
 **What you get:**
 

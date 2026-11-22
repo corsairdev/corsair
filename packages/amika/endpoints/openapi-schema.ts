@@ -12,9 +12,10 @@ function isRecord(value: unknown): value is OpenApiDocument {
 
 /**
  * `request` keeps the published contract for what a caller sends: required
- * fields, closed enums, and length and number limits. Objects keep keys the
- * spec doesn't list, so a field Amika adds before this plugin is regenerated
- * still reaches it; the API itself rejects a key it doesn't know.
+ * fields, closed enums, patterns, and length and number limits. Objects keep
+ * keys the spec doesn't list, so a field Amika adds before this plugin is
+ * regenerated still reaches it; the API itself rejects a key it doesn't know.
+ * Objects the spec closes (`additionalProperties: false`) refuse extra keys.
  *
  * `response` parses what Amika sends: every field is optional and nullable,
  * enums are open and unknown fields pass through, so a field the provider adds
@@ -28,6 +29,21 @@ function unionOf(options: z.ZodType[]): z.ZodType {
 	if (!first) return z.never();
 	if (!second) return first;
 	return z.union([first, second, ...rest]);
+}
+
+/**
+ * The spec's `pattern` as a RegExp (an env var name, a host secret, an SSH
+ * key). A pattern JavaScript can't compile is skipped rather than failing the
+ * whole schema: Amika still checks it.
+ */
+// `unknown` is necessary because the keyword comes from provider JSON.
+function patternOf(value: unknown): RegExp | undefined {
+	if (typeof value !== 'string') return undefined;
+	try {
+		return new RegExp(value);
+	} catch {
+		return undefined;
+	}
 }
 
 function withDescription(schema: z.ZodType, value: OpenApiDocument) {
@@ -212,18 +228,30 @@ function schemaFromOpenApi(
 		if (strict && typeof value.maxLength === 'number') {
 			stringSchema = stringSchema.max(value.maxLength);
 		}
+		const pattern = strict ? patternOf(value.pattern) : undefined;
+		if (pattern) stringSchema = stringSchema.regex(pattern);
 		schema = stringSchema;
 	} else if (type === 'integer' || type === 'number') {
 		let numberSchema = z.number();
-		if (strict && type === 'integer') numberSchema = numberSchema.int();
+		// A cursor or count that comes back fractional would be refused when sent back.
+		if (type === 'integer') numberSchema = numberSchema.int();
+		// OpenAPI 3.0 writes an exclusive bound as `exclusiveMinimum: true` next to
+		// `minimum`; 3.1 writes the bound itself as `exclusiveMinimum: 0`. The spec
+		// uses both.
 		if (strict && typeof value.minimum === 'number') {
-			numberSchema = numberSchema.min(value.minimum);
+			numberSchema =
+				value.exclusiveMinimum === true
+					? numberSchema.gt(value.minimum)
+					: numberSchema.min(value.minimum);
 		}
 		if (strict && typeof value.exclusiveMinimum === 'number') {
 			numberSchema = numberSchema.gt(value.exclusiveMinimum);
 		}
 		if (strict && typeof value.maximum === 'number') {
-			numberSchema = numberSchema.max(value.maximum);
+			numberSchema =
+				value.exclusiveMaximum === true
+					? numberSchema.lt(value.maximum)
+					: numberSchema.max(value.maximum);
 		}
 		if (strict && typeof value.exclusiveMaximum === 'number') {
 			numberSchema = numberSchema.lt(value.exclusiveMaximum);
@@ -277,8 +305,13 @@ function schemaFromOpenApi(
 							? propertySchema.optional()
 							: propertySchema.nullish();
 			}
-			// Unknown keys are kept in both modes (see SchemaMode).
-			schema = z.object(shape).passthrough();
+			// Unknown keys are kept (see SchemaMode), except in a request object the
+			// spec closes with `additionalProperties: false` (`{ mode: "none" }` for
+			// rigs.create's amika_api_key takes nothing else).
+			schema =
+				strict && value.additionalProperties === false
+					? z.object(shape).strict()
+					: z.object(shape).passthrough();
 		}
 	} else {
 		// `unknown` is necessary because the spec leaves this JSON value untyped.

@@ -1535,7 +1535,7 @@ Checks whether a host's daemon is answering.
 **Risk:** `read`
 
 ```ts
-await corsair.amika.api.hosts.checkHealth({ id: 'host_01M82C1D3F5H7J9K1M3N5P7Q9S' });
+await corsair.amika.api.hosts.checkHealth({ id: 'host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d' });
 ```
 
 **Input**
@@ -1567,7 +1567,7 @@ Registers a host for bring-your-own-compute. amika-hostd setup normally does thi
 **Risk:** `write`
 
 ```ts
-await corsair.amika.api.hosts.create({ hostname: 'studio-mac', secret: 'host-shared-secret' });
+await corsair.amika.api.hosts.create({ hostname: 'studio-mac', secret: 'replace-with-output-of-openssl-rand-hex-24' });
 ```
 
 **Input**
@@ -1702,7 +1702,7 @@ Deletes a host and its stored secret; rigs can no longer be created on it.
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.amika.api.hosts.delete({ id: 'host_01M82C1D3F5H7J9K1M3N5P7Q9S' });
+await corsair.amika.api.hosts.delete({ id: 'host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d' });
 ```
 
 **Input**
@@ -1732,7 +1732,7 @@ Enrols a tunnel host with its gateway.
 **Risk:** `write`
 
 ```ts
-await corsair.amika.api.hosts.enrol({ id: 'host_01M82C1D3F5H7J9K1M3N5P7Q9S' });
+await corsair.amika.api.hosts.enrol({ id: 'host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d' });
 ```
 
 **Input**
@@ -1765,7 +1765,7 @@ Reads one of your own hosts: its hostname, runtimes, sizes and status.
 **Risk:** `read`
 
 ```ts
-await corsair.amika.api.hosts.get({ id: 'host_01M82C1D3F5H7J9K1M3N5P7Q9S' });
+await corsair.amika.api.hosts.get({ id: 'host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d' });
 ```
 
 **Input**
@@ -1922,7 +1922,7 @@ Replaces a host's registration: hostname, URL and settings.
 **Risk:** `write`
 
 ```ts
-await corsair.amika.api.hosts.replace({ id: 'host_01M82C1D3F5H7J9K1M3N5P7Q9S', hostname: 'studio-mac' });
+await corsair.amika.api.hosts.replace({ id: 'host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d', hostname: 'studio-mac' });
 ```
 
 **Input**
@@ -2210,60 +2210,11 @@ await corsair.amika.api.jobRuns.cancel({ id: 'jr_01M82D2E4G6J8L0N2Q4S6U8W0Y' });
       mode?: string | null
     } | null
   } | null,
-  sandbox_id?: string | null,
-  sandbox_name?: string | null,
-  sandbox_ref?: string | null,
-  sandbox_create?: {
-    name?: string | null,
-    repo_url?: string | null,
-    git_url?: string | null,
-    github_url?: string | null,
-    branch?: string | null,
-    new_branch_name?: string | null,
-    provider?: string | null,
-    host_id?: string | null,
-    cloud_account_id?: string | null,
-    cloud_account_name?: string | null,
-    cloud_account_ref?: string | null,
-    runtime?: string | null,
-    resources?: {
-      vcpus?: number | null,
-      memoryGib?: number | null,
-      diskGib?: number | null
-    } | null,
-    auto_stop_interval?: number | null,
-    auto_delete_interval?: number | null,
-    amika_opencode_web?: string | number | any | null | null,
-    env_vars?: Record<string, string> | null,
-    secret_env_vars?: Record<string, string> | null,
-    disabled_repo_env_var_names?: string[] | null,
-    setup_script_text?: string | null,
-    skip_setup_script?: boolean | null,
-    agent_credentials?: {
-      kind?: string | null,
-      name?: string | null,
-      type?: string | null,
-      none?: boolean | null
-    }[] | null,
-    preset?: string | null,
-    size?: string | null,
-    snapshot?: string | null | null,
-    integration_ids?: string[] | null,
-    agent?: string | null,
-    github_auth_mode?: string | null,
-    amika_api_key?: {
-      mode?: string | null,
-      scope?: string | null
-    } | {
-      mode?: string | null
-    } | null
-  } | null,
   session?: string | null,
   command?: string | null,
   timeout_ms?: number | null,
   queue_timeout_ms?: number | null,
-  cwd?: string | null,
-  working_directory?: string | null
+  cwd?: string | null
 }[] | null
 ```
 </Accordion>
@@ -2368,60 +2319,11 @@ await corsair.amika.api.jobRuns.get({ id: 'jr_01M82D2E4G6J8L0N2Q4S6U8W0Y' });
       mode?: string | null
     } | null
   } | null,
-  sandbox_id?: string | null,
-  sandbox_name?: string | null,
-  sandbox_ref?: string | null,
-  sandbox_create?: {
-    name?: string | null,
-    repo_url?: string | null,
-    git_url?: string | null,
-    github_url?: string | null,
-    branch?: string | null,
-    new_branch_name?: string | null,
-    provider?: string | null,
-    host_id?: string | null,
-    cloud_account_id?: string | null,
-    cloud_account_name?: string | null,
-    cloud_account_ref?: string | null,
-    runtime?: string | null,
-    resources?: {
-      vcpus?: number | null,
-      memoryGib?: number | null,
-      diskGib?: number | null
-    } | null,
-    auto_stop_interval?: number | null,
-    auto_delete_interval?: number | null,
-    amika_opencode_web?: string | number | any | null | null,
-    env_vars?: Record<string, string> | null,
-    secret_env_vars?: Record<string, string> | null,
-    disabled_repo_env_var_names?: string[] | null,
-    setup_script_text?: string | null,
-    skip_setup_script?: boolean | null,
-    agent_credentials?: {
-      kind?: string | null,
-      name?: string | null,
-      type?: string | null,
-      none?: boolean | null
-    }[] | null,
-    preset?: string | null,
-    size?: string | null,
-    snapshot?: string | null | null,
-    integration_ids?: string[] | null,
-    agent?: string | null,
-    github_auth_mode?: string | null,
-    amika_api_key?: {
-      mode?: string | null,
-      scope?: string | null
-    } | {
-      mode?: string | null
-    } | null
-  } | null,
   session?: string | null,
   command?: string | null,
   timeout_ms?: number | null,
   queue_timeout_ms?: number | null,
-  cwd?: string | null,
-  working_directory?: string | null
+  cwd?: string | null
 }[] | null
 ```
 </Accordion>
@@ -2528,60 +2430,11 @@ await corsair.amika.api.jobRuns.list({ job_ref: 'nightly-tests', limit: 20 });
         mode?: string | null
       } | null
     } | null,
-    sandbox_id?: string | null,
-    sandbox_name?: string | null,
-    sandbox_ref?: string | null,
-    sandbox_create?: {
-      name?: string | null,
-      repo_url?: string | null,
-      git_url?: string | null,
-      github_url?: string | null,
-      branch?: string | null,
-      new_branch_name?: string | null,
-      provider?: string | null,
-      host_id?: string | null,
-      cloud_account_id?: string | null,
-      cloud_account_name?: string | null,
-      cloud_account_ref?: string | null,
-      runtime?: string | null,
-      resources?: {
-        vcpus?: number | null,
-        memoryGib?: number | null,
-        diskGib?: number | null
-      } | null,
-      auto_stop_interval?: number | null,
-      auto_delete_interval?: number | null,
-      amika_opencode_web?: string | number | any | null | null,
-      env_vars?: Record<string, string> | null,
-      secret_env_vars?: Record<string, string> | null,
-      disabled_repo_env_var_names?: string[] | null,
-      setup_script_text?: string | null,
-      skip_setup_script?: boolean | null,
-      agent_credentials?: {
-        kind?: string | null,
-        name?: string | null,
-        type?: string | null,
-        none?: boolean | null
-      }[] | null,
-      preset?: string | null,
-      size?: string | null,
-      snapshot?: string | null | null,
-      integration_ids?: string[] | null,
-      agent?: string | null,
-      github_auth_mode?: string | null,
-      amika_api_key?: {
-        mode?: string | null,
-        scope?: string | null
-      } | {
-        mode?: string | null
-      } | null
-    } | null,
     session?: string | null,
     command?: string | null,
     timeout_ms?: number | null,
     queue_timeout_ms?: number | null,
-    cwd?: string | null,
-    working_directory?: string | null
+    cwd?: string | null
   }[] | null,
   command_run_ids?: string[] | null,
   finish_command_run_id?: string | null | null,
@@ -2699,60 +2552,11 @@ await corsair.amika.api.jobRuns.start({ job_ref: 'nightly-tests' });
       mode?: string | null
     } | null
   } | null,
-  sandbox_id?: string | null,
-  sandbox_name?: string | null,
-  sandbox_ref?: string | null,
-  sandbox_create?: {
-    name?: string | null,
-    repo_url?: string | null,
-    git_url?: string | null,
-    github_url?: string | null,
-    branch?: string | null,
-    new_branch_name?: string | null,
-    provider?: string | null,
-    host_id?: string | null,
-    cloud_account_id?: string | null,
-    cloud_account_name?: string | null,
-    cloud_account_ref?: string | null,
-    runtime?: string | null,
-    resources?: {
-      vcpus?: number | null,
-      memoryGib?: number | null,
-      diskGib?: number | null
-    } | null,
-    auto_stop_interval?: number | null,
-    auto_delete_interval?: number | null,
-    amika_opencode_web?: string | number | any | null | null,
-    env_vars?: Record<string, string> | null,
-    secret_env_vars?: Record<string, string> | null,
-    disabled_repo_env_var_names?: string[] | null,
-    setup_script_text?: string | null,
-    skip_setup_script?: boolean | null,
-    agent_credentials?: {
-      kind?: string | null,
-      name?: string | null,
-      type?: string | null,
-      none?: boolean | null
-    }[] | null,
-    preset?: string | null,
-    size?: string | null,
-    snapshot?: string | null | null,
-    integration_ids?: string[] | null,
-    agent?: string | null,
-    github_auth_mode?: string | null,
-    amika_api_key?: {
-      mode?: string | null,
-      scope?: string | null
-    } | {
-      mode?: string | null
-    } | null
-  } | null,
   session?: string | null,
   command?: string | null,
   timeout_ms?: number | null,
   queue_timeout_ms?: number | null,
-  cwd?: string | null,
-  working_directory?: string | null
+  cwd?: string | null
 }[] | null
 ```
 </Accordion>
@@ -2768,7 +2572,7 @@ await corsair.amika.api.jobRuns.start({ job_ref: 'nightly-tests' });
 
 `jobs.create`
 
-Creates a job: a cron trigger and 1 to 20 shell steps. Each time the trigger fires, a job run runs the steps in order on a rig. Set enabled false to create it paused. An idempotencyKey is made for you when you leave it out.
+Creates a job: a cron trigger and 1 to 20 shell steps. Each time the trigger fires, a job run runs the steps in order on one rig. Step 0 names the rig with exactly one of rig_id, rig_name, rig_ref or rig_create; later steps name none and run on step 0's rig. Set enabled false to create it paused. An idempotencyKey is made for you when you leave it out.
 
 **Risk:** `destructive`
 
@@ -2860,60 +2664,11 @@ await corsair.amika.api.jobs.create({
       mode: none
     }
   },
-  sandbox_id?: string,
-  sandbox_name?: string,
-  sandbox_ref?: string,
-  sandbox_create?: {
-    name: string,
-    repo_url?: string,
-    git_url?: string,
-    github_url?: string,
-    branch?: string,
-    new_branch_name?: string,
-    provider?: daytona | e2b | freestyle | vercel | instabox | smol | lume | amika-hostd | simulate,
-    host_id?: string,
-    cloud_account_id?: string,
-    cloud_account_name?: string,
-    cloud_account_ref?: string,
-    runtime?: string,
-    resources?: {
-      vcpus: number,
-      memoryGib: number,
-      diskGib: number
-    },
-    auto_stop_interval?: number,
-    auto_delete_interval?: number,
-    amika_opencode_web?: string | number | any | null,
-    env_vars?: Record<string, string>,
-    secret_env_vars?: Record<string, string>,
-    disabled_repo_env_var_names?: string[],
-    setup_script_text?: string,
-    skip_setup_script?: boolean,
-    agent_credentials?: {
-      kind: claude | codex,
-      name?: string,
-      type?: oauth | api_key,
-      none?: true
-    }[],
-    preset?: coder | coder-plus-docker | macos-coder,
-    size?: string,
-    snapshot?: string | null,
-    integration_ids?: string[],
-    agent?: claude | codex,
-    github_auth_mode?: pat | app_token,
-    amika_api_key?: {
-      mode: new,
-      scope: org | user
-    } | {
-      mode: none
-    }
-  },
   session?: string,
   command: string,
   timeout_ms: number,
   queue_timeout_ms?: number,
-  cwd?: string,
-  working_directory?: string
+  cwd?: string
 }[]
 ```
 </Accordion>
@@ -3001,60 +2756,11 @@ await corsair.amika.api.jobs.create({
       mode?: string | null
     } | null
   } | null,
-  sandbox_id?: string | null,
-  sandbox_name?: string | null,
-  sandbox_ref?: string | null,
-  sandbox_create?: {
-    name?: string | null,
-    repo_url?: string | null,
-    git_url?: string | null,
-    github_url?: string | null,
-    branch?: string | null,
-    new_branch_name?: string | null,
-    provider?: string | null,
-    host_id?: string | null,
-    cloud_account_id?: string | null,
-    cloud_account_name?: string | null,
-    cloud_account_ref?: string | null,
-    runtime?: string | null,
-    resources?: {
-      vcpus?: number | null,
-      memoryGib?: number | null,
-      diskGib?: number | null
-    } | null,
-    auto_stop_interval?: number | null,
-    auto_delete_interval?: number | null,
-    amika_opencode_web?: string | number | any | null | null,
-    env_vars?: Record<string, string> | null,
-    secret_env_vars?: Record<string, string> | null,
-    disabled_repo_env_var_names?: string[] | null,
-    setup_script_text?: string | null,
-    skip_setup_script?: boolean | null,
-    agent_credentials?: {
-      kind?: string | null,
-      name?: string | null,
-      type?: string | null,
-      none?: boolean | null
-    }[] | null,
-    preset?: string | null,
-    size?: string | null,
-    snapshot?: string | null | null,
-    integration_ids?: string[] | null,
-    agent?: string | null,
-    github_auth_mode?: string | null,
-    amika_api_key?: {
-      mode?: string | null,
-      scope?: string | null
-    } | {
-      mode?: string | null
-    } | null
-  } | null,
   session?: string | null,
   command?: string | null,
   timeout_ms?: number | null,
   queue_timeout_ms?: number | null,
-  cwd?: string | null,
-  working_directory?: string | null
+  cwd?: string | null
 }[] | null
 ```
 </Accordion>
@@ -3196,60 +2902,11 @@ await corsair.amika.api.jobs.get({ job: 'nightly-tests' });
       mode?: string | null
     } | null
   } | null,
-  sandbox_id?: string | null,
-  sandbox_name?: string | null,
-  sandbox_ref?: string | null,
-  sandbox_create?: {
-    name?: string | null,
-    repo_url?: string | null,
-    git_url?: string | null,
-    github_url?: string | null,
-    branch?: string | null,
-    new_branch_name?: string | null,
-    provider?: string | null,
-    host_id?: string | null,
-    cloud_account_id?: string | null,
-    cloud_account_name?: string | null,
-    cloud_account_ref?: string | null,
-    runtime?: string | null,
-    resources?: {
-      vcpus?: number | null,
-      memoryGib?: number | null,
-      diskGib?: number | null
-    } | null,
-    auto_stop_interval?: number | null,
-    auto_delete_interval?: number | null,
-    amika_opencode_web?: string | number | any | null | null,
-    env_vars?: Record<string, string> | null,
-    secret_env_vars?: Record<string, string> | null,
-    disabled_repo_env_var_names?: string[] | null,
-    setup_script_text?: string | null,
-    skip_setup_script?: boolean | null,
-    agent_credentials?: {
-      kind?: string | null,
-      name?: string | null,
-      type?: string | null,
-      none?: boolean | null
-    }[] | null,
-    preset?: string | null,
-    size?: string | null,
-    snapshot?: string | null | null,
-    integration_ids?: string[] | null,
-    agent?: string | null,
-    github_auth_mode?: string | null,
-    amika_api_key?: {
-      mode?: string | null,
-      scope?: string | null
-    } | {
-      mode?: string | null
-    } | null
-  } | null,
   session?: string | null,
   command?: string | null,
   timeout_ms?: number | null,
   queue_timeout_ms?: number | null,
-  cwd?: string | null,
-  working_directory?: string | null
+  cwd?: string | null
 }[] | null
 ```
 </Accordion>
@@ -3352,60 +3009,11 @@ await corsair.amika.api.jobs.list({});
         mode?: string | null
       } | null
     } | null,
-    sandbox_id?: string | null,
-    sandbox_name?: string | null,
-    sandbox_ref?: string | null,
-    sandbox_create?: {
-      name?: string | null,
-      repo_url?: string | null,
-      git_url?: string | null,
-      github_url?: string | null,
-      branch?: string | null,
-      new_branch_name?: string | null,
-      provider?: string | null,
-      host_id?: string | null,
-      cloud_account_id?: string | null,
-      cloud_account_name?: string | null,
-      cloud_account_ref?: string | null,
-      runtime?: string | null,
-      resources?: {
-        vcpus?: number | null,
-        memoryGib?: number | null,
-        diskGib?: number | null
-      } | null,
-      auto_stop_interval?: number | null,
-      auto_delete_interval?: number | null,
-      amika_opencode_web?: string | number | any | null | null,
-      env_vars?: Record<string, string> | null,
-      secret_env_vars?: Record<string, string> | null,
-      disabled_repo_env_var_names?: string[] | null,
-      setup_script_text?: string | null,
-      skip_setup_script?: boolean | null,
-      agent_credentials?: {
-        kind?: string | null,
-        name?: string | null,
-        type?: string | null,
-        none?: boolean | null
-      }[] | null,
-      preset?: string | null,
-      size?: string | null,
-      snapshot?: string | null | null,
-      integration_ids?: string[] | null,
-      agent?: string | null,
-      github_auth_mode?: string | null,
-      amika_api_key?: {
-        mode?: string | null,
-        scope?: string | null
-      } | {
-        mode?: string | null
-      } | null
-    } | null,
     session?: string | null,
     command?: string | null,
     timeout_ms?: number | null,
     queue_timeout_ms?: number | null,
-    cwd?: string | null,
-    working_directory?: string | null
+    cwd?: string | null
   }[] | null,
   rig_status_on_finish?: string | null | null,
   overlap_policy?: string | null,
@@ -3425,9 +3033,9 @@ await corsair.amika.api.jobs.list({});
 
 `jobs.update`
 
-Updates a job: its trigger, steps or description; enabled false pauses it and true resumes it.
+Updates a job: its trigger, steps or description; enabled false pauses it and true resumes it. New steps follow the jobs.create rule: only step 0 names a rig.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.amika.api.jobs.update({ job: 'nightly-tests', enabled: false });
@@ -3511,60 +3119,11 @@ await corsair.amika.api.jobs.update({ job: 'nightly-tests', enabled: false });
       mode: none
     }
   },
-  sandbox_id?: string,
-  sandbox_name?: string,
-  sandbox_ref?: string,
-  sandbox_create?: {
-    name: string,
-    repo_url?: string,
-    git_url?: string,
-    github_url?: string,
-    branch?: string,
-    new_branch_name?: string,
-    provider?: daytona | e2b | freestyle | vercel | instabox | smol | lume | amika-hostd | simulate,
-    host_id?: string,
-    cloud_account_id?: string,
-    cloud_account_name?: string,
-    cloud_account_ref?: string,
-    runtime?: string,
-    resources?: {
-      vcpus: number,
-      memoryGib: number,
-      diskGib: number
-    },
-    auto_stop_interval?: number,
-    auto_delete_interval?: number,
-    amika_opencode_web?: string | number | any | null,
-    env_vars?: Record<string, string>,
-    secret_env_vars?: Record<string, string>,
-    disabled_repo_env_var_names?: string[],
-    setup_script_text?: string,
-    skip_setup_script?: boolean,
-    agent_credentials?: {
-      kind: claude | codex,
-      name?: string,
-      type?: oauth | api_key,
-      none?: true
-    }[],
-    preset?: coder | coder-plus-docker | macos-coder,
-    size?: string,
-    snapshot?: string | null,
-    integration_ids?: string[],
-    agent?: claude | codex,
-    github_auth_mode?: pat | app_token,
-    amika_api_key?: {
-      mode: new,
-      scope: org | user
-    } | {
-      mode: none
-    }
-  },
   session?: string,
   command: string,
   timeout_ms: number,
   queue_timeout_ms?: number,
-  cwd?: string,
-  working_directory?: string
+  cwd?: string
 }[]
 ```
 </Accordion>
@@ -3652,60 +3211,11 @@ await corsair.amika.api.jobs.update({ job: 'nightly-tests', enabled: false });
       mode?: string | null
     } | null
   } | null,
-  sandbox_id?: string | null,
-  sandbox_name?: string | null,
-  sandbox_ref?: string | null,
-  sandbox_create?: {
-    name?: string | null,
-    repo_url?: string | null,
-    git_url?: string | null,
-    github_url?: string | null,
-    branch?: string | null,
-    new_branch_name?: string | null,
-    provider?: string | null,
-    host_id?: string | null,
-    cloud_account_id?: string | null,
-    cloud_account_name?: string | null,
-    cloud_account_ref?: string | null,
-    runtime?: string | null,
-    resources?: {
-      vcpus?: number | null,
-      memoryGib?: number | null,
-      diskGib?: number | null
-    } | null,
-    auto_stop_interval?: number | null,
-    auto_delete_interval?: number | null,
-    amika_opencode_web?: string | number | any | null | null,
-    env_vars?: Record<string, string> | null,
-    secret_env_vars?: Record<string, string> | null,
-    disabled_repo_env_var_names?: string[] | null,
-    setup_script_text?: string | null,
-    skip_setup_script?: boolean | null,
-    agent_credentials?: {
-      kind?: string | null,
-      name?: string | null,
-      type?: string | null,
-      none?: boolean | null
-    }[] | null,
-    preset?: string | null,
-    size?: string | null,
-    snapshot?: string | null | null,
-    integration_ids?: string[] | null,
-    agent?: string | null,
-    github_auth_mode?: string | null,
-    amika_api_key?: {
-      mode?: string | null,
-      scope?: string | null
-    } | {
-      mode?: string | null
-    } | null
-  } | null,
   session?: string | null,
   command?: string | null,
   timeout_ms?: number | null,
   queue_timeout_ms?: number | null,
-  cwd?: string | null,
-  working_directory?: string | null
+  cwd?: string | null
 }[] | null
 ```
 </Accordion>
@@ -4057,9 +3567,9 @@ await corsair.amika.api.repositories.upsert({ repo_url: 'https://github.com/acme
 
 `rigs.create`
 
-Creates a rig: a devbox VM with a repo cloned, dependencies set up and agent credentials injected. Runs on Amika Cloud (billed per second), a connected cloud account, or one of your own hosts (host_id). Answers 202 while it boots; poll rigs.get until status is running and setup_status ok. By default the rig gets a new organization API key as AMIKA_API_KEY (amika_api_key changes that).
+Creates a rig: a devbox VM with a repo cloned, dependencies set up and agent credentials injected. Runs on Amika Cloud (billed per second), a connected cloud account, or one of your own hosts (host_id). Answers 202 while it boots; poll rigs.get until status is running and setup_status ok (git-failed, setup-failed or sys-setup-failed means setup failed: stop waiting). By default the rig gets a new organization API key as AMIKA_API_KEY (amika_api_key changes that).
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.amika.api.rigs.create({
@@ -4294,7 +3804,7 @@ await corsair.amika.api.rigs.create({
 
 `rigs.createSshSession`
 
-Opens a direct WebSocket SSH session to a rig and returns its connection details. The rig is named by id or name (see `by`).
+Opens a direct WebSocket SSH session to a rig and returns its connection details. Name the rig by id or name; `sandbox_by` says which (default: either).
 
 **Risk:** `write`
 
@@ -4331,7 +3841,7 @@ await corsair.amika.api.rigs.createSshSession({ id: 'dev-rig' });
 
 `rigs.createTerminalTicket`
 
-Mints a single-use ticket for the web terminal of a rig. The rig is named by id or name (see `by`).
+Mints a single-use ticket for the web terminal of a rig. Name the rig by id or name; `sandbox_by` says which (default: either).
 
 **Risk:** `write`
 
@@ -4363,7 +3873,7 @@ await corsair.amika.api.rigs.createTerminalTicket({ id: 'dev-rig' });
 
 `rigs.delete`
 
-Deletes a rig and its disk. Anything not pushed or snapshotted is lost. The rig is named by id or name (see `by`).
+Deletes a rig and its disk. Anything not pushed or snapshotted is lost. Name the rig by id or name; `by` says which (default: either).
 
 **Risk:** `destructive` · **Irreversible**
 
@@ -4395,7 +3905,7 @@ await corsair.amika.api.rigs.delete({ id: 'dev-rig' });
 
 `rigs.get`
 
-Reads one rig: status, setup status, provider, size, branch, services and timestamps. The rig is named by id or name (see `by`).
+Reads one rig: status, setup status, provider, size, branch, services and timestamps. Name the rig by id or name; `by` says which (default: either).
 
 **Risk:** `read`
 
@@ -4783,7 +4293,7 @@ await corsair.amika.api.rigs.list({});
 
 `rigs.listIntegrations`
 
-Lists the MCP integrations (Sentry, Linear, Pylon) attached to a rig at creation. The rig is named by id or name (see `by`).
+Lists the MCP integrations (Sentry, Linear, Pylon) attached to a rig at creation. Name the rig by id or name; `sandbox_by` says which (default: either).
 
 **Risk:** `read`
 
@@ -4823,7 +4333,7 @@ await corsair.amika.api.rigs.listIntegrations({ id: 'dev-rig' });
 
 `rigs.listLifecycleEvents`
 
-Reads the control-plane event feed of a rig: created, setup steps, started, stopped, errors. The rig is named by id or name (see `by`).
+Reads the control-plane event feed of a rig: created, setup steps, started, stopped, errors. Name the rig by id or name; `sandbox_by` says which (default: either).
 
 **Risk:** `read`
 
@@ -4991,7 +4501,7 @@ await corsair.amika.api.rigs.services.delete({ id: 'dev-rig', ref: 'web' });
 
 `rigs.services.list`
 
-Lists the live services of a rig: name, port and the URL that reaches it. The rig is named by id or name (see `by`).
+Lists the live services of a rig: name, port and the URL that reaches it. Name the rig by id or name; `sandbox_by` says which (default: either).
 
 **Risk:** `read`
 
@@ -5097,7 +4607,7 @@ await corsair.amika.api.rigs.services.replace({
 
 `rigs.sessions.create`
 
-Creates a new, empty agent session on a rig for the named agent (no message is sent). The rig is named by id or name (see `by`).
+Creates a new, empty agent session on a rig for the named agent (no message is sent). Name the rig by id or name; `sandbox_by` says which (default: either).
 
 **Risk:** `write`
 
@@ -5214,7 +4724,7 @@ await corsair.amika.api.rigs.sessions.get({ id: 'dev-rig', sessionId: 'ses_01M82
 
 `rigs.sessions.getLatest`
 
-Reads the most recent agent session on a rig. The rig is named by id or name (see `by`).
+Reads the most recent agent session on a rig. Name the rig by id or name; `sandbox_by` says which (default: either).
 
 **Risk:** `read`
 
@@ -5271,7 +4781,7 @@ await corsair.amika.api.rigs.sessions.getLatest({ id: 'dev-rig' });
 
 `rigs.sessions.list`
 
-Lists the agent sessions on one rig. The rig is named by id or name (see `by`).
+Lists the agent sessions on one rig. Name the rig by id or name; `sandbox_by` says which (default: either).
 
 **Risk:** `read`
 
@@ -5394,9 +4904,9 @@ await corsair.amika.api.rigs.sessions.update({
 
 `rigs.start`
 
-Starts a stopped rig; its filesystem is kept. Billing resumes while it runs. The rig is named by id or name (see `by`).
+Starts a stopped rig; its filesystem is kept. Billing resumes while it runs. Name the rig by id or name; `by` says which (default: either).
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.amika.api.rigs.start({ id: 'dev-rig' });
@@ -5426,7 +4936,7 @@ await corsair.amika.api.rigs.start({ id: 'dev-rig' });
 
 `rigs.stop`
 
-Stops a running rig, keeping its filesystem, so it stops billing for compute. The rig is named by id or name (see `by`).
+Stops a running rig, keeping its filesystem, so it stops billing for compute. Name the rig by id or name; `by` says which (default: either).
 
 **Risk:** `write`
 
@@ -6133,7 +5643,7 @@ await corsair.amika.api.slack.settings.set({ repository_id: 'repo_01M82E3F5H7K9M
 
 Starts capturing a snapshot of a running rig (sandbox_ref names it). mode scrub_and_delete (default) removes injected secrets and deletes the source rig; full keeps both. Answers 202; poll snapshots.get for status.
 
-**Risk:** `write`
+**Risk:** `destructive` · **Irreversible**
 
 ```ts
 await corsair.amika.api.snapshots.create({

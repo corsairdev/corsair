@@ -3,7 +3,7 @@
 # spec; docs-examples.test.ts parses every example with its input schema.
 displayName: Amika
 description: "Give an agent its own coding agents: create rigs (isolated devbox VMs with a repo, its dependencies and agent credentials), send messages to Claude Code or Codex running in them, queue shell commands and read their output, schedule jobs, expose dev servers as preview URLs, snapshot rigs into base images, and manage hosts, secrets, agent credentials and repository MCP integrations (98 operations)."
-overviewNote: "Connect with an Amika API key (app.amika.dev \u2192 Settings \u2192 API Keys, or `amika auth api-key create`). rigs.create answers before the rig has booted: poll rigs.get until status is running. commandRuns.create queues a command; read its output with commandRuns.listEvents. agentSessions.send needs a Claude or Codex credential stored in Amika first (agentCredentials.claude.create)."
+overviewNote: "Connect with an Amika API key (app.amika.dev \u2192 Settings \u2192 API Keys, or `amika auth api-key create`). rigs.create answers before the rig has booted: poll rigs.get until status is running and setup_status is ok, and stop if setup_status ends in -failed. commandRuns.create queues a command; read its output with commandRuns.listEvents. agentSessions.send needs a Claude or Codex credential stored in Amika first (agentCredentials.claude.create)."
 examples:
   read:
     path: rigs.list
@@ -73,19 +73,19 @@ apiExamples:
   gitUserSettings.set:
     args: {"name": "Ada Lovelace", "email": "ada@example.com"}
   hosts.checkHealth:
-    args: {"id": "host_01M82C1D3F5H7J9K1M3N5P7Q9S"}
+    args: {"id": "host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d"}
   hosts.create:
-    args: {"hostname": "studio-mac", "secret": "host-shared-secret"}
+    args: {"hostname": "studio-mac", "secret": "replace-with-output-of-openssl-rand-hex-24"}
   hosts.delete:
-    args: {"id": "host_01M82C1D3F5H7J9K1M3N5P7Q9S"}
+    args: {"id": "host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d"}
   hosts.enrol:
-    args: {"id": "host_01M82C1D3F5H7J9K1M3N5P7Q9S"}
+    args: {"id": "host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d"}
   hosts.get:
-    args: {"id": "host_01M82C1D3F5H7J9K1M3N5P7Q9S"}
+    args: {"id": "host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d"}
   hosts.list:
     args: {}
   hosts.replace:
-    args: {"id": "host_01M82C1D3F5H7J9K1M3N5P7Q9S", "hostname": "studio-mac"}
+    args: {"id": "host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d", "hostname": "studio-mac"}
   integrations.disconnect:
     args: {"provider": "sentry"}
   integrations.list:

@@ -16,6 +16,11 @@ pnpm add @corsair-dev/amika
   an organization key acts for the organization. Hub stores it as the
   account's API key.
 
+  A `key` passed in options wins over the key each tenant stores, so every
+  tenant then calls Amika as that one account. Leave `key` out when each
+  tenant connects its own Amika organization; set it only when all tenants
+  are meant to share one.
+
 ## How it is built
 
 The 98 operations come from Amika's published OpenAPI spec
@@ -46,7 +51,14 @@ Left out of the spec's 111 routes:
 
 Body and query fields the spec documents as another field's old name
 (`sandbox_id` for `rig_id`, `sandbox` for `rig`, `working_directory` for
-`cwd`) are left out too, so each input has one name.
+`cwd`) are left out at every level, a job step's fields included, so each
+input has one name.
+
+Input checks beyond the spec's types: its regex patterns (env var names, a
+host secret of 32+ characters, SSH keys), exclusive bounds, closed objects
+(`additionalProperties: false`), and the job step rule the spec states in
+prose: step 0 names the rig with exactly one of `rig_id`, `rig_name`,
+`rig_ref` or `rig_create`, and later steps name none.
 
 `commandRuns.create`, `jobs.create` and `jobRuns.start` take an
 `Idempotency-Key` header (required by Amika for the first two). Leave
@@ -117,11 +129,11 @@ No incoming webhooks: Amika publishes none. Poll `rigs.get`,
 | `jobRuns.get` | `amika.api.jobRuns.get` | `read` | Reads one job run: status, timing and the command run of each step. |
 | `jobRuns.list` | `amika.api.jobRuns.list` | `read` | Lists job runs, filtered by job, status or trigger kind. |
 | `jobRuns.start` | `amika.api.jobRuns.start` | `destructive` | Starts a run of a job now, outside its schedule. |
-| `jobs.create` | `amika.api.jobs.create` | `destructive` | Creates a job: a cron trigger and 1 to 20 shell steps. Each time the trigger fires, a job run runs the steps in order on a rig. Set enabled false to create it paused. An idempotencyKey is made for you when you leave it out. |
+| `jobs.create` | `amika.api.jobs.create` | `destructive` | Creates a job: a cron trigger and 1 to 20 shell steps. Each time the trigger fires, a job run runs the steps in order on one rig. Step 0 names the rig with exactly one of rig_id, rig_name, rig_ref or rig_create; later steps name none and run on step 0's rig. Set enabled false to create it paused. An idempotencyKey is made for you when you leave it out. |
 | `jobs.delete` | `amika.api.jobs.delete` | `destructive` | Deletes a job and all of its job runs. |
 | `jobs.get` | `amika.api.jobs.get` | `read` | Reads one job by id or name. |
 | `jobs.list` | `amika.api.jobs.list` | `read` | Lists jobs (scheduled commands on rigs) with their trigger, steps and next run. |
-| `jobs.update` | `amika.api.jobs.update` | `write` | Updates a job: its trigger, steps or description; enabled false pauses it and true resumes it. |
+| `jobs.update` | `amika.api.jobs.update` | `destructive` | Updates a job: its trigger, steps or description; enabled false pauses it and true resumes it. New steps follow the jobs.create rule: only step 0 names a rig. |
 | `linear.settings.get` | `amika.api.linear.settings.get` | `read` | Reads the organization's Linear defaults: repository, agent and system prompt. 404 when not set. |
 | `linear.settings.set` | `amika.api.linear.settings.set` | `write` | Sets the organization's Linear defaults: the repository and agent Linear issues use. |
 | `repositories.clearImage` | `amika.api.repositories.clearImage` | `destructive` | Clears a repository's image configuration, so new rigs use the preset image. |
@@ -130,28 +142,28 @@ No incoming webhooks: Amika publishes none. Poll `rigs.get`,
 | `repositories.integrations.set` | `amika.api.repositories.integrations.set` | `write` | Replaces the list of MCP integrations new rigs of a repository get. |
 | `repositories.list` | `amika.api.repositories.list` | `read` | Lists the organization's repositories and their rig settings (setup script, image, env). |
 | `repositories.upsert` | `amika.api.repositories.upsert` | `write` | Creates or updates a repository by repo_url: its setup script, image and environment for new rigs. |
-| `rigs.create` | `amika.api.rigs.create` | `write` | Creates a rig: a devbox VM with a repo cloned, dependencies set up and agent credentials injected. Runs on Amika Cloud (billed per second), a connected cloud account, or one of your own hosts (host_id). Answers 202 while it boots; poll rigs.get until status is running and setup_status ok. By default the rig gets a new organization API key as AMIKA_API_KEY (amika_api_key changes that). |
-| `rigs.createSshSession` | `amika.api.rigs.createSshSession` | `write` | Opens a direct WebSocket SSH session to a rig and returns its connection details. The rig is named by id or name (see `by`). |
-| `rigs.createTerminalTicket` | `amika.api.rigs.createTerminalTicket` | `write` | Mints a single-use ticket for the web terminal of a rig. The rig is named by id or name (see `by`). |
-| `rigs.delete` | `amika.api.rigs.delete` | `destructive` | Deletes a rig and its disk. Anything not pushed or snapshotted is lost. The rig is named by id or name (see `by`). |
-| `rigs.get` | `amika.api.rigs.get` | `read` | Reads one rig: status, setup status, provider, size, branch, services and timestamps. The rig is named by id or name (see `by`). |
+| `rigs.create` | `amika.api.rigs.create` | `destructive` | Creates a rig: a devbox VM with a repo cloned, dependencies set up and agent credentials injected. Runs on Amika Cloud (billed per second), a connected cloud account, or one of your own hosts (host_id). Answers 202 while it boots; poll rigs.get until status is running and setup_status ok (git-failed, setup-failed or sys-setup-failed means setup failed: stop waiting). By default the rig gets a new organization API key as AMIKA_API_KEY (amika_api_key changes that). |
+| `rigs.createSshSession` | `amika.api.rigs.createSshSession` | `write` | Opens a direct WebSocket SSH session to a rig and returns its connection details. Name the rig by id or name; `sandbox_by` says which (default: either). |
+| `rigs.createTerminalTicket` | `amika.api.rigs.createTerminalTicket` | `write` | Mints a single-use ticket for the web terminal of a rig. Name the rig by id or name; `sandbox_by` says which (default: either). |
+| `rigs.delete` | `amika.api.rigs.delete` | `destructive` | Deletes a rig and its disk. Anything not pushed or snapshotted is lost. Name the rig by id or name; `by` says which (default: either). |
+| `rigs.get` | `amika.api.rigs.get` | `read` | Reads one rig: status, setup status, provider, size, branch, services and timestamps. Name the rig by id or name; `by` says which (default: either). |
 | `rigs.getSlackConversation` | `amika.api.rigs.getSlackConversation` | `read` | Reads the Slack thread a Slack-made rig belongs to. |
 | `rigs.getSlackMetadata` | `amika.api.rigs.getSlackMetadata` | `read` | Lists Slack metadata (team, channel, thread) for the organization's Slack-made rigs, keyed by rig. |
 | `rigs.list` | `amika.api.rigs.list` | `read` | Lists the organization's rigs (isolated devbox VMs for coding agents) with their status, provider and size. |
-| `rigs.listIntegrations` | `amika.api.rigs.listIntegrations` | `read` | Lists the MCP integrations (Sentry, Linear, Pylon) attached to a rig at creation. The rig is named by id or name (see `by`). |
-| `rigs.listLifecycleEvents` | `amika.api.rigs.listLifecycleEvents` | `read` | Reads the control-plane event feed of a rig: created, setup steps, started, stopped, errors. The rig is named by id or name (see `by`). |
+| `rigs.listIntegrations` | `amika.api.rigs.listIntegrations` | `read` | Lists the MCP integrations (Sentry, Linear, Pylon) attached to a rig at creation. Name the rig by id or name; `sandbox_by` says which (default: either). |
+| `rigs.listLifecycleEvents` | `amika.api.rigs.listLifecycleEvents` | `read` | Reads the control-plane event feed of a rig: created, setup steps, started, stopped, errors. Name the rig by id or name; `sandbox_by` says which (default: either). |
 | `rigs.services.create` | `amika.api.rigs.services.create` | `write` | Exposes a port of a rig as a named service with its own http or https URL (a dev server preview). |
 | `rigs.services.createToken` | `amika.api.rigs.services.createToken` | `write` | Mints an access token for a service of a rig that runs on your own host, for calling it from a script. |
 | `rigs.services.delete` | `amika.api.rigs.services.delete` | `destructive` | Removes a live service from a rig; its URL stops answering. |
-| `rigs.services.list` | `amika.api.rigs.services.list` | `read` | Lists the live services of a rig: name, port and the URL that reaches it. The rig is named by id or name (see `by`). |
+| `rigs.services.list` | `amika.api.rigs.services.list` | `read` | Lists the live services of a rig: name, port and the URL that reaches it. Name the rig by id or name; `sandbox_by` says which (default: either). |
 | `rigs.services.replace` | `amika.api.rigs.services.replace` | `write` | Replaces a live service on a rig: its name, port and URL scheme. |
-| `rigs.sessions.create` | `amika.api.rigs.sessions.create` | `write` | Creates a new, empty agent session on a rig for the named agent (no message is sent). The rig is named by id or name (see `by`). |
+| `rigs.sessions.create` | `amika.api.rigs.sessions.create` | `write` | Creates a new, empty agent session on a rig for the named agent (no message is sent). Name the rig by id or name; `sandbox_by` says which (default: either). |
 | `rigs.sessions.get` | `amika.api.rigs.sessions.get` | `read` | Reads one agent session on a rig by its session id. |
-| `rigs.sessions.getLatest` | `amika.api.rigs.sessions.getLatest` | `read` | Reads the most recent agent session on a rig. The rig is named by id or name (see `by`). |
-| `rigs.sessions.list` | `amika.api.rigs.sessions.list` | `read` | Lists the agent sessions on one rig. The rig is named by id or name (see `by`). |
+| `rigs.sessions.getLatest` | `amika.api.rigs.sessions.getLatest` | `read` | Reads the most recent agent session on a rig. Name the rig by id or name; `sandbox_by` says which (default: either). |
+| `rigs.sessions.list` | `amika.api.rigs.sessions.list` | `read` | Lists the agent sessions on one rig. Name the rig by id or name; `sandbox_by` says which (default: either). |
 | `rigs.sessions.update` | `amika.api.rigs.sessions.update` | `write` | Updates an agent session on a rig: its status or metadata. |
-| `rigs.start` | `amika.api.rigs.start` | `write` | Starts a stopped rig; its filesystem is kept. Billing resumes while it runs. The rig is named by id or name (see `by`). |
-| `rigs.stop` | `amika.api.rigs.stop` | `write` | Stops a running rig, keeping its filesystem, so it stops billing for compute. The rig is named by id or name (see `by`). |
+| `rigs.start` | `amika.api.rigs.start` | `destructive` | Starts a stopped rig; its filesystem is kept. Billing resumes while it runs. Name the rig by id or name; `by` says which (default: either). |
+| `rigs.stop` | `amika.api.rigs.stop` | `write` | Stops a running rig, keeping its filesystem, so it stops billing for compute. Name the rig by id or name; `by` says which (default: either). |
 | `secrets.create` | `amika.api.secrets.create` | `write` | Stores a generic secret in the Amika vault (user or organization scope) for injecting into rigs as an env var. |
 | `secrets.delete` | `amika.api.secrets.delete` | `destructive` | Deletes a generic secret from the vault. |
 | `secrets.list` | `amika.api.secrets.list` | `read` | Lists the generic secrets the caller can see (names and scopes, never values). |
@@ -168,7 +180,7 @@ No incoming webhooks: Amika publishes none. Poll `rigs.get`,
 | `slack.channelSettings.set` | `amika.api.slack.channelSettings.set` | `write` | Sets the repository, agent and system prompt one Slack channel uses. |
 | `slack.settings.get` | `amika.api.slack.settings.get` | `read` | Reads the organization's Slack defaults: repository, agent and system prompt. 404 when not set. |
 | `slack.settings.set` | `amika.api.slack.settings.set` | `write` | Sets the organization's Slack defaults: the repository and agent a new Slack thread uses, and an optional system prompt. |
-| `snapshots.create` | `amika.api.snapshots.create` | `write` | Starts capturing a snapshot of a running rig (sandbox_ref names it). mode scrub_and_delete (default) removes injected secrets and deletes the source rig; full keeps both. Answers 202; poll snapshots.get for status. |
+| `snapshots.create` | `amika.api.snapshots.create` | `destructive` | Starts capturing a snapshot of a running rig (sandbox_ref names it). mode scrub_and_delete (default) removes injected secrets and deletes the source rig; full keeps both. Answers 202; poll snapshots.get for status. |
 | `snapshots.delete` | `amika.api.snapshots.delete` | `destructive` | Deletes a snapshot by name (default) or id. Rigs can no longer boot from it. |
 | `snapshots.get` | `amika.api.snapshots.get` | `read` | Reads one snapshot by name (default) or id: status, source rig and size. |
 | `snapshots.list` | `amika.api.snapshots.list` | `read` | Lists snapshots captured from rigs (reusable base images new rigs can boot from). |

@@ -1,4 +1,4 @@
-import { amikaOperations } from './endpoints/manifest';
+import { amikaDefinitions, amikaOperations } from './endpoints/manifest';
 import { getAmikaInputSchema } from './endpoints/openapi-schema';
 
 // jest-yaml-transform turns the yaml into a plain object.
@@ -13,6 +13,59 @@ const docs = require('./plugin-docs.yaml') as {
 	// `unknown` because example args are free-form YAML values.
 	apiExamples?: Record<string, { args?: Record<string, unknown> }>;
 };
+
+// `unknown` because the walk covers raw JSON Schema documents and example values.
+function resolve(schema: unknown): Record<string, unknown> {
+	let current = schema;
+	for (let depth = 0; depth < 20; depth++) {
+		const record = current as Record<string, unknown> | undefined;
+		if (!record || typeof record.$ref !== 'string') break;
+		current = amikaDefinitions[record.$ref];
+	}
+	return (current ?? {}) as Record<string, unknown>;
+}
+
+/** Every branch of a union or intersection, resolved. */
+// `unknown` because the walk covers raw JSON Schema documents.
+function branches(schema: unknown): Record<string, unknown>[] {
+	const resolved = resolve(schema);
+	const members = [
+		...((resolved.oneOf as unknown[]) ?? []),
+		...((resolved.anyOf as unknown[]) ?? []),
+		...((resolved.allOf as unknown[]) ?? []),
+	];
+	return [resolved, ...members.flatMap(branches)];
+}
+
+/** Paths of keys in `value` that no schema branch declares (maps excepted). */
+// `unknown` because example values are free-form YAML.
+function unknownKeys(value: unknown, schema: unknown, path: string): string[] {
+	const options = branches(schema);
+	if (Array.isArray(value)) {
+		const items = options.find((o) => o.items !== undefined)?.items;
+		return value.flatMap((item, i) => unknownKeys(item, items, `${path}.${i}`));
+	}
+	if (typeof value !== 'object' || value === null) return [];
+	const declared = new Map<string, unknown>();
+	for (const option of options) {
+		for (const [key, inner] of Object.entries(
+			(option.properties as Record<string, unknown>) ?? {},
+		)) {
+			if (!declared.has(key)) declared.set(key, inner);
+		}
+	}
+	const map = options.find(
+		(o) => typeof o.additionalProperties === 'object' && o.additionalProperties,
+	)?.additionalProperties;
+	if (declared.size === 0) return []; // a map or an untyped value: any key
+	return Object.entries(value).flatMap(([key, inner]) =>
+		declared.has(key)
+			? unknownKeys(inner, declared.get(key), `${path}.${key}`)
+			: map
+				? unknownKeys(inner, map, `${path}.${key}`)
+				: [`${path}.${key}`],
+	);
+}
 
 describe('plugin-docs.yaml', () => {
 	it('names the provider and says what the plugin covers', () => {
@@ -37,18 +90,18 @@ describe('plugin-docs.yaml', () => {
 	);
 
 	it.each(amikaOperations.map((operation) => operation.id))(
-		'%s apiExample uses only fields the operation takes',
+		'%s apiExample uses only fields the operation takes, nested ones too',
 		(id) => {
-			// Input schemas keep unknown body keys (Amika may add fields first),
-			// so a misspelt example would still parse: check the names here.
+			// Input schemas keep unknown keys (Amika may add fields first), so a
+			// misspelt example would still parse: check every name here.
 			const operation = amikaOperations.find((o) => o.id === id);
-			const known = Object.keys(
-				(operation?.input.properties as Record<string, unknown>) ?? {},
-			);
-			const unknown = Object.keys(docs.apiExamples?.[id]?.args ?? {}).filter(
-				(name) => !known.includes(name),
-			);
-			expect(unknown).toEqual([]);
+			expect(
+				unknownKeys(
+					docs.apiExamples?.[id]?.args ?? {},
+					operation?.input,
+					'args',
+				),
+			).toEqual([]);
 		},
 	);
 

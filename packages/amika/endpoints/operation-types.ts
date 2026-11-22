@@ -232,76 +232,6 @@ export type AmikaJobStepInput = {
 					mode: 'none';
 			  };
 	};
-	/** Alias for `rig_id`. */
-	sandbox_id?: string;
-	/** Alias for `rig_name`. */
-	sandbox_name?: string;
-	/** Alias for `rig_ref`. */
-	sandbox_ref?: string;
-	/** Alias for `rig_create`. */
-	sandbox_create?: {
-		name: string;
-		repo_url?: string;
-		git_url?: string;
-		github_url?: string;
-		branch?: string;
-		new_branch_name?: string;
-		provider?:
-			| 'daytona'
-			| 'e2b'
-			| 'freestyle'
-			| 'vercel'
-			| 'instabox'
-			| 'smol'
-			| 'lume'
-			| 'amika-hostd'
-			| 'simulate';
-		host_id?: string;
-		/** Run the rig in this connected cloud account (by id). At most one of cloud_account_id, cloud_account_name, cloud_account_ref. Cannot be combined with host_id. */
-		cloud_account_id?: string;
-		/** Run the rig in the connected cloud account with this name; `amika` means Amika Cloud. `provider` narrows the name. */
-		cloud_account_name?: string;
-		/** Run the rig in the connected cloud account with this id or name. */
-		cloud_account_ref?: string;
-		/** With `host_id`, the host runtime to run the rig on (`smol`, `lume`). Omitted, the rig runs on its preset's default runtime on that host. Requires `host_id`. */
-		runtime?: string;
-		/** With `host_id`, the rig's resources, in place of a named `size`: 1 to 16 vCPUs, at least 64 MiB of memory in whole MiB, and a disk of at least 1 GiB. Requires `host_id`, and cannot be combined with `size`. */
-		resources?: {
-			vcpus: number;
-			memoryGib: number;
-			diskGib: number;
-		};
-		auto_stop_interval?: number;
-		auto_delete_interval?: number;
-		amika_opencode_web?: string | number | AmikaJsonValue | null;
-		env_vars?: Record<string, string>;
-		secret_env_vars?: Record<string, string>;
-		disabled_repo_env_var_names?: Array<string>;
-		setup_script_text?: string;
-		skip_setup_script?: boolean;
-		agent_credentials?: Array<{
-			kind: 'claude' | 'codex';
-			name?: string;
-			type?: 'oauth' | 'api_key';
-			none?: true;
-		}>;
-		preset?: 'coder' | 'coder-plus-docker' | 'macos-coder';
-		/** Providerless sandbox size (for example `a0.m`). Legacy names such as `m` and `medium` are also accepted. The provider is inferred from `provider` or the server default; when omitted, the size defaults to that provider's medium tier. With `host_id`, names one of the host's own sizes instead; a… */
-		size?: string;
-		snapshot?: string | null;
-		integration_ids?: Array<string>;
-		agent?: 'claude' | 'codex';
-		github_auth_mode?: 'pat' | 'app_token';
-		/** The Amika API key the rig gets as `AMIKA_API_KEY`. `{"mode": "new", "scope": "org"}` (default): a new organization key. `{"mode": "new", "scope": "user"}`: a new key for the calling user; a caller with no user cannot use it. `{"mode": "none"}`: no key, and `AMIKA_API_KEY` is not set. A new key… */
-		amika_api_key?:
-			| {
-					mode: 'new';
-					scope: 'org' | 'user';
-			  }
-			| {
-					mode: 'none';
-			  };
-	};
 	/** FIFO lane on the rig. Runs in one session start in creation order, one at a time. Runs in different sessions run in parallel. Default `default`. */
 	session?: string;
 	/** Shell command. Amika runs it with `bash -e -o pipefail`. */
@@ -312,8 +242,6 @@ export type AmikaJobStepInput = {
 	queue_timeout_ms?: number;
 	/** Working directory of the command. Absolute, or relative to the agent directory (`AMIKA_AGENT_CWD`). Default: the agent directory. */
 	cwd?: string;
-	/** Alias for `cwd`. */
-	working_directory?: string;
 };
 
 /** When the job starts a job run. `cron` is the only kind. */
@@ -820,70 +748,6 @@ export type AmikaJobStep = {
 			  )
 			| null;
 	} | null;
-	/** Alias for `rig_id`. */
-	sandbox_id?: string | null;
-	/** Alias for `rig_name`. */
-	sandbox_name?: string | null;
-	/** Alias for `rig_ref`. */
-	sandbox_ref?: string | null;
-	/** Alias for `rig_create`. */
-	sandbox_create?: {
-		name?: string | null;
-		repo_url?: string | null;
-		git_url?: string | null;
-		github_url?: string | null;
-		branch?: string | null;
-		new_branch_name?: string | null;
-		provider?: string | null;
-		host_id?: string | null;
-		/** Run the rig in this connected cloud account (by id). At most one of cloud_account_id, cloud_account_name, cloud_account_ref. Cannot be combined with host_id. */
-		cloud_account_id?: string | null;
-		/** Run the rig in the connected cloud account with this name; `amika` means Amika Cloud. `provider` narrows the name. */
-		cloud_account_name?: string | null;
-		/** Run the rig in the connected cloud account with this id or name. */
-		cloud_account_ref?: string | null;
-		/** With `host_id`, the host runtime to run the rig on (`smol`, `lume`). Omitted, the rig runs on its preset's default runtime on that host. Requires `host_id`. */
-		runtime?: string | null;
-		/** With `host_id`, the rig's resources, in place of a named `size`: 1 to 16 vCPUs, at least 64 MiB of memory in whole MiB, and a disk of at least 1 GiB. Requires `host_id`, and cannot be combined with `size`. */
-		resources?: {
-			vcpus?: number | null;
-			memoryGib?: number | null;
-			diskGib?: number | null;
-		} | null;
-		auto_stop_interval?: number | null;
-		auto_delete_interval?: number | null;
-		amika_opencode_web?: (string | number | AmikaJsonValue | null) | null;
-		env_vars?: Record<string, string> | null;
-		secret_env_vars?: Record<string, string> | null;
-		disabled_repo_env_var_names?: Array<string> | null;
-		setup_script_text?: string | null;
-		skip_setup_script?: boolean | null;
-		agent_credentials?: Array<{
-			kind?: string | null;
-			name?: string | null;
-			type?: string | null;
-			none?: boolean | null;
-		}> | null;
-		preset?: string | null;
-		/** Providerless sandbox size (for example `a0.m`). Legacy names such as `m` and `medium` are also accepted. The provider is inferred from `provider` or the server default; when omitted, the size defaults to that provider's medium tier. With `host_id`, names one of the host's own sizes instead; a… */
-		size?: string | null;
-		snapshot?: string | null;
-		integration_ids?: Array<string> | null;
-		agent?: string | null;
-		github_auth_mode?: string | null;
-		/** The Amika API key the rig gets as `AMIKA_API_KEY`. `{"mode": "new", "scope": "org"}` (default): a new organization key. `{"mode": "new", "scope": "user"}`: a new key for the calling user; a caller with no user cannot use it. `{"mode": "none"}`: no key, and `AMIKA_API_KEY` is not set. A new key… */
-		amika_api_key?:
-			| (
-					| {
-							mode?: string | null;
-							scope?: string | null;
-					  }
-					| {
-							mode?: string | null;
-					  }
-			  )
-			| null;
-	} | null;
 	/** FIFO lane on the rig. Runs in one session start in creation order, one at a time. Runs in different sessions run in parallel. Default `default`. */
 	session?: string | null;
 	/** Shell command. Amika runs it with `bash -e -o pipefail`. */
@@ -894,8 +758,6 @@ export type AmikaJobStep = {
 	queue_timeout_ms?: number | null;
 	/** Working directory of the command. Absolute, or relative to the agent directory (`AMIKA_AGENT_CWD`). Default: the agent directory. */
 	cwd?: string | null;
-	/** Alias for `cwd`. */
-	working_directory?: string | null;
 };
 
 /** When the job starts a job run. `cron` is the only kind. */
