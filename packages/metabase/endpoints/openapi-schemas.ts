@@ -20226,12 +20226,22 @@ export type MetabaseLegacyQuery = {
 	type: 'native' | 'query';
 	[key: string]: JsonValue;
 };
-const MetabaseLegacyQuerySchema = z
-	.object({
-		database: z.number().int().min(1),
-		type: z.enum(['native', 'query']),
-	})
-	.catchall(z.json());
+const MetabaseLegacyQuerySchema = z.union([
+	z
+		.object({
+			database: z.number().int().min(1),
+			type: z.literal('native'),
+			native: z.json(),
+		})
+		.catchall(z.json()),
+	z
+		.object({
+			database: z.number().int().min(1),
+			type: z.literal('query'),
+			query: z.json(),
+		})
+		.catchall(z.json()),
+]);
 export type MetabaseOpenApiType337 =
 	| MetabaseOpenApiType534
 	| MetabaseLegacyQuery;

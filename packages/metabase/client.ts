@@ -179,7 +179,7 @@ function retryAfterMs(value: string | null, now: number): number | undefined {
 		? seconds * 1000
 		: Date.parse(value) - now;
 	if (!Number.isFinite(requestedDelay) || requestedDelay < 0) return undefined;
-	return Math.min(requestedDelay, MAX_RETRY_AFTER_MS);
+	return requestedDelay;
 }
 
 function wait(milliseconds: number): Promise<void> {
@@ -375,7 +375,13 @@ export async function makeMetabaseRequest(
 			response.headers.get('Retry-After'),
 			Date.now(),
 		);
-		if (response.status === 429 && attempt < MAX_RATE_LIMIT_RETRIES) {
+		// A Retry-After longer than the local wait cap is not shortened: the 429 goes back with the
+		// provider's own delay so the caller can wait it out.
+		if (
+			response.status === 429 &&
+			attempt < MAX_RATE_LIMIT_RETRIES &&
+			(retryAfter === undefined || retryAfter <= MAX_RETRY_AFTER_MS)
+		) {
 			await releaseResponse(response);
 			await wait(retryAfter ?? 250 * 2 ** attempt);
 			continue;

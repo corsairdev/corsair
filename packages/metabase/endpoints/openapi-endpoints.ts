@@ -41,7 +41,7 @@ export type MetabaseOpenApiTestCase = {
 // Metabase's offset-paging middleware reads `limit` and `offset` on paged list routes, though the OpenAPI
 // document omits them. The operations whose response is the `{ data, limit, offset, total }` envelope accept both.
 const metabasePageQueryShape = {
-	limit: z.number().int().min(1).optional(),
+	limit: z.number().int().min(0).optional(),
 	offset: z.number().int().min(0).optional(),
 };
 
@@ -14193,8 +14193,9 @@ export const MetabaseOpenApiEndpointMeta = {
 		description: 'Fetch values for a dimension of a metric.',
 	},
 	'notification.post': {
-		riskLevel: 'write',
-		description: 'Create a new notification, return the created notification.',
+		riskLevel: 'destructive',
+		description:
+			'Create a new notification (alert or subscription), return the created notification. With email or Slack set up, Metabase can send it to its recipients right away.',
 	},
 	'notification.getAdmin': {
 		riskLevel: 'read',

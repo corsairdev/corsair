@@ -232,6 +232,61 @@ describe('Metabase review fixes', () => {
 		).toBe(true);
 	});
 
+	it('returns a 429 with the provider delay when Retry-After is longer than the local cap', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response('{}', {
+				status: 429,
+				headers: { 'Retry-After': '120', 'Content-Type': 'application/json' },
+			}),
+		);
+		await expect(endpoints.collections.list(ctx, {})).rejects.toMatchObject({
+			status: 429,
+			retryAfter: 120_000,
+		});
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('counts unrecognized fields instead of naming them', async () => {
+		const fetchMock = jest.spyOn(globalThis, 'fetch');
+		await expect(
+			endpoints.collections.create(ctx, {
+				body: { name: 'x', 'jane@example.com': true },
+			} as never),
+		).rejects.toThrow('body: 1 unrecognized field(s)');
+		await expect(
+			endpoints.collections.create(ctx, {
+				body: { name: 'x', 'jane@example.com': true },
+			} as never),
+		).rejects.not.toThrow('jane@example.com');
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('accepts limit 0 for a count-only page', () => {
+		expect(
+			metabaseEndpointSchemas['collections.candidates.list'].input.safeParse({
+				path: { id: 3 },
+				query: { limit: 0 },
+			}).success,
+		).toBe(true);
+		expect(
+			metabaseEndpointSchemas['metric.get'].input.safeParse({
+				query: { limit: 0 },
+			}).success,
+		).toBe(true);
+	});
+
+	it('requires the native or query part of a legacy query', () => {
+		const input = metabaseEndpointSchemas['dataset.post'].input;
+		expect(
+			input.safeParse({ body: { database: 1, type: 'native' } }).success,
+		).toBe(false);
+		expect(
+			input.safeParse({
+				body: { database: 1, type: 'query', query: { 'source-table': 2 } },
+			}).success,
+		).toBe(true);
+	});
+
 	it('names the failing field when input validation fails', async () => {
 		const fetchMock = jest.spyOn(globalThis, 'fetch');
 		await expect(

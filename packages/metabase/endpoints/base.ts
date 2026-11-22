@@ -39,11 +39,18 @@ export function buildMetabasePath(
 	return path;
 }
 
-// Paths and zod's messages only (no input or response values), so query text and record data stay out of errors.
+// Schema paths and zod's messages only. Unrecognized keys come from the caller's input (a key can be an
+// email address), so they are counted, not named; nothing from input or response values is copied.
 function describeIssues(error: z.ZodError): string {
 	return error.issues
 		.slice(0, 5)
-		.map((issue) => `${issue.path.join('.') || '(root)'}: ${issue.message}`)
+		.map((issue) => {
+			const at = issue.path.join('.') || '(root)';
+			if (issue.code === 'unrecognized_keys') {
+				return `${at}: ${issue.keys.length} unrecognized field(s)`;
+			}
+			return `${at}: ${issue.message}`;
+		})
 		.join('; ');
 }
 

@@ -29,7 +29,8 @@ const ModelSchema = z.enum([
 // Metabase's offset-paging middleware reads these on the item and dashboard-question candidate lists
 // (the responses echo `limit`/`offset`), though the OpenAPI document leaves them out.
 const PageQueryShape = {
-	limit: z.number().int().min(1).optional(),
+	// 0 returns no rows but still counts the matches (Metabase's offset paging).
+	limit: z.number().int().min(0).optional(),
 	offset: z.number().int().min(0).optional(),
 };
 const PageQuerySchema = z.object(PageQueryShape).strict();
