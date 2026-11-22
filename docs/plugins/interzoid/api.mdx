@@ -1,0 +1,2861 @@
+---
+title: "Interzoid API reference"
+sidebarTitle: "API"
+description: "API reference for the Interzoid plugin in Corsair: every `interzoid.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Intelligence
+
+### getBuildingProfile
+
+`intelligence.getBuildingProfile`
+
+Retrieve commercial building intelligence, class, square footage, and tenants
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getBuildingProfile({ address: '415 Mission St, San Francisco, CA 94105' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `PropertyAddress` | `string` | No | — |
+| `BuildingClass` | `string` | No | — |
+| `YearBuilt` | `string` | No | — |
+| `TotalSquareFootage` | `string` | No | — |
+| `FloorCount` | `string` | No | — |
+| `PrimaryTenants` | `string` | No | — |
+| `PropertyManager` | `string` | No | — |
+| `OwnershipEntity` | `string` | No | — |
+| `RecentRenovations` | `string` | No | — |
+| `ParkingRatio` | `string` | No | — |
+| `TransitAccess` | `string` | No | — |
+| `BuildingReferenceURL` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getBusinessInfo
+
+`intelligence.getBusinessInfo`
+
+Retrieve comprehensive business intelligence and firmographic profile
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getBusinessInfo({ lookup: 'Cisco' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CompanyName` | `string` | No | — |
+| `CompanyURL` | `string` | No | — |
+| `CompanyLocation` | `string` | No | — |
+| `CompanyDescription` | `string` | No | — |
+| `Revenue` | `string` | No | — |
+| `NumberEmployees` | `string` | No | — |
+| `NAICS` | `string` | No | — |
+| `TopExecutive` | `string` | No | — |
+| `TopExecutiveTitle` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getBusinessInfoDomain
+
+`intelligence.getBusinessInfoDomain`
+
+Resolve company name, ticker, or brand into primary internet domain
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getBusinessInfoDomain({ lookup: 'Microsoft' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Domain` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getBusinessInfoName
+
+`intelligence.getBusinessInfoName`
+
+Resolve domain or brand name into standard company name
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getBusinessInfoName({ lookup: 'Microsoft' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CompanyName` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getBuyingSignals
+
+`intelligence.getBuyingSignals`
+
+Retrieve real-time B2B purchase intent signals and expansion indicators
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getBuyingSignals({ lookup: 'SpaceX' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CompanyName` | `string` | No | — |
+| `Industry` | `string` | No | — |
+| `CompanySize` | `string` | No | — |
+| `LeadershipChanges` | `string` | No | — |
+| `FundingEvents` | `string` | No | — |
+| `HiringSignals` | `string` | No | — |
+| `TechnologyChanges` | `string` | No | — |
+| `ExpansionSignals` | `string` | No | — |
+| `PainPointIndicators` | `string` | No | — |
+| `BudgetIndicators` | `string` | No | — |
+| `SignalStrengthScore` | `string` | No | — |
+| `RecommendedTiming` | `string` | No | — |
+| `KeyDecisionMakers` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getCompanyVerification
+
+`intelligence.getCompanyVerification`
+
+Verify the legitimacy, existence, and reputability of a company
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getCompanyVerification({ lookup: 'Microsoft Corporation' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Score` | `string` | No | — |
+| `Reasoning` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getCompetitorAnalysis
+
+`intelligence.getCompetitorAnalysis`
+
+Retrieve structured competitive intelligence, advantages, and market dynamics
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getCompetitorAnalysis({ lookup: 'Databricks' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CompanyName` | `string` | No | — |
+| `Industry` | `string` | No | — |
+| `MarketPosition` | `string` | No | — |
+| `TopCompetitors` | `string` | No | — |
+| `IndirectCompetitors` | `string` | No | — |
+| `CompetitiveAdvantages` | `string` | No | — |
+| `CompetitiveWeaknesses` | `string` | No | — |
+| `MarketDynamics` | `string` | No | — |
+| `StrategicOutlook` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getCustomData
+
+`intelligence.getCustomData`
+
+Query custom AI-powered dataset attributes specified by topic and requested columns
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getCustomData({ topic: 'detailed information about IBM', lookup: 'IBM', output: 'headquarters,ceo,website' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `topic` | `string` | Yes | — |
+| `lookup` | `string` | Yes | The record to look up for this topic, such as a company name. Interzoid refuses a call without it. |
+| `output` | `string` | Yes | — |
+| `model` | `string` | No | Interzoid AI model, such as `model-a` (1 credit). The `-premium` models cost 10 to 25 credits per call. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### getCustomsDutyRates
+
+`intelligence.getCustomsDutyRates`
+
+Retrieve international customs duty rates based on origin, destination, and HS code
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getCustomsDutyRates({ origin: 'China', lookup: 'United States', hscode: '8471.30.00' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin` | `string` | No | Optional; Interzoid picks its default when omitted. |
+| `lookup` | `string` | Yes | — |
+| `hscode` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OriginCountry` | `string` | No | — |
+| `DestinationCountry` | `string` | No | — |
+| `CountryCodeISO2` | `string` | No | — |
+| `HSCode` | `string` | No | — |
+| `HSCodeDescription` | `string` | No | — |
+| `MFNAppliedRate` | `string` | No | — |
+| `DutyBasis` | `string` | No | — |
+| `ApplicablePreferentialRate` | `string` | No | — |
+| `TradeRemedyDuties` | `string` | No | — |
+| `SafeguardMeasures` | `string` | No | — |
+| `ImportVATOrGST` | `string` | No | — |
+| `SpecialOrAdditionalTaxes` | `string` | No | — |
+| `DeMinimisThreshold` | `string` | No | — |
+| `RestrictionsNotes` | `string` | No | — |
+| `EffectivePeriod` | `string` | No | — |
+| `CustomsAuthorityReferenceURL` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getEsgProfile
+
+`intelligence.getEsgProfile`
+
+Retrieve ESG, carbon scope emissions, and corporate sustainability intelligence
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getEsgProfile({ lookup: 'Microsoft' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CompanyName` | `string` | No | — |
+| `CompanyURL` | `string` | No | — |
+| `ESGRiskRating` | `string` | No | — |
+| `EnvironmentalScore` | `string` | No | — |
+| `SocialScore` | `string` | No | — |
+| `GovernanceScore` | `string` | No | — |
+| `CarbonEmissionsScopes` | `string` | No | — |
+| `NetZeroTarget` | `string` | No | — |
+| `RenewableEnergyPercent` | `string` | No | — |
+| `ESGControversies` | `string` | No | — |
+| `SustainabilityFrameworks` | `string` | No | — |
+| `ESGReferenceURL` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getEuVatRates
+
+`intelligence.getEuVatRates`
+
+Retrieve European VAT tax rates, standard/reduced categories, and thresholds
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getEuVatRates({ lookup: 'Germany' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CountryName` | `string` | No | — |
+| `CountryCodeISO2` | `string` | No | — |
+| `TaxSystem` | `string` | No | — |
+| `TaxSystemLocalName` | `string` | No | — |
+| `StandardRate` | `string` | No | — |
+| `ReducedRates` | `string` | No | — |
+| `SuperReducedRate` | `string` | No | — |
+| `ZeroRatedCategories` | `string` | No | — |
+| `ExemptCategories` | `string` | No | — |
+| `TerritorialExceptions` | `string` | No | — |
+| `EUMemberStatus` | `string` | No | — |
+| `RegistrationThreshold` | `string` | No | — |
+| `TaxAuthorityReferenceURL` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getExecutiveProfile
+
+`intelligence.getExecutiveProfile`
+
+Retrieve executive profile details based on company name and title
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getExecutiveProfile({ lookup: 'Amazon Web Services CEO' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CompanyName` | `string` | No | — |
+| `CompanyURL` | `string` | No | — |
+| `ExecutiveName` | `string` | No | — |
+| `ExecutiveTitle` | `string` | No | — |
+| `LinkedInURL` | `string` | No | — |
+| `BiographyURL` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getFacilitiesProfile
+
+`intelligence.getFacilitiesProfile`
+
+Retrieve corporate facilities and real estate portfolio intelligence
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getFacilitiesProfile({ lookup: 'Amazon' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CompanyName` | `string` | No | — |
+| `CompanyURL` | `string` | No | — |
+| `HeadquartersLocation` | `string` | No | — |
+| `TotalFacilityCount` | `string` | No | — |
+| `TotalSquareFootage` | `string` | No | — |
+| `OwnedLeasedMix` | `string` | No | — |
+| `FacilityTypeBreakdown` | `string` | No | — |
+| `TopGeographicMarkets` | `string` | No | — |
+| `RecentOpenings` | `string` | No | — |
+| `RecentClosures` | `string` | No | — |
+| `WorkPolicy` | `string` | No | — |
+| `FacilitiesReferenceURL` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getGovContracts
+
+`intelligence.getGovContracts`
+
+Retrieve US federal government contracting intelligence and major awards
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getGovContracts({ lookup: 'Lockheed Martin' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CompanyName` | `string` | No | — |
+| `CompanyURL` | `string` | No | — |
+| `LifetimeContractValue` | `string` | No | — |
+| `TTMContractValue` | `string` | No | — |
+| `TopAwardingAgencies` | `string` | No | — |
+| `ActiveContractVehicles` | `string` | No | — |
+| `SetAsideStatus` | `string` | No | — |
+| `RecentMajorAwards` | `string` | No | — |
+| `PrimeSubMix` | `string` | No | — |
+| `TopNAICSCodes` | `string` | No | — |
+| `CAGECode` | `string` | No | — |
+| `SAMReferenceURL` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getIndustryCodes
+
+`intelligence.getIndustryCodes`
+
+Retrieve NAICS and SIC industry classification codes for a company
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getIndustryCodes({ lookup: 'Oracle Corporation' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CompanyName` | `string` | No | — |
+| `PrimaryIndustry` | `string` | No | — |
+| `NAICSCode` | `string` | No | — |
+| `NAICSCodeTitle` | `string` | No | — |
+| `SICCode` | `string` | No | — |
+| `SICCodeTitle` | `string` | No | — |
+| `Sector` | `string` | No | — |
+| `Subsector` | `string` | No | — |
+| `IndustryDefinition` | `string` | No | — |
+| `ConfidenceScore` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getIrsPerDiemRates
+
+`intelligence.getIrsPerDiemRates`
+
+Retrieve official IRS per diem reimbursement rates for travel
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getIrsPerDiemRates({ lookup: 'New York, NY' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Jurisdiction` | `string` | No | — |
+| `JurisdictionLevel` | `string` | No | — |
+| `LookupType` | `string` | No | — |
+| `State` | `string` | No | — |
+| `County` | `string` | No | — |
+| `City` | `string` | No | — |
+| `IRSClassification` | `string` | No | — |
+| `TotalPerDiem` | `string` | No | — |
+| `LodgingAllowance` | `string` | No | — |
+| `MealsIncidentalAllowance` | `string` | No | — |
+| `IncidentalExpensesOnlyRate` | `string` | No | — |
+| `EffectivePeriod` | `string` | No | — |
+| `IRSReferenceURL` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getMuniIssuerProfile
+
+`intelligence.getMuniIssuerProfile`
+
+Retrieve municipal bond issuer profiles and credit diligence intelligence
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getMuniIssuerProfile({ lookup: 'State of California' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `IssuerName` | `string` | No | — |
+| `IssuerType` | `string` | No | — |
+| `State` | `string` | No | — |
+| `Population` | `string` | No | — |
+| `IssuerProfile` | `string` | No | — |
+| `TypicalSecurityTypes` | `string` | No | — |
+| `GeneralCreditStanding` | `string` | No | — |
+| `OutstandingDebtOverview` | `string` | No | — |
+| `NotableEvents` | `string` | No | — |
+| `PensionAndOPEBNotes` | `string` | No | — |
+| `KeyRevenueSources` | `string` | No | — |
+| `EMMAReferenceURL` | `string` | No | — |
+| `MSRBReferenceURL` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getNearestCoffeeShops
+
+`intelligence.getNearestCoffeeShops`
+
+Find nearest coffee shops and proximity data for a location
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getNearestCoffeeShops({ lookup: 'Union Square, San Francisco' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `SearchLocation` | `string` | No | — |
+| `Shop1Name` | `string` | No | — |
+| `Shop1Address` | `string` | No | — |
+| `Shop1Distance` | `string` | No | — |
+| `Shop1Rating` | `string` | No | — |
+| `Shop1Hours` | `string` | No | — |
+| `Shop2Name` | `string` | No | — |
+| `Shop2Address` | `string` | No | — |
+| `Shop2Distance` | `string` | No | — |
+| `Shop2Rating` | `string` | No | — |
+| `Shop2Hours` | `string` | No | — |
+| `Shop3Name` | `string` | No | — |
+| `Shop3Address` | `string` | No | — |
+| `Shop3Distance` | `string` | No | — |
+| `Shop3Rating` | `string` | No | — |
+| `Shop3Hours` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getParentCompanyInfo
+
+`intelligence.getParentCompanyInfo`
+
+Retrieve corporate ownership and ultimate parent company intelligence
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getParentCompanyInfo({ lookup: 'Informatica' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CompanyName` | `string` | No | — |
+| `CompanyURL` | `string` | No | — |
+| `ParentCompany` | `string` | No | — |
+| `ParentCompanyLocation` | `string` | No | — |
+| `ParentCompanyURL` | `string` | No | — |
+| `ParentCompanyDescription` | `string` | No | — |
+| `ParentCompanyReferenceURL` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getPrivateCompanyDealIntel
+
+`intelligence.getPrivateCompanyDealIntel`
+
+Retrieve venture capital and private equity deal intelligence for private firms
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getPrivateCompanyDealIntel({ lookup: 'Anthropic' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CompanyName` | `string` | No | — |
+| `FoundedYear` | `string` | No | — |
+| `Headquarters` | `string` | No | — |
+| `Industry` | `string` | No | — |
+| `LatestValuation` | `string` | No | — |
+| `TotalFundingRaised` | `string` | No | — |
+| `FundingRounds` | `string` | No | — |
+| `KeyInvestors` | `string` | No | — |
+| `EmployeeCountEstimate` | `string` | No | — |
+| `RevenueEstimate` | `string` | No | — |
+| `GrowthMetrics` | `string` | No | — |
+| `RecentDealsAndExits` | `string` | No | — |
+| `ComparableCompanies` | `string` | No | — |
+| `DataConfidenceNotes` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getProductRecallInfo
+
+`intelligence.getProductRecallInfo`
+
+Retrieve consumer safety recall intelligence for products and brands
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getProductRecallInfo({ lookup: 'Kirkland Signature Prosecco' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ProductName` | `string` | No | — |
+| `Brand` | `string` | No | — |
+| `RecallDate` | `string` | No | — |
+| `RecallingAgency` | `string` | No | — |
+| `RecallReason` | `string` | No | — |
+| `SeverityLevel` | `string` | No | — |
+| `UnitsAffected` | `string` | No | — |
+| `RemedyAction` | `string` | No | — |
+| `RecallStatus` | `string` | No | — |
+| `AdditionalDetails` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getPropertyHistory
+
+`intelligence.getPropertyHistory`
+
+Retrieve historical real estate property sales, deeds, and mortgages
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getPropertyHistory({ address: '600 Montgomery St, San Francisco, CA 94111' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `PropertyAddress` | `string` | No | — |
+| `PropertyType` | `string` | No | — |
+| `LastSaleDate` | `string` | No | — |
+| `LastSalePrice` | `string` | No | — |
+| `PriorTransactions` | `string` | No | — |
+| `PricePerSqFtTrajectory` | `string` | No | — |
+| `OwnershipChain` | `string` | No | — |
+| `DeedTypes` | `string` | No | — |
+| `MortgageHistory` | `string` | No | — |
+| `CurrentOwner` | `string` | No | — |
+| `AssessorParcelNumber` | `string` | No | — |
+| `PropertyReferenceURL` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getSalesUseTaxRates
+
+`intelligence.getSalesUseTaxRates`
+
+Retrieve US sales and use tax rates by address, zip code, or city
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getSalesUseTaxRates({ lookup: 'Beverly Hills, CA' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Jurisdiction` | `string` | No | — |
+| `JurisdictionLevel` | `string` | No | — |
+| `LookupType` | `string` | No | — |
+| `State` | `string` | No | — |
+| `County` | `string` | No | — |
+| `City` | `string` | No | — |
+| `StateRate` | `string` | No | — |
+| `CountyRate` | `string` | No | — |
+| `CityRate` | `string` | No | — |
+| `DistrictSpecialRate` | `string` | No | — |
+| `CombinedRate` | `string` | No | — |
+| `RateEffectiveDate` | `string` | No | — |
+| `TaxAuthorityReferenceURL` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getSicCodes
+
+`intelligence.getSicCodes`
+
+Retrieve primary and secondary SIC codes with SEC filing provenance
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getSicCodes({ lookup: 'Safeway Inc.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CompanyName` | `string` | No | — |
+| `PrimarySICCode` | `string` | No | — |
+| `PrimarySICCodeTitle` | `string` | No | — |
+| `PrimarySICBasis` | `string` | No | — |
+| `AdditionalSICCodes` | `string` | No | — |
+| `AdditionalSICCodeTitles` | `string` | No | — |
+| `SICSourceType` | `string` | No | — |
+| `SICSourceReferenceURL` | `string` | No | — |
+| `ConfidenceScore` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getStockInfo
+
+`intelligence.getStockInfo`
+
+Retrieve financial stock metrics, market cap, and analyst consensus for a ticker
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getStockInfo({ lookup: 'NVDA' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Ticker` | `string` | No | — |
+| `Exchange` | `string` | No | — |
+| `Company` | `string` | No | — |
+| `Website` | `string` | No | — |
+| `Description` | `string` | No | — |
+| `MarketCap` | `string` | No | — |
+| `CurrentPrice` | `string` | No | — |
+| `AnalystAssessment` | `string` | No | — |
+| `PERatio` | `string` | No | — |
+| `EPS` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getTechStack
+
+`intelligence.getTechStack`
+
+Retrieve technology stack and web infrastructure detected for a domain
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getTechStack({ lookup: 'shopify.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `DomainName` | `string` | No | — |
+| `CMSPlatform` | `string` | No | — |
+| `FrontendFrameworks` | `string` | No | — |
+| `BackendTechnologies` | `string` | No | — |
+| `WebServer` | `string` | No | — |
+| `HostingProvider` | `string` | No | — |
+| `CDNProvider` | `string` | No | — |
+| `AnalyticsTools` | `string` | No | — |
+| `SecurityTechnologies` | `string` | No | — |
+| `EcommercePlatform` | `string` | No | — |
+| `AdditionalTechnologies` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getUniversityInfo
+
+`intelligence.getUniversityInfo`
+
+Retrieve comprehensive higher education profile and statistics for a university
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getUniversityInfo({ lookup: 'The Ohio State University' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `InstitutionName` | `string` | No | — |
+| `Location` | `string` | No | — |
+| `InstitutionType` | `string` | No | — |
+| `FoundedYear` | `string` | No | — |
+| `TotalEnrollment` | `string` | No | — |
+| `AcceptanceRate` | `string` | No | — |
+| `TuitionInState` | `string` | No | — |
+| `TuitionOutOfState` | `string` | No | — |
+| `NotablePrograms` | `string` | No | — |
+| `WebsiteURL` | `string` | No | — |
+| `EndowmentSize` | `string` | No | — |
+| `AthleticConference` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getUserXHandle
+
+`intelligence.getUserXHandle`
+
+Lookup X/Twitter handle for a person, company, or team
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getUserXHandle({ lookup: 'San Francisco 49ers' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Handle` | `string` | No | — |
+| `ConfidenceScore` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getXLast3
+
+`intelligence.getXLast3`
+
+Retrieve the latest three posts from an X/Twitter account
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getXLast3({ handle: 'Google' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Handle` | `string` | No | — |
+| `Tweet1` | `string` | No | — |
+| `Tweet1Date` | `string` | No | — |
+| `Tweet2` | `string` | No | — |
+| `Tweet2Date` | `string` | No | — |
+| `Tweet3` | `string` | No | — |
+| `Tweet3Date` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getXUserProfile
+
+`intelligence.getXUserProfile`
+
+Retrieve public profile statistics and bio for an X/Twitter handle
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.intelligence.getXUserProfile({ handle: 'lexfridman' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `handle` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Handle` | `string` | No | — |
+| `DisplayName` | `string` | No | — |
+| `Description` | `string` | No | — |
+| `CreateDate` | `string` | No | — |
+| `Following` | `string` | No | — |
+| `Followers` | `string` | No | — |
+| `PostCount` | `string` | No | — |
+| `WebsiteURL` | `string` | No | — |
+| `Location` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+## Matching
+
+### getAddressAndFullNameMatch
+
+`matching.getAddressAndFullNameMatch`
+
+Generate a composite similarity key based on both address and full name
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.matching.getAddressAndFullNameMatch({ address: '100 Main St', fullname: 'James Kelly' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `fullname` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `SimKey` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getAddressMatch
+
+`matching.getAddressMatch`
+
+Generate a standard similarity key for street address matching and deduplication
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.matching.getAddressMatch({ address: '500 Oak Drive' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `SimKey` | `string` | No | — |
+| `Simkey` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getAddressMatchAdvanced
+
+`matching.getAddressMatchAdvanced`
+
+Generate an AI-powered similarity key for a street address to identify duplicates
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.matching.getAddressMatchAdvanced({ address: '400 East Broadway', algorithm: 'model-v3-narrow' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `algorithm` | `string` | No | — |
+| `zip` | `string` | No | ZIP code of the address; optional, makes the match more precise. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `SimKey` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getCityMatch
+
+`matching.getCityMatch`
+
+Generate a similarity key for city name matching and deduplication
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.matching.getCityMatch({ city: 'San Francisco' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `city` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `SimKey` | `string` | No | — |
+| `Simkey` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getCompanyAndAddressMatch
+
+`matching.getCompanyAndAddressMatch`
+
+Generate a composite similarity key based on both company name and street address
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.matching.getCompanyAndAddressMatch({ company: 'IBM Corp', address: '1 New Orchard Road' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `string` | Yes | — |
+| `address` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `SimKey` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getCompanyAndFullNameMatch
+
+`matching.getCompanyAndFullNameMatch`
+
+Generate a composite similarity key based on both company name and individual full name
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.matching.getCompanyAndFullNameMatch({ company: 'IBM Corp', fullname: 'James Kelly' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `string` | Yes | — |
+| `fullname` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `SimKey` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getCompanyMatch
+
+`matching.getCompanyMatch`
+
+Generate a standard similarity key for company name matching and deduplication
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.matching.getCompanyMatch({ company: 'International Business Machines' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `SimKey` | `string` | No | — |
+| `Simkey` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getCompanyMatchAdvanced
+
+`matching.getCompanyMatchAdvanced`
+
+Generate an AI-powered similarity key for a company or organization name to identify duplicates
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.matching.getCompanyMatchAdvanced({ company: 'IBM Corporation', algorithm: 'model-v4-wide' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `string` | Yes | — |
+| `algorithm` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `SimKey` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getCountryMatch
+
+`matching.getCountryMatch`
+
+Generate a similarity key for country name matching and deduplication
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.matching.getCountryMatch({ country: 'United States' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `SimKey` | `string` | No | — |
+| `Simkey` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getFullNameMatch
+
+`matching.getFullNameMatch`
+
+Generate an AI-powered similarity key for an individual full name to identify duplicates
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.matching.getFullNameMatch({ fullname: 'James Kelly' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fullname` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `SimKey` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getFullNameMatchScore
+
+`matching.getFullNameMatchScore`
+
+Calculate a match similarity score between two individual names (0-100)
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.matching.getFullNameMatchScore({ fullname1: 'James Kelly', fullname2: 'Jim Kelly' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fullname1` | `string` | Yes | — |
+| `fullname2` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Score` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getFullNameParsedMatch
+
+`matching.getFullNameParsedMatch`
+
+Generate a similarity key from separate first and last names
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.matching.getFullNameParsedMatch({ firstname: 'James', lastname: 'Kelly' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstname` | `string` | Yes | — |
+| `lastname` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `SimKey` | `string` | No | — |
+| `Simkey` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getGlobalAddressMatch
+
+`matching.getGlobalAddressMatch`
+
+Generate an AI-powered similarity key for global addresses worldwide
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.matching.getGlobalAddressMatch({ address: 'Piazza del Colosseo, 1, Rome, Italy' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+| `algorithm` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `SimKey` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getOrgMatchScore
+
+`matching.getOrgMatchScore`
+
+Calculate a match similarity score between two organization names (0-100)
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.matching.getOrgMatchScore({ org1: 'Amazon.com', org2: 'Amazon Inc.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org1` | `string` | Yes | — |
+| `org2` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Score` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getProductMatch
+
+`matching.getProductMatch`
+
+Generate an AI-powered similarity key for product names to detect duplicate items
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.matching.getProductMatch({ product: 'Dell OptiPlex 7020 Desktop Computer' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product` | `string` | Yes | — |
+| `algorithm` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `SimKey` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+## Standardization
+
+### getCityStandard
+
+`standardization.getCityStandard`
+
+Standardize a city name to its canonical form
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.standardization.getCityStandard({ city: 'NYC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `city` | `string` | Yes | — |
+| `algorithm` | `string` | No | — |
+| `state` | `string` | No | State or province of the city; optional, makes the result more precise. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CityStandard` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getCountryInfo
+
+`standardization.getCountryInfo`
+
+Get standardized country metadata including ISO codes, currency, and calling code
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.standardization.getCountryInfo({ country: 'France' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+| `algorithm` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CountryStandard` | `string` | No | — |
+| `TwoLetterCode` | `string` | No | — |
+| `ThreeLetterCode` | `string` | No | — |
+| `ThreeDigitCode` | `string` | No | — |
+| `CurrencyCode` | `string` | No | — |
+| `CurrencyName` | `string` | No | — |
+| `CurrencySubUnit` | `string` | No | — |
+| `CurrencySymbol` | `string` | No | — |
+| `InternetCode` | `string` | No | — |
+| `CallingCode` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getCountryStandard
+
+`standardization.getCountryStandard`
+
+Standardize a country name or alias to canonical form
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.standardization.getCountryStandard({ country: 'Deutschland' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `country` | `string` | Yes | — |
+| `algorithm` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CountryStandard` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getOfficialName
+
+`standardization.getOfficialName`
+
+Resolve commercial or colloquial brand name into official legal entity registration
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.standardization.getOfficialName({ lookup: 'Apple' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `OfficialNameEnglish` | `string` | No | — |
+| `CommercialName` | `string` | No | — |
+| `OfficialNameLocal` | `string` | No | — |
+| `OfficialNameLocalRomanized` | `string` | No | — |
+| `LegalForm` | `string` | No | — |
+| `EntityCategory` | `string` | No | — |
+| `CountryOfIncorporation` | `string` | No | — |
+| `CountryCodeISO2` | `string` | No | — |
+| `IncorporationRegistryName` | `string` | No | — |
+| `RegistryIdentifier` | `string` | No | — |
+| `AlsoKnownAs` | `string` | No | — |
+| `Status` | `string` | No | — |
+| `OfficialDocumentationURL` | `string` | No | — |
+| `SourceType` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getOrgStandard
+
+`standardization.getOrgStandard`
+
+Standardize an organization name to its canonical English form
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.standardization.getOrgStandard({ org: 'b.o.a.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Standard` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getStateAbbreviation
+
+`standardization.getStateAbbreviation`
+
+Standardize a US state or Canadian province name into its two-letter abbreviation
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.standardization.getStateAbbreviation({ state: 'California' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `state` | `string` | Yes | — |
+| `algorithm` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `State` | `string` | No | — |
+| `Abbreviation` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+## Utilities
+
+### convertCurrency
+
+`utilities.convertCurrency`
+
+Convert an amount from one foreign currency into another
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.utilities.convertCurrency({ from: 'USD', to: 'EUR', amount: '100' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `amount` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Code` | `string` | No | — |
+| `Converted` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+| `Currency` | `string` | No | — |
+
+
+
+---
+
+### getCurrencyRate
+
+`utilities.getCurrencyRate`
+
+Retrieve live USD foreign exchange rate for a currency symbol
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.utilities.getCurrencyRate({ symbol: 'EUR' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `symbol` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Symbol` | `string` | No | — |
+| `Name` | `string` | No | — |
+| `Country` | `string` | No | — |
+| `Rate` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getEntityType
+
+`utilities.getEntityType`
+
+Classify text into entity type (Location, Organization, Individual, or Text)
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.utilities.getEntityType({ text: 'Argentina' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getGender
+
+`utilities.getGender`
+
+Infer the likely gender from an individual first name
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.utilities.getGender({ name: 'Pierre' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Gender` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getGlobalLatency
+
+`utilities.getGlobalLatency`
+
+Measure website or API URL latency from a specified worldwide location
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.utilities.getGlobalLatency({ origin: 'Singapore', url: 'https://example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin` | `string` | No | Optional; Interzoid picks its default when omitted. |
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Origin` | `string` | No | — |
+| `Seconds` | `string` | No | — |
+| `PageResponseStatus` | `string` | No | — |
+| `Contents` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getGlobalPageLoad
+
+`utilities.getGlobalPageLoad`
+
+Measure browser page load performance from a specified global geography
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.utilities.getGlobalPageLoad({ origin: 'London', url: 'https://example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Origin` | `string` | No | — |
+| `Seconds` | `string` | No | — |
+| `PageResponseStatus` | `string` | No | — |
+| `Contents` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getGlobalTime
+
+`utilities.getGlobalTime`
+
+Retrieve current date and time for a global city or locale
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.utilities.getGlobalTime({ locale: 'Tokyo' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locale` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ClockTime` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+| `CurrentDate` | `string` | No | — |
+| `CurrentTime` | `string` | No | — |
+| `Day` | `string` | No | — |
+| `Hour` | `string` | No | — |
+| `Locale` | `string` | No | — |
+| `Minute` | `string` | No | — |
+| `Month` | `string` | No | — |
+| `MonthNumber` | `string` | No | — |
+| `Second` | `string` | No | — |
+| `TimeStamp` | `string` | No | — |
+| `Weekday` | `string` | No | — |
+| `Year` | `string` | No | — |
+| `Zone` | `string` | No | — |
+
+
+
+---
+
+### getGlobalWeather
+
+`utilities.getGlobalWeather`
+
+Retrieve current weather conditions for worldwide city locations
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.utilities.getGlobalWeather({ location: 'Madrid' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `TempF` | `string` | No | — |
+| `TempC` | `string` | No | — |
+| `Weather` | `string` | No | — |
+| `WindSpeed` | `string` | No | — |
+| `WindDir` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getNameOrigin
+
+`utilities.getNameOrigin`
+
+Infer the likely geographic country or region of origin from a personal name
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.utilities.getNameOrigin({ name: 'Pierre' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Origin` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getRemainingCredits
+
+`utilities.getRemainingCredits`
+
+Retrieve the remaining API credits balance for the active API license key
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.utilities.getRemainingCredits({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getWeatherZipCode
+
+`utilities.getWeatherZipCode`
+
+Retrieve current live weather conditions for a US ZIP code
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.utilities.getWeatherZipCode({ zip: '94105' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zip` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `City` | `string` | No | — |
+| `State` | `string` | No | — |
+| `TempF` | `string` | No | — |
+| `TempC` | `string` | No | — |
+| `Weather` | `string` | No | — |
+| `WindMPH` | `string` | No | — |
+| `WindDir` | `string` | No | — |
+| `RelativeHumidity` | `string` | No | — |
+| `VisibilityMiles` | `string` | No | — |
+| `PrecipitationLastHour` | `string` | No | — |
+| `WindChill` | `string` | No | — |
+| `HeatIndex` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### identifyLanguage
+
+`utilities.identifyLanguage`
+
+Detect the natural language of a text string
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.utilities.identifyLanguage({ text: 'Bonjour, comment allez-vous?' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Language` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### translateToAny
+
+`utilities.translateToAny`
+
+Translate text from any language into a specified target language
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.utilities.translateToAny({ text: 'Hello', to: 'French' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### translateToEnglish
+
+`utilities.translateToEnglish`
+
+Translate non-English text to English
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.utilities.translateToEnglish({ text: 'Bonjour' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Result` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+## Validation
+
+### addressParse
+
+`validation.addressParse`
+
+Parse a free-form address string into structured postal components
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.validation.addressParse({ address: '922 N 5th St Ste 100A, Phoenix, AZ 85004' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `StreetNumber` | `string` | No | — |
+| `PreDirection` | `string` | No | — |
+| `StreetName` | `string` | No | — |
+| `StreetSuffix` | `string` | No | — |
+| `PostDirection` | `string` | No | — |
+| `UnitType` | `string` | No | — |
+| `UnitNumber` | `string` | No | — |
+| `City` | `string` | No | — |
+| `StateProvince` | `string` | No | — |
+| `PostalCode` | `string` | No | — |
+| `Country` | `string` | No | — |
+| `Special` | `string` | No | — |
+| `BuildingName` | `string` | No | — |
+| `Organization` | `string` | No | — |
+| `AdditionalInformation` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getAreaCode
+
+`validation.getAreaCode`
+
+Retrieve geographic locale and city for a telephone area code
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.validation.getAreaCode({ areacode: '415' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `areacode` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Abbreviation` | `string` | No | — |
+| `AreaCode` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+| `Locale` | `string` | No | — |
+| `PrimaryCity` | `string` | No | — |
+
+
+
+---
+
+### getAreaCodeFromNumber
+
+`validation.getAreaCodeFromNumber`
+
+Extract area code and locale information from a telephone number
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.validation.getAreaCodeFromNumber({ number: '415-555-1234' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `number` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Abbreviation` | `string` | No | — |
+| `AreaCode` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+| `Locale` | `string` | No | — |
+| `PrimaryCity` | `string` | No | — |
+
+
+
+---
+
+### getEmailDomainType
+
+`validation.getEmailDomainType`
+
+Classify email domain into Business, Government, Education, Generic or Disposable; Unknown when Interzoid cannot tell
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.validation.getEmailDomainType({ email: 'user@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `DomainType` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getEmailInfo
+
+`validation.getEmailInfo`
+
+Validate and enrich an email address with deliverability and demographic details
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.validation.getEmailInfo({ email: 'info@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Email` | `string` | No | — |
+| `Response` | `string` | No | — |
+| `Info` | `string` | No | — |
+| `Domain` | `string` | No | — |
+| `IsGovernment` | `string` | No | — |
+| `IsEducational` | `string` | No | — |
+| `IsOrganizational` | `string` | No | — |
+| `IsDisposable` | `string` | No | — |
+| `IsVulgar` | `string` | No | — |
+| `IsGeneric` | `string` | No | — |
+| `Geolocation` | `string` | No | — |
+| `DomainOwner` | `string` | No | — |
+| `XHandle` | `string` | No | — |
+| `Organization` | `string` | No | — |
+| `Revenue` | `string` | No | — |
+| `Employees` | `string` | No | — |
+| `HeadquartersCountry` | `string` | No | — |
+| `HeadquartersCity` | `string` | No | — |
+| `Currency` | `string` | No | — |
+| `Rate` | `string` | No | — |
+| `Description` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getEmailTrustScore
+
+`validation.getEmailTrustScore`
+
+Compute a trust and quality score for an email address
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.validation.getEmailTrustScore({ lookup: 'contact@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Email` | `string` | No | — |
+| `Score` | `string` | No | — |
+| `Reasoning` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getGlobalNumberInfo
+
+`validation.getGlobalNumberInfo`
+
+Retrieve demographic and geographic information for an international phone number
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.validation.getGlobalNumberInfo({ intlnumber: '+442071838750' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `intlnumber` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Language1` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Country` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+| `Language2` | `string` | No | — |
+| `Language3` | `string` | No | — |
+| `Mobile` | `string` | No | — |
+| `PrimaryCity` | `string` | No | — |
+| `PrimaryLanguage` | `string` | No | — |
+| `Region` | `string` | No | — |
+| `Wealth` | `string` | No | — |
+
+
+
+---
+
+### getIpProfile
+
+`validation.getIpProfile`
+
+Retrieve IP intelligence, geolocation, ASN, and reputation profile
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.validation.getIpProfile({ lookup: '8.8.8.8' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Version` | `string` | No | — |
+| `ASN` | `string` | No | — |
+| `Organization` | `string` | No | — |
+| `CIDR` | `string` | No | — |
+| `Hostname` | `string` | No | — |
+| `Geolocation` | `string` | No | — |
+| `AbuseContact` | `string` | No | — |
+| `Reputation` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getPhoneProfile
+
+`validation.getPhoneProfile`
+
+Retrieve phone number intelligence, carrier, time zone, and risk assessment
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.validation.getPhoneProfile({ lookup: '+16502530000' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lookup` | `string` | Yes | — |
+| `language` | `string` | No | Return the values in this language, as a two-letter code such as `fr`. English when omitted. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Normalized` | `string` | No | — |
+| `Country` | `string` | No | — |
+| `Organization` | `string` | No | — |
+| `Type` | `string` | No | — |
+| `Carrier` | `string` | No | — |
+| `TimeZone` | `string` | No | — |
+| `Region` | `string` | No | — |
+| `IsValid` | `string` | No | — |
+| `RiskAssessment` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+
+
+
+---
+
+### getZipCodeInfo
+
+`validation.getZipCodeInfo`
+
+Retrieve detailed demographics, city, state, and geographic data for a US ZIP code
+
+**Risk:** `read`
+
+```ts
+await corsair.interzoid.api.validation.getZipCodeInfo({ zip: '94105' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zip` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `AreaSquareMiles` | `string` | No | — |
+| `City` | `string` | No | — |
+| `Code` | `string` | No | — |
+| `Credits` | `number \| string` | No | — |
+| `ElderlyHouseholdPercent` | `string` | No | — |
+| `FarmerHouseholdPercent` | `string` | No | — |
+| `IncomePercent100k` | `string` | No | — |
+| `IncomePercent200k` | `string` | No | — |
+| `IncomePercent50k` | `string` | No | — |
+| `Latitude` | `string` | No | — |
+| `Longitude` | `string` | No | — |
+| `MarriedHouseholdPercent` | `string` | No | — |
+| `Population` | `string` | No | — |
+| `State` | `string` | No | — |
+| `ZipCode` | `string` | No | — |
+
+
+
+---
+

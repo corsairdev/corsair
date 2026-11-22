@@ -7,7 +7,12 @@ const fetchPolicy = z.object({
 	max_age_seconds: z.number().int().nullable().optional(),
 	timeout_seconds: z.number().nullable().optional(),
 	disable_cache_fallback: z.boolean().optional(),
+	// ISO 8601 date or timestamp: results as the web stood at that moment.
+	as_of: z.string().nullable().optional(),
 });
+// Task runs take the same fetch policy, but Parallel's TaskAdvancedSettings
+// says as_of is not supported there.
+const taskFetchPolicy = fetchPolicy.extend({ as_of: z.null().optional() });
 const sourcePolicy = z.object({
 	include_domains: z.array(z.string()).optional(),
 	exclude_domains: z.array(z.string()).optional(),
@@ -155,6 +160,9 @@ export const ImageSearchOutput = z
 		),
 	})
 	.passthrough();
+const verticalSettings = z
+	.object({ max_results: z.number().int().min(1).nullable().optional() })
+	.strict();
 const hourIntervals = z
 	.array(z.object({ opens: z.string(), closes: z.string() }).passthrough())
 	.nullable()
@@ -178,9 +186,11 @@ export const PlaceSearchInput = z
 		longitude: z.number().min(-180).max(180).nullable().optional(),
 		max_distance_km: z.number().gt(0).max(200).nullable().optional(),
 		open_now: z.boolean().optional(),
+		/** Older top-level form; Parallel now documents advanced_settings.max_results. */
 		max_results: z.number().int().min(1).nullable().optional(),
 		mode: discoveryMode,
 		...discoverySession,
+		advanced_settings: verticalSettings.nullable().optional(),
 	})
 	.strict()
 	.refine(
@@ -200,6 +210,7 @@ export const PlaceSearchOutput = z
 				.object({
 					name: z.string(),
 					url: z.string().nullable().optional(),
+					description: z.string().nullable().optional(),
 					address: z.string().nullable().optional(),
 					phone: z.string().nullable().optional(),
 					latitude: z.number().nullable().optional(),
@@ -583,6 +594,20 @@ const taskWebhook = z.object({
 	url: z.string(),
 	event_types: z.array(z.literal('task_run.status')).optional(),
 });
+// Parallel's OpenAPI reuses the Task webhook type here, but its FindAll webhook
+// guide (docs.parallel.ai/findall-api/features/findall-webhook) lists these.
+export const FINDALL_WEBHOOK_EVENTS = [
+	'findall.candidate.generated',
+	'findall.candidate.matched',
+	'findall.candidate.enriched',
+	'findall.run.completed',
+	'findall.run.cancelled',
+	'findall.run.failed',
+] as const;
+const findallWebhook = z.object({
+	url: z.string(),
+	event_types: z.array(z.enum(FINDALL_WEBHOOK_EVENTS)).optional(),
+});
 export const TaskRunInput = z.object({
 	processor: z.string(),
 	input: z.union([z.string(), z.record(z.string(), z.json())]),
@@ -592,7 +617,7 @@ export const TaskRunInput = z.object({
 	advanced_settings: z
 		.object({
 			location: z.string().nullable().optional(),
-			fetch_policy: fetchPolicy.nullable().optional(),
+			fetch_policy: taskFetchPolicy.nullable().optional(),
 			data_sources: z
 				.object({
 					pay_per_use: z.array(z.string()).optional(),
@@ -787,7 +812,7 @@ export const FindAllCreateInput = z.object({
 		.nullable()
 		.optional(),
 	metadata: taskMetadata.nullable().optional(),
-	webhook: taskWebhook.nullable().optional(),
+	webhook: findallWebhook.nullable().optional(),
 	memory_scope_key: memoryKey.nullable().optional(),
 });
 export const FindAllIdInput = z.object({ findall_id: safeId });
@@ -851,24 +876,23 @@ export const FindAllRunOutput = z
 		modified_at: z.string().nullable().optional(),
 	})
 	.passthrough();
+export const FindAllCandidate = z
+	.object({
+		candidate_id: z.string(),
+		name: z.string(),
+		url: z.string(),
+		match_status: z
+			.enum(['generated', 'matched', 'unmatched', 'discarded'])
+			.or(z.string()),
+		description: z.string().nullable().optional(),
+		output: z.record(z.string(), z.json()).nullable().optional(),
+		basis: z.array(taskBasis).nullable().optional(),
+	})
+	.passthrough();
 export const FindAllResultOutput = z
 	.object({
 		run: FindAllRunOutput,
-		candidates: z.array(
-			z
-				.object({
-					candidate_id: z.string(),
-					name: z.string(),
-					url: z.string(),
-					match_status: z
-						.enum(['generated', 'matched', 'unmatched', 'discarded'])
-						.or(z.string()),
-					description: z.string().nullable().optional(),
-					output: z.record(z.string(), z.json()).nullable().optional(),
-					basis: z.array(taskBasis).nullable().optional(),
-				})
-				.passthrough(),
-		),
+		candidates: z.array(FindAllCandidate),
 		last_event_id: z.string().nullable().optional(),
 	})
 	.passthrough();
@@ -1031,6 +1055,242 @@ export const ResponseOutput = z
 	})
 	.passthrough();
 
+// Flights, Hotels and Shopping (docs.parallel.ai/api-reference/search/*).
+const iata = z.string().regex(/^[A-Z]{3}$/);
+const airline = z.string().regex(/^[A-Z0-9]{2}$/);
+const currency = z.string().regex(/^[A-Za-z]{3}$/);
+const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+const hourWindow = z
+	.object({
+		earliest: z.number().int().min(0).max(23),
+		latest: z.number().int().min(0).max(23),
+	})
+	.strict();
+const advancedOnly = z.literal('advanced').nullable().optional();
+export const FlightSearchInput = z
+	.object({
+		origins: z.array(iata).min(1).max(7),
+		destinations: z.array(iata).min(1).max(7),
+		departure_date: isoDate,
+		return_date: isoDate.nullable().optional(),
+		adults: z.number().int().min(1).max(9).optional(),
+		children: z.number().int().min(0).max(8).optional(),
+		infants_in_seat: z.number().int().min(0).max(8).optional(),
+		infants_on_lap: z.number().int().min(0).max(8).optional(),
+		cabin: z
+			.enum(['economy', 'premium_economy', 'business', 'first'])
+			.optional(),
+		max_stops: z.number().int().min(0).max(2).nullable().optional(),
+		max_price: z.number().int().gt(0).nullable().optional(),
+		currency: z
+			.string()
+			.regex(/^[A-Z]{3}$/)
+			.optional(),
+		max_duration_minutes: z.number().int().gt(0).nullable().optional(),
+		include_airlines: z.array(airline).max(10).optional(),
+		exclude_airlines: z.array(airline).max(10).optional(),
+		departure_hours: hourWindow.nullable().optional(),
+		arrival_hours: hourWindow.nullable().optional(),
+		return_hours: hourWindow.nullable().optional(),
+		return_arrival_hours: hourWindow.nullable().optional(),
+		sort: z
+			.enum(['best', 'price', 'duration', 'departure_time', 'arrival_time'])
+			.optional(),
+		advanced_settings: verticalSettings.nullable().optional(),
+		mode: advancedOnly,
+		...discoverySession,
+	})
+	.strict()
+	.refine(
+		(v) => !(v.include_airlines?.length && v.exclude_airlines?.length),
+		'include_airlines and exclude_airlines cannot be combined',
+	);
+const flightSegment = z
+	.object({
+		airline: z.string(),
+		flight_number: z.string(),
+		departure_airport: z.string(),
+		departure_time: z.string(),
+		arrival_airport: z.string(),
+		arrival_time: z.string(),
+		duration_minutes: z.number().int().nullable().optional(),
+		aircraft: z.string().nullable().optional(),
+		cabin: z.string().nullable().optional(),
+		legroom: z.string().nullable().optional(),
+		overnight: z.boolean().optional(),
+	})
+	.passthrough();
+const flightLeg = z
+	.object({
+		departure_airport: z.string(),
+		departure_time: z.string(),
+		arrival_airport: z.string(),
+		arrival_time: z.string(),
+		duration_minutes: z.number().int().nullable().optional(),
+		stops: z.number().int(),
+		segments: z.array(flightSegment),
+		layovers: z
+			.array(
+				z
+					.object({
+						airport: z.string(),
+						duration_minutes: z.number().int().nullable().optional(),
+						overnight: z.boolean().optional(),
+					})
+					.passthrough(),
+			)
+			.optional(),
+	})
+	.passthrough();
+export const FlightSearchOutput = z
+	.object({
+		search_id: z.string(),
+		...shared,
+		results: z.array(
+			z
+				.object({
+					url: z.string(),
+					price: z.number().nullable().optional(),
+					outbound: flightLeg,
+					inbound: flightLeg.nullable().optional(),
+				})
+				.passthrough(),
+		),
+	})
+	.passthrough();
+
+const stayType = z.enum(['hotel', 'vacation_rental']);
+export const HotelSearchInput = z
+	.object({
+		location: z.string().min(2).max(200),
+		check_in_date: isoDate,
+		check_out_date: isoDate,
+		adults: z.number().int().min(1).max(16).optional(),
+		children_ages: z.array(z.number().int().min(0).max(17)).max(8).optional(),
+		rooms: z.number().int().min(1).max(8).optional(),
+		property_types: z.array(stayType).min(1).optional(),
+		min_price: z.number().min(0).nullable().optional(),
+		max_price: z.number().gt(0).nullable().optional(),
+		min_rating: z.number().min(1).max(5).nullable().optional(),
+		hotel_classes: z.array(z.number().int().min(1).max(5)).max(5).optional(),
+		free_cancellation: z.boolean().optional(),
+		sort: z.enum(['relevance', 'price', 'rating']).optional(),
+		currency: currency.optional(),
+		mode: advancedOnly,
+		...discoverySession,
+		advanced_settings: verticalSettings.nullable().optional(),
+	})
+	.strict();
+export const HotelSearchOutput = z
+	.object({
+		search_id: z.string(),
+		...shared,
+		results: z.array(
+			z
+				.object({
+					url: z.string(),
+					url_kind: z.enum(['property_website', 'booking_page']).or(z.string()),
+					name: z.string(),
+					property_type: stayType.or(z.string()),
+					address: z.string().nullable().optional(),
+					latitude: z.number().nullable().optional(),
+					longitude: z.number().nullable().optional(),
+					hotel_class: z.number().int().nullable().optional(),
+					rating: z
+						.enum(['fair', 'good', 'great', 'excellent'])
+						.or(z.string())
+						.nullable()
+						.optional(),
+					images: z.array(z.string()).optional(),
+					price_per_night: z.number().nullable().optional(),
+					total_price: z.number().nullable().optional(),
+					currency: z.string(),
+					free_cancellation: z.boolean().nullable().optional(),
+					offers: z.array(
+						z
+							.object({
+								seller: z.string().nullable().optional(),
+								url: z.string().nullable().optional(),
+								price_per_night: z.number().nullable().optional(),
+								total_price: z.number().nullable().optional(),
+								currency: z.string(),
+								free_cancellation: z.boolean().nullable().optional(),
+							})
+							.passthrough(),
+					),
+					amenities: z.array(z.string()).optional(),
+					check_in_time: z.string().nullable().optional(),
+					check_out_time: z.string().nullable().optional(),
+				})
+				.passthrough(),
+		),
+	})
+	.passthrough();
+
+const productCondition = z.enum(['new', 'used', 'refurbished']);
+export const ShoppingSearchInput = z
+	.object({
+		search_queries: z.array(z.string().max(200)).min(1).max(5),
+		objective: z.string().max(5000).nullable().optional(),
+		min_price: z.number().min(0).nullable().optional(),
+		max_price: z.number().gt(0).nullable().optional(),
+		condition: productCondition.or(z.literal('any')).optional(),
+		mode: advancedOnly,
+		...discoverySession,
+		advanced_settings: z
+			.object({
+				max_results: z.number().int().min(1).nullable().optional(),
+				// ISO 3166-1 alpha-2 market, e.g. `us`.
+				location: z.string().nullable().optional(),
+			})
+			.strict()
+			.nullable()
+			.optional(),
+	})
+	.strict();
+export const ShoppingSearchOutput = z
+	.object({
+		search_id: z.string(),
+		...shared,
+		results: z.array(
+			z
+				.object({
+					url: z.string(),
+					// The spec marks title required without describing it.
+					title: z.string().nullable().optional(),
+					description: z.string().nullable().optional(),
+					merchant: z.string().nullable().optional(),
+					brand: z.string().nullable().optional(),
+					price: z.number().nullable().optional(),
+					currency: z.string().nullable().optional(),
+					original_price: z.number().nullable().optional(),
+					rating: z.number().nullable().optional(),
+					review_count: z.number().int().nullable().optional(),
+					image_url: z.string().nullable().optional(),
+					condition: productCondition.or(z.string()).nullable().optional(),
+					availability: z
+						.enum(['in_stock', 'out_of_stock', 'preorder'])
+						.or(z.string())
+						.nullable()
+						.optional(),
+					offers: z
+						.array(
+							z
+								.object({
+									url: z.string(),
+									merchant: z.string().nullable().optional(),
+									price: z.number().nullable().optional(),
+									currency: z.string().nullable().optional(),
+								})
+								.passthrough(),
+						)
+						.optional(),
+				})
+				.passthrough(),
+		),
+	})
+	.passthrough();
+
 export const EndpointInputSchemas = {
 	'monitors.create': MonitorCreateInput,
 	'monitors.list': MonitorListInput,
@@ -1062,6 +1322,9 @@ export const EndpointInputSchemas = {
 	'search.search': SearchInput,
 	'images.search': ImageSearchInput,
 	'places.search': PlaceSearchInput,
+	'flights.search': FlightSearchInput,
+	'hotels.search': HotelSearchInput,
+	'shopping.search': ShoppingSearchInput,
 	'decisions.create': DecisionInput,
 	'memory.clear': MemoryClearInput,
 	'memory.evict': MemoryEvictInput,
@@ -1100,6 +1363,9 @@ export const EndpointOutputSchemas = {
 	'search.search': SearchOutput,
 	'images.search': ImageSearchOutput,
 	'places.search': PlaceSearchOutput,
+	'flights.search': FlightSearchOutput,
+	'hotels.search': HotelSearchOutput,
+	'shopping.search': ShoppingSearchOutput,
 	'decisions.create': DecisionOutput,
 	'memory.clear': NoContent,
 	'memory.evict': NoContent,

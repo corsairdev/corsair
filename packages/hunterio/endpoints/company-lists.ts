@@ -242,3 +242,29 @@ export const unfavorite: HunterioEndpoints['companyListsUnfavorite'] = async (
 
 	return parsedResponse;
 };
+
+export const listCompanies: HunterioEndpoints['companyListsListCompanies'] =
+	async (ctx, input) => {
+		const parsed =
+			HunterioEndpointInputSchemas.companyListsListCompanies.parse(input);
+		const { company_list_id, ...query } = parsed;
+
+		const response = await makeHunterioRequest<
+			HunterioEndpointOutputs['companyListsListCompanies']
+		>(`/company-lists/${company_list_id}/companies`, ctx.key, {
+			method: 'GET',
+			query,
+		});
+
+		const parsedResponse =
+			HunterioEndpointOutputSchemas.companyListsListCompanies.parse(response);
+
+		await logEventFromContext(
+			ctx,
+			'hunterio.companyLists.listCompanies',
+			{ companyListId: company_list_id },
+			'completed',
+		);
+
+		return parsedResponse;
+	};

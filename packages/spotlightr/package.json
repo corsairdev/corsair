@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/spotlightr",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Spotlightr plugin for Corsair: manage videos, projects, embed domains, course students and access records, and read view analytics",
   "type": "module",
   "main": "./dist/index.js",
@@ -20,7 +20,7 @@
     "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
   },
   "peerDependencies": {
-    "corsair": ">=0.1.0",
+    "corsair": ">=0.2.9",
     "zod": "^4.1.13"
   },
   "devDependencies": {

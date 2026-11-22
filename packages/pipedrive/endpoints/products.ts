@@ -1,10 +1,18 @@
 import { logEventFromContext } from 'corsair/core';
+import type { FileInput } from 'corsair/http';
+import { resolveFileInput } from 'corsair/http';
 import { makePipedriveRequest } from '../client';
 import type { PipedriveEndpoints } from '../index';
 import {
 	PipedriveEndpointInputSchemas,
 	PipedriveEndpointOutputSchemas,
 } from './types';
+
+/**
+ * Most bytes taken from a link, base64 or a data: URL: core's download default,
+ * passed explicitly so inline base64 is held to it too (core caps it only when asked).
+ */
+const FILE_MAX_BYTES = 25 * 1024 * 1024;
 
 type QueryScalar = string | number | boolean | undefined;
 
@@ -273,6 +281,28 @@ function defaultImageFileName(mimeType: string): string {
 	return `image.${extension}`;
 }
 
+/**
+ * The image to send. A Blob is sent as it was given and named from its type,
+ * as before. A link is downloaded through core's guarded fetch and base64 is
+ * decoded; either keeps its own file name when that name has an extension.
+ * Pipedrive documents no size limit, so core's 25 MB download cap applies.
+ */
+async function productImageFile(
+	data: FileInput,
+): Promise<{ data: Blob; name?: string }> {
+	if (data instanceof Blob) return { data };
+	const resolved = await resolveFileInput(data, {
+		maxBytes: FILE_MAX_BYTES,
+		fallbackName: 'image',
+	});
+	return {
+		data: resolved.file,
+		name: /\.[A-Za-z0-9]+$/.test(resolved.filename)
+			? resolved.filename
+			: undefined,
+	};
+}
+
 async function sendProductImage(
 	ctx: Parameters<PipedriveEndpoints['productImageUpload']>[0],
 	input: Parameters<PipedriveEndpoints['productImageUpload']>[1],
@@ -280,13 +310,16 @@ async function sendProductImage(
 ) {
 	const parsedInput =
 		PipedriveEndpointInputSchemas.productImageUpload.parse(input);
+	const image = await productImageFile(parsedInput.data);
 	const formData = new FormData();
 	// Pipedrive stores the upload under its file name; a name without an
 	// extension (FormData's default `blob`) saves an image it then fails to read.
 	formData.append(
 		'data',
-		parsedInput.data,
-		parsedInput.file_name ?? defaultImageFileName(parsedInput.data.type),
+		image.data,
+		parsedInput.file_name ??
+			image.name ??
+			defaultImageFileName(image.data.type),
 	);
 	const response = await makePipedriveRequest(
 		`/products/${parsedInput.id}/images`,

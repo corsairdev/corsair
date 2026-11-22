@@ -1854,7 +1854,7 @@
     {
       "path": "textit.api.media.upload",
       "shortPath": "media.upload",
-      "description": "Upload a media file for message attachments.",
+      "description": "Upload a media file for message attachments. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -1862,7 +1862,8 @@
           {
             "key": "file",
             "optional": false,
-            "type": "custom"
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string } | custom",
+            "description": "The media file to attach to messages: a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…)."
           }
         ]
       },

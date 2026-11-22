@@ -1,3 +1,4 @@
+import { FileInputSchema } from 'corsair/http';
 import { z } from 'zod';
 
 export const AGENTQL_QUERY_MODE = ['fast', 'standard'] as const;
@@ -87,8 +88,19 @@ const AgentQLQueryDocumentParamsSchema = z
 
 const AgentQLQueryDocumentInputSchema = z
 	.object({
-		file: z.instanceof(Blob),
-		fileName: z.string().optional(),
+		// An agent sends JSON, so it passes a link or base64; a Blob or File
+		// still works from TypeScript.
+		file: z
+			.union([FileInputSchema, z.instanceof(Blob)])
+			.describe(
+				'The PDF or image (.pdf, .png, .jpg, .jpeg): a public URL, {url, filename?, contentType?}, or {base64, filename?, contentType?}; a Blob or File from TypeScript. On Corsair, pass a Files id (fil_…).',
+			),
+		fileName: z
+			.string()
+			.optional()
+			.describe(
+				"The name stored with the result. Defaults to the name of a linked or base64 file; a Blob's is not taken.",
+			),
 		query: z.string().min(1).optional(),
 		prompt: z.string().min(1).optional(),
 		params: AgentQLQueryDocumentParamsSchema.optional(),

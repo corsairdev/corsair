@@ -109,7 +109,7 @@ const agentQLEndpointMeta = {
 	'data.queryDocument': {
 		riskLevel: 'read',
 		description:
-			'Tool to extract structured data from PDF or image documents using an AgentQL query or natural language prompt. Accepts a file upload plus query or prompt.',
+			'Tool to extract structured data from PDF or image documents using an AgentQL query or natural language prompt. Accepts a file plus query or prompt. Takes the file as a public link, base64 or a Blob; on Corsair, pass a Files id.',
 	},
 	'usage.get': {
 		riskLevel: 'read',

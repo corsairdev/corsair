@@ -1,0 +1,145 @@
+---
+title: "StatusCake plugin"
+sidebarTitle: "Overview"
+description: "Uptime monitoring with StatusCake - manage uptime, heartbeat, SSL, pagespeed and maintenance-window monitoring, contact groups and alert history. Read-only alerts, history and periods come back with their pagination links."
+---
+
+Use **StatusCake** through Corsair: one client, typed API calls.
+
+Create an API token in the StatusCake account panel under Manage API keys. Things to know before you start:
+
+- **Deletes and downtime alerts are real.** `uptime.delete`, `ssl.delete`, `pagespeed.delete`, `heartbeat.delete`, `maintenanceWindows.delete` and `contactGroups.delete` remove the resource immediately and cannot be undone; deleting a maintenance window resumes alerts at once.
+- **Updates are partial.** PUT endpoints change only the fields you pass. The API reads an empty field as "clear it": `uptime.update` with `tags: []` removes every tag, while omitting `tags` leaves them alone.
+- **Arrays in checks.** `tags`, `contact_groups`, `dns_ips` and `regions` are sent as repeated `field[]` parameters, the format StatusCake documents.
+- **Two paging styles.** Resource lists (`uptime.list`, `ssl.list` and the rest) take `page` and `limit` and answer `metadata.page_count` and `total_count`. Record lists (`uptime.history`, `uptime.periods`, `uptime.alerts`, `pagespeed.history`) take `limit`, `before` and `after` Unix seconds, answer newest first, and put the continuation point in `links.next`, which is absent on the last page.
+- **Rate limits.** Free accounts may make 60 requests per minute and every account has a burst limit of 5 per second. Responses carry `x-ratelimit-limit`, `x-ratelimit-remaining` and `x-ratelimit-reset` (seconds until the window lifts); the plugin retries a 429 up to three times, waiting the reset time. The quota is shared by every client using the account's tokens.
+- **Bad tokens.** A wrong or deleted token is denied before the request reaches the API, so the error carries no body; the plugin reports it as an authentication failure.
+- **No webhook receiver.** StatusCake sends alert callbacks to a contact group's `ping_url`, which `contactGroups.create` and `contactGroups.update` can set. The plugin does not receive those deliveries.
+
+**What you get:**
+
+- 36 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/statuscake better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/statuscake better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/statuscake better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/statuscake better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { statuscake } from '@corsair-dev/statuscake';
+
+export const corsair = createCorsair({
+	plugins: [
+		statuscake(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the StatusCake API key before the first call: `pnpm corsair setup --plugin=statuscake --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+statuscake()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'statuscake',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List down checks tagged production**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.statuscake.api.uptime.list({
+	status: 'down',
+	tags: ['production'],
+});
+```
+
+
+**Create an HTTP uptime check every five minutes**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.statuscake.api.uptime.create({
+	name: 'statuscake.com',
+	test_type: 'HTTP',
+	website_url: 'https://www.statuscake.com',
+	check_rate: 300,
+});
+```
+
+
+See the full list on the [API](/plugins/statuscake/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/statuscake/api">
+    Every `statuscake.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

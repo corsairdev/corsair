@@ -1,0 +1,382 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from Kernel's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
+displayName: Kernel
+description: "Cloud browsers for agents: start headless or headful Chromium sessions, drive them with Playwright, computer controls or WebMCP in one call, hand a session to a person through a live view, keep logins in profiles and managed auth, and manage files, processes, replays, proxies, extensions, pools and vaults (183 operations)."
+overviewNote: "A browser bills per second while active and holds a concurrency slot until it is deleted: call `browsers.delete` when done. `headless: true` costs about 8x less than headful but has no live view. `browsers.playwright.execute` acts on a page in one call. Screenshots, file reads, replays and archives come back as files. Kernel's event streams (SSE) are left out; poll the matching `get` instead."
+examples:
+  read:
+    path: browsers.list
+    title: List running browsers
+    args: {"status": "active", "limit": 20}
+  write:
+    path: browsers.playwright.execute
+    title: Open a page and read its title
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "code": "await page.goto('https://example.com'); return await page.title();", "timeout_sec": 60}
+apiExamples:
+  apiKeys.create:
+    args: {"name": "my-name"}
+  apiKeys.delete:
+    args: {"id": "apiKey_123"}
+  apiKeys.get:
+    args: {"id": "apiKey_123"}
+  apiKeys.list:
+    args: {}
+  apiKeys.rotate:
+    args: {"id": "apiKey_123"}
+  apiKeys.update:
+    args: {"id": "apiKey_123"}
+  apps.list:
+    args: {}
+  auditLogs.exportChunk:
+    args: {"start": "2026-11-19T00:00:00Z", "end": "2026-11-20T00:00:00Z", "format": "jsonl"}
+  auditLogs.exportDestinations.create:
+    args: {"type": "s3", "region": "example", "bucket": "example", "prefix": "example", "role_arn": "example", "format": "jsonl.gz"}
+  auditLogs.exportDestinations.delete:
+    args: {"id": "auditLog_123"}
+  auditLogs.exportDestinations.get:
+    args: {"id": "auditLog_123"}
+  auditLogs.exportDestinations.list:
+    args: {}
+  auditLogs.exportDestinations.test:
+    args: {"id": "auditLog_123"}
+  auditLogs.exportDestinations.update:
+    args: {"id": "auditLog_123"}
+  auditLogs.list:
+    args: {"start": "2026-11-19T00:00:00Z", "end": "2026-11-20T00:00:00Z", "limit": 50}
+  auth.connections.create:
+    args: {"domain": "app.acme.com", "profile_name": "acme-login"}
+  auth.connections.delete:
+    args: {"id": "auth_123"}
+  auth.connections.exchange:
+    args: {"id": "auth_123", "code": "return 1;"}
+  auth.connections.get:
+    args: {"id": "auth_123"}
+  auth.connections.list:
+    args: {}
+  auth.connections.login:
+    args: {"id": "conn_123"}
+  auth.connections.submit:
+    args: {"id": "auth_123"}
+  auth.connections.timeline:
+    args: {"id": "auth_123"}
+  auth.connections.update:
+    args: {"id": "auth_123"}
+  auth.context.get:
+    args: {}
+  browserPools.acquire:
+    args: {"id_or_name": "my-pool"}
+  browserPools.create:
+    args: {"size": 1}
+  browserPools.delete:
+    args: {"id_or_name": "my-pool"}
+  browserPools.flush:
+    args: {"id_or_name": "my-pool"}
+  browserPools.get:
+    args: {"id_or_name": "my-pool"}
+  browserPools.list:
+    args: {}
+  browserPools.release:
+    args: {"id_or_name": "my-pool", "session_id": "htzv5orfit78e1m2biiifpbv"}
+  browserPools.update:
+    args: {"id_or_name": "my-pool"}
+  browsers.computer.batch:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "actions": [{"type": "click_mouse", "click_mouse": {"x": 640, "y": 360}}, {"type": "type_text", "type_text": {"text": "hello"}}, {"type": "press_key", "press_key": {"keys": ["Return"]}}]}
+  browsers.computer.captureScreenshot:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv"}
+  browsers.computer.clickMouse:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "x": 640, "y": 360}
+  browsers.computer.dragMouse:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "path": [[100, 100], [300, 100]]}
+  browsers.computer.getMousePosition:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv"}
+  browsers.computer.moveMouse:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "x": 640, "y": 360}
+  browsers.computer.pressKey:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "keys": ["Ctrl+a"]}
+  browsers.computer.readClipboard:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv"}
+  browsers.computer.scroll:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "x": 640, "y": 360, "delta_y": 5}
+  browsers.computer.setCursorVisibility:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "hidden": true}
+  browsers.computer.typeText:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "text": "hello"}
+  browsers.computer.writeClipboard:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "text": "hello"}
+  browsers.create:
+    args: {"headless": true, "stealth": true, "timeout_seconds": 120, "start_url": "https://example.com", "profile": {"name": "acme-login", "save_changes": true}}
+  browsers.curl:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "url": "https://example.com/api/me", "method": "GET"}
+  browsers.delete:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv"}
+  browsers.fs.createDirectory:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "path": "/tmp/downloads/report.pdf"}
+  browsers.fs.deleteDirectory:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "path": "/tmp/downloads/report.pdf"}
+  browsers.fs.deleteFile:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "path": "/tmp/downloads/report.pdf"}
+  browsers.fs.downloadDirZip:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "path": "/tmp/downloads/report.pdf"}
+  browsers.fs.fileInfo:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "path": "/tmp/downloads/report.pdf"}
+  browsers.fs.listFiles:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "path": "/tmp/downloads"}
+  browsers.fs.move:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "src_path": "/tmp/downloads/report.pdf", "dest_path": "/tmp/archive/report.pdf"}
+  browsers.fs.readFile:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "path": "/tmp/downloads/report.pdf"}
+  browsers.fs.setFilePermissions:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "path": "/tmp/downloads/report.pdf", "mode": "0644"}
+  browsers.fs.upload:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "files": [{"dest_path": "/tmp/uploads/invoice.pdf", "file": "https://example.com/invoice.pdf"}]}
+  browsers.fs.uploadZip:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "zip_file": "https://example.com/archive.zip", "dest_path": "/tmp/archive/report.pdf"}
+  browsers.fs.watch.start:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "path": "/tmp/downloads/report.pdf"}
+  browsers.fs.watch.stop:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "watch_id": "watch_123"}
+  browsers.fs.writeFile:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "path": "/tmp/notes.txt", "file": {"base64": "aGVsbG8=", "filename": "notes.txt"}}
+  browsers.get:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv"}
+  browsers.list:
+    args: {"status": "active", "limit": 20}
+  browsers.liveView.create:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "scope": "control", "ttl_seconds": 900}
+  browsers.loadExtensions:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "extensions": [{"zip_file": "https://example.com/archive.zip", "name": "my-name"}]}
+  browsers.playwright.execute:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "code": "await page.goto('https://example.com'); return await page.title();", "timeout_sec": 60}
+  browsers.playwright.executors.delete:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "name": "my-name"}
+  browsers.playwright.executors.list:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv"}
+  browsers.process.exec:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "command": "ls", "args": ["-la", "/tmp/downloads"], "timeout_sec": 30}
+  browsers.process.kill:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "process_id": "proc_123", "signal": "TERM"}
+  browsers.process.resize:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "process_id": "proc_123", "rows": 1, "cols": 1}
+  browsers.process.spawn:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "command": "ls"}
+  browsers.process.status:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "process_id": "proc_123"}
+  browsers.process.stdin:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "process_id": "proc_123", "data_b64": "aGVsbG8K"}
+  browsers.repl:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "code": "repl.help()"}
+  browsers.replays.download:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "replay_id": "replay_123"}
+  browsers.replays.list:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv"}
+  browsers.replays.start:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv"}
+  browsers.replays.stop:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "replay_id": "replay_123"}
+  browsers.saveProfile:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv"}
+  browsers.telemetry.events:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv"}
+  browsers.update:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv"}
+  browsers.webmcp.customTools.add:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "namespace": "acme", "source": "export default { name: \"ping\", execute: () => \"pong\" };"}
+  browsers.webmcp.customTools.list:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv"}
+  browsers.webmcp.customTools.remove:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "id": "browser_123"}
+  browsers.webmcp.invokeTool:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv", "tool_ref": "tool_ref_from_list_tools", "input": {"key": "value"}}
+  browsers.webmcp.listTools:
+    args: {"id_or_name": "htzv5orfit78e1m2biiifpbv"}
+  configRegistry.analyses.cancel:
+    args: {"id": "configRegistry_123"}
+  configRegistry.analyses.get:
+    args: {"id": "configRegistry_123"}
+  configRegistry.analyses.list:
+    args: {}
+  configRegistry.list:
+    args: {}
+  configRegistry.lookup:
+    args: {"url": "https://example.com"}
+  configRegistry.resolve:
+    args: {"url": "https://example.com"}
+  credentialProviders.create:
+    args: {"provider_type": "onepassword", "name": "my-name", "token": "example"}
+  credentialProviders.delete:
+    args: {"id": "credentialProvider_123"}
+  credentialProviders.get:
+    args: {"id": "credentialProvider_123"}
+  credentialProviders.list:
+    args: {}
+  credentialProviders.listItems:
+    args: {"id": "credentialProvider_123"}
+  credentialProviders.test:
+    args: {"id": "credentialProvider_123"}
+  credentialProviders.update:
+    args: {"id": "credentialProvider_123"}
+  credentials.create:
+    args: {"name": "acme-login", "domain": "app.acme.com", "values": {"username": "agent@acme.com", "password": "••••••••"}}
+  credentials.delete:
+    args: {"id_or_name": "acme-login"}
+  credentials.get:
+    args: {"id_or_name": "acme-login"}
+  credentials.list:
+    args: {}
+  credentials.totpCode:
+    args: {"id_or_name": "acme-login"}
+  credentials.update:
+    args: {"id_or_name": "acme-login"}
+  deployments.create:
+    args: {}
+  deployments.delete:
+    args: {"id": "deployment_123"}
+  deployments.get:
+    args: {"id": "deployment_123"}
+  deployments.list:
+    args: {}
+  extensions.delete:
+    args: {"id_or_name": "my-extension"}
+  extensions.download:
+    args: {"id_or_name": "my-extension"}
+  extensions.downloadFromChromeStore:
+    args: {"url": "https://chromewebstore.google.com/detail/ublock-origin-lite/ddkjiahejlhfcafbddmgiahcphecmpfh"}
+  extensions.get:
+    args: {"id_or_name": "my-extension"}
+  extensions.list:
+    args: {}
+  extensions.upload:
+    args: {"file": "https://example.com/archive.zip"}
+  invocations.create:
+    args: {"app_name": "my-app", "version": "1", "action_name": "run"}
+  invocations.deleteBrowsers:
+    args: {"id": "invocation_123"}
+  invocations.get:
+    args: {"id": "invocation_123"}
+  invocations.list:
+    args: {}
+  invocations.listBrowsers:
+    args: {"id": "invocation_123"}
+  invocations.update:
+    args: {"id": "invocation_123", "status": "succeeded"}
+  organization.entitlements.get:
+    args: {}
+  organization.limits.get:
+    args: {}
+  organization.limits.update:
+    args: {}
+  profiles.create:
+    args: {"name": "acme-login"}
+  profiles.delete:
+    args: {"id_or_name": "acme-login"}
+  profiles.download:
+    args: {"id_or_name": "acme-login"}
+  profiles.get:
+    args: {"id_or_name": "acme-login"}
+  profiles.list:
+    args: {}
+  profiles.update:
+    args: {"id_or_name": "acme-login", "name": "my-name"}
+  projects.create:
+    args: {"name": "my-name"}
+  projects.delete:
+    args: {"id_or_name": "my-project"}
+  projects.get:
+    args: {"id_or_name": "my-project"}
+  projects.limits.get:
+    args: {"id_or_name": "my-project"}
+  projects.limits.update:
+    args: {"id_or_name": "my-project"}
+  projects.list:
+    args: {}
+  projects.update:
+    args: {"id_or_name": "my-project"}
+  proxies.check:
+    args: {"id_or_name": "my-proxy"}
+  proxies.create:
+    args: {"type": "datacenter"}
+  proxies.delete:
+    args: {"id_or_name": "my-proxy"}
+  proxies.get:
+    args: {"id_or_name": "my-proxy"}
+  proxies.list:
+    args: {}
+  proxies.update:
+    args: {"id_or_name": "my-proxy"}
+  proxyIPs.get:
+    args: {"ip_address": "203.0.113.10"}
+  proxyIPs.list:
+    args: {}
+  reportTypes.get:
+    args: {"type": "my-report-type"}
+  reportTypes.list:
+    args: {"task_id": "task_123"}
+  reportTypes.versions.get:
+    args: {"type": "my-report-type", "version": 1}
+  reports.create:
+    args: {"task_id": "task_123", "type": "my-report-type", "data": {"key": "value"}}
+  reports.get:
+    args: {"id": "report_123"}
+  reports.list:
+    args: {"task_id": "task_123"}
+  search.contents.fetch:
+    args: {"id": "search_123"}
+  search.create:
+    args: {"query": "kernel browser automation"}
+  search.get:
+    args: {"id": "search_123"}
+  search.providers.list:
+    args: {}
+  tasks.create:
+    args: {"description": "example"}
+  tasks.get:
+    args: {"id": "task_123"}
+  tasks.linkBrowsers:
+    args: {"id": "task_123", "session_ids": ["htzv5orfit78e1m2biiifpbv"]}
+  tasks.list:
+    args: {}
+  telemetry.destinations.create:
+    args: {"name": "my-name", "endpoint": "example"}
+  telemetry.destinations.delete:
+    args: {"id_or_name": "my-destination"}
+  telemetry.destinations.get:
+    args: {"id_or_name": "my-destination"}
+  telemetry.destinations.list:
+    args: {}
+  telemetry.destinations.update:
+    args: {"id_or_name": "my-destination"}
+  vaultProviderConfigs.create:
+    args: {"name": "my-name", "provider": "link", "credentials": {"client_id": "example", "client_secret": "example"}}
+  vaultProviderConfigs.delete:
+    args: {"id_or_name": "my-provider-config"}
+  vaultProviderConfigs.get:
+    args: {"id_or_name": "my-provider-config"}
+  vaultProviderConfigs.list:
+    args: {}
+  vaultProviderConfigs.update:
+    args: {"id_or_name": "my-provider-config"}
+  vaults.delete:
+    args: {"id_or_name": "my-vault"}
+  vaults.get:
+    args: {"id_or_name": "my-vault"}
+  vaults.getEncryptionKey:
+    args: {"id_or_name": "my-vault"}
+  vaults.items.delete:
+    args: {"id_or_name": "my-vault", "key": "my-item"}
+  vaults.items.events:
+    args: {"id_or_name": "my-vault", "key": "my-item"}
+  vaults.items.get:
+    args: {"id_or_name": "my-vault", "key": "my-item"}
+  vaults.items.list:
+    args: {"id_or_name": "my-vault"}
+  vaults.items.performOperation:
+    args: {"id_or_name": "my-vault", "key": "my-item", "type": "authorize"}
+  vaults.items.update:
+    args: {"id_or_name": "my-vault", "key": "my-item", "spec": {"provider": "link", "wallet": "example", "payment_method_id": "example", "amount": 1, "currency": "exa", "merchant_name": "example", "merchant_url": "example", "context": "examplexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}}
+  vaults.items.upsert:
+    args: {"id_or_name": "my-vault", "key": "team-wallet", "type": "wallet", "spec": {"provider": "kernel"}}
+  vaults.list:
+    args: {}
+  vaults.upsert:
+    args: {"name": "my-name"}

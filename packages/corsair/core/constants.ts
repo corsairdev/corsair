@@ -321,9 +321,12 @@ export const BaseProviders = [
 	'godial',
 	'gong',
 	'googleaddressvalidation',
+	'googleadmin',
+	'googleads',
 	'googleanalytics',
 	'googlebigquery',
 	'googlecalendar',
+	'googlephotos',
 	'googleclassroom',
 	'googlecloudvision',
 	'googlecontacts',
@@ -332,6 +335,7 @@ export const BaseProviders = [
 	'googlemaps',
 	'googlemeet',
 	'googlesheets',
+	'googlesearchconsole',
 	'googleslides',
 	'googletasks',
 	'gorgias',
@@ -357,6 +361,7 @@ export const BaseProviders = [
 	'honeybadger',
 	'honeyhive',
 	'hookdeck',
+	'hotspotsystem',
 	'htmltoimage',
 	'hubplanner',
 	'hubspot',
@@ -377,6 +382,7 @@ export const BaseProviders = [
 	'instagram',
 	'instantly',
 	'intercom',
+	'interzoid',
 	'ip2proxy',
 	'ip2whois',
 	'jigsawstack',
@@ -391,6 +397,7 @@ export const BaseProviders = [
 	'kanbanize',
 	'keen',
 	'keenable',
+	'kernel',
 	'keyword',
 	'kibana',
 	'kickbox',
@@ -405,15 +412,19 @@ export const BaseProviders = [
 	'kontentai',
 	'krakenio',
 	'labs64netlicensing',
+	'laposta',
 	'launchdarkly',
 	'leexi',
 	'leiga',
+	'lemlist',
 	'lemonsqueezy',
 	'lever',
+	'lexoffice',
 	'linear',
 	'linguapop',
 	'linkedin',
 	'linkup',
+	'listennotes',
 	'litescrape',
 	'livesession',
 	'logodev',
@@ -476,16 +487,26 @@ export const BaseProviders = [
 	'opengraph',
 	'openrouter',
 	'opensea',
+	'openseo',
 	'openweathermap',
 	'orbit',
 	'oura',
 	'outlook',
 	'pagerduty',
+	'pandadoc',
+	'paradym',
 	'paperform',
 	'parallel',
 	'parma',
 	'parsehub',
+	'parsera',
 	'parseur',
+	'parsio',
+	'passcreator',
+	'payhere',
+	'payhip',
+	'paystack',
+	'pdf4me',
 	'pdfapi',
 	'pdfco',
 	'pdfless',
@@ -493,10 +514,20 @@ export const BaseProviders = [
 	'pdl',
 	'perplexityai',
 	'phantombuster',
+	'piggy',
+	'pingdom',
 	'pinecone',
 	'pipedrive',
+	'penpot',
+	'perigon',
+	'pipelinecrm',
 	'placid',
+	'persistiq',
 	'plain',
+	'persona',
+	'pexels',
+	'piloterr',
+	'pilvio',
 	'platerecognizer',
 	'ploid',
 	'pointagram',
@@ -611,7 +642,12 @@ export const BaseProviders = [
 	'square',
 	'stackai',
 	'stackexchange',
+	'stannp',
 	'starton',
+	'statuscake',
+	'storeganise',
+	'storerocket',
+	'stormboard',
 	'stormglass',
 	'strava',
 	'streamtime',
@@ -632,6 +668,7 @@ export const BaseProviders = [
 	'sympla',
 	'synthflowai',
 	'taggun',
+	'tailscale',
 	'talenthr',
 	'tapfiliate',
 	'tally',
@@ -1055,9 +1092,12 @@ export const ProviderDisplayNames = {
 	godial: 'GoDial',
 	gong: 'Gong',
 	googleaddressvalidation: 'Google Address Validation',
+	googleadmin: 'Google Admin',
+	googleads: 'Google Ads',
 	googleanalytics: 'Google Analytics',
 	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
+	googlephotos: 'Google Photos',
 	googleclassroom: 'Google Classroom',
 	googlecloudvision: 'Google Cloud Vision',
 	googlecontacts: 'Google Contacts',
@@ -1066,6 +1106,7 @@ export const ProviderDisplayNames = {
 	googlemaps: 'Google Maps',
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
+	googlesearchconsole: 'Google Search Console',
 	googleslides: 'Google Slides',
 	googletasks: 'Google Tasks',
 	gorgias: 'Gorgias',
@@ -1091,6 +1132,7 @@ export const ProviderDisplayNames = {
 	honeybadger: 'Honeybadger',
 	honeyhive: 'HoneyHive',
 	hookdeck: 'Hookdeck',
+	hotspotsystem: 'HotspotSystem',
 	htmltoimage: 'HtmlToImage',
 	hubplanner: 'Hub Planner',
 	hubspot: 'HubSpot',
@@ -1111,6 +1153,7 @@ export const ProviderDisplayNames = {
 	instagram: 'Instagram',
 	instantly: 'Instantly',
 	intercom: 'Intercom',
+	interzoid: 'Interzoid',
 	ip2proxy: 'IP2Proxy',
 	ip2whois: 'IP2WHOIS',
 	jigsawstack: 'JigsawStack',
@@ -1125,6 +1168,7 @@ export const ProviderDisplayNames = {
 	kanbanize: 'Kanbanize',
 	keen: 'Keen',
 	keenable: 'Keenable',
+	kernel: 'Kernel',
 	keyword: 'Keyword',
 	kibana: 'Kibana',
 	kickbox: 'Kickbox',
@@ -1139,15 +1183,19 @@ export const ProviderDisplayNames = {
 	kontentai: 'Kontent.ai',
 	krakenio: 'Kraken.io',
 	labs64netlicensing: 'Labs64 NetLicensing',
+	laposta: 'Laposta',
 	launchdarkly: 'LaunchDarkly',
 	leexi: 'Leexi',
 	leiga: 'Leiga',
+	lemlist: 'Lemlist',
 	lemonsqueezy: 'Lemon Squeezy',
 	lever: 'Lever',
+	lexoffice: 'Lexoffice',
 	linear: 'Linear',
 	linguapop: 'Linguapop',
 	linkedin: 'LinkedIn',
 	linkup: 'Linkup',
+	listennotes: 'Listen Notes',
 	litescrape: 'LiteScrape',
 	livesession: 'LiveSession',
 	logodev: 'Logo.dev',
@@ -1210,16 +1258,26 @@ export const ProviderDisplayNames = {
 	opengraph: 'OpenGraph.io',
 	openrouter: 'OpenRouter',
 	opensea: 'OpenSea',
+	openseo: 'OpenSEO',
 	openweathermap: 'OpenWeatherMap',
 	orbit: 'Orbit',
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	pandadoc: 'PandaDoc',
+	paradym: 'Paradym',
 	paperform: 'Paperform',
 	parallel: 'Parallel',
 	parma: 'Parma',
 	parsehub: 'ParseHub',
+	parsera: 'Parsera',
 	parseur: 'Parseur',
+	parsio: 'Parsio',
+	passcreator: 'Passcreator',
+	payhere: 'Payhere',
+	payhip: 'Payhip',
+	paystack: 'Paystack',
+	pdf4me: 'PDF4me',
 	pdfapi: 'PDF-API.io',
 	pdfco: 'PDF.co',
 	pdfless: 'PDFLess',
@@ -1227,10 +1285,20 @@ export const ProviderDisplayNames = {
 	pdl: 'People Data Labs',
 	perplexityai: 'Perplexity AI',
 	phantombuster: 'PhantomBuster',
+	piggy: 'Piggy',
+	pingdom: 'Pingdom',
 	pinecone: 'Pinecone',
 	pipedrive: 'Pipedrive',
+	penpot: 'Penpot',
+	perigon: 'Perigon',
+	pipelinecrm: 'Pipeline CRM',
 	placid: 'Placid',
+	persistiq: 'PersistIQ',
 	plain: 'Plain',
+	persona: 'Persona',
+	pexels: 'Pexels',
+	piloterr: 'Piloterr',
+	pilvio: 'Pilvio',
 	platerecognizer: 'Plate Recognizer',
 	ploid: 'Ploid',
 	pointagram: 'Pointagram',
@@ -1345,7 +1413,12 @@ export const ProviderDisplayNames = {
 	square: 'Square',
 	stackai: 'StackAI',
 	stackexchange: 'Stack Exchange',
+	stannp: 'Stannp',
 	starton: 'Starton',
+	statuscake: 'StatusCake',
+	storeganise: 'Storeganise',
+	storerocket: 'Storerocket',
+	stormboard: 'Stormboard',
 	stormglass: 'Stormglass',
 	strava: 'Strava',
 	streamtime: 'Streamtime',
@@ -1366,6 +1439,7 @@ export const ProviderDisplayNames = {
 	sympla: 'Sympla',
 	synthflowai: 'Synthflow AI',
 	taggun: 'Taggun',
+	tailscale: 'Tailscale',
 	talenthr: 'TalentHR',
 	tapfiliate: 'Tapfiliate',
 	tally: 'Tally',
@@ -1796,9 +1870,12 @@ export type AllProviders =
 	| 'godial'
 	| 'gong'
 	| 'googleaddressvalidation'
+	| 'googleadmin'
+	| 'googleads'
 	| 'googleanalytics'
 	| 'googlebigquery'
 	| 'googlecalendar'
+	| 'googlephotos'
 	| 'googleclassroom'
 	| 'googlecloudvision'
 	| 'googlecontacts'
@@ -1807,6 +1884,7 @@ export type AllProviders =
 	| 'googlemaps'
 	| 'googlemeet'
 	| 'googlesheets'
+	| 'googlesearchconsole'
 	| 'googleslides'
 	| 'googletasks'
 	| 'gorgias'
@@ -1832,6 +1910,7 @@ export type AllProviders =
 	| 'honeybadger'
 	| 'honeyhive'
 	| 'hookdeck'
+	| 'hotspotsystem'
 	| 'htmltoimage'
 	| 'hubplanner'
 	| 'hubspot'
@@ -1852,6 +1931,7 @@ export type AllProviders =
 	| 'instagram'
 	| 'instantly'
 	| 'intercom'
+	| 'interzoid'
 	| 'ip2proxy'
 	| 'ip2whois'
 	| 'jigsawstack'
@@ -1866,6 +1946,7 @@ export type AllProviders =
 	| 'kanbanize'
 	| 'keen'
 	| 'keenable'
+	| 'kernel'
 	| 'keyword'
 	| 'kibana'
 	| 'kickbox'
@@ -1880,15 +1961,19 @@ export type AllProviders =
 	| 'kontentai'
 	| 'krakenio'
 	| 'labs64netlicensing'
+	| 'laposta'
 	| 'launchdarkly'
 	| 'leexi'
 	| 'leiga'
+	| 'lemlist'
 	| 'lemonsqueezy'
 	| 'lever'
+	| 'lexoffice'
 	| 'linear'
 	| 'linguapop'
 	| 'linkedin'
 	| 'linkup'
+	| 'listennotes'
 	| 'litescrape'
 	| 'livesession'
 	| 'logodev'
@@ -1951,16 +2036,26 @@ export type AllProviders =
 	| 'opengraph'
 	| 'openrouter'
 	| 'opensea'
+	| 'openseo'
 	| 'openweathermap'
 	| 'orbit'
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'pandadoc'
+	| 'paradym'
 	| 'paperform'
 	| 'parallel'
 	| 'parma'
 	| 'parsehub'
+	| 'parsera'
 	| 'parseur'
+	| 'parsio'
+	| 'passcreator'
+	| 'payhere'
+	| 'payhip'
+	| 'paystack'
+	| 'pdf4me'
 	| 'pdfapi'
 	| 'pdfco'
 	| 'pdfless'
@@ -1968,10 +2063,20 @@ export type AllProviders =
 	| 'pdl'
 	| 'perplexityai'
 	| 'phantombuster'
+	| 'piggy'
 	| 'pinecone'
+	| 'pingdom'
 	| 'pipedrive'
+	| 'penpot'
+	| 'perigon'
+	| 'pipelinecrm'
 	| 'placid'
+	| 'persistiq'
 	| 'plain'
+	| 'persona'
+	| 'pexels'
+	| 'piloterr'
+	| 'pilvio'
 	| 'platerecognizer'
 	| 'ploid'
 	| 'pointagram'
@@ -2086,7 +2191,12 @@ export type AllProviders =
 	| 'square'
 	| 'stackai'
 	| 'stackexchange'
+	| 'stannp'
 	| 'starton'
+	| 'statuscake'
+	| 'storeganise'
+	| 'storerocket'
+	| 'stormboard'
 	| 'stormglass'
 	| 'strava'
 	| 'streamtime'
@@ -2107,6 +2217,7 @@ export type AllProviders =
 	| 'sympla'
 	| 'synthflowai'
 	| 'taggun'
+	| 'tailscale'
 	| 'talenthr'
 	| 'tapfiliate'
 	| 'tally'

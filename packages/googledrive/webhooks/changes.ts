@@ -249,6 +249,7 @@ async function applyRemovedChange(
 		db?: {
 			files?: { deleteByEntityId: (id: string) => Promise<unknown> };
 			folders?: { deleteByEntityId: (id: string) => Promise<unknown> };
+			fileContents?: { deleteByEntityId: (id: string) => Promise<unknown> };
 		};
 	},
 	change: Change,
@@ -266,6 +267,8 @@ async function applyRemovedChange(
 			await ctx.db?.folders?.deleteByEntityId(fileId);
 		} else {
 			await ctx.db?.files?.deleteByEntityId(fileId);
+			// Saved Docs text goes with its file, or search keeps finding it.
+			await ctx.db?.fileContents?.deleteByEntityId(fileId);
 		}
 		if (!file.mimeType) {
 			await ctx.db?.folders?.deleteByEntityId(fileId);

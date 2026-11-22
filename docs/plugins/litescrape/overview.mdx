@@ -1,14 +1,16 @@
 ---
 title: "LiteScrape plugin"
 sidebarTitle: "Overview"
-description: "Search, maps, reviews and web-data scraping API (Google, Bing, DuckDuckGo, Apple, Yelp, Tripadvisor and app stores)."
+description: "Web data API with 200 read operations across 70 sites: Google, Bing, Brave, Yahoo, Baidu, Naver and Yandex search; Google, Apple, Bing and DuckDuckGo maps and reviews; Amazon, Walmart, eBay and other shops; TikTok, Instagram, X, YouTube, LinkedIn and Reddit; job boards; real estate; and web page fetch and screenshots."
 ---
 
 Use **LiteScrape** through Corsair: one client, typed API calls.
 
+Every data operation is a read that spends one prepaid Litescrape call; failed calls are not billed. `keys.status` is free and shows the calls left. Pass `timeout` (seconds, up to 90) to bound a slow scrape.
+
 **What you get:**
 
-- 36 typed API operations
+- 202 typed API operations
 
 ## Setup
 
@@ -94,17 +96,20 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`appleAppStore.product`**
+**Search Google**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.litescrape.api.appleAppStore.product({});
+await tenant.litescrape.api.google.search({ q: 'python documentation', num: 3, fast_mode: true });
 ```
 
 
-**Write**
+**Look up an Amazon product**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/litescrape/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.litescrape.api.amazon.product({ asin: 'B072MQ5BRX' });
+```
 
 
 See the full list on the [API](/plugins/litescrape/api) page.
