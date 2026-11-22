@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T16:33:53.243Z",
+  "generatedAt": "2026-11-22T16:43:47.524Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
@@ -1267,7 +1267,7 @@
     "parsera": "twenty-icons",
     "parseur": "curated",
     "parsio": "twenty-icons",
-    "passcreator": "twenty-icons",
+    "passcreator": "url-override",
     "payhere": "twenty-icons",
     "payhip": "twenty-icons",
     "paystack": "google-favicon",
