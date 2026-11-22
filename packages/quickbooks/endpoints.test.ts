@@ -350,6 +350,12 @@ describe('QuickBooks first-party catalog operation requests', () => {
 				if (requestInit?.body instanceof FormData) {
 					expect(requestInit.body.has('file_metadata_01')).toBe(true);
 					expect(requestInit.body.has('file_content_01')).toBe(true);
+					const file = requestInit.body.get('file_content_01');
+					expect(file).toBeInstanceOf(File);
+					expect(file instanceof File && file.name).toBe('receipt.pdf');
+					expect(
+						file instanceof File && Buffer.from(await file.arrayBuffer()),
+					).toEqual(Buffer.from('JVBERg==', 'base64'));
 				}
 			} else {
 				expect(requestInit?.body).toBeUndefined();

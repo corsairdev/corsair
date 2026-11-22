@@ -539,8 +539,10 @@ const attachable_uploadDef = {
 				],
 				{ type: 'application/json' },
 			),
-			file_content_01: new Blob(
-				[Uint8Array.from(Buffer.from(input.base64Content, 'base64'))],
+			// A File, not a Blob: the multipart part's filename is what QuickBooks stores.
+			file_content_01: new File(
+				[Buffer.from(input.base64Content, 'base64')],
+				input.fileName,
 				{ type: input.contentType },
 			),
 		},
