@@ -144,7 +144,11 @@ describe('QuickBooks endpoint schemas', () => {
 		).toBe(true);
 		expect(
 			QuickBooksEndpointOutputSchemas.companyGet.safeParse({
-				CompanyInfo: { Id: '123', unverified: true },
+				CompanyInfo: {
+					Id: '123',
+					CompanyName: 'Demo Company',
+					unverified: true,
+				},
 				time: '2026-11-18T12:00:00Z',
 			}).success,
 		).toBe(false);
