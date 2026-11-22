@@ -2353,6 +2353,19 @@ describe('Meta Ads operations', () => {
 				],
 			}),
 		).resolves.toMatchObject({ id: 'study-1' });
+		await expect(
+			Studies.create(ctx, {
+				businessId: 'business-1',
+				name: 'Two-way split',
+				startTime: 1_900_000_000,
+				endTime: 1_900_086_400,
+				type: 'SPLIT_TEST',
+				cells: [
+					{ name: 'A', treatmentPercentage: 50.005, adSetIds: ['adset-1'] },
+					{ name: 'B', treatmentPercentage: 49.995, adSetIds: ['adset-2'] },
+				],
+			}),
+		).resolves.toMatchObject({ id: 'study-1' });
 	});
 
 	it('accepts a numeric-string session id when listing upload sessions', async () => {

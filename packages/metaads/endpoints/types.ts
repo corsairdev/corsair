@@ -1413,10 +1413,13 @@ const studyCreateInput = z
 	.refine((value) => value.endTime > value.startTime)
 	.refine(
 		(value) =>
-			// Sum in hundredths so 33.3 + 33.3 + 33.4 is exactly 100, not 100.00000000000001.
-			value.cells.reduce(
-				(total, cell) => total + Math.round(cell.treatmentPercentage * 100),
-				0,
+			// Round the total to hundredths so float error (33.3 + 33.3 + 33.4 = 100.00000000000001)
+			// doesn't reject a valid split; rounding each cell first would reject 50.005 + 49.995.
+			Math.round(
+				value.cells.reduce(
+					(total, cell) => total + cell.treatmentPercentage,
+					0,
+				) * 100,
 			) <= 10_000,
 	);
 const studyUpdateInput = z
