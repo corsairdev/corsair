@@ -2327,7 +2327,7 @@ describe('Meta Ads operations', () => {
 	});
 
 	it('marks label deletion destructive', () => {
-		expect(metaads().endpointMeta['labels.delete'].riskLevel).toBe(
+		expect(metaads().endpointMeta?.['labels.delete']?.riskLevel).toBe(
 			'destructive',
 		);
 	});
