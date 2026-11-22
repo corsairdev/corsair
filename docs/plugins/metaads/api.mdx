@@ -1106,7 +1106,8 @@ Requires targetingSpec.geo_locations.countries, accepts at most one country, and
 ```ts
 {
   users_lower_bound: number,
-  users_upper_bound: number
+  users_upper_bound: number,
+  estimate_ready?: boolean
 }
 ```
 </Accordion>
@@ -1834,7 +1835,7 @@ await corsair.metaads.api.ads.create({
 | `status` | `ACTIVE \| PAUSED` | No | — |
 | `idempotencyKey` | `string` | No | — |
 
-Use an existing creative ID or the documented inline AdCreative envelope: the creative form field contains a nested creative object with name and object_story_spec. Optionally pass a bare conversionDomain for campaigns that share data with a pixel; Meta requires it only for those campaigns. New ads enter review and can deliver after approval; this consequential write isn't automatically retried.
+Use an existing creative ID or an inline creativeSpec; the creative form field carries name and object_story_spec directly, as in Meta's ad-creation examples. Optionally pass a bare conversionDomain for campaigns that share data with a pixel; Meta requires it only for those campaigns. New ads enter review and can deliver after approval; this consequential write isn't automatically retried.
 
 <AccordionGroup>
 <Accordion title="creativeSpec full type">
@@ -2587,7 +2588,7 @@ await corsair.metaads.api.adSets.budgetSchedulesList({ adSetId: '120000000000002
 {
   id: string,
   budget_value?: number | string,
-  budget_value_type?: ABSOLUTE | MULTIPLIER,
+  budget_value_type?: ABSOLUTE | MULTIPLIER | string,
   recurrence_type?: string,
   time_end?: string | number,
   time_start?: string | number
@@ -2728,7 +2729,7 @@ Creates a copy with status_option fixed to PAUSED. Deep-copying child ads is not
 
 ```ts
 {
-  ad_object_type: unique_adcreative | ad | ad_set | campaign | opportunities | privacy_info_center | topline | ad_account | product,
+  ad_object_type: unique_adcreative | ad | ad_set | campaign | opportunities | privacy_info_center | topline | ad_account | product | string,
   source_id: string,
   copied_id: string
 }[]
@@ -2769,6 +2770,9 @@ await corsair.metaads.api.adSets.create({
 | `optimizationGoal` | `NONE \| APP_INSTALLS \| AD_RECALL_LIFT \| ENGAGED_USERS \| EVENT_RESPONSES \| IMPRESSIONS \| LEAD_GENERATION \| QUALITY_LEAD \| LINK_CLICKS \| OFFSITE_CONVERSIONS \| PAGE_LIKES \| POST_ENGAGEMENT \| QUALITY_CALL \| REACH \| LANDING_PAGE_VIEWS \| VISIT_INSTAGRAM_PROFILE \| ENGAGED_PAGE_VIEWS \| VALUE \| THRUPLAY \| DERIVED_EVENTS \| APP_INSTALLS_AND_OFFSITE_CONVERSIONS \| CONVERSATIONS \| IN_APP_VALUE \| MESSAGING_PURCHASE_CONVERSION \| MESSAGING_DEEP_CONVERSATION_AND_FOLLOW \| SUBSCRIBERS \| REMINDERS_SET \| MEANINGFUL_CALL_ATTEMPT \| PROFILE_VISIT \| PROFILE_AND_PAGE_ENGAGEMENT \| ADVERTISER_SILOED_VALUE \| AUTOMATIC_OBJECTIVE \| MESSAGING_APPOINTMENT_CONVERSION` | Yes | — |
 | `billingEvent` | `APP_INSTALLS \| CLICKS \| IMPRESSIONS \| LINK_CLICKS \| NONE \| OFFER_CLAIMS \| PAGE_LIKES \| POST_ENGAGEMENT \| THRUPLAY \| PURCHASE \| LISTING_INTERACTION` | Yes | — |
 | `targeting` | `Record<string, any>` | Yes | — |
+| `bidStrategy` | `LOWEST_COST_WITHOUT_CAP \| LOWEST_COST_WITH_BID_CAP \| COST_CAP \| LOWEST_COST_WITH_MIN_ROAS` | No | — |
+| `bidAmount` | `number` | No | — |
+| `promotedObject` | `object` | No | — |
 | `status` | `ACTIVE \| PAUSED` | No | — |
 | `dailyBudget` | `number` | No | — |
 | `lifetimeBudget` | `number` | No | — |
@@ -2776,7 +2780,28 @@ await corsair.metaads.api.adSets.create({
 | `endTime` | `string` | No | — |
 | `idempotencyKey` | `string` | No | — |
 
-Supply optimizationGoal (REACH) and billingEvent (IMPRESSIONS), a documented Meta v27 ad-set example. This consequential write is destructive and isn't automatically retried. Budgets use integer smallest-currency units; initial status defaults to PAUSED. Meta v27 can enable cross-device expansion for eligible Sales ad sets unless the documented targeting automation setting is set to 0; EU targeting needs beneficiary/payer account defaults or explicit values.
+Supply optimizationGoal (REACH) and billingEvent (IMPRESSIONS), a documented Meta v27 ad-set example. This consequential write is destructive and isn't automatically retried. Budgets use integer smallest-currency units; initial status defaults to PAUSED. Meta v27 can enable cross-device expansion for eligible Sales ad sets unless the documented targeting automation setting is set to 0; EU targeting needs beneficiary/payer account defaults or explicit values. Conversion, lead, app-install and page-like goals need promotedObject (for example pixel_id with custom_event_type, or page_id); bid caps and cost caps need bidAmount.
+
+<AccordionGroup>
+<Accordion title="promotedObject full type">
+
+```ts
+{
+  pixel_id?: string,
+  custom_event_type?: string,
+  custom_conversion_id?: string,
+  page_id?: string,
+  application_id?: string,
+  object_store_url?: string,
+  product_catalog_id?: string,
+  product_set_id?: string,
+  event_id?: string,
+  offline_conversion_data_set_id?: string,
+  whatsapp_phone_number?: string
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3067,7 +3092,7 @@ Lists safe asynchronous creative job status fields and supports Graph cursor pag
   success_count?: number,
   error_count?: number,
   canceled_count?: number,
-  notification_mode?: OFF | ON_COMPLETE
+  notification_mode?: OFF | ON_COMPLETE | string
 }[]
 ```
 </Accordion>
@@ -3114,7 +3139,18 @@ Cancels one request only while it remains unprocessed and returns literal true; 
 
 
 
-**Output:** `true`
+**Output:** `true \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+true | {
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -3164,7 +3200,7 @@ Only request IDs, parent IDs and statuses can be selected; use the documented st
 {
   id: string | number,
   scope_object_id?: string | number,
-  status?: INITIAL | IN_PROGRESS | SUCCESS | ERROR | CANCELED | PENDING_DEPENDENCY | CANCELED_DEPENDENCY | ERROR_DEPENDENCY | ERROR_CONFLICTS | USER_CANCELED | USER_CANCELED_DEPENDENCY | PROCESS_BY_EVENT_PROCESSOR | PROCESS_BY_AD_ASYNC_ENGINE | Initial | In_progress | Success | Error | Canceled
+  status?: INITIAL | IN_PROGRESS | SUCCESS | ERROR | CANCELED | PENDING_DEPENDENCY | CANCELED_DEPENDENCY | ERROR_DEPENDENCY | ERROR_CONFLICTS | USER_CANCELED | USER_CANCELED_DEPENDENCY | PROCESS_BY_EVENT_PROCESSOR | PROCESS_BY_AD_ASYNC_ENGINE | Initial | In_progress | Success | Error | Canceled | string
 }[]
 ```
 </Accordion>
@@ -3232,7 +3268,7 @@ Accepts numeric or string requestSetId values and stringifies the Graph path. On
 {
   id: string | number,
   scope_object_id?: string | number,
-  status?: INITIAL | IN_PROGRESS | SUCCESS | ERROR | CANCELED | PENDING_DEPENDENCY | CANCELED_DEPENDENCY | ERROR_DEPENDENCY | ERROR_CONFLICTS | USER_CANCELED | USER_CANCELED_DEPENDENCY | PROCESS_BY_EVENT_PROCESSOR | PROCESS_BY_AD_ASYNC_ENGINE | Initial | In_progress | Success | Error | Canceled
+  status?: INITIAL | IN_PROGRESS | SUCCESS | ERROR | CANCELED | PENDING_DEPENDENCY | CANCELED_DEPENDENCY | ERROR_DEPENDENCY | ERROR_CONFLICTS | USER_CANCELED | USER_CANCELED_DEPENDENCY | PROCESS_BY_EVENT_PROCESSOR | PROCESS_BY_AD_ASYNC_ENGINE | Initial | In_progress | Success | Error | Canceled | string
 }[]
 ```
 </Accordion>
@@ -3279,7 +3315,18 @@ Cancels a request set only while it remains unprocessed and returns literal true
 
 
 
-**Output:** `true`
+**Output:** `true \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+true | {
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -3362,7 +3409,7 @@ Accepts numeric or string requestSetId values and stringifies the Graph path. On
 | `success_count` | `number` | No | — |
 | `error_count` | `number` | No | — |
 | `canceled_count` | `number` | No | — |
-| `notification_mode` | `OFF \| ON_COMPLETE` | No | — |
+| `notification_mode` | `OFF \| ON_COMPLETE \| string` | No | — |
 
 
 
@@ -3416,7 +3463,7 @@ Lists safe status/count fields and supports Graph cursor pagination.
   success_count?: number,
   error_count?: number,
   canceled_count?: number,
-  notification_mode?: OFF | ON_COMPLETE
+  notification_mode?: OFF | ON_COMPLETE | string
 }[]
 ```
 </Accordion>
@@ -3462,7 +3509,18 @@ Renames a request set and returns literal true on success. Numeric or string IDs
 
 
 
-**Output:** `true`
+**Output:** `true \| object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+true | {
+  success: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
@@ -4494,7 +4552,7 @@ Supports the documented timeStart/timeStop filters and Graph cursor paging.
 {
   id: string,
   budget_value?: number | string,
-  budget_value_type?: ABSOLUTE | MULTIPLIER,
+  budget_value_type?: ABSOLUTE | MULTIPLIER | string,
   recurrence_type?: string,
   time_end?: string | number,
   time_start?: string | number
@@ -4634,7 +4692,7 @@ Creates a shallow campaign copy with status_option fixed to PAUSED. Deep-copying
 
 ```ts
 {
-  ad_object_type: unique_adcreative | ad | ad_set | campaign | opportunities | privacy_info_center | topline | ad_account | product,
+  ad_object_type: unique_adcreative | ad | ad_set | campaign | opportunities | privacy_info_center | topline | ad_account | product | string,
   source_id: string,
   copied_id: string
 }[]
@@ -4674,9 +4732,10 @@ await corsair.metaads.api.campaigns.create({
 | `status` | `ACTIVE \| PAUSED` | No | — |
 | `dailyBudget` | `number` | No | — |
 | `lifetimeBudget` | `number` | No | — |
+| `adsetBudgetSharing` | `boolean` | No | — |
 | `idempotencyKey` | `string` | No | — |
 
-Campaign creation requires objective (for example OUTCOME_TRAFFIC) and specialAdCategories (use [] when no special category applies). Meta v27's campaign-create example uses OUTCOME_TRAFFIC with an empty special_ad_categories array. This consequential write is destructive and isn't automatically retried. Budget values are integer smallest-currency units.
+Campaign creation requires objective (for example OUTCOME_TRAFFIC) and specialAdCategories (use [] when no special category applies). Meta v27's campaign-create example uses OUTCOME_TRAFFIC with an empty special_ad_categories array. This consequential write is destructive and isn't automatically retried. Budget values are integer smallest-currency units. Without a campaign budget (budgets on the ad sets), Meta v24+ requires is_adset_budget_sharing_enabled: the plugin sends false unless adsetBudgetSharing is true.
 
 
 
@@ -5387,7 +5446,7 @@ Reads a single high-demand period by its Graph object ID.
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
 | `budget_value` | `number \| string` | No | — |
-| `budget_value_type` | `ABSOLUTE \| MULTIPLIER` | No | — |
+| `budget_value_type` | `ABSOLUTE \| MULTIPLIER \| string` | No | — |
 | `recurrence_type` | `string` | No | — |
 | `time_end` | `string \| number` | No | — |
 | `time_start` | `string \| number` | No | — |
@@ -5482,7 +5541,7 @@ await corsair.metaads.api.images.list({ accountId: '1234567890', name: 'campaign
   original_height?: number,
   original_width?: number,
   permalink_url?: string,
-  status?: ACTIVE | INTERNAL | DELETED,
+  status?: ACTIVE | INTERNAL | DELETED | string,
   updated_time?: string,
   url?: string,
   url_128?: string,
@@ -5994,8 +6053,8 @@ Lists enabled features; a missing feature is equivalent to disabled.
 
 ```ts
 {
-  feature_name: comscore | impression_device | time_of_day_viewer_tz | frequency_value,
-  status: enabled,
+  feature_name: comscore | impression_device | time_of_day_viewer_tz | frequency_value | string,
+  status: string,
   insights_effective_date?: string
 }[]
 ```
@@ -6056,8 +6115,8 @@ Lists documented account Insights features, including breakdown features.
 
 ```ts
 {
-  feature_name: comscore | impression_device | time_of_day_viewer_tz | frequency_value,
-  feature_type: breakdown
+  feature_name: comscore | impression_device | time_of_day_viewer_tz | frequency_value | string,
+  feature_type: string
 }[]
 ```
 </Accordion>
@@ -6756,7 +6815,7 @@ await corsair.metaads.api.labels.creativesList({ labelId: '120000000000010' });
 
 Delete an ad label from an account
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.metaads.api.labels.delete({ labelId: '120000000000010' });
@@ -7241,11 +7300,11 @@ Reads selected documented prediction fields; pause_periods is omitted because it
 | `is_io` | `boolean` | No | — |
 | `name` | `string` | No | — |
 | `placement_breakdown` | `object` | No | — |
-| `prediction_mode` | `0 \| 1` | No | — |
+| `prediction_mode` | `number` | No | — |
 | `prediction_progress` | `number` | No | — |
-| `reservation_status` | `0 \| 1 \| 2` | No | — |
+| `reservation_status` | `number` | No | — |
 | `status` | `number` | No | — |
-| `story_event_type` | `0 \| 128 \| 256 \| 384` | No | — |
+| `story_event_type` | `number` | No | — |
 | `target_spec` | `string` | No | — |
 | `time_created` | `string` | No | — |
 | `time_updated` | `string` | No | — |
@@ -7392,11 +7451,11 @@ Lists safe documented prediction fields and supports cursor pagination; pause_pe
     instream_videos?: number,
     suggested_videos?: number
   },
-  prediction_mode?: 0 | 1,
+  prediction_mode?: number,
   prediction_progress?: number,
-  reservation_status?: 0 | 1 | 2,
+  reservation_status?: number,
   status?: number,
-  story_event_type?: 0 | 128 | 256 | 384,
+  story_event_type?: number,
   target_spec?: string,
   time_created?: string,
   time_updated?: string
@@ -7758,3 +7817,4 @@ Dissociates the specified video from the ad-account library; it does not delete 
 
 
 ---
+
