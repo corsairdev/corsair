@@ -11424,5 +11424,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/paradym",
+    "dir": "packages/paradym",
+    "name": "Paradym",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
