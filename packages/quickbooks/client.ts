@@ -36,7 +36,14 @@ export type QuickBooksAuthenticatedContext = {
 	_refreshAuth?: () => Promise<string>;
 };
 
-function sanitizeFormDataError(
+/**
+ * Rebuilds a QuickBooks ApiError without the request it was sent with. The
+ * query string can carry a recipient address (`sendTo` on the send routes) or a
+ * query that names customers, and bodies and multipart parts carry customer and
+ * file data. The provider's Fault body, the status and the rate-limit fields
+ * stay, so callers and core's 401/429 handling see the same error.
+ */
+function sanitizeQuickBooksError(
 	error: ApiError,
 	path: string,
 	options: QuickBooksRequestOptions,
@@ -44,12 +51,9 @@ function sanitizeFormDataError(
 	const request: ApiRequestOptions = {
 		method: options.method ?? 'GET',
 		url: path,
-		mediaType: 'multipart/form-data',
-		...(options.query ? { query: options.query } : {}),
-		...(options.headers ? { headers: options.headers } : {}),
 	};
 	const response: ApiResult = {
-		url: error.url,
+		url: error.url.split('?')[0] ?? '',
 		ok: false,
 		status: error.status,
 		statusText: error.statusText,
@@ -136,15 +140,15 @@ export async function makeAuthenticatedQuickBooksRequest<T>(
 					environment,
 				);
 			} catch (refreshError: unknown) {
-				// unknown because retry rejection values are untrusted; form data must not escape in ApiError.request.
-				if (options.formData && refreshError instanceof ApiError) {
-					throw sanitizeFormDataError(refreshError, path, options);
+				// unknown because retry rejection values are untrusted; request data must not escape in ApiError.request.
+				if (refreshError instanceof ApiError) {
+					throw sanitizeQuickBooksError(refreshError, path, options);
 				}
 				throw refreshError;
 			}
 		}
-		if (options.formData && error instanceof ApiError) {
-			throw sanitizeFormDataError(error, path, options);
+		if (error instanceof ApiError) {
+			throw sanitizeQuickBooksError(error, path, options);
 		}
 		throw error;
 	}

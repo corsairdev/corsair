@@ -100,6 +100,44 @@ describe('QuickBooks HTTP client', () => {
 		expect(failure.request.formData).toBeUndefined();
 	});
 
+	it('drops the recipient address and JSON body from propagated errors', async () => {
+		fetchMock.mockResolvedValue(
+			new Response(
+				JSON.stringify({ Fault: { Error: [{ Message: 'Invalid email' }] } }),
+				{
+					status: 400,
+					statusText: 'Bad Request',
+					headers: { 'Content-Type': 'application/json' },
+				},
+			),
+		);
+		// unknown because rejected promises may carry arbitrary values; instanceof narrows the provider error.
+		const failure = await makeAuthenticatedQuickBooksRequest(
+			{ key: 'access-token' },
+			'company/123/invoice/7/send',
+			{
+				method: 'POST',
+				query: { sendTo: 'pat@example.com' },
+				body: { BillEmail: { Address: 'pat@example.com' } },
+			},
+			'sandbox',
+		).catch((caught: unknown) => caught);
+
+		expect(failure).toBeInstanceOf(ApiError);
+		if (!(failure instanceof ApiError)) {
+			throw new Error('Expected the provider HTTP error');
+		}
+		expect(failure.status).toBe(400);
+		expect(failure.body).toEqual({
+			Fault: { Error: [{ Message: 'Invalid email' }] },
+		});
+		expect(JSON.stringify([failure.url, failure.request])).not.toContain(
+			'pat@example.com',
+		);
+		expect(failure.request.query).toBeUndefined();
+		expect(failure.request.body).toBeUndefined();
+	});
+
 	it('refreshes OAuth access tokens through Intuit with HTTP Basic client auth', async () => {
 		const plugin = quickbooks({ environment: 'sandbox' });
 		expect(plugin.oauthConfig?.authUrl).toBe(
