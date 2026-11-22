@@ -38,7 +38,12 @@ export function defineMailcoachOperation<
 		z.output<O>
 	> = async (context, input) => {
 		const parsedInput = spec.inputSchema.parse(input);
-		const accountApiUrl = await context.keys?.get_api_url();
+		// A key passed in the plugin options pairs with the options' apiUrl, never with a
+		// team URL stored on the account, so a token is never sent to another team's host.
+		const usesOptionsKey = context.options.key !== undefined;
+		const accountApiUrl = usesOptionsKey
+			? undefined
+			: await context.keys?.get_api_url();
 		const rawResponse = await makeMailcoachRequest<z.output<O>>(
 			spec.path(parsedInput),
 			context.key,
