@@ -1,0 +1,1330 @@
+{
+  "id": "persistiq",
+  "displayName": "PersistIQ",
+  "description": "PersistIQ is an outbound sales automation platform. This plugin manages leads and their custom attributes, campaigns and their lead membership, replies to inbox messages, do-not-contact domains, activity events, tags, lead fields and statuses, and the webhook plugin settings.",
+  "npmPackageName": "@corsair-dev/persistiq",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 21,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "persistiq.api.campaigns.addLead",
+      "shortPath": "campaigns.addLead",
+      "description": "Add leads to a campaign; the campaign's automated emails start going to them",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign id"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string",
+            "description": "Lead id to add"
+          },
+          {
+            "key": "leads",
+            "optional": true,
+            "type": "string[]",
+            "description": "Bulk add: up to 100 lead ids"
+          },
+          {
+            "key": "mailbox_id",
+            "optional": true,
+            "type": "string",
+            "description": "Mailbox to send from; defaults to the campaign owner's"
+          },
+          {
+            "key": "skip_if_exists",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return the existing membership instead of an error"
+          },
+          {
+            "key": "override_lead_limit",
+            "optional": true,
+            "type": "boolean",
+            "description": "Add past the campaign's lead limit"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "success or error"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any | null",
+            "description": "Error details, null on success"
+          },
+          {
+            "key": "campaign_lead",
+            "optional": true,
+            "type": "{ id: string, campaign_id?: string | null, mailbox_id?: string | null, lead?: { id: string, status?: string | null, data?: Record<string, any> | null, creator_id?: string | null, owner_id?: string | null, bounced?: boolean | null, optedout?: boolean | null, sent_count?: number | null, replied_count?: number | null, last_sent_at?: string | null } | null } | null",
+            "description": "The membership created (single add)"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Create a campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_name",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign name"
+          },
+          {
+            "key": "owner_id",
+            "optional": false,
+            "type": "string",
+            "description": "User id of the campaign owner; see users.list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Campaign name"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, email?: string | null } | null",
+            "description": "The user who created the campaign"
+          },
+          {
+            "key": "stats",
+            "optional": true,
+            "type": "{ prospects_contacted?: number | null, prospects_reached?: number | null, prospects_opened?: number | null, prospects_replied?: number | null, prospects_bounced?: number | null, prospects_optedout?: number | null, total_prospects?: number | null } | null",
+            "description": "Campaign counters"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.campaigns.duplicate",
+      "shortPath": "campaigns.duplicate",
+      "description": "Copy a campaign to a new owner",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign id to duplicate"
+          },
+          {
+            "key": "owner_id",
+            "optional": false,
+            "type": "string",
+            "description": "User id that owns the copy"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the copy; PersistIQ picks one when omitted"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Campaign name"
+          },
+          {
+            "key": "creator",
+            "optional": true,
+            "type": "{ id?: string | null, name?: string | null, email?: string | null } | null",
+            "description": "The user who created the campaign"
+          },
+          {
+            "key": "stats",
+            "optional": true,
+            "type": "{ prospects_contacted?: number | null, prospects_reached?: number | null, prospects_opened?: number | null, prospects_replied?: number | null, prospects_bounced?: number | null, prospects_optedout?: number | null, total_prospects?: number | null } | null",
+            "description": "Campaign counters"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "List the campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1; ask for the next one while has_more is true"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Only campaigns with this name"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only campaigns owned by this user id"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only campaigns this lead is in"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "success or error"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Problems PersistIQ reports with the request"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether more pages exist"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "Link to the next page; pass page + 1 to fetch it"
+          },
+          {
+            "key": "campaigns",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, creator?: { id?: string | null, name?: string | null, email?: string | null } | null, stats?: { prospects_contacted?: number | null, prospects_reached?: number | null, prospects_opened?: number | null, prospects_replied?: number | null, prospects_bounced?: number | null, prospects_optedout?: number | null, total_prospects?: number | null } | null }[]",
+            "description": "Campaigns"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.campaigns.listLeads",
+      "shortPath": "campaigns.listLeads",
+      "description": "List the leads in a campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign id"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1; ask for the next one while has_more is true"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "success or error"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Problems PersistIQ reports with the request"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether more pages exist"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "Link to the next page; pass page + 1 to fetch it"
+          },
+          {
+            "key": "campaign_leads",
+            "optional": false,
+            "type": "{ id: string, campaign_id?: string | null, mailbox_id?: string | null, lead?: { id: string, status?: string | null, data?: Record<string, any> | null, creator_id?: string | null, owner_id?: string | null, bounced?: boolean | null, optedout?: boolean | null, sent_count?: number | null, replied_count?: number | null, last_sent_at?: string | null } | null }[]",
+            "description": "Leads in the campaign"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.campaigns.listReplies",
+      "shortPath": "campaigns.listReplies",
+      "description": "List the replies in a campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign id"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1; ask for the next one while has_more is true"
+          },
+          {
+            "key": "lead_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only replies from this lead"
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "string",
+            "description": "Only replies sent on or after this ISO 8601 time"
+          },
+          {
+            "key": "end_at",
+            "optional": true,
+            "type": "string",
+            "description": "Only replies sent on or before this ISO 8601 time"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "success or error"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Problems PersistIQ reports with the request"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether more pages exist"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "Link to the next page; pass page + 1 to fetch it"
+          },
+          {
+            "key": "replies",
+            "optional": false,
+            "type": "{ id: string, from_email?: string | null, to_emails?: string[] | null, cc_emails?: string[] | null, subject?: string | null, body?: string | null, preview?: string | null, sent_at?: string | null, sentiment?: string | null, kind?: string | null, lead_id?: string | null, campaign_id?: string | null, step_message_id?: string | null }[]",
+            "description": "Replies"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.campaigns.removeLead",
+      "shortPath": "campaigns.removeLead",
+      "description": "Remove a lead from a campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign id"
+          },
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string",
+            "description": "Lead id to remove (the id of the lead, as the spec names it)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "success",
+            "description": "success"
+          },
+          {
+            "key": "leadId",
+            "optional": false,
+            "type": "string",
+            "description": "The lead removed"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.campaigns.replyToMessage",
+      "shortPath": "campaigns.replyToMessage",
+      "description": "Reply to a message received in a campaign; the email goes out and cannot be recalled",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaignId",
+            "optional": false,
+            "type": "string",
+            "description": "Campaign id"
+          },
+          {
+            "key": "inbox_message_id",
+            "optional": false,
+            "type": "string",
+            "description": "Inbox message id to reply to (a reply id from listReplies)"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "string",
+            "description": "HTML body of the reply"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "queued once accepted"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "What PersistIQ did"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.dncDomains.create",
+      "shortPath": "dncDomains.create",
+      "description": "Add a domain to the do-not-contact list; emails to it stop",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Domain to add to the do-not-contact list, e.g. example.com"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "success or error"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any | null",
+            "description": "Error details, null on success"
+          },
+          {
+            "key": "dnc_domain",
+            "optional": true,
+            "type": "{ id: string, name?: string | null } | null",
+            "description": "The domain added"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.dncDomains.list",
+      "shortPath": "dncDomains.list",
+      "description": "List the do-not-contact domains",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1; ask for the next one while has_more is true"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "success or error"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Problems PersistIQ reports with the request"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether more pages exist"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "Link to the next page; pass page + 1 to fetch it"
+          },
+          {
+            "key": "dnc_domains",
+            "optional": false,
+            "type": "{ id: string, name?: string | null }[]",
+            "description": "Do-not-contact domains"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.events.list",
+      "shortPath": "events.list",
+      "description": "List activity events, with filters, page by page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1; ask for the next one while has_more is true"
+          },
+          {
+            "key": "group",
+            "optional": true,
+            "type": "string",
+            "description": "Only events of this group"
+          },
+          {
+            "key": "campaign",
+            "optional": true,
+            "type": "string",
+            "description": "Only events of this campaign id"
+          },
+          {
+            "key": "lead",
+            "optional": true,
+            "type": "string",
+            "description": "Only events of this lead id"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "string",
+            "description": "Only events of this user id"
+          },
+          {
+            "key": "start_at",
+            "optional": true,
+            "type": "string",
+            "description": "Only events after this ISO 8601 time"
+          },
+          {
+            "key": "end_at",
+            "optional": true,
+            "type": "string",
+            "description": "Only events before this ISO 8601 time"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "success or error"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Problems PersistIQ reports with the request"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether more pages exist"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "Link to the next page; pass page + 1 to fetch it"
+          },
+          {
+            "key": "events",
+            "optional": false,
+            "type": "{ id: string, event_type?: string | null, data?: Record<string, any> | null, created_at?: string | null }[]",
+            "description": "Events on this page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.leadFields.list",
+      "shortPath": "leadFields.list",
+      "description": "List the lead field definitions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "success or error"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Problems PersistIQ reports with the request"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether more pages exist"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "Link to the next page; pass page + 1 to fetch it"
+          },
+          {
+            "key": "lead_fields",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, label?: string | null }[]",
+            "description": "Lead field definitions"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.leads.create",
+      "shortPath": "leads.create",
+      "description": "Create a lead with its attributes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "lead",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Lead data keyed by field name (email, first_name, last_name, company_name, ...); see leadFields.list"
+          },
+          {
+            "key": "dup",
+            "optional": true,
+            "type": "update | skip",
+            "description": "What to do when a lead with the same email exists"
+          },
+          {
+            "key": "creator_id",
+            "optional": true,
+            "type": "string",
+            "description": "User id recorded as the creator"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "success or error"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any | null",
+            "description": "Error details, null on success"
+          },
+          {
+            "key": "lead",
+            "optional": false,
+            "type": "{ id: string, status?: string | null, data?: Record<string, any> | null, creator_id?: string | null, owner_id?: string | null, bounced?: boolean | null, optedout?: boolean | null, sent_count?: number | null, replied_count?: number | null, last_sent_at?: string | null }",
+            "description": "The lead"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.leads.get",
+      "shortPath": "leads.get",
+      "description": "Read one lead by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Lead id, or the lead email address"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "success or error"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any | null",
+            "description": "Error details, null on success"
+          },
+          {
+            "key": "lead",
+            "optional": false,
+            "type": "{ id: string, status?: string | null, data?: Record<string, any> | null, creator_id?: string | null, owner_id?: string | null, bounced?: boolean | null, optedout?: boolean | null, sent_count?: number | null, replied_count?: number | null, last_sent_at?: string | null }",
+            "description": "The lead"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.leads.list",
+      "shortPath": "leads.list",
+      "description": "List leads, with filters, page by page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1; ask for the next one while has_more is true"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "Only leads with this status name"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only leads with this status id"
+          },
+          {
+            "key": "updated_after",
+            "optional": true,
+            "type": "string",
+            "description": "Only leads updated after this ISO 8601 time"
+          },
+          {
+            "key": "created_after",
+            "optional": true,
+            "type": "string",
+            "description": "Only leads created after this ISO 8601 time"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Only the lead with this email"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "success or error"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Problems PersistIQ reports with the request"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether more pages exist"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "Link to the next page; pass page + 1 to fetch it"
+          },
+          {
+            "key": "leads",
+            "optional": false,
+            "type": "{ id: string, status?: string | null, data?: Record<string, any> | null, creator_id?: string | null, owner_id?: string | null, bounced?: boolean | null, optedout?: boolean | null, sent_count?: number | null, replied_count?: number | null, last_sent_at?: string | null }[]",
+            "description": "Leads on this page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.leads.update",
+      "shortPath": "leads.update",
+      "description": "Update a lead's status, owner, flags or attributes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Lead id, or the lead email address"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "New status name"
+          },
+          {
+            "key": "status_id",
+            "optional": true,
+            "type": "string",
+            "description": "New status id"
+          },
+          {
+            "key": "owner_id",
+            "optional": true,
+            "type": "string",
+            "description": "New owner user id"
+          },
+          {
+            "key": "bounced",
+            "optional": true,
+            "type": "boolean",
+            "description": "Mark the lead bounced"
+          },
+          {
+            "key": "optedout",
+            "optional": true,
+            "type": "boolean",
+            "description": "Mark the lead opted out"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Lead attributes to update, keyed by field name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "success or error"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "any | null",
+            "description": "Error details, null on success"
+          },
+          {
+            "key": "lead",
+            "optional": false,
+            "type": "{ id: string, status?: string | null, data?: Record<string, any> | null, creator_id?: string | null, owner_id?: string | null, bounced?: boolean | null, optedout?: boolean | null, sent_count?: number | null, replied_count?: number | null, last_sent_at?: string | null }",
+            "description": "The lead"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.leadStatuses.list",
+      "shortPath": "leadStatuses.list",
+      "description": "List the lead status vocabulary",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "success or error"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Problems PersistIQ reports with the request"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether more pages exist"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "Link to the next page; pass page + 1 to fetch it"
+          },
+          {
+            "key": "lead_statuses",
+            "optional": false,
+            "type": "{ id: string, name?: string | null }[]",
+            "description": "Lead statuses"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.tags.list",
+      "shortPath": "tags.list",
+      "description": "List the tags",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1; ask for the next one while has_more is true"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "success or error"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Problems PersistIQ reports with the request"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether more pages exist"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "Link to the next page; pass page + 1 to fetch it"
+          },
+          {
+            "key": "tags",
+            "optional": false,
+            "type": "{ id: string, name?: string | null }[]",
+            "description": "Tags"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.users.list",
+      "shortPath": "users.list",
+      "description": "List the team members",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, from 1; ask for the next one while has_more is true"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "success or error"
+          },
+          {
+            "key": "errors",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Problems PersistIQ reports with the request"
+          },
+          {
+            "key": "has_more",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether more pages exist"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "Link to the next page; pass page + 1 to fetch it"
+          },
+          {
+            "key": "users",
+            "optional": false,
+            "type": "{ id: string, name?: string | null, email?: string | null, activated?: boolean | null, salesforce_id?: string | null, default_mailbox_id?: string | null, mailboxes?: { id?: string | null, email?: string | null, campaign_ids?: string[] | null }[] | null }[]",
+            "description": "Team members"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.webhooks.getSettings",
+      "shortPath": "webhooks.getSettings",
+      "description": "Read the webhook plugin settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post_new_prospect",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether new-lead deliveries are on"
+          },
+          {
+            "key": "post_new_prospect_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Endpoint new-lead deliveries are posted to"
+          },
+          {
+            "key": "post_updated_prospect",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether updated-lead deliveries are on"
+          },
+          {
+            "key": "post_updated_prospect_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Endpoint updated-lead deliveries are posted to"
+          },
+          {
+            "key": "raw_events",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether raw-event deliveries are on"
+          },
+          {
+            "key": "raw_events_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Endpoint raw-event deliveries are posted to"
+          },
+          {
+            "key": "post_email_reply",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether email-reply deliveries are on"
+          },
+          {
+            "key": "post_email_reply_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Endpoint email-reply deliveries are posted to"
+          },
+          {
+            "key": "post_email_opened",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether email-opened deliveries are on"
+          },
+          {
+            "key": "post_email_opened_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Endpoint email-opened deliveries are posted to"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persistiq.api.webhooks.updateSettings",
+      "shortPath": "webhooks.updateSettings",
+      "description": "Turn webhook deliveries on or off and set the URL each one posts to",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post_new_prospect",
+            "optional": true,
+            "type": "boolean",
+            "description": "Turn new-lead deliveries on or off"
+          },
+          {
+            "key": "post_new_prospect_url",
+            "optional": true,
+            "type": "string",
+            "description": "Endpoint new-lead deliveries are posted to"
+          },
+          {
+            "key": "post_updated_prospect",
+            "optional": true,
+            "type": "boolean",
+            "description": "Turn updated-lead deliveries on or off"
+          },
+          {
+            "key": "post_updated_prospect_url",
+            "optional": true,
+            "type": "string",
+            "description": "Endpoint updated-lead deliveries are posted to"
+          },
+          {
+            "key": "raw_events",
+            "optional": true,
+            "type": "boolean",
+            "description": "Turn raw-event deliveries on or off"
+          },
+          {
+            "key": "raw_events_url",
+            "optional": true,
+            "type": "string",
+            "description": "Endpoint raw-event deliveries are posted to"
+          },
+          {
+            "key": "post_email_reply",
+            "optional": true,
+            "type": "boolean",
+            "description": "Turn email-reply deliveries on or off"
+          },
+          {
+            "key": "post_email_reply_url",
+            "optional": true,
+            "type": "string",
+            "description": "Endpoint email-reply deliveries are posted to"
+          },
+          {
+            "key": "post_email_opened",
+            "optional": true,
+            "type": "boolean",
+            "description": "Turn email-opened deliveries on or off"
+          },
+          {
+            "key": "post_email_opened_url",
+            "optional": true,
+            "type": "string",
+            "description": "Endpoint email-opened deliveries are posted to"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "post_new_prospect",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether new-lead deliveries are on"
+          },
+          {
+            "key": "post_new_prospect_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Endpoint new-lead deliveries are posted to"
+          },
+          {
+            "key": "post_updated_prospect",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether updated-lead deliveries are on"
+          },
+          {
+            "key": "post_updated_prospect_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Endpoint updated-lead deliveries are posted to"
+          },
+          {
+            "key": "raw_events",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether raw-event deliveries are on"
+          },
+          {
+            "key": "raw_events_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Endpoint raw-event deliveries are posted to"
+          },
+          {
+            "key": "post_email_reply",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether email-reply deliveries are on"
+          },
+          {
+            "key": "post_email_reply_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Endpoint email-reply deliveries are posted to"
+          },
+          {
+            "key": "post_email_opened",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether email-opened deliveries are on"
+          },
+          {
+            "key": "post_email_opened_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Endpoint email-opened deliveries are posted to"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
