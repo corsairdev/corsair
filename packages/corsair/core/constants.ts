@@ -520,6 +520,7 @@ export const BaseProviders = [
 	'placid',
 	'plain',
 	'persona',
+	'pexels',
 	'piloterr',
 	'pilvio',
 	'platerecognizer',
@@ -1285,6 +1286,7 @@ export const ProviderDisplayNames = {
 	placid: 'Placid',
 	plain: 'Plain',
 	persona: 'Persona',
+	pexels: 'Pexels',
 	piloterr: 'Piloterr',
 	pilvio: 'Pilvio',
 	platerecognizer: 'Plate Recognizer',
@@ -2057,6 +2059,7 @@ export type AllProviders =
 	| 'placid'
 	| 'plain'
 	| 'persona'
+	| 'pexels'
 	| 'piloterr'
 	| 'pilvio'
 	| 'platerecognizer'
