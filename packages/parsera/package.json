@@ -1,0 +1,53 @@
+{
+  "name": "@corsair-dev/parsera",
+  "version": "0.1.0",
+  "description": "Parsera is an AI web scraper: this plugin extracts structured data from pages or raw content with prompts or attribute lists, manages reusable extractor and agentic scrapers, and runs them synchronously or as pollable async jobs.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "dev-source": "./index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc --build --force && tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
+  },
+  "peerDependencies": {
+    "corsair": ">=0.1.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "corsair": "workspace:*",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.9",
+    "tsup": "^8.0.1",
+    "typescript": "catalog:",
+    "zod": "^4.1.13"
+  },
+  "keywords": [
+    "corsair",
+    "parsera",
+    "plugin",
+    "web-scraping",
+    "extraction"
+  ],
+  "author": "Ambikeeshh",
+  "license": "Apache-2.0",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/corsairdev/corsair.git",
+    "directory": "packages/parsera"
+  },
+  "homepage": "https://parsera.org"
+}

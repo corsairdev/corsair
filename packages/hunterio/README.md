@@ -20,6 +20,7 @@ pnpm add @corsair-dev/hunterio
 | `apiKeys.list` | `hunterio.api.apiKeys.list` | `read` | List the API keys on the account |
 | `apiKeys.replace` | `hunterio.api.apiKeys.replace` | `write` | Replace an API key definition |
 | `apiKeys.update` | `hunterio.api.apiKeys.update` | `write` | Update an API key |
+| `briefing.get` | `hunterio.api.briefing.get` | `read` | Get what needs attention today: counts of new lead and Monitored Signals events, new opportunities this week, and the credit balance, each with its follow-up call |
 | `companies.bulkCopy` | `hunterio.api.companies.bulkCopy` | `write` | Copy companies to another company list |
 | `companies.bulkDelete` | `hunterio.api.companies.bulkDelete` | `destructive` | Delete companies in bulk permanently [DESTRUCTIVE · IRREVERSIBLE] |
 | `companies.bulkMove` | `hunterio.api.companies.bulkMove` | `write` | Move companies to another company list |
@@ -42,6 +43,7 @@ pnpm add @corsair-dev/hunterio
 | `companyLists.favorite` | `hunterio.api.companyLists.favorite` | `write` | Mark a company list as favorite |
 | `companyLists.get` | `hunterio.api.companyLists.get` | `read` | Get a company list and its companies |
 | `companyLists.list` | `hunterio.api.companyLists.list` | `read` | List the company lists on the account |
+| `companyLists.listCompanies` | `hunterio.api.companyLists.listCompanies` | `read` | List the companies in a static company list, most recently added first |
 | `companyLists.removeCompany` | `hunterio.api.companyLists.removeCompany` | `destructive` | Remove a company from a company list [DESTRUCTIVE] |
 | `companyLists.replace` | `hunterio.api.companyLists.replace` | `write` | Replace a company list |
 | `companyLists.unfavorite` | `hunterio.api.companyLists.unfavorite` | `write` | Remove the favorite mark from a company list |
@@ -71,8 +73,10 @@ pnpm add @corsair-dev/hunterio
 | `domainCount.get` | `hunterio.api.domainCount.get` | `read` | Count the email addresses available for a domain |
 | `domainFinder.find` | `hunterio.api.domainFinder.find` | `read` | Find the domain of a company by name |
 | `domainFinder.findPost` | `hunterio.api.domainFinder.findPost` | `read` | Find the domain of a company by name (POST form) |
-| `domainSearch.search` | `hunterio.api.domainSearch.search` | `read` | List the email addresses found for a domain |
-| `domainSearch.searchPost` | `hunterio.api.domainSearch.searchPost` | `read` | List the email addresses found for a domain (POST form) |
+| `domainSearch.found` | `hunterio.api.domainSearch.found` | `read` | Search the email addresses Hunter found on the web for a domain, without generated guesses. Charges 1 credit per 10 emails returned |
+| `domainSearch.foundPost` | `hunterio.api.domainSearch.foundPost` | `read` | Search found email addresses for a domain with body filters, including location. Charges 1 credit per 10 emails returned |
+| `domainSearch.search` | `hunterio.api.domainSearch.search` | `read` | List the email addresses found for a domain. Charges 1 credit per 10 emails returned |
+| `domainSearch.searchPost` | `hunterio.api.domainSearch.searchPost` | `read` | List the email addresses found for a domain (POST form). Charges 1 credit per 10 emails returned |
 | `domainsSuggestion.get` | `hunterio.api.domainsSuggestion.get` | `read` | Suggest similar company domains |
 | `emailAccounts.capacities` | `hunterio.api.emailAccounts.capacities` | `read` | Get the sending capacities of all email accounts |
 | `emailAccounts.get` | `hunterio.api.emailAccounts.get` | `read` | Get a connected email account |
@@ -84,15 +88,17 @@ pnpm add @corsair-dev/hunterio
 | `emailAccounts.usage` | `hunterio.api.emailAccounts.usage` | `read` | Get sending usage and limits of an email account |
 | `emailAccounts.warmupReport` | `hunterio.api.emailAccounts.warmupReport` | `read` | Get the warmup report of an email account |
 | `emailCount.get` | `hunterio.api.emailCount.get` | `read` | Count the email addresses found for a domain |
-| `emailFinder.find` | `hunterio.api.emailFinder.find` | `read` | Find the most likely email of a person |
-| `emailFinder.findFound` | `hunterio.api.emailFinder.findFound` | `read` | Check whether an email was already found for a person |
-| `emailFinder.findFoundPost` | `hunterio.api.emailFinder.findFoundPost` | `read` | Check whether an email was already found (POST form) |
+| `emailFinder.find` | `hunterio.api.emailFinder.find` | `read` | Find the most likely email of a person. Charges 1 credit when an email is found |
+| `emailFinder.findFound` | `hunterio.api.emailFinder.findFound` | `read` | Check whether an email was already found for a person. Charges 1 credit when an email is found |
+| `emailFinder.findFoundPost` | `hunterio.api.emailFinder.findFoundPost` | `read` | Check whether an email was already found (POST form). Charges 1 credit when an email is found |
 | `emailInsight.get` | `hunterio.api.emailInsight.get` | `read` | Get insight data for an email address |
-| `emailVerifier.verify` | `hunterio.api.emailVerifier.verify` | `read` | Verify the deliverability of an email address |
-| `enrichment.combined` | `hunterio.api.enrichment.combined` | `read` | Enrich a person and their company together |
-| `enrichment.company` | `hunterio.api.enrichment.company` | `read` | Enrich a company profile from a domain or name |
-| `enrichment.person` | `hunterio.api.enrichment.person` | `read` | Enrich a person profile from an email or name |
+| `emailVerifier.verify` | `hunterio.api.emailVerifier.verify` | `read` | Verify the deliverability of an email address. Charges 0.5 credit per verification |
+| `enrichment.combined` | `hunterio.api.enrichment.combined` | `read` | Enrich a person and their company together. Charges 0.2 credit when data is found |
+| `enrichment.company` | `hunterio.api.enrichment.company` | `read` | Enrich a company profile from a domain or name. Charges 0.2 credit when data is found |
+| `enrichment.person` | `hunterio.api.enrichment.person` | `read` | Enrich a person profile from an email or name. Charges 0.2 credit when data is found |
 | `feedback.create` | `hunterio.api.feedback.create` | `write` | Send product feedback to Hunter |
+| `leadTags.attach` | `hunterio.api.leadTags.attach` | `write` | Attach a tag to a lead |
+| `leadTags.detach` | `hunterio.api.leadTags.detach` | `destructive` | Detach a tag from a lead [DESTRUCTIVE] |
 | `leads.bulkDelete` | `hunterio.api.leads.bulkDelete` | `destructive` | Delete leads in bulk permanently [DESTRUCTIVE · IRREVERSIBLE] |
 | `leads.bulkExist` | `hunterio.api.leads.bulkExist` | `read` | Check which of the given emails exist as leads |
 | `leads.bulkMove` | `hunterio.api.leads.bulkMove` | `write` | Move leads to another leads list |
@@ -122,19 +128,20 @@ pnpm add @corsair-dev/hunterio
 | `leadsLists.replace` | `hunterio.api.leadsLists.replace` | `write` | Replace a leads list |
 | `leadsLists.unfavorite` | `hunterio.api.leadsLists.unfavorite` | `write` | Remove the favorite mark from a leads list |
 | `leadsLists.update` | `hunterio.api.leadsLists.update` | `write` | Update a leads list |
-| `leadTags.attach` | `hunterio.api.leadTags.attach` | `write` | Attach a tag to a lead |
-| `leadTags.detach` | `hunterio.api.leadTags.detach` | `destructive` | Detach a tag from a lead [DESTRUCTIVE] |
 | `lookalikes.list` | `hunterio.api.lookalikes.list` | `read` | Find companies similar to a seed company |
-| `messages.list` | `hunterio.api.messages.list` | `read` | List messages sent or received |
-| `messages.send` | `hunterio.api.messages.send` | `write` | Send a message from a connected email account |
 | `messageTemplates.create` | `hunterio.api.messageTemplates.create` | `write` | Create a message template |
 | `messageTemplates.delete` | `hunterio.api.messageTemplates.delete` | `destructive` | Delete a message template permanently [DESTRUCTIVE · IRREVERSIBLE] |
 | `messageTemplates.get` | `hunterio.api.messageTemplates.get` | `read` | Get a message template |
 | `messageTemplates.list` | `hunterio.api.messageTemplates.list` | `read` | List message templates |
 | `messageTemplates.replace` | `hunterio.api.messageTemplates.replace` | `write` | Replace a message template |
 | `messageTemplates.update` | `hunterio.api.messageTemplates.update` | `write` | Update a message template |
-| `multiDomainSearch.reveal` | `hunterio.api.multiDomainSearch.reveal` | `read` | Reveal the verified email addresses of a multi-domain search |
+| `messages.list` | `hunterio.api.messages.list` | `read` | List messages sent or received |
+| `messages.send` | `hunterio.api.messages.send` | `destructive` | Send a message from a connected email account. Sends a real email [DESTRUCTIVE · SENDS EMAIL] |
+| `monitoredSignals.list` | `hunterio.api.monitoredSignals.list` | `read` | List the Monitored Signals of the team: funding signals, job openings signals and company follows |
+| `multiDomainSearch.reveal` | `hunterio.api.multiDomainSearch.reveal` | `read` | Reveal the verified email addresses of a multi-domain search. Charges 1 credit per email revealed for the first time this billing period |
 | `multiDomainSearch.search` | `hunterio.api.multiDomainSearch.search` | `read` | Find email addresses across multiple domains |
+| `opportunities.list` | `hunterio.api.opportunities.list` | `read` | List the opportunities of this week: groups of people or companies similar to the leads and companies you saved |
+| `opportunities.results` | `hunterio.api.opportunities.results` | `read` | List the masked people or the companies of one opportunity; reveal emails with multiDomainSearch.reveal |
 | `sequenceFollowUps.create` | `hunterio.api.sequenceFollowUps.create` | `write` | Add a follow-up step to a sequence |
 | `sequenceFollowUps.delete` | `hunterio.api.sequenceFollowUps.delete` | `destructive` | Delete the last follow-up step permanently [DESTRUCTIVE · IRREVERSIBLE] |
 | `sequenceFollowUps.get` | `hunterio.api.sequenceFollowUps.get` | `read` | Get a follow-up step |
@@ -144,6 +151,7 @@ pnpm add @corsair-dev/hunterio
 | `sequenceRecipients.add` | `hunterio.api.sequenceRecipients.add` | `write` | Add recipients to a sequence |
 | `sequenceRecipients.list` | `hunterio.api.sequenceRecipients.list` | `read` | List the recipients of a sequence |
 | `sequenceRecipients.remove` | `hunterio.api.sequenceRecipients.remove` | `destructive` | Remove recipients from a sequence and cancel their messages [DESTRUCTIVE] |
+| `sequenceStats.get` | `hunterio.api.sequenceStats.get` | `read` | Get performance statistics for a sequence |
 | `sequences.archive` | `hunterio.api.sequences.archive` | `write` | Archive a sequence |
 | `sequences.create` | `hunterio.api.sequences.create` | `write` | Create a sequence draft |
 | `sequences.delete` | `hunterio.api.sequences.delete` | `destructive` | Delete a sequence draft permanently [DESTRUCTIVE · IRREVERSIBLE] |
@@ -152,10 +160,10 @@ pnpm add @corsair-dev/hunterio
 | `sequences.pause` | `hunterio.api.sequences.pause` | `write` | Pause an active sequence |
 | `sequences.replace` | `hunterio.api.sequences.replace` | `write` | Replace a sequence |
 | `sequences.resume` | `hunterio.api.sequences.resume` | `write` | Resume a paused sequence |
-| `sequences.start` | `hunterio.api.sequences.start` | `write` | Start a sequence |
-| `sequences.test` | `hunterio.api.sequences.test` | `write` | Send test emails for every step of a sequence |
+| `sequences.start` | `hunterio.api.sequences.start` | `destructive` | Start a sequence. Starts sending emails to the recipients [DESTRUCTIVE · SENDS EMAIL] |
+| `sequences.test` | `hunterio.api.sequences.test` | `destructive` | Send test emails for every step of a sequence. Sends a real test email [DESTRUCTIVE · SENDS EMAIL] |
 | `sequences.update` | `hunterio.api.sequences.update` | `write` | Update a sequence |
-| `sequenceStats.get` | `hunterio.api.sequenceStats.get` | `read` | Get performance statistics for a sequence |
+| `signals.list` | `hunterio.api.signals.list` | `read` | List signal events from the last 30 days (funding rounds, tech changes, new contacts, hires, job posts, contact moves) for your leads or your Monitored Signals |
 | `tags.create` | `hunterio.api.tags.create` | `write` | Create a lead tag |
 | `tags.delete` | `hunterio.api.tags.delete` | `destructive` | Delete a lead tag permanently [DESTRUCTIVE · IRREVERSIBLE] |
 | `tags.get` | `hunterio.api.tags.get` | `read` | Get a lead tag |

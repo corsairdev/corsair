@@ -1,0 +1,151 @@
+---
+title: "PandaDoc plugin"
+sidebarTitle: "Overview"
+description: "PandaDoc is a document automation and e-signature platform. This plugin creates documents from templates or PDFs, sends them for signing, tracks their status, downloads the signed PDFs, and manages templates, contacts, folders and webhook subscriptions."
+---
+
+Use **PandaDoc** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Authenticate with an API key from the PandaDoc Developer Dashboard (app.pandadoc.com/developers/); sandbox keys work the same way. The header is `Authorization: API-Key <key>`, which the plugin sets for you.
+Creating a document from a template or PDF URL is asynchronous: the create call answers immediately with `document.create_pending`, and the document reaches `document.draft` a few seconds later. Listen for the `document_state_changed` webhook (subscribe with webhooks.createSubscription, and store the subscription's shared_key) or poll documents.get.
+Document creation by file upload (multipart) and the OAuth flow are not part of this plugin; neither are the member, workspace, content-library, catalog, section, quote and notarization endpoints.
+Every operation is described in PandaDoc's API reference: https://developers.pandadoc.com/reference/about
+
+**What you get:**
+
+- 26 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/pandadoc better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/pandadoc better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/pandadoc better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/pandadoc better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { pandadoc } from '@corsair-dev/pandadoc';
+
+export const corsair = createCorsair({
+	plugins: [
+		pandadoc(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the PandaDoc API key before the first call: `pnpm corsair setup --plugin=pandadoc --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+pandadoc()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'pandadoc',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a document**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.pandadoc.api.documents.get({ id: 'RsXrKarV524iCpjci9CMGa' });
+```
+
+
+**Create a document from a template**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.pandadoc.api.documents.create({
+	template_uuid: 'ustHNnVaPCD6MzuoNBbZ8L',
+	name: 'Contract for Acme Corp',
+	recipients: [{
+		email: 'jane@example.com',
+		first_name: 'Jane',
+		last_name: 'Roe',
+		role: 'Signer',
+	}],
+});
+```
+
+
+See the full list on the [API](/plugins/pandadoc/api) page.
+
+## Webhooks
+
+This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/pandadoc/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/pandadoc/api">
+    Every `pandadoc.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/pandadoc/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

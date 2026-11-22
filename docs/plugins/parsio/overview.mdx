@@ -1,0 +1,143 @@
+---
+title: "Parsio plugin"
+sidebarTitle: "Overview"
+description: "Parsio is an AI email and document parser that turns emails, PDFs and scans into structured JSON. This plugin manages mailboxes, parses HTML, text and uploaded files synchronously or asynchronously, reads parsed documents and collected data, and manages the webhooks that deliver parsed documents (HMAC-verified)."
+---
+
+Use **Parsio** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Authenticate with the API key from your Parsio account; the plugin sends it in the `X-API-Key` header. Mailbox ids look like 6xxxxxxxxxxxxxxx and are visible in the app URL when a mailbox is open.
+Synchronous imports (documents.createSync, documents.uploadSync) return the parsed document in the same response whenever parsing finishes within the timeout; asynchronous imports (documents.createAsync, documents.uploadAsync) return parsing_in_progress true and are followed with documents.get, which the plugin declares as a job so the agent can wait on it. doc-sync is supported only by the template-based and GPT parsers; uploads work with all parser types (sync: one file up to 20MB and no ZIP; async: one file up to 50MB, ZIPs included). Parsing consumes credits.
+Webhook deliveries carry the parsed document and are signed in the parsio-signature header (base64 HMAC-SHA256 of the raw payload with the signing secret the Parsio app shows per webhook). Store that secret with keys.set_webhook_signature so deliveries can be verified.
+Template management (list, get, enable, disable, clone, delete) is documented by Parsio but not part of this plugin; the docs publish its parameters but not the response shapes.
+Every operation is described in the official docs: https://help.parsio.io/public-api/parsio-public-api
+
+**What you get:**
+
+- 21 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/parsio better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/parsio better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/parsio better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/parsio better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { parsio } from '@corsair-dev/parsio';
+
+export const corsair = createCorsair({
+	plugins: [
+		parsio(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Parsio API key before the first call: `pnpm corsair setup --plugin=parsio --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+parsio()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'parsio',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a parsed document**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.parsio.api.documents.get({ documentId: '65d1c0e4b8f2b3c4d5e6f7a8' });
+```
+
+
+**Parse text content and wait for the result**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.parsio.api.documents.createSync({ mailboxId: '65d1c0e4b8f2b3c4d5e6f7a8', text: 'Invoice number INV-42, total 120.00 EUR' });
+```
+
+
+See the full list on the [API](/plugins/parsio/api) page.
+
+## Webhooks
+
+This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/parsio/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/parsio/api">
+    Every `parsio.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/parsio/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,0 +1,1819 @@
+---
+title: "Pilvio API reference"
+sidebarTitle: "API"
+description: "API reference for the Pilvio plugin in Corsair: every `pilvio.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getUser
+
+`account.getUser`
+
+Read the authenticated user and profile
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.account.getUser({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | User id |
+| `name` | `string \| null` | No | Login name |
+| `last_activity` | `string \| null` | No | Last activity timestamp |
+| `profile` | `object \| null` | No | Profile details |
+| `state` | `any \| null` | No | User state |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  id?: number | null,
+  user_id?: number | null,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  phone_number?: string | null,
+  personal_id_number?: string | null,
+  avatar?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sshKeys.create
+
+`account.sshKeys.create`
+
+Add an SSH public key
+
+**Risk:** `write`
+
+```ts
+await corsair.pilvio.api.account.sshKeys.create({ name: "laptop-mbp", publicKey: "ssh-ed25519 AAAA…" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Key name |
+| `publicKey` | `string` | Yes | OpenSSH public key material |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | Key UUID |
+| `name` | `string \| null` | No | Key name |
+| `public_key` | `string \| null` | No | OpenSSH public key material |
+| `user_id` | `number \| null` | No | Owner user id |
+| `created_at` | `string \| null` | No | Creation timestamp |
+
+
+
+---
+
+### sshKeys.delete
+
+`account.sshKeys.delete`
+
+Delete an SSH key
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pilvio.api.account.sshKeys.delete({ uuid: "3f8f4c5a-…" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | UUID of the key to delete |
+
+
+
+**Output:** `any`
+
+
+---
+
+### sshKeys.list
+
+`account.sshKeys.list`
+
+List the SSH public keys of the user
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.account.sshKeys.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  public_key?: string | null,
+  user_id?: number | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### sshKeys.rename
+
+`account.sshKeys.rename`
+
+Rename an SSH key
+
+**Risk:** `write`
+
+```ts
+await corsair.pilvio.api.account.sshKeys.rename({ uuid: "3f8f4c5a-…", name: "personal-laptop" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | UUID of the key to rename |
+| `name` | `string` | Yes | New key name |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | Key UUID |
+| `name` | `string \| null` | No | Key name |
+| `public_key` | `string \| null` | No | OpenSSH public key material |
+| `user_id` | `number \| null` | No | Owner user id |
+| `created_at` | `string \| null` | No | Creation timestamp |
+
+
+
+---
+
+### tokens.delete
+
+`account.tokens.delete`
+
+Delete an API token
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pilvio.api.account.tokens.delete({ tokenId: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tokenId` | `number` | Yes | Id of the token to delete |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### tokens.list
+
+`account.tokens.list`
+
+List the API tokens of the user
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.account.tokens.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number | null,
+  tokenEnding?: string | null,
+  description?: string | null,
+  restricted?: boolean | null,
+  billing_account_id?: number | null,
+  user_id?: number | null,
+  consumer_id?: string | null,
+  kong_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### tokens.update
+
+`account.tokens.update`
+
+Update a token description or restriction
+
+**Risk:** `write`
+
+```ts
+await corsair.pilvio.api.account.tokens.update({ tokenId: 3, description: "rotated" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tokenId` | `number` | Yes | Id of the token to update |
+| `description` | `string` | No | New description |
+| `restricted` | `true` | No | true restricts the token to billingAccountId; false is not supported |
+| `billingAccountId` | `number` | No | Billing account for a restricted token |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | Token id |
+| `tokenEnding` | `string \| null` | No | Last four characters of the token, to tell tokens apart |
+| `description` | `string \| null` | No | Token description |
+| `restricted` | `boolean \| null` | No | Whether the token is bound to one billing account |
+| `billing_account_id` | `number \| null` | No | Billing account a restricted token is bound to |
+| `user_id` | `number \| null` | No | Owner user id |
+| `consumer_id` | `string \| null` | No | Gateway consumer id |
+| `kong_id` | `string \| null` | No | Gateway token id |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+
+
+---
+
+### updateProfile
+
+`account.updateProfile`
+
+Update the user profile fields
+
+**Risk:** `write`
+
+```ts
+await corsair.pilvio.api.account.updateProfile({ firstName: "Cloudia", phoneNumber: "+372…" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `firstName` | `string` | No | New first name |
+| `lastName` | `string` | No | New last name |
+| `phoneNumber` | `string` | No | New phone number |
+| `personalIdNumber` | `string` | No | New personal id number |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | User id |
+| `name` | `string \| null` | No | Login name |
+| `last_activity` | `string \| null` | No | Last activity timestamp |
+| `profile` | `object \| null` | No | Profile details |
+| `state` | `any \| null` | No | User state |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  id?: number | null,
+  user_id?: number | null,
+  email?: string | null,
+  first_name?: string | null,
+  last_name?: string | null,
+  phone_number?: string | null,
+  personal_id_number?: string | null,
+  avatar?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Config
+
+### getPricingPolicy
+
+`config.getPricingPolicy`
+
+Read the pricing policy lines
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.config.getPricingPolicy({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `policy` | `object[]` | Yes | Pricing lines per resource type |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+{
+  policyId?: number | null,
+  resourceType?: string | null,
+  price?: number | null,
+  serviceNameUserFriendly?: string | null,
+  numCpus?: number | null,
+  megsRam?: number | null,
+  serviceNameInUptime?: any | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAppCatalogImages
+
+`config.listAppCatalogImages`
+
+List the app catalog images
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.config.listAppCatalogImages({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  os_name?: string | null,
+  os_version?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listBootImages
+
+`config.listBootImages`
+
+List bootable media images
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.config.listBootImages({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listLocations
+
+`config.listLocations`
+
+List the Pilvio data centre locations
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.config.listLocations({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  slug?: string | null,
+  display_name?: string | null,
+  description?: string | null,
+  country_code?: string | null,
+  is_default?: boolean | null,
+  is_preferred?: boolean | null,
+  order_nr?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listPlainOsImages
+
+`config.listPlainOsImages`
+
+List the plain OS images
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.config.listPlainOsImages({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  os_name?: string | null,
+  os_version?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listResourcePools
+
+`config.listResourcePools`
+
+List VM server classes (resource pools)
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.config.listResourcePools({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listVmImages
+
+`config.listVmImages`
+
+List the VM image catalog
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.config.listVmImages({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  os_name?: string | null,
+  os_version?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Network
+
+### firewalls.create
+
+`network.firewalls.create`
+
+Create a firewall with rules
+
+**Risk:** `write`
+
+```ts
+await corsair.pilvio.api.network.firewalls.create({ displayName: "Database Firewall", rules: [{ protocol: "tcp", direction: "inbound", portStart: 3306, portEnd: 3306, endpointSpecType: "ip_prefixes", endpointSpec: ["10.0.0.0/24"] }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `displayName` | `string` | Yes | Firewall name |
+| `billingAccountId` | `number` | No | Billing account |
+| `rules` | `object[]` | Yes | The firewall rules |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+Rules take protocol tcp/udp/icmp, direction inbound/outbound, a port range and endpointSpecType ip_prefixes (with CIDR list) or any.
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  protocol: tcp | udp | icmp,
+  direction: inbound | outbound,
+  portStart?: number,
+  portEnd?: number,
+  endpointSpecType: ip_prefixes | any,
+  endpointSpec?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | Firewall UUID |
+| `display_name` | `string \| null` | No | Firewall name |
+| `billing_account_id` | `number \| null` | No | Billing account id |
+| `rules` | `object[] \| null` | No | Firewall rules |
+| `resources_assigned` | `any[] \| null` | No | Resources the firewall is assigned to |
+| `user_id` | `number \| null` | No | Owner user id |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `deleted_at` | `string \| null` | No | Deletion timestamp |
+
+<AccordionGroup>
+<Accordion title="rules full type">
+
+```ts
+{
+  uuid?: string | null,
+  protocol?: tcp | udp | icmp | null,
+  direction?: inbound | outbound | null,
+  port_start?: number | null,
+  port_end?: number | null,
+  endpoint_spec_type?: ip_prefixes | any | null,
+  endpoint_spec?: string[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### firewalls.delete
+
+`network.firewalls.delete`
+
+Delete a firewall
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pilvio.api.network.firewalls.delete({ uuid: "2a874f44-310f-4df8-9340-1dc274c2bd51" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | UUID of the firewall to delete |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+
+
+**Output:** `any`
+
+
+---
+
+### firewalls.list
+
+`network.firewalls.list`
+
+List the firewalls and their rules
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.network.firewalls.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  uuid?: string | null,
+  display_name?: string | null,
+  billing_account_id?: number | null,
+  rules?: {
+    uuid?: string | null,
+    protocol?: tcp | udp | icmp | null,
+    direction?: inbound | outbound | null,
+    port_start?: number | null,
+    port_end?: number | null,
+    endpoint_spec_type?: ip_prefixes | any | null,
+    endpoint_spec?: string[] | null
+  }[] | null,
+  resources_assigned?: any[] | null,
+  user_id?: number | null,
+  created_at?: string | null,
+  deleted_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### networks.create
+
+`network.networks.create`
+
+Create a private network
+
+**Risk:** `write`
+
+```ts
+await corsair.pilvio.api.network.networks.create({ name: "network3" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Descriptive network name, sent as the name query parameter |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | Network UUID |
+| `name` | `string \| null` | No | Network name |
+| `type` | `string \| null` | No | private or default |
+| `vlan_id` | `number \| null` | No | VLAN id |
+| `subnet` | `string \| null` | No | IPv4 subnet in CIDR notation |
+| `subnet_ipv6` | `string \| null` | No | IPv6 subnet in CIDR notation |
+| `is_default` | `boolean \| null` | No | Whether this is the user default network |
+| `vm_uuids` | `string[] \| null` | No | UUIDs of VMs on the network |
+| `resources_count` | `number \| null` | No | Resources on the network |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+
+
+---
+
+### networks.delete
+
+`network.networks.delete`
+
+Delete an empty, non-default network
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pilvio.api.network.networks.delete({ uuid: "2e8cd389-27fe-45ce-a63d-d536068659e5" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | UUID of the network; it must be empty and not the default |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+Only works when the network holds no resources and is not the user default.
+
+
+
+**Output:** `any`
+
+
+---
+
+### networks.get
+
+`network.networks.get`
+
+Read one network by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.network.networks.get({ uuid: "2e8cd389-27fe-45ce-a63d-d536068659e5" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | UUID of the network |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | Network UUID |
+| `name` | `string \| null` | No | Network name |
+| `type` | `string \| null` | No | private or default |
+| `vlan_id` | `number \| null` | No | VLAN id |
+| `subnet` | `string \| null` | No | IPv4 subnet in CIDR notation |
+| `subnet_ipv6` | `string \| null` | No | IPv6 subnet in CIDR notation |
+| `is_default` | `boolean \| null` | No | Whether this is the user default network |
+| `vm_uuids` | `string[] \| null` | No | UUIDs of VMs on the network |
+| `resources_count` | `number \| null` | No | Resources on the network |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+
+
+---
+
+### networks.list
+
+`network.networks.list`
+
+List the private networks
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.network.networks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  type?: string | null,
+  vlan_id?: number | null,
+  subnet?: string | null,
+  subnet_ipv6?: string | null,
+  is_default?: boolean | null,
+  vm_uuids?: string[] | null,
+  resources_count?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Storage
+
+### buckets.create
+
+`storage.buckets.create`
+
+Create an S3 bucket with a globally unique name
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pilvio.api.storage.buckets.create({ name: "pang1", billingAccountId: 129093 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Bucket name following S3 naming rules; globally unique |
+| `billingAccountId` | `number` | No | Billing account; required for global API tokens |
+
+Bucket names follow S3 naming rules and are globally unique across all Pilvio users.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | Bucket name |
+| `size_bytes` | `number \| null` | No | Stored bytes |
+| `num_objects` | `number \| null` | No | Object count |
+| `billing_account_id` | `number \| null` | No | Billing account id |
+| `is_suspended` | `boolean \| null` | No | Whether the bucket is suspended |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `modified_at` | `string \| null` | No | Last modification timestamp |
+
+
+
+---
+
+### buckets.delete
+
+`storage.buckets.delete`
+
+Delete a bucket
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pilvio.api.storage.buckets.delete({ name: "pang1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The bucket name |
+
+
+
+**Output:** `any`
+
+
+---
+
+### buckets.get
+
+`storage.buckets.get`
+
+Read one bucket by name
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.storage.buckets.get({ name: "pang1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The bucket name |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | Bucket name |
+| `size_bytes` | `number \| null` | No | Stored bytes |
+| `num_objects` | `number \| null` | No | Object count |
+| `billing_account_id` | `number \| null` | No | Billing account id |
+| `is_suspended` | `boolean \| null` | No | Whether the bucket is suspended |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `modified_at` | `string \| null` | No | Last modification timestamp |
+
+
+
+---
+
+### buckets.list
+
+`storage.buckets.list`
+
+List the object storage buckets
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.storage.buckets.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string | null,
+  size_bytes?: number | null,
+  num_objects?: number | null,
+  billing_account_id?: number | null,
+  is_suspended?: boolean | null,
+  created_at?: string | null,
+  modified_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### buckets.update
+
+`storage.buckets.update`
+
+Move a bucket to another billing account
+
+**Risk:** `write`
+
+```ts
+await corsair.pilvio.api.storage.buckets.update({ name: "pang1", billingAccountId: 129072 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The bucket name |
+| `billingAccountId` | `number` | Yes | Billing account to move it to |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | Bucket name |
+| `size_bytes` | `number \| null` | No | Stored bytes |
+| `num_objects` | `number \| null` | No | Object count |
+| `billing_account_id` | `number \| null` | No | Billing account id |
+| `is_suspended` | `boolean \| null` | No | Whether the bucket is suspended |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `modified_at` | `string \| null` | No | Last modification timestamp |
+
+
+
+---
+
+### disks.create
+
+`storage.disks.create`
+
+Create a disk from empty, an OS image, a disk or a snapshot
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pilvio.api.storage.disks.create({ sizeGb: 50, sourceImageType: "EMPTY", displayName: "DB data" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sizeGb` | `number` | No | Size in GiB; required when not apparent from the source image |
+| `sourceImageType` | `EMPTY \| OS_BASE \| DISK \| SNAPSHOT` | No | What the disk starts from (default EMPTY) |
+| `sourceImage` | `string` | No | Image reference: e.g. ubuntu_20.04 for OS_BASE or a UUID |
+| `displayName` | `string` | No | Display name |
+| `billingAccountId` | `number` | No | Billing account |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+source_image_type EMPTY needs no source; OS_BASE takes e.g. ubuntu_20.04, DISK and SNAPSHOT take a UUID. sizeGb is required when the size is not apparent from the source image.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | Disk UUID |
+| `id` | `number \| null` | No | Disk numeric id |
+| `status` | `string \| null` | No | Active, … |
+| `display_name` | `string \| null` | No | Display name |
+| `size_gb` | `number \| null` | No | Size in GiB |
+| `source_image_type` | `string \| null` | No | EMPTY, OS_BASE, DISK or SNAPSHOT |
+| `billing_account_id` | `number \| null` | No | Billing account id |
+| `storage_pool_uuid` | `string \| null` | No | Storage pool |
+| `snapshots` | `object[] \| null` | No | Disk snapshots |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+| `user_id` | `number \| null` | No | Owner user id |
+
+<AccordionGroup>
+<Accordion title="snapshots full type">
+
+```ts
+{
+  uuid?: string | null,
+  size_gb?: number | null,
+  display_name?: string | null,
+  created_at?: string | null,
+  disk_uuid?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### disks.delete
+
+`storage.disks.delete`
+
+Delete a disk
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pilvio.api.storage.disks.delete({ uuid: "05a61876-86f3-4b05-b0ec-53ee6fa03ced" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | UUID of the disk to delete |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+
+
+**Output:** `any`
+
+
+---
+
+### disks.get
+
+`storage.disks.get`
+
+Read one disk by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.storage.disks.get({ uuid: "05a61876-86f3-4b05-b0ec-53ee6fa03ced" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | UUID of the disk |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | Disk UUID |
+| `id` | `number \| null` | No | Disk numeric id |
+| `status` | `string \| null` | No | Active, … |
+| `display_name` | `string \| null` | No | Display name |
+| `size_gb` | `number \| null` | No | Size in GiB |
+| `source_image_type` | `string \| null` | No | EMPTY, OS_BASE, DISK or SNAPSHOT |
+| `billing_account_id` | `number \| null` | No | Billing account id |
+| `storage_pool_uuid` | `string \| null` | No | Storage pool |
+| `snapshots` | `object[] \| null` | No | Disk snapshots |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+| `user_id` | `number \| null` | No | Owner user id |
+
+<AccordionGroup>
+<Accordion title="snapshots full type">
+
+```ts
+{
+  uuid?: string | null,
+  size_gb?: number | null,
+  display_name?: string | null,
+  created_at?: string | null,
+  disk_uuid?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### disks.list
+
+`storage.disks.list`
+
+List the block storage disks
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.storage.disks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  uuid?: string | null,
+  id?: number | null,
+  status?: string | null,
+  display_name?: string | null,
+  size_gb?: number | null,
+  source_image_type?: string | null,
+  billing_account_id?: number | null,
+  storage_pool_uuid?: string | null,
+  snapshots?: {
+    uuid?: string | null,
+    size_gb?: number | null,
+    display_name?: string | null,
+    created_at?: string | null,
+    disk_uuid?: string | null
+  }[] | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  user_id?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### disks.update
+
+`storage.disks.update`
+
+Update disk metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.pilvio.api.storage.disks.update({ uuid: "05a61876-…", displayName: "Web server backup" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | UUID of the disk to update |
+| `displayName` | `string` | No | New display name |
+| `billingAccountId` | `number` | No | Billing account |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | Disk UUID |
+| `id` | `number \| null` | No | Disk numeric id |
+| `status` | `string \| null` | No | Active, … |
+| `display_name` | `string \| null` | No | Display name |
+| `size_gb` | `number \| null` | No | Size in GiB |
+| `source_image_type` | `string \| null` | No | EMPTY, OS_BASE, DISK or SNAPSHOT |
+| `billing_account_id` | `number \| null` | No | Billing account id |
+| `storage_pool_uuid` | `string \| null` | No | Storage pool |
+| `snapshots` | `object[] \| null` | No | Disk snapshots |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+| `user_id` | `number \| null` | No | Owner user id |
+
+<AccordionGroup>
+<Accordion title="snapshots full type">
+
+```ts
+{
+  uuid?: string | null,
+  size_gb?: number | null,
+  display_name?: string | null,
+  created_at?: string | null,
+  disk_uuid?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Vm
+
+### create
+
+`vm.create`
+
+Create a virtual machine from an image or source
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pilvio.api.vm.create({ name: "Ubuntu-22-04", osName: "ubuntu", osVersion: "22.04-lts", disks: 20, vcpu: 2, ram: 2048 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | VM name |
+| `osName` | `string` | Yes | OS name from the image catalog, or _custom for an empty disk |
+| `osVersion` | `string` | Yes | OS version from the image catalog, or _ for an empty disk |
+| `disks` | `number` | No | Boot disk size in GiB |
+| `vcpu` | `number` | No | Virtual CPUs |
+| `ram` | `number` | No | RAM in MiB |
+| `designatedPoolUuid` | `string` | No | Server class (resource pool) to host the VM on |
+| `username` | `string` | No | Login username |
+| `password` | `string` | No | Login password |
+| `billingAccountId` | `number` | No | Billing account; optional for account-restricted tokens |
+| `networkUuid` | `string` | No | Private network; the default network when omitted |
+| `reservePublicIp` | `boolean` | No | Set false to create the VM without a public IPv4 |
+| `cloudInit` | `string` | No | Cloud-init user data as a YAML or JSON object |
+| `sourceUuid` | `string` | No | VM UUID to create the VM from (copy of a backup or snapshot) |
+| `sourceReplica` | `string` | No | Snapshot or backup UUID used with sourceUuid |
+| `diskUuid` | `string` | No | Existing unattached disk to use as the boot disk |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+osName/osVersion come from config.listVmImages; use osName "_custom" and osVersion "_" for an empty disk booted from an ISO. cloudInit takes a YAML or JSON object as a string and overrides username/password.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | VM UUID |
+| `id` | `number \| null` | No | VM numeric id |
+| `name` | `string \| null` | No | VM name |
+| `hostname` | `string \| null` | No | Hostname |
+| `description` | `string \| null` | No | Description |
+| `status` | `string \| null` | No | running, stopped, … |
+| `os_name` | `string \| null` | No | OS name, e.g. ubuntu |
+| `os_version` | `string \| null` | No | OS version |
+| `vcpu` | `number \| null` | No | Virtual CPUs |
+| `memory` | `number \| null` | No | RAM in MiB |
+| `mac` | `string \| null` | No | MAC address |
+| `private_ipv4` | `string \| null` | No | Private IPv4 |
+| `public_ipv6` | `string \| null` | No | Public IPv6 |
+| `username` | `string \| null` | No | Login username |
+| `backup` | `boolean \| null` | No | Whether auto backup is on |
+| `billing_account` | `number \| null` | No | Billing account id |
+| `storage` | `object[] \| null` | No | Attached disks |
+| `tags` | `any \| null` | No | Tags |
+| `user_id` | `number \| null` | No | Owner user id |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+<AccordionGroup>
+<Accordion title="storage full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  pool?: string | null,
+  primary?: boolean | null,
+  replica?: any[] | null,
+  shared?: boolean | null,
+  size?: number | null,
+  type?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  user_id?: number | null,
+  id?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`vm.delete`
+
+Delete a virtual machine
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pilvio.api.vm.delete({ uuid: "fc880f74-cf03-4a7a-93da-74c506157023" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | UUID of the VM to delete |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`vm.get`
+
+Read one VM by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.vm.get({ uuid: "fc880f74-cf03-4a7a-93da-74c506157023" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | UUID of the VM |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | VM UUID |
+| `id` | `number \| null` | No | VM numeric id |
+| `name` | `string \| null` | No | VM name |
+| `hostname` | `string \| null` | No | Hostname |
+| `description` | `string \| null` | No | Description |
+| `status` | `string \| null` | No | running, stopped, … |
+| `os_name` | `string \| null` | No | OS name, e.g. ubuntu |
+| `os_version` | `string \| null` | No | OS version |
+| `vcpu` | `number \| null` | No | Virtual CPUs |
+| `memory` | `number \| null` | No | RAM in MiB |
+| `mac` | `string \| null` | No | MAC address |
+| `private_ipv4` | `string \| null` | No | Private IPv4 |
+| `public_ipv6` | `string \| null` | No | Public IPv6 |
+| `username` | `string \| null` | No | Login username |
+| `backup` | `boolean \| null` | No | Whether auto backup is on |
+| `billing_account` | `number \| null` | No | Billing account id |
+| `storage` | `object[] \| null` | No | Attached disks |
+| `tags` | `any \| null` | No | Tags |
+| `user_id` | `number \| null` | No | Owner user id |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+<AccordionGroup>
+<Accordion title="storage full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  pool?: string | null,
+  primary?: boolean | null,
+  replica?: any[] | null,
+  shared?: boolean | null,
+  size?: number | null,
+  type?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  user_id?: number | null,
+  id?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`vm.list`
+
+List the virtual machines
+
+**Risk:** `read`
+
+```ts
+await corsair.pilvio.api.vm.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  uuid?: string | null,
+  id?: number | null,
+  name?: string | null,
+  hostname?: string | null,
+  description?: string | null,
+  status?: string | null,
+  os_name?: string | null,
+  os_version?: string | null,
+  vcpu?: number | null,
+  memory?: number | null,
+  mac?: string | null,
+  private_ipv4?: string | null,
+  public_ipv6?: string | null,
+  username?: string | null,
+  backup?: boolean | null,
+  billing_account?: number | null,
+  storage?: {
+    uuid?: string | null,
+    name?: string | null,
+    pool?: string | null,
+    primary?: boolean | null,
+    replica?: any[] | null,
+    shared?: boolean | null,
+    size?: number | null,
+    type?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null,
+    user_id?: number | null,
+    id?: number | null
+  }[] | null,
+  tags?: any | null,
+  user_id?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### reinstall
+
+`vm.reinstall`
+
+Reinstall a VM with a new OS; existing data is replaced
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pilvio.api.vm.reinstall({ uuid: "fc880f74-…", osName: "ubuntu", osVersion: "22.04-lts" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | UUID of the VM to reinstall |
+| `osName` | `string` | Yes | New OS name |
+| `osVersion` | `string` | Yes | New OS version |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+Destructive: the VM is reinstalled with the new OS and existing data is replaced.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | VM UUID |
+| `id` | `number \| null` | No | VM numeric id |
+| `name` | `string \| null` | No | VM name |
+| `hostname` | `string \| null` | No | Hostname |
+| `description` | `string \| null` | No | Description |
+| `status` | `string \| null` | No | running, stopped, … |
+| `os_name` | `string \| null` | No | OS name, e.g. ubuntu |
+| `os_version` | `string \| null` | No | OS version |
+| `vcpu` | `number \| null` | No | Virtual CPUs |
+| `memory` | `number \| null` | No | RAM in MiB |
+| `mac` | `string \| null` | No | MAC address |
+| `private_ipv4` | `string \| null` | No | Private IPv4 |
+| `public_ipv6` | `string \| null` | No | Public IPv6 |
+| `username` | `string \| null` | No | Login username |
+| `backup` | `boolean \| null` | No | Whether auto backup is on |
+| `billing_account` | `number \| null` | No | Billing account id |
+| `storage` | `object[] \| null` | No | Attached disks |
+| `tags` | `any \| null` | No | Tags |
+| `user_id` | `number \| null` | No | Owner user id |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+<AccordionGroup>
+<Accordion title="storage full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  pool?: string | null,
+  primary?: boolean | null,
+  replica?: any[] | null,
+  shared?: boolean | null,
+  size?: number | null,
+  type?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  user_id?: number | null,
+  id?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`vm.start`
+
+Start a stopped VM; billing for it resumes
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pilvio.api.vm.start({ uuid: "fc880f74-cf03-4a7a-93da-74c506157023" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | UUID of the VM |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | VM UUID |
+| `id` | `number \| null` | No | VM numeric id |
+| `name` | `string \| null` | No | VM name |
+| `hostname` | `string \| null` | No | Hostname |
+| `description` | `string \| null` | No | Description |
+| `status` | `string \| null` | No | running, stopped, … |
+| `os_name` | `string \| null` | No | OS name, e.g. ubuntu |
+| `os_version` | `string \| null` | No | OS version |
+| `vcpu` | `number \| null` | No | Virtual CPUs |
+| `memory` | `number \| null` | No | RAM in MiB |
+| `mac` | `string \| null` | No | MAC address |
+| `private_ipv4` | `string \| null` | No | Private IPv4 |
+| `public_ipv6` | `string \| null` | No | Public IPv6 |
+| `username` | `string \| null` | No | Login username |
+| `backup` | `boolean \| null` | No | Whether auto backup is on |
+| `billing_account` | `number \| null` | No | Billing account id |
+| `storage` | `object[] \| null` | No | Attached disks |
+| `tags` | `any \| null` | No | Tags |
+| `user_id` | `number \| null` | No | Owner user id |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+<AccordionGroup>
+<Accordion title="storage full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  pool?: string | null,
+  primary?: boolean | null,
+  replica?: any[] | null,
+  shared?: boolean | null,
+  size?: number | null,
+  type?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  user_id?: number | null,
+  id?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stop
+
+`vm.stop`
+
+Stop a running VM
+
+**Risk:** `write`
+
+```ts
+await corsair.pilvio.api.vm.stop({ uuid: "fc880f74-cf03-4a7a-93da-74c506157023" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | UUID of the VM |
+| `location` | `string` | No | Location slug, e.g. tll01; the default location when unset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string \| null` | No | VM UUID |
+| `id` | `number \| null` | No | VM numeric id |
+| `name` | `string \| null` | No | VM name |
+| `hostname` | `string \| null` | No | Hostname |
+| `description` | `string \| null` | No | Description |
+| `status` | `string \| null` | No | running, stopped, … |
+| `os_name` | `string \| null` | No | OS name, e.g. ubuntu |
+| `os_version` | `string \| null` | No | OS version |
+| `vcpu` | `number \| null` | No | Virtual CPUs |
+| `memory` | `number \| null` | No | RAM in MiB |
+| `mac` | `string \| null` | No | MAC address |
+| `private_ipv4` | `string \| null` | No | Private IPv4 |
+| `public_ipv6` | `string \| null` | No | Public IPv6 |
+| `username` | `string \| null` | No | Login username |
+| `backup` | `boolean \| null` | No | Whether auto backup is on |
+| `billing_account` | `number \| null` | No | Billing account id |
+| `storage` | `object[] \| null` | No | Attached disks |
+| `tags` | `any \| null` | No | Tags |
+| `user_id` | `number \| null` | No | Owner user id |
+| `created_at` | `string \| null` | No | Creation timestamp |
+| `updated_at` | `string \| null` | No | Last update timestamp |
+
+<AccordionGroup>
+<Accordion title="storage full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  pool?: string | null,
+  primary?: boolean | null,
+  replica?: any[] | null,
+  shared?: boolean | null,
+  size?: number | null,
+  type?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null,
+  user_id?: number | null,
+  id?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
