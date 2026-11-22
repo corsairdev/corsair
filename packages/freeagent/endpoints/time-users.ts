@@ -147,9 +147,12 @@ function build() {
 			query: PageQuery.extend({ user: z.string().url().optional() }).optional(),
 		})
 		.strict();
-	const PayrollProfilesOutput = z
+	const PayrollProfilesData = z
 		.object({ profiles: z.array(PayrollProfile) })
 		.passthrough();
+	const PayrollProfilesOutput = PayrollProfilesData.extend({
+		pagination: Pagination,
+	}).passthrough();
 
 	const User = z
 		.object({
@@ -398,6 +401,11 @@ function build() {
 			method: 'GET',
 			path: (input) => `/v2/payroll_profiles/${encodeURIComponent(input.year)}`,
 			query: (input) => input.query ?? {},
+			// The input takes page/per_page, so the result carries the Link and X-Total-Count headers.
+			paginated: {
+				data: PayrollProfilesData,
+				combine: (data, pagination) => ({ ...data, pagination }),
+			},
 		}),
 	};
 	const Users = {

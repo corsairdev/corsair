@@ -362,7 +362,11 @@ const InvoiceEmailAttachmentSchema = z
 			.string()
 			.min(1)
 			.max(6_990_508)
-			.regex(/^[A-Za-z0-9+/]*={0,2}$/),
+			.regex(/^[A-Za-z0-9+/]*={0,2}$/)
+			// Base64 comes in complete 4-character groups ("YQ=" is cut short); a length check avoids a backtracking regex on multi-MB files.
+			.refine((value) => value.length % 4 === 0, {
+				message: 'Base64 data must be complete 4-character groups',
+			}),
 		file_name: z.string().min(1),
 	})
 	.strict()

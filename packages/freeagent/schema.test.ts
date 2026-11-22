@@ -288,6 +288,21 @@ describe('FreeAgent schemas', () => {
 				})),
 			}).success,
 		).toBe(false);
+		for (const [data, valid] of [
+			['YQ==', true],
+			['YQ=', false],
+		] as const) {
+			expect(
+				BankingEndpointSchemas[
+					'bankTransactionExplanations.createAttachments'
+				].input.safeParse({
+					id: '1',
+					attachments: [
+						{ data, file_name: 'receipt.png', content_type: 'image/png' },
+					],
+				}).success,
+			).toBe(valid);
+		}
 	});
 
 	it('validates accounting, capital asset, landlord property, and stock contracts', () => {

@@ -258,7 +258,9 @@ apiExamples:
                                                  "explanation":  {
                                                                      "bank_account":  "https://api.freeagent.com/v2/bank_accounts/1",
                                                                      "dated_on":  "2026-10-01",
-                                                                     "gross_value":  "-5.0"
+                                                                     "gross_value":  "-5.0",
+                                                                     "category":  "https://api.freeagent.com/v2/categories/285",
+                                                                     "description":  "Train ticket"
                                                                  }
                                              },
       "bankTransactionExplanations.update":  {
@@ -349,8 +351,7 @@ apiExamples:
       "financialReports.profitAndLoss":  {
                                              "query":  {
                                                            "from_date":  "2026-01-01",
-                                                           "to_date":  "2026-12-31",
-                                                           "accounting_period":  "2026/27"
+                                                           "to_date":  "2026-12-31"
                                                        }
                                          },
       "financialReports.trialBalance":  {
@@ -720,14 +721,14 @@ apiExamples:
                                                         "category":  "https://api.freeagent.com/v2/categories/285",
                                                         "dated_on":  "2026-10-01",
                                                         "description":  "First",
-                                                        "gross_value":  "10.0"
+                                                        "gross_value":  "-10.0"
                                                     },
                                                     {
                                                         "user":  "https://api.freeagent.com/v2/users/1",
                                                         "category":  "https://api.freeagent.com/v2/categories/285",
                                                         "dated_on":  "2026-10-01",
                                                         "description":  "Second",
-                                                        "gross_value":  "20.0"
+                                                        "gross_value":  "-20.0"
                                                     }
                                                 ]
                                },
@@ -926,11 +927,11 @@ apiExamples:
                       },
       "payroll.markPaymentAsPaid":  {
                                         "year":  "2026",
-                                        "payment_date":  "2026-05-22"
+                                        "payment_date":  "2025-05-22"
                                     },
       "payroll.markPaymentAsUnpaid":  {
                                           "year":  "2026",
-                                          "payment_date":  "2026-05-22"
+                                          "payment_date":  "2025-05-22"
                                       },
       "payrollProfiles.list":  {
                                    "year":  "2026",

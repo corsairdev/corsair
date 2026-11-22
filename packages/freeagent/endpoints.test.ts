@@ -3299,6 +3299,7 @@ const wireCases: readonly WireCase[] = [
 					total_pay_in_previous_employment: '1000.0',
 				},
 			],
+			pagination,
 		},
 	},
 	{

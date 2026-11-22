@@ -64,11 +64,13 @@ function build() {
 			link: z.string().url().optional(),
 		})
 		.passthrough();
+	// Documented profile fields; method-specific ones appear only for that method.
 	const DepreciationProfile = z
 		.object({
-			depreciation_method: z.string().optional(),
-			depreciation_rate: Decimal.optional(),
-			depreciation_frequency: z.string().optional(),
+			method: z.string().optional(),
+			frequency: z.string().optional(),
+			asset_life_years: z.number().int().nullable().optional(),
+			annual_depreciation_percentage: Decimal.nullable().optional(),
 		})
 		.passthrough();
 	const CapitalAsset = z
