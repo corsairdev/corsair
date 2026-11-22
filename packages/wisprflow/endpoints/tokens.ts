@@ -20,7 +20,8 @@ export const generate: WisprFlowEndpoints['tokensGenerate'] = async (
 	await logEventFromContext(
 		ctx,
 		'wisprflow.tokens.generate',
-		{ client_id: body.client_id, duration_secs: body.duration_secs },
+		// client_id is the caller's own identifier and can be an email address, so only the lifetime is logged.
+		{ duration_secs: body.duration_secs },
 		'completed',
 	);
 	return response;
@@ -55,7 +56,7 @@ export const revokeClient: WisprFlowEndpoints['tokensRevokeClient'] = async (
 	await logEventFromContext(
 		ctx,
 		'wisprflow.tokens.revokeClient',
-		{ client_id: body.client_id },
+		{},
 		'completed',
 	);
 	return response;
