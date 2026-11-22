@@ -1,0 +1,14 @@
+// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
+// needs a corresponding test; this one pins the schema contract.
+import { PersonaSchema } from './schema';
+
+describe('PersonaSchema', () => {
+	it('declares a semver version', () => {
+		expect(PersonaSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
+	});
+
+	it('declares no entities, because inquiries and accounts are read live and webhook deliveries carry the record', () => {
+		expect(Array.isArray(PersonaSchema.entities)).toBe(false);
+		expect(PersonaSchema.entities).toEqual({});
+	});
+});

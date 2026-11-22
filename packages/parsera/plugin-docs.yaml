@@ -1,0 +1,82 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Parsera"
+description: "Parsera is an AI web scraper you drive with plain instructions. This plugin extracts structured data from pages or raw content, manages reusable extractor and agentic scrapers, runs them synchronously or as pollable async jobs, and tracks run progress and credits."
+domain: parsera.org
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with an API key from the Parsera app; the plugin sends it in
+  the `X-API-KEY` header. One-shot extraction charges credits per call, so
+  extractor.extract and extractor.parse are marked as writes.
+
+  Agent extractions and async scraper runs answer 202 with an id: poll
+  agent.getTask (statuses pending, running, completed, failed, stopped) or
+  scrapers.getRun (running, completed, completed_partial, failed), and stop a
+  running extraction with agent.stopTask. The plugin declares these as jobs,
+  so the agent can follow them with get_job.
+
+  Every extraction result is an open record: its keys are the attribute names
+  you sent, or whatever structure the prompt produced. The docs publish no
+  fixed result schema, so the plugin does not invent one.
+
+  Every operation is described in the official docs: https://parsera.org/docs/api
+examples:
+  read:
+    path: agent.getTask
+    title: Read an extraction task
+    args:
+      taskId: agent-extract-abc123
+  write:
+    path: extractor.extract
+    title: Extract attributes from a page
+    args:
+      url: https://news.ycombinator.com/
+      attributes:
+        - name: title
+          description: News title
+        - name: points
+          description: Number of points
+apiExamples:
+  extractor.extract:
+    call: '{ url: "https://news.ycombinator.com/", prompt: "Extract news metadata", attributes: [{ name: "title", description: "News title" }] }'
+  extractor.parse:
+    call: '{ content: "<h1>Hello</h1>", attributes: [{ name: "heading", description: "The heading text" }] }'
+  extractor.createScraper:
+    call: '{}'
+  extractor.getScraper:
+    call: '{ scraperId: "abc123" }'
+  extractor.deleteScraper:
+    call: '{ scraperId: "abc123" }'
+  agent.extract:
+    call: '{ url: "https://news.ycombinator.com/", prompt: "Extract the top 10 news titles with their scores", callback_url: "https://example.com/callback" }'
+  agent.getTask:
+    call: '{ taskId: "agent-extract-abc123" }'
+  agent.stopTask:
+    call: '{ taskId: "agent-extract-abc123" }'
+  agent.generateScraper:
+    call: '{ url: "https://news.ycombinator.com/", prompt: "Extract news titles with their scores" }'
+  agent.createScraper:
+    call: '{}'
+  agent.getScraper:
+    call: '{ scraperId: "abc123" }'
+  agent.deleteScraper:
+    call: '{ scraperId: "abc123" }'
+  scrapers.run:
+    call: '{ template_id: "abc123", url: "https://example.com/page1" }'
+  scrapers.runAsync:
+    call: '{ template_id: "abc123", url: ["https://example.com/page1", "https://example.com/page2"] }'
+  scrapers.getRun:
+    call: '{ runId: "run-abc123" }'
+apiNotes:
+  extractor.extract: 'Minimal payload is url plus an attributes list (a prompt alone answers 422); the prompt adds context; mode and proxy_country are optional, cookies take the documented name-value records with an optional sameSite.'
+  extractor.parse: 'Parses content you already have instead of fetching a URL.'
+  extractor.deleteScraper: 'The API answers a message string the operation validates and returns.'
+  agent.extract: 'Answers 202 Accepted with a task_id and status pending; poll agent.getTask, stop with agent.stopTask, or get a callback at callback_url.'
+  agent.getTask: 'Status is one of pending, running, completed, failed, stopped; data arrives when completed.'
+  agent.stopTask: 'Cancels a running extraction; the task reports stopped.'
+  agent.generateScraper: 'Answers 202 with template_id and status generating; agent.getScraper reports ready or failed when the build ends. Omitting template_id creates a new scraper.'
+  agent.getScraper: 'Status is one of generating, ready, failed; parameters_schema lists what each run accepts.'
+  agent.deleteScraper: 'The API answers a message string the operation validates and returns.'
+  scrapers.run: 'Waits up to five minutes; past that the API answers 202 with a run_id, which scrapers.getRun polls.'
+  scrapers.runAsync: 'Extractor scrapers accept up to 100 URLs and fan out into one aggregated run; agentic scrapers take a single URL.'
+  scrapers.getRun: 'Status is one of running, completed, completed_partial, failed; data is keyed by scraped URL once done.'

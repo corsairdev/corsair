@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-21T11:21:41.575Z",
+  "generatedAt": "2026-11-22T12:03:20.668Z",
   "corsairVersion": "0.2.21",
   "catalogVersion": 2,
   "plugins": [
@@ -5340,7 +5340,7 @@
       ],
       "defaultAuthType": "api_key",
       "counts": {
-        "api": 160,
+        "api": 168,
         "webhooks": 0,
         "db": 0
       }
@@ -106643,6 +106643,12 @@
     {
       "pluginId": "hunterio",
       "kind": "api",
+      "shortPath": "briefing.get",
+      "haystack": "briefing.get hunterio.api.briefing.get get what needs attention today: counts of new lead and monitored signals events, new opportunities this week, and the credit balance, each with its follow-up call read"
+    },
+    {
+      "pluginId": "hunterio",
+      "kind": "api",
       "shortPath": "companies.bulkCopy",
       "haystack": "companies.bulkcopy hunterio.api.companies.bulkcopy copy companies to another company list write"
     },
@@ -106771,6 +106777,12 @@
       "kind": "api",
       "shortPath": "companyLists.list",
       "haystack": "companylists.list hunterio.api.companylists.list list the company lists on the account read"
+    },
+    {
+      "pluginId": "hunterio",
+      "kind": "api",
+      "shortPath": "companyLists.listCompanies",
+      "haystack": "companylists.listcompanies hunterio.api.companylists.listcompanies list the companies in a static company list, most recently added first read"
     },
     {
       "pluginId": "hunterio",
@@ -106949,14 +106961,26 @@
     {
       "pluginId": "hunterio",
       "kind": "api",
+      "shortPath": "domainSearch.found",
+      "haystack": "domainsearch.found hunterio.api.domainsearch.found search the email addresses hunter found on the web for a domain, without generated guesses. charges 1 credit per 10 emails returned read"
+    },
+    {
+      "pluginId": "hunterio",
+      "kind": "api",
+      "shortPath": "domainSearch.foundPost",
+      "haystack": "domainsearch.foundpost hunterio.api.domainsearch.foundpost search found email addresses for a domain with body filters, including location. charges 1 credit per 10 emails returned read"
+    },
+    {
+      "pluginId": "hunterio",
+      "kind": "api",
       "shortPath": "domainSearch.search",
-      "haystack": "domainsearch.search hunterio.api.domainsearch.search list the email addresses found for a domain read"
+      "haystack": "domainsearch.search hunterio.api.domainsearch.search list the email addresses found for a domain. charges 1 credit per 10 emails returned read"
     },
     {
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "domainSearch.searchPost",
-      "haystack": "domainsearch.searchpost hunterio.api.domainsearch.searchpost list the email addresses found for a domain (post form) read"
+      "haystack": "domainsearch.searchpost hunterio.api.domainsearch.searchpost list the email addresses found for a domain (post form). charges 1 credit per 10 emails returned read"
     },
     {
       "pluginId": "hunterio",
@@ -107028,19 +107052,19 @@
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "emailFinder.find",
-      "haystack": "emailfinder.find hunterio.api.emailfinder.find find the most likely email of a person read"
+      "haystack": "emailfinder.find hunterio.api.emailfinder.find find the most likely email of a person. charges 1 credit when an email is found read"
     },
     {
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "emailFinder.findFound",
-      "haystack": "emailfinder.findfound hunterio.api.emailfinder.findfound check whether an email was already found for a person read"
+      "haystack": "emailfinder.findfound hunterio.api.emailfinder.findfound check whether an email was already found for a person. charges 1 credit when an email is found read"
     },
     {
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "emailFinder.findFoundPost",
-      "haystack": "emailfinder.findfoundpost hunterio.api.emailfinder.findfoundpost check whether an email was already found (post form) read"
+      "haystack": "emailfinder.findfoundpost hunterio.api.emailfinder.findfoundpost check whether an email was already found (post form). charges 1 credit when an email is found read"
     },
     {
       "pluginId": "hunterio",
@@ -107052,25 +107076,25 @@
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "emailVerifier.verify",
-      "haystack": "emailverifier.verify hunterio.api.emailverifier.verify verify the deliverability of an email address read"
+      "haystack": "emailverifier.verify hunterio.api.emailverifier.verify verify the deliverability of an email address. charges 0.5 credit per verification read"
     },
     {
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "enrichment.combined",
-      "haystack": "enrichment.combined hunterio.api.enrichment.combined enrich a person and their company together read"
+      "haystack": "enrichment.combined hunterio.api.enrichment.combined enrich a person and their company together. charges 0.2 credit when data is found read"
     },
     {
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "enrichment.company",
-      "haystack": "enrichment.company hunterio.api.enrichment.company enrich a company profile from a domain or name read"
+      "haystack": "enrichment.company hunterio.api.enrichment.company enrich a company profile from a domain or name. charges 0.2 credit when data is found read"
     },
     {
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "enrichment.person",
-      "haystack": "enrichment.person hunterio.api.enrichment.person enrich a person profile from an email or name read"
+      "haystack": "enrichment.person hunterio.api.enrichment.person enrich a person profile from an email or name. charges 0.2 credit when data is found read"
     },
     {
       "pluginId": "hunterio",
@@ -107280,7 +107304,7 @@
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "messages.send",
-      "haystack": "messages.send hunterio.api.messages.send send a message from a connected email account write"
+      "haystack": "messages.send hunterio.api.messages.send send a message from a connected email account. sends a real email [destructive · sends email] destructive"
     },
     {
       "pluginId": "hunterio",
@@ -107321,14 +107345,32 @@
     {
       "pluginId": "hunterio",
       "kind": "api",
+      "shortPath": "monitoredSignals.list",
+      "haystack": "monitoredsignals.list hunterio.api.monitoredsignals.list list the monitored signals of the team: funding signals, job openings signals and company follows read"
+    },
+    {
+      "pluginId": "hunterio",
+      "kind": "api",
       "shortPath": "multiDomainSearch.reveal",
-      "haystack": "multidomainsearch.reveal hunterio.api.multidomainsearch.reveal reveal the verified email addresses of a multi-domain search read"
+      "haystack": "multidomainsearch.reveal hunterio.api.multidomainsearch.reveal reveal the verified email addresses of a multi-domain search. charges 1 credit per email revealed for the first time this billing period read"
     },
     {
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "multiDomainSearch.search",
       "haystack": "multidomainsearch.search hunterio.api.multidomainsearch.search find email addresses across multiple domains read"
+    },
+    {
+      "pluginId": "hunterio",
+      "kind": "api",
+      "shortPath": "opportunities.list",
+      "haystack": "opportunities.list hunterio.api.opportunities.list list the opportunities of this week: groups of people or companies similar to the leads and companies you saved read"
+    },
+    {
+      "pluginId": "hunterio",
+      "kind": "api",
+      "shortPath": "opportunities.results",
+      "haystack": "opportunities.results hunterio.api.opportunities.results list the masked people or the companies of one opportunity; reveal emails with multidomainsearch.reveal read"
     },
     {
       "pluginId": "hunterio",
@@ -107436,13 +107478,13 @@
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "sequences.start",
-      "haystack": "sequences.start hunterio.api.sequences.start start a sequence write"
+      "haystack": "sequences.start hunterio.api.sequences.start start a sequence. starts sending emails to the recipients [destructive · sends email] destructive"
     },
     {
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "sequences.test",
-      "haystack": "sequences.test hunterio.api.sequences.test send test emails for every step of a sequence write"
+      "haystack": "sequences.test hunterio.api.sequences.test send test emails for every step of a sequence. sends a real test email [destructive · sends email] destructive"
     },
     {
       "pluginId": "hunterio",
@@ -107455,6 +107497,12 @@
       "kind": "api",
       "shortPath": "sequenceStats.get",
       "haystack": "sequencestats.get hunterio.api.sequencestats.get get performance statistics for a sequence read"
+    },
+    {
+      "pluginId": "hunterio",
+      "kind": "api",
+      "shortPath": "signals.list",
+      "haystack": "signals.list hunterio.api.signals.list list signal events from the last 30 days (funding rounds, tech changes, new contacts, hires, job posts, contact moves) for your leads or your monitored signals read"
     },
     {
       "pluginId": "hunterio",

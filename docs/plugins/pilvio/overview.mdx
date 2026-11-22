@@ -1,0 +1,139 @@
+---
+title: "Pilvio plugin"
+sidebarTitle: "Overview"
+description: "Pilvio is an Estonian cloud IaaS for compute and storage. This plugin manages the user profile, API tokens and SSH keys, creates and controls virtual machines, provisions block storage disks and S3 buckets, and manages private networks and firewalls across Pilvio locations."
+---
+
+Use **Pilvio** through Corsair: one client, typed API calls.
+
+Authenticate with an API token created in the Pilvio user interface; the plugin sends it in the apikey header. Every call goes against https://api.pilvio.com/v1. Most write endpoints take form-encoded bodies; SSH keys and firewalls take JSON, and the plugin handles both. Answers are bare JSON objects or arrays; business errors carry &#123;"errors": &#123;"Error": …&#125;&#125;, and authentication failures answer 403.
+Location-scoped resources live under /v1/&#123;slug&#125;/… with the slug from config.listLocations (cyc01, bus02, …); without a slug the API serves the default location. Lists answer whole arrays with no pagination.
+Deletes and reinstalls are destructive: vm.reinstall replaces the VM's operating system and storage.disks.delete / storage.buckets.delete / network.*.delete remove the resource. Networks can only be deleted when empty and not the default.
+The API documents more resources than this plugin covers (VM replicas, clones and backups, disk attach, floating IPs, load balancers, payments and invoices), all on the same shapes. Every operation is described in the official docs served at https://api.pilvio.com.
+
+**What you get:**
+
+- 40 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/pilvio better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/pilvio better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/pilvio better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/pilvio better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { pilvio } from '@corsair-dev/pilvio';
+
+export const corsair = createCorsair({
+	plugins: [
+		pilvio(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Pilvio API key before the first call: `pnpm corsair setup --plugin=pilvio --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+pilvio()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'pilvio',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List locations**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.pilvio.api.config.listLocations({});
+```
+
+
+**Create a VM**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.pilvio.api.vm.create({
+	name: 'web-1',
+	osName: 'ubuntu',
+	osVersion: '22.04-lts',
+	disks: 20,
+	vcpu: 2,
+	ram: 2048,
+});
+```
+
+
+See the full list on the [API](/plugins/pilvio/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/pilvio/api">
+    Every `pilvio.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

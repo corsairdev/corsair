@@ -1,0 +1,145 @@
+---
+title: "Persona plugin"
+sidebarTitle: "Overview"
+description: "Persona is an identity verification and KYC platform. This plugin manages accounts and inquiries, approves or declines inquiries, marks them for review, runs inquiry sessions and one-time links, reads inquiry templates, configures webhooks with signing-secret rotation, and verifies inbound webhook deliveries with HMAC-SHA256."
+---
+
+Use **Persona** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Authenticate with the environment API key from the Persona dashboard (sandbox or production); the plugin sends it as an Authorization Bearer token and pins Persona-Version: 2023-01-05, the version its schemas follow (override with the apiVersion option).
+Every operation is a JSON:API call. Create and update bodies wrap fields in data.attributes; tag, decision and link options go in meta. Answers carry data (attribute keys in kebab-case, e.g. reference-id, created-at), plus included resources, and lists carry links.next: pass its page[after] value as pageAfter for the next page. Redactions, approvals and declines are final. One-time links let a holder resume an inquiry or session; anyone with the link can use it, so share it only with the intended holder.
+Webhook deliveries carry a Persona-Signature header of t=&lt;unix time&gt;,v1=&lt;hex&gt; sets: HMAC-SHA256 over "&lt;t&gt;.&lt;raw body&gt;" with the webhook's secret, one set per active secret while it rotates. Sets whose timestamp is more than 5 minutes from now are refused, so an old signed delivery can't be replayed. webhooks.create and webhooks.rotateSecret return the secret; store it with keys.set_webhook_signature (or set webhookSecret on the plugin). The delivery body is &#123; data: &#123; type: "event", attributes: &#123; name, payload &#125; &#125; &#125;.
+The Persona API has 200+ operations; this plugin covers accounts, inquiries, inquiry sessions, inquiry templates, and webhook management. The verification sub-types (AAMVA, database businesses, government IDs), lists, reports, transactions and devices are documented by Persona but not part of this plugin.
+Every operation is described in the official reference: https://docs.withpersona.com/2023-01-05/api-reference
+
+**What you get:**
+
+- 36 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/persona better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/persona better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/persona better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/persona better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { persona } from '@corsair-dev/persona';
+
+export const corsair = createCorsair({
+	plugins: [
+		persona(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Persona API key before the first call: `pnpm corsair setup --plugin=persona --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+persona()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'persona',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read an inquiry**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.persona.api.inquiries.get({ inquiryId: 'inq_ABC123' });
+```
+
+
+**Create an inquiry**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.persona.api.inquiries.create({
+	attributes: { inquiry-template-id: 'itmpl_ABC123', reference-id: 'user-42' },
+});
+```
+
+
+See the full list on the [API](/plugins/persona/api) page.
+
+## Webhooks
+
+This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/persona/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/persona/api">
+    Every `persona.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/persona/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
