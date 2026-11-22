@@ -649,166 +649,163 @@ export const schemas = {
 			code: { type: 'integer', readOnly: true },
 			message: { type: 'string', readOnly: true },
 			salesorder: {
-				type: 'array',
-				items: {
-					type: 'object',
-					properties: {
-						customer_id: { $ref: '#/components/schemas/customer_id' },
-						billing_address_id: {
-							$ref: '#/components/schemas/billing_address_id',
-						},
-						shipping_address_id: {
-							$ref: '#/components/schemas/shipping_address_id',
-						},
-						is_pre_gst: { $ref: '#/components/schemas/is_pre_gst' },
-						gst_no: { $ref: '#/components/schemas/gst_no' },
-						shipping_gst_no: { $ref: '#/components/schemas/shipping_gst_no' },
-						shipping_trader_name: {
-							$ref: '#/components/schemas/shipping_trader_name',
-						},
-						shipping_legal_name: {
-							$ref: '#/components/schemas/shipping_legal_name',
-						},
-						gst_treatment: { $ref: '#/components/schemas/gst_treatment' },
-						place_of_supply: { $ref: '#/components/schemas/place_of_supply' },
-						crm_owner_id: { $ref: '#/components/schemas/crm_owner_id' },
-						crm_custom_reference_id: {
-							$ref: '#/components/schemas/crm_custom_reference_id',
-						},
-						zcrm_potential_id: {
-							$ref: '#/components/schemas/zcrm_potential_id',
-						},
-						vat_treatment: { $ref: '#/components/schemas/vat_treatment' },
-						tax_treatment: { $ref: '#/components/schemas/tax_treatment' },
-						is_reverse_charge_applied: {
-							$ref: '#/components/schemas/is_reverse_charge_applied',
-						},
-						is_update_customer: {
-							$ref: '#/components/schemas/is_update_customer',
-						},
-						contact_persons_associated: {
-							$ref: '#/components/schemas/contact_persons_associated',
-						},
-						salesorder_number: {
-							$ref: '#/components/schemas/salesorder_number',
-						},
-						reference_number: { $ref: '#/components/schemas/reference_number' },
-						template_id: { $ref: '#/components/schemas/template_id' },
-						date: { description: 'Date of the comment', type: 'string' },
-						documents: { $ref: '#/components/schemas/documents' },
-						shipment_date: { $ref: '#/components/schemas/shipment_date' },
-						exchange_rate: { $ref: '#/components/schemas/exchange_rate' },
-						discount: { $ref: '#/components/schemas/discount' },
-						is_discount_before_tax: {
-							$ref: '#/components/schemas/is_discount_before_tax',
-						},
-						discount_type: { $ref: '#/components/schemas/discount_type' },
-						salesperson_id: { $ref: '#/components/schemas/salesperson_id' },
-						salesperson_name: { $ref: '#/components/schemas/salesperson_name' },
-						merchant_id: { $ref: '#/components/schemas/merchant_id' },
-						merchant_name: { $ref: '#/components/schemas/merchant_name' },
-						estimate_id: { $ref: '#/components/schemas/estimate_id' },
-						tax_id: { $ref: '#/components/schemas/tax_id' },
-						tax_authority_id: { $ref: '#/components/schemas/tax_authority_id' },
-						tax_authority_name: {
-							$ref: '#/components/schemas/tax_authority_name',
-						},
-						tax_exemption_id: { $ref: '#/components/schemas/tax_exemption_id' },
-						tax_exemption_code: {
-							$ref: '#/components/schemas/tax_exemption_code',
-						},
-						avatax_exempt_no: { $ref: '#/components/schemas/avatax_exempt_no' },
-						avatax_use_code: { $ref: '#/components/schemas/avatax_use_code' },
-						is_inclusive_tax: { $ref: '#/components/schemas/is_inclusive_tax' },
-						sub_statuses: { $ref: '#/components/schemas/sub_statuses' },
-						custom_fields: { $ref: '#/components/schemas/custom_fields' },
-						location_id: { $ref: '#/components/schemas/location_id' },
-						location_name: { $ref: '#/components/schemas/location_name' },
-						line_items: {
-							description: 'Details of the line items in the Sales Order',
-							type: 'array',
-							items: {
-								type: 'object',
-								properties: {
-									line_item_id: {
-										description:
-											'ID of the line item. Note: This value is a set of numeric characters.',
-										type: 'string',
-									},
-									sku: { $ref: '#/components/schemas/sku' },
-									bcy_rate: { $ref: '#/components/schemas/bcy_rate' },
-									tax_name: { $ref: '#/components/schemas/tax_name' },
-									tax_type: { $ref: '#/components/schemas/tax_type' },
-									tax_percentage: {
-										$ref: '#/components/schemas/tax_percentage',
-									},
-									tax_id: { $ref: '#/components/schemas/tax_id' },
-									tds_tax_id: { $ref: '#/components/schemas/tds_tax_id' },
-									tax_treatment_code: {
-										$ref: '#/components/schemas/tax_treatment_code',
-									},
-									is_taxable: {
-										description: 'Check if the Sales Order is taxable.',
-										type: 'boolean',
-										'x-node_available_in': ['us'],
-										'x-node_unavailable_in': [],
-									},
-									product_exemption_id: {
-										$ref: '#/components/schemas/product_exemption_id',
-									},
-									product_exemption_code: {
-										$ref: '#/components/schemas/product_exemption_code',
-									},
-									avatax_use_code_id: {
-										$ref: '#/components/schemas/avatax_use_code_id',
-									},
-									avatax_use_code_desc: {
-										$ref: '#/components/schemas/avatax_use_code_desc',
-									},
-									avatax_tax_code_id: {
-										$ref: '#/components/schemas/avatax_tax_code_id',
-									},
-									avatax_tax_code_desc: {
-										$ref: '#/components/schemas/avatax_tax_code_desc',
-									},
-									item_total_inclusive_of_tax: {
-										$ref: '#/components/schemas/item_total_inclusive_of_tax',
-									},
-									product_type: { $ref: '#/components/schemas/product_type' },
-									hsn_or_sac: { $ref: '#/components/schemas/hsn_or_sac' },
-									sat_item_key_code: {
-										$ref: '#/components/schemas/sat_item_key_code',
-									},
-									unitkey_code: { $ref: '#/components/schemas/unitkey_code' },
-									is_invoiced: { $ref: '#/components/schemas/is_invoiced' },
-									stock_on_hand: { $ref: '#/components/schemas/stock_on_hand' },
-									image_id: { $ref: '#/components/schemas/image_id' },
-									image_name: { $ref: '#/components/schemas/image_name' },
-									image_type: { $ref: '#/components/schemas/image_type' },
-									project_id: { $ref: '#/components/schemas/project_id' },
-									project_name: { $ref: '#/components/schemas/project_name' },
-									location_id: { $ref: '#/components/schemas/location_id' },
-									location_name: { $ref: '#/components/schemas/location_name' },
-									tags: { $ref: '#/components/schemas/tags_response' },
-									line_item_category: {
-										$ref: '#/components/schemas/line_item_category',
-									},
+				type: 'object',
+				properties: {
+					customer_id: { $ref: '#/components/schemas/customer_id' },
+					billing_address_id: {
+						$ref: '#/components/schemas/billing_address_id',
+					},
+					shipping_address_id: {
+						$ref: '#/components/schemas/shipping_address_id',
+					},
+					is_pre_gst: { $ref: '#/components/schemas/is_pre_gst' },
+					gst_no: { $ref: '#/components/schemas/gst_no' },
+					shipping_gst_no: { $ref: '#/components/schemas/shipping_gst_no' },
+					shipping_trader_name: {
+						$ref: '#/components/schemas/shipping_trader_name',
+					},
+					shipping_legal_name: {
+						$ref: '#/components/schemas/shipping_legal_name',
+					},
+					gst_treatment: { $ref: '#/components/schemas/gst_treatment' },
+					place_of_supply: { $ref: '#/components/schemas/place_of_supply' },
+					crm_owner_id: { $ref: '#/components/schemas/crm_owner_id' },
+					crm_custom_reference_id: {
+						$ref: '#/components/schemas/crm_custom_reference_id',
+					},
+					zcrm_potential_id: {
+						$ref: '#/components/schemas/zcrm_potential_id',
+					},
+					vat_treatment: { $ref: '#/components/schemas/vat_treatment' },
+					tax_treatment: { $ref: '#/components/schemas/tax_treatment' },
+					is_reverse_charge_applied: {
+						$ref: '#/components/schemas/is_reverse_charge_applied',
+					},
+					is_update_customer: {
+						$ref: '#/components/schemas/is_update_customer',
+					},
+					contact_persons_associated: {
+						$ref: '#/components/schemas/contact_persons_associated',
+					},
+					salesorder_number: {
+						$ref: '#/components/schemas/salesorder_number',
+					},
+					reference_number: { $ref: '#/components/schemas/reference_number' },
+					template_id: { $ref: '#/components/schemas/template_id' },
+					date: { description: 'Date of the comment', type: 'string' },
+					documents: { $ref: '#/components/schemas/documents' },
+					shipment_date: { $ref: '#/components/schemas/shipment_date' },
+					exchange_rate: { $ref: '#/components/schemas/exchange_rate' },
+					discount: { $ref: '#/components/schemas/discount' },
+					is_discount_before_tax: {
+						$ref: '#/components/schemas/is_discount_before_tax',
+					},
+					discount_type: { $ref: '#/components/schemas/discount_type' },
+					salesperson_id: { $ref: '#/components/schemas/salesperson_id' },
+					salesperson_name: { $ref: '#/components/schemas/salesperson_name' },
+					merchant_id: { $ref: '#/components/schemas/merchant_id' },
+					merchant_name: { $ref: '#/components/schemas/merchant_name' },
+					estimate_id: { $ref: '#/components/schemas/estimate_id' },
+					tax_id: { $ref: '#/components/schemas/tax_id' },
+					tax_authority_id: { $ref: '#/components/schemas/tax_authority_id' },
+					tax_authority_name: {
+						$ref: '#/components/schemas/tax_authority_name',
+					},
+					tax_exemption_id: { $ref: '#/components/schemas/tax_exemption_id' },
+					tax_exemption_code: {
+						$ref: '#/components/schemas/tax_exemption_code',
+					},
+					avatax_exempt_no: { $ref: '#/components/schemas/avatax_exempt_no' },
+					avatax_use_code: { $ref: '#/components/schemas/avatax_use_code' },
+					is_inclusive_tax: { $ref: '#/components/schemas/is_inclusive_tax' },
+					sub_statuses: { $ref: '#/components/schemas/sub_statuses' },
+					custom_fields: { $ref: '#/components/schemas/custom_fields' },
+					location_id: { $ref: '#/components/schemas/location_id' },
+					location_name: { $ref: '#/components/schemas/location_name' },
+					line_items: {
+						description: 'Details of the line items in the Sales Order',
+						type: 'array',
+						items: {
+							type: 'object',
+							properties: {
+								line_item_id: {
+									description:
+										'ID of the line item. Note: This value is a set of numeric characters.',
+									type: 'string',
+								},
+								sku: { $ref: '#/components/schemas/sku' },
+								bcy_rate: { $ref: '#/components/schemas/bcy_rate' },
+								tax_name: { $ref: '#/components/schemas/tax_name' },
+								tax_type: { $ref: '#/components/schemas/tax_type' },
+								tax_percentage: {
+									$ref: '#/components/schemas/tax_percentage',
+								},
+								tax_id: { $ref: '#/components/schemas/tax_id' },
+								tds_tax_id: { $ref: '#/components/schemas/tds_tax_id' },
+								tax_treatment_code: {
+									$ref: '#/components/schemas/tax_treatment_code',
+								},
+								is_taxable: {
+									description: 'Check if the Sales Order is taxable.',
+									type: 'boolean',
+									'x-node_available_in': ['us'],
+									'x-node_unavailable_in': [],
+								},
+								product_exemption_id: {
+									$ref: '#/components/schemas/product_exemption_id',
+								},
+								product_exemption_code: {
+									$ref: '#/components/schemas/product_exemption_code',
+								},
+								avatax_use_code_id: {
+									$ref: '#/components/schemas/avatax_use_code_id',
+								},
+								avatax_use_code_desc: {
+									$ref: '#/components/schemas/avatax_use_code_desc',
+								},
+								avatax_tax_code_id: {
+									$ref: '#/components/schemas/avatax_tax_code_id',
+								},
+								avatax_tax_code_desc: {
+									$ref: '#/components/schemas/avatax_tax_code_desc',
+								},
+								item_total_inclusive_of_tax: {
+									$ref: '#/components/schemas/item_total_inclusive_of_tax',
+								},
+								product_type: { $ref: '#/components/schemas/product_type' },
+								hsn_or_sac: { $ref: '#/components/schemas/hsn_or_sac' },
+								sat_item_key_code: {
+									$ref: '#/components/schemas/sat_item_key_code',
+								},
+								unitkey_code: { $ref: '#/components/schemas/unitkey_code' },
+								is_invoiced: { $ref: '#/components/schemas/is_invoiced' },
+								stock_on_hand: { $ref: '#/components/schemas/stock_on_hand' },
+								image_id: { $ref: '#/components/schemas/image_id' },
+								image_name: { $ref: '#/components/schemas/image_name' },
+								image_type: { $ref: '#/components/schemas/image_type' },
+								project_id: { $ref: '#/components/schemas/project_id' },
+								project_name: { $ref: '#/components/schemas/project_name' },
+								location_id: { $ref: '#/components/schemas/location_id' },
+								location_name: { $ref: '#/components/schemas/location_name' },
+								tags: { $ref: '#/components/schemas/tags_response' },
+								line_item_category: {
+									$ref: '#/components/schemas/line_item_category',
 								},
 							},
 						},
-						pricebook_id: { $ref: '#/components/schemas/pricebook_id' },
-						shipping_charge: { $ref: '#/components/schemas/shipping_charge' },
-						adjustment: { $ref: '#/components/schemas/adjustment' },
-						adjustment_description: {
-							$ref: '#/components/schemas/adjustment_description',
-						},
-						delivery_method: { $ref: '#/components/schemas/delivery_method' },
-						notes: { $ref: '#/components/schemas/notes' },
-						notes_default: { $ref: '#/components/schemas/notes_default' },
-						terms: { $ref: '#/components/schemas/terms' },
-						terms_default: { $ref: '#/components/schemas/terms_default' },
-						tags: { $ref: '#/components/schemas/tags_response' },
 					},
+					pricebook_id: { $ref: '#/components/schemas/pricebook_id' },
+					shipping_charge: { $ref: '#/components/schemas/shipping_charge' },
+					adjustment: { $ref: '#/components/schemas/adjustment' },
+					adjustment_description: {
+						$ref: '#/components/schemas/adjustment_description',
+					},
+					delivery_method: { $ref: '#/components/schemas/delivery_method' },
+					notes: { $ref: '#/components/schemas/notes' },
+					notes_default: { $ref: '#/components/schemas/notes_default' },
+					terms: { $ref: '#/components/schemas/terms' },
+					terms_default: { $ref: '#/components/schemas/terms_default' },
+					tags: { $ref: '#/components/schemas/tags_response' },
 				},
 			},
 		},
@@ -1201,10 +1198,7 @@ export const schemas = {
 			'External reference identifier for cross-referencing with customer purchase orders, internal tracking systems, or third-party applications. Used for order reconciliation, customer communication, and integration with external business systems and workflows.',
 		type: 'string',
 	},
-	salesorder: {
-		type: 'array',
-		items: { $ref: '#/components/schemas/salesorder-response' },
-	},
+	salesorder: { $ref: '#/components/schemas/salesorder-response' },
 	'salesorder-response': {
 		type: 'object',
 		properties: {

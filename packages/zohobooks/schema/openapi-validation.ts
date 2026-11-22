@@ -412,12 +412,19 @@ function validateOperationOutput(
 			(response) => response.contentType === 'application/x-empty',
 		);
 	}
-	// Any JSON body is accepted: Zoho's published response schemas disagree with
-	// the live API (11-22: list `page_context` is documented as an array but is an
-	// object, `creditnotes` as an object but is an array, chart-of-accounts `depth`
-	// as a string but is a number), so checking them failed every invoice,
-	// estimate, expense and project list.
-	return true;
+	return matchesTopLevelShape(value);
+}
+
+// Zoho's published response schemas disagree with the live API in many places,
+// top-level fields included (11-22: list `page_context` is an object, documented
+// as an array; get/create sales order returns `salesorder` as an object,
+// documented as an array), so a full schema check rejected real responses. Every
+// live JSON response was an object with a numeric `code`; that is what is checked.
+function matchesTopLevelShape(value: JsonValue): boolean {
+	return (
+		isJsonObject(value) &&
+		(value.code === undefined || typeof value.code === 'number')
+	);
 }
 
 // Input schemas name each path, query and header parameter and the request
