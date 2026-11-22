@@ -519,6 +519,7 @@ export const BaseProviders = [
 	'pipelinecrm',
 	'placid',
 	'plain',
+	'persona',
 	'piloterr',
 	'pilvio',
 	'platerecognizer',
@@ -1283,6 +1284,7 @@ export const ProviderDisplayNames = {
 	pipelinecrm: 'Pipeline CRM',
 	placid: 'Placid',
 	plain: 'Plain',
+	persona: 'Persona',
 	piloterr: 'Piloterr',
 	pilvio: 'Pilvio',
 	platerecognizer: 'Plate Recognizer',
@@ -2054,6 +2056,7 @@ export type AllProviders =
 	| 'pipelinecrm'
 	| 'placid'
 	| 'plain'
+	| 'persona'
 	| 'piloterr'
 	| 'pilvio'
 	| 'platerecognizer'
