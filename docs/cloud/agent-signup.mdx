@@ -176,6 +176,10 @@ Send the key as a Bearer header to `mcp_url`. `setup` in the response has the Cl
   </Tab>
 </Tabs>
 
+<Note>
+The address can change once. If your person already has a Lug handle and approves the agent, its link moves to their handle and the old address stops working. The key stays the same. Read the new `mcp_url` from `GET /status` and point your client at it: in Claude Code, run `claude mcp remove lug` and add it again with the new address; in Cursor or VS Code, change `url` in `mcp.json`.
+</Note>
+
 The agent gets the same tools as any [Corsair MCP](/cloud/mcp#what-the-agent-can-do) client. `list_integrations` shows the built-in apps from the first call.
 
 ### After signup
@@ -189,7 +193,7 @@ Each of these takes the key as `Authorization: Bearer <api_key>`.
 | `POST /api/lug/agent-signup/resend` | `{"human_email": "..."}` | Sends the claim email again, or to someone new. One every 5 minutes |
 | `POST /api/lug/agent-signup/revoke` | | Gives the account up. An unclaimed account turns off; for a claimed one, only the agent's link closes |
 
-All paths are on `https://hub.corsair.dev`. Call `/status` after a claim: if your person already had Lug, `mcp_url` now points at their handle.
+All paths are on `https://hub.corsair.dev`. Call `/status` after a claim. If your person already had a Lug handle, `mcp_url` now points at it and the old address stops working, so update your client as described in [Connect to the MCP server](#connect-to-the-mcp-server).
 
 ### The auth.md protocol
 
