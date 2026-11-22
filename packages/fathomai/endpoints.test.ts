@@ -1,5 +1,6 @@
-import { logEventFromContext } from 'corsair/core';
+import { createCorsair, logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { list as listMeetings, listTypes } from './endpoints/meetings';
 import {
 	getDownload,
@@ -11,10 +12,12 @@ import { listMembers, list as listTeams } from './endpoints/teams';
 import { list as listUsers } from './endpoints/users';
 import { create as createWebhook, remove } from './endpoints/webhooks';
 import { errorHandlers } from './error-handlers';
+import { fathomai } from './index';
 import { FathomAiSchema } from './schema';
 import { MEETING } from './test-fixtures';
 
 jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
 	logEventFromContext: jest.fn().mockResolvedValue(undefined),
 }));
 
@@ -377,6 +380,86 @@ describe('Fathom AI endpoints', () => {
 	});
 });
 
+describe('Fathom AI through a Corsair client', () => {
+	const originalFetch = global.fetch;
+	const team = { name: 'Sales', created_at: '2023-11-10T12:00:00Z' };
+	let fetchMock: jest.Mock;
+
+	async function createClient(options: { key?: string }) {
+		const testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'fathomai', 'default');
+		const corsair = createCorsair({
+			plugins: [fathomai(options)],
+			database: testDb.db,
+			kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
+		});
+		await corsair.fathomai.keys.issue_new_dek();
+		await corsair.fathomai.keys.set_api_key('stored-key');
+		return { corsair, testDb };
+	}
+
+	beforeEach(() => {
+		fetchMock = jest.fn();
+		global.fetch = fetchMock;
+	});
+
+	afterAll(() => {
+		global.fetch = originalFetch;
+	});
+
+	it('sends the stored api key and syncs the result into the database', async () => {
+		fetchMock.mockResolvedValue(
+			json(200, { limit: 10, next_cursor: null, items: [team] }),
+		);
+		const { corsair, testDb } = await createClient({});
+		try {
+			const result = await corsair.fathomai.api.teams.list({});
+
+			const [url, init] = fetchMock.mock.calls[0];
+			expect(String(url)).toBe(`${BASE}/teams`);
+			expect(new Headers(init.headers).get('X-Api-Key')).toBe('stored-key');
+			expect(result.items).toEqual([team]);
+			const stored = await corsair.fathomai.db.teams.findByEntityId('Sales');
+			expect(stored?.data).toEqual(team);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('prefers the key plugin option over the stored key', async () => {
+		fetchMock.mockResolvedValue(
+			json(200, { limit: 10, next_cursor: null, items: [] }),
+		);
+		const { corsair, testDb } = await createClient({ key: 'option-key' });
+		try {
+			await corsair.fathomai.api.teams.list({});
+
+			const [, init] = fetchMock.mock.calls[0];
+			expect(new Headers(init.headers).get('X-Api-Key')).toBe('option-key');
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('fails a rejected key once, without retrying', async () => {
+		fetchMock.mockImplementation(async () =>
+			json(401, { error: 'Unauthorized' }),
+		);
+		const { corsair, testDb } = await createClient({});
+		try {
+			const error = await corsair.fathomai.api.teams
+				.list({})
+				.catch((e: unknown) => e);
+
+			expect(error).toBeInstanceOf(ApiError);
+			expect((error as ApiError).status).toBe(401);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+});
+
 describe('Fathom AI error handlers', () => {
 	const apiError = (status: number) =>
 		new ApiError(
@@ -393,8 +476,11 @@ describe('Fathom AI error handlers', () => {
 		});
 	});
 
-	it('routes 401 to the auth handler', () => {
+	it('routes 401 to the auth handler, which does not retry', async () => {
 		expect(errorHandlers.AUTH_ERROR.match(apiError(401))).toBe(true);
 		expect(errorHandlers.AUTH_ERROR.match(apiError(500))).toBe(false);
+		await expect(errorHandlers.AUTH_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
 	});
 });
