@@ -998,6 +998,9 @@ apiExamples:
                                         "status":  "Completed"
                                     }
                        },
+      "tasks.delete":  {
+                           "id":  "1"
+                       },
       "timeslips.list":  {
                              "query":  {
                                            "page":  1,
@@ -1122,8 +1125,10 @@ overviewNote: >-
   Access tokens last an hour and refresh automatically. Pass sandbox: true to use
   api.sandbox.freeagent.com for both OAuth and the API. Route coverage and all
   unresolved or excluded contracts are listed in the package README; coverage
-  remains partial and is not a claim of full API coverage. The Tasks resource's
-  published delete path is unresolved, and Timeslips batch-create is withheld
+  remains partial and is not a claim of full API coverage. Three published paths
+  are typos that answer 404 on the sandbox, so the plugin uses the working ones:
+  tasks delete (DELETE /v2/tasks/:id, not /v2/users/:id), price list item delete
+  and bank transaction delete (plural paths). Timeslips batch-create is withheld
   because its response is undocumented. The Bills and Expenses docs omit Monthly
   from their recurring enums, so their input schemas enforce only those published
   values and do not claim Monthly support. The separate Recurring Invoices resource

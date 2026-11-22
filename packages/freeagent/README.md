@@ -4,7 +4,7 @@ FreeAgent's company API integration for Corsair. The API uses OAuth 2.0 bearer a
 
 ## Coverage summary
 
-The plugin has **205 registered Corsair operation handlers**: the verified route operations in the matrix below plus a distinct batch-create mode for expenses on `POST /v2/expenses`. The official inventory contains **205 resource/method/version rows**: **204 implemented and mocked-wire-tested**, plus one unresolved Tasks delete entry. The Tasks page publishes `DELETE /v2/users/:id`, the same path as Users delete; this PR does not guess that it deletes a task. The plugin does implement `users.delete` for that documented Users operation. Coverage remains partial; the README does not claim complete FreeAgent API coverage.
+The plugin has **206 registered Corsair operation handlers**: the verified route operations in the matrix below plus a distinct batch-create mode for expenses on `POST /v2/expenses`. The official inventory contains **205 resource/method/version rows**, all implemented and mocked-wire-tested. Three published paths are typos that answer 404 on the sandbox: the Tasks page's delete (`DELETE /v2/users/:id`, the Users delete path), `DELETE /v2/price_list_item/:id` and `DELETE /v2/bank_transaction/:id`. The plugin uses `DELETE /v2/tasks/:id`, `/v2/price_list_items/:id` and `/v2/bank_transactions/:id`, which delete on the sandbox. Coverage remains partial; the README does not claim complete FreeAgent API coverage.
 
 Every registered operation has strict input validation, a response schema, risk metadata, and a wire test that checks method, host, path, query/body placement, auth headers, and output parsing. Collection operations that expose pagination return `pagination.link` and the decimal-string `pagination.total_count` from the provider headers. The five test files cover schema rejection before network access, 429/`Retry-After`, OAuth refresh behavior, and error propagation.
 
@@ -26,7 +26,7 @@ Failed POST/PUT/DELETE errors are rebuilt as `ApiError` instances with request a
 
 ## Official company API route inventory
 
-The inventory below reconciles each method/path/version shown by the official resource pages and the versioned Bank Transaction Explanation Attachments page. *Implemented* means a typed operation with a mocked wire-contract test. The Tasks page published delete example remains unresolved and is not guessed. Rows with the same method/path but different resource or version retain separate documentation provenance.
+The inventory below reconciles each method/path/version shown by the official resource pages and the versioned Bank Transaction Explanation Attachments page. *Implemented* means a typed operation with a mocked wire-contract test. The Tasks delete row uses `/v2/tasks/:id`; the page's published path is the Users delete (see below). Rows with the same method/path but different resource or version retain separate documentation provenance.
 
 | Resource page | Method | Path | API version | Coverage | Official source |
 | --- | --- | --- | --- | --- | --- |
@@ -53,7 +53,7 @@ The inventory below reconciles each method/path/version shown by the official re
 | `bank_transaction_explanations` | DELETE | `/v2/bank_transaction_explanations/:id` | default | Implemented | [official docs](https://dev.freeagent.com/docs/bank_transaction_explanations) |
 | `bank_transaction_explanations` | GET | `/v2/bank_transaction_explanations/:id` | default | Implemented | [official docs](https://dev.freeagent.com/docs/bank_transaction_explanations) |
 | `bank_transaction_explanations` | PUT | `/v2/bank_transaction_explanations/:id` | default | Implemented | [official docs](https://dev.freeagent.com/docs/bank_transaction_explanations) |
-| `bank_transactions` | DELETE | `/v2/bank_transaction/:id` | default | Implemented | [official docs](https://dev.freeagent.com/docs/bank_transactions) |
+| `bank_transactions` | DELETE | `/v2/bank_transactions/:id` (docs: `/v2/bank_transaction/:id`, 404) | default | Implemented | [official docs](https://dev.freeagent.com/docs/bank_transactions) |
 | `bank_transactions` | GET | `/v2/bank_transactions` | default | Implemented | [official docs](https://dev.freeagent.com/docs/bank_transactions) |
 | `bank_transactions` | GET | `/v2/bank_transactions/:id` | default | Implemented | [official docs](https://dev.freeagent.com/docs/bank_transactions) |
 | `bank_transactions` | POST | `/v2/bank_transactions/statement` | default | Implemented | [official docs](https://dev.freeagent.com/docs/bank_transactions) |
@@ -178,7 +178,7 @@ The inventory below reconciles each method/path/version shown by the official re
 | `payroll` | PUT | `/v2/payroll/:year/payments/:payment_date/mark_as_paid` | default | Implemented | [official docs](https://dev.freeagent.com/docs/payroll) |
 | `payroll` | GET | `/v2/payroll/:year/payments/:payment_date/mark_as_unpaid` | default | Implemented | [official docs](https://dev.freeagent.com/docs/payroll) |
 | `payroll_profiles` | GET | `/v2/payroll_profiles/:year` | default | Implemented | [official docs](https://dev.freeagent.com/docs/payroll_profiles) |
-| `price_list_items` | DELETE | `/v2/price_list_item/:id` | default | Implemented | [official docs](https://dev.freeagent.com/docs/price_list_items) |
+| `price_list_items` | DELETE | `/v2/price_list_items/:id` (docs: `/v2/price_list_item/:id`, 404) | default | Implemented | [official docs](https://dev.freeagent.com/docs/price_list_items) |
 | `price_list_items` | GET | `/v2/price_list_items` | default | Implemented | [official docs](https://dev.freeagent.com/docs/price_list_items) |
 | `price_list_items` | POST | `/v2/price_list_items` | default | Implemented | [official docs](https://dev.freeagent.com/docs/price_list_items) |
 | `price_list_items` | GET | `/v2/price_list_items/:id` | default | Implemented | [official docs](https://dev.freeagent.com/docs/price_list_items) |
@@ -208,7 +208,7 @@ The inventory below reconciles each method/path/version shown by the official re
 | `tasks` | POST | `/v2/tasks` | default | Implemented | [official docs](https://dev.freeagent.com/docs/tasks) |
 | `tasks` | GET | `/v2/tasks/:id` | default | Implemented | [official docs](https://dev.freeagent.com/docs/tasks) |
 | `tasks` | PUT | `/v2/tasks/:id` | default | Implemented | [official docs](https://dev.freeagent.com/docs/tasks) |
-| `tasks` | DELETE | `/v2/users/:id` | default | Unresolved - Tasks page publishes DELETE /v2/users/:id; not guessed as a task deletion | [official docs](https://dev.freeagent.com/docs/tasks) |
+| `tasks` | DELETE | `/v2/tasks/:id` (docs: `/v2/users/:id`) | default | Implemented as `tasks.delete`; the documented path is the Users delete, `/v2/tasks/:id` deletes a task on the sandbox | [official docs](https://dev.freeagent.com/docs/tasks) |
 | `timeslips` | GET | `/v2/timeslips` | default | Implemented | [official docs](https://dev.freeagent.com/docs/timeslips) |
 | `timeslips` | POST | `/v2/timeslips` | default | Implemented | [official docs](https://dev.freeagent.com/docs/timeslips) |
 | `timeslips` | DELETE | `/v2/timeslips/:id` | default | Implemented | [official docs](https://dev.freeagent.com/docs/timeslips) |
@@ -236,13 +236,13 @@ The inventory below reconciles each method/path/version shown by the official re
 | `vat_returns` | PUT | `/v2/vat_returns/:period_ends_on/payments/:payment_date/mark_as_paid` | default | Implemented | [official docs](https://dev.freeagent.com/docs/vat_returns) |
 | `vat_returns` | PUT | `/v2/vat_returns/:period_ends_on/payments/:payment_date/mark_as_unpaid` | default | Implemented | [official docs](https://dev.freeagent.com/docs/vat_returns) |
 
-**Counts:** 205 official route/resource entries are indexed here (201 from the documentation index, plus four operations at API version `2026-09-01`). 204 entries are implemented and tested; one Tasks-resource delete operation is unresolved. The Users resource independently documents the same `DELETE /v2/users/:id` path, which is implemented only as `users.delete`.
+**Counts:** 205 official route/resource entries are indexed here (201 from the documentation index, plus four operations at API version `2026-09-01`). All 205 are implemented and tested; the Tasks delete uses `/v2/tasks/:id` because the documented path belongs to Users.
 
 <!-- ROUTE_MATRIX_END -->
 
 ## Explicit exclusions and unresolved contract details
 
-- **Tasks delete:** unresolved. The official [Tasks page](https://dev.freeagent.com/docs/tasks) shows `DELETE /v2/users/:id`, and the [Users page](https://dev.freeagent.com/docs/users) documents that exact same method and path as deleting a user. The current [Changes page](https://dev.freeagent.com/docs/changes) and [Versioning page](https://dev.freeagent.com/docs/versioning) provide no corrected Tasks route or Tasks-specific version contract; no first-party OpenAPI contract or forum correction was found. Because the target resource is ambiguous, no `tasks.delete` operation is guessed. The documented Users delete operation is implemented as `users.delete`.
+- **Tasks delete:** the official [Tasks page](https://dev.freeagent.com/docs/tasks) shows `DELETE /v2/users/:id`, which the [Users page](https://dev.freeagent.com/docs/users) documents as deleting a user. On the sandbox `DELETE /v2/tasks/:id` deleted a task (200, then 404 on read), so `tasks.delete` uses that path.
 - **Account Locks:** implemented as `accountLocks.list`, `accountLocks.update`, and `accountLocks.delete`. The official page requires Full Access; only the user account lock can be set or deleted, while other listed locks are read-only. `earliest_lock_date` can be absent, in which case a user lock cannot be set.
 - **Expenses batch-create mode:** implemented as `expenses.batchCreate`. The first-party API discussion reports a `201` result per submitted item in order and one observed `422` validation rejection that created no records. That does not prove whether a request committed if its response is lost or times out; callers should check for already-created expenses before retrying an ambiguous failure.
 - **Timeslips batch-create mode:** unresolved. The official [Timeslips page](https://dev.freeagent.com/docs/timeslips) documents an array request under `timeslips` but stops without a batch response example, status code, or response envelope. The single-record `timeslip` response does not establish the batch contract; single-timeslip create is implemented, and batch mode is withheld.
