@@ -339,5 +339,12 @@ describe('Wispr Flow schema', () => {
 		expect(() =>
 			WisprFlowSchema.entities.transcription.parse({ id: 'x', text: 'hi' }),
 		).toThrow();
+		// The client-side spec types total_time as a number, not an integer.
+		expect(
+			WisprFlowSchema.entities.transcription.parse({
+				...TRANSCRIPTION,
+				total_time: 432.5,
+			}).total_time,
+		).toBe(432.5);
 	});
 });

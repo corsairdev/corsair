@@ -59,7 +59,7 @@ export const TranscriptionSchema = z.object({
 	id: z.string().describe('Transcription UUID'),
 	text: z.string().describe('Transcribed text with formatting applied'),
 	detected_language: z.string().describe('Detected ISO 639-1 language code'),
-	total_time: z.number().int().describe('Processing time in milliseconds'),
+	total_time: z.number().describe('Processing time in milliseconds'),
 	generated_tokens: z
 		.number()
 		.int()
