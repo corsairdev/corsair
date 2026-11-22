@@ -49,9 +49,10 @@ export async function create(
 		},
 		ctx.options.environment,
 	);
-	return responseSchema(QuickBooksEndpointOutputSchemas.accountsCreate).parse(
-		response,
-	) as QuickBooksEndpointOutputs['accountsCreate'];
+	return responseSchema(
+		QuickBooksEndpointOutputSchemas.accountsCreate,
+		false,
+	).parse(response) as QuickBooksEndpointOutputs['accountsCreate'];
 }
 
 export async function get(

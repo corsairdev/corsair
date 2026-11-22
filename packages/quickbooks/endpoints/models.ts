@@ -76,7 +76,7 @@ const reportheaderSchema = lazySchema(() =>
 			Customer: z.string().optional(),
 			ReportName: z.string().optional(),
 			Vendor: z.string().optional(),
-			Option: reportoptionSchema().optional(),
+			Option: z.array(namevalueSchema()).optional(),
 			Item: z.string().optional(),
 			Employee: z.string().optional(),
 			ReportBasis: z.enum(['Accrual', 'Cash']).optional(),
@@ -274,7 +274,7 @@ const attachablerequestSchema = lazySchema(() =>
 	z
 		.object({
 			Note: z.string().optional(),
-			AttachableRef: attachablerefSchema().optional(),
+			AttachableRef: z.array(attachablerefSchema()).optional(),
 			FileName: z.string().optional(),
 		})
 		.strict(),
@@ -393,7 +393,7 @@ const salesformsprefSchema = lazySchema(() =>
 			ETransactionEnabledStatus: z.string().optional(),
 			AllowEstimates: z.boolean().optional(),
 			AllowDiscount: z.boolean().optional(),
-			CustomField: customfieldSchema().optional(),
+			CustomField: z.array(customfieldSchema()).optional(),
 			AutoApplyCredit: z.boolean().optional(),
 		})
 		.strict(),
@@ -573,7 +573,7 @@ const accountbasedexpenselineSchema = lazySchema(() =>
 			CustomExtensions: customextensionsSchema().optional(),
 			LineNum: z.number().optional(),
 			Amount: z.number(),
-			Id: z.string(),
+			Id: z.string().optional(),
 			AccountBasedExpenseLineDetail: accountbasedexpenselinedetailSchema(),
 		})
 		.strict(),
@@ -608,7 +608,7 @@ const lineSchema = lazySchema(() =>
 			ProjectRef: referencetypeSchema().optional(),
 			LineNum: z.number().optional(),
 			Amount: z.number(),
-			Id: z.string(),
+			Id: z.string().optional(),
 		})
 		.strict(),
 );
@@ -619,7 +619,12 @@ const purchaserequestSchema = lazySchema(() =>
 			PaymentType: z.string(),
 			AccountRef: referencetypeSchema(),
 			CurrencyRef: currencyrefSchema().optional(),
-			Line: z.array(accountbasedexpenselineSchema()),
+			Line: z.array(
+				z.union([
+					accountbasedexpenselineSchema(),
+					itembasedexpenselineSchema(),
+				]),
+			),
 		})
 		.strict(),
 );
@@ -629,7 +634,12 @@ const billrequestSchema = lazySchema(() =>
 		.object({
 			CurrencyRef: currencyrefSchema().optional(),
 			VendorRef: referencetypeSchema(),
-			Line: z.array(accountbasedexpenselineSchema()),
+			Line: z.array(
+				z.union([
+					accountbasedexpenselineSchema(),
+					itembasedexpenselineSchema(),
+				]),
+			),
 		})
 		.strict(),
 );
@@ -672,7 +682,7 @@ const itemadjustmentlineSchema = lazySchema(() =>
 				.optional(),
 			CustomExtensions: customextensionsSchema().optional(),
 			ItemAdjustmentLineDetail: itemadjustmentlinedetailSchema(),
-			Id: z.number(),
+			Id: z.number().optional(),
 		})
 		.strict(),
 );
@@ -730,7 +740,7 @@ const itembasedexpenselinebillSchema = lazySchema(() =>
 			LineNum: z.number().optional(),
 			Amount: z.number(),
 			DetailType: z.literal('ItemBasedExpenseLineDetail'),
-			Id: z.string(),
+			Id: z.string().optional(),
 		})
 		.strict(),
 );
@@ -744,7 +754,7 @@ const accountbasedexpenselinebillSchema = lazySchema(() =>
 			CustomExtensions: customextensionsSchema().optional(),
 			LineNum: z.number().optional(),
 			Amount: z.number(),
-			Id: z.string(),
+			Id: z.string().optional(),
 			AccountBasedExpenseLineDetail: accountbasedexpenselinedetailSchema(),
 		})
 		.strict(),
@@ -814,7 +824,7 @@ const salesitemlineSchema = lazySchema(() =>
 			LineNum: z.number().optional(),
 			Amount: z.number(),
 			CustomExtensions: customextensionsSchema().optional(),
-			Id: z.string(),
+			Id: z.string().optional(),
 		})
 		.strict(),
 );
@@ -855,7 +865,7 @@ const grouplineSchema = lazySchema(() =>
 			]),
 			CustomExtensions: customextensionsSchema().optional(),
 			LineNum: z.number().optional(),
-			Id: z.string(),
+			Id: z.string().optional(),
 		})
 		.strict(),
 );
@@ -895,7 +905,7 @@ const descriptiononlylineSchema = lazySchema(() =>
 			LineNum: z.number().optional(),
 			Amount: z.number().optional(),
 			DescriptionLineDetail: descriptiononlySchema(),
-			Id: z.string(),
+			Id: z.string().optional(),
 		})
 		.strict(),
 );
@@ -926,7 +936,7 @@ const discountlineSchema = lazySchema(() =>
 			]),
 			LineNum: z.number().optional(),
 			Amount: z.number(),
-			Id: z.string(),
+			Id: z.string().optional(),
 		})
 		.strict(),
 );
@@ -965,9 +975,20 @@ const subtotallineSchema = lazySchema(() =>
 			]),
 			LineNum: z.number().optional(),
 			Amount: z.number(),
-			Id: z.string(),
+			Id: z.string().optional(),
 		})
 		.strict(),
+);
+
+// Sales transactions mix item, subtotal, discount, description and group lines.
+const saleslineSchema = lazySchema(() =>
+	z.union([
+		salesitemlineSchema(),
+		subtotallineSchema(),
+		discountlineSchema(),
+		descriptiononlylineSchema(),
+		grouplineSchema(),
+	]),
 );
 
 const memorefSchema = lazySchema(() =>
@@ -1041,7 +1062,7 @@ const physicaladdressSchema = lazySchema(() =>
 			Line1: z.string().optional(),
 			PostalCode: z.string().optional(),
 			CountrySubDivisionCode: z.string().optional(),
-			Id: z.string(),
+			Id: z.string().optional(),
 		})
 		.strict(),
 );
@@ -1051,7 +1072,7 @@ const creditmemoresponseSchema = lazySchema(() =>
 		.object({
 			TxnDate: z.string().optional(),
 			CurrencyRef: currencyrefSchema().optional(),
-			CustomField: customfieldSchema().optional(),
+			CustomField: z.array(customfieldSchema()).optional(),
 			HomeBalance: z.number().optional(),
 			ClassRef: referencetypeSchema().optional(),
 			PrintStatus: z.string().optional(),
@@ -1065,7 +1086,7 @@ const creditmemoresponseSchema = lazySchema(() =>
 			DocNumber: z.string().optional(),
 			PrivateNote: z.string().optional(),
 			RecurDataRef: referencetypeSchema().optional(),
-			Line: z.array(salesitemlineSchema()),
+			Line: z.array(saleslineSchema()),
 			CustomerMemo: memorefSchema().optional(),
 			ProjectRef: referencetypeSchema().optional(),
 			TaxExemptionRef: referencetypeSchema().optional(),
@@ -1248,7 +1269,7 @@ const journalentrylineSchema = lazySchema(() =>
 			CustomExtensions: customextensionsSchema().optional(),
 			LineNum: z.number().optional(),
 			Amount: z.number(),
-			Id: z.string(),
+			Id: z.string().optional(),
 		})
 		.strict(),
 );
@@ -1342,7 +1363,7 @@ const transactionlistreportheaderSchema = lazySchema(() =>
 			Customer: z.string().optional(),
 			ReportName: z.string().optional(),
 			Vendor: z.string().optional(),
-			Option: reportoptionSchema().optional(),
+			Option: z.array(namevalueSchema()).optional(),
 			Item: z.string().optional(),
 			Employee: z.string().optional(),
 			ReportBasis: z.enum(['Accrual', 'Cash']).optional(),
@@ -1481,7 +1502,7 @@ const refundreceiptresponseSchema = lazySchema(() =>
 		.object({
 			TxnDate: z.string().optional(),
 			CurrencyRef: currencyrefSchema().optional(),
-			CustomField: customfieldSchema().optional(),
+			CustomField: z.array(customfieldSchema()).optional(),
 			HomeBalance: z.number().optional(),
 			ClassRef: referencetypeSchema().optional(),
 			PrintStatus: z.string().optional(),
@@ -1497,7 +1518,7 @@ const refundreceiptresponseSchema = lazySchema(() =>
 			DocNumber: z.string().optional(),
 			PrivateNote: z.string().optional(),
 			DepositToAccountRef: referencetypeSchema(),
-			Line: z.array(salesitemlineSchema()),
+			Line: z.array(saleslineSchema()),
 			CustomerMemo: memorefSchema().optional(),
 			ProjectRef: referencetypeSchema().optional(),
 			TaxExemptionRef: referencetypeSchema().optional(),
@@ -1646,7 +1667,7 @@ const taxratedetailsSchema = lazySchema(() =>
 	z
 		.object({
 			RateValue: z.string(),
-			TaxRateId: z.string(),
+			TaxRateId: z.string().optional(),
 			TaxApplicableOn: z.enum(['Purchase', 'Sales']).optional(),
 			TaxAgencyId: z.string().optional(),
 			TaxRateName: z.string().optional(),
@@ -1712,7 +1733,7 @@ const invoicevoidresponseSchema = lazySchema(() =>
 			DocNumber: z.string().optional(),
 			PrivateNote: z.string().optional(),
 			DepositToAccountRef: referencetypeSchema().optional(),
-			Line: z.array(salesitemlineSchema()).optional(),
+			Line: z.array(saleslineSchema()).optional(),
 			BillEmailCc: emailaddressSchema().optional(),
 			CustomerMemo: memorefSchema().optional(),
 			AllowOnlinePayPalPayment: z.boolean().optional(),
@@ -1725,7 +1746,7 @@ const invoicevoidresponseSchema = lazySchema(() =>
 			TxnTaxDetail: txntaxdetailSchema().optional(),
 			AllowOnlineCreditCardPayment: z.boolean().optional(),
 			SyncToken: z.string().optional(),
-			CustomField: customfieldSchema().optional(),
+			CustomField: z.array(customfieldSchema()).optional(),
 			ShipAddr: physicaladdressSchema().optional(),
 			HomeTotalAmt: z.number().optional(),
 			DepartmentRef: referencetypeSchema().optional(),
@@ -1780,7 +1801,7 @@ const itembasedexpenselineSchema = lazySchema(() =>
 			LineNum: z.number().optional(),
 			Amount: z.number(),
 			DetailType: z.literal('ItemBasedExpenseLineDetail'),
-			Id: z.string(),
+			Id: z.string().optional(),
 		})
 		.strict(),
 );
@@ -1844,17 +1865,17 @@ const recurringscheduleinfoSchema = lazySchema(() =>
 		.object({
 			DayOfWeek: z.string().optional(),
 			StartDate: z.string().optional(),
-			MaxOccurrences: z.string().optional(),
-			RemindDays: z.string().optional(),
+			MaxOccurrences: z.number().int().optional(),
+			RemindDays: z.number().int().optional(),
 			IntervalType: z.string().optional(),
 			WeekOfMonth: z.string().optional(),
 			MonthOfYear: z.string().optional(),
-			DaysBefore: z.string().optional(),
+			DaysBefore: z.number().int().optional(),
 			NextDate: z.string().optional(),
-			NumInterval: z.string().optional(),
+			NumInterval: z.number().int().optional(),
 			EndDate: z.string().optional(),
 			PreviousDate: z.string().optional(),
-			DayOfMonth: z.string().optional(),
+			DayOfMonth: z.number().int().optional(),
 		})
 		.strict(),
 );
@@ -2098,7 +2119,7 @@ const projectestimateresponseSchema = lazySchema(() =>
 			ClassRef: referencetypeSchema().optional(),
 			PrintStatus: z.string().optional(),
 			HomeTotalCostAmount: z.number().optional(),
-			CustomField: customfieldSchema().optional(),
+			CustomField: z.array(customfieldSchema()).optional(),
 			SalesTermRef: referencetypeSchema().optional(),
 			TxnStatus: z.string().optional(),
 			LinkedTxn: z.array(linkedtxnSchema()).optional(),
@@ -2110,7 +2131,7 @@ const projectestimateresponseSchema = lazySchema(() =>
 			DocNumber: z.string().optional(),
 			PrivateNote: z.string().optional(),
 			RecurDataRef: referencetypeSchema().optional(),
-			Line: z.array(salesitemlineSchema()).optional(),
+			Line: z.array(saleslineSchema()).optional(),
 			CustomerMemo: memorefSchema().optional(),
 			EmailStatus: z.string().optional(),
 			ProjectRef: referencetypeSchema().optional(),
@@ -2148,7 +2169,7 @@ const companycurrencyresponseSchema = lazySchema(() =>
 			SyncToken: z.string().optional(),
 			Code: z.string(),
 			Name: z.string().optional(),
-			CustomField: customfieldSchema().optional(),
+			CustomField: z.array(customfieldSchema()).optional(),
 			Active: z.boolean().optional(),
 			Id: z.string(),
 			MetaData: modificationmetadataSchema().optional(),
@@ -2234,7 +2255,7 @@ const itemreceiptlineSchema = lazySchema(() =>
 				'ReimburseLineDetail',
 				'ItemAdjustmentLineDetail',
 			]),
-			Id: z.string(),
+			Id: z.string().optional(),
 		})
 		.strict(),
 );
@@ -2275,7 +2296,7 @@ const attachableresponseSchema = lazySchema(() =>
 			ContentType: z.string().optional(),
 			PlaceName: z.string().optional(),
 			Size: z.number().optional(),
-			AttachableRef: attachablerefSchema().optional(),
+			AttachableRef: z.array(attachablerefSchema()).optional(),
 			Long: z.string().optional(),
 			FileName: z.string().optional(),
 			Note: z.string().optional(),
@@ -2350,9 +2371,9 @@ const purchaseorderitemlineSchema = lazySchema(() =>
 			]),
 			LineNum: z.number().optional(),
 			Amount: z.number(),
-			CustomField: customfieldSchema().optional(),
+			CustomField: z.array(customfieldSchema()).optional(),
 			PurchaseOrderItemLineDetail: purchaseorderitemlinedetailSchema(),
-			Id: z.string(),
+			Id: z.string().optional(),
 		})
 		.strict(),
 );
@@ -2444,8 +2465,8 @@ const depositlineSchema = lazySchema(() =>
 			CustomExtensions: customextensionsSchema().optional(),
 			LineNum: z.number().optional(),
 			Amount: z.number(),
-			CustomField: customfieldSchema().optional(),
-			Id: z.string(),
+			CustomField: z.array(customfieldSchema()).optional(),
+			Id: z.string().optional(),
 			DepositLineDetail: depositlinedetailSchema(),
 		})
 		.strict(),
@@ -2458,6 +2479,7 @@ const timeactivityrequestSchema = lazySchema(() =>
 			EmployeeRef: referencetypeSchema().optional(),
 			ProjectRef: referencetypeSchema().optional(),
 			Hours: z.number().int().optional(),
+			Minutes: z.number().int().min(0).max(59).optional(),
 			StartTime: z.string().optional(),
 			HourlyRate: z.number().optional(),
 			VendorRef: referencetypeSchema().optional(),
@@ -2545,7 +2567,7 @@ const paymentlineSchema = lazySchema(() =>
 			LineNum: z.number().optional(),
 			Amount: z.number(),
 			PaymentLineDetail: paymentlinedetailSchema(),
-			Id: z.string(),
+			Id: z.string().optional(),
 		})
 		.strict(),
 );
@@ -2686,7 +2708,7 @@ const projectestimaterequestSchema = lazySchema(() =>
 	z
 		.object({
 			ProjectRef: referencetypeSchema().optional(),
-			Line: salesitemlineSchema(),
+			Line: z.array(saleslineSchema()),
 			CustomerRef: referencetypeSchema(),
 			CurrencyRef: currencyrefSchema().optional(),
 		})
@@ -2832,7 +2854,7 @@ const creditmemorequestSchema = lazySchema(() =>
 	z
 		.object({
 			ProjectRef: referencetypeSchema().optional(),
-			Line: salesitemlineSchema(),
+			Line: z.array(saleslineSchema()),
 			CustomerRef: referencetypeSchema(),
 			CurrencyRef: currencyrefSchema().optional(),
 		})
@@ -2889,7 +2911,7 @@ const refundreceiptrequestSchema = lazySchema(() =>
 			CurrencyRef: currencyrefSchema().optional(),
 			ProjectRef: referencetypeSchema().optional(),
 			DepositToAccountRef: referencetypeSchema(),
-			Line: z.array(salesitemlineSchema()),
+			Line: z.array(saleslineSchema()),
 		})
 		.strict(),
 );
@@ -2903,7 +2925,7 @@ const creditmemoSchema = lazySchema(() =>
 			ShipDate: z.string().optional(),
 			TrackingNum: z.string().optional(),
 			PrintStatus: z.string().optional(),
-			CustomField: customfieldSchema().optional(),
+			CustomField: z.array(customfieldSchema()).optional(),
 			SalesTermRef: referencetypeSchema().optional(),
 			GlobalTaxCalculation: z
 				.enum(['TaxInclusive', 'TaxExcluded', 'NotApplicable'])
@@ -2914,7 +2936,7 @@ const creditmemoSchema = lazySchema(() =>
 			DocNumber: z.string().optional(),
 			PrivateNote: z.string().optional(),
 			DepositToAccountRef: referencetypeSchema().optional(),
-			Line: z.array(salesitemlineSchema()).optional(),
+			Line: z.array(saleslineSchema()).optional(),
 			CustomerMemo: memorefSchema().optional(),
 			EmailStatus: z.string().optional(),
 			ProjectRef: referencetypeSchema().optional(),
@@ -3144,7 +3166,9 @@ const depositrequestSchema = lazySchema(() =>
 			ExchangeRate: z.number().optional(),
 			CurrencyRef: currencyrefSchema().optional(),
 			DepositToAccountRef: referencetypeSchema().optional(),
-			Line: z.array(depositlineSchema()).optional(),
+			Line: z
+				.array(z.union([depositlineSchema(), linelinkedtxnSchema()]))
+				.optional(),
 		})
 		.strict(),
 );
@@ -3235,7 +3259,7 @@ const estimateresponseSchema = lazySchema(() =>
 			ShipDate: z.string().optional(),
 			ClassRef: referencetypeSchema().optional(),
 			PrintStatus: z.string().optional(),
-			CustomField: customfieldSchema().optional(),
+			CustomField: z.array(customfieldSchema()).optional(),
 			SalesTermRef: referencetypeSchema().optional(),
 			TxnStatus: z.string().optional(),
 			LinkedTxn: z.array(linkedtxnSchema()).optional(),
@@ -3250,7 +3274,7 @@ const estimateresponseSchema = lazySchema(() =>
 			DocNumber: z.string().optional(),
 			PrivateNote: z.string().optional(),
 			RecurDataRef: referencetypeSchema().optional(),
-			Line: z.array(salesitemlineSchema()).optional(),
+			Line: z.array(saleslineSchema()).optional(),
 			CustomerMemo: memorefSchema().optional(),
 			EmailStatus: z.string().optional(),
 			ProjectRef: referencetypeSchema().optional(),
@@ -3541,15 +3565,31 @@ const customerincomequerySchema = lazySchema(() =>
 		.strict(),
 );
 
+// A recurring template comes back under its transaction type: { Invoice: { Id, RecurringInfo, ... } }.
+const recurringtemplateSchema = lazySchema(() =>
+	z.looseObject({
+		Id: z.string(),
+		SyncToken: z.string().optional(),
+		RecurringInfo: recurringinfoSchema().optional(),
+		MetaData: modificationmetadataSchema().optional(),
+	}),
+);
+
 const recurringtransactionresponseSchema = lazySchema(() =>
 	z
 		.object({
-			SyncToken: z.string().optional(),
-			RecurringInfo: recurringinfoSchema(),
-			RecurDataRef: referencetypeSchema().optional(),
-			Type: z.string().optional(),
-			Id: z.string(),
-			MetaData: modificationmetadataSchema().optional(),
+			Bill: recurringtemplateSchema().optional(),
+			CreditMemo: recurringtemplateSchema().optional(),
+			Deposit: recurringtemplateSchema().optional(),
+			Estimate: recurringtemplateSchema().optional(),
+			Invoice: recurringtemplateSchema().optional(),
+			JournalEntry: recurringtemplateSchema().optional(),
+			Purchase: recurringtemplateSchema().optional(),
+			PurchaseOrder: recurringtemplateSchema().optional(),
+			RefundReceipt: recurringtemplateSchema().optional(),
+			SalesReceipt: recurringtemplateSchema().optional(),
+			Transfer: recurringtemplateSchema().optional(),
+			VendorCredit: recurringtemplateSchema().optional(),
 		})
 		.strict(),
 );
@@ -3687,7 +3727,7 @@ const salesreceiptrequestSchema = lazySchema(() =>
 		.object({
 			CurrencyRef: currencyrefSchema().optional(),
 			ProjectRef: referencetypeSchema().optional(),
-			Line: z.array(salesitemlineSchema()),
+			Line: z.array(saleslineSchema()),
 		})
 		.strict(),
 );
@@ -3722,7 +3762,7 @@ const invoiceresponseSchema = lazySchema(() =>
 			DocNumber: z.string().optional(),
 			PrivateNote: z.string().optional(),
 			RecurDataRef: referencetypeSchema().optional(),
-			Line: z.array(salesitemlineSchema()),
+			Line: z.array(saleslineSchema()),
 			BillEmailCc: emailaddressSchema().optional(),
 			CustomerMemo: memorefSchema().optional(),
 			AllowOnlinePayPalPayment: z.boolean().optional(),
@@ -3735,7 +3775,7 @@ const invoiceresponseSchema = lazySchema(() =>
 			TxnTaxDetail: txntaxdetailSchema().optional(),
 			AllowOnlineCreditCardPayment: z.boolean().optional(),
 			SyncToken: z.string().optional(),
-			CustomField: customfieldSchema().optional(),
+			CustomField: z.array(customfieldSchema()).optional(),
 			ShipAddr: physicaladdressSchema().optional(),
 			HomeTotalAmt: z.number().optional(),
 			DepartmentRef: referencetypeSchema().optional(),
@@ -3783,7 +3823,7 @@ const exchangerateresponseSchema = lazySchema(() =>
 		.object({
 			SyncToken: z.string().optional(),
 			AsOfDate: z.string().optional(),
-			CustomField: customfieldSchema().optional(),
+			CustomField: z.array(customfieldSchema()).optional(),
 			SourceCurrencyCode: z.string().optional(),
 			Rate: z.number().optional(),
 			TargetCurrencyCode: z.string().optional(),
@@ -3820,7 +3860,7 @@ const pcesalesitemlineSchema = lazySchema(() =>
 			Amount: z.number(),
 			CostAmount: z.number(),
 			HomeCostAmount: z.number(),
-			Id: z.string(),
+			Id: z.string().optional(),
 		})
 		.strict(),
 );
@@ -3830,7 +3870,7 @@ const purchaseorderresponseSchema = lazySchema(() =>
 		.object({
 			TxnDate: z.string().optional(),
 			CurrencyRef: currencyrefSchema().optional(),
-			CustomField: customfieldSchema().optional(),
+			CustomField: z.array(customfieldSchema()).optional(),
 			APAccountRef: referencetypeSchema(),
 			POEmail: emailaddressSchema().optional(),
 			ClassRef: referencetypeSchema().optional(),
@@ -3887,7 +3927,12 @@ const vendorcreditrequestSchema = lazySchema(() =>
 		.object({
 			CurrencyRef: currencyrefSchema().optional(),
 			VendorRef: referencetypeSchema(),
-			Line: z.array(itembasedexpenselineSchema()),
+			Line: z.array(
+				z.union([
+					accountbasedexpenselineSchema(),
+					itembasedexpenselineSchema(),
+				]),
+			),
 		})
 		.strict(),
 );
@@ -3980,7 +4025,7 @@ const changeorderresponseSchema = lazySchema(() =>
 			ApplyTaxAfterDiscount: z.boolean().optional(),
 			DocNumber: z.string().optional(),
 			PrivateNote: z.string().optional(),
-			Line: z.array(salesitemlineSchema()),
+			Line: z.array(saleslineSchema()),
 			CustomerMemo: memorefSchema().optional(),
 			ProjectRef: referencetypeSchema(),
 			CustomerRef: referencetypeSchema(),
@@ -4002,15 +4047,74 @@ const invoicerequestSchema = lazySchema(() =>
 			ProjectRef: referencetypeSchema().optional(),
 			CurrencyRef: currencyrefSchema().optional(),
 			CustomerRef: referencetypeSchema(),
-			Line: z.array(salesitemlineSchema()),
+			Line: z.array(saleslineSchema()),
 		})
 		.strict(),
 );
 
+// QuickBooks wraps a recurring template in its transaction type: { Invoice: { ..., RecurringInfo } }.
+// Send exactly one type; the template body is the transaction's own create body.
 const recurringtransactionrequestSchema = lazySchema(() =>
 	z
 		.object({
-			RecurringInfo: recurringinfoSchema(),
+			Bill: z.looseObject({ RecurringInfo: recurringinfoSchema() }).optional(),
+			CreditMemo: z
+				.looseObject({ RecurringInfo: recurringinfoSchema() })
+				.optional(),
+			Deposit: z
+				.looseObject({ RecurringInfo: recurringinfoSchema() })
+				.optional(),
+			Estimate: z
+				.looseObject({ RecurringInfo: recurringinfoSchema() })
+				.optional(),
+			Invoice: z
+				.looseObject({ RecurringInfo: recurringinfoSchema() })
+				.optional(),
+			JournalEntry: z
+				.looseObject({ RecurringInfo: recurringinfoSchema() })
+				.optional(),
+			Purchase: z
+				.looseObject({ RecurringInfo: recurringinfoSchema() })
+				.optional(),
+			PurchaseOrder: z
+				.looseObject({ RecurringInfo: recurringinfoSchema() })
+				.optional(),
+			RefundReceipt: z
+				.looseObject({ RecurringInfo: recurringinfoSchema() })
+				.optional(),
+			SalesReceipt: z
+				.looseObject({ RecurringInfo: recurringinfoSchema() })
+				.optional(),
+			Transfer: z
+				.looseObject({ RecurringInfo: recurringinfoSchema() })
+				.optional(),
+			VendorCredit: z
+				.looseObject({ RecurringInfo: recurringinfoSchema() })
+				.optional(),
+		})
+		.strict(),
+);
+
+const recurringtransactionidSchema = lazySchema(() =>
+	z.object({ Id: z.string(), SyncToken: z.string() }).strict(),
+);
+
+// Delete names the template under its transaction type: { Invoice: { Id, SyncToken } }.
+const recurringtransactiondeleterequestSchema = lazySchema(() =>
+	z
+		.object({
+			Bill: recurringtransactionidSchema().optional(),
+			CreditMemo: recurringtransactionidSchema().optional(),
+			Deposit: recurringtransactionidSchema().optional(),
+			Estimate: recurringtransactionidSchema().optional(),
+			Invoice: recurringtransactionidSchema().optional(),
+			JournalEntry: recurringtransactionidSchema().optional(),
+			Purchase: recurringtransactionidSchema().optional(),
+			PurchaseOrder: recurringtransactionidSchema().optional(),
+			RefundReceipt: recurringtransactionidSchema().optional(),
+			SalesReceipt: recurringtransactionidSchema().optional(),
+			Transfer: recurringtransactionidSchema().optional(),
+			VendorCredit: recurringtransactionidSchema().optional(),
 		})
 		.strict(),
 );
@@ -4077,7 +4181,7 @@ const salesreceiptresponseSchema = lazySchema(() =>
 			TxnDate: z.string().optional(),
 			ShipFromAddr: physicaladdressSchema().optional(),
 			CurrencyRef: currencyrefSchema().optional(),
-			CustomField: customfieldSchema().optional(),
+			CustomField: z.array(customfieldSchema()).optional(),
 			HomeBalance: z.number().optional(),
 			ShipDate: z.string().optional(),
 			TrackingNum: z.string().optional(),
@@ -4096,7 +4200,7 @@ const salesreceiptresponseSchema = lazySchema(() =>
 			DocNumber: z.string().optional(),
 			PrivateNote: z.string().optional(),
 			DepositToAccountRef: referencetypeSchema().optional(),
-			Line: z.array(salesitemlineSchema()),
+			Line: z.array(saleslineSchema()),
 			CustomerMemo: memorefSchema().optional(),
 			EmailStatus: z.string().optional(),
 			ProjectRef: referencetypeSchema().optional(),
@@ -4142,7 +4246,7 @@ const estimaterequestSchema = lazySchema(() =>
 	z
 		.object({
 			ProjectRef: referencetypeSchema().optional(),
-			Line: salesitemlineSchema(),
+			Line: z.array(saleslineSchema()),
 			CustomerRef: referencetypeSchema(),
 			CurrencyRef: currencyrefSchema().optional(),
 		})
@@ -4161,7 +4265,7 @@ const changeorderrequestSchema = lazySchema(() =>
 			ProjectRef: referencetypeSchema(),
 			PrintStatus: z.string().optional(),
 			ExpirationDate: z.string().optional(),
-			Line: salesitemlineSchema(),
+			Line: z.array(saleslineSchema()),
 			CustomerRef: referencetypeSchema(),
 			EmailStatus: z.string().optional(),
 		})
@@ -4832,6 +4936,9 @@ export const QuickBooksModelSchemas = {
 	},
 	get recurringtransactionrequest() {
 		return recurringtransactionrequestSchema();
+	},
+	get recurringtransactiondeleterequest() {
+		return recurringtransactiondeleterequestSchema();
 	},
 	get taxsummaryquery() {
 		return taxsummaryquerySchema();

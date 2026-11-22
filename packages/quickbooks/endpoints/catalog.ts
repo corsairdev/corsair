@@ -18,7 +18,11 @@ const DeleteBodySchema = z
 	.object({ Id: IdSchema, SyncToken: SyncTokenSchema })
 	.strict();
 const VoidBodySchema = z
-	.object({ Id: IdSchema, SyncToken: SyncTokenSchema, sparse: z.literal(true) })
+	.object({
+		Id: IdSchema,
+		SyncToken: SyncTokenSchema,
+		sparse: z.literal(true).optional(),
+	})
 	.strict();
 const BinarySchema = z
 	.object({
@@ -85,7 +89,10 @@ function defineEndpoint<I extends z.ZodType, O extends z.ZodType>(
 			requestOptions,
 			ctx.options.environment,
 		);
-		return responseSchema(definition.output()).parse(result) as z.output<O>;
+		return responseSchema(
+			definition.output(),
+			requestOptions.method === 'GET',
+		).parse(result) as z.output<O>;
 	};
 }
 
@@ -486,7 +493,31 @@ const attachable_uploadInput = lazySchema(() =>
 const attachable_uploadOutput = lazySchema(() =>
 	z
 		.object({
-			Attachable: QuickBooksModelSchemas['attachableresponse'],
+			AttachableResponse: z.array(
+				z
+					.object({
+						Attachable: QuickBooksModelSchemas['attachableresponse'].optional(),
+						Fault: z
+							.object({
+								type: z.string().optional(),
+								Error: z
+									.array(
+										z
+											.object({
+												Message: z.string().optional(),
+												Detail: z.string().optional(),
+												code: z.string().optional(),
+												element: z.string().optional(),
+											})
+											.strict(),
+									)
+									.optional(),
+							})
+							.strict()
+							.optional(),
+					})
+					.strict(),
+			),
 			time: z.string(),
 		})
 		.strict(),
@@ -1449,7 +1480,7 @@ const creditCardPayment_createInput = lazySchema(() =>
 const creditCardPayment_createOutput = lazySchema(() =>
 	z
 		.object({
-			CreditCardPayment: QuickBooksModelSchemas['creditcardpaymentresponse'],
+			CreditCardPaymentTxn: QuickBooksModelSchemas['creditcardpaymentresponse'],
 			time: z.string(),
 		})
 		.strict(),
@@ -1482,7 +1513,7 @@ const creditCardPayment_deleteInput = lazySchema(() =>
 const creditCardPayment_deleteOutput = lazySchema(() =>
 	z
 		.object({
-			CreditCardPayment: z
+			CreditCardPaymentTxn: z
 				.object({
 					status: z.literal('Deleted'),
 					Id: IdSchema,
@@ -1526,7 +1557,7 @@ const creditCardPayment_listOutput = lazySchema(() =>
 					startPosition: z.number().optional(),
 					maxResults: z.number().optional(),
 					totalCount: z.number().optional(),
-					CreditCardPayment: z
+					CreditCardPaymentTxn: z
 						.array(QuickBooksModelSchemas['creditcardpaymentresponse'])
 						.optional(),
 				})
@@ -1558,7 +1589,7 @@ const creditCardPayment_getInput = lazySchema(() =>
 const creditCardPayment_getOutput = lazySchema(() =>
 	z
 		.object({
-			CreditCardPayment: QuickBooksModelSchemas['creditcardpaymentresponse'],
+			CreditCardPaymentTxn: QuickBooksModelSchemas['creditcardpaymentresponse'],
 			time: z.string(),
 		})
 		.strict(),
@@ -1588,7 +1619,7 @@ const creditCardPayment_updateInput = lazySchema(() =>
 const creditCardPayment_updateOutput = lazySchema(() =>
 	z
 		.object({
-			CreditCardPayment: QuickBooksModelSchemas['creditcardpaymentresponse'],
+			CreditCardPaymentTxn: QuickBooksModelSchemas['creditcardpaymentresponse'],
 			time: z.string(),
 		})
 		.strict(),
@@ -1626,7 +1657,7 @@ const creditCardPayment_sparseUpdateInput = lazySchema(() =>
 const creditCardPayment_sparseUpdateOutput = lazySchema(() =>
 	z
 		.object({
-			CreditCardPayment: QuickBooksModelSchemas['creditcardpaymentresponse'],
+			CreditCardPaymentTxn: QuickBooksModelSchemas['creditcardpaymentresponse'],
 			time: z.string(),
 		})
 		.strict(),
@@ -2808,16 +2839,7 @@ const exchangerate_getInput = lazySchema(() =>
 const exchangerate_getOutput = lazySchema(() =>
 	z
 		.object({
-			QueryResponse: z
-				.object({
-					startPosition: z.number().optional(),
-					maxResults: z.number().optional(),
-					totalCount: z.number().optional(),
-					Exchangerate: z
-						.array(QuickBooksModelSchemas['exchangerateresponse'])
-						.optional(),
-				})
-				.strict(),
+			ExchangeRate: QuickBooksModelSchemas['exchangerateresponse'],
 			time: z.string(),
 		})
 		.strict(),
@@ -2850,7 +2872,7 @@ const exchangerate_listOutput = lazySchema(() =>
 					startPosition: z.number().optional(),
 					maxResults: z.number().optional(),
 					totalCount: z.number().optional(),
-					Exchangerate: z
+					ExchangeRate: z
 						.array(QuickBooksModelSchemas['exchangerateresponse'])
 						.optional(),
 				})
@@ -2876,8 +2898,13 @@ const exchangerate_updateInput = lazySchema(() =>
 	z
 		.object({
 			realmId: RealmIdSchema,
+			// Exchange rates have no Id: the currency and date identify the rate.
 			body: QuickBooksModelSchemas['exchangerateresponse']
-				.extend({ Id: IdSchema, SyncToken: SyncTokenSchema })
+				.extend({
+					SyncToken: SyncTokenSchema,
+					SourceCurrencyCode: z.string().regex(/^[A-Z]{3}$/),
+					Rate: z.number().positive(),
+				})
 				.strict(),
 		})
 		.strict(),
@@ -2885,7 +2912,7 @@ const exchangerate_updateInput = lazySchema(() =>
 const exchangerate_updateOutput = lazySchema(() =>
 	z
 		.object({
-			Exchangerate: QuickBooksModelSchemas['exchangerateresponse'],
+			ExchangeRate: QuickBooksModelSchemas['exchangerateresponse'],
 			time: z.string(),
 		})
 		.strict(),
@@ -2975,9 +3002,7 @@ const inventoryAdjustment_deleteInput = lazySchema(() =>
 	z
 		.object({
 			realmId: RealmIdSchema,
-			body: QuickBooksModelSchemas['inventoryadjustmentdeleterequest']
-				.extend({ Id: IdSchema, SyncToken: SyncTokenSchema })
-				.strict(),
+			body: DeleteBodySchema,
 		})
 		.strict(),
 );
@@ -3876,7 +3901,14 @@ const journalReport_listDef = {
 	request: (input: z.output<ReturnType<typeof journalReport_listInput>>) => ({
 		path: `company/${encodeURIComponent(input.realmId)}/reports/JournalReport`,
 		method: 'GET',
-		query: {},
+		query: {
+			end_date: input.params?.['end_date'],
+			date_macro: input.params?.['date_macro'],
+			sort_by: input.params?.['sort_by'],
+			sort_order: input.params?.['sort_order'],
+			start_date: input.params?.['start_date'],
+			columns: input.params?.['columns'],
+		},
 	}),
 } as const;
 const journalReport_listEndpoint = defineEndpoint(journalReport_listDef);
@@ -4220,21 +4252,29 @@ const preferences_listInput = lazySchema(() =>
 		.strict(),
 );
 const preferences_listOutput = lazySchema(() =>
-	z
-		.object({
-			QueryResponse: z
-				.object({
-					startPosition: z.number().optional(),
-					maxResults: z.number().optional(),
-					totalCount: z.number().optional(),
-					Preferences: z
-						.array(QuickBooksModelSchemas['preferencesresponse'])
-						.optional(),
-				})
-				.strict(),
-			time: z.string(),
-		})
-		.strict(),
+	z.union([
+		z
+			.object({
+				QueryResponse: z
+					.object({
+						startPosition: z.number().optional(),
+						maxResults: z.number().optional(),
+						totalCount: z.number().optional(),
+						Preferences: z
+							.array(QuickBooksModelSchemas['preferencesresponse'])
+							.optional(),
+					})
+					.strict(),
+				time: z.string(),
+			})
+			.strict(),
+		z
+			.object({
+				Preferences: QuickBooksModelSchemas['preferencesresponse'],
+				time: z.string(),
+			})
+			.strict(),
+	]),
 );
 const preferences_listDef = {
 	input: preferences_listInput,
@@ -4346,7 +4386,7 @@ const profitAndLossDetail_listInput = lazySchema(() =>
 		.strict(),
 );
 const profitAndLossDetail_listOutput = lazySchema(
-	() => QuickBooksModelSchemas['profitandlossdetailquery'],
+	() => QuickBooksModelSchemas['reporttoplevel'],
 );
 const profitAndLossDetail_listDef = {
 	input: profitAndLossDetail_listInput,
@@ -4748,18 +4788,23 @@ const recurringTransaction_createEndpoint = defineEndpoint(
 );
 
 const recurringTransaction_deleteInput = lazySchema(() =>
-	z.object({ realmId: RealmIdSchema, body: DeleteBodySchema }).strict(),
+	z
+		.object({
+			realmId: RealmIdSchema,
+			body: QuickBooksModelSchemas['recurringtransactiondeleterequest'],
+		})
+		.strict(),
 );
 const recurringTransaction_deleteOutput = lazySchema(() =>
 	z
 		.object({
+			// The deleted template comes back under its transaction type: { status, domain, Invoice: { Id } }.
 			RecurringTransaction: z
 				.object({
 					status: z.literal('Deleted'),
-					Id: IdSchema,
 					domain: z.literal('QBO').optional(),
 				})
-				.strict(),
+				.catchall(z.object({ Id: IdSchema }).strict()),
 			time: z.string().optional(),
 		})
 		.strict(),
@@ -4828,14 +4873,32 @@ const recurringTransaction_getInput = lazySchema(() =>
 		.object({ realmId: RealmIdSchema, recurringtransactionId: IdSchema })
 		.strict(),
 );
+// Intuit's read sample answers { QueryResponse: { RecurringTransaction: [...] } }; accept that and the entity envelope.
 const recurringTransaction_getOutput = lazySchema(() =>
-	z
-		.object({
-			RecurringTransaction:
-				QuickBooksModelSchemas['recurringtransactionresponse'],
-			time: z.string(),
-		})
-		.strict(),
+	z.union([
+		z
+			.object({
+				RecurringTransaction:
+					QuickBooksModelSchemas['recurringtransactionresponse'],
+				time: z.string(),
+			})
+			.strict(),
+		z
+			.object({
+				QueryResponse: z
+					.object({
+						startPosition: z.number().optional(),
+						maxResults: z.number().optional(),
+						totalCount: z.number().optional(),
+						RecurringTransaction: z
+							.array(QuickBooksModelSchemas['recurringtransactionresponse'])
+							.optional(),
+					})
+					.strict(),
+				time: z.string(),
+			})
+			.strict(),
+	]),
 );
 const recurringTransaction_getDef = {
 	input: recurringTransaction_getInput,
@@ -7386,7 +7449,11 @@ export const QuickBooksCatalogEndpoints = {
 	},
 } as const;
 
-export const QuickBooksCatalogEndpointSchemas = {
+// Typed loosely on purpose: each operation's exact types live in QuickBooksCatalogEndpointInputs/Outputs.
+export const QuickBooksCatalogEndpointSchemas: Record<
+	string,
+	{ readonly input: z.ZodType; readonly output: z.ZodType }
+> = {
 	'apAgingDetail.list': lazySchemaEntry(
 		apAgingDetail_listInput,
 		apAgingDetail_listOutput,
@@ -8090,7 +8157,7 @@ export const QuickBooksCatalogEndpointSchemas = {
 		vendorExpenses_listInput,
 		vendorExpenses_listOutput,
 	),
-} as const;
+};
 
 export const QuickBooksCatalogEndpointMeta = {
 	'apAgingDetail.list': {

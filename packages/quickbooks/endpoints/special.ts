@@ -4,7 +4,7 @@ import type { QuickBooksEnvironment } from '../client';
 import { makeAuthenticatedQuickBooksRequest } from '../client';
 import { lazySchema, lazySchemaEntry } from './lazy-schema';
 import { QuickBooksModelSchemas } from './models';
-import { requestSchema, responseSchema } from './schema-mode';
+import { responseSchema } from './schema-mode';
 
 const RealmIdSchema = z.string().regex(/^\d+$/);
 const IdSchema = z.string().min(1);
@@ -2259,13 +2259,71 @@ const BatchOutputInputSchema = lazySchema(() =>
 		.strict(),
 );
 
+const BATCH_ITEM_FIELDS = new Set(['bId', 'operation', 'optionsData', 'Query']);
+/*
+ * Batch items are checked at runtime by their envelope: a unique bId and either
+ * a Query or one entity payload with its operation. The per-entity union above
+ * stays the documented contract; QuickBooks validates each payload and answers
+ * per item, and a sparse update carries only the fields it changes.
+ */
+const BatchRuntimeInputSchema = lazySchema(() =>
+	z
+		.object({
+			realmId: RealmIdSchema,
+			items: z
+				.array(
+					z
+						.looseObject({
+							bId: z.string().min(1),
+							operation: z.enum(['create', 'update', 'delete']).optional(),
+							optionsData: z.string().optional(),
+							Query: z.string().min(1).optional(),
+						})
+						.superRefine((item, ctx) => {
+							const entities = Object.keys(item).filter(
+								(key) => !BATCH_ITEM_FIELDS.has(key),
+							);
+							const valid =
+								item.Query !== undefined
+									? entities.length === 0 && item.operation === undefined
+									: entities.length === 1 &&
+										item.operation !== undefined &&
+										typeof item[entities[0] as string] === 'object';
+							if (!valid) {
+								ctx.addIssue({
+									code: 'custom',
+									message:
+										'Each batch item needs either Query, or operation plus exactly one entity object.',
+								});
+							}
+						}),
+				)
+				.min(1)
+				.max(30)
+				.superRefine((items, ctx) => {
+					const seen = new Set<string>();
+					for (const [index, item] of items.entries()) {
+						if (seen.has(item.bId)) {
+							ctx.addIssue({
+								code: 'custom',
+								message: `Duplicate bId "${item.bId}"; each batch item needs its own.`,
+								path: [index, 'bId'],
+							});
+						}
+						seen.add(item.bId);
+					}
+				}),
+		})
+		.strict(),
+);
+
 export async function executeBatch(
 	ctx: SpecialContext,
 	rawInput: z.input<ReturnType<typeof BatchOutputInputSchema>>,
 ): Promise<z.output<ReturnType<typeof BatchOutputSchema>>> {
-	const input = requestSchema(BatchOutputInputSchema(), ['items']).parse(
-		rawInput,
-	) as z.output<ReturnType<typeof BatchOutputInputSchema>>;
+	const input = BatchRuntimeInputSchema().parse(rawInput) as z.output<
+		ReturnType<typeof BatchOutputInputSchema>
+	>;
 	// unknown because the shared transport returns untrusted batch response JSON before the output schema validates it.
 	const response: unknown = await makeAuthenticatedQuickBooksRequest<unknown>(
 		ctx,
@@ -2273,7 +2331,7 @@ export async function executeBatch(
 		{ method: 'POST', body: { BatchItemRequest: input.items } },
 		ctx.options.environment,
 	);
-	return responseSchema(BatchOutputSchema()).parse(response) as z.output<
+	return responseSchema(BatchOutputSchema(), false).parse(response) as z.output<
 		ReturnType<typeof BatchOutputSchema>
 	>;
 }

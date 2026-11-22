@@ -475,12 +475,14 @@ describe('QuickBooks first-party catalog operation requests', () => {
 			Amount: 75,
 			DetailType: 'DepositLineDetail' as const,
 			Description: 'Other deposit income',
-			CustomField: {
-				DefinitionId: '1',
-				Name: 'Reference',
-				Type: 'StringType' as const,
-				StringValue: 'A-7',
-			},
+			CustomField: [
+				{
+					DefinitionId: '1',
+					Name: 'Reference',
+					Type: 'StringType' as const,
+					StringValue: 'A-7',
+				},
+			],
 			DepositLineDetail: {
 				AccountRef: { value: 'income-account' },
 				CheckNum: 'A-7',

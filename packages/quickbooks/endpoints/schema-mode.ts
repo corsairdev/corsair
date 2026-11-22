@@ -17,6 +17,7 @@ type AnySchema = z.ZodType;
 
 const lenientCache = new WeakMap<AnySchema, AnySchema>();
 const responseCache = new WeakMap<AnySchema, AnySchema>();
+const writeResponseCache = new WeakMap<AnySchema, AnySchema>();
 const requestCache = new WeakMap<AnySchema, AnySchema>();
 const inputCache = new WeakMap<AnySchema, AnySchema>();
 
@@ -26,13 +27,14 @@ function defOf(schema: AnySchema): Def {
 	return (schema as unknown as { _zod: { def: Def } })._zod.def;
 }
 
-const leaf = {
-	string: () => z.union([z.string(), z.number()]),
-	number: () => z.union([z.number(), z.string()]),
-	boolean: () => z.union([z.boolean(), z.string()]),
-};
+// Provider-defined leaf value; the catalog types several references and amounts as plain strings or numbers.
+const anyLeaf = z.unknown();
 
-function lenient(schema: AnySchema, top: boolean): AnySchema {
+function lenient(
+	schema: AnySchema,
+	top: boolean,
+	requireEnvelope = true,
+): AnySchema {
 	if (!top) {
 		const cached = lenientCache.get(schema);
 		if (cached) return cached;
@@ -47,7 +49,10 @@ function lenient(schema: AnySchema, top: boolean): AnySchema {
 				const inner = lenient(field, false);
 				// The envelope key (`Invoice`, `QueryResponse`) stays required; `time` and everything below may be absent.
 				const required =
-					top && name !== 'time' && defOf(field).type !== 'optional';
+					top &&
+					requireEnvelope &&
+					name !== 'time' &&
+					defOf(field).type !== 'optional';
 				fields[name] = required ? inner : inner.nullish();
 			}
 			const object = z.looseObject(fields);
@@ -61,7 +66,7 @@ function lenient(schema: AnySchema, top: boolean): AnySchema {
 		}
 		case 'union': {
 			const options = (def.options as AnySchema[]).map((option) =>
-				lenient(option, top),
+				lenient(option, top, requireEnvelope),
 			);
 			out = z.union(options as [AnySchema, AnySchema, ...AnySchema[]]);
 			break;
@@ -77,19 +82,17 @@ function lenient(schema: AnySchema, top: boolean): AnySchema {
 		case 'prefault':
 		case 'readonly':
 		case 'catch':
-			out = lenient(def.innerType as AnySchema, top).nullish();
+			out = lenient(def.innerType as AnySchema, top, requireEnvelope).nullish();
 			break;
 		case 'record':
 			out = z.record(z.string(), lenient(def.valueType as AnySchema, false));
 			break;
 		case 'enum':
 		case 'literal':
-			out = z.union([z.string(), z.number(), z.boolean()]);
-			break;
 		case 'string':
 		case 'number':
 		case 'boolean':
-			out = leaf[def.type]();
+			out = anyLeaf;
 			break;
 		default:
 			out = schema;
@@ -98,14 +101,27 @@ function lenient(schema: AnySchema, top: boolean): AnySchema {
 	return out;
 }
 
-/** Lenient copy of an operation's documented response schema, used to parse what QuickBooks returns. */
-export function responseSchema(schema: AnySchema): AnySchema {
-	let cached = responseCache.get(schema);
+/**
+ * Lenient copy of an operation's documented response schema, used to parse
+ * what QuickBooks returns. Reads keep their envelope key (`Invoice`,
+ * `QueryResponse`) required; after a write (POST) nothing is required, so a
+ * change QuickBooks already made always reaches the caller.
+ */
+export function responseSchema(
+	schema: AnySchema,
+	requireEnvelope = true,
+): AnySchema {
+	const cache = requireEnvelope ? responseCache : writeResponseCache;
+	let cached = cache.get(schema);
 	if (!cached) {
-		cached = lenient(schema, true);
-		responseCache.set(schema, cached);
+		cached = lenient(schema, true, requireEnvelope);
+		cache.set(schema, cached);
 	}
 	return cached;
+}
+
+function isRequired(field: AnySchema | undefined): boolean {
+	return field !== undefined && defOf(field).type !== 'optional';
 }
 
 function looseBody(schema: AnySchema, nested: boolean): AnySchema {
@@ -116,10 +132,17 @@ function looseBody(schema: AnySchema, nested: boolean): AnySchema {
 	switch (def.type) {
 		case 'object': {
 			const shape = (schema as z.ZodObject).shape as Record<string, AnySchema>;
+			// A body that names an existing record (update, sparse update, delete) needs only
+			// Id and SyncToken; QuickBooks validates the rest of the entity itself.
+			const identifiesRecord =
+				!nested && isRequired(shape.Id) && isRequired(shape.SyncToken);
 			const fields: Record<string, AnySchema> = {};
 			for (const [name, field] of Object.entries(shape)) {
 				const inner = looseBody(field, true);
-				fields[name] = nested && name === 'Id' ? inner.optional() : inner;
+				const optional =
+					(nested && name === 'Id') ||
+					(identifiesRecord && name !== 'Id' && name !== 'SyncToken');
+				fields[name] = optional ? inner.optional() : inner;
 			}
 			out = z.looseObject(fields);
 			break;

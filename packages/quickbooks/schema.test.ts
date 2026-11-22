@@ -210,12 +210,14 @@ describe('QuickBooks endpoint schemas', () => {
 			Amount: 75,
 			DetailType: 'DepositLineDetail',
 			Description: 'Other deposit income',
-			CustomField: {
-				DefinitionId: '1',
-				Name: 'Reference',
-				Type: 'StringType',
-				StringValue: 'A-7',
-			},
+			CustomField: [
+				{
+					DefinitionId: '1',
+					Name: 'Reference',
+					Type: 'StringType',
+					StringValue: 'A-7',
+				},
+			],
 			DepositLineDetail: {
 				AccountRef: { value: 'income-account' },
 				CheckNum: 'A-7',

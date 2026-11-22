@@ -6,6 +6,12 @@ import {
 } from './catalog';
 
 // Mocked request/response cases for endpoints.test.ts. Not imported by the plugin.
+
+function schemasFor(id: string) {
+	const entry = QuickBooksCatalogEndpointSchemas[id];
+	if (!entry) throw new Error(`No schemas for ${id}`);
+	return entry;
+}
 export type QuickBooksCatalogTestCase = {
 	id: string;
 	method: 'GET' | 'POST';
@@ -33,8 +39,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['apAgingDetail.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['apAgingDetail.list'].output,
+		inputSchema: schemasFor('apAgingDetail.list').input,
+		outputSchema: schemasFor('apAgingDetail.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['apAgingDetail']['list'](ctx, {
 				realmId: '12345678',
@@ -50,9 +56,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['apAgingSummary.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['apAgingSummary.list'].output,
+		inputSchema: schemasFor('apAgingSummary.list').input,
+		outputSchema: schemasFor('apAgingSummary.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['apAgingSummary']['list'](ctx, {
 				realmId: '12345678',
@@ -68,8 +73,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['arAgingDetail.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['arAgingDetail.list'].output,
+		inputSchema: schemasFor('arAgingDetail.list').input,
+		outputSchema: schemasFor('arAgingDetail.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['arAgingDetail']['list'](ctx, {
 				realmId: '12345678',
@@ -85,9 +90,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['arAgingSummary.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['arAgingSummary.list'].output,
+		inputSchema: schemasFor('arAgingSummary.list').input,
+		outputSchema: schemasFor('arAgingSummary.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['arAgingSummary']['list'](ctx, {
 				realmId: '12345678',
@@ -116,8 +120,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { Id: '35', Name: 'sample', SyncToken: '0' },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['accounts.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['accounts.update'].output,
+		inputSchema: schemasFor('accounts.update').input,
+		outputSchema: schemasFor('accounts.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['accounts']['update'](ctx, {
 				realmId: '12345678',
@@ -133,10 +137,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['accountListDetail.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['accountListDetail.list'].output,
+		inputSchema: schemasFor('accountListDetail.list').input,
+		outputSchema: schemasFor('accountListDetail.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['accountListDetail']['list'](ctx, {
 				realmId: '12345678',
@@ -156,8 +158,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { Attachable: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', body: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['attachable.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['attachable.create'].output,
+		inputSchema: schemasFor('attachable.create').input,
+		outputSchema: schemasFor('attachable.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['attachable']['create'](ctx, {
 				realmId: '12345678',
@@ -183,8 +185,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['attachable.delete'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['attachable.delete'].output,
+		inputSchema: schemasFor('attachable.delete').input,
+		outputSchema: schemasFor('attachable.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['attachable']['delete'](ctx, {
 				realmId: '12345678',
@@ -203,9 +205,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: 'https://download.example.test/temporary-file',
 		input: { realmId: '12345678', attachableId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['attachable.download'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['attachable.download'].output,
+		inputSchema: schemasFor('attachable.download').input,
+		outputSchema: schemasFor('attachable.download').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['attachable']['download'](ctx, {
 				realmId: '12345678',
@@ -227,8 +228,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['attachable.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['attachable.list'].output,
+		inputSchema: schemasFor('attachable.list').input,
+		outputSchema: schemasFor('attachable.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['attachable']['list'](ctx, {
 				realmId: '12345678',
@@ -246,8 +247,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { Attachable: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', attachableId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['attachable.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['attachable.get'].output,
+		inputSchema: schemasFor('attachable.get').input,
+		outputSchema: schemasFor('attachable.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['attachable']['get'](ctx, {
 				realmId: '12345678',
@@ -267,8 +268,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { Attachable: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['attachable.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['attachable.update'].output,
+		inputSchema: schemasFor('attachable.update').input,
+		outputSchema: schemasFor('attachable.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['attachable']['update'](ctx, {
 				realmId: '12345678',
@@ -283,9 +284,15 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		requestKind: 'form-data',
 		response: {
 			kind: 'json',
-			body: { Attachable: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
+			body: {
+				AttachableResponse: [{ Attachable: { Id: '1' } }],
+				time: '2026-11-18T12:00:00Z',
+			},
 		},
-		expectedResult: { Attachable: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
+		expectedResult: {
+			AttachableResponse: [{ Attachable: { Id: '1' } }],
+			time: '2026-11-18T12:00:00Z',
+		},
 		input: {
 			realmId: '12345678',
 			fileName: 'receipt.pdf',
@@ -293,8 +300,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			base64Content: 'JVBERg==',
 			metadata: {},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['attachable.upload'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['attachable.upload'].output,
+		inputSchema: schemasFor('attachable.upload').input,
+		outputSchema: schemasFor('attachable.upload').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['attachable']['upload'](ctx, {
 				realmId: '12345678',
@@ -313,8 +320,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['balanceSheet.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['balanceSheet.list'].output,
+		inputSchema: schemasFor('balanceSheet.list').input,
+		outputSchema: schemasFor('balanceSheet.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['balanceSheet']['list'](ctx, {
 				realmId: '12345678',
@@ -343,8 +350,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { VendorRef: { value: 'sample' }, Line: [] },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['bill.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['bill.create'].output,
+		inputSchema: schemasFor('bill.create').input,
+		outputSchema: schemasFor('bill.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['bill']['create'](ctx, {
 				realmId: '12345678',
@@ -370,8 +377,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['bill.delete'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['bill.delete'].output,
+		inputSchema: schemasFor('bill.delete').input,
+		outputSchema: schemasFor('bill.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['bill']['delete'](ctx, {
 				realmId: '12345678',
@@ -393,8 +400,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['bill.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['bill.list'].output,
+		inputSchema: schemasFor('bill.list').input,
+		outputSchema: schemasFor('bill.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['bill']['list'](ctx, { realmId: '12345678' }),
 	},
@@ -416,8 +423,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', billId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['bill.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['bill.get'].output,
+		inputSchema: schemasFor('bill.get').input,
+		outputSchema: schemasFor('bill.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['bill']['get'](ctx, {
 				realmId: '12345678',
@@ -456,8 +463,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['bill.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['bill.update'].output,
+		inputSchema: schemasFor('bill.update').input,
+		outputSchema: schemasFor('bill.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['bill']['update'](ctx, {
 				realmId: '12345678',
@@ -513,8 +520,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				PayType: 'Check',
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['billPayment.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['billPayment.create'].output,
+		inputSchema: schemasFor('billPayment.create').input,
+		outputSchema: schemasFor('billPayment.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['billPayment']['create'](ctx, {
 				realmId: '12345678',
@@ -560,8 +567,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { Id: '35', SyncToken: '0', sparse: true },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['billPayment.void'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['billPayment.void'].output,
+		inputSchema: schemasFor('billPayment.void').input,
+		outputSchema: schemasFor('billPayment.void').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['billPayment']['void'](ctx, {
 				realmId: '12345678',
@@ -587,8 +594,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['billPayment.delete'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['billPayment.delete'].output,
+		inputSchema: schemasFor('billPayment.delete').input,
+		outputSchema: schemasFor('billPayment.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['billPayment']['delete'](ctx, {
 				realmId: '12345678',
@@ -613,8 +620,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['billPayment.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['billPayment.list'].output,
+		inputSchema: schemasFor('billPayment.list').input,
+		outputSchema: schemasFor('billPayment.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['billPayment']['list'](ctx, {
 				realmId: '12345678',
@@ -650,8 +657,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', billpaymentId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['billPayment.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['billPayment.get'].output,
+		inputSchema: schemasFor('billPayment.get').input,
+		outputSchema: schemasFor('billPayment.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['billPayment']['get'](ctx, {
 				realmId: '12345678',
@@ -706,8 +713,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['billPayment.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['billPayment.update'].output,
+		inputSchema: schemasFor('billPayment.update').input,
+		outputSchema: schemasFor('billPayment.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['billPayment']['update'](ctx, {
 				realmId: '12345678',
@@ -743,8 +750,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { EndDate: 'sample', StartDate: 'sample' },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['budget.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['budget.create'].output,
+		inputSchema: schemasFor('budget.create').input,
+		outputSchema: schemasFor('budget.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['budget']['create'](ctx, {
 				realmId: '12345678',
@@ -770,8 +777,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['budget.delete'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['budget.delete'].output,
+		inputSchema: schemasFor('budget.delete').input,
+		outputSchema: schemasFor('budget.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['budget']['delete'](ctx, {
 				realmId: '12345678',
@@ -793,8 +800,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['budget.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['budget.list'].output,
+		inputSchema: schemasFor('budget.list').input,
+		outputSchema: schemasFor('budget.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['budget']['list'](ctx, {
 				realmId: '12345678',
@@ -818,8 +825,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', budgetId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['budget.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['budget.get'].output,
+		inputSchema: schemasFor('budget.get').input,
+		outputSchema: schemasFor('budget.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['budget']['get'](ctx, {
 				realmId: '12345678',
@@ -858,8 +865,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['budget.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['budget.update'].output,
+		inputSchema: schemasFor('budget.update').input,
+		outputSchema: schemasFor('budget.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['budget']['update'](ctx, {
 				realmId: '12345678',
@@ -880,8 +887,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['cashFlow.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['cashFlow.list'].output,
+		inputSchema: schemasFor('cashFlow.list').input,
+		outputSchema: schemasFor('cashFlow.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['cashFlow']['list'](ctx, {
 				realmId: '12345678',
@@ -895,12 +902,14 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		expectedQuery: {},
 		expectedBody: {
 			ProjectRef: { value: 'sample' },
-			Line: {
-				DetailType: 'PaymentLineDetail',
-				SalesItemLineDetail: {},
-				Amount: 1,
-				Id: '1',
-			},
+			Line: [
+				{
+					DetailType: 'PaymentLineDetail',
+					SalesItemLineDetail: {},
+					Amount: 1,
+					Id: '1',
+				},
+			],
 			CustomerRef: { value: 'sample' },
 		},
 		requestKind: 'json',
@@ -931,28 +940,32 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: {
 				ProjectRef: { value: 'sample' },
-				Line: {
-					DetailType: 'PaymentLineDetail',
-					SalesItemLineDetail: {},
-					Amount: 1,
-					Id: '1',
-				},
-				CustomerRef: { value: 'sample' },
-			},
-		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['changeOrder.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['changeOrder.create'].output,
-		invoke: (ctx) =>
-			QuickBooksCatalogEndpoints['changeOrder']['create'](ctx, {
-				realmId: '12345678',
-				body: {
-					ProjectRef: { value: 'sample' },
-					Line: {
+				Line: [
+					{
 						DetailType: 'PaymentLineDetail',
 						SalesItemLineDetail: {},
 						Amount: 1,
 						Id: '1',
 					},
+				],
+				CustomerRef: { value: 'sample' },
+			},
+		},
+		inputSchema: schemasFor('changeOrder.create').input,
+		outputSchema: schemasFor('changeOrder.create').output,
+		invoke: (ctx) =>
+			QuickBooksCatalogEndpoints['changeOrder']['create'](ctx, {
+				realmId: '12345678',
+				body: {
+					ProjectRef: { value: 'sample' },
+					Line: [
+						{
+							DetailType: 'PaymentLineDetail',
+							SalesItemLineDetail: {},
+							Amount: 1,
+							Id: '1',
+						},
+					],
 					CustomerRef: { value: 'sample' },
 				},
 			}),
@@ -976,8 +989,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['changeOrder.delete'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['changeOrder.delete'].output,
+		inputSchema: schemasFor('changeOrder.delete').input,
+		outputSchema: schemasFor('changeOrder.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['changeOrder']['delete'](ctx, {
 				realmId: '12345678',
@@ -1014,8 +1027,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', changeorderId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['changeOrder.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['changeOrder.get'].output,
+		inputSchema: schemasFor('changeOrder.get').input,
+		outputSchema: schemasFor('changeOrder.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['changeOrder']['get'](ctx, {
 				realmId: '12345678',
@@ -1070,8 +1083,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['changeOrder.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['changeOrder.update'].output,
+		inputSchema: schemasFor('changeOrder.update').input,
+		outputSchema: schemasFor('changeOrder.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['changeOrder']['update'](ctx, {
 				realmId: '12345678',
@@ -1104,8 +1117,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Name: 'sample' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['class.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['class.create'].output,
+		inputSchema: schemasFor('class.create').input,
+		outputSchema: schemasFor('class.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['class']['create'](ctx, {
 				realmId: '12345678',
@@ -1127,8 +1140,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['class.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['class.list'].output,
+		inputSchema: schemasFor('class.list').input,
+		outputSchema: schemasFor('class.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['class']['list'](ctx, { realmId: '12345678' }),
 	},
@@ -1150,8 +1163,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', classId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['class.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['class.get'].output,
+		inputSchema: schemasFor('class.get').input,
+		outputSchema: schemasFor('class.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['class']['get'](ctx, {
 				realmId: '12345678',
@@ -1180,8 +1193,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { Name: 'sample', Id: '35', SyncToken: '0' },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['class.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['class.update'].output,
+		inputSchema: schemasFor('class.update').input,
+		outputSchema: schemasFor('class.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['class']['update'](ctx, {
 				realmId: '12345678',
@@ -1207,10 +1220,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Code: 'sample' } },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['companyCurrency.create'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['companyCurrency.create'].output,
+		inputSchema: schemasFor('companyCurrency.create').input,
+		outputSchema: schemasFor('companyCurrency.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['companyCurrency']['create'](ctx, {
 				realmId: '12345678',
@@ -1235,9 +1246,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['companyCurrency.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['companyCurrency.list'].output,
+		inputSchema: schemasFor('companyCurrency.list').input,
+		outputSchema: schemasFor('companyCurrency.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['companyCurrency']['list'](ctx, {
 				realmId: '12345678',
@@ -1261,9 +1271,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', companycurrencyId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['companyCurrency.get'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['companyCurrency.get'].output,
+		inputSchema: schemasFor('companyCurrency.get').input,
+		outputSchema: schemasFor('companyCurrency.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['companyCurrency']['get'](ctx, {
 				realmId: '12345678',
@@ -1292,10 +1301,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { Code: 'sample', Id: '35', SyncToken: '0' },
 		},
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['companyCurrency.update'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['companyCurrency.update'].output,
+		inputSchema: schemasFor('companyCurrency.update').input,
+		outputSchema: schemasFor('companyCurrency.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['companyCurrency']['update'](ctx, {
 				realmId: '12345678',
@@ -1315,8 +1322,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { CompanyInfo: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['company.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['company.update'].output,
+		inputSchema: schemasFor('company.update').input,
+		outputSchema: schemasFor('company.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['company']['update'](ctx, {
 				realmId: '12345678',
@@ -1339,9 +1346,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { Id: '35', SyncToken: '0', sparse: true },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['company.sparseUpdate'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['company.sparseUpdate'].output,
+		inputSchema: schemasFor('company.sparseUpdate').input,
+		outputSchema: schemasFor('company.sparseUpdate').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['company']['sparseUpdate'](ctx, {
 				realmId: '12345678',
@@ -1363,7 +1369,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: {
 			kind: 'json',
 			body: {
-				CreditCardPayment: {
+				CreditCardPaymentTxn: {
 					CreditCardAccountRef: { value: 'sample' },
 					Amount: 1,
 					BankAccountRef: { value: 'sample' },
@@ -1373,7 +1379,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			},
 		},
 		expectedResult: {
-			CreditCardPayment: {
+			CreditCardPaymentTxn: {
 				CreditCardAccountRef: { value: 'sample' },
 				Amount: 1,
 				BankAccountRef: { value: 'sample' },
@@ -1390,10 +1396,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				CreditCardAccountRef: { value: 'sample' },
 			},
 		},
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['creditCardPayment.create'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['creditCardPayment.create'].output,
+		inputSchema: schemasFor('creditCardPayment.create').input,
+		outputSchema: schemasFor('creditCardPayment.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['creditCardPayment']['create'](ctx, {
 				realmId: '12345678',
@@ -1421,12 +1425,12 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: {
 			kind: 'json',
 			body: {
-				CreditCardPayment: { status: 'Deleted', Id: '35', domain: 'QBO' },
+				CreditCardPaymentTxn: { status: 'Deleted', Id: '35', domain: 'QBO' },
 				time: '2026-11-18T12:00:00Z',
 			},
 		},
 		expectedResult: {
-			CreditCardPayment: { status: 'Deleted', Id: '35', domain: 'QBO' },
+			CreditCardPaymentTxn: { status: 'Deleted', Id: '35', domain: 'QBO' },
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: {
@@ -1439,10 +1443,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['creditCardPayment.delete'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['creditCardPayment.delete'].output,
+		inputSchema: schemasFor('creditCardPayment.delete').input,
+		outputSchema: schemasFor('creditCardPayment.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['creditCardPayment']['delete'](ctx, {
 				realmId: '12345678',
@@ -1464,19 +1466,17 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: {
 			kind: 'json',
 			body: {
-				QueryResponse: { CreditCardPayment: [] },
+				QueryResponse: { CreditCardPaymentTxn: [] },
 				time: '2026-11-18T12:00:00Z',
 			},
 		},
 		expectedResult: {
-			QueryResponse: { CreditCardPayment: [] },
+			QueryResponse: { CreditCardPaymentTxn: [] },
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['creditCardPayment.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['creditCardPayment.list'].output,
+		inputSchema: schemasFor('creditCardPayment.list').input,
+		outputSchema: schemasFor('creditCardPayment.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['creditCardPayment']['list'](ctx, {
 				realmId: '12345678',
@@ -1491,7 +1491,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: {
 			kind: 'json',
 			body: {
-				CreditCardPayment: {
+				CreditCardPaymentTxn: {
 					CreditCardAccountRef: { value: 'sample' },
 					Amount: 1,
 					BankAccountRef: { value: 'sample' },
@@ -1501,7 +1501,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			},
 		},
 		expectedResult: {
-			CreditCardPayment: {
+			CreditCardPaymentTxn: {
 				CreditCardAccountRef: { value: 'sample' },
 				Amount: 1,
 				BankAccountRef: { value: 'sample' },
@@ -1510,10 +1510,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', creditcardpaymentId: '35' },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['creditCardPayment.get'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['creditCardPayment.get'].output,
+		inputSchema: schemasFor('creditCardPayment.get').input,
+		outputSchema: schemasFor('creditCardPayment.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['creditCardPayment']['get'](ctx, {
 				realmId: '12345678',
@@ -1537,7 +1535,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: {
 			kind: 'json',
 			body: {
-				CreditCardPayment: {
+				CreditCardPaymentTxn: {
 					CreditCardAccountRef: { value: 'sample' },
 					Amount: 1,
 					BankAccountRef: { value: 'sample' },
@@ -1547,7 +1545,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			},
 		},
 		expectedResult: {
-			CreditCardPayment: {
+			CreditCardPaymentTxn: {
 				CreditCardAccountRef: { value: 'sample' },
 				Amount: 1,
 				BankAccountRef: { value: 'sample' },
@@ -1566,10 +1564,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['creditCardPayment.update'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['creditCardPayment.update'].output,
+		inputSchema: schemasFor('creditCardPayment.update').input,
+		outputSchema: schemasFor('creditCardPayment.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['creditCardPayment']['update'](ctx, {
 				realmId: '12345678',
@@ -1601,7 +1597,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: {
 			kind: 'json',
 			body: {
-				CreditCardPayment: {
+				CreditCardPaymentTxn: {
 					CreditCardAccountRef: { value: 'sample' },
 					Amount: 1,
 					BankAccountRef: { value: 'sample' },
@@ -1611,7 +1607,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			},
 		},
 		expectedResult: {
-			CreditCardPayment: {
+			CreditCardPaymentTxn: {
 				CreditCardAccountRef: { value: 'sample' },
 				Amount: 1,
 				BankAccountRef: { value: 'sample' },
@@ -1631,10 +1627,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				sparse: true,
 			},
 		},
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['creditCardPayment.sparseUpdate'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['creditCardPayment.sparseUpdate'].output,
+		inputSchema: schemasFor('creditCardPayment.sparseUpdate').input,
+		outputSchema: schemasFor('creditCardPayment.sparseUpdate').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['creditCardPayment']['sparseUpdate'](ctx, {
 				realmId: '12345678',
@@ -1655,12 +1649,14 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		expectedPath: '/v3/company/12345678/creditmemo',
 		expectedQuery: {},
 		expectedBody: {
-			Line: {
-				DetailType: 'PaymentLineDetail',
-				SalesItemLineDetail: {},
-				Amount: 1,
-				Id: '1',
-			},
+			Line: [
+				{
+					DetailType: 'PaymentLineDetail',
+					SalesItemLineDetail: {},
+					Amount: 1,
+					Id: '1',
+				},
+			],
 			CustomerRef: { value: 'sample' },
 		},
 		requestKind: 'json',
@@ -1678,27 +1674,31 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		input: {
 			realmId: '12345678',
 			body: {
-				Line: {
-					DetailType: 'PaymentLineDetail',
-					SalesItemLineDetail: {},
-					Amount: 1,
-					Id: '1',
-				},
-				CustomerRef: { value: 'sample' },
-			},
-		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['creditMemo.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['creditMemo.create'].output,
-		invoke: (ctx) =>
-			QuickBooksCatalogEndpoints['creditMemo']['create'](ctx, {
-				realmId: '12345678',
-				body: {
-					Line: {
+				Line: [
+					{
 						DetailType: 'PaymentLineDetail',
 						SalesItemLineDetail: {},
 						Amount: 1,
 						Id: '1',
 					},
+				],
+				CustomerRef: { value: 'sample' },
+			},
+		},
+		inputSchema: schemasFor('creditMemo.create').input,
+		outputSchema: schemasFor('creditMemo.create').output,
+		invoke: (ctx) =>
+			QuickBooksCatalogEndpoints['creditMemo']['create'](ctx, {
+				realmId: '12345678',
+				body: {
+					Line: [
+						{
+							DetailType: 'PaymentLineDetail',
+							SalesItemLineDetail: {},
+							Amount: 1,
+							Id: '1',
+						},
+					],
 					CustomerRef: { value: 'sample' },
 				},
 			}),
@@ -1722,8 +1722,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['creditMemo.delete'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['creditMemo.delete'].output,
+		inputSchema: schemasFor('creditMemo.delete').input,
+		outputSchema: schemasFor('creditMemo.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['creditMemo']['delete'](ctx, {
 				realmId: '12345678',
@@ -1744,8 +1744,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			sizeBytes: 4,
 		},
 		input: { realmId: '12345678', creditmemoId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['creditMemo.getPdf'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['creditMemo.getPdf'].output,
+		inputSchema: schemasFor('creditMemo.getPdf').input,
+		outputSchema: schemasFor('creditMemo.getPdf').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['creditMemo']['getPdf'](ctx, {
 				realmId: '12345678',
@@ -1767,8 +1767,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['creditMemo.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['creditMemo.list'].output,
+		inputSchema: schemasFor('creditMemo.list').input,
+		outputSchema: schemasFor('creditMemo.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['creditMemo']['list'](ctx, {
 				realmId: '12345678',
@@ -1792,8 +1792,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', creditmemoId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['creditMemo.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['creditMemo.get'].output,
+		inputSchema: schemasFor('creditMemo.get').input,
+		outputSchema: schemasFor('creditMemo.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['creditMemo']['get'](ctx, {
 				realmId: '12345678',
@@ -1822,8 +1822,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			creditmemoId: '35',
 			sendTo: 'billing@example.test',
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['creditMemo.send'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['creditMemo.send'].output,
+		inputSchema: schemasFor('creditMemo.send').input,
+		outputSchema: schemasFor('creditMemo.send').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['creditMemo']['send'](ctx, {
 				realmId: '12345678',
@@ -1863,8 +1863,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['creditMemo.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['creditMemo.update'].output,
+		inputSchema: schemasFor('creditMemo.update').input,
+		outputSchema: schemasFor('creditMemo.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['creditMemo']['update'](ctx, {
 				realmId: '12345678',
@@ -1889,8 +1889,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { Customer: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', body: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['customer.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['customer.create'].output,
+		inputSchema: schemasFor('customer.create').input,
+		outputSchema: schemasFor('customer.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['customer']['create'](ctx, {
 				realmId: '12345678',
@@ -1912,8 +1912,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['customer.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['customer.list'].output,
+		inputSchema: schemasFor('customer.list').input,
+		outputSchema: schemasFor('customer.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['customer']['list'](ctx, {
 				realmId: '12345678',
@@ -1931,8 +1931,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { Customer: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', customerId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['customer.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['customer.get'].output,
+		inputSchema: schemasFor('customer.get').input,
+		outputSchema: schemasFor('customer.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['customer']['get'](ctx, {
 				realmId: '12345678',
@@ -1952,8 +1952,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { Customer: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['customer.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['customer.update'].output,
+		inputSchema: schemasFor('customer.update').input,
+		outputSchema: schemasFor('customer.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['customer']['update'](ctx, {
 				realmId: '12345678',
@@ -1976,10 +1976,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { Id: '35', SyncToken: '0', sparse: true },
 		},
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['customer.sparseUpdate'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['customer.sparseUpdate'].output,
+		inputSchema: schemasFor('customer.sparseUpdate').input,
+		outputSchema: schemasFor('customer.sparseUpdate').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['customer']['sparseUpdate'](ctx, {
 				realmId: '12345678',
@@ -1995,9 +1993,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['customerBalance.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['customerBalance.list'].output,
+		inputSchema: schemasFor('customerBalance.list').input,
+		outputSchema: schemasFor('customerBalance.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['customerBalance']['list'](ctx, {
 				realmId: '12345678',
@@ -2013,10 +2010,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['customerBalanceDetail.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['customerBalanceDetail.list'].output,
+		inputSchema: schemasFor('customerBalanceDetail.list').input,
+		outputSchema: schemasFor('customerBalanceDetail.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['customerBalanceDetail']['list'](ctx, {
 				realmId: '12345678',
@@ -2032,9 +2027,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['customerIncome.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['customerIncome.list'].output,
+		inputSchema: schemasFor('customerIncome.list').input,
+		outputSchema: schemasFor('customerIncome.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['customerIncome']['list'](ctx, {
 				realmId: '12345678',
@@ -2059,8 +2053,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['customerType.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['customerType.list'].output,
+		inputSchema: schemasFor('customerType.list').input,
+		outputSchema: schemasFor('customerType.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['customerType']['list'](ctx, {
 				realmId: '12345678',
@@ -2078,8 +2072,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { CustomerType: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', id: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['customerType.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['customerType.get'].output,
+		inputSchema: schemasFor('customerType.get').input,
+		outputSchema: schemasFor('customerType.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['customerType']['get'](ctx, {
 				realmId: '12345678',
@@ -2105,8 +2099,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Name: 'sample' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['department.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['department.create'].output,
+		inputSchema: schemasFor('department.create').input,
+		outputSchema: schemasFor('department.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['department']['create'](ctx, {
 				realmId: '12345678',
@@ -2128,8 +2122,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['department.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['department.list'].output,
+		inputSchema: schemasFor('department.list').input,
+		outputSchema: schemasFor('department.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['department']['list'](ctx, {
 				realmId: '12345678',
@@ -2153,8 +2147,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', departmentId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['department.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['department.get'].output,
+		inputSchema: schemasFor('department.get').input,
+		outputSchema: schemasFor('department.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['department']['get'](ctx, {
 				realmId: '12345678',
@@ -2183,8 +2177,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { Name: 'sample', Id: '35', SyncToken: '0' },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['department.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['department.update'].output,
+		inputSchema: schemasFor('department.update').input,
+		outputSchema: schemasFor('department.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['department']['update'](ctx, {
 				realmId: '12345678',
@@ -2214,8 +2208,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['deposit.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['deposit.create'].output,
+		inputSchema: schemasFor('deposit.create').input,
+		outputSchema: schemasFor('deposit.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['deposit']['create'](ctx, {
 				realmId: '12345678',
@@ -2241,8 +2235,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['deposit.delete'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['deposit.delete'].output,
+		inputSchema: schemasFor('deposit.delete').input,
+		outputSchema: schemasFor('deposit.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['deposit']['delete'](ctx, {
 				realmId: '12345678',
@@ -2264,8 +2258,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['deposit.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['deposit.list'].output,
+		inputSchema: schemasFor('deposit.list').input,
+		outputSchema: schemasFor('deposit.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['deposit']['list'](ctx, {
 				realmId: '12345678',
@@ -2293,8 +2287,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', depositId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['deposit.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['deposit.get'].output,
+		inputSchema: schemasFor('deposit.get').input,
+		outputSchema: schemasFor('deposit.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['deposit']['get'](ctx, {
 				realmId: '12345678',
@@ -2337,8 +2331,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['deposit.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['deposit.update'].output,
+		inputSchema: schemasFor('deposit.update').input,
+		outputSchema: schemasFor('deposit.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['deposit']['update'](ctx, {
 				realmId: '12345678',
@@ -2388,9 +2382,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				sparse: true,
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['deposit.sparseUpdate'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['deposit.sparseUpdate'].output,
+		inputSchema: schemasFor('deposit.sparseUpdate').input,
+		outputSchema: schemasFor('deposit.sparseUpdate').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['deposit']['sparseUpdate'](ctx, {
 				realmId: '12345678',
@@ -2416,8 +2409,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { Employee: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', body: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['employee.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['employee.create'].output,
+		inputSchema: schemasFor('employee.create').input,
+		outputSchema: schemasFor('employee.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['employee']['create'](ctx, {
 				realmId: '12345678',
@@ -2439,8 +2432,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['employee.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['employee.list'].output,
+		inputSchema: schemasFor('employee.list').input,
+		outputSchema: schemasFor('employee.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['employee']['list'](ctx, {
 				realmId: '12345678',
@@ -2458,8 +2451,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { Employee: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', employeeId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['employee.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['employee.get'].output,
+		inputSchema: schemasFor('employee.get').input,
+		outputSchema: schemasFor('employee.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['employee']['get'](ctx, {
 				realmId: '12345678',
@@ -2479,8 +2472,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { Employee: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['employee.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['employee.update'].output,
+		inputSchema: schemasFor('employee.update').input,
+		outputSchema: schemasFor('employee.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['employee']['update'](ctx, {
 				realmId: '12345678',
@@ -2493,12 +2486,14 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		expectedPath: '/v3/company/12345678/estimate',
 		expectedQuery: {},
 		expectedBody: {
-			Line: {
-				DetailType: 'PaymentLineDetail',
-				SalesItemLineDetail: {},
-				Amount: 1,
-				Id: '1',
-			},
+			Line: [
+				{
+					DetailType: 'PaymentLineDetail',
+					SalesItemLineDetail: {},
+					Amount: 1,
+					Id: '1',
+				},
+			],
 			CustomerRef: { value: 'sample' },
 		},
 		requestKind: 'json',
@@ -2516,27 +2511,31 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		input: {
 			realmId: '12345678',
 			body: {
-				Line: {
-					DetailType: 'PaymentLineDetail',
-					SalesItemLineDetail: {},
-					Amount: 1,
-					Id: '1',
-				},
-				CustomerRef: { value: 'sample' },
-			},
-		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['estimate.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['estimate.create'].output,
-		invoke: (ctx) =>
-			QuickBooksCatalogEndpoints['estimate']['create'](ctx, {
-				realmId: '12345678',
-				body: {
-					Line: {
+				Line: [
+					{
 						DetailType: 'PaymentLineDetail',
 						SalesItemLineDetail: {},
 						Amount: 1,
 						Id: '1',
 					},
+				],
+				CustomerRef: { value: 'sample' },
+			},
+		},
+		inputSchema: schemasFor('estimate.create').input,
+		outputSchema: schemasFor('estimate.create').output,
+		invoke: (ctx) =>
+			QuickBooksCatalogEndpoints['estimate']['create'](ctx, {
+				realmId: '12345678',
+				body: {
+					Line: [
+						{
+							DetailType: 'PaymentLineDetail',
+							SalesItemLineDetail: {},
+							Amount: 1,
+							Id: '1',
+						},
+					],
 					CustomerRef: { value: 'sample' },
 				},
 			}),
@@ -2560,8 +2559,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['estimate.delete'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['estimate.delete'].output,
+		inputSchema: schemasFor('estimate.delete').input,
+		outputSchema: schemasFor('estimate.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['estimate']['delete'](ctx, {
 				realmId: '12345678',
@@ -2582,8 +2581,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			sizeBytes: 4,
 		},
 		input: { realmId: '12345678', estimateId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['estimate.getPdf'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['estimate.getPdf'].output,
+		inputSchema: schemasFor('estimate.getPdf').input,
+		outputSchema: schemasFor('estimate.getPdf').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['estimate']['getPdf'](ctx, {
 				realmId: '12345678',
@@ -2605,8 +2604,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['estimate.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['estimate.list'].output,
+		inputSchema: schemasFor('estimate.list').input,
+		outputSchema: schemasFor('estimate.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['estimate']['list'](ctx, {
 				realmId: '12345678',
@@ -2630,8 +2629,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', estimateId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['estimate.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['estimate.get'].output,
+		inputSchema: schemasFor('estimate.get').input,
+		outputSchema: schemasFor('estimate.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['estimate']['get'](ctx, {
 				realmId: '12345678',
@@ -2660,8 +2659,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			estimateId: '35',
 			sendTo: 'billing@example.test',
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['estimate.send'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['estimate.send'].output,
+		inputSchema: schemasFor('estimate.send').input,
+		outputSchema: schemasFor('estimate.send').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['estimate']['send'](ctx, {
 				realmId: '12345678',
@@ -2701,10 +2700,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				sparse: true,
 			},
 		},
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['estimate.sparseUpdate'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['estimate.sparseUpdate'].output,
+		inputSchema: schemasFor('estimate.sparseUpdate').input,
+		outputSchema: schemasFor('estimate.sparseUpdate').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['estimate']['sparseUpdate'](ctx, {
 				realmId: '12345678',
@@ -2742,8 +2739,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { CustomerRef: { value: 'sample' }, Id: '35', SyncToken: '0' },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['estimate.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['estimate.update'].output,
+		inputSchema: schemasFor('estimate.update').input,
+		outputSchema: schemasFor('estimate.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['estimate']['update'](ctx, {
 				realmId: '12345678',
@@ -2759,17 +2756,25 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: {
 			kind: 'json',
 			body: {
-				QueryResponse: { Exchangerate: [] },
+				ExchangeRate: {
+					SourceCurrencyCode: 'EUR',
+					Rate: 1.08,
+					TargetCurrencyCode: 'USD',
+				},
 				time: '2026-11-18T12:00:00Z',
 			},
 		},
 		expectedResult: {
-			QueryResponse: { Exchangerate: [] },
+			ExchangeRate: {
+				SourceCurrencyCode: 'EUR',
+				Rate: 1.08,
+				TargetCurrencyCode: 'USD',
+			},
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', currencyCode: 'USD', asOfDate: '2026-11-18' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['exchangerate.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['exchangerate.get'].output,
+		inputSchema: schemasFor('exchangerate.get').input,
+		outputSchema: schemasFor('exchangerate.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['exchangerate']['get'](ctx, {
 				realmId: '12345678',
@@ -2786,17 +2791,17 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: {
 			kind: 'json',
 			body: {
-				QueryResponse: { Exchangerate: [] },
+				QueryResponse: { ExchangeRate: [] },
 				time: '2026-11-18T12:00:00Z',
 			},
 		},
 		expectedResult: {
-			QueryResponse: { Exchangerate: [] },
+			QueryResponse: { ExchangeRate: [] },
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['exchangerate.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['exchangerate.list'].output,
+		inputSchema: schemasFor('exchangerate.list').input,
+		outputSchema: schemasFor('exchangerate.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['exchangerate']['list'](ctx, {
 				realmId: '12345678',
@@ -2807,21 +2812,44 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		method: 'POST',
 		expectedPath: '/v3/company/12345678/exchangerate',
 		expectedQuery: {},
-		expectedBody: { Id: '35', SyncToken: '0' },
+		expectedBody: {
+			SyncToken: '0',
+			SourceCurrencyCode: 'EUR',
+			Rate: 1.08,
+			AsOfDate: '2026-11-18',
+		},
 		requestKind: 'json',
 		response: {
 			kind: 'json',
-			body: { Exchangerate: {}, time: '2026-11-18T12:00:00Z' },
+			body: {
+				ExchangeRate: { SourceCurrencyCode: 'EUR', Rate: 1.08 },
+				time: '2026-11-18T12:00:00Z',
+			},
 		},
-		expectedResult: { Exchangerate: {}, time: '2026-11-18T12:00:00Z' },
-		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['exchangerate.update'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['exchangerate.update'].output,
+		expectedResult: {
+			ExchangeRate: { SourceCurrencyCode: 'EUR', Rate: 1.08 },
+			time: '2026-11-18T12:00:00Z',
+		},
+		input: {
+			realmId: '12345678',
+			body: {
+				SyncToken: '0',
+				SourceCurrencyCode: 'EUR',
+				Rate: 1.08,
+				AsOfDate: '2026-11-18',
+			},
+		},
+		inputSchema: schemasFor('exchangerate.update').input,
+		outputSchema: schemasFor('exchangerate.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['exchangerate']['update'](ctx, {
 				realmId: '12345678',
-				body: { Id: '35', SyncToken: '0' },
+				body: {
+					SyncToken: '0',
+					SourceCurrencyCode: 'EUR',
+					Rate: 1.08,
+					AsOfDate: '2026-11-18',
+				},
 			}),
 	},
 	{
@@ -2833,8 +2861,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['generalLedger.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['generalLedger.list'].output,
+		inputSchema: schemasFor('generalLedger.list').input,
+		outputSchema: schemasFor('generalLedger.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['generalLedger']['list'](ctx, {
 				realmId: '12345678',
@@ -2883,10 +2911,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				TxnDate: 'sample',
 			},
 		},
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['inventoryAdjustment.create'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['inventoryAdjustment.create'].output,
+		inputSchema: schemasFor('inventoryAdjustment.create').input,
+		outputSchema: schemasFor('inventoryAdjustment.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['inventoryAdjustment']['create'](ctx, {
 				realmId: '12345678',
@@ -2903,7 +2929,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		method: 'POST',
 		expectedPath: '/v3/company/12345678/inventoryadjustment',
 		expectedQuery: { operation: 'delete' },
-		expectedBody: { SyncToken: '0', id: '1', Id: '35' },
+		expectedBody: { Id: '35', SyncToken: '0' },
 		requestKind: 'json',
 		response: {
 			kind: 'json',
@@ -2916,15 +2942,13 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			InventoryAdjustment: { status: 'Deleted', Id: '35', domain: 'QBO' },
 			time: '2026-11-18T12:00:00Z',
 		},
-		input: { realmId: '12345678', body: { SyncToken: '0', id: '1', Id: '35' } },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['inventoryAdjustment.delete'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['inventoryAdjustment.delete'].output,
+		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
+		inputSchema: schemasFor('inventoryAdjustment.delete').input,
+		outputSchema: schemasFor('inventoryAdjustment.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['inventoryAdjustment']['delete'](ctx, {
 				realmId: '12345678',
-				body: { SyncToken: '0', id: '1', Id: '35' },
+				body: { Id: '35', SyncToken: '0' },
 			}),
 	},
 	{
@@ -2955,10 +2979,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', inventoryadjustmentId: '35' },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['inventoryAdjustment.get'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['inventoryAdjustment.get'].output,
+		inputSchema: schemasFor('inventoryAdjustment.get').input,
+		outputSchema: schemasFor('inventoryAdjustment.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['inventoryAdjustment']['get'](ctx, {
 				realmId: '12345678',
@@ -3011,12 +3033,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				sparse: true,
 			},
 		},
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['inventoryAdjustment.sparseUpdate']
-				.input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['inventoryAdjustment.sparseUpdate']
-				.output,
+		inputSchema: schemasFor('inventoryAdjustment.sparseUpdate').input,
+		outputSchema: schemasFor('inventoryAdjustment.sparseUpdate').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['inventoryAdjustment']['sparseUpdate'](ctx, {
 				realmId: '12345678',
@@ -3039,10 +3057,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['inventoryValuationDetail.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['inventoryValuationDetail.list'].output,
+		inputSchema: schemasFor('inventoryValuationDetail.list').input,
+		outputSchema: schemasFor('inventoryValuationDetail.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['inventoryValuationDetail']['list'](ctx, {
 				realmId: '12345678',
@@ -3058,10 +3074,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['inventoryValuationSummary.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['inventoryValuationSummary.list'].output,
+		inputSchema: schemasFor('inventoryValuationSummary.list').input,
+		outputSchema: schemasFor('inventoryValuationSummary.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['inventoryValuationSummary']['list'](ctx, {
 				realmId: '12345678',
@@ -3090,8 +3104,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { CustomerRef: { value: 'sample' }, Line: [] },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['invoice.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['invoice.create'].output,
+		inputSchema: schemasFor('invoice.create').input,
+		outputSchema: schemasFor('invoice.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['invoice']['create'](ctx, {
 				realmId: '12345678',
@@ -3117,8 +3131,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['invoice.delete'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['invoice.delete'].output,
+		inputSchema: schemasFor('invoice.delete').input,
+		outputSchema: schemasFor('invoice.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['invoice']['delete'](ctx, {
 				realmId: '12345678',
@@ -3147,8 +3161,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { Id: '35', SyncToken: '0', sparse: true },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['invoice.void'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['invoice.void'].output,
+		inputSchema: schemasFor('invoice.void').input,
+		outputSchema: schemasFor('invoice.void').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['invoice']['void'](ctx, {
 				realmId: '12345678',
@@ -3169,8 +3183,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			sizeBytes: 4,
 		},
 		input: { realmId: '12345678', invoiceId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['invoice.getPdf'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['invoice.getPdf'].output,
+		inputSchema: schemasFor('invoice.getPdf').input,
+		outputSchema: schemasFor('invoice.getPdf').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['invoice']['getPdf'](ctx, {
 				realmId: '12345678',
@@ -3192,8 +3206,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['invoice.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['invoice.list'].output,
+		inputSchema: schemasFor('invoice.list').input,
+		outputSchema: schemasFor('invoice.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['invoice']['list'](ctx, {
 				realmId: '12345678',
@@ -3217,8 +3231,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', invoiceId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['invoice.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['invoice.get'].output,
+		inputSchema: schemasFor('invoice.get').input,
+		outputSchema: schemasFor('invoice.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['invoice']['get'](ctx, {
 				realmId: '12345678',
@@ -3247,8 +3261,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			invoiceId: '35',
 			sendTo: 'billing@example.test',
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['invoice.send'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['invoice.send'].output,
+		inputSchema: schemasFor('invoice.send').input,
+		outputSchema: schemasFor('invoice.send').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['invoice']['send'](ctx, {
 				realmId: '12345678',
@@ -3290,9 +3304,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				sparse: true,
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['invoice.sparseUpdate'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['invoice.sparseUpdate'].output,
+		inputSchema: schemasFor('invoice.sparseUpdate').input,
+		outputSchema: schemasFor('invoice.sparseUpdate').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['invoice']['sparseUpdate'](ctx, {
 				realmId: '12345678',
@@ -3337,8 +3350,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['invoice.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['invoice.update'].output,
+		inputSchema: schemasFor('invoice.update').input,
+		outputSchema: schemasFor('invoice.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['invoice']['update'](ctx, {
 				realmId: '12345678',
@@ -3366,8 +3379,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Name: 'sample' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['item.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['item.create'].output,
+		inputSchema: schemasFor('item.create').input,
+		outputSchema: schemasFor('item.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['item']['create'](ctx, {
 				realmId: '12345678',
@@ -3387,9 +3400,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { Item: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', body: { Type: 'sample', Name: 'sample' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['item.createCategory'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['item.createCategory'].output,
+		inputSchema: schemasFor('item.createCategory').input,
+		outputSchema: schemasFor('item.createCategory').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['item']['createCategory'](ctx, {
 				realmId: '12345678',
@@ -3414,8 +3426,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', startPosition: 1, maxResults: 10 },
-		inputSchema: QuickBooksCatalogEndpointSchemas['item.listBundles'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['item.listBundles'].output,
+		inputSchema: schemasFor('item.listBundles').input,
+		outputSchema: schemasFor('item.listBundles').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['item']['listBundles'](ctx, {
 				realmId: '12345678',
@@ -3441,9 +3453,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', startPosition: 1, maxResults: 10 },
-		inputSchema: QuickBooksCatalogEndpointSchemas['item.listCategories'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['item.listCategories'].output,
+		inputSchema: schemasFor('item.listCategories').input,
+		outputSchema: schemasFor('item.listCategories').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['item']['listCategories'](ctx, {
 				realmId: '12345678',
@@ -3469,8 +3480,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', startPosition: 1, maxResults: 10 },
-		inputSchema: QuickBooksCatalogEndpointSchemas['item.listItems'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['item.listItems'].output,
+		inputSchema: schemasFor('item.listItems').input,
+		outputSchema: schemasFor('item.listItems').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['item']['listItems'](ctx, {
 				realmId: '12345678',
@@ -3493,8 +3504,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', itemId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['item.getBundle'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['item.getBundle'].output,
+		inputSchema: schemasFor('item.getBundle').input,
+		outputSchema: schemasFor('item.getBundle').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['item']['getBundle'](ctx, {
 				realmId: '12345678',
@@ -3513,8 +3524,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { Item: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', itemId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['item.getCategory'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['item.getCategory'].output,
+		inputSchema: schemasFor('item.getCategory').input,
+		outputSchema: schemasFor('item.getCategory').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['item']['getCategory'](ctx, {
 				realmId: '12345678',
@@ -3536,8 +3547,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', itemId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['item.getItem'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['item.getItem'].output,
+		inputSchema: schemasFor('item.getItem').input,
+		outputSchema: schemasFor('item.getItem').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['item']['getItem'](ctx, {
 				realmId: '12345678',
@@ -3563,8 +3574,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { Name: 'sample', Id: '35', SyncToken: '0' },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['item.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['item.update'].output,
+		inputSchema: schemasFor('item.update').input,
+		outputSchema: schemasFor('item.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['item']['update'](ctx, {
 				realmId: '12345678',
@@ -3587,9 +3598,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { Name: 'sample', Type: 'sample', Id: '35', SyncToken: '0' },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['item.updateCategory'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['item.updateCategory'].output,
+		inputSchema: schemasFor('item.updateCategory').input,
+		outputSchema: schemasFor('item.updateCategory').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['item']['updateCategory'](ctx, {
 				realmId: '12345678',
@@ -3615,9 +3625,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Line: [] } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['journalEntry.create'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['journalEntry.create'].output,
+		inputSchema: schemasFor('journalEntry.create').input,
+		outputSchema: schemasFor('journalEntry.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['journalEntry']['create'](ctx, {
 				realmId: '12345678',
@@ -3643,9 +3652,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['journalEntry.delete'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['journalEntry.delete'].output,
+		inputSchema: schemasFor('journalEntry.delete').input,
+		outputSchema: schemasFor('journalEntry.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['journalEntry']['delete'](ctx, {
 				realmId: '12345678',
@@ -3670,8 +3678,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['journalEntry.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['journalEntry.list'].output,
+		inputSchema: schemasFor('journalEntry.list').input,
+		outputSchema: schemasFor('journalEntry.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['journalEntry']['list'](ctx, {
 				realmId: '12345678',
@@ -3695,8 +3703,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', journalentryId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['journalEntry.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['journalEntry.get'].output,
+		inputSchema: schemasFor('journalEntry.get').input,
+		outputSchema: schemasFor('journalEntry.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['journalEntry']['get'](ctx, {
 				realmId: '12345678',
@@ -3725,9 +3733,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { Id: '35', Line: [], SyncToken: '0' },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['journalEntry.update'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['journalEntry.update'].output,
+		inputSchema: schemasFor('journalEntry.update').input,
+		outputSchema: schemasFor('journalEntry.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['journalEntry']['update'](ctx, {
 				realmId: '12345678',
@@ -3756,10 +3763,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { Id: '35', Line: [], SyncToken: '0', sparse: true },
 		},
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['journalEntry.sparseUpdate'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['journalEntry.sparseUpdate'].output,
+		inputSchema: schemasFor('journalEntry.sparseUpdate').input,
+		outputSchema: schemasFor('journalEntry.sparseUpdate').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['journalEntry']['sparseUpdate'](ctx, {
 				realmId: '12345678',
@@ -3775,8 +3780,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['journalReport.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['journalReport.list'].output,
+		inputSchema: schemasFor('journalReport.list').input,
+		outputSchema: schemasFor('journalReport.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['journalReport']['list'](ctx, {
 				realmId: '12345678',
@@ -3805,8 +3810,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { TotalAmt: 1, CustomerRef: { value: 'sample' } },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['payment.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['payment.create'].output,
+		inputSchema: schemasFor('payment.create').input,
+		outputSchema: schemasFor('payment.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['payment']['create'](ctx, {
 				realmId: '12345678',
@@ -3832,8 +3837,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['payment.delete'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['payment.delete'].output,
+		inputSchema: schemasFor('payment.delete').input,
+		outputSchema: schemasFor('payment.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['payment']['delete'](ctx, {
 				realmId: '12345678',
@@ -3862,8 +3867,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { Id: '35', SyncToken: '0', sparse: true },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['payment.void'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['payment.void'].output,
+		inputSchema: schemasFor('payment.void').input,
+		outputSchema: schemasFor('payment.void').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['payment']['void'](ctx, {
 				realmId: '12345678',
@@ -3884,8 +3889,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			sizeBytes: 4,
 		},
 		input: { realmId: '12345678', paymentId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['payment.getPdf'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['payment.getPdf'].output,
+		inputSchema: schemasFor('payment.getPdf').input,
+		outputSchema: schemasFor('payment.getPdf').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['payment']['getPdf'](ctx, {
 				realmId: '12345678',
@@ -3907,8 +3912,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['payment.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['payment.list'].output,
+		inputSchema: schemasFor('payment.list').input,
+		outputSchema: schemasFor('payment.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['payment']['list'](ctx, {
 				realmId: '12345678',
@@ -3932,8 +3937,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', paymentId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['payment.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['payment.get'].output,
+		inputSchema: schemasFor('payment.get').input,
+		outputSchema: schemasFor('payment.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['payment']['get'](ctx, {
 				realmId: '12345678',
@@ -3962,8 +3967,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			paymentId: '35',
 			sendTo: 'billing@example.test',
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['payment.send'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['payment.send'].output,
+		inputSchema: schemasFor('payment.send').input,
+		outputSchema: schemasFor('payment.send').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['payment']['send'](ctx, {
 				realmId: '12345678',
@@ -4003,8 +4008,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['payment.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['payment.update'].output,
+		inputSchema: schemasFor('payment.update').input,
+		outputSchema: schemasFor('payment.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['payment']['update'](ctx, {
 				realmId: '12345678',
@@ -4035,9 +4040,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Name: 'sample' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['paymentMethod.create'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['paymentMethod.create'].output,
+		inputSchema: schemasFor('paymentMethod.create').input,
+		outputSchema: schemasFor('paymentMethod.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['paymentMethod']['create'](ctx, {
 				realmId: '12345678',
@@ -4062,8 +4066,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['paymentMethod.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['paymentMethod.list'].output,
+		inputSchema: schemasFor('paymentMethod.list').input,
+		outputSchema: schemasFor('paymentMethod.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['paymentMethod']['list'](ctx, {
 				realmId: '12345678',
@@ -4087,8 +4091,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', paymentmethodId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['paymentMethod.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['paymentMethod.get'].output,
+		inputSchema: schemasFor('paymentMethod.get').input,
+		outputSchema: schemasFor('paymentMethod.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['paymentMethod']['get'](ctx, {
 				realmId: '12345678',
@@ -4117,9 +4121,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { Name: 'sample', Id: '35', SyncToken: '0' },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['paymentMethod.update'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['paymentMethod.update'].output,
+		inputSchema: schemasFor('paymentMethod.update').input,
+		outputSchema: schemasFor('paymentMethod.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['paymentMethod']['update'](ctx, {
 				realmId: '12345678',
@@ -4144,8 +4147,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['preferences.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['preferences.list'].output,
+		inputSchema: schemasFor('preferences.list').input,
+		outputSchema: schemasFor('preferences.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['preferences']['list'](ctx, {
 				realmId: '12345678',
@@ -4163,8 +4166,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { Preferences: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['preferences.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['preferences.get'].output,
+		inputSchema: schemasFor('preferences.get').input,
+		outputSchema: schemasFor('preferences.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['preferences']['get'](ctx, {
 				realmId: '12345678',
@@ -4183,8 +4186,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { Preferences: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['preferences.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['preferences.update'].output,
+		inputSchema: schemasFor('preferences.update').input,
+		outputSchema: schemasFor('preferences.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['preferences']['update'](ctx, {
 				realmId: '12345678',
@@ -4200,8 +4203,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['profitAndLoss.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['profitAndLoss.list'].output,
+		inputSchema: schemasFor('profitAndLoss.list').input,
+		outputSchema: schemasFor('profitAndLoss.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['profitAndLoss']['list'](ctx, {
 				realmId: '12345678',
@@ -4217,10 +4220,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['profitAndLossDetail.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['profitAndLossDetail.list'].output,
+		inputSchema: schemasFor('profitAndLossDetail.list').input,
+		outputSchema: schemasFor('profitAndLossDetail.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['profitAndLossDetail']['list'](ctx, {
 				realmId: '12345678',
@@ -4267,8 +4268,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				Line: [],
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['purchase.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['purchase.create'].output,
+		inputSchema: schemasFor('purchase.create').input,
+		outputSchema: schemasFor('purchase.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['purchase']['create'](ctx, {
 				realmId: '12345678',
@@ -4298,8 +4299,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['purchase.delete'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['purchase.delete'].output,
+		inputSchema: schemasFor('purchase.delete').input,
+		outputSchema: schemasFor('purchase.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['purchase']['delete'](ctx, {
 				realmId: '12345678',
@@ -4321,8 +4322,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['purchase.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['purchase.list'].output,
+		inputSchema: schemasFor('purchase.list').input,
+		outputSchema: schemasFor('purchase.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['purchase']['list'](ctx, {
 				realmId: '12345678',
@@ -4356,8 +4357,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', purchaseId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['purchase.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['purchase.get'].output,
+		inputSchema: schemasFor('purchase.get').input,
+		outputSchema: schemasFor('purchase.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['purchase']['get'](ctx, {
 				realmId: '12345678',
@@ -4408,8 +4409,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['purchase.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['purchase.update'].output,
+		inputSchema: schemasFor('purchase.update').input,
+		outputSchema: schemasFor('purchase.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['purchase']['update'](ctx, {
 				realmId: '12345678',
@@ -4462,9 +4463,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				Line: [],
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['purchaseOrder.create'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['purchaseOrder.create'].output,
+		inputSchema: schemasFor('purchaseOrder.create').input,
+		outputSchema: schemasFor('purchaseOrder.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['purchaseOrder']['create'](ctx, {
 				realmId: '12345678',
@@ -4494,9 +4494,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['purchaseOrder.delete'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['purchaseOrder.delete'].output,
+		inputSchema: schemasFor('purchaseOrder.delete').input,
+		outputSchema: schemasFor('purchaseOrder.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['purchaseOrder']['delete'](ctx, {
 				realmId: '12345678',
@@ -4517,9 +4516,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			sizeBytes: 4,
 		},
 		input: { realmId: '12345678', purchaseorderId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['purchaseOrder.getPdf'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['purchaseOrder.getPdf'].output,
+		inputSchema: schemasFor('purchaseOrder.getPdf').input,
+		outputSchema: schemasFor('purchaseOrder.getPdf').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['purchaseOrder']['getPdf'](ctx, {
 				realmId: '12345678',
@@ -4544,8 +4542,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['purchaseOrder.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['purchaseOrder.list'].output,
+		inputSchema: schemasFor('purchaseOrder.list').input,
+		outputSchema: schemasFor('purchaseOrder.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['purchaseOrder']['list'](ctx, {
 				realmId: '12345678',
@@ -4579,8 +4577,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', purchaseorderId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['purchaseOrder.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['purchaseOrder.get'].output,
+		inputSchema: schemasFor('purchaseOrder.get').input,
+		outputSchema: schemasFor('purchaseOrder.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['purchaseOrder']['get'](ctx, {
 				realmId: '12345678',
@@ -4619,8 +4617,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			purchaseorderId: '35',
 			sendTo: 'billing@example.test',
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['purchaseOrder.send'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['purchaseOrder.send'].output,
+		inputSchema: schemasFor('purchaseOrder.send').input,
+		outputSchema: schemasFor('purchaseOrder.send').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['purchaseOrder']['send'](ctx, {
 				realmId: '12345678',
@@ -4672,9 +4670,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['purchaseOrder.update'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['purchaseOrder.update'].output,
+		inputSchema: schemasFor('purchaseOrder.update').input,
+		outputSchema: schemasFor('purchaseOrder.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['purchaseOrder']['update'](ctx, {
 				realmId: '12345678',
@@ -4692,28 +4689,26 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		method: 'POST',
 		expectedPath: '/v3/company/12345678/recurringtransaction',
 		expectedQuery: {},
-		expectedBody: { RecurringInfo: {} },
+		expectedBody: { Invoice: { RecurringInfo: {} } },
 		requestKind: 'json',
 		response: {
 			kind: 'json',
 			body: {
-				RecurringTransaction: { RecurringInfo: {}, Id: '1' },
+				RecurringTransaction: { Invoice: { RecurringInfo: {}, Id: '1' } },
 				time: '2026-11-18T12:00:00Z',
 			},
 		},
 		expectedResult: {
-			RecurringTransaction: { RecurringInfo: {}, Id: '1' },
+			RecurringTransaction: { Invoice: { RecurringInfo: {}, Id: '1' } },
 			time: '2026-11-18T12:00:00Z',
 		},
-		input: { realmId: '12345678', body: { RecurringInfo: {} } },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['recurringTransaction.create'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['recurringTransaction.create'].output,
+		input: { realmId: '12345678', body: { Invoice: { RecurringInfo: {} } } },
+		inputSchema: schemasFor('recurringTransaction.create').input,
+		outputSchema: schemasFor('recurringTransaction.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['recurringTransaction']['create'](ctx, {
 				realmId: '12345678',
-				body: { RecurringInfo: {} },
+				body: { Invoice: { RecurringInfo: {} } },
 			}),
 	},
 	{
@@ -4721,28 +4716,37 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		method: 'POST',
 		expectedPath: '/v3/company/12345678/recurringtransaction',
 		expectedQuery: { operation: 'delete' },
-		expectedBody: { Id: '35', SyncToken: '0' },
+		expectedBody: { Invoice: { Id: '35', SyncToken: '0' } },
 		requestKind: 'json',
 		response: {
 			kind: 'json',
 			body: {
-				RecurringTransaction: { status: 'Deleted', Id: '35', domain: 'QBO' },
+				RecurringTransaction: {
+					status: 'Deleted',
+					domain: 'QBO',
+					Invoice: { Id: '35' },
+				},
 				time: '2026-11-18T12:00:00Z',
 			},
 		},
 		expectedResult: {
-			RecurringTransaction: { status: 'Deleted', Id: '35', domain: 'QBO' },
+			RecurringTransaction: {
+				status: 'Deleted',
+				domain: 'QBO',
+				Invoice: { Id: '35' },
+			},
 			time: '2026-11-18T12:00:00Z',
 		},
-		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['recurringTransaction.delete'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['recurringTransaction.delete'].output,
+		input: {
+			realmId: '12345678',
+			body: { Invoice: { Id: '35', SyncToken: '0' } },
+		},
+		inputSchema: schemasFor('recurringTransaction.delete').input,
+		outputSchema: schemasFor('recurringTransaction.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['recurringTransaction']['delete'](ctx, {
 				realmId: '12345678',
-				body: { Id: '35', SyncToken: '0' },
+				body: { Invoice: { Id: '35', SyncToken: '0' } },
 			}),
 	},
 	{
@@ -4763,10 +4767,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['recurringTransaction.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['recurringTransaction.list'].output,
+		inputSchema: schemasFor('recurringTransaction.list').input,
+		outputSchema: schemasFor('recurringTransaction.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['recurringTransaction']['list'](ctx, {
 				realmId: '12345678',
@@ -4781,19 +4783,17 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: {
 			kind: 'json',
 			body: {
-				RecurringTransaction: { RecurringInfo: {}, Id: '1' },
+				RecurringTransaction: { Invoice: { RecurringInfo: {}, Id: '1' } },
 				time: '2026-11-18T12:00:00Z',
 			},
 		},
 		expectedResult: {
-			RecurringTransaction: { RecurringInfo: {}, Id: '1' },
+			RecurringTransaction: { Invoice: { RecurringInfo: {}, Id: '1' } },
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', recurringtransactionId: '35' },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['recurringTransaction.get'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['recurringTransaction.get'].output,
+		inputSchema: schemasFor('recurringTransaction.get').input,
+		outputSchema: schemasFor('recurringTransaction.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['recurringTransaction']['get'](ctx, {
 				realmId: '12345678',
@@ -4830,9 +4830,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { DepositToAccountRef: { value: 'sample' }, Line: [] },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['refundReceipt.create'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['refundReceipt.create'].output,
+		inputSchema: schemasFor('refundReceipt.create').input,
+		outputSchema: schemasFor('refundReceipt.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['refundReceipt']['create'](ctx, {
 				realmId: '12345678',
@@ -4858,9 +4857,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['refundReceipt.delete'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['refundReceipt.delete'].output,
+		inputSchema: schemasFor('refundReceipt.delete').input,
+		outputSchema: schemasFor('refundReceipt.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['refundReceipt']['delete'](ctx, {
 				realmId: '12345678',
@@ -4881,9 +4879,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			sizeBytes: 4,
 		},
 		input: { realmId: '12345678', refundreceiptId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['refundReceipt.getPdf'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['refundReceipt.getPdf'].output,
+		inputSchema: schemasFor('refundReceipt.getPdf').input,
+		outputSchema: schemasFor('refundReceipt.getPdf').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['refundReceipt']['getPdf'](ctx, {
 				realmId: '12345678',
@@ -4908,8 +4905,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['refundReceipt.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['refundReceipt.list'].output,
+		inputSchema: schemasFor('refundReceipt.list').input,
+		outputSchema: schemasFor('refundReceipt.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['refundReceipt']['list'](ctx, {
 				realmId: '12345678',
@@ -4941,8 +4938,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', refundreceiptId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['refundReceipt.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['refundReceipt.get'].output,
+		inputSchema: schemasFor('refundReceipt.get').input,
+		outputSchema: schemasFor('refundReceipt.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['refundReceipt']['get'](ctx, {
 				realmId: '12345678',
@@ -4979,8 +4976,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			refundreceiptId: '35',
 			sendTo: 'billing@example.test',
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['refundReceipt.send'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['refundReceipt.send'].output,
+		inputSchema: schemasFor('refundReceipt.send').input,
+		outputSchema: schemasFor('refundReceipt.send').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['refundReceipt']['send'](ctx, {
 				realmId: '12345678',
@@ -5030,10 +5027,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				sparse: true,
 			},
 		},
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['refundReceipt.sparseUpdate'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['refundReceipt.sparseUpdate'].output,
+		inputSchema: schemasFor('refundReceipt.sparseUpdate').input,
+		outputSchema: schemasFor('refundReceipt.sparseUpdate').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['refundReceipt']['sparseUpdate'](ctx, {
 				realmId: '12345678',
@@ -5086,9 +5081,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['refundReceipt.update'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['refundReceipt.update'].output,
+		inputSchema: schemasFor('refundReceipt.update').input,
+		outputSchema: schemasFor('refundReceipt.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['refundReceipt']['update'](ctx, {
 				realmId: '12345678',
@@ -5118,9 +5112,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['reimburseCharge.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['reimburseCharge.list'].output,
+		inputSchema: schemasFor('reimburseCharge.list').input,
+		outputSchema: schemasFor('reimburseCharge.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['reimburseCharge']['list'](ctx, {
 				realmId: '12345678',
@@ -5154,9 +5147,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', taxrateId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['reimburseCharge.get'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['reimburseCharge.get'].output,
+		inputSchema: schemasFor('reimburseCharge.get').input,
+		outputSchema: schemasFor('reimburseCharge.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['reimburseCharge']['get'](ctx, {
 				realmId: '12345678',
@@ -5172,10 +5164,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['salesByClassSummary.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['salesByClassSummary.list'].output,
+		inputSchema: schemasFor('salesByClassSummary.list').input,
+		outputSchema: schemasFor('salesByClassSummary.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['salesByClassSummary']['list'](ctx, {
 				realmId: '12345678',
@@ -5191,9 +5181,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['salesByCustomer.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['salesByCustomer.list'].output,
+		inputSchema: schemasFor('salesByCustomer.list').input,
+		outputSchema: schemasFor('salesByCustomer.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['salesByCustomer']['list'](ctx, {
 				realmId: '12345678',
@@ -5209,10 +5198,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['salesByDepartment.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['salesByDepartment.list'].output,
+		inputSchema: schemasFor('salesByDepartment.list').input,
+		outputSchema: schemasFor('salesByDepartment.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['salesByDepartment']['list'](ctx, {
 				realmId: '12345678',
@@ -5228,9 +5215,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['salesByProduct.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['salesByProduct.list'].output,
+		inputSchema: schemasFor('salesByProduct.list').input,
+		outputSchema: schemasFor('salesByProduct.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['salesByProduct']['list'](ctx, {
 				realmId: '12345678',
@@ -5256,9 +5242,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Line: [] } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['salesReceipt.create'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['salesReceipt.create'].output,
+		inputSchema: schemasFor('salesReceipt.create').input,
+		outputSchema: schemasFor('salesReceipt.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['salesReceipt']['create'](ctx, {
 				realmId: '12345678',
@@ -5284,9 +5269,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['salesReceipt.delete'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['salesReceipt.delete'].output,
+		inputSchema: schemasFor('salesReceipt.delete').input,
+		outputSchema: schemasFor('salesReceipt.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['salesReceipt']['delete'](ctx, {
 				realmId: '12345678',
@@ -5315,8 +5299,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { Id: '35', SyncToken: '0', sparse: true },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['salesReceipt.void'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['salesReceipt.void'].output,
+		inputSchema: schemasFor('salesReceipt.void').input,
+		outputSchema: schemasFor('salesReceipt.void').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['salesReceipt']['void'](ctx, {
 				realmId: '12345678',
@@ -5337,9 +5321,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			sizeBytes: 4,
 		},
 		input: { realmId: '12345678', salesreceiptId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['salesReceipt.getPdf'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['salesReceipt.getPdf'].output,
+		inputSchema: schemasFor('salesReceipt.getPdf').input,
+		outputSchema: schemasFor('salesReceipt.getPdf').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['salesReceipt']['getPdf'](ctx, {
 				realmId: '12345678',
@@ -5364,8 +5347,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['salesReceipt.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['salesReceipt.list'].output,
+		inputSchema: schemasFor('salesReceipt.list').input,
+		outputSchema: schemasFor('salesReceipt.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['salesReceipt']['list'](ctx, {
 				realmId: '12345678',
@@ -5389,8 +5372,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', salesreceiptId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['salesReceipt.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['salesReceipt.get'].output,
+		inputSchema: schemasFor('salesReceipt.get').input,
+		outputSchema: schemasFor('salesReceipt.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['salesReceipt']['get'](ctx, {
 				realmId: '12345678',
@@ -5419,8 +5402,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			salesreceiptId: '35',
 			sendTo: 'billing@example.test',
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['salesReceipt.send'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['salesReceipt.send'].output,
+		inputSchema: schemasFor('salesReceipt.send').input,
+		outputSchema: schemasFor('salesReceipt.send').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['salesReceipt']['send'](ctx, {
 				realmId: '12345678',
@@ -5460,9 +5443,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['salesReceipt.update'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['salesReceipt.update'].output,
+		inputSchema: schemasFor('salesReceipt.update').input,
+		outputSchema: schemasFor('salesReceipt.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['salesReceipt']['update'](ctx, {
 				realmId: '12345678',
@@ -5508,10 +5490,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				sparse: true,
 			},
 		},
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['salesReceipt.sparseUpdate'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['salesReceipt.sparseUpdate'].output,
+		inputSchema: schemasFor('salesReceipt.sparseUpdate').input,
+		outputSchema: schemasFor('salesReceipt.sparseUpdate').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['salesReceipt']['sparseUpdate'](ctx, {
 				realmId: '12345678',
@@ -5543,8 +5523,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { DisplayName: 'sample' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['taxAgency.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['taxAgency.create'].output,
+		inputSchema: schemasFor('taxAgency.create').input,
+		outputSchema: schemasFor('taxAgency.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['taxAgency']['create'](ctx, {
 				realmId: '12345678',
@@ -5566,8 +5546,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['taxAgency.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['taxAgency.list'].output,
+		inputSchema: schemasFor('taxAgency.list').input,
+		outputSchema: schemasFor('taxAgency.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['taxAgency']['list'](ctx, {
 				realmId: '12345678',
@@ -5591,8 +5571,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', taxagencyId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['taxAgency.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['taxAgency.get'].output,
+		inputSchema: schemasFor('taxAgency.get').input,
+		outputSchema: schemasFor('taxAgency.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['taxAgency']['get'](ctx, {
 				realmId: '12345678',
@@ -5617,10 +5597,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', taxClassificationId: '35' },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['taxClassification.get'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['taxClassification.get'].output,
+		inputSchema: schemasFor('taxClassification.get').input,
+		outputSchema: schemasFor('taxClassification.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['taxClassification']['get'](ctx, {
 				realmId: '12345678',
@@ -5645,10 +5623,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', parentId: '35' },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['taxClassification.listChildren'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['taxClassification.listChildren'].output,
+		inputSchema: schemasFor('taxClassification.listChildren').input,
+		outputSchema: schemasFor('taxClassification.listChildren').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['taxClassification']['listChildren'](ctx, {
 				realmId: '12345678',
@@ -5673,10 +5649,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['taxClassification.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['taxClassification.list'].output,
+		inputSchema: schemasFor('taxClassification.list').input,
+		outputSchema: schemasFor('taxClassification.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['taxClassification']['list'](ctx, {
 				realmId: '12345678',
@@ -5700,10 +5674,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', level: 1 },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['taxClassification.listByLevel'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['taxClassification.listByLevel'].output,
+		inputSchema: schemasFor('taxClassification.listByLevel').input,
+		outputSchema: schemasFor('taxClassification.listByLevel').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['taxClassification']['listByLevel'](ctx, {
 				realmId: '12345678',
@@ -5725,8 +5697,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['taxCode.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['taxCode.list'].output,
+		inputSchema: schemasFor('taxCode.list').input,
+		outputSchema: schemasFor('taxCode.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['taxCode']['list'](ctx, {
 				realmId: '12345678',
@@ -5750,8 +5722,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', taxcodeId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['taxCode.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['taxCode.get'].output,
+		inputSchema: schemasFor('taxCode.get').input,
+		outputSchema: schemasFor('taxCode.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['taxCode']['get'](ctx, {
 				realmId: '12345678',
@@ -5773,8 +5745,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['taxPayment.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['taxPayment.list'].output,
+		inputSchema: schemasFor('taxPayment.list').input,
+		outputSchema: schemasFor('taxPayment.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['taxPayment']['list'](ctx, {
 				realmId: '12345678',
@@ -5792,8 +5764,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { TaxPayment: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', taxPaymentId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['taxPayment.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['taxPayment.get'].output,
+		inputSchema: schemasFor('taxPayment.get').input,
+		outputSchema: schemasFor('taxPayment.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['taxPayment']['get'](ctx, {
 				realmId: '12345678',
@@ -5815,8 +5787,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['taxRate.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['taxRate.list'].output,
+		inputSchema: schemasFor('taxRate.list').input,
+		outputSchema: schemasFor('taxRate.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['taxRate']['list'](ctx, {
 				realmId: '12345678',
@@ -5834,8 +5806,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { TaxRate: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', taxrateId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['taxRate.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['taxRate.get'].output,
+		inputSchema: schemasFor('taxRate.get').input,
+		outputSchema: schemasFor('taxRate.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['taxRate']['get'](ctx, {
 				realmId: '12345678',
@@ -5864,8 +5836,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { TaxCode: 'sample', TaxRateDetails: [] },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['taxService.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['taxService.create'].output,
+		inputSchema: schemasFor('taxService.create').input,
+		outputSchema: schemasFor('taxService.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['taxService']['create'](ctx, {
 				realmId: '12345678',
@@ -5881,8 +5853,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: { agency_id: '1' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['taxSummary.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['taxSummary.list'].output,
+		inputSchema: schemasFor('taxSummary.list').input,
+		outputSchema: schemasFor('taxSummary.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['taxSummary']['list'](ctx, {
 				realmId: '12345678',
@@ -5905,8 +5877,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Name: 'sample' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['term.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['term.create'].output,
+		inputSchema: schemasFor('term.create').input,
+		outputSchema: schemasFor('term.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['term']['create'](ctx, {
 				realmId: '12345678',
@@ -5928,8 +5900,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['term.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['term.list'].output,
+		inputSchema: schemasFor('term.list').input,
+		outputSchema: schemasFor('term.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['term']['list'](ctx, { realmId: '12345678' }),
 	},
@@ -5948,8 +5920,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', termId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['term.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['term.get'].output,
+		inputSchema: schemasFor('term.get').input,
+		outputSchema: schemasFor('term.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['term']['get'](ctx, {
 				realmId: '12345678',
@@ -5975,8 +5947,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { Name: 'sample', Id: '35', SyncToken: '0' },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['term.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['term.update'].output,
+		inputSchema: schemasFor('term.update').input,
+		outputSchema: schemasFor('term.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['term']['update'](ctx, {
 				realmId: '12345678',
@@ -6002,9 +5974,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { NameOf: 'sample' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['timeActivity.create'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['timeActivity.create'].output,
+		inputSchema: schemasFor('timeActivity.create').input,
+		outputSchema: schemasFor('timeActivity.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['timeActivity']['create'](ctx, {
 				realmId: '12345678',
@@ -6030,9 +6001,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['timeActivity.delete'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['timeActivity.delete'].output,
+		inputSchema: schemasFor('timeActivity.delete').input,
+		outputSchema: schemasFor('timeActivity.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['timeActivity']['delete'](ctx, {
 				realmId: '12345678',
@@ -6057,8 +6027,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['timeActivity.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['timeActivity.list'].output,
+		inputSchema: schemasFor('timeActivity.list').input,
+		outputSchema: schemasFor('timeActivity.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['timeActivity']['list'](ctx, {
 				realmId: '12345678',
@@ -6082,8 +6052,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', timeactivityId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['timeActivity.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['timeActivity.get'].output,
+		inputSchema: schemasFor('timeActivity.get').input,
+		outputSchema: schemasFor('timeActivity.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['timeActivity']['get'](ctx, {
 				realmId: '12345678',
@@ -6112,9 +6082,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { NameOf: 'sample', Id: '35', SyncToken: '0' },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['timeActivity.update'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['timeActivity.update'].output,
+		inputSchema: schemasFor('timeActivity.update').input,
+		outputSchema: schemasFor('timeActivity.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['timeActivity']['update'](ctx, {
 				realmId: '12345678',
@@ -6130,9 +6099,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['transactionList.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['transactionList.list'].output,
+		inputSchema: schemasFor('transactionList.list').input,
+		outputSchema: schemasFor('transactionList.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['transactionList']['list'](ctx, {
 				realmId: '12345678',
@@ -6148,10 +6116,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['transactionListByCustomer.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['transactionListByCustomer.list'].output,
+		inputSchema: schemasFor('transactionListByCustomer.list').input,
+		outputSchema: schemasFor('transactionListByCustomer.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['transactionListByCustomer']['list'](ctx, {
 				realmId: '12345678',
@@ -6167,10 +6133,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['transactionListByVendor.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['transactionListByVendor.list'].output,
+		inputSchema: schemasFor('transactionListByVendor.list').input,
+		outputSchema: schemasFor('transactionListByVendor.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['transactionListByVendor']['list'](ctx, {
 				realmId: '12345678',
@@ -6186,10 +6150,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['transactionListWithSplits.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['transactionListWithSplits.list'].output,
+		inputSchema: schemasFor('transactionListWithSplits.list').input,
+		outputSchema: schemasFor('transactionListWithSplits.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['transactionListWithSplits']['list'](ctx, {
 				realmId: '12345678',
@@ -6236,8 +6198,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				FromAccountRef: { value: 'sample' },
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['transfer.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['transfer.create'].output,
+		inputSchema: schemasFor('transfer.create').input,
+		outputSchema: schemasFor('transfer.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['transfer']['create'](ctx, {
 				realmId: '12345678',
@@ -6282,8 +6244,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['transfer.delete'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['transfer.delete'].output,
+		inputSchema: schemasFor('transfer.delete').input,
+		outputSchema: schemasFor('transfer.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['transfer']['delete'](ctx, {
 				realmId: '12345678',
@@ -6311,8 +6273,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['transfer.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['transfer.list'].output,
+		inputSchema: schemasFor('transfer.list').input,
+		outputSchema: schemasFor('transfer.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['transfer']['list'](ctx, {
 				realmId: '12345678',
@@ -6346,8 +6308,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', transferId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['transfer.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['transfer.get'].output,
+		inputSchema: schemasFor('transfer.get').input,
+		outputSchema: schemasFor('transfer.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['transfer']['get'](ctx, {
 				realmId: '12345678',
@@ -6400,10 +6362,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				sparse: true,
 			},
 		},
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['transfer.sparseUpdate'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['transfer.sparseUpdate'].output,
+		inputSchema: schemasFor('transfer.sparseUpdate').input,
+		outputSchema: schemasFor('transfer.sparseUpdate').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['transfer']['sparseUpdate'](ctx, {
 				realmId: '12345678',
@@ -6461,8 +6421,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['transfer.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['transfer.update'].output,
+		inputSchema: schemasFor('transfer.update').input,
+		outputSchema: schemasFor('transfer.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['transfer']['update'](ctx, {
 				realmId: '12345678',
@@ -6484,8 +6444,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', locale: 'default', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['trialBalance.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['trialBalance.list'].output,
+		inputSchema: schemasFor('trialBalance.list').input,
+		outputSchema: schemasFor('trialBalance.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['trialBalance']['list'](ctx, {
 				realmId: '12345678',
@@ -6506,8 +6466,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { Vendor: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', body: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['vendor.create'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['vendor.create'].output,
+		inputSchema: schemasFor('vendor.create').input,
+		outputSchema: schemasFor('vendor.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['vendor']['create'](ctx, {
 				realmId: '12345678',
@@ -6529,8 +6489,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['vendor.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['vendor.list'].output,
+		inputSchema: schemasFor('vendor.list').input,
+		outputSchema: schemasFor('vendor.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['vendor']['list'](ctx, {
 				realmId: '12345678',
@@ -6548,8 +6508,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { Vendor: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', vendorId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['vendor.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['vendor.get'].output,
+		inputSchema: schemasFor('vendor.get').input,
+		outputSchema: schemasFor('vendor.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['vendor']['get'](ctx, {
 				realmId: '12345678',
@@ -6569,8 +6529,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		},
 		expectedResult: { Vendor: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['vendor.update'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['vendor.update'].output,
+		inputSchema: schemasFor('vendor.update').input,
+		outputSchema: schemasFor('vendor.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['vendor']['update'](ctx, {
 				realmId: '12345678',
@@ -6586,8 +6546,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['vendorBalance.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['vendorBalance.list'].output,
+		inputSchema: schemasFor('vendorBalance.list').input,
+		outputSchema: schemasFor('vendorBalance.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['vendorBalance']['list'](ctx, {
 				realmId: '12345678',
@@ -6603,10 +6563,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema:
-			QuickBooksCatalogEndpointSchemas['vendorBalanceDetail.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['vendorBalanceDetail.list'].output,
+		inputSchema: schemasFor('vendorBalanceDetail.list').input,
+		outputSchema: schemasFor('vendorBalanceDetail.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['vendorBalanceDetail']['list'](ctx, {
 				realmId: '12345678',
@@ -6635,9 +6593,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			body: { VendorRef: { value: 'sample' }, Line: [] },
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['vendorCredit.create'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['vendorCredit.create'].output,
+		inputSchema: schemasFor('vendorCredit.create').input,
+		outputSchema: schemasFor('vendorCredit.create').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['vendorCredit']['create'](ctx, {
 				realmId: '12345678',
@@ -6663,9 +6620,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', body: { Id: '35', SyncToken: '0' } },
-		inputSchema: QuickBooksCatalogEndpointSchemas['vendorCredit.delete'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['vendorCredit.delete'].output,
+		inputSchema: schemasFor('vendorCredit.delete').input,
+		outputSchema: schemasFor('vendorCredit.delete').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['vendorCredit']['delete'](ctx, {
 				realmId: '12345678',
@@ -6690,8 +6646,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['vendorCredit.list'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['vendorCredit.list'].output,
+		inputSchema: schemasFor('vendorCredit.list').input,
+		outputSchema: schemasFor('vendorCredit.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['vendorCredit']['list'](ctx, {
 				realmId: '12345678',
@@ -6715,8 +6671,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', vendorcreditId: '35' },
-		inputSchema: QuickBooksCatalogEndpointSchemas['vendorCredit.get'].input,
-		outputSchema: QuickBooksCatalogEndpointSchemas['vendorCredit.get'].output,
+		inputSchema: schemasFor('vendorCredit.get').input,
+		outputSchema: schemasFor('vendorCredit.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['vendorCredit']['get'](ctx, {
 				realmId: '12345678',
@@ -6755,9 +6711,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				SyncToken: '0',
 			},
 		},
-		inputSchema: QuickBooksCatalogEndpointSchemas['vendorCredit.update'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['vendorCredit.update'].output,
+		inputSchema: schemasFor('vendorCredit.update').input,
+		outputSchema: schemasFor('vendorCredit.update').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['vendorCredit']['update'](ctx, {
 				realmId: '12345678',
@@ -6778,9 +6733,8 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: { kind: 'json', body: {} },
 		expectedResult: {},
 		input: { realmId: '12345678', params: {} },
-		inputSchema: QuickBooksCatalogEndpointSchemas['vendorExpenses.list'].input,
-		outputSchema:
-			QuickBooksCatalogEndpointSchemas['vendorExpenses.list'].output,
+		inputSchema: schemasFor('vendorExpenses.list').input,
+		outputSchema: schemasFor('vendorExpenses.list').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['vendorExpenses']['list'](ctx, {
 				realmId: '12345678',
