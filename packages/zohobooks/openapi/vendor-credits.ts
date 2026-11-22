@@ -2032,6 +2032,16 @@ export const operations = [
 				contentType: 'application/json',
 				schema: { $ref: '#/components/schemas/get-vendor-credit-response' },
 			},
+			{
+				status: '200',
+				contentType: 'application/pdf',
+				schema: { type: 'string', format: 'binary' },
+			},
+			{
+				status: '200',
+				contentType: 'text/html',
+				schema: { type: 'string', format: 'binary' },
+			},
 		],
 		scopes: ['ZohoBooks.debitnotes.READ'],
 		riskLevel: 'read',

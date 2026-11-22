@@ -654,7 +654,7 @@ apiExamples:
   customerDebitNotes.createCustomerDebitNote:
     args: {"query":{"organization_id":"999999999999999"},"body":{"customer_id":"999999999999999","type":"debit_note","reference_invoice_id":"999999999999999","line_items":[]}}
   customerDebitNotes.listCustomerDebitNotes:
-    args: {"query":{"organization_id":"999999999999999"}}
+    args: {"query":{"organization_id":"999999999999999","filter_by":"Type.DebitNote"}}
   customerDebitNotes.updateCustomerDebitNote:
     args: {"pathParams":{"debit_note_id":"999999999999999"},"query":{"organization_id":"999999999999999"},"body":{"customer_id":"999999999999999","line_items":[]}}
   customerDebitNotes.getCustomerDebitNote:

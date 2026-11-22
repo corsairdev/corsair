@@ -488,9 +488,9 @@ export const operations = [
 			{
 				name: 'filter_by',
 				in: 'query',
-				required: false,
+				required: true,
 				description: 'Filter needs to be  <code>Type.DebitNote</code>.',
-				schema: { type: 'string' },
+				schema: { type: 'string', enum: ['Type.DebitNote'] },
 			},
 			{
 				name: 'search_text',
@@ -639,6 +639,16 @@ export const operations = [
 				schema: {
 					$ref: '#/components/schemas/get-a-customer-debit-note-response',
 				},
+			},
+			{
+				status: '200',
+				contentType: 'application/pdf',
+				schema: { type: 'string', format: 'binary' },
+			},
+			{
+				status: '200',
+				contentType: 'text/html',
+				schema: { type: 'string', format: 'binary' },
 			},
 		],
 		scopes: ['ZohoBooks.invoices.READ'],

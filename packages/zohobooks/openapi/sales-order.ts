@@ -2466,6 +2466,16 @@ export const operations = [
 				contentType: 'application/json',
 				schema: { $ref: '#/components/schemas/get-a-sales-order-response' },
 			},
+			{
+				status: '200',
+				contentType: 'application/pdf',
+				schema: { type: 'string', format: 'binary' },
+			},
+			{
+				status: '200',
+				contentType: 'text/html',
+				schema: { type: 'string', format: 'binary' },
+			},
 		],
 		scopes: ['ZohoBooks.salesorders.READ'],
 		riskLevel: 'read',

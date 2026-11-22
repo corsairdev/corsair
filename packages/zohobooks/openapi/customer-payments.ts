@@ -1074,6 +1074,11 @@ export const operations = [
 				contentType: 'application/json',
 				schema: { $ref: '#/components/schemas/retrieve-a-payment-response' },
 			},
+			{
+				status: '200',
+				contentType: 'application/pdf',
+				schema: { type: 'string', format: 'binary' },
+			},
 		],
 		scopes: ['ZohoBooks.customerpayments.READ'],
 		riskLevel: 'read',

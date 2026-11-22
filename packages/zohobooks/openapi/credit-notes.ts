@@ -246,13 +246,7 @@ export const schemas = {
 		type: 'string',
 	},
 	'create-a-credit-note-request': {
-		required: [
-			'customer_id',
-			'date',
-			'creditnote_number',
-			'line_items',
-			'reason_for_credit_debit_note',
-		],
+		required: ['customer_id', 'date', 'line_items'],
 		type: 'object',
 		properties: {
 			customer_id: { $ref: '#/components/schemas/customer_id' },
@@ -1888,13 +1882,7 @@ export const schemas = {
 		},
 	},
 	'update-a-credit-note-request': {
-		required: [
-			'customer_id',
-			'date',
-			'creditnote_number',
-			'line_items',
-			'reason_for_credit_debit_note',
-		],
+		required: ['customer_id', 'date', 'line_items'],
 		type: 'object',
 		properties: {
 			customer_id: { $ref: '#/components/schemas/customer_id' },
@@ -2753,6 +2741,16 @@ export const operations = [
 				status: '200',
 				contentType: 'application/json',
 				schema: { $ref: '#/components/schemas/get-a-credit-note-response' },
+			},
+			{
+				status: '200',
+				contentType: 'application/pdf',
+				schema: { type: 'string', format: 'binary' },
+			},
+			{
+				status: '200',
+				contentType: 'text/html',
+				schema: { type: 'string', format: 'binary' },
 			},
 		],
 		scopes: ['ZohoBooks.creditnotes.READ'],
