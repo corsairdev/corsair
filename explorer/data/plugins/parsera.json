@@ -1,0 +1,800 @@
+{
+  "id": "parsera",
+  "displayName": "Parsera",
+  "description": "Parsera is an AI web scraper you drive with plain instructions. This plugin extracts structured data from pages or raw content, manages reusable extractor and agentic scrapers, runs them synchronously or as pollable async jobs, and tracks run progress and credits.",
+  "npmPackageName": "@corsair-dev/parsera",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 15,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "parsera.api.agent.createScraper",
+      "shortPath": "agent.createScraper",
+      "description": "Create an empty agentic scraper",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Scraper id (the API spells it template_id)"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsera.api.agent.deleteScraper",
+      "shortPath": "agent.deleteScraper",
+      "description": "Delete an agentic scraper",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scraperId",
+            "optional": false,
+            "type": "string",
+            "description": "Scraper id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "The API confirmation, e.g. \"Scraper deleted successfully.\""
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsera.api.agent.extract",
+      "shortPath": "agent.extract",
+      "description": "Start a one-shot agentic extraction; answers a task_id to poll, stop or wait on",
+      "riskLevel": "read",
+      "job": {
+        "idPath": "task_id",
+        "status": {
+          "op": "agent.getTask",
+          "idArg": "taskId",
+          "statusPath": "status",
+          "done": ["completed"],
+          "failed": ["failed", "stopped"]
+        },
+        "cancel": {
+          "op": "agent.stopTask",
+          "idArg": "taskId"
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string",
+            "description": "Prompt describing what to extract"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{ name: string, description: string }[]",
+            "description": "Attribute list describing the output fields"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "URL for the agent to start from"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string",
+            "description": "URL to POST results to when extraction completes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string",
+            "description": "Extraction task id"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | running | completed | failed | stopped | string",
+            "description": "Task status"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null",
+            "description": "Why a failed task failed (URL credentials redacted)"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "The extracted records once the task completed"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsera.api.agent.generateScraper",
+      "shortPath": "agent.generateScraper",
+      "description": "Build or regenerate an agentic scraper from a page and an instruction",
+      "riskLevel": "destructive",
+      "job": {
+        "idPath": "template_id",
+        "status": {
+          "op": "agent.getScraper",
+          "idArg": "scraperId",
+          "statusPath": "status",
+          "done": ["ready"],
+          "failed": ["failed"]
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": false,
+            "type": "string",
+            "description": "Prompt describing what to extract"
+          },
+          {
+            "key": "attributes",
+            "optional": true,
+            "type": "{ name: string, description: string }[]",
+            "description": "Attribute list describing the output fields"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "URL for the agent to build on"
+          },
+          {
+            "key": "template_id",
+            "optional": true,
+            "type": "string",
+            "description": "Existing scraper id to regenerate; a new scraper is created when omitted"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Scraper id being generated"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "Build status, generating"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsera.api.agent.getScraper",
+      "shortPath": "agent.getScraper",
+      "description": "Read one agentic scraper with its build status and parameters schema",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scraperId",
+            "optional": false,
+            "type": "string",
+            "description": "Scraper id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Scraper id"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Scraper type, agentic"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "generating | ready | failed",
+            "description": "Build status"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Scraper name"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Primary URL the scraper was built on"
+          },
+          {
+            "key": "sample_data",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "Data captured while the agent learned the page"
+          },
+          {
+            "key": "parameters_schema",
+            "optional": true,
+            "type": "{ name: string, type?: string | null, description?: string | null }[] | null",
+            "description": "Parameters the scraper accepts on each run"
+          },
+          {
+            "key": "credits_charged",
+            "optional": true,
+            "type": "number | null",
+            "description": "Credits charged for the build"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsera.api.agent.getTask",
+      "shortPath": "agent.getTask",
+      "description": "Read one agentic extraction task with its status and results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string",
+            "description": "Extraction task id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string",
+            "description": "Extraction task id"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | running | completed | failed | stopped | string",
+            "description": "Task status"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null",
+            "description": "Why a failed task failed (URL credentials redacted)"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "The extracted records once the task completed"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsera.api.agent.stopTask",
+      "shortPath": "agent.stopTask",
+      "description": "Cancel a running agentic extraction",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "taskId",
+            "optional": false,
+            "type": "string",
+            "description": "Extraction task id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "task_id",
+            "optional": false,
+            "type": "string",
+            "description": "Extraction task id"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "pending | running | completed | failed | stopped | string",
+            "description": "Task status"
+          },
+          {
+            "key": "error",
+            "optional": true,
+            "type": "string | null",
+            "description": "Why a failed task failed (URL credentials redacted)"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "The extracted records once the task completed"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsera.api.extractor.createScraper",
+      "shortPath": "extractor.createScraper",
+      "description": "Create an empty extractor scraper",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Scraper id (the API spells it template_id)"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsera.api.extractor.deleteScraper",
+      "shortPath": "extractor.deleteScraper",
+      "description": "Delete an extractor scraper",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scraperId",
+            "optional": false,
+            "type": "string",
+            "description": "Scraper id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string",
+            "description": "The API confirmation, e.g. \"Scraper deleted successfully.\""
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsera.api.extractor.extract",
+      "shortPath": "extractor.extract",
+      "description": "Extract structured data from a URL with the LLM extractor; each call charges credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string",
+            "description": "Prompt that adds context to the attributes"
+          },
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "{ name: string, description: string }[]",
+            "description": "Attribute list describing what to extract"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "URL of the webpage to extract data from"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "standard",
+            "description": "Extractor mode; standard is the documented value"
+          },
+          {
+            "key": "proxy_country",
+            "optional": true,
+            "type": "string",
+            "description": "Proxy country, e.g. \"Germany\" or \"UnitedStates\""
+          },
+          {
+            "key": "cookies",
+            "optional": true,
+            "type": "Record<string, any>[]",
+            "description": "Cookies to use during extraction"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "parsera.api.extractor.getScraper",
+      "shortPath": "extractor.getScraper",
+      "description": "Read one extractor scraper",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "scraperId",
+            "optional": false,
+            "type": "string",
+            "description": "Scraper id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Scraper id"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Scraper type, extractor"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Scraper name"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Primary URL the scraper was built on"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsera.api.extractor.parse",
+      "shortPath": "extractor.parse",
+      "description": "Parse data from HTML or text content you already have; each call charges credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
+            "optional": true,
+            "type": "string",
+            "description": "Prompt that adds context to the attributes"
+          },
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "{ name: string, description: string }[]",
+            "description": "Attribute list describing what to extract"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "Raw HTML or text content to extract data from"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "Record<string, any>"
+      }
+    },
+    {
+      "path": "parsera.api.scrapers.getRun",
+      "shortPath": "scrapers.getRun",
+      "description": "Read one async scraper run with its progress and results",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "runId",
+            "optional": false,
+            "type": "string",
+            "description": "Run id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Run id, present when the API deferred the run (202)"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "queued or running while in progress; completed or completed_partial with data when done (async); the sync run answers the results"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "number | null",
+            "description": "URLs processed so far (async runs)"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total URLs in the run (async runs)"
+          },
+          {
+            "key": "credits_charged",
+            "optional": true,
+            "type": "number | null",
+            "description": "Credits charged for the run"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, Record<string, any>[]> | null",
+            "description": "Extracted records keyed by scraped URL"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsera.api.scrapers.run",
+      "shortPath": "scrapers.run",
+      "description": "Run a scraper and wait for results; the API defers past five minutes to a pollable run",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Scraper id to run"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "URL to scrape; extractor scrapers accept an array of up to 100 URLs, agentic scrapers a single URL. Falls back to the scraper default when omitted"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom parameters for agentic scrapers that define a parameters_schema"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string",
+            "description": "URL to POST results to when the run completes"
+          },
+          {
+            "key": "proxy_country",
+            "optional": true,
+            "type": "string",
+            "description": "Proxy country, e.g. \"Germany\" or \"UnitedStates\""
+          },
+          {
+            "key": "cookies",
+            "optional": true,
+            "type": "Record<string, any>[]",
+            "description": "Cookies to use; ignored for agentic scrapers"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Run id, present when the API deferred the run (202)"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "queued or running while in progress; completed or completed_partial with data when done (async); the sync run answers the results"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "number | null",
+            "description": "URLs processed so far (async runs)"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total URLs in the run (async runs)"
+          },
+          {
+            "key": "credits_charged",
+            "optional": true,
+            "type": "number | null",
+            "description": "Credits charged for the run"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, Record<string, any>[]> | null",
+            "description": "Extracted records keyed by scraped URL"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsera.api.scrapers.runAsync",
+      "shortPath": "scrapers.runAsync",
+      "description": "Run a scraper asynchronously; answers a run_id to poll",
+      "riskLevel": "read",
+      "job": {
+        "idPath": "run_id",
+        "status": {
+          "op": "scrapers.getRun",
+          "idArg": "runId",
+          "statusPath": "status",
+          "done": ["completed", "completed_partial"],
+          "failed": ["failed"]
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_id",
+            "optional": false,
+            "type": "string",
+            "description": "Scraper id to run"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "URL to scrape; extractor scrapers accept an array of up to 100 URLs, agentic scrapers a single URL. Falls back to the scraper default when omitted"
+          },
+          {
+            "key": "parameters",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom parameters for agentic scrapers that define a parameters_schema"
+          },
+          {
+            "key": "callback_url",
+            "optional": true,
+            "type": "string",
+            "description": "URL to POST results to when the run completes"
+          },
+          {
+            "key": "proxy_country",
+            "optional": true,
+            "type": "string",
+            "description": "Proxy country, e.g. \"Germany\" or \"UnitedStates\""
+          },
+          {
+            "key": "cookies",
+            "optional": true,
+            "type": "Record<string, any>[]",
+            "description": "Cookies to use; ignored for agentic scrapers"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "run_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Run id, present when the API deferred the run (202)"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "queued or running while in progress; completed or completed_partial with data when done (async); the sync run answers the results"
+          },
+          {
+            "key": "completed",
+            "optional": true,
+            "type": "number | null",
+            "description": "URLs processed so far (async runs)"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total URLs in the run (async runs)"
+          },
+          {
+            "key": "credits_charged",
+            "optional": true,
+            "type": "number | null",
+            "description": "Credits charged for the run"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, Record<string, any>[]> | null",
+            "description": "Extracted records keyed by scraped URL"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
