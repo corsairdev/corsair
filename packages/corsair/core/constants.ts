@@ -506,6 +506,7 @@ export const BaseProviders = [
 	'pinecone',
 	'pipedrive',
 	'perigon',
+	'pipelinecrm',
 	'placid',
 	'plain',
 	'platerecognizer',
@@ -1257,6 +1258,7 @@ export const ProviderDisplayNames = {
 	pinecone: 'Pinecone',
 	pipedrive: 'Pipedrive',
 	perigon: 'Perigon',
+	pipelinecrm: 'Pipeline CRM',
 	placid: 'Placid',
 	plain: 'Plain',
 	platerecognizer: 'Plate Recognizer',
@@ -2015,6 +2017,7 @@ export type AllProviders =
 	| 'pinecone'
 	| 'pipedrive'
 	| 'perigon'
+	| 'pipelinecrm'
 	| 'placid'
 	| 'plain'
 	| 'platerecognizer'
