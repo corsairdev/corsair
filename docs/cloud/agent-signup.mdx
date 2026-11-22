@@ -72,11 +72,12 @@ If you don't know the agent, open the link and choose **Not me**, or ignore the 
 ### Sign up
 
 ```bash
-curl -X POST https://hub.corsair.dev/api/lug/agent-signup \
+curl -X POST \
+  https://hub.corsair.dev/api/lug/agent-signup \
   -H 'content-type: application/json' \
   -d '{
     "human_email": "person@example.com",
-    "note_to_human": "I set up Lug so I can work with your apps.",
+    "note_to_human": "I set up Lug to use your apps.",
     "agent_name": "Research Assistant",
     "harness": "claude-code"
   }'
@@ -101,8 +102,12 @@ The response is `201`:
     "built_in_apps": ["pm", "crm", "skills", "loops"],
     "expires_at": "2026-11-29T12:00:00.000Z"
   },
-  "setup": { "header": "...", "claude_code": "...", "mcp_json": { "mcpServers": { "lug": { "...": "..." } } } },
-  "message": "Lug account made. Store api_key now: it is shown once. ..."
+  "setup": {
+    "header": "Authorization: Bearer mcpk_...",
+    "claude_code": "claude mcp add ...",
+    "mcp_json": { "mcpServers": { "lug": "..." } }
+  },
+  "message": "Lug account made. Store api_key now: ..."
 }
 ```
 
@@ -110,25 +115,52 @@ Store `api_key` right away. Lug shows it once and keeps only a hash. `message` t
 
 ### Connect to the MCP server
 
-Send the key as a Bearer header to `mcp_url`. `setup` in the response holds these lines with your address and key filled in.
+Send the key as a Bearer header to `mcp_url`. `setup` in the response has the Claude Code command and an `mcpServers` block with your address and key filled in.
 
 <Tabs>
   <Tab title="Claude Code">
     ```bash
-    claude mcp add --transport http lug https://agent-k3x9q2ab.lug.dev/agent \
+    claude mcp add --transport http lug \
+      https://agent-k3x9q2ab.lug.dev/agent \
       --header "Authorization: Bearer mcpk_..."
     ```
   </Tab>
-  <Tab title="mcp.json">
-    For Cursor, VS Code and other clients that read an `mcpServers` file:
+  <Tab title="Cursor">
+    Add this to `~/.cursor/mcp.json`, or `.cursor/mcp.json` in a project. Other clients that read an `mcpServers` file take the same block.
 
     ```json
     {
       "mcpServers": {
         "lug": {
+          "url": "https://agent-k3x9q2ab.lug.dev/agent",
+          "headers": {
+            "Authorization": "Bearer mcpk_..."
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="VS Code">
+    Add this to `.vscode/mcp.json`. VS Code reads a top-level `servers` key, not `mcpServers`, and asks for the key the first time it starts the server, so the key stays out of a file you might commit.
+
+    ```json
+    {
+      "inputs": [
+        {
+          "type": "promptString",
+          "id": "lug-api-key",
+          "description": "Lug API key",
+          "password": true
+        }
+      ],
+      "servers": {
+        "lug": {
           "type": "http",
           "url": "https://agent-k3x9q2ab.lug.dev/agent",
-          "headers": { "Authorization": "Bearer mcpk_..." }
+          "headers": {
+            "Authorization": "Bearer ${input:lug-api-key}"
+          }
         }
       }
     }
