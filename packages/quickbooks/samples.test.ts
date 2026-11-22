@@ -212,6 +212,51 @@ describe('QuickBooks operations against Intuit catalog samples', () => {
 		expect(fetchMock).toHaveBeenCalledTimes(3);
 	});
 
+	it('keeps sparse: true required on a sparse update', async () => {
+		await expect(
+			CatalogEndpoints.customer.sparseUpdate(context, {
+				realmId,
+				// Without sparse QuickBooks would run a full update and clear omitted fields.
+				body: { Id: '1', SyncToken: '0', DisplayName: 'Renamed' } as never,
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+
+		answer('Customer.Create0');
+		await CatalogEndpoints.customer.sparseUpdate(context, {
+			realmId,
+			body: { Id: '1', SyncToken: '0', sparse: true, DisplayName: 'Renamed' },
+		});
+		expect(sent().body).toMatchObject({ sparse: true });
+	});
+
+	it('uploads an attachment linked to an invoice', async () => {
+		answer('Attachable.Upload0');
+		await CatalogEndpoints.attachable.upload(context, {
+			realmId,
+			fileName: 'receipt.pdf',
+			contentType: 'application/pdf',
+			base64Content: 'JVBERg==',
+			metadata: {
+				AttachableRef: [
+					{ EntityRef: { type: 'Invoice', value: '95' }, IncludeOnSend: false },
+				],
+			},
+		});
+		const call = fetchMock.mock.calls.at(-1);
+		const form = call?.[1]?.body;
+		expect(form).toBeInstanceOf(FormData);
+		const metadata =
+			form instanceof FormData ? form.get('file_metadata_01') : null;
+		expect(metadata).toBeInstanceOf(Blob);
+		expect(
+			metadata instanceof Blob ? JSON.parse(await metadata.text()) : null,
+		).toMatchObject({
+			AttachableRef: [{ EntityRef: { type: 'Invoice', value: '95' } }],
+			FileName: 'receipt.pdf',
+		});
+	});
+
 	it('creates a customer with the documented contact fields', async () => {
 		answer('Customer.Create0');
 		await CatalogEndpoints.customer.create(context, {

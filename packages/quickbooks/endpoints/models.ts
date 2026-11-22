@@ -265,7 +265,15 @@ const attachablerefSchema = lazySchema(() =>
 			NoRefOnly: z.boolean().optional(),
 			CustomField: z.array(customfieldSchema()).optional(),
 			Inactive: z.boolean().optional(),
-			EntityRef: referencetypeSchema().optional(),
+			// An attachment's EntityRef names the record type it belongs to ({ type: 'Invoice', value: '95' }).
+			EntityRef: z
+				.object({
+					type: z.string().optional(),
+					value: z.string(),
+					name: z.string().optional(),
+				})
+				.strict()
+				.optional(),
 		})
 		.strict(),
 );

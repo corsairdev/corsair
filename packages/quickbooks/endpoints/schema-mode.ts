@@ -133,15 +133,20 @@ function looseBody(schema: AnySchema, nested: boolean): AnySchema {
 		case 'object': {
 			const shape = (schema as z.ZodObject).shape as Record<string, AnySchema>;
 			// A body that names an existing record (update, sparse update, delete) needs only
-			// Id and SyncToken; QuickBooks validates the rest of the entity itself.
+			// Id, SyncToken and its fixed flags (`sparse: true`); QuickBooks validates the
+			// rest of the entity itself. Without `sparse`, a sparse update would run as a
+			// full update and clear the fields it leaves out.
 			const identifiesRecord =
 				!nested && isRequired(shape.Id) && isRequired(shape.SyncToken);
 			const fields: Record<string, AnySchema> = {};
 			for (const [name, field] of Object.entries(shape)) {
 				const inner = looseBody(field, true);
+				const keepsRequired =
+					name === 'Id' ||
+					name === 'SyncToken' ||
+					defOf(field).type === 'literal';
 				const optional =
-					(nested && name === 'Id') ||
-					(identifiesRecord && name !== 'Id' && name !== 'SyncToken');
+					(nested && name === 'Id') || (identifiesRecord && !keepsRequired);
 				fields[name] = optional ? inner.optional() : inner;
 			}
 			out = z.looseObject(fields);
@@ -182,7 +187,8 @@ function looseBody(schema: AnySchema, nested: boolean): AnySchema {
  */
 export function requestSchema(
 	schema: AnySchema,
-	bodyKeys: readonly string[] = ['body'],
+	// `metadata` is the Attachable sent with an upload.
+	bodyKeys: readonly string[] = ['body', 'metadata'],
 ): AnySchema {
 	const cached = inputCache.get(schema);
 	if (cached) return cached;
