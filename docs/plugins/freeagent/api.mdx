@@ -754,7 +754,8 @@ await corsair.freeagent.api.bankFeeds.get({ id: '1' });
   created_at?: string,
   updated_at?: string,
   last_fetched_at?: string | null,
-  status?: string
+  status?: string,
+  state?: string
 }
 ```
 </Accordion>
@@ -815,7 +816,8 @@ await corsair.freeagent.api.bankFeeds.list({
   created_at?: string,
   updated_at?: string,
   last_fetched_at?: string | null,
-  status?: string
+  status?: string,
+  state?: string
 }[]
 ```
 </Accordion>
@@ -868,6 +870,14 @@ await corsair.freeagent.api.bankTransactionExplanations.create({
 
 ```ts
 {
+  capital_asset?: {
+    depreciation_profile: {
+      method: straight_line | reducing_balance | no_depreciation,
+      frequency?: string,
+      asset_life_years?: number,
+      annual_depreciation_percentage?: number
+    }
+  },
   bank_account?: string,
   bank_transaction?: string,
   ec_status?: string,
@@ -1457,6 +1467,14 @@ await corsair.freeagent.api.bankTransactionExplanations.update({
 
 ```ts
 {
+  capital_asset?: {
+    depreciation_profile: {
+      method: straight_line | reducing_balance | no_depreciation,
+      frequency?: string,
+      asset_life_years?: number,
+      annual_depreciation_percentage?: number
+    }
+  },
   bank_account?: string,
   bank_transaction?: string,
   ec_status?: string,
@@ -2030,7 +2048,7 @@ await corsair.freeagent.api.bankTransactions.uploadStatement({
 | `bank_account` | `string` | Yes | — |
 | `statement` | `object[]` | Yes | — |
 
-Implements the documented JSON transaction-array statement import. The alternate multipart file-upload mode is not exposed.
+Implements the documented JSON transaction-array statement import. The alternate multipart file-upload mode is not exposed. FreeAgent can answer 200 before the transactions appear, so check them with bankTransactions.list for the same bank account before treating the import as done.
 
 <AccordionGroup>
 <Accordion title="statement full type">
@@ -2134,7 +2152,14 @@ await corsair.freeagent.api.bills.create({
     stock_item?: string,
     stock_altering_quantity?: string | number,
     depreciation_schedule?: string,
-    capital_asset?: string,
+    capital_asset?: string | {
+      depreciation_profile: {
+        method: straight_line | reducing_balance | no_depreciation,
+        frequency?: string,
+        asset_life_years?: number,
+        annual_depreciation_percentage?: number
+      }
+    },
     project?: string,
     cis_deduction_rate?: string | number
   }[]
@@ -2582,7 +2607,14 @@ Existing bill items can be deleted with their URL and _destroy: 1. This operatio
       stock_item?: string,
       stock_altering_quantity?: string | number,
       depreciation_schedule?: string,
-      capital_asset?: string,
+      capital_asset?: string | {
+        depreciation_profile: {
+          method: straight_line | reducing_balance | no_depreciation,
+          frequency?: string,
+          asset_life_years?: number,
+          annual_depreciation_percentage?: number
+        }
+      },
       project?: string,
       cis_deduction_rate?: string | number,
       url: string
@@ -2601,7 +2633,14 @@ Existing bill items can be deleted with their URL and _destroy: 1. This operatio
       stock_item?: string,
       stock_altering_quantity?: string | number,
       depreciation_schedule?: string,
-      capital_asset?: string,
+      capital_asset?: string | {
+        depreciation_profile: {
+          method: straight_line | reducing_balance | no_depreciation,
+          frequency?: string,
+          asset_life_years?: number,
+          annual_depreciation_percentage?: number
+        }
+      },
       project?: string,
       cis_deduction_rate?: string | number,
       url: ""
@@ -6102,6 +6141,7 @@ Create estimates as Draft and use status transitions. FreeAgent's first-party fo
   ec_status?: UK/Non-EC | EC Goods | EC Services | Reverse Charge | EC VAT MOSS,
   place_of_supply?: string,
   estimate_items?: {
+    position?: number,
     item_type?: Hours | Days | Weeks | Months | Years | -no unit- | Products | Services | Training | Expenses | Comments | Bills | Discount | Credit,
     quantity?: string | number,
     price?: string | number,
@@ -6210,6 +6250,7 @@ await corsair.freeagent.api.estimates.createItem({
 
 ```ts
 {
+  position?: number,
   item_type: Hours | Days | Weeks | Months | Years | -no unit- | Products | Services | Training | Expenses | Comments | Bills | Discount | Credit,
   quantity: string | number,
   price: string | number,
@@ -6932,6 +6973,7 @@ await corsair.freeagent.api.estimates.update({
   ec_status?: UK/Non-EC | EC Goods | EC Services | Reverse Charge | EC VAT MOSS,
   place_of_supply?: string,
   estimate_items?: {
+    position?: number,
     item_type?: Hours | Days | Weeks | Months | Years | -no unit- | Products | Services | Training | Expenses | Comments | Bills | Discount | Credit,
     quantity?: string | number,
     price?: string | number,
@@ -7022,6 +7064,7 @@ await corsair.freeagent.api.estimates.updateItem({
 
 ```ts
 {
+  position?: number,
   item_type?: Hours | Days | Weeks | Months | Years | -no unit- | Products | Services | Training | Expenses | Comments | Bills | Discount | Credit,
   quantity?: string | number,
   price?: string | number,
@@ -7094,6 +7137,14 @@ The first-party API forum confirms a 201 response containing one expense per sub
 
 ```ts
 {
+  capital_asset?: {
+    depreciation_profile: {
+      method: straight_line | reducing_balance | no_depreciation,
+      frequency?: string,
+      asset_life_years?: number,
+      annual_depreciation_percentage?: number
+    }
+  },
   user: string,
   category: string | Mileage,
   dated_on: string,
@@ -7258,6 +7309,14 @@ await corsair.freeagent.api.expenses.create({
 
 ```ts
 {
+  capital_asset?: {
+    depreciation_profile: {
+      method: straight_line | reducing_balance | no_depreciation,
+      frequency?: string,
+      asset_life_years?: number,
+      annual_depreciation_percentage?: number
+    }
+  },
   user: string,
   category: string | Mileage,
   dated_on: string,
@@ -7750,6 +7809,14 @@ await corsair.freeagent.api.expenses.update({
 
 ```ts
 {
+  capital_asset?: {
+    depreciation_profile: {
+      method: straight_line | reducing_balance | no_depreciation,
+      frequency?: string,
+      asset_life_years?: number,
+      annual_depreciation_percentage?: number
+    }
+  },
   user?: string,
   category?: string | Mileage,
   dated_on?: string,
@@ -11243,7 +11310,7 @@ await corsair.freeagent.api.priceListItems.create({
 
 `priceListItems.delete`
 
-Delete a price list item using the documented singular route
+Delete a price list item
 
 **Risk:** `destructive`
 
@@ -14090,7 +14157,6 @@ await corsair.freeagent.api.users.update({
   unique_tax_reference?: string,
   role?: Owner | Director | Partner | Company Secretary | Employee | Shareholder | Accountant,
   opening_mileage?: string | number,
-  send_invitation?: boolean,
   permission_level?: number
 }
 ```
@@ -14146,7 +14212,6 @@ await corsair.freeagent.api.users.updateMe({
   unique_tax_reference?: string,
   role?: Owner | Director | Partner | Company Secretary | Employee | Shareholder | Accountant,
   opening_mileage?: string | number,
-  send_invitation?: boolean,
   permission_level?: number
 }
 ```
