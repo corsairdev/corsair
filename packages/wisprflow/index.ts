@@ -98,7 +98,7 @@ export const wisprFlowEndpointSchemas = {
 
 const wisprFlowEndpointMeta = {
 	'transcriptions.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Transcribe base64 16kHz PCM16 WAV audio into formatted text. Billed per generated token',
 	},
