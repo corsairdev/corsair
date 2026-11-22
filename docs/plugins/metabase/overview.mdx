@@ -6,11 +6,11 @@ description: "Work with Metabase's documented REST API for collections, queries,
 
 Use **Metabase** through Corsair: one client, typed API calls.
 
-Metabase's REST API is unversioned. The current latest documentation is for Metabase 65, but available routes depend on the installed instance. This plugin implements JSON-schema-backed OpenAPI routes compatible with Corsair; the custom-viz Server-Sent Events proxy and inbound Slack event receiver are excluded. API keys use the documented X-API-Key header and inherit permissions from their assigned group. Configure the instance in metabase(&#123; baseUrl &#125;); agent inputs cannot change the host. Cookies are omitted and redirects are not followed.
+Metabase's REST API is unversioned. The current latest documentation is for Metabase 65, but available routes depend on the installed instance. This plugin implements JSON-schema-backed OpenAPI routes compatible with Corsair; the custom-viz Server-Sent Events proxy and inbound Slack event receiver are excluded. API keys use the documented X-API-Key header and inherit permissions from their assigned group. The instance comes from the account's stored `base_url` or metabase(&#123; baseUrl &#125;); agent inputs cannot change the host. Cookies are omitted and redirects are not followed. Operations under `ee.` call Pro/Enterprise routes, which an open-source instance answers with 404. Metabase's MCP Apps routes (`/api/embed-mcp/*`) are left out: they need an MCP session header that only Metabase's embed sets.
 
 **What you get:**
 
-- 309 typed API operations
+- 306 typed API operations
 
 ## Setup
 
@@ -68,7 +68,7 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 
 Store the Metabase API key before the first call: `pnpm corsair setup --plugin=metabase --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
-Configure the administrator-controlled Metabase instance origin. Use HTTPS, or HTTP only for localhost development. Store each tenant's API key separately; Metabase grants that key the permissions of its assigned group.
+Each account stores its Metabase instance origin as `base_url` (for example https://example.metabaseapp.com) next to its API key; `metabase({ baseUrl })` overrides it for a single-instance setup. Use HTTPS, or HTTP only for localhost development. Metabase grants each API key the permissions of its assigned group.
 
 ```ts
 metabase()
