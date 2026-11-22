@@ -1,0 +1,589 @@
+---
+title: "Parsera API reference"
+sidebarTitle: "API"
+description: "API reference for the Parsera plugin in Corsair: every `parsera.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Agent
+
+### createScraper
+
+`agent.createScraper`
+
+Create an empty agentic scraper
+
+**Risk:** `write`
+
+```ts
+await corsair.parsera.api.agent.createScraper({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Scraper id (the API spells it template_id) |
+
+
+
+---
+
+### deleteScraper
+
+`agent.deleteScraper`
+
+Delete an agentic scraper
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.parsera.api.agent.deleteScraper({ scraperId: "abc123" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scraperId` | `string` | Yes | Scraper id |
+
+The API answers a message string the operation validates and returns.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | The API confirmation, e.g. "Scraper deleted successfully." |
+
+
+
+---
+
+### extract
+
+`agent.extract`
+
+Start a one-shot agentic extraction; answers a task_id to poll, stop or wait on
+
+**Risk:** `read`
+
+```ts
+await corsair.parsera.api.agent.extract({ url: "https://news.ycombinator.com/", prompt: "Extract the top 10 news titles with their scores", callback_url: "https://example.com/callback" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prompt` | `string` | Yes | Prompt describing what to extract |
+| `attributes` | `object[]` | No | Attribute list describing the output fields |
+| `url` | `string` | Yes | URL for the agent to start from |
+| `callback_url` | `string` | No | URL to POST results to when extraction completes |
+
+Answers 202 Accepted with a task_id and status pending; poll agent.getTask, stop with agent.stopTask, or get a callback at callback_url.
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  name: string,
+  description: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | Extraction task id |
+| `status` | `pending \| running \| completed \| failed \| stopped \| string` | Yes | Task status |
+| `error` | `string \| null` | No | Why a failed task failed (URL credentials redacted) |
+| `data` | `Record<string, any>[] \| null` | No | The extracted records once the task completed |
+
+
+
+---
+
+### generateScraper
+
+`agent.generateScraper`
+
+Build or regenerate an agentic scraper from a page and an instruction
+
+**Risk:** `destructive`
+
+```ts
+await corsair.parsera.api.agent.generateScraper({ url: "https://news.ycombinator.com/", prompt: "Extract news titles with their scores" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prompt` | `string` | Yes | Prompt describing what to extract |
+| `attributes` | `object[]` | No | Attribute list describing the output fields |
+| `url` | `string` | Yes | URL for the agent to build on |
+| `template_id` | `string` | No | Existing scraper id to regenerate; a new scraper is created when omitted |
+
+Answers 202 with template_id and status generating; agent.getScraper reports ready or failed when the build ends. Omitting template_id creates a new scraper.
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  name: string,
+  description: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Scraper id being generated |
+| `status` | `string` | Yes | Build status, generating |
+
+
+
+---
+
+### getScraper
+
+`agent.getScraper`
+
+Read one agentic scraper with its build status and parameters schema
+
+**Risk:** `read`
+
+```ts
+await corsair.parsera.api.agent.getScraper({ scraperId: "abc123" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scraperId` | `string` | Yes | Scraper id |
+
+Status is one of generating, ready, failed; parameters_schema lists what each run accepts.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Scraper id |
+| `type` | `string \| null` | No | Scraper type, agentic |
+| `status` | `generating \| ready \| failed` | Yes | Build status |
+| `name` | `string \| null` | No | Scraper name |
+| `url` | `string \| null` | No | Primary URL the scraper was built on |
+| `sample_data` | `Record<string, any>[] \| null` | No | Data captured while the agent learned the page |
+| `parameters_schema` | `object[] \| null` | No | Parameters the scraper accepts on each run |
+| `credits_charged` | `number \| null` | No | Credits charged for the build |
+
+<AccordionGroup>
+<Accordion title="parameters_schema full type">
+
+```ts
+{
+  name: string,
+  type?: string | null,
+  description?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTask
+
+`agent.getTask`
+
+Read one agentic extraction task with its status and results
+
+**Risk:** `read`
+
+```ts
+await corsair.parsera.api.agent.getTask({ taskId: "agent-extract-abc123" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | Extraction task id |
+
+Status is one of pending, running, completed, failed, stopped; data arrives when completed.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | Extraction task id |
+| `status` | `pending \| running \| completed \| failed \| stopped \| string` | Yes | Task status |
+| `error` | `string \| null` | No | Why a failed task failed (URL credentials redacted) |
+| `data` | `Record<string, any>[] \| null` | No | The extracted records once the task completed |
+
+
+
+---
+
+### stopTask
+
+`agent.stopTask`
+
+Cancel a running agentic extraction
+
+**Risk:** `write`
+
+```ts
+await corsair.parsera.api.agent.stopTask({ taskId: "agent-extract-abc123" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `taskId` | `string` | Yes | Extraction task id |
+
+Cancels a running extraction; the task reports stopped.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `task_id` | `string` | Yes | Extraction task id |
+| `status` | `pending \| running \| completed \| failed \| stopped \| string` | Yes | Task status |
+| `error` | `string \| null` | No | Why a failed task failed (URL credentials redacted) |
+| `data` | `Record<string, any>[] \| null` | No | The extracted records once the task completed |
+
+
+
+---
+
+## Extractor
+
+### createScraper
+
+`extractor.createScraper`
+
+Create an empty extractor scraper
+
+**Risk:** `write`
+
+```ts
+await corsair.parsera.api.extractor.createScraper({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Scraper id (the API spells it template_id) |
+
+
+
+---
+
+### deleteScraper
+
+`extractor.deleteScraper`
+
+Delete an extractor scraper
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.parsera.api.extractor.deleteScraper({ scraperId: "abc123" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scraperId` | `string` | Yes | Scraper id |
+
+The API answers a message string the operation validates and returns.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | The API confirmation, e.g. "Scraper deleted successfully." |
+
+
+
+---
+
+### extract
+
+`extractor.extract`
+
+Extract structured data from a URL with the LLM extractor; each call charges credits
+
+**Risk:** `read`
+
+```ts
+await corsair.parsera.api.extractor.extract({ url: "https://news.ycombinator.com/", prompt: "Extract news metadata", attributes: [{ name: "title", description: "News title" }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prompt` | `string` | No | Prompt that adds context to the attributes |
+| `attributes` | `object[]` | Yes | Attribute list describing what to extract |
+| `url` | `string` | Yes | URL of the webpage to extract data from |
+| `mode` | `standard` | No | Extractor mode; standard is the documented value |
+| `proxy_country` | `string` | No | Proxy country, e.g. "Germany" or "UnitedStates" |
+| `cookies` | `Record<string, any>[]` | No | Cookies to use during extraction |
+
+Minimal payload is url plus an attributes list (a prompt alone answers 422); the prompt adds context; mode and proxy_country are optional, cookies take the documented name-value records with an optional sameSite.
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  name: string,
+  description: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### getScraper
+
+`extractor.getScraper`
+
+Read one extractor scraper
+
+**Risk:** `read`
+
+```ts
+await corsair.parsera.api.extractor.getScraper({ scraperId: "abc123" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scraperId` | `string` | Yes | Scraper id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Scraper id |
+| `type` | `string \| null` | No | Scraper type, extractor |
+| `name` | `string \| null` | No | Scraper name |
+| `url` | `string \| null` | No | Primary URL the scraper was built on |
+
+
+
+---
+
+### parse
+
+`extractor.parse`
+
+Parse data from HTML or text content you already have; each call charges credits
+
+**Risk:** `read`
+
+```ts
+await corsair.parsera.api.extractor.parse({ content: "<h1>Hello</h1>", attributes: [{ name: "heading", description: "The heading text" }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prompt` | `string` | No | Prompt that adds context to the attributes |
+| `attributes` | `object[]` | Yes | Attribute list describing what to extract |
+| `content` | `string` | Yes | Raw HTML or text content to extract data from |
+
+Parses content you already have instead of fetching a URL.
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+  name: string,
+  description: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+## Scrapers
+
+### getRun
+
+`scrapers.getRun`
+
+Read one async scraper run with its progress and results
+
+**Risk:** `read`
+
+```ts
+await corsair.parsera.api.scrapers.getRun({ runId: "run-abc123" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `runId` | `string` | Yes | Run id |
+
+Status is one of running, completed, completed_partial, failed; data is keyed by scraped URL once done.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `string \| null` | No | Run id, present when the API deferred the run (202) |
+| `status` | `string` | Yes | queued or running while in progress; completed or completed_partial with data when done (async); the sync run answers the results |
+| `completed` | `number \| null` | No | URLs processed so far (async runs) |
+| `total` | `number \| null` | No | Total URLs in the run (async runs) |
+| `credits_charged` | `number \| null` | No | Credits charged for the run |
+| `data` | `Record<string, Record<string, any>[]> \| null` | No | Extracted records keyed by scraped URL |
+
+
+
+---
+
+### run
+
+`scrapers.run`
+
+Run a scraper and wait for results; the API defers past five minutes to a pollable run
+
+**Risk:** `read`
+
+```ts
+await corsair.parsera.api.scrapers.run({ template_id: "abc123", url: "https://example.com/page1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Scraper id to run |
+| `url` | `string \| string[]` | No | URL to scrape; extractor scrapers accept an array of up to 100 URLs, agentic scrapers a single URL. Falls back to the scraper default when omitted |
+| `parameters` | `Record<string, any>` | No | Custom parameters for agentic scrapers that define a parameters_schema |
+| `callback_url` | `string` | No | URL to POST results to when the run completes |
+| `proxy_country` | `string` | No | Proxy country, e.g. "Germany" or "UnitedStates" |
+| `cookies` | `Record<string, any>[]` | No | Cookies to use; ignored for agentic scrapers |
+
+Waits up to five minutes; past that the API answers 202 with a run_id, which scrapers.getRun polls.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `string \| null` | No | Run id, present when the API deferred the run (202) |
+| `status` | `string` | Yes | queued or running while in progress; completed or completed_partial with data when done (async); the sync run answers the results |
+| `completed` | `number \| null` | No | URLs processed so far (async runs) |
+| `total` | `number \| null` | No | Total URLs in the run (async runs) |
+| `credits_charged` | `number \| null` | No | Credits charged for the run |
+| `data` | `Record<string, Record<string, any>[]> \| null` | No | Extracted records keyed by scraped URL |
+
+
+
+---
+
+### runAsync
+
+`scrapers.runAsync`
+
+Run a scraper asynchronously; answers a run_id to poll
+
+**Risk:** `read`
+
+```ts
+await corsair.parsera.api.scrapers.runAsync({ template_id: "abc123", url: ["https://example.com/page1", "https://example.com/page2"] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `template_id` | `string` | Yes | Scraper id to run |
+| `url` | `string \| string[]` | No | URL to scrape; extractor scrapers accept an array of up to 100 URLs, agentic scrapers a single URL. Falls back to the scraper default when omitted |
+| `parameters` | `Record<string, any>` | No | Custom parameters for agentic scrapers that define a parameters_schema |
+| `callback_url` | `string` | No | URL to POST results to when the run completes |
+| `proxy_country` | `string` | No | Proxy country, e.g. "Germany" or "UnitedStates" |
+| `cookies` | `Record<string, any>[]` | No | Cookies to use; ignored for agentic scrapers |
+
+Extractor scrapers accept up to 100 URLs and fan out into one aggregated run; agentic scrapers take a single URL.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `run_id` | `string \| null` | No | Run id, present when the API deferred the run (202) |
+| `status` | `string` | Yes | queued or running while in progress; completed or completed_partial with data when done (async); the sync run answers the results |
+| `completed` | `number \| null` | No | URLs processed so far (async runs) |
+| `total` | `number \| null` | No | Total URLs in the run (async runs) |
+| `credits_charged` | `number \| null` | No | Credits charged for the run |
+| `data` | `Record<string, Record<string, any>[]> \| null` | No | Extracted records keyed by scraped URL |
+
+
+
+---
+

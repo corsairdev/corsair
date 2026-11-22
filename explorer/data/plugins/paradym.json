@@ -1,0 +1,2219 @@
+{
+  "id": "paradym",
+  "displayName": "Paradym",
+  "description": "Paradym is the easiest way to issue, verify, and manage verifiable credentials. This plugin manages wallets, SD-JWT VC credential templates and trusted entities, creates OpenID4VC issuance offers and verification requests, batch-revokes issued credentials, and manages webhook subscriptions with delivery history.",
+  "npmPackageName": "@corsair-dev/paradym",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 33,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "wallet_id"]
+    }
+  ],
+  "api": [
+    {
+      "path": "paradym.api.credentialTemplates.archive",
+      "shortPath": "credentialTemplates.archive",
+      "description": "Archive an SD-JWT VC credential template",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credentialTemplateId",
+            "optional": false,
+            "type": "string",
+            "description": "Template id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Archived template id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the archive succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.credentialTemplates.create",
+      "shortPath": "credentialTemplates.create",
+      "description": "Create an SD-JWT VC credential template with its attributes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string",
+            "description": "Credential type identifier, e.g. urn:eudi:pid:1"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Template name"
+          },
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "Record<string, {}>",
+            "description": "Credential attributes keyed by attribute name"
+          },
+          {
+            "key": "revocable",
+            "optional": true,
+            "type": "boolean",
+            "description": "Enable revocation for credentials from this template"
+          },
+          {
+            "key": "validFrom",
+            "optional": true,
+            "type": "string | { future: { days?: number, months?: number, years?: number } }",
+            "description": "A date, e.g. 2026-11-21, or { future: { days, months, years } }"
+          },
+          {
+            "key": "validUntil",
+            "optional": true,
+            "type": "string | { start: issuance | validFrom, future: { days?: number, months?: number, years?: number } }",
+            "description": "A date, or { start: issuance | validFrom, future: { days, months, years } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Template id"
+          },
+          {
+            "key": "walletId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Wallet the template belongs to"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template description"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string | null",
+            "description": "Credential format"
+          },
+          {
+            "key": "revocable",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether credentials from this template can be revoked"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the template is archived"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.credentialTemplates.get",
+      "shortPath": "credentialTemplates.get",
+      "description": "Read one SD-JWT VC credential template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credentialTemplateId",
+            "optional": false,
+            "type": "string",
+            "description": "Template id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Template id"
+          },
+          {
+            "key": "walletId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Wallet the template belongs to"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template description"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string | null",
+            "description": "Credential format"
+          },
+          {
+            "key": "revocable",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether credentials from this template can be revoked"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the template is archived"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.credentialTemplates.list",
+      "shortPath": "credentialTemplates.list",
+      "description": "List SD-JWT VC credential templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (sent as page[size]); the meta.page response carries maxSize"
+          },
+          {
+            "key": "pageAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor of the first record to return (sent as page[after]; take it from meta.page.after)"
+          },
+          {
+            "key": "pageBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor of the last record to return (sent as page[before]; take it from meta.page.before)"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "id | -id | name | -name | createdAt | -createdAt | updatedAt | -updatedAt",
+            "description": "Sort field; \"-\" prefix sorts descending"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, walletId?: string | null, name?: string | null, description?: string | null, format?: string | null, revocable?: boolean | null, archived?: boolean | null, createdAt?: string | null, updatedAt?: string | null }[]",
+            "description": "Templates on this page"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page?: { maxSize?: string | null, size?: string | null, after?: string | null, before?: string | null } | null }",
+            "description": "Pagination metadata for the list"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.credentialTemplates.unarchive",
+      "shortPath": "credentialTemplates.unarchive",
+      "description": "Unarchive an SD-JWT VC credential template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credentialTemplateId",
+            "optional": false,
+            "type": "string",
+            "description": "Template id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credentialTemplateId",
+            "optional": false,
+            "type": "string",
+            "description": "Unarchived template id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the unarchive succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.credentialTemplates.update",
+      "shortPath": "credentialTemplates.update",
+      "description": "Update an SD-JWT VC credential template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credentialTemplateId",
+            "optional": false,
+            "type": "string",
+            "description": "Template id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Template name"
+          },
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "Record<string, {}>",
+            "description": "Credential attributes keyed by attribute name"
+          },
+          {
+            "key": "validFrom",
+            "optional": true,
+            "type": "string | { future: { days?: number, months?: number, years?: number } }",
+            "description": "A date, e.g. 2026-11-21, or { future: { days, months, years } }"
+          },
+          {
+            "key": "validUntil",
+            "optional": true,
+            "type": "string | { start: issuance | validFrom, future: { days?: number, months?: number, years?: number } }",
+            "description": "A date, or { start: issuance | validFrom, future: { days, months, years } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Template id"
+          },
+          {
+            "key": "walletId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Wallet the template belongs to"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template description"
+          },
+          {
+            "key": "format",
+            "optional": true,
+            "type": "string | null",
+            "description": "Credential format"
+          },
+          {
+            "key": "revocable",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether credentials from this template can be revoked"
+          },
+          {
+            "key": "archived",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the template is archived"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.issuance.createOffer",
+      "shortPath": "issuance.createOffer",
+      "description": "Create a credential offer a holder wallet can accept",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credentials",
+            "optional": false,
+            "type": "{ credentialTemplateId: string, attributes?: Record<string, any> }[]",
+            "description": "The credentials to be issued in this offer"
+          },
+          {
+            "key": "expirationInMinutes",
+            "optional": true,
+            "type": "number",
+            "description": "Minutes until the offer expires"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Issuance session id"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "Session status, e.g. offered, completed, failed, expired"
+          },
+          {
+            "key": "offerUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "Credential offer URI a wallet opens"
+          },
+          {
+            "key": "offerQrUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "QR image of the offer"
+          },
+          {
+            "key": "offerDeeplinkUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deep link of the offer"
+          },
+          {
+            "key": "offerDeeplinkQrUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "QR image of the deep link"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the offer expires"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.issuance.getSession",
+      "shortPath": "issuance.getSession",
+      "description": "Read one OpenID4VC issuance session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issuanceId",
+            "optional": false,
+            "type": "string",
+            "description": "Issuance session id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Issuance session id"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "Session status, e.g. offered, completed, failed, expired"
+          },
+          {
+            "key": "offerUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "Credential offer URI a wallet opens"
+          },
+          {
+            "key": "offerQrUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "QR image of the offer"
+          },
+          {
+            "key": "offerDeeplinkUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deep link of the offer"
+          },
+          {
+            "key": "offerDeeplinkQrUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "QR image of the deep link"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the offer expires"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.issuance.listSessions",
+      "shortPath": "issuance.listSessions",
+      "description": "List OpenID4VC issuance sessions with their statuses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filterStatus",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by session status (sent as filter[status])"
+          },
+          {
+            "key": "filterId",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by id (sent as filter[id])"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "id | -id | createdAt | -createdAt | updatedAt | -updatedAt",
+            "description": "Sort field; \"-\" prefix sorts descending"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (sent as page[size]); the meta.page response carries maxSize"
+          },
+          {
+            "key": "pageAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor of the first record to return (sent as page[after]; take it from meta.page.after)"
+          },
+          {
+            "key": "pageBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor of the last record to return (sent as page[before]; take it from meta.page.before)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, status: string, offerUri?: string | null, offerQrUri?: string | null, offerDeeplinkUri?: string | null, offerDeeplinkQrUri?: string | null, expiresAt?: string | null, createdAt?: string | null, updatedAt?: string | null }[]",
+            "description": "Issuance sessions on this page"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page?: { maxSize?: string | null, size?: string | null, after?: string | null, before?: string | null } | null }",
+            "description": "Pagination metadata for the list"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.presentationTemplates.archive",
+      "shortPath": "presentationTemplates.archive",
+      "description": "Archive a presentation template",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationTemplateId",
+            "optional": false,
+            "type": "string",
+            "description": "Template id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Archived template id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the archive succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.presentationTemplates.create",
+      "shortPath": "presentationTemplates.create",
+      "description": "Create a presentation template defining what a holder must present",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Template name"
+          },
+          {
+            "key": "credentials",
+            "optional": false,
+            "type": "{ format: sd-jwt-vc | mdoc | anoncreds, type?: string, schema?: string, attributes: Record<string, {}>, name?: string }[]",
+            "description": "The credentials the holder must present"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Template id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Template name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template description"
+          },
+          {
+            "key": "credentials",
+            "optional": true,
+            "type": "{}[] | null",
+            "description": "The credentials the holder must present"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.presentationTemplates.get",
+      "shortPath": "presentationTemplates.get",
+      "description": "Read one presentation template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationTemplateId",
+            "optional": false,
+            "type": "string",
+            "description": "Template id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Template id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Template name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template description"
+          },
+          {
+            "key": "credentials",
+            "optional": true,
+            "type": "{}[] | null",
+            "description": "The credentials the holder must present"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.presentationTemplates.list",
+      "shortPath": "presentationTemplates.list",
+      "description": "List presentation templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (sent as page[size]); the meta.page response carries maxSize"
+          },
+          {
+            "key": "pageAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor of the first record to return (sent as page[after]; take it from meta.page.after)"
+          },
+          {
+            "key": "pageBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor of the last record to return (sent as page[before]; take it from meta.page.before)"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "id | -id | name | -name | createdAt | -createdAt | updatedAt | -updatedAt",
+            "description": "Sort field; \"-\" prefix sorts descending"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string | null, credentials?: {}[] | null, createdAt?: string | null, updatedAt?: string | null }[]",
+            "description": "Templates on this page"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page?: { maxSize?: string | null, size?: string | null, after?: string | null, before?: string | null } | null }",
+            "description": "Pagination metadata for the list"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.presentationTemplates.update",
+      "shortPath": "presentationTemplates.update",
+      "description": "Update a presentation template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationTemplateId",
+            "optional": false,
+            "type": "string",
+            "description": "Template id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Template name"
+          },
+          {
+            "key": "credentials",
+            "optional": false,
+            "type": "{ format: sd-jwt-vc | mdoc | anoncreds, type?: string, schema?: string, attributes: Record<string, {}>, name?: string }[]",
+            "description": "The credentials to present"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Template id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Template name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Template description"
+          },
+          {
+            "key": "credentials",
+            "optional": true,
+            "type": "{}[] | null",
+            "description": "The credentials the holder must present"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.revocation.batch",
+      "shortPath": "revocation.batch",
+      "description": "Revoke issued credentials in one batch; revocation cannot be undone",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "issuedCredentialIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Issued credential ids to revoke"
+          },
+          {
+            "key": "notifyWallet",
+            "optional": true,
+            "type": "boolean",
+            "description": "Notify the holder wallet about the revocation"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "revokedCredentials",
+            "optional": false,
+            "type": "{}[]",
+            "description": "The credentials the batch revoked"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.trustedEntities.create",
+      "shortPath": "trustedEntities.create",
+      "description": "Create a trusted entity from DIDs or X.509 certificates",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Name that identifies the trusted entity"
+          },
+          {
+            "key": "dids",
+            "optional": true,
+            "type": "{ did: string }[]",
+            "description": "DIDs to trust from this entity"
+          },
+          {
+            "key": "certificates",
+            "optional": true,
+            "type": "{ certificate: string }[]",
+            "description": "X.509 certificates to trust from this entity"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Trusted entity id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Trusted entity name"
+          },
+          {
+            "key": "dids",
+            "optional": false,
+            "type": "{}[]",
+            "description": "DIDs trusted from this entity"
+          },
+          {
+            "key": "certificates",
+            "optional": false,
+            "type": "{}[]",
+            "description": "X.509 certificates trusted from this entity"
+          },
+          {
+            "key": "etsiLotes",
+            "optional": false,
+            "type": "{}[]",
+            "description": "ETSI trusted lists linked to this entity"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.trustedEntities.delete",
+      "shortPath": "trustedEntities.delete",
+      "description": "Delete a trusted entity",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trustedEntityId",
+            "optional": false,
+            "type": "string",
+            "description": "Trusted entity id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Deleted trusted entity id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.trustedEntities.get",
+      "shortPath": "trustedEntities.get",
+      "description": "Read one trusted entity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "trustedEntityId",
+            "optional": false,
+            "type": "string",
+            "description": "Trusted entity id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Trusted entity id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Trusted entity name"
+          },
+          {
+            "key": "dids",
+            "optional": false,
+            "type": "{}[]",
+            "description": "DIDs trusted from this entity"
+          },
+          {
+            "key": "certificates",
+            "optional": false,
+            "type": "{}[]",
+            "description": "X.509 certificates trusted from this entity"
+          },
+          {
+            "key": "etsiLotes",
+            "optional": false,
+            "type": "{}[]",
+            "description": "ETSI trusted lists linked to this entity"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.trustedEntities.list",
+      "shortPath": "trustedEntities.list",
+      "description": "List trusted entities with their DIDs and certificates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (sent as page[size]); the meta.page response carries maxSize"
+          },
+          {
+            "key": "pageAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor of the first record to return (sent as page[after]; take it from meta.page.after)"
+          },
+          {
+            "key": "pageBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor of the last record to return (sent as page[before]; take it from meta.page.before)"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "id | -id | name | -name | createdAt | -createdAt | updatedAt | -updatedAt",
+            "description": "Sort field; \"-\" prefix sorts descending"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, dids: {}[], certificates: {}[], etsiLotes: {}[], createdAt?: string | null, updatedAt?: string | null }[]",
+            "description": "Trusted entities on this page"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page?: { maxSize?: string | null, size?: string | null, after?: string | null, before?: string | null } | null }",
+            "description": "Pagination metadata for the list"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.verification.complete",
+      "shortPath": "verification.complete",
+      "description": "Mark a succeeded verification session as completed",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "verificationId",
+            "optional": false,
+            "type": "string",
+            "description": "Verification session id"
+          },
+          {
+            "key": "challenge",
+            "optional": false,
+            "type": "string",
+            "description": "The challenge the verification request was created with"
+          },
+          {
+            "key": "responseCode",
+            "optional": false,
+            "type": "string",
+            "description": "The response_code the wallet redirect returned"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Verification session id"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "Session status, e.g. requested, verified, failed, expired"
+          },
+          {
+            "key": "presentationTemplateId",
+            "optional": false,
+            "type": "string",
+            "description": "Presentation template the session verifies against"
+          },
+          {
+            "key": "authorizationRequestUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "Authorization request URI a wallet opens"
+          },
+          {
+            "key": "authorizationRequestQrUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "QR image of the request"
+          },
+          {
+            "key": "authorizationRequestDeeplinkUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deep link of the request"
+          },
+          {
+            "key": "authorizationRequestDeeplinkQrUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "QR image of the deep link"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the session expires"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.verification.createRequest",
+      "shortPath": "verification.createRequest",
+      "description": "Create a verification session a holder wallet responds to",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "presentationTemplateId",
+            "optional": false,
+            "type": "string",
+            "description": "Presentation template defining what the holder must present"
+          },
+          {
+            "key": "expirationInMinutes",
+            "optional": true,
+            "type": "number",
+            "description": "Minutes until the session expires"
+          },
+          {
+            "key": "challenge",
+            "optional": true,
+            "type": "string",
+            "description": "Challenge bound into the authorization request"
+          },
+          {
+            "key": "redirectUri",
+            "optional": true,
+            "type": "string",
+            "description": "Where the wallet redirects after presenting"
+          },
+          {
+            "key": "requireResponseEncryption",
+            "optional": true,
+            "type": "boolean",
+            "description": "Require the wallet to encrypt the presentation response"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Verification session id"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "Session status, e.g. requested, verified, failed, expired"
+          },
+          {
+            "key": "presentationTemplateId",
+            "optional": false,
+            "type": "string",
+            "description": "Presentation template the session verifies against"
+          },
+          {
+            "key": "authorizationRequestUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "Authorization request URI a wallet opens"
+          },
+          {
+            "key": "authorizationRequestQrUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "QR image of the request"
+          },
+          {
+            "key": "authorizationRequestDeeplinkUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deep link of the request"
+          },
+          {
+            "key": "authorizationRequestDeeplinkQrUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "QR image of the deep link"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the session expires"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.verification.getSession",
+      "shortPath": "verification.getSession",
+      "description": "Read one OpenID4VC verification session, including presented credentials",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "verificationId",
+            "optional": false,
+            "type": "string",
+            "description": "Verification session id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Verification session id"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "Session status, e.g. requested, verified, failed, expired"
+          },
+          {
+            "key": "presentationTemplateId",
+            "optional": false,
+            "type": "string",
+            "description": "Presentation template the session verifies against"
+          },
+          {
+            "key": "authorizationRequestUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "Authorization request URI a wallet opens"
+          },
+          {
+            "key": "authorizationRequestQrUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "QR image of the request"
+          },
+          {
+            "key": "authorizationRequestDeeplinkUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deep link of the request"
+          },
+          {
+            "key": "authorizationRequestDeeplinkQrUri",
+            "optional": true,
+            "type": "string | null",
+            "description": "QR image of the deep link"
+          },
+          {
+            "key": "expiresAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the session expires"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.verification.listSessions",
+      "shortPath": "verification.listSessions",
+      "description": "List OpenID4VC verification sessions with their statuses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "filterStatus",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by session status (sent as filter[status])"
+          },
+          {
+            "key": "filterId",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by id (sent as filter[id])"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "id | -id | createdAt | -createdAt | updatedAt | -updatedAt",
+            "description": "Sort field; \"-\" prefix sorts descending"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (sent as page[size]); the meta.page response carries maxSize"
+          },
+          {
+            "key": "pageAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor of the first record to return (sent as page[after]; take it from meta.page.after)"
+          },
+          {
+            "key": "pageBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor of the last record to return (sent as page[before]; take it from meta.page.before)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, status: string, presentationTemplateId: string, authorizationRequestUri?: string | null, authorizationRequestQrUri?: string | null, authorizationRequestDeeplinkUri?: string | null, authorizationRequestDeeplinkQrUri?: string | null, expiresAt?: string | null, createdAt?: string | null, updatedAt?: string | null }[]",
+            "description": "Verification sessions on this page"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page?: { maxSize?: string | null, size?: string | null, after?: string | null, before?: string | null } | null }",
+            "description": "Pagination metadata for the list"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.wallets.create",
+      "shortPath": "wallets.create",
+      "description": "Create a wallet with its own agent, templates and credentials",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Wallet name"
+          },
+          {
+            "key": "verificationDataAccess",
+            "optional": true,
+            "type": "webhook | once | 15min",
+            "description": "How long presented credential data stays readable: webhook (only in the webhook), once (one read) or 15min"
+          },
+          {
+            "key": "openId4VcVersion",
+            "optional": true,
+            "type": "v1",
+            "description": "OpenID4VC version this wallet interoperates with"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Wallet id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Wallet name"
+          },
+          {
+            "key": "ownerId",
+            "optional": false,
+            "type": "string",
+            "description": "Id of the owning user"
+          },
+          {
+            "key": "verificationDataAccess",
+            "optional": true,
+            "type": "string | null",
+            "description": "Access mode for presented data: webhook, once or 15min"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.wallets.get",
+      "shortPath": "wallets.get",
+      "description": "Read one wallet by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "walletId",
+            "optional": false,
+            "type": "string",
+            "description": "Wallet id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Wallet id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Wallet name"
+          },
+          {
+            "key": "ownerId",
+            "optional": false,
+            "type": "string",
+            "description": "Id of the owning user"
+          },
+          {
+            "key": "verificationDataAccess",
+            "optional": true,
+            "type": "string | null",
+            "description": "Access mode for presented data: webhook, once or 15min"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.wallets.list",
+      "shortPath": "wallets.list",
+      "description": "List wallets, searched by name or filtered by id and name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "searchName",
+            "optional": true,
+            "type": "string",
+            "description": "Search by name (sent as search[name])"
+          },
+          {
+            "key": "filterId",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by id (sent as filter[id])"
+          },
+          {
+            "key": "filterName",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by exact name (sent as filter[name])"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "id | -id | createdAt | -createdAt | updatedAt | -updatedAt",
+            "description": "Sort field; \"-\" prefix sorts descending"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (sent as page[size]); the meta.page response carries maxSize"
+          },
+          {
+            "key": "pageAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor of the first record to return (sent as page[after]; take it from meta.page.after)"
+          },
+          {
+            "key": "pageBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor of the last record to return (sent as page[before]; take it from meta.page.before)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, ownerId: string, verificationDataAccess?: string | null, createdAt: string, updatedAt: string }[]",
+            "description": "Wallets on this page"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page?: { maxSize?: string | null, size?: string | null, after?: string | null, before?: string | null } | null }",
+            "description": "Pagination metadata for the list"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.wallets.update",
+      "shortPath": "wallets.update",
+      "description": "Rename a wallet or change its verification data access",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "walletId",
+            "optional": false,
+            "type": "string",
+            "description": "Wallet id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New wallet name"
+          },
+          {
+            "key": "verificationDataAccess",
+            "optional": true,
+            "type": "webhook | once | 15min",
+            "description": "How long presented credential data stays readable: webhook (only in the webhook), once (one read) or 15min"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Wallet id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Wallet name"
+          },
+          {
+            "key": "ownerId",
+            "optional": false,
+            "type": "string",
+            "description": "Id of the owning user"
+          },
+          {
+            "key": "verificationDataAccess",
+            "optional": true,
+            "type": "string | null",
+            "description": "Access mode for presented data: webhook, once or 15min"
+          },
+          {
+            "key": "createdAt",
+            "optional": false,
+            "type": "string",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": false,
+            "type": "string",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.webhooks.createSubscription",
+      "shortPath": "webhooks.createSubscription",
+      "description": "Create a webhook subscription for the event types you choose",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Subscription name"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Endpoint deliveries are posted to"
+          },
+          {
+            "key": "eventTypes",
+            "optional": false,
+            "type": "string[]",
+            "description": "Event types to subscribe to, e.g. openid4vc.issuance.completed, openid4vc.verification.verified, didcomm.connection.created, certificate.renewal.required"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Subscription id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Subscription name"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Endpoint deliveries are posted to"
+          },
+          {
+            "key": "walletId",
+            "optional": false,
+            "type": "string",
+            "description": "Wallet the subscription belongs to"
+          },
+          {
+            "key": "eventTypes",
+            "optional": false,
+            "type": "string[]",
+            "description": "Event types the subscription delivers"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          },
+          {
+            "key": "signatureSecret",
+            "optional": false,
+            "type": "string",
+            "description": "Secret used to verify delivery signatures (HMAC-SHA256 over the raw body, hex, in the X-Paradym-HMAC-SHA-256 header)"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.webhooks.deleteSubscription",
+      "shortPath": "webhooks.deleteSubscription",
+      "description": "Delete a webhook subscription; deliveries stop until it is created again",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookSubscriptionId",
+            "optional": false,
+            "type": "string",
+            "description": "Subscription id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Deleted subscription id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.webhooks.getDelivery",
+      "shortPath": "webhooks.getDelivery",
+      "description": "Read one webhook delivery with its attempt history",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deliveryId",
+            "optional": false,
+            "type": "string",
+            "description": "Delivery id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Delivery id"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "Delivery status, e.g. pending, delivered, failed"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "string",
+            "description": "Event type that was delivered"
+          },
+          {
+            "key": "webhookSubscriptionId",
+            "optional": false,
+            "type": "string",
+            "description": "Subscription the delivery belongs to"
+          },
+          {
+            "key": "attemptCount",
+            "optional": true,
+            "type": "number | null",
+            "description": "Delivery attempts made so far"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          },
+          {
+            "key": "completedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the delivery succeeded"
+          },
+          {
+            "key": "lastAttemptAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the last attempt ran"
+          },
+          {
+            "key": "nextAttemptAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the next retry runs"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.webhooks.listDeliveries",
+      "shortPath": "webhooks.listDeliveries",
+      "description": "List webhook deliveries with their statuses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (sent as page[size]); the meta.page response carries maxSize"
+          },
+          {
+            "key": "pageAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor of the first record to return (sent as page[after]; take it from meta.page.after)"
+          },
+          {
+            "key": "pageBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor of the last record to return (sent as page[before]; take it from meta.page.before)"
+          },
+          {
+            "key": "filterStatus",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by delivery status (sent as filter[status])"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, status: string, eventType: string, webhookSubscriptionId: string, attemptCount?: number | null, createdAt?: string | null, updatedAt?: string | null, completedAt?: string | null, lastAttemptAt?: string | null, nextAttemptAt?: string | null }[]",
+            "description": "Deliveries on this page"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page?: { maxSize?: string | null, size?: string | null, after?: string | null, before?: string | null } | null }",
+            "description": "Pagination metadata for the list"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.webhooks.listSubscriptions",
+      "shortPath": "webhooks.listSubscriptions",
+      "description": "List the wallet webhook subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (sent as page[size]); the meta.page response carries maxSize"
+          },
+          {
+            "key": "pageAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor of the first record to return (sent as page[after]; take it from meta.page.after)"
+          },
+          {
+            "key": "pageBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor of the last record to return (sent as page[before]; take it from meta.page.before)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, name: string, url: string, walletId: string, eventTypes: string[], createdAt?: string | null, updatedAt?: string | null }[]",
+            "description": "Subscriptions in the wallet"
+          }
+        ]
+      }
+    },
+    {
+      "path": "paradym.api.webhooks.redeliverDelivery",
+      "shortPath": "webhooks.redeliverDelivery",
+      "description": "Redeliver a pending or failed webhook delivery: the payload is posted to the subscription URL again",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "deliveryId",
+            "optional": false,
+            "type": "string",
+            "description": "Delivery id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Delivery id"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "Delivery status, e.g. pending, delivered, failed"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "string",
+            "description": "Event type that was delivered"
+          },
+          {
+            "key": "webhookSubscriptionId",
+            "optional": false,
+            "type": "string",
+            "description": "Subscription the delivery belongs to"
+          },
+          {
+            "key": "attemptCount",
+            "optional": true,
+            "type": "number | null",
+            "description": "Delivery attempts made so far"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updatedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          },
+          {
+            "key": "completedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the delivery succeeded"
+          },
+          {
+            "key": "lastAttemptAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the last attempt ran"
+          },
+          {
+            "key": "nextAttemptAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the next retry runs"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "paradym.webhooks.paradym.event",
+      "shortPath": "paradym.event",
+      "description": "A Paradym webhook event: issuance, verification or DIDComm updates",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "The subscription the delivery came from"
+          },
+          {
+            "key": "webhookPublishedAt",
+            "optional": false,
+            "type": "string",
+            "description": "When Paradym published the event"
+          },
+          {
+            "key": "walletId",
+            "optional": false,
+            "type": "string",
+            "description": "Wallet the event belongs to"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "string",
+            "description": "The event that fired, e.g. openid4vc.issuance.completed"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      },
+      "responseType": "{ webhookId: string, webhookPublishedAt: string, walletId: string, eventType: string, payload?: Record<string, any> | null }",
+      "usageExample": "paradym({\n    webhookHooks: {\n        paradym: {\n            event: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

@@ -53,3 +53,51 @@ export const searchPost: HunterioEndpoints['domainSearchSearchPost'] = async (
 
 	return parsedResponse;
 };
+
+// Charges credits like Domain Search, for found (not generated) addresses.
+export const found: HunterioEndpoints['domainSearchFound'] = async (
+	ctx,
+	input,
+) => {
+	const parsed = HunterioEndpointInputSchemas.domainSearchFound.parse(input);
+
+	const response = await makeHunterioRequest<
+		HunterioEndpointOutputs['domainSearchFound']
+	>('/domain-search/found', ctx.key, { method: 'GET', query: parsed });
+
+	const parsedResponse =
+		HunterioEndpointOutputSchemas.domainSearchFound.parse(response);
+
+	await logEventFromContext(
+		ctx,
+		'hunterio.domainSearch.found',
+		{},
+		'completed',
+	);
+
+	return parsedResponse;
+};
+
+export const foundPost: HunterioEndpoints['domainSearchFoundPost'] = async (
+	ctx,
+	input,
+) => {
+	const parsed =
+		HunterioEndpointInputSchemas.domainSearchFoundPost.parse(input);
+
+	const response = await makeHunterioRequest<
+		HunterioEndpointOutputs['domainSearchFoundPost']
+	>('/domain-search/found', ctx.key, { method: 'POST', body: parsed });
+
+	const parsedResponse =
+		HunterioEndpointOutputSchemas.domainSearchFoundPost.parse(response);
+
+	await logEventFromContext(
+		ctx,
+		'hunterio.domainSearch.foundPost',
+		{},
+		'completed',
+	);
+
+	return parsedResponse;
+};

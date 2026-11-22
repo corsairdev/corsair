@@ -321,6 +321,7 @@ export const BaseProviders = [
 	'godial',
 	'gong',
 	'googleaddressvalidation',
+	'googleadmin',
 	'googleads',
 	'googleanalytics',
 	'googlebigquery',
@@ -411,16 +412,19 @@ export const BaseProviders = [
 	'kontentai',
 	'krakenio',
 	'labs64netlicensing',
+	'laposta',
 	'launchdarkly',
 	'leexi',
 	'leiga',
 	'lemlist',
 	'lemonsqueezy',
 	'lever',
+	'lexoffice',
 	'linear',
 	'linguapop',
 	'linkedin',
 	'linkup',
+	'listennotes',
 	'litescrape',
 	'livesession',
 	'logodev',
@@ -490,11 +494,20 @@ export const BaseProviders = [
 	'oura',
 	'outlook',
 	'pagerduty',
+	'pandadoc',
+	'paradym',
 	'paperform',
 	'parallel',
 	'parma',
 	'parsehub',
+	'parsera',
 	'parseur',
+	'parsio',
+	'passcreator',
+	'payhere',
+	'payhip',
+	'paystack',
+	'pdf4me',
 	'pdfapi',
 	'pdfco',
 	'pdfless',
@@ -502,10 +515,20 @@ export const BaseProviders = [
 	'pdl',
 	'perplexityai',
 	'phantombuster',
+	'piggy',
+	'pingdom',
 	'pinecone',
 	'pipedrive',
+	'penpot',
+	'perigon',
+	'pipelinecrm',
 	'placid',
+	'persistiq',
 	'plain',
+	'persona',
+	'pexels',
+	'piloterr',
+	'pilvio',
 	'platerecognizer',
 	'ploid',
 	'pointagram',
@@ -646,6 +669,7 @@ export const BaseProviders = [
 	'sympla',
 	'synthflowai',
 	'taggun',
+	'tailscale',
 	'talenthr',
 	'tapfiliate',
 	'tally',
@@ -1069,6 +1093,7 @@ export const ProviderDisplayNames = {
 	godial: 'GoDial',
 	gong: 'Gong',
 	googleaddressvalidation: 'Google Address Validation',
+	googleadmin: 'Google Admin',
 	googleads: 'Google Ads',
 	googleanalytics: 'Google Analytics',
 	googlebigquery: 'Google BigQuery',
@@ -1159,16 +1184,19 @@ export const ProviderDisplayNames = {
 	kontentai: 'Kontent.ai',
 	krakenio: 'Kraken.io',
 	labs64netlicensing: 'Labs64 NetLicensing',
+	laposta: 'Laposta',
 	launchdarkly: 'LaunchDarkly',
 	leexi: 'Leexi',
 	leiga: 'Leiga',
 	lemlist: 'Lemlist',
 	lemonsqueezy: 'Lemon Squeezy',
 	lever: 'Lever',
+	lexoffice: 'Lexoffice',
 	linear: 'Linear',
 	linguapop: 'Linguapop',
 	linkedin: 'LinkedIn',
 	linkup: 'Linkup',
+	listennotes: 'Listen Notes',
 	litescrape: 'LiteScrape',
 	livesession: 'LiveSession',
 	logodev: 'Logo.dev',
@@ -1238,11 +1266,20 @@ export const ProviderDisplayNames = {
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	pandadoc: 'PandaDoc',
+	paradym: 'Paradym',
 	paperform: 'Paperform',
 	parallel: 'Parallel',
 	parma: 'Parma',
 	parsehub: 'ParseHub',
+	parsera: 'Parsera',
 	parseur: 'Parseur',
+	parsio: 'Parsio',
+	passcreator: 'Passcreator',
+	payhere: 'Payhere',
+	payhip: 'Payhip',
+	paystack: 'Paystack',
+	pdf4me: 'PDF4me',
 	pdfapi: 'PDF-API.io',
 	pdfco: 'PDF.co',
 	pdfless: 'PDFLess',
@@ -1250,10 +1287,20 @@ export const ProviderDisplayNames = {
 	pdl: 'People Data Labs',
 	perplexityai: 'Perplexity AI',
 	phantombuster: 'PhantomBuster',
+	piggy: 'Piggy',
+	pingdom: 'Pingdom',
 	pinecone: 'Pinecone',
 	pipedrive: 'Pipedrive',
+	penpot: 'Penpot',
+	perigon: 'Perigon',
+	pipelinecrm: 'Pipeline CRM',
 	placid: 'Placid',
+	persistiq: 'PersistIQ',
 	plain: 'Plain',
+	persona: 'Persona',
+	pexels: 'Pexels',
+	piloterr: 'Piloterr',
+	pilvio: 'Pilvio',
 	platerecognizer: 'Plate Recognizer',
 	ploid: 'Ploid',
 	pointagram: 'Pointagram',
@@ -1394,6 +1441,7 @@ export const ProviderDisplayNames = {
 	sympla: 'Sympla',
 	synthflowai: 'Synthflow AI',
 	taggun: 'Taggun',
+	tailscale: 'Tailscale',
 	talenthr: 'TalentHR',
 	tapfiliate: 'Tapfiliate',
 	tally: 'Tally',
@@ -1824,6 +1872,7 @@ export type AllProviders =
 	| 'godial'
 	| 'gong'
 	| 'googleaddressvalidation'
+	| 'googleadmin'
 	| 'googleads'
 	| 'googleanalytics'
 	| 'googlebigquery'
@@ -1914,16 +1963,19 @@ export type AllProviders =
 	| 'kontentai'
 	| 'krakenio'
 	| 'labs64netlicensing'
+	| 'laposta'
 	| 'launchdarkly'
 	| 'leexi'
 	| 'leiga'
 	| 'lemlist'
 	| 'lemonsqueezy'
 	| 'lever'
+	| 'lexoffice'
 	| 'linear'
 	| 'linguapop'
 	| 'linkedin'
 	| 'linkup'
+	| 'listennotes'
 	| 'litescrape'
 	| 'livesession'
 	| 'logodev'
@@ -1993,11 +2045,20 @@ export type AllProviders =
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'pandadoc'
+	| 'paradym'
 	| 'paperform'
 	| 'parallel'
 	| 'parma'
 	| 'parsehub'
+	| 'parsera'
 	| 'parseur'
+	| 'parsio'
+	| 'passcreator'
+	| 'payhere'
+	| 'payhip'
+	| 'paystack'
+	| 'pdf4me'
 	| 'pdfapi'
 	| 'pdfco'
 	| 'pdfless'
@@ -2005,10 +2066,20 @@ export type AllProviders =
 	| 'pdl'
 	| 'perplexityai'
 	| 'phantombuster'
+	| 'piggy'
 	| 'pinecone'
+	| 'pingdom'
 	| 'pipedrive'
+	| 'penpot'
+	| 'perigon'
+	| 'pipelinecrm'
 	| 'placid'
+	| 'persistiq'
 	| 'plain'
+	| 'persona'
+	| 'pexels'
+	| 'piloterr'
+	| 'pilvio'
 	| 'platerecognizer'
 	| 'ploid'
 	| 'pointagram'
@@ -2149,6 +2220,7 @@ export type AllProviders =
 	| 'sympla'
 	| 'synthflowai'
 	| 'taggun'
+	| 'tailscale'
 	| 'talenthr'
 	| 'tapfiliate'
 	| 'tally'

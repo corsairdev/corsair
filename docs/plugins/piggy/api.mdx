@@ -1,0 +1,2817 @@
+---
+title: "Piggy API reference"
+sidebarTitle: "API"
+description: "API reference for the Piggy plugin in Corsair: every `piggy.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Businesses
+
+### getProfile
+
+`businesses.getProfile`
+
+Read one business profile by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.businesses.getProfile({ uuid: "123123" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | The business profile UUID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The business profile |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  type?: string | null,
+  reference?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProfiles
+
+`businesses.listProfiles`
+
+List the account business profiles
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.businesses.listProfiles({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| any[] \| Record<string, any>` | Yes | Paging metadata; an empty value on lists Piggy does not page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  type?: string | null,
+  reference?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  limit?: number | null,
+  viewing_from?: number | null,
+  viewing_to?: number | null,
+  last_page?: number | null,
+  total?: number | null
+} | any[] | Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### claim
+
+`contacts.claim`
+
+Claim an anonymous contact with a real email; merges into a matching contact, which cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.piggy.api.contacts.claim({ anonymousContactUuid: "3a685add-1711-425d-9184-fc6db18e0e1d", email: "patrick@bikinibottom.sea" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `anonymousContactUuid` | `string` | Yes | The anonymous contact UUID with a fictional email |
+| `email` | `string` | Yes | The real email address to claim the contact with |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The contact |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  email?: string | null,
+  attributes?: any[] | null,
+  tier?: {
+    uuid?: string | null,
+    name?: string | null,
+    description?: string | null,
+    position?: number | null,
+    media?: any | null,
+    perks?: any[] | null
+  } | null,
+  subscriptions?: {
+    is_subscribed?: boolean | null,
+    status?: string | null,
+    subscription_type?: {
+      id?: number | null,
+      uuid?: string | null,
+      name?: string | null,
+      active?: boolean | null,
+      description?: string | null,
+      strategy?: string | null
+    } | null
+  }[] | null,
+  credit_balance?: {
+    id?: number | null,
+    balance?: number | null
+  } | null,
+  prepaid_balance?: {
+    balance_in_cents?: number | null
+  } | null,
+  current_values?: Record<string, any> | null,
+  current_display_values?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`contacts.create`
+
+Create a contact from an email address
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.contacts.create({ email: "spongebob@bikinibottom.sea" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | The contact email address |
+| `referralCode` | `string` | No | A referral code for the referral programme |
+
+Only the email is required; Piggy answers with the new UUID only. Use contacts.update to add attributes.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The created contact UUID |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createAnonymous
+
+`contacts.createAnonymous`
+
+Create an anonymous contact with a fictional email
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.contacts.createAnonymous({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactIdentifierValue` | `string` | No | Value for the contact identifier to serve as the identifier |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The created contact UUID |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact (DEFAULT or GDPR); cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.piggy.api.contacts.delete({ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c", type: "GDPR" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactUuid` | `string` | Yes | The contact UUID |
+| `type` | `DEFAULT \| GDPR` | Yes | DEFAULT keeps a detailed log; GDPR removes personal data references |
+
+Schedules the removal; DEFAULT keeps a detailed log and GDPR removes personal data references. Cannot be undone.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `null \| null` | No | Piggy answers with a null data value |
+| `meta` | `any` | No | — |
+
+
+
+---
+
+### findOneByEmail
+
+`contacts.findOneByEmail`
+
+Read one contact by email address
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.contacts.findOneByEmail({ email: "spongebob@bikinibottom.sea" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | The contact email address |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The contact |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  email?: string | null,
+  attributes?: any[] | null,
+  tier?: {
+    uuid?: string | null,
+    name?: string | null,
+    description?: string | null,
+    position?: number | null,
+    media?: any | null,
+    perks?: any[] | null
+  } | null,
+  subscriptions?: {
+    is_subscribed?: boolean | null,
+    status?: string | null,
+    subscription_type?: {
+      id?: number | null,
+      uuid?: string | null,
+      name?: string | null,
+      active?: boolean | null,
+      description?: string | null,
+      strategy?: string | null
+    } | null
+  }[] | null,
+  credit_balance?: {
+    id?: number | null,
+    balance?: number | null
+  } | null,
+  prepaid_balance?: {
+    balance_in_cents?: number | null
+  } | null,
+  current_values?: Record<string, any> | null,
+  current_display_values?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### findOrCreate
+
+`contacts.findOrCreate`
+
+Read a contact by email, creating one when missing
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.contacts.findOrCreate({ email: "spongebob@bikinibottom.sea" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | The contact email address |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The contact |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  email?: string | null,
+  attributes?: any[] | null,
+  tier?: {
+    uuid?: string | null,
+    name?: string | null,
+    description?: string | null,
+    position?: number | null,
+    media?: any | null,
+    perks?: any[] | null
+  } | null,
+  subscriptions?: {
+    is_subscribed?: boolean | null,
+    status?: string | null,
+    subscription_type?: {
+      id?: number | null,
+      uuid?: string | null,
+      name?: string | null,
+      active?: boolean | null,
+      description?: string | null,
+      strategy?: string | null
+    } | null
+  }[] | null,
+  credit_balance?: {
+    id?: number | null,
+    balance?: number | null
+  } | null,
+  prepaid_balance?: {
+    balance_in_cents?: number | null
+  } | null,
+  current_values?: Record<string, any> | null,
+  current_display_values?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Read one contact by UUID with balances and subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.contacts.get({ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactUuid` | `string` | Yes | The contact UUID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The contact |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  email?: string | null,
+  attributes?: any[] | null,
+  tier?: {
+    uuid?: string | null,
+    name?: string | null,
+    description?: string | null,
+    position?: number | null,
+    media?: any | null,
+    perks?: any[] | null
+  } | null,
+  subscriptions?: {
+    is_subscribed?: boolean | null,
+    status?: string | null,
+    subscription_type?: {
+      id?: number | null,
+      uuid?: string | null,
+      name?: string | null,
+      active?: boolean | null,
+      description?: string | null,
+      strategy?: string | null
+    } | null
+  }[] | null,
+  credit_balance?: {
+    id?: number | null,
+    balance?: number | null
+  } | null,
+  prepaid_balance?: {
+    balance_in_cents?: number | null
+  } | null,
+  current_values?: Record<string, any> | null,
+  current_display_values?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCreditBalance
+
+`contacts.getCreditBalance`
+
+Read a contact credit balance
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.contacts.getCreditBalance({ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactUuid` | `string` | Yes | The contact UUID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The credit balance |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  balance: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPrepaidBalance
+
+`contacts.getPrepaidBalance`
+
+Read a contact prepaid balance
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.contacts.getPrepaidBalance({ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactUuid` | `string` | Yes | The contact UUID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The prepaid balance |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  balance_in_cents: number,
+  balance?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTier
+
+`contacts.getTier`
+
+Read the contact current loyalty tier
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.contacts.getTier({ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactUuid` | `string` | Yes | The contact UUID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The current tier |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  description?: string | null,
+  position?: number | null,
+  media?: any | null,
+  perks?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts with paging, date and attribute filters
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.contacts.list({ limit: 25, page: 1, createdAtGte: "2026-01-01" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page (default 10, max 100) |
+| `page` | `number` | No | Page number (default 1) |
+| `sort` | `created_at \| -created_at` | No | Sort field; prefix - for descending |
+| `createdAtGt` | `string` | No | created_at after this ISO 8601 value |
+| `createdAtGte` | `string` | No | created_at at or after this ISO 8601 value |
+| `createdAtLt` | `string` | No | created_at before this ISO 8601 value |
+| `createdAtLte` | `string` | No | created_at at or before this ISO 8601 value |
+| `attributesQuery` | `Record<string, string \| number \| boolean>` | No | Attribute filters as Piggy query parameters: each key is the full bracketed parameter name, e.g. "attributes[likes_pizza]" or "attributes[visits][gte]". See the attribute operators in the Piggy contacts docs |
+
+Attribute filters ride through attributesQuery with Piggy bracketed parameter names, e.g. "attributes[visits][gte]": 10 or "attributes[likes_pizza]": true; a contact must match every filter.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| any[] \| Record<string, any>` | Yes | Paging metadata; an empty value on lists Piggy does not page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  email?: string | null,
+  attributes?: any[] | null,
+  tier?: {
+    uuid?: string | null,
+    name?: string | null,
+    description?: string | null,
+    position?: number | null,
+    media?: any | null,
+    perks?: any[] | null
+  } | null,
+  subscriptions?: {
+    is_subscribed?: boolean | null,
+    status?: string | null,
+    subscription_type?: {
+      id?: number | null,
+      uuid?: string | null,
+      name?: string | null,
+      active?: boolean | null,
+      description?: string | null,
+      strategy?: string | null
+    } | null
+  }[] | null,
+  credit_balance?: {
+    id?: number | null,
+    balance?: number | null
+  } | null,
+  prepaid_balance?: {
+    balance_in_cents?: number | null
+  } | null,
+  current_values?: Record<string, any> | null,
+  current_display_values?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  limit?: number | null,
+  viewing_from?: number | null,
+  viewing_to?: number | null,
+  last_page?: number | null,
+  total?: number | null
+} | any[] | Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### merge
+
+`contacts.merge`
+
+Merge a source contact into a destination contact; cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.piggy.api.contacts.merge({ sourceContactUuid: "cd183615-d1cb-402a-b618-6472d5e13890", destinationContactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sourceContactUuid` | `string` | Yes | UUID of the contact that ceases to exist |
+| `destinationContactUuid` | `string` | Yes | UUID of the contact that remains |
+
+The source contact ceases to exist and the merge cannot be undone; verify both emails belong to the same person first.
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update contact attributes keyed by attribute name
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.contacts.update({ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c", attributes: { firstname: "Patrick" } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactUuid` | `string` | Yes | The contact UUID |
+| `attributes` | `Record<string, string \| number \| boolean \| null>` | Yes | Attribute values keyed by attribute name; system values such as credit balance cannot be updated |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The contact |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  email?: string | null,
+  attributes?: any[] | null,
+  tier?: {
+    uuid?: string | null,
+    name?: string | null,
+    description?: string | null,
+    position?: number | null,
+    media?: any | null,
+    perks?: any[] | null
+  } | null,
+  subscriptions?: {
+    is_subscribed?: boolean | null,
+    status?: string | null,
+    subscription_type?: {
+      id?: number | null,
+      uuid?: string | null,
+      name?: string | null,
+      active?: boolean | null,
+      description?: string | null,
+      strategy?: string | null
+    } | null
+  }[] | null,
+  credit_balance?: {
+    id?: number | null,
+    balance?: number | null
+  } | null,
+  prepaid_balance?: {
+    balance_in_cents?: number | null
+  } | null,
+  current_values?: Record<string, any> | null,
+  current_display_values?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Giftcards
+
+### create
+
+`giftcards.create`
+
+Issue a digital giftcard with a balance; it carries real value and uses Leat tokens
+
+**Risk:** `destructive`
+
+```ts
+await corsair.piggy.api.giftcards.create({ giftcardProgramUuid: "8fb59dcf-fb5b-4cee-88d8-35e361e55a12" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `giftcardProgramUuid` | `string` | Yes | UUID of the giftcard program to link the card to |
+
+The public API only creates digital giftcards (the plugin sends type 1); physical cards are refused with error 55021.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The giftcard |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  type?: string | null,
+  hash?: string | null,
+  amount_in_cents?: number | null,
+  amount?: number | null,
+  display_amount?: string | null,
+  upgradeable?: boolean | null,
+  active?: boolean | null,
+  expiration_date?: string | null,
+  formatted_expiration_date?: string | null,
+  url?: string | null,
+  giftcard_program?: {
+    id?: number | null,
+    uuid?: string | null,
+    name?: string | null,
+    active?: boolean | null,
+    card_count?: number | null,
+    settles?: number | null,
+    expiration_days?: number | null,
+    max_amount_in_cents?: number | null,
+    min_amount_in_cents?: number | null,
+    calculator_flow?: string | null
+  } | null,
+  giftcard_recipients?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### findOneByHash
+
+`giftcards.findOneByHash`
+
+Read one giftcard by hash or QR value
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.giftcards.findOneByHash({ hash: "41654" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hash` | `string` | Yes | The giftcard's unique hash or QR value |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The giftcard |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  type?: string | null,
+  hash?: string | null,
+  amount_in_cents?: number | null,
+  amount?: number | null,
+  display_amount?: string | null,
+  upgradeable?: boolean | null,
+  active?: boolean | null,
+  expiration_date?: string | null,
+  formatted_expiration_date?: string | null,
+  url?: string | null,
+  giftcard_program?: {
+    id?: number | null,
+    uuid?: string | null,
+    name?: string | null,
+    active?: boolean | null,
+    card_count?: number | null,
+    settles?: number | null,
+    expiration_days?: number | null,
+    max_amount_in_cents?: number | null,
+    min_amount_in_cents?: number | null,
+    calculator_flow?: string | null
+  } | null,
+  giftcard_recipients?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`giftcards.get`
+
+Read one giftcard by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.giftcards.get({ giftcardUuid: "5b3dab1c-bdde-4313-a74d-67de815c751c" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `giftcardUuid` | `string` | Yes | The giftcard UUID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The giftcard |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  type?: string | null,
+  hash?: string | null,
+  amount_in_cents?: number | null,
+  amount?: number | null,
+  display_amount?: string | null,
+  upgradeable?: boolean | null,
+  active?: boolean | null,
+  expiration_date?: string | null,
+  formatted_expiration_date?: string | null,
+  url?: string | null,
+  giftcard_program?: {
+    id?: number | null,
+    uuid?: string | null,
+    name?: string | null,
+    active?: boolean | null,
+    card_count?: number | null,
+    settles?: number | null,
+    expiration_days?: number | null,
+    max_amount_in_cents?: number | null,
+    min_amount_in_cents?: number | null,
+    calculator_flow?: string | null
+  } | null,
+  giftcard_recipients?: any[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`giftcards.list`
+
+List giftcards with program and paging filters
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.giftcards.list({ giftcardProgramUuid: "8fb59dcf-fb5b-4cee-88d8-35e361e55a12" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `giftcardProgramUuid` | `string` | No | Giftcard program UUID filter |
+| `page` | `number` | No | Page number |
+| `limit` | `number` | No | Records per page (default 30, max 100) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| any[] \| Record<string, any>` | Yes | Paging metadata; an empty value on lists Piggy does not page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  type?: string | null,
+  hash?: string | null,
+  amount_in_cents?: number | null,
+  amount?: number | null,
+  display_amount?: string | null,
+  upgradeable?: boolean | null,
+  active?: boolean | null,
+  expiration_date?: string | null,
+  formatted_expiration_date?: string | null,
+  url?: string | null,
+  giftcard_program?: {
+    id?: number | null,
+    uuid?: string | null,
+    name?: string | null,
+    active?: boolean | null,
+    card_count?: number | null,
+    settles?: number | null,
+    expiration_days?: number | null,
+    max_amount_in_cents?: number | null,
+    min_amount_in_cents?: number | null,
+    calculator_flow?: string | null
+  } | null,
+  giftcard_recipients?: any[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  limit?: number | null,
+  viewing_from?: number | null,
+  viewing_to?: number | null,
+  last_page?: number | null,
+  total?: number | null
+} | any[] | Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPrograms
+
+`giftcards.listPrograms`
+
+List the giftcard programs
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.giftcards.listPrograms({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| any[] \| Record<string, any>` | Yes | Paging metadata; an empty value on lists Piggy does not page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  uuid?: string | null,
+  name?: string | null,
+  active?: boolean | null,
+  card_count?: number | null,
+  settles?: number | null,
+  expiration_days?: number | null,
+  max_amount_in_cents?: number | null,
+  min_amount_in_cents?: number | null,
+  calculator_flow?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  limit?: number | null,
+  viewing_from?: number | null,
+  viewing_to?: number | null,
+  last_page?: number | null,
+  total?: number | null
+} | any[] | Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sendByEmail
+
+`giftcards.sendByEmail`
+
+Email a giftcard to a contact; the email cannot be recalled
+
+**Risk:** `destructive`
+
+```ts
+await corsair.piggy.api.giftcards.sendByEmail({ giftcardUuid: "5b3dab1c-bdde-4313-a74d-67de815c751c", contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `giftcardUuid` | `string` | Yes | The giftcard UUID to send |
+| `contactUuid` | `string` | Yes | UUID of the contact to email |
+| `emailUuid` | `string` | No | Email template UUID; must contain the giftcard.hash token |
+| `mergeTags` | `Record<string, string>` | No | Custom merge tags; keys must start with custom. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The send result |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  message?: string | null,
+  data?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Loyalty
+
+### getProgram
+
+`loyalty.getProgram`
+
+Read the account loyalty program settings
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.loyalty.getProgram({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The loyalty program |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  max_amount?: number | null,
+  custom_credit_name?: string | null,
+  unit?: {
+    name?: string | null,
+    label?: string | null,
+    prefix?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTransactions
+
+`loyalty.listTransactions`
+
+List loyalty transactions with type, shop and date filters
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.loyalty.listTransactions({ type: "reward_receptions", limit: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Records per page (default 10, max 100) |
+| `page` | `number` | No | Page number (default 1) |
+| `type` | `credit_receptions \| reward_receptions` | No | Transaction type filter |
+| `shopUuid` | `string` | No | Business profile UUID filter |
+| `sort` | `created_at \| -created_at` | No | Sort field; prefix - for descending |
+| `createdAtGt` | `string` | No | created_at after this ISO 8601 value |
+| `createdAtGte` | `string` | No | created_at at or after this ISO 8601 value |
+| `createdAtLt` | `string` | No | created_at before this ISO 8601 value |
+| `createdAtLte` | `string` | No | created_at at or before this ISO 8601 value |
+
+type filters to credit_receptions or reward_receptions; shopUuid takes a business profile UUID.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| any[] \| Record<string, any>` | Yes | Paging metadata; an empty value on lists Piggy does not page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  credits?: number | null,
+  created_at?: string | null,
+  type?: string | null,
+  contact_identifier?: string | null,
+  contact?: {
+    uuid?: string | null,
+    email?: string | null,
+    credit_balance?: {
+      id?: number | null,
+      balance?: number | null
+    } | null
+  } | null,
+  shop?: {
+    id?: number | null,
+    uuid?: string | null,
+    type?: string | null,
+    name?: string | null,
+    address?: any | null
+  } | null,
+  unit_value?: number | null,
+  unit?: {
+    id?: number | null,
+    name?: string | null,
+    label?: string | null,
+    prefix?: string | null,
+    is_default?: boolean | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  limit?: number | null,
+  viewing_from?: number | null,
+  viewing_to?: number | null,
+  last_page?: number | null,
+  total?: number | null
+} | any[] | Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Points
+
+### create
+
+`points.create`
+
+Add or subtract points on a contact balance directly
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.points.create({ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c", businessProfileUuid: "123123", points: 50 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactUuid` | `string` | Yes | UUID of the contact the points are for |
+| `businessProfileUuid` | `string` | Yes | UUID of the business profile the points are given at |
+| `points` | `number` | Yes | Whole number of points; a negative number subtracts |
+| `customAttributes` | `Record<string, string \| number \| boolean>` | No | Custom attribute values keyed by attribute name |
+
+A negative points value subtracts; the transaction can be reversed once with points.reverse.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The points transaction |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  contact?: {
+    uuid?: string | null,
+    email?: string | null,
+    credit_balance?: {
+      id?: number | null,
+      balance?: number | null
+    } | null
+  } | null,
+  business_profile?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  points?: number | null,
+  channel?: string | null,
+  custom_attributes?: Record<string, any> | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`points.get`
+
+Read one direct points transaction
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.points.get({ uuid: "8d1e4b7c-2a50-4f3e-b6c9-0e7a5d4c3b12" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | UUID of the points transaction |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The points transaction |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  contact?: {
+    uuid?: string | null,
+    email?: string | null,
+    credit_balance?: {
+      id?: number | null,
+      balance?: number | null
+    } | null
+  } | null,
+  business_profile?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  points?: number | null,
+  channel?: string | null,
+  custom_attributes?: Record<string, any> | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reverse
+
+`points.reverse`
+
+Reverse a direct points transaction (once per transaction)
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.points.reverse({ uuid: "8d1e4b7c-2a50-4f3e-b6c9-0e7a5d4c3b12" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uuid` | `string` | Yes | UUID of the points transaction to reverse |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The points transaction |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  contact?: {
+    uuid?: string | null,
+    email?: string | null,
+    credit_balance?: {
+      id?: number | null,
+      balance?: number | null
+    } | null
+  } | null,
+  business_profile?: {
+    uuid?: string | null,
+    name?: string | null
+  } | null,
+  points?: number | null,
+  channel?: string | null,
+  custom_attributes?: Record<string, any> | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Promotions
+
+### get
+
+`promotions.get`
+
+Read one promotion by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.promotions.get({ promotionUuid: "9c966b16-6212-4169-ae2f-a523566b533f" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `promotionUuid` | `string` | Yes | The promotion UUID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The promotion |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  description?: string | null,
+  voucher_limit?: number | null,
+  limit_per_contact?: number | null,
+  expiration_duration?: number | null,
+  attributes?: Record<string, any> | null,
+  media?: any | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`promotions.list`
+
+List the account promotions
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.promotions.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| any[] \| Record<string, any>` | Yes | Paging metadata; an empty value on lists Piggy does not page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  description?: string | null,
+  voucher_limit?: number | null,
+  limit_per_contact?: number | null,
+  expiration_duration?: number | null,
+  attributes?: Record<string, any> | null,
+  media?: any | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  limit?: number | null,
+  viewing_from?: number | null,
+  viewing_to?: number | null,
+  last_page?: number | null,
+  total?: number | null
+} | any[] | Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Rewards
+
+### get
+
+`rewards.get`
+
+Read one reward by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.rewards.get({ rewardUuid: "539483d0-fab4-40db-add5-2ec65ef12901" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rewardUuid` | `string` | Yes | The reward UUID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The reward |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  title?: string | null,
+  type?: string | null,
+  reward_type?: string | null,
+  is_active?: boolean | null,
+  active?: boolean | null,
+  description?: string | null,
+  required_credits?: number | null,
+  stock?: number | null,
+  media?: any | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`rewards.list`
+
+List rewards, optionally claimable by a contact
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.rewards.list({ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `shopUuid` | `string` | No | Business profile UUID filter |
+| `contactUuid` | `string` | No | List the rewards claimable by this contact |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| any[] \| Record<string, any>` | Yes | Paging metadata; an empty value on lists Piggy does not page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  title?: string | null,
+  type?: string | null,
+  reward_type?: string | null,
+  is_active?: boolean | null,
+  active?: boolean | null,
+  description?: string | null,
+  required_credits?: number | null,
+  stock?: number | null,
+  media?: any | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  limit?: number | null,
+  viewing_from?: number | null,
+  viewing_to?: number | null,
+  last_page?: number | null,
+  total?: number | null
+} | any[] | Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### redeem
+
+`rewards.redeem`
+
+Create a reward reception: claim a reward for a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.rewards.redeem({ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c", rewardUuid: "539483d0-fab4-40db-add5-2ec65ef12901", shopUuid: "123123" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contactUuid` | `string` | Yes | UUID of the contact claiming the reward |
+| `rewardUuid` | `string` | Yes | UUID of the reward to claim |
+| `shopUuid` | `string` | Yes | UUID of the business profile the claim is for |
+
+The claim fails with documented codes when credits are insufficient (1017), stock is empty (1018) or the per-contact limit is reached (1019).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The reward reception |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  title?: string | null,
+  type?: string | null,
+  uuid?: string | null,
+  credits?: number | null,
+  contact?: {
+    uuid?: string | null,
+    email?: string | null,
+    credit_balance?: {
+      id?: number | null,
+      balance?: number | null
+    } | null
+  } | null,
+  shop?: {
+    id?: number | null,
+    uuid?: string | null,
+    type?: string | null,
+    name?: string | null,
+    address?: any | null
+  } | null,
+  contact_identifier?: string | null,
+  created_at?: string | null,
+  reward?: {
+    uuid?: string | null,
+    title?: string | null,
+    type?: string | null,
+    reward_type?: string | null,
+    is_active?: boolean | null,
+    active?: boolean | null,
+    description?: string | null,
+    required_credits?: number | null,
+    stock?: number | null,
+    media?: any | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reverseRedemption
+
+`rewards.reverseRedemption`
+
+Reverse a reward redemption, reissuing the credits
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.rewards.reverseRedemption({ rewardReceptionUuid: "55537e6c-23e8-4c0c-bbce-65f587fb543a" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rewardReceptionUuid` | `string` | Yes | UUID of the reward reception to reverse |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The credit reception reissuing the credits |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string | null,
+  contact_identifier?: string | null,
+  contact?: {
+    uuid?: string | null,
+    email?: string | null,
+    credit_balance?: {
+      id?: number | null,
+      balance?: number | null
+    } | null
+  } | null,
+  shop?: {
+    id?: number | null,
+    uuid?: string | null,
+    type?: string | null,
+    name?: string | null,
+    address?: any | null
+  } | null,
+  credits?: number | null,
+  created_at?: string | null,
+  uuid?: string | null,
+  unit?: {
+    id?: number | null,
+    name?: string | null,
+    label?: string | null,
+    prefix?: string | null,
+    is_default?: boolean | null
+  } | null,
+  unit_value?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`rewards.update`
+
+Update a reward title, description or required credits
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.rewards.update({ rewardUuid: "539483d0-fab4-40db-add5-2ec65ef12901", requiredCredits: 40 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rewardUuid` | `string` | Yes | The reward UUID |
+| `title` | `string` | No | A new title |
+| `description` | `string` | No | A new description |
+| `requiredCredits` | `number` | No | Credits required to claim this reward |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The reward |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  title?: string | null,
+  type?: string | null,
+  reward_type?: string | null,
+  is_active?: boolean | null,
+  active?: boolean | null,
+  description?: string | null,
+  required_credits?: number | null,
+  stock?: number | null,
+  media?: any | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Vouchers
+
+### create
+
+`vouchers.create`
+
+Create a voucher for a promotion
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.vouchers.create({ promotionUuid: "9c966b16-6212-4169-ae2f-a523566b533f" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `promotionUuid` | `string` | Yes | UUID of the promotion to create the voucher for |
+| `code` | `string` | No | Unique voucher code; Piggy generates one when omitted |
+| `contactUuid` | `string` | No | Contact UUID to link the voucher to |
+| `expirationDate` | `string` | No | Expiration date in ISO 8601, stored in UTC |
+| `activationDate` | `string` | No | Activation date in ISO 8601, stored in UTC |
+| `totalRedemptionsAllowed` | `number` | No | Times this voucher can be redeemed |
+| `customAttributes` | `Record<string, string \| number \| boolean>` | No | Custom attribute values keyed by attribute name |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The voucher |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  code?: string | null,
+  status?: string | null,
+  name?: string | null,
+  description?: string | null,
+  expiration_date?: string | null,
+  activation_date?: string | null,
+  redeemed_at?: string | null,
+  is_redeemed?: boolean | null,
+  attributes?: Record<string, any> | null,
+  contact?: {
+    uuid?: string | null,
+    email?: string | null,
+    credit_balance?: {
+      id?: number | null,
+      balance?: number | null
+    } | null
+  } | null,
+  promotion?: {
+    uuid?: string | null,
+    name?: string | null,
+    description?: string | null,
+    voucher_limit?: number | null,
+    limit_per_contact?: number | null,
+    expiration_duration?: number | null,
+    media?: any | null,
+    type?: string | null
+  } | null,
+  total_redemptions_allowed?: number | null,
+  times_redeemed?: number | null,
+  redemptions_remaining?: number | null,
+  add_to_wallet_url?: string | null,
+  voucher_redemption?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### find
+
+`vouchers.find`
+
+Read one voucher by code
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.vouchers.find({ code: "ABC123" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | The voucher code |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The voucher |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  code?: string | null,
+  status?: string | null,
+  name?: string | null,
+  description?: string | null,
+  expiration_date?: string | null,
+  activation_date?: string | null,
+  redeemed_at?: string | null,
+  is_redeemed?: boolean | null,
+  attributes?: Record<string, any> | null,
+  contact?: {
+    uuid?: string | null,
+    email?: string | null,
+    credit_balance?: {
+      id?: number | null,
+      balance?: number | null
+    } | null
+  } | null,
+  promotion?: {
+    uuid?: string | null,
+    name?: string | null,
+    description?: string | null,
+    voucher_limit?: number | null,
+    limit_per_contact?: number | null,
+    expiration_duration?: number | null,
+    media?: any | null,
+    type?: string | null
+  } | null,
+  total_redemptions_allowed?: number | null,
+  times_redeemed?: number | null,
+  redemptions_remaining?: number | null,
+  add_to_wallet_url?: string | null,
+  voucher_redemption?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`vouchers.list`
+
+List vouchers with promotion, contact and status filters
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.vouchers.list({ status: "ACTIVE", limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `promotionUuid` | `string` | No | Promotion UUID filter |
+| `contactUuid` | `string` | No | Contact UUID filter |
+| `status` | `ACTIVE \| REDEEMED \| EXPIRED \| DEACTIVATED \| INACTIVE \| LOCKED` | No | Voucher status filter |
+| `limit` | `number` | No | Records per page (default 30, max 500) |
+| `page` | `number` | No | Page number |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| any[] \| Record<string, any>` | Yes | Paging metadata; an empty value on lists Piggy does not page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  code?: string | null,
+  status?: string | null,
+  name?: string | null,
+  description?: string | null,
+  expiration_date?: string | null,
+  activation_date?: string | null,
+  redeemed_at?: string | null,
+  is_redeemed?: boolean | null,
+  attributes?: Record<string, any> | null,
+  contact?: {
+    uuid?: string | null,
+    email?: string | null,
+    credit_balance?: {
+      id?: number | null,
+      balance?: number | null
+    } | null
+  } | null,
+  promotion?: {
+    uuid?: string | null,
+    name?: string | null,
+    description?: string | null,
+    voucher_limit?: number | null,
+    limit_per_contact?: number | null,
+    expiration_duration?: number | null,
+    media?: any | null,
+    type?: string | null
+  } | null,
+  total_redemptions_allowed?: number | null,
+  times_redeemed?: number | null,
+  redemptions_remaining?: number | null,
+  add_to_wallet_url?: string | null,
+  voucher_redemption?: Record<string, any> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  limit?: number | null,
+  viewing_from?: number | null,
+  viewing_to?: number | null,
+  last_page?: number | null,
+  total?: number | null
+} | any[] | Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### lock
+
+`vouchers.lock`
+
+Lock a voucher and receive a release key
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.vouchers.lock({ voucherUuid: "57d93a44-1c9d-4548-8c0e-e6cd71d6170a" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voucherUuid` | `string` | Yes | The voucher UUID to lock |
+
+Returns a release_key needed for later redemption or release; Piggy auto-releases the lock after one hour.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The lock with its release key |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  voucher?: {
+    uuid?: string | null,
+    status?: string | null
+  } | null,
+  lock?: {
+    release_key?: string | null,
+    locked_at?: string | null,
+    unlocked_at?: string | null,
+    system_release_at?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### redeem
+
+`vouchers.redeem`
+
+Redeem a voucher by code at a business profile
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.vouchers.redeem({ code: "ABC123", shopUuid: "123123" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | The voucher code |
+| `shopUuid` | `string` | Yes | UUID of the business profile the voucher is redeemed through |
+| `contactUuid` | `string` | No | Required when the voucher has no linked contact |
+| `releaseKey` | `string` | No | Release key from vouchers.lock, when the voucher is locked |
+
+contactUuid is required when the voucher has no linked contact; pass the releaseKey from vouchers.lock for locked vouchers.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The redeemed voucher |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  code?: string | null,
+  status?: string | null,
+  name?: string | null,
+  description?: string | null,
+  expiration_date?: string | null,
+  activation_date?: string | null,
+  redeemed_at?: string | null,
+  is_redeemed?: boolean | null,
+  attributes?: Record<string, any> | null,
+  contact?: {
+    uuid?: string | null,
+    email?: string | null,
+    credit_balance?: {
+      id?: number | null,
+      balance?: number | null
+    } | null
+  } | null,
+  promotion?: {
+    uuid?: string | null,
+    name?: string | null,
+    description?: string | null,
+    voucher_limit?: number | null,
+    limit_per_contact?: number | null,
+    expiration_duration?: number | null,
+    media?: any | null,
+    type?: string | null
+  } | null,
+  total_redemptions_allowed?: number | null,
+  times_redeemed?: number | null,
+  redemptions_remaining?: number | null,
+  add_to_wallet_url?: string | null,
+  voucher_redemption?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### release
+
+`vouchers.release`
+
+Release a locked voucher with its release key
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.vouchers.release({ voucherUuid: "57d93a44-1c9d-4548-8c0e-e6cd71d6170a", releaseKey: "5cc7e94a-7aa2-4f4a-8a8c-c20ab3a086ce" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voucherUuid` | `string` | Yes | The voucher UUID to release |
+| `releaseKey` | `string` | Yes | The release key returned when the voucher was locked |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The lock with its release key |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  voucher?: {
+    uuid?: string | null,
+    status?: string | null
+  } | null,
+  lock?: {
+    release_key?: string | null,
+    locked_at?: string | null,
+    unlocked_at?: string | null,
+    system_release_at?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reverseRedemption
+
+`vouchers.reverseRedemption`
+
+Reverse a voucher redemption
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.vouchers.reverseRedemption({ voucherUuid: "57d93a44-1c9d-4548-8c0e-e6cd71d6170a" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voucherUuid` | `string` | Yes | UUID of the voucher whose redemption is reversed |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`vouchers.update`
+
+Update voucher status, attributes or expiration
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.vouchers.update({ voucherUuid: "57d93a44-1c9d-4548-8c0e-e6cd71d6170a", status: "DEACTIVATED" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voucherUuid` | `string` | Yes | The voucher UUID |
+| `status` | `ACTIVE \| DEACTIVATED` | Yes | The new voucher status |
+| `customAttributes` | `Record<string, string \| number \| boolean>` | No | Custom attribute values keyed by attribute name |
+| `expirationDate` | `string` | No | New expiration date in ISO 8601; only for active and inactive vouchers |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The voucher |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  code?: string | null,
+  status?: string | null,
+  name?: string | null,
+  description?: string | null,
+  expiration_date?: string | null,
+  activation_date?: string | null,
+  redeemed_at?: string | null,
+  is_redeemed?: boolean | null,
+  attributes?: Record<string, any> | null,
+  contact?: {
+    uuid?: string | null,
+    email?: string | null,
+    credit_balance?: {
+      id?: number | null,
+      balance?: number | null
+    } | null
+  } | null,
+  promotion?: {
+    uuid?: string | null,
+    name?: string | null,
+    description?: string | null,
+    voucher_limit?: number | null,
+    limit_per_contact?: number | null,
+    expiration_duration?: number | null,
+    media?: any | null,
+    type?: string | null
+  } | null,
+  total_redemptions_allowed?: number | null,
+  times_redeemed?: number | null,
+  redemptions_remaining?: number | null,
+  add_to_wallet_url?: string | null,
+  voucher_redemption?: Record<string, any> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validate
+
+`vouchers.validate`
+
+Check whether a voucher is redeemable at a business profile
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.vouchers.validate({ voucherUuid: "57d93a44-1c9d-4548-8c0e-e6cd71d6170a", shopUuid: "123123" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voucherUuid` | `string` | Yes | The voucher UUID to check |
+| `contactUuid` | `string` | No | UUID of the contact who would redeem; required when no contact is linked |
+| `shopUuid` | `string` | Yes | UUID of the business profile where the voucher would be redeemed |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook subscription for one event type
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.webhooks.create({ name: "Contact alerts", eventType: "contact_created", url: "https://example.com/piggy/webhooks", version: "V2" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | A name for the subscription |
+| `eventType` | `string` | Yes | The event type to listen to (see the Piggy webhook event catalogue) |
+| `url` | `string` | Yes | The endpoint deliveries are sent to |
+| `secret` | `string` | No | Secret used to sign the Signature header; defaults to the account secret |
+| `version` | `V1 \| V2` | No | Delivery envelope; V2 batches events and is the recommended version |
+
+One subscription per event type: creating again for the same event_type overwrites the existing subscription. version V2 batches events and is the recommended envelope.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The webhook subscription |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  event_type?: string | null,
+  url?: string | null,
+  status?: string | null,
+  version?: string | null,
+  properties?: any | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook subscription; it cannot be restored
+
+**Risk:** `destructive`
+
+```ts
+await corsair.piggy.api.webhooks.delete({ webhookSubscriptionUuid: "f1dc2d67-caa8-4919-a537-66491a94ed2f" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookSubscriptionUuid` | `string` | Yes | The webhook subscription UUID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `any` | No | Piggy answers with an empty data array |
+| `meta` | `any` | No | — |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Read one webhook subscription by UUID
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.webhooks.get({ webhookSubscriptionUuid: "f1dc2d67-caa8-4919-a537-66491a94ed2f" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookSubscriptionUuid` | `string` | Yes | The webhook subscription UUID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The webhook subscription |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  event_type?: string | null,
+  url?: string | null,
+  status?: string | null,
+  version?: string | null,
+  properties?: any | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhook subscriptions with event type and status filters
+
+**Risk:** `read`
+
+```ts
+await corsair.piggy.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `eventType` | `string` | No | Only subscriptions of this event type |
+| `status` | `ACTIVE \| INACTIVE` | No | Only subscriptions of this status |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `meta` | `object \| any[] \| Record<string, any>` | Yes | Paging metadata; an empty value on lists Piggy does not page |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  event_type?: string | null,
+  url?: string | null,
+  status?: string | null,
+  version?: string | null,
+  properties?: any | null,
+  created_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: number | null,
+  limit?: number | null,
+  viewing_from?: number | null,
+  viewing_to?: number | null,
+  last_page?: number | null,
+  total?: number | null
+} | any[] | Record<string, any>
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a subscription name, URL or status
+
+**Risk:** `write`
+
+```ts
+await corsair.piggy.api.webhooks.update({ webhookSubscriptionUuid: "f1dc2d67-caa8-4919-a537-66491a94ed2f", status: "INACTIVE" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookSubscriptionUuid` | `string` | Yes | The webhook subscription UUID |
+| `name` | `string` | No | A new subscription name |
+| `url` | `string` | No | A new delivery URL |
+| `status` | `ACTIVE \| INACTIVE` | No | The new status |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The webhook subscription |
+| `meta` | `any` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid?: string | null,
+  name?: string | null,
+  event_type?: string | null,
+  url?: string | null,
+  status?: string | null,
+  version?: string | null,
+  properties?: any | null,
+  created_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

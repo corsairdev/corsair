@@ -20,6 +20,10 @@ import {
 	FindAllResultOutput,
 	FindAllRunOutput,
 	FindAllSchemaOutput,
+	FlightSearchInput,
+	FlightSearchOutput,
+	HotelSearchInput,
+	HotelSearchOutput,
 	ImageSearchInput,
 	ImageSearchOutput,
 	MemoryClearInput,
@@ -42,6 +46,8 @@ import {
 	ResponseOutput,
 	SearchInput,
 	SearchOutput,
+	ShoppingSearchInput,
+	ShoppingSearchOutput,
 	safeId,
 	TaskGroupCreateInput,
 	TaskGroupIdInput,
@@ -318,6 +324,23 @@ export const endpoints = {
 	},
 	places: {
 		search: operation(PlaceSearchInput, PlaceSearchOutput, '/v1/places/search'),
+	},
+	flights: {
+		search: operation(
+			FlightSearchInput,
+			FlightSearchOutput,
+			'/v1/flights/search',
+		),
+	},
+	hotels: {
+		search: operation(HotelSearchInput, HotelSearchOutput, '/v1/hotels/search'),
+	},
+	shopping: {
+		search: operation(
+			ShoppingSearchInput,
+			ShoppingSearchOutput,
+			'/v1/shopping/search',
+		),
 	},
 	decisions: {
 		create: operation(DecisionInput, DecisionOutput, '/v1/decisions'),
