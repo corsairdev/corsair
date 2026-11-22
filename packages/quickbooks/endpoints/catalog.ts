@@ -8233,7 +8233,7 @@ export const QuickBooksCatalogEndpointMeta = {
 		description: 'QuickBooks Full update a bill',
 	},
 	'billPayment.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'QuickBooks Create a billpayment',
 	},
 	'billPayment.void': {
@@ -8253,7 +8253,7 @@ export const QuickBooksCatalogEndpointMeta = {
 		description: 'QuickBooks Read a billpayment',
 	},
 	'billPayment.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'QuickBooks Full update a billpayment',
 	},
 	'budget.create': {
@@ -8328,7 +8328,7 @@ export const QuickBooksCatalogEndpointMeta = {
 		description: 'QuickBooks Sparse update companyinfo',
 	},
 	'creditCardPayment.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'QuickBooks Create a creditcardpayment',
 	},
 	'creditCardPayment.delete': {
@@ -8344,11 +8344,11 @@ export const QuickBooksCatalogEndpointMeta = {
 		description: 'QuickBooks Read a creditcardpayment',
 	},
 	'creditCardPayment.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'QuickBooks Full update a creditcardpayment',
 	},
 	'creditCardPayment.sparseUpdate': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'QuickBooks Sparse update a creditcardpayment',
 	},
 	'creditMemo.create': {
@@ -8650,7 +8650,7 @@ export const QuickBooksCatalogEndpointMeta = {
 		description: 'QuickBooks Query a report',
 	},
 	'payment.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'QuickBooks Create a payment',
 	},
 	'payment.delete': {
@@ -8678,7 +8678,7 @@ export const QuickBooksCatalogEndpointMeta = {
 		description: 'QuickBooks Send a payment',
 	},
 	'payment.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'QuickBooks Full update a payment',
 	},
 	'paymentMethod.create': {
