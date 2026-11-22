@@ -77,6 +77,26 @@ export type ZohoBooksRequestContext = {
 	options: { region?: ZohoBooksRegion };
 };
 
+const MAX_ERROR_MESSAGE_LENGTH = 300;
+
+// Zoho's error messages name the failing field ("Invalid value passed for
+// account_id"), which callers need to fix a request. They can also quote a
+// value the caller sent, so email addresses are masked and the text is capped.
+function safeZohoBooksErrorMessage(error: ApiError): string | undefined {
+	// `unknown` because provider error bodies are untrusted until checked.
+	const body: unknown = error.body;
+	if (!isJsonValue(body) || !isZohoBooksJsonObject(body)) return undefined;
+	const message = body.message;
+	if (typeof message !== 'string' || !message.trim()) return undefined;
+	const masked = message
+		.replace(/[^\s@()<>"',;]+@[^\s@()<>"',;]+/g, '[email]')
+		.replace(/\s+/g, ' ')
+		.trim();
+	return masked.length > MAX_ERROR_MESSAGE_LENGTH
+		? `${masked.slice(0, MAX_ERROR_MESSAGE_LENGTH - 1)}…`
+		: masked;
+}
+
 function sanitizeApiError(
 	error: ApiError,
 	operation: ZohoBooksOperationDefinition,
@@ -86,22 +106,24 @@ function sanitizeApiError(
 		method: operation.method,
 		url: operation.path,
 	};
+	const code = getZohoBooksApiErrorCode(error);
+	const message = safeZohoBooksErrorMessage(error);
 	const safeResponse: ApiResult = {
 		url: `${zohoBooksApiBase(region)}${operation.path}`,
 		ok: false,
 		status: error.status,
 		statusText: error.statusText,
 		body: {
-			...(getZohoBooksApiErrorCode(error) !== undefined
-				? { code: getZohoBooksApiErrorCode(error) }
-				: {}),
-			message: 'Zoho Books error details were redacted.',
+			...(code !== undefined ? { code } : {}),
+			message: message ?? 'Zoho Books returned no error message.',
 		},
 	};
 	return new ApiError(
 		safeRequest,
 		safeResponse,
-		`Zoho Books API request failed with HTTP ${error.status}.`,
+		`Zoho Books API request failed with HTTP ${error.status}${
+			code !== undefined ? ` (code ${code})` : ''
+		}${message ? `: ${message}` : '.'}`,
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,
