@@ -1112,7 +1112,8 @@ const metaAdsEndpointMeta = {
 	},
 	'creatives.create': {
 		riskLevel: 'destructive',
-		description: 'Create a creative from an existing Page post',
+		description:
+			'Create a creative from an existing Page post or an inline object_story_spec',
 	},
 	'creatives.update': {
 		riskLevel: 'destructive',

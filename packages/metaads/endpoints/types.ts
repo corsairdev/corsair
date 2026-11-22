@@ -1413,10 +1413,11 @@ const studyCreateInput = z
 	.refine((value) => value.endTime > value.startTime)
 	.refine(
 		(value) =>
+			// Sum in hundredths so 33.3 + 33.3 + 33.4 is exactly 100, not 100.00000000000001.
 			value.cells.reduce(
-				(total, cell) => total + cell.treatmentPercentage,
+				(total, cell) => total + Math.round(cell.treatmentPercentage * 100),
 				0,
-			) <= 100,
+			) <= 10_000,
 	);
 const studyUpdateInput = z
 	.object({
@@ -1973,7 +1974,13 @@ const AudienceSharingSchema = z.object({
 const audienceSessionsListInput = z
 	.object({
 		audienceId: id,
-		sessionId: z.number().int().positive().optional(),
+		// `/users` answers session_id as a number or a numeric string; accept both.
+		sessionId: z
+			.union([
+				z.number().int().positive().max(Number.MAX_SAFE_INTEGER),
+				z.string().regex(/^[1-9][0-9]*$/),
+			])
+			.optional(),
 		limit: pageSize,
 		after: cursor,
 		before: cursor,
@@ -2027,6 +2034,15 @@ const audienceUsersRemoveInput = z
 	.strict();
 const audienceUsersResultSchema = z.object({
 	audience_id: z.string(),
+	session_id: z.union([z.string(), z.number().int()]),
+	num_received: z.number().int(),
+	num_invalid_entries: z.number().int(),
+	// invalid_entry_samples can echo submitted identifiers, so it is intentionally stripped.
+});
+// `usersreplace` answers with the ad account instead of the audience id.
+const audienceUsersReplaceResultSchema = z.object({
+	account_id: z.union([z.string(), z.number().int()]).optional(),
+	audience_id: z.string().optional(),
 	session_id: z.union([z.string(), z.number().int()]),
 	num_received: z.number().int(),
 	num_invalid_entries: z.number().int(),
@@ -2242,20 +2258,22 @@ const insightParamsShape = {
 	productIdLimit: z.number().int().positive().optional(),
 };
 const insightRequestShape = { accountId: id, ...insightParamsShape };
+type InsightsParameterShape = {
+	datePreset?: string;
+	since?: string;
+	until?: string;
+	actionBreakdowns?: string[];
+	fields: string[];
+	summaryActionBreakdowns?: string[];
+	summary?: string[];
+	defaultSummary?: boolean;
+};
+// Generic over the schema itself so each insights operation keeps its own input type.
 const validateInsightsParameters = <
-	T extends {
-		datePreset?: string;
-		since?: string;
-		until?: string;
-		actionBreakdowns?: string[];
-		fields: string[];
-		summaryActionBreakdowns?: string[];
-		summary?: string[];
-		defaultSummary?: boolean;
-	},
+	S extends z.ZodType<InsightsParameterShape>,
 >(
-	schema: z.ZodType<T>,
-) =>
+	schema: S,
+): S =>
 	schema
 		.refine((value) => !(value.datePreset && (value.since || value.until)))
 		.refine(
@@ -2765,7 +2783,7 @@ export type MetaAdsEndpointOutputs = {
 	audiencesSessionsList: z.infer<typeof audienceSessionsListOutput>;
 	audiencesUsersAdd: z.infer<typeof audienceUsersResultSchema>;
 	audiencesUsersRemove: z.infer<typeof audienceUsersResultSchema>;
-	audiencesUsersReplace: z.infer<typeof audienceUsersResultSchema>;
+	audiencesUsersReplace: z.infer<typeof audienceUsersReplaceResultSchema>;
 	audiencesAdAccountsShare: z.infer<typeof AudienceSharingSchema>;
 	audiencesAdAccountsUnshare: z.infer<typeof MetaAdsDeleteSchema>;
 	studiesGet: z.infer<typeof AdStudySchema>;
@@ -3040,7 +3058,7 @@ export const MetaAdsEndpointOutputSchemas = {
 	audiencesSessionsList: audienceSessionsListOutput,
 	audiencesUsersAdd: audienceUsersResultSchema,
 	audiencesUsersRemove: audienceUsersResultSchema,
-	audiencesUsersReplace: audienceUsersResultSchema,
+	audiencesUsersReplace: audienceUsersReplaceResultSchema,
 	audiencesAdAccountsShare: AudienceSharingSchema,
 	audiencesAdAccountsUnshare: MetaAdsDeleteSchema,
 	studiesGet: AdStudySchema,

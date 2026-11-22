@@ -3343,7 +3343,14 @@ Start ad creation requests that may lead to delivery and spend
 await corsair.metaads.api.asyncRequestSets.create({
   accountId: "1234567890",
   name: "Ad request set",
-  adSpecs: [{ name: "Paused ad", adset_id: "120000000000002", status: "PAUSED" }],
+  adSpecs: [
+    {
+      name: "Paused ad",
+      adset_id: "120000000000002",
+      creative: '{"creative_id":"120000000000004"}',
+      status: "PAUSED",
+    },
+  ],
 });
 ```
 
@@ -3960,7 +3967,7 @@ await corsair.metaads.api.audiences.sessionsList({ audienceId: '120000000000005'
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `audienceId` | `string` | Yes | — |
-| `sessionId` | `number` | No | — |
+| `sessionId` | `number \| string` | No | — |
 | `limit` | `number` | No | — |
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
@@ -4172,7 +4179,8 @@ Replaces audience members in a unique upload session using only single-key SHA-2
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `audience_id` | `string` | Yes | — |
+| `account_id` | `string \| number` | No | — |
+| `audience_id` | `string` | No | — |
 | `session_id` | `string \| number` | Yes | — |
 | `num_received` | `number` | Yes | — |
 | `num_invalid_entries` | `number` | Yes | — |
@@ -4977,7 +4985,7 @@ Budget and spend-cap edits are consequential writes and aren't automatically ret
 
 `creatives.create`
 
-Create a creative from an existing Page post
+Create a creative from an existing Page post or an inline object_story_spec
 
 **Risk:** `destructive`
 

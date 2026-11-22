@@ -398,7 +398,14 @@ apiExamples:
       {
         accountId: "1234567890",
         name: "Ad request set",
-        adSpecs: [{ name: "Paused ad", adset_id: "120000000000002", status: "PAUSED" }],
+        adSpecs: [
+          {
+            name: "Paused ad",
+            adset_id: "120000000000002",
+            creative: '{"creative_id":"120000000000004"}',
+            status: "PAUSED",
+          },
+        ],
       }
   asyncRequestSets.get:
     requestSetId: "1234567898"

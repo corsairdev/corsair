@@ -2201,6 +2201,13 @@ beforeEach(() => {
 	mockedLog.mockReset();
 });
 
+// Compile-time check: insights inputs keep their own type (accountId required).
+export const insightsInputTypeCheck: Parameters<typeof Insights.list>[1][] = [
+	{ accountId: '123', fields: ['spend'] },
+	// @ts-expect-error accountId is required
+	{ fields: ['spend'] },
+];
+
 describe('Meta Ads operations', () => {
 	it('sends is_adset_budget_sharing_enabled when the campaign has no campaign budget', async () => {
 		mockedRequest.mockResolvedValue({ id: 'campaign-1' });
@@ -2328,6 +2335,56 @@ describe('Meta Ads operations', () => {
 		await expect(
 			Insights.listFeatures(ctx, { accountId: '123' }),
 		).resolves.toMatchObject({ data: [{ feature_name: 'new_breakdown' }] });
+	});
+
+	it('accepts split-test cells that add up to 100 in decimals', async () => {
+		mockedRequest.mockResolvedValue({ id: 'study-1' });
+		await expect(
+			Studies.create(ctx, {
+				businessId: 'business-1',
+				name: 'Three-way split',
+				startTime: 1_900_000_000,
+				endTime: 1_900_086_400,
+				type: 'SPLIT_TEST',
+				cells: [
+					{ name: 'A', treatmentPercentage: 33.3, adSetIds: ['adset-1'] },
+					{ name: 'B', treatmentPercentage: 33.3, adSetIds: ['adset-2'] },
+					{ name: 'C', treatmentPercentage: 33.4, adSetIds: ['adset-3'] },
+				],
+			}),
+		).resolves.toMatchObject({ id: 'study-1' });
+	});
+
+	it('accepts a numeric-string session id when listing upload sessions', async () => {
+		mockedRequest.mockResolvedValue({ data: [] });
+		await Audiences.sessionsList(ctx, {
+			audienceId: 'audience-1',
+			sessionId: '9876543210',
+		});
+		expect(mockedRequest.mock.calls[0]?.[2]).toMatchObject({
+			query: { session_id: '9876543210' },
+		});
+	});
+
+	it('parses the documented usersreplace receipt with account_id', async () => {
+		mockedRequest.mockResolvedValue({
+			account_id: '123',
+			session_id: '9876543210',
+			num_received: 1,
+			num_invalid_entries: 0,
+			invalid_entry_samples: { sample: 'echoed' },
+		});
+		const result = await Audiences.usersReplace(ctx, {
+			audienceId: 'audience-1',
+			schema: 'EMAIL_SHA256',
+			hashes: ['a'.repeat(64)],
+			sessionId: 9876543210,
+			batchSequence: 1,
+			lastBatch: true,
+			estimatedTotal: 1,
+		});
+		expect(result).toMatchObject({ account_id: '123', num_received: 1 });
+		expect(JSON.stringify(result)).not.toContain('echoed');
 	});
 
 	it('marks label deletion destructive', () => {
