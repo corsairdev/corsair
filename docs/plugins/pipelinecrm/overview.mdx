@@ -1,0 +1,132 @@
+---
+title: "Pipeline CRM plugin"
+sidebarTitle: "Overview"
+description: "Pipeline CRM is a sales CRM for deals, people and companies. This plugin manages deals with stages and values, people and companies with their associations, records activities (notes) on any record, and reads the visible users."
+---
+
+Use **Pipeline CRM** through Corsair: one client, typed API calls.
+
+Authenticate with an API token from the Pipeline CRM profile (tokens begin pcrm_live_ in production); the plugin sends it as an Authorization Bearer token. Every call goes against https://api.pipelinecrm.com/api/v3. Lists answer &#123; entries, pagination &#125; with page and per_page (at most 200) paging; every write wraps its fields in the record name (&#123; deal: &#123;...&#125; &#125;, &#123; person: &#123;...&#125; &#125;).
+Filtering uses bracketed conditions parameters: pass conditions as a map of full bracketed keys to values, e.g. "conditions[deal_stage][]": 3 or "conditions[deal_created][selection]": "last_30" — each list page documents its keys, and the API ignores unknown keys rather than rejecting them. Sorting uses sort=&lt;field&gt; or sort=-&lt;field&gt; with record field names such as value or created_at (sort=-deal_value answers 500). Money fields such as a deal's value serialize as decimal strings ("12000.0"); send numbers or numeric strings.
+Tokens are rate limited to 10 requests per second per user; exceeding answers 429 &#123;"error":"Rate limit exceeded"&#125; and the plugin retries with backoff. Deleting a deal, person, company or activity cannot be undone.
+The API documents far more than this plugin covers (CSV exports, calendar entries, call and SMS logs, comments, files, projects, saved searches, admin custom fields, pipelines, JWT auth for interactive clients, …), all on the same shapes. Every operation is described in the official reference: https://app.pipelinecrm.com/api/docs
+
+**What you get:**
+
+- 29 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/pipelinecrm better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/pipelinecrm better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/pipelinecrm better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/pipelinecrm better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { pipelinecrm } from '@corsair-dev/pipelinecrm';
+
+export const corsair = createCorsair({
+	plugins: [
+		pipelinecrm(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Pipeline CRM API key before the first call: `pnpm corsair setup --plugin=pipelinecrm --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+pipelinecrm()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'pipelinecrm',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a deal**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.pipelinecrm.api.deals.get({ id: 4521 });
+```
+
+
+**Create a deal**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.pipelinecrm.api.deals.create({ name: 'Acme renewal', value: 12000 });
+```
+
+
+See the full list on the [API](/plugins/pipelinecrm/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/pipelinecrm/api">
+    Every `pipelinecrm.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

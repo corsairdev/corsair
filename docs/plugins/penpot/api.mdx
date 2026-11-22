@@ -1,0 +1,1098 @@
+---
+title: "Penpot API reference"
+sidebarTitle: "API"
+description: "API reference for the Penpot plugin in Corsair: every `penpot.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Access Tokens
+
+### delete
+
+`accessTokens.delete`
+
+Revoke an API access token; apps using it stop working
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.penpot.api.accessTokens.delete({ id: "ef2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c66" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Token id |
+
+Revoking a token immediately breaks apps using it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Revoked token id |
+| `success` | `boolean` | Yes | Whether the revoke succeeded |
+
+
+
+---
+
+### list
+
+`accessTokens.list`
+
+List the API access tokens of the account (names only, never values)
+
+**Risk:** `read`
+
+```ts
+await corsair.penpot.api.accessTokens.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  createdAt?: string | null,
+  expiration?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Comments
+
+### create
+
+`comments.create`
+
+Comment on a thread
+
+**Risk:** `write`
+
+```ts
+await corsair.penpot.api.comments.create({ threadId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c62", content: "Done in the latest push." });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadId` | `string` | Yes | Thread to comment on |
+| `content` | `string` | Yes | Comment content (max 750 characters) |
+
+Content is capped at 750 characters.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `content` | `string \| null` | No | Comment content |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+
+
+
+---
+
+### list
+
+`comments.list`
+
+List the comments of a thread
+
+**Risk:** `read`
+
+```ts
+await corsair.penpot.api.comments.list({ threadId: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c62" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `threadId` | `string` | Yes | Thread id |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  content?: string | null,
+  createdAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### threadCreate
+
+`comments.threadCreate`
+
+Open a comment thread on a file page
+
+**Risk:** `write`
+
+```ts
+await corsair.penpot.api.comments.threadCreate({ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", pageId: "bf2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c63", position: { x: 120, y: 80 }, content: "Can we tighten the spacing here?" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | File the thread is opened on |
+| `pageId` | `string` | Yes | Page the thread sits on |
+| `frameId` | `string` | No | Frame the thread is attached to; the page root frame when unset |
+| `position` | `object` | Yes | Where the thread pin sits on the page |
+| `content` | `string` | Yes | Thread opening comment content |
+
+<AccordionGroup>
+<Accordion title="position full type">
+
+```ts
+{
+  x: number,
+  y: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `content` | `string \| null` | No | Thread opening comment content |
+| `pageId` | `string \| null` | No | Page the thread sits on |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+
+
+
+---
+
+### threadGet
+
+`comments.threadGet`
+
+Read one comment thread
+
+**Risk:** `read`
+
+```ts
+await corsair.penpot.api.comments.threadGet({ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", id: "af2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c62" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | File id |
+| `id` | `string` | Yes | Thread id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `content` | `string \| null` | No | Thread opening comment content |
+| `pageId` | `string \| null` | No | Page the thread sits on |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+
+
+
+---
+
+### threadsList
+
+`comments.threadsList`
+
+List the comment threads of a file
+
+**Risk:** `read`
+
+```ts
+await corsair.penpot.api.comments.threadsList({ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | List threads of this file |
+
+Takes a fileId; the RPC answers 404 when called with only a team.
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  content?: string | null,
+  pageId?: string | null,
+  createdAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Files
+
+### create
+
+`files.create`
+
+Create a design file in a project
+
+**Risk:** `write`
+
+```ts
+await corsair.penpot.api.files.create({ projectId: "6f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5e", name: "Landing page", isShared: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | Project the file is created in |
+| `name` | `string` | Yes | File name |
+| `isShared` | `boolean` | No | Share the file for team editing |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `name` | `string \| null` | No | File name |
+| `projectId` | `string \| null` | No | Project the file belongs to |
+| `modifiedAt` | `string \| null` | No | Last modification timestamp |
+
+
+
+---
+
+### delete
+
+`files.delete`
+
+Delete a design file
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.penpot.api.files.delete({ id: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | File id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Deleted file id |
+| `success` | `boolean` | Yes | Whether the delete succeeded |
+
+
+
+---
+
+### duplicate
+
+`files.duplicate`
+
+Duplicate a design file
+
+**Risk:** `write`
+
+```ts
+await corsair.penpot.api.files.duplicate({ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", name: "Copy" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | File id to duplicate |
+| `name` | `string` | No | Name of the duplicate |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `name` | `string \| null` | No | File name |
+| `projectId` | `string \| null` | No | Project the file belongs to |
+| `modifiedAt` | `string \| null` | No | Last modification timestamp |
+
+
+
+---
+
+### get
+
+`files.get`
+
+Read one design file with its data
+
+**Risk:** `read`
+
+```ts
+await corsair.penpot.api.files.get({ id: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | File id |
+
+The answer includes the full file data tree.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `name` | `string \| null` | No | File name |
+| `projectId` | `string \| null` | No | Project the file belongs to |
+| `modifiedAt` | `string \| null` | No | Last modification timestamp |
+
+
+
+---
+
+### rename
+
+`files.rename`
+
+Rename a design file
+
+**Risk:** `write`
+
+```ts
+await corsair.penpot.api.files.rename({ id: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", name: "Renamed" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | File id |
+| `name` | `string` | Yes | New file name |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `name` | `string \| null` | No | File name |
+| `projectId` | `string \| null` | No | Project the file belongs to |
+| `modifiedAt` | `string \| null` | No | Last modification timestamp |
+
+
+
+---
+
+### shareLinkCreate
+
+`files.shareLinkCreate`
+
+Create a share link for a file
+
+**Risk:** `write`
+
+```ts
+await corsair.penpot.api.files.shareLinkCreate({ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", pages: ["bf2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c63"], whoComment: "team" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | File id to share |
+| `pages` | `string[]` | Yes | Page ids the link shows (files.get answers them in data.pages) |
+| `whoComment` | `all \| team` | No | Who can comment through the link; team when unset |
+| `whoInspect` | `all \| team` | No | Who can inspect through the link; team when unset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `fileId` | `string \| null` | No | Shared file id |
+
+
+
+---
+
+### shareLinkDelete
+
+`files.shareLinkDelete`
+
+Delete a share link; the link stops working immediately
+
+**Risk:** `write`
+
+```ts
+await corsair.penpot.api.files.shareLinkDelete({ id: "9f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c61" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Share link id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Deleted share link id |
+| `success` | `boolean` | Yes | Whether the delete succeeded |
+
+
+
+---
+
+### snapshotsCreate
+
+`files.snapshotsCreate`
+
+Create a snapshot of a file
+
+**Risk:** `write`
+
+```ts
+await corsair.penpot.api.files.snapshotsCreate({ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f", label: "Before handoff" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | File id |
+| `label` | `string` | No | Snapshot label |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `label` | `string \| null` | No | Snapshot label |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+
+
+
+---
+
+### snapshotsDelete
+
+`files.snapshotsDelete`
+
+Delete a file snapshot
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.penpot.api.files.snapshotsDelete({ id: "8f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c60" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Snapshot id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Deleted snapshot id |
+| `success` | `boolean` | Yes | Whether the delete succeeded |
+
+
+
+---
+
+### snapshotsList
+
+`files.snapshotsList`
+
+List the snapshots of a file
+
+**Risk:** `read`
+
+```ts
+await corsair.penpot.api.files.snapshotsList({ fileId: "7f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5f" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileId` | `string` | Yes | File id |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  label?: string | null,
+  createdAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a project in a team
+
+**Risk:** `write`
+
+```ts
+await corsair.penpot.api.projects.create({ teamId: "5f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d", name: "Website Redesign" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | Team the project is created in |
+| `name` | `string` | Yes | Project name |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `name` | `string \| null` | No | Project name |
+| `teamId` | `string \| null` | No | Team the project belongs to |
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project with its files
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.penpot.api.projects.delete({ id: "6f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5e" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Project id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Deleted project id |
+| `success` | `boolean` | Yes | Whether the delete succeeded |
+
+
+
+---
+
+### duplicate
+
+`projects.duplicate`
+
+Duplicate a project
+
+**Risk:** `write`
+
+```ts
+await corsair.penpot.api.projects.duplicate({ id: "6f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5e", name: "Copy" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Project id to duplicate |
+| `name` | `string` | No | Name of the duplicate |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `name` | `string \| null` | No | Project name |
+| `teamId` | `string \| null` | No | Team the project belongs to |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Read one project by id
+
+**Risk:** `read`
+
+```ts
+await corsair.penpot.api.projects.get({ id: "6f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5e" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Project id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `name` | `string \| null` | No | Project name |
+| `teamId` | `string \| null` | No | Team the project belongs to |
+
+
+
+---
+
+### listAll
+
+`projects.listAll`
+
+List all projects of the authenticated profile
+
+**Risk:** `read`
+
+```ts
+await corsair.penpot.api.projects.listAll({});
+```
+
+**Input:** _empty object_
+
+Returns every project the profile can see across teams.
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  teamId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### rename
+
+`projects.rename`
+
+Rename a project
+
+**Risk:** `write`
+
+```ts
+await corsair.penpot.api.projects.rename({ id: "6f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5e", name: "Renamed" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Project id |
+| `name` | `string` | Yes | New project name |
+
+The RPC answers an empty body; the plugin answers the id and the new name.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `name` | `string \| null` | No | The new project name |
+
+
+
+---
+
+## Teams
+
+### create
+
+`teams.create`
+
+Create a team
+
+**Risk:** `write`
+
+```ts
+await corsair.penpot.api.teams.create({ name: "Design Guild" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Team name |
+| `isDefault` | `boolean` | No | Make this the default team |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `name` | `string \| null` | No | Team name |
+
+
+
+---
+
+### delete
+
+`teams.delete`
+
+Delete a team with its projects and files
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.penpot.api.teams.delete({ id: "5f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Team id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Deleted team id |
+| `success` | `boolean` | Yes | Whether the delete succeeded |
+
+
+
+---
+
+### get
+
+`teams.get`
+
+Read one team
+
+**Risk:** `read`
+
+```ts
+await corsair.penpot.api.teams.get({ id: "5f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Team id |
+
+Takes the team id.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `name` | `string \| null` | No | Team name |
+
+
+
+---
+
+### list
+
+`teams.list`
+
+List the teams of the authenticated profile
+
+**Risk:** `read`
+
+```ts
+await corsair.penpot.api.teams.list({});
+```
+
+**Input:** _empty object_
+
+Returns the teams of the authenticated profile.
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook for a team
+
+**Risk:** `write`
+
+```ts
+await corsair.penpot.api.webhooks.create({ teamId: "5f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d", uri: "https://example.com/webhooks/penpot", mtype: "application/json" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | Team the webhook belongs to |
+| `uri` | `string` | Yes | Endpoint deliveries are posted to |
+| `mtype` | `application/json` | Yes | Payload format; JSON, the format the plugin reads |
+
+mtype is application/json: the plugin reads JSON deliveries only (Penpot can also send Transit or form bodies, which it does not decode). Penpot calls the URI on create and refuses one that does not answer (500 webhook-validation).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `uri` | `string \| null` | No | Endpoint deliveries are posted to |
+| `mtype` | `string \| null` | No | Payload format: application/json or application/transit+json |
+| `isActive` | `boolean \| null` | No | Whether deliveries are active |
+| `teamId` | `string \| null` | No | Team the webhook belongs to |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a webhook; deliveries stop until it is created again
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.penpot.api.webhooks.delete({ id: "df2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c65" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook id |
+
+Deliveries stop until the webhook is created again.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Deleted webhook id |
+| `success` | `boolean` | Yes | Whether the delete succeeded |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List the webhooks of a team
+
+**Risk:** `read`
+
+```ts
+await corsair.penpot.api.webhooks.list({ teamId: "5f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | Yes | Team id |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  uri?: string | null,
+  mtype?: string | null,
+  isActive?: boolean | null,
+  teamId?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a webhook URL, payload format or active state
+
+**Risk:** `write`
+
+```ts
+await corsair.penpot.api.webhooks.update({ id: "df2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c65", uri: "https://example.com/webhooks/penpot", mtype: "application/json", isActive: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Webhook id |
+| `uri` | `string` | Yes | Endpoint deliveries are posted to |
+| `mtype` | `application/json` | Yes | Payload format |
+| `isActive` | `boolean` | Yes | Whether deliveries are active |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | UUID |
+| `uri` | `string \| null` | No | Endpoint deliveries are posted to |
+| `mtype` | `string \| null` | No | Payload format: application/json or application/transit+json |
+| `isActive` | `boolean \| null` | No | Whether deliveries are active |
+| `teamId` | `string \| null` | No | Team the webhook belongs to |
+
+
+
+---
+

@@ -1,0 +1,81 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "PDF4me"
+description: "PDF4me is a PDF and document processing SaaS. This plugin merges, splits, compresses and organizes PDFs, converts them to Word and renders HTML to PDF, runs OCR, reads PDF metadata, extracts tables and form data, and polls asynchronous processing jobs. File answers come back base64-encoded."
+domain: pdf4me.com
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with the API key from the PDF4me dashboard; the plugin sends
+  it as the raw value of the Authorization header, without a Bearer prefix,
+  as the API expects. File payloads go in the docContent field as base64, a
+  pdf4meblobid:// reference or an https URL, with docName always set — the
+  API dispatches on the extension.
+
+  PDF-producing actions answer the raw file or a JSON file shape; the
+  plugin returns either as fileContent (base64), and the parts of a split
+  as documents. With isAsync: true, and always for PDF-to-Word and OCR, the
+  API answers a job (jobId, statusUrl) instead: poll jobs.status, which
+  answers the produced file once the job has finished. Every processing
+  call uses one PDF4me API call from the plan, so the file-producing
+  operations are marked destructive.
+
+  Checked live (2026-11-21): the docs' GetPdfInformation route answers 404,
+  so pdf.getInfo uses GetPdfMetadata; table and form extraction answer
+  tableList and formData, not the tables and formFields the docs show.
+
+  This plugin covers a working subset: merge, split, compress, page
+  organization, metadata, PDF-to-Word, HTML-to-PDF, OCR, and table and form
+  extraction. The barcode, Excel, image, Word-suite, generate and signature
+  families are documented by PDF4me but not part of this plugin.
+
+  Every operation is described in the official docs:
+  https://docs.pdf4me.com/pdf4me-api/
+examples:
+  read:
+    path: pdf.getInfo
+    title: Read PDF metadata
+    args:
+      docContent: JVBERi0=
+      docName: document.pdf
+  write:
+    path: pdf.compress
+    title: Compress a PDF
+    args:
+      docContent: JVBERi0=
+      docName: document.pdf
+      optimizeProfile: Web
+apiExamples:
+  pdf.merge:
+    call: '{ docContent: ["<base64 of first.pdf>", "<base64 of second.pdf>"], docName: "merged.pdf" }'
+  pdf.split:
+    call: '{ docContent: "<base64>", docName: "document.pdf", splitAction: "SplitAfterPage", splitActionNumber: 3 }'
+  pdf.compress:
+    call: '{ docContent: "<base64>", docName: "document.pdf", optimizeProfile: "Web" }'
+  pdf.extractPages:
+    call: '{ docContent: "<base64>", docName: "document.pdf", pageNumbers: [1, 3] }'
+  pdf.deletePages:
+    call: '{ docContent: "<base64>", docName: "document.pdf", pageNumbers: "2,4-5" }'
+  pdf.getInfo:
+    call: '{ docContent: "<base64>", docName: "document.pdf" }'
+  convert.pdfToWord:
+    call: '{ docContent: "<base64>", docName: "document.pdf", qualityType: "Draft" }'
+  convert.htmlToPdf:
+    call: '{ htmlContent: "<h1>Hello</h1>", docName: "page.html", format: "A4" }'
+  convert.ocrPdf:
+    call: '{ docContent: "<base64>", docName: "scan.pdf", ocrWhenNeeded: true, language: "English" }'
+  extract.tableFromPdf:
+    call: '{ docContent: "<base64>", docName: "document.pdf" }'
+  extract.pdfFormData:
+    call: '{ docContent: "<base64>", docName: "filled-form.pdf" }'
+  jobs.status:
+    call: '{ jobId: "job-1" }'
+apiNotes:
+  pdf.merge: 'docContent is an array and the array order is the merge order. The answer is the merged PDF.'
+  pdf.split: 'splitAction picks after a page, every N pages, after listed pages or by ranges; the parts come back in documents.'
+  pdf.compress: 'optimizeProfile values: Max, Web, Print, Default. Default is mapped to Max server-side; an unknown value fails with 400 Invalid Optimization Profile.'
+  pdf.deletePages: 'Answers a new PDF without the pages; the source file is not changed. Marked destructive because each call uses a billed API call.'
+  pdf.getInfo: 'Calls GetPdfMetadata (the documented GetPdfInformation route answers 404). Reads page count, size, author, version and more.'
+  convert.ocrPdf: 'Always runs as a job: poll jobs.status with the jobId for the file. ocrWhenNeeded goes out as the string the API expects.'
+  extract.tableFromPdf: 'Answers tableList: one entry per page with its table rows.'
+  extract.pdfFormData: 'Answers formData: field values keyed by field name.'
+  jobs.status: 'GETs GetActionStatus with the job id. A finished job answers its file (isFinished true, fileContent); a running one answers its status.'
