@@ -271,7 +271,7 @@ await corsair.freeagent.api.balanceSheet.get({
   as_at_date?: string,
   currency?: string,
   capital_assets?: {
-    accounts: {
+    accounts?: {
       name: string,
       nominal_code: string,
       total_debit_value: number
@@ -279,14 +279,14 @@ await corsair.freeagent.api.balanceSheet.get({
     net_book_value?: number
   },
   current_assets?: {
-    accounts: {
+    accounts?: {
       name: string,
       nominal_code: string,
       total_debit_value: number
     }[]
   },
   current_liabilities?: {
-    accounts: {
+    accounts?: {
       name: string,
       nominal_code: string,
       total_debit_value: number
@@ -295,7 +295,7 @@ await corsair.freeagent.api.balanceSheet.get({
   net_current_assets?: number,
   total_assets?: number,
   owners_equity?: {
-    accounts: {
+    accounts?: {
       name: string,
       nominal_code: string,
       total_debit_value: number
@@ -342,7 +342,7 @@ await corsair.freeagent.api.balanceSheet.openingBalances({});
   as_at_date?: string,
   currency?: string,
   capital_assets?: {
-    accounts: {
+    accounts?: {
       name: string,
       nominal_code: string,
       total_debit_value: number
@@ -350,14 +350,14 @@ await corsair.freeagent.api.balanceSheet.openingBalances({});
     net_book_value?: number
   },
   current_assets?: {
-    accounts: {
+    accounts?: {
       name: string,
       nominal_code: string,
       total_debit_value: number
     }[]
   },
   current_liabilities?: {
-    accounts: {
+    accounts?: {
       name: string,
       nominal_code: string,
       total_debit_value: number
@@ -366,7 +366,7 @@ await corsair.freeagent.api.balanceSheet.openingBalances({});
   net_current_assets?: number,
   total_assets?: number,
   owners_equity?: {
-    accounts: {
+    accounts?: {
       name: string,
       nominal_code: string,
       total_debit_value: number
@@ -847,7 +847,13 @@ Create a bank transaction explanation
 
 ```ts
 await corsair.freeagent.api.bankTransactionExplanations.create({
-	explanation: { bank_account: 'https://api.freeagent.com/v2/bank_accounts/1', dated_on: '2026-10-01', gross_value: '-5.0' },
+	explanation: {
+		bank_account: 'https://api.freeagent.com/v2/bank_accounts/1',
+		dated_on: '2026-10-01',
+		gross_value: '-5.0',
+		category: 'https://api.freeagent.com/v2/categories/285',
+		description: 'Train ticket',
+	},
 });
 ```
 
@@ -2675,9 +2681,10 @@ await corsair.freeagent.api.capitalAssets.get({
   description?: string,
   asset_life_years?: number | null,
   depreciation_profile?: {
-    depreciation_method?: string,
-    depreciation_rate?: string | number,
-    depreciation_frequency?: string
+    method?: string,
+    frequency?: string,
+    asset_life_years?: number | null,
+    annual_depreciation_percentage?: string | number | null
   },
   asset_type?: string,
   purchased_on?: string,
@@ -2753,9 +2760,10 @@ await corsair.freeagent.api.capitalAssets.list({
   description?: string,
   asset_life_years?: number | null,
   depreciation_profile?: {
-    depreciation_method?: string,
-    depreciation_rate?: string | number,
-    depreciation_frequency?: string
+    method?: string,
+    frequency?: string,
+    asset_life_years?: number | null,
+    annual_depreciation_percentage?: string | number | null
   },
   asset_type?: string,
   purchased_on?: string,
@@ -7062,13 +7070,13 @@ await corsair.freeagent.api.expenses.batchCreate({
 		category: 'https://api.freeagent.com/v2/categories/285',
 		dated_on: '2026-10-01',
 		description: 'First',
-		gross_value: '10.0',
+		gross_value: '-10.0',
 	}, {
 		user: 'https://api.freeagent.com/v2/users/1',
 		category: 'https://api.freeagent.com/v2/categories/285',
 		dated_on: '2026-10-01',
 		description: 'Second',
-		gross_value: '20.0',
+		gross_value: '-20.0',
 	}],
 });
 ```
@@ -8104,7 +8112,7 @@ Get the profit and loss summary for a period
 
 ```ts
 await corsair.freeagent.api.financialReports.profitAndLoss({
-	query: { from_date: '2026-01-01', to_date: '2026-12-31', accounting_period: '2026/27' },
+	query: { from_date: '2026-01-01', to_date: '2026-12-31' },
 });
 ```
 
@@ -10943,7 +10951,7 @@ Mark a payroll payment as paid
 **Risk:** `destructive`
 
 ```ts
-await corsair.freeagent.api.payroll.markPaymentAsPaid({ year: '2026', payment_date: '2026-05-22' });
+await corsair.freeagent.api.payroll.markPaymentAsPaid({ year: '2026', payment_date: '2025-05-22' });
 ```
 
 **Input**
@@ -11006,7 +11014,7 @@ Mark a payroll payment as unpaid using the published GET method
 **Risk:** `write`
 
 ```ts
-await corsair.freeagent.api.payroll.markPaymentAsUnpaid({ year: '2026', payment_date: '2026-05-22' });
+await corsair.freeagent.api.payroll.markPaymentAsUnpaid({ year: '2026', payment_date: '2025-05-22' });
 ```
 
 **Input**
@@ -11104,6 +11112,7 @@ await corsair.freeagent.api.payrollProfiles.list({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `profiles` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="profiles full type">
@@ -11128,6 +11137,16 @@ await corsair.freeagent.api.payrollProfiles.list({
   created_at?: string,
   updated_at?: string
 }[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  link: string | null,
+  total_count: string | null
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -12238,13 +12257,7 @@ await corsair.freeagent.api.recurringInvoices.get({ id: 'record/with space?' });
     sales_tax_status?: TAXABLE | EXEMPT,
     category?: string
   }[],
-  payment_methods?: {
-    paypal?: boolean,
-    gocardless_preauth?: boolean,
-    gocardless_instant_bank_pay?: boolean,
-    stripe?: boolean,
-    tyl?: boolean
-  }
+  payment_methods?: Record<string, boolean>
 }
 ```
 </Accordion>
@@ -12337,13 +12350,7 @@ Supports the documented draft, active, or inactive view filter and a contact URL
     sales_tax_status?: TAXABLE | EXEMPT,
     category?: string
   }[],
-  payment_methods?: {
-    paypal?: boolean,
-    gocardless_preauth?: boolean,
-    gocardless_instant_bank_pay?: boolean,
-    stripe?: boolean,
-    tyl?: boolean
-  }
+  payment_methods?: Record<string, boolean>
 }[]
 ```
 </Accordion>
@@ -12937,6 +12944,41 @@ await corsair.freeagent.api.tasks.create({
 </Accordion>
 </AccordionGroup>
 
+
+
+---
+
+### delete
+
+`tasks.delete`
+
+Delete a task
+
+**Risk:** `destructive`
+
+```ts
+await corsair.freeagent.api.tasks.delete({ id: '1' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object \| undefined`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | undefined
+```
+</Accordion>
+</AccordionGroup>
 
 
 ---
