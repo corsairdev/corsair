@@ -6,7 +6,7 @@ description: "QuickBooks Online Accounting operations for all catalogued resourc
 
 Use **QuickBooks** through Corsair: one client, typed API calls.
 
-This plugin registers 236 of the 237 operations in Intuit’s first-party Accounting route catalog. The remaining Entitlements.READ operation requires an XML response contract that the package cannot validate; details are in the package README. Supply the realmId returned by Intuit’s OAuth redirect to each operation. The default minor version is 75.
+This plugin registers 236 of the 237 operations in Intuit’s first-party Accounting route catalog. The remaining Entitlements.READ operation requires an XML response contract that the package cannot validate; details are in the package README. Pass the company's realmId to each operation: Intuit sends it on the OAuth redirect, and a company admin can read it in QuickBooks under Settings &gt; Account and settings &gt; Billing & subscription (Company ID). Hub does not save it on connect yet. The default minor version is 75.
 
 **What you get:**
 
