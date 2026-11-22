@@ -1,0 +1,1866 @@
+{
+  "id": "pandadoc",
+  "displayName": "PandaDoc",
+  "description": "PandaDoc is a document automation and e-signature platform. This plugin creates documents from templates or PDFs, sends them for signing, tracks their status, downloads the signed PDFs, and manages templates, contacts, folders and webhook subscriptions.",
+  "npmPackageName": "@corsair-dev/pandadoc",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 26,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "pandadoc.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Contact email address"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact first name"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact last name"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact company"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact job title"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact phone number"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact country"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact state"
+          },
+          {
+            "key": "street_address",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact street address"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact city"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact postal code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Contact id"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact email address"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact first name"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact last name"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact company"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact job title"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact phone number"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact country"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact state"
+          },
+          {
+            "key": "street_address",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact street address"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact city"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact postal code"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Contact id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Deleted contact id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Read one contact by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Contact id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Contact id"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact email address"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact first name"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact last name"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact company"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact job title"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact phone number"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact country"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact state"
+          },
+          {
+            "key": "street_address",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact street address"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact city"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact postal code"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts, optionally filtered by exact email address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Filter contacts by exact email address"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, email?: string | null, first_name?: string | null, last_name?: string | null, company?: string | null, job_title?: string | null, phone?: string | null, country?: string | null, state?: string | null, street_address?: string | null, city?: string | null, postal_code?: string | null }[]",
+            "description": "Contacts matching the filter"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Contact id"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact first name"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact last name"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact company"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact job title"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact phone number"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact country"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact state"
+          },
+          {
+            "key": "street_address",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact street address"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact city"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact postal code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Contact id"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact email address"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact first name"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact last name"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact company"
+          },
+          {
+            "key": "job_title",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact job title"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact phone number"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact country"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact state"
+          },
+          {
+            "key": "street_address",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact street address"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact city"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string | null",
+            "description": "Contact postal code"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.documents.create",
+      "shortPath": "documents.create",
+      "description": "Create a draft document from a template or from a public PDF URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "template_uuid",
+            "optional": true,
+            "type": "string",
+            "description": "Create from this template"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "Create from a publicly accessible HTTPS PDF"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Document name; required when creating from a PDF URL"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ email?: string | null, first_name?: string | null, last_name?: string | null, phone?: string | null, role?: string | null, signing_order?: number | null }[]",
+            "description": "Recipients; required when creating from a template"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Prefilled fields, keyed by field name or uuid; values are strings, booleans or arrays"
+          },
+          {
+            "key": "tokens",
+            "optional": true,
+            "type": "{ name: string, value: string }[]",
+            "description": "Token replacements"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Arbitrary metadata key/value pairs, filterable on documents.list"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Tags for the document"
+          },
+          {
+            "key": "folder_uuid",
+            "optional": true,
+            "type": "string",
+            "description": "Place the document in this folder"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ membership_id?: string | null, email?: string | null }",
+            "description": "Create the document on a member’s behalf"
+          },
+          {
+            "key": "parse_form_fields",
+            "optional": true,
+            "type": "boolean",
+            "description": "Convert native PDF form fields into PandaDoc fields (PDF creation only)"
+          },
+          {
+            "key": "editable",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let recipients edit the uploaded PDF (PDF creation only)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document name"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document lifecycle status, e.g. document.draft, document.sent, document.completed"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document uuid"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document version"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ id?: string | null, email?: string | null, first_name?: string | null, last_name?: string | null, phone?: string | null, role?: string | null, signing_order?: number | null }[] | null",
+            "description": "Recipients as stored"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.documents.createFields",
+      "shortPath": "documents.createFields",
+      "description": "Place new fields on a document",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          },
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ type: checkbox | collect_file | date | dropdown | initials | payment_details | radio_buttons | signature | stamp | text, layout: { page: number, position: { offset_x: number, offset_y: number, anchor_point: topleft | topright | bottomleft | bottomright }, style: { width: number, height: number } }, field_id?: string | null, merge_field?: string | null, assigned_to?: string | null }[]",
+            "description": "Fields to place on the document"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, type?: string | null }[]",
+            "description": "All fields on the document after the change"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.documents.delete",
+      "shortPath": "documents.delete",
+      "description": "Delete a document, optionally permanently (forever)",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          },
+          {
+            "key": "forever",
+            "optional": true,
+            "type": "boolean",
+            "description": "Delete permanently instead of moving to deleted documents"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Deleted document id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.documents.download",
+      "shortPath": "documents.download",
+      "description": "Download a document as PDF, with optional watermarking",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          },
+          {
+            "key": "watermark_color",
+            "optional": true,
+            "type": "string",
+            "description": "Watermark color, e.g. #FF0000"
+          },
+          {
+            "key": "watermark_font_size",
+            "optional": true,
+            "type": "number",
+            "description": "Watermark font size"
+          },
+          {
+            "key": "watermark_opacity",
+            "optional": true,
+            "type": "number",
+            "description": "Watermark opacity, 0.0-1.0"
+          },
+          {
+            "key": "watermark_text",
+            "optional": true,
+            "type": "string",
+            "description": "Watermark text"
+          },
+          {
+            "key": "separate_files",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return a zip of per-recipient files instead of one PDF"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type, for example application/pdf"
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes"
+          },
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The PDF, base64-encoded; missing while the render is pending"
+          },
+          {
+            "key": "pending",
+            "optional": false,
+            "type": "boolean",
+            "description": "True when PandaDoc answered 202 and the file is still rendering"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.documents.downloadProtected",
+      "shortPath": "documents.downloadProtected",
+      "description": "Download a completed document as a protected (flattened) PDF; needs a production key (sandbox keys get 401)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          },
+          {
+            "key": "separate_files",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return a zip of per-recipient files instead of one PDF"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type, for example application/pdf"
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes"
+          },
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The PDF, base64-encoded; missing while the render is pending"
+          },
+          {
+            "key": "pending",
+            "optional": false,
+            "type": "boolean",
+            "description": "True when PandaDoc answered 202 and the file is still rendering"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.documents.get",
+      "shortPath": "documents.get",
+      "description": "Read one document with its recipients, status and metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Document name"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string",
+            "description": "Document lifecycle status, e.g. document.draft, document.sent, document.completed"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document uuid"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document version"
+          },
+          {
+            "key": "folder_uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Folder the document lives in"
+          },
+          {
+            "key": "ref_number",
+            "optional": true,
+            "type": "string | null",
+            "description": "Reference number from the template"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          },
+          {
+            "key": "date_sent",
+            "optional": true,
+            "type": "string | null",
+            "description": "Sent timestamp; null until sent"
+          },
+          {
+            "key": "date_completed",
+            "optional": true,
+            "type": "string | null",
+            "description": "Completion timestamp"
+          },
+          {
+            "key": "expiration_date",
+            "optional": true,
+            "type": "string | null",
+            "description": "Expiration timestamp"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ id?: string | null, email?: string | null, first_name?: string | null, last_name?: string | null, phone?: string | null, role?: string | null, signing_order?: number | null }[] | null",
+            "description": "Recipients with their roles and signing order"
+          },
+          {
+            "key": "tokens",
+            "optional": true,
+            "type": "{ name?: string | null, value?: string | null }[] | null",
+            "description": "Template tokens (variables) and their values"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Metadata stored on the document"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Tags on the document"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.documents.list",
+      "shortPath": "documents.list",
+      "description": "List documents, filtered by status, folder, contact, dates or metadata",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page; default 50, maximum 100"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number",
+            "description": "Filter by numeric status: 0 document.draft, 1 document.sent, 2 document.completed, 3 document.uploaded, 4 document.error, 5 document.viewed, 6 document.waiting_approval"
+          },
+          {
+            "key": "statusNe",
+            "optional": true,
+            "type": "number",
+            "description": "Exclude this numeric status (sent as status__ne)"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return only deleted documents"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by name or reference number"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Search for a document by its id"
+          },
+          {
+            "key": "folderUuid",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by folder (sent as folder_uuid)"
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by template (sent as template_id)"
+          },
+          {
+            "key": "contactId",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by contact (sent as contact_id)"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "name | date_created | date_status_changed | date_of_last_action | date_modified | date_sent | date_completed | date_expiration | date_declined | status | -name | -date_created | -date_status_changed | -date_of_last_action | -date_modified | -date_sent | -date_completed | -date_expiration | -date_declined | -status",
+            "description": "Sort field (sent as order_by)"
+          },
+          {
+            "key": "createdFrom",
+            "optional": true,
+            "type": "string",
+            "description": "Created at or after (sent as created_from)"
+          },
+          {
+            "key": "createdTo",
+            "optional": true,
+            "type": "string",
+            "description": "Created at or before (sent as created_to)"
+          },
+          {
+            "key": "completedFrom",
+            "optional": true,
+            "type": "string",
+            "description": "Completed at or after (sent as completed_from)"
+          },
+          {
+            "key": "completedTo",
+            "optional": true,
+            "type": "string",
+            "description": "Completed at or before (sent as completed_to)"
+          },
+          {
+            "key": "modifiedFrom",
+            "optional": true,
+            "type": "string",
+            "description": "Modified at or after (sent as modified_from)"
+          },
+          {
+            "key": "modifiedTo",
+            "optional": true,
+            "type": "string",
+            "description": "Modified at or before (sent as modified_to)"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "string[]",
+            "description": "Metadata filters, repeated once per entry"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by tag"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, status: string, uuid?: string | null, version?: string | null, folder_uuid?: string | null, ref_number?: string | null, date_created?: string | null, date_modified?: string | null, date_sent?: string | null, date_completed?: string | null, expiration_date?: string | null }[]",
+            "description": "Documents on this page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.documents.listFields",
+      "shortPath": "documents.listFields",
+      "description": "Read the fields placed on a document with their coordinates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fields",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, type?: string | null }[]",
+            "description": "Fields placed on the document, with their coordinates"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.documents.move",
+      "shortPath": "documents.move",
+      "description": "Move a document into a folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          },
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string",
+            "description": "Destination folder uuid (sent in the path as folder_id)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Moved document id"
+          },
+          {
+            "key": "folderId",
+            "optional": false,
+            "type": "string",
+            "description": "Folder the document now lives in"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the move succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.documents.send",
+      "shortPath": "documents.send",
+      "description": "Send a document to its recipients for signing; the signing emails cannot be recalled (silent: true sends without emails)",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          },
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string",
+            "description": "Email body for the recipients"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string",
+            "description": "Email subject for the recipients"
+          },
+          {
+            "key": "silent",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send without email notifications to the recipients and the sender, and without scheduled reminders (approval notifications still go out); leave false for recipients to get the signing email"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "string",
+            "description": "Reply-to email address"
+          },
+          {
+            "key": "sender",
+            "optional": true,
+            "type": "{ membership_id?: string, email?: string }",
+            "description": "Send as another workspace member, by email or membership_id"
+          },
+          {
+            "key": "forwarding_settings",
+            "optional": true,
+            "type": "{ forwarding_allowed?: boolean, forwarding_with_reassigning_allowed?: boolean }",
+            "description": "Control whether recipients can forward the document"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document name"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document lifecycle status, e.g. document.draft, document.sent, document.completed"
+          },
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document uuid"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document version"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ id?: string | null, email?: string | null, first_name?: string | null, last_name?: string | null, phone?: string | null, role?: string | null, signing_order?: number | null }[] | null",
+            "description": "Recipients the document was sent to"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.documents.update",
+      "shortPath": "documents.update",
+      "description": "Update a draft document: name, recipients, fields, tokens, metadata or tags",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New document name"
+          },
+          {
+            "key": "recipients",
+            "optional": true,
+            "type": "{ email?: string | null, first_name?: string | null, last_name?: string | null, phone?: string | null, role?: string | null, signing_order?: number | null }[]",
+            "description": "Replace the recipients"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Updated prefilled field values"
+          },
+          {
+            "key": "tokens",
+            "optional": true,
+            "type": "{ name: string, value: string }[]",
+            "description": "Token replacements"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Metadata key/value pairs"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[]",
+            "description": "Tags for the document"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Updated document id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the update succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.folders.create",
+      "shortPath": "folders.create",
+      "description": "Create a documents folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Folder name"
+          },
+          {
+            "key": "parent_uuid",
+            "optional": true,
+            "type": "string",
+            "description": "Create the folder inside this parent folder"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "Folder uuid"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Folder name"
+          },
+          {
+            "key": "parent_uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Parent folder uuid"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.folders.list",
+      "shortPath": "folders.list",
+      "description": "List document folders, optionally under one parent folder",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "parentUuid",
+            "optional": true,
+            "type": "string",
+            "description": "List children of this folder (sent as parent_uuid)"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page; default 50, maximum 100"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ uuid: string, name: string, parent_uuid?: string | null, date_created?: string | null }[]",
+            "description": "Folders on this page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.folders.rename",
+      "shortPath": "folders.rename",
+      "description": "Rename a documents folder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Folder uuid"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "New folder name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "Folder uuid"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Folder name"
+          },
+          {
+            "key": "parent_uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Parent folder uuid"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete a template",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Template id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Deleted template id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Read one template with its fields, tokens and roles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Template id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Template id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Template name"
+          },
+          {
+            "key": "folder_uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Folder the template lives in"
+          },
+          {
+            "key": "date_created",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "date_modified",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          },
+          {
+            "key": "tokens",
+            "optional": true,
+            "type": "{ name?: string | null }[] | null",
+            "description": "Tokens the template declares"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "Record<string, any>[] | null",
+            "description": "Fields the template places on documents"
+          },
+          {
+            "key": "roles",
+            "optional": true,
+            "type": "{ name?: string | null }[] | null",
+            "description": "Signing roles the template defines"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Tags on the template"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Template metadata"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List templates, filtered by name, folder, tag or shared state",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page; default 50, maximum 100"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 1"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by template name"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string",
+            "description": "Search for a template by its id"
+          },
+          {
+            "key": "folderUuid",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by folder (sent as folder_uuid)"
+          },
+          {
+            "key": "deleted",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return only deleted templates"
+          },
+          {
+            "key": "shared",
+            "optional": true,
+            "type": "boolean",
+            "description": "Return templates shared with the workspace"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by tag"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "content_date_modified[]",
+            "description": "Extra fields to include, sent comma-separated; the API documents content_date_modified"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id: string, name: string, status?: string | null, folder_uuid?: string | null, date_created?: string | null, date_modified?: string | null, tags?: string[] | null }[]",
+            "description": "Templates on this page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.webhooks.createSubscription",
+      "shortPath": "webhooks.createSubscription",
+      "description": "Create a webhook subscription for the events you choose",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Subscription name"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Endpoint deliveries are posted to"
+          },
+          {
+            "key": "triggers",
+            "optional": false,
+            "type": "string[]",
+            "description": "Event names to subscribe to, e.g. document_state_changed, recipient_completed, document_deleted, document_updated, document_creation_failed, document_completed_pdf_ready, quote_updated, template_created, template_updated, template_deleted"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether deliveries start active"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "(metadata | fields | products | tokens | pricing)[]",
+            "description": "Extra payload sections to include in every delivery"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "Subscription id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Subscription name"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Endpoint deliveries are posted to"
+          },
+          {
+            "key": "active",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether deliveries are active"
+          },
+          {
+            "key": "triggers",
+            "optional": false,
+            "type": "string[]",
+            "description": "Event names the subscription delivers"
+          },
+          {
+            "key": "payload",
+            "optional": true,
+            "type": "(metadata | fields | products | tokens | pricing)[] | null",
+            "description": "Extra payload sections the subscription asks for"
+          },
+          {
+            "key": "workspace_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Workspace the subscription belongs to"
+          },
+          {
+            "key": "shared_key",
+            "optional": true,
+            "type": "string | null",
+            "description": "Key used to verify delivery signatures (HMAC-SHA256 over the raw body, hex, in the signature query parameter)"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "ACTIVE | INACTIVE | DEACTIVATED | null",
+            "description": "Subscription status"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.webhooks.deleteSubscription",
+      "shortPath": "webhooks.deleteSubscription",
+      "description": "Delete a webhook subscription; deliveries stop until it is created again",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Subscription uuid"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Deleted subscription id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.webhooks.getEvent",
+      "shortPath": "webhooks.getEvent",
+      "description": "Read one webhook event by the id a delivery carries",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook event id (from the X-PandaDoc-Webhook-Event-Id delivery header)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Event id"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | null",
+            "description": "Event name"
+          },
+          {
+            "key": "created_on",
+            "optional": true,
+            "type": "string | null",
+            "description": "When the event happened"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Event payload"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pandadoc.api.webhooks.listSubscriptions",
+      "shortPath": "webhooks.listSubscriptions",
+      "description": "List the workspace webhook subscriptions, including their shared keys",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ uuid: string, name: string, url: string, active?: boolean | null, triggers: string[], payload?: (metadata | fields | products | tokens | pricing)[] | null, workspace_id?: string | null, shared_key?: string | null, status?: ACTIVE | INACTIVE | DEACTIVATED | null }[]",
+            "description": "Subscriptions in the workspace"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "pandadoc.webhooks.pandadoc.event",
+      "shortPath": "pandadoc.event",
+      "description": "A PandaDoc event delivery: an array of event objects",
+      "payload": {
+        "kind": "inline",
+        "type": "{ event: string, data?: Record<string, any> | null }[]"
+      },
+      "responseType": "{ event: string, data?: Record<string, any> | null }[]",
+      "usageExample": "pandadoc({\n    webhookHooks: {\n        pandadoc: {\n            event: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

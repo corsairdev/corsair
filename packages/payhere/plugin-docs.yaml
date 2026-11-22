@@ -1,0 +1,61 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Payhere"
+description: "Payhere is a Stripe-backed payment links platform. This plugin reads the account user, company and 30-day stats, lists customers, payments, plans and subscriptions, reads a customer with their payment history, issues full or partial refunds, and receives HMAC-verified payment and subscription webhooks."
+domain: payhere.co
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with the API key from the integrations section of the
+  merchants admin; the plugin sends it as an Authorization Bearer token.
+  Every list endpoint pages with page and per_page (default 20, maximum 100)
+  and answers { data, meta } where meta.next_page is the next page number.
+
+  Webhook deliveries are signed in the X-Signature header: HMAC-SHA1 hex of
+  the raw body with the shared secret from the merchants admin. Store that
+  secret with keys.set_webhook_signature (or set webhookSecret on the
+  plugin) so deliveries can be verified. Events include payment.success,
+  payment.failed and subscription.cancelled.
+
+  The plugin covers nine read and refund operations. Creating plans and
+  cancelling subscriptions (POST /api/v1/plans, DELETE
+  /api/v1/subscriptions/:id) are not wrapped yet.
+
+  Every operation is described in the official docs:
+  https://developers.payhere.co/docs/api-auth
+examples:
+  read:
+    path: customers.get
+    title: Read a customer with their history
+    args:
+      customerId: 989899294
+  write:
+    path: refunds.create
+    title: Refund a payment
+    args:
+      payment_id: 373
+      amount: 0.5
+      reason: requested_by_customer
+apiExamples:
+  user.get:
+    call: '{}'
+  company.get:
+    call: '{}'
+  company.stats:
+    call: '{}'
+  customers.list:
+    call: '{ page: 1, per_page: 50 }'
+  customers.get:
+    call: '{ customerId: 989899294 }'
+  payments.list:
+    call: '{ page: 1, per_page: 50 }'
+  plans.list:
+    call: '{ page: 1, per_page: 50 }'
+  subscriptions.list:
+    call: '{ page: 1, per_page: 50 }'
+  refunds.create:
+    call: '{ payment_id: 373, amount: 0.5, reason: "requested_by_customer" }'
+apiNotes:
+  customers.list: 'Ordered chronologically, most recent first; meta.next_page is the next page number or null on the last page.'
+  customers.get: 'The answer embeds the customer''s subscriptions and payment history.'
+  refunds.create: 'Answers 204 with no body. The reason must be one of requested_by_customer, duplicate or fraudulent; the amount uses the payment currency.'
+  company.stats: 'Comparison fields cover the 30-60 days before the last 30.'

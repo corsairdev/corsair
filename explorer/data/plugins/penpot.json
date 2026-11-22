@@ -1,0 +1,1291 @@
+{
+  "id": "penpot",
+  "displayName": "Penpot",
+  "description": "Penpot is the open-source design tool. This plugin manages teams, projects and design files over the RPC API, creates file snapshots and share links, reads and writes comment threads, configures team webhooks, and lists and revokes the account's API access tokens.",
+  "npmPackageName": "@corsair-dev/penpot",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 31,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "penpot.api.accessTokens.delete",
+      "shortPath": "accessTokens.delete",
+      "description": "Revoke an API access token; apps using it stop working",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Token id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Revoked token id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the revoke succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.accessTokens.list",
+      "shortPath": "accessTokens.list",
+      "description": "List the API access tokens of the account (names only, never values)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, createdAt?: string | null, expiration?: number | null }[]"
+      }
+    },
+    {
+      "path": "penpot.api.comments.create",
+      "shortPath": "comments.create",
+      "description": "Comment on a thread",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string",
+            "description": "Thread to comment on"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "Comment content (max 750 characters)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null",
+            "description": "Comment content"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.comments.list",
+      "shortPath": "comments.list",
+      "description": "List the comments of a thread",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "threadId",
+            "optional": false,
+            "type": "string",
+            "description": "Thread id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, content?: string | null, createdAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "penpot.api.comments.threadCreate",
+      "shortPath": "comments.threadCreate",
+      "description": "Open a comment thread on a file page",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "File the thread is opened on"
+          },
+          {
+            "key": "pageId",
+            "optional": false,
+            "type": "string",
+            "description": "Page the thread sits on"
+          },
+          {
+            "key": "frameId",
+            "optional": true,
+            "type": "string",
+            "description": "Frame the thread is attached to; the page root frame when unset"
+          },
+          {
+            "key": "position",
+            "optional": false,
+            "type": "{ x: number, y: number }",
+            "description": "Where the thread pin sits on the page"
+          },
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "Thread opening comment content"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null",
+            "description": "Thread opening comment content"
+          },
+          {
+            "key": "pageId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Page the thread sits on"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.comments.threadGet",
+      "shortPath": "comments.threadGet",
+      "description": "Read one comment thread",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "File id"
+          },
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Thread id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null",
+            "description": "Thread opening comment content"
+          },
+          {
+            "key": "pageId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Page the thread sits on"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.comments.threadsList",
+      "shortPath": "comments.threadsList",
+      "description": "List the comment threads of a file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "List threads of this file"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, content?: string | null, pageId?: string | null, createdAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "penpot.api.files.create",
+      "shortPath": "files.create",
+      "description": "Create a design file in a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "projectId",
+            "optional": false,
+            "type": "string",
+            "description": "Project the file is created in"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "File name"
+          },
+          {
+            "key": "isShared",
+            "optional": true,
+            "type": "boolean",
+            "description": "Share the file for team editing"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "File name"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Project the file belongs to"
+          },
+          {
+            "key": "modifiedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.files.delete",
+      "shortPath": "files.delete",
+      "description": "Delete a design file",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "File id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Deleted file id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.files.duplicate",
+      "shortPath": "files.duplicate",
+      "description": "Duplicate a design file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "File id to duplicate"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the duplicate"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "File name"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Project the file belongs to"
+          },
+          {
+            "key": "modifiedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.files.get",
+      "shortPath": "files.get",
+      "description": "Read one design file with its data",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "File id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "File name"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Project the file belongs to"
+          },
+          {
+            "key": "modifiedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.files.rename",
+      "shortPath": "files.rename",
+      "description": "Rename a design file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "File id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "New file name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "File name"
+          },
+          {
+            "key": "projectId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Project the file belongs to"
+          },
+          {
+            "key": "modifiedAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.files.shareLinkCreate",
+      "shortPath": "files.shareLinkCreate",
+      "description": "Create a share link for a file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "File id to share"
+          },
+          {
+            "key": "pages",
+            "optional": false,
+            "type": "string[]",
+            "description": "Page ids the link shows (files.get answers them in data.pages)"
+          },
+          {
+            "key": "whoComment",
+            "optional": true,
+            "type": "all | team",
+            "description": "Who can comment through the link; team when unset"
+          },
+          {
+            "key": "whoInspect",
+            "optional": true,
+            "type": "all | team",
+            "description": "Who can inspect through the link; team when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Shared file id"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.files.shareLinkDelete",
+      "shortPath": "files.shareLinkDelete",
+      "description": "Delete a share link; the link stops working immediately",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Share link id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Deleted share link id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.files.snapshotsCreate",
+      "shortPath": "files.snapshotsCreate",
+      "description": "Create a snapshot of a file",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "File id"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string",
+            "description": "Snapshot label"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | null",
+            "description": "Snapshot label"
+          },
+          {
+            "key": "createdAt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.files.snapshotsDelete",
+      "shortPath": "files.snapshotsDelete",
+      "description": "Delete a file snapshot",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Snapshot id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Deleted snapshot id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.files.snapshotsList",
+      "shortPath": "files.snapshotsList",
+      "description": "List the snapshots of a file",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fileId",
+            "optional": false,
+            "type": "string",
+            "description": "File id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, label?: string | null, createdAt?: string | null }[]"
+      }
+    },
+    {
+      "path": "penpot.api.projects.create",
+      "shortPath": "projects.create",
+      "description": "Create a project in a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string",
+            "description": "Team the project is created in"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Project name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Project name"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Team the project belongs to"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.projects.delete",
+      "shortPath": "projects.delete",
+      "description": "Delete a project with its files",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Project id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Deleted project id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.projects.duplicate",
+      "shortPath": "projects.duplicate",
+      "description": "Duplicate a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Project id to duplicate"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the duplicate"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Project name"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Team the project belongs to"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.projects.get",
+      "shortPath": "projects.get",
+      "description": "Read one project by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Project id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Project name"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Team the project belongs to"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.projects.listAll",
+      "shortPath": "projects.listAll",
+      "description": "List all projects of the authenticated profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null, teamId?: string | null }[]"
+      }
+    },
+    {
+      "path": "penpot.api.projects.rename",
+      "shortPath": "projects.rename",
+      "description": "Rename a project",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Project id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "New project name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "The new project name"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.teams.create",
+      "shortPath": "teams.create",
+      "description": "Create a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Team name"
+          },
+          {
+            "key": "isDefault",
+            "optional": true,
+            "type": "boolean",
+            "description": "Make this the default team"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Team name"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.teams.delete",
+      "shortPath": "teams.delete",
+      "description": "Delete a team with its projects and files",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Team id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Deleted team id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.teams.get",
+      "shortPath": "teams.get",
+      "description": "Read one team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Team id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Team name"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List the teams of the authenticated profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, name?: string | null }[]"
+      }
+    },
+    {
+      "path": "penpot.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a webhook for a team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string",
+            "description": "Team the webhook belongs to"
+          },
+          {
+            "key": "uri",
+            "optional": false,
+            "type": "string",
+            "description": "Endpoint deliveries are posted to"
+          },
+          {
+            "key": "mtype",
+            "optional": false,
+            "type": "application/json",
+            "description": "Payload format; JSON, the format the plugin reads"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string | null",
+            "description": "Endpoint deliveries are posted to"
+          },
+          {
+            "key": "mtype",
+            "optional": true,
+            "type": "string | null",
+            "description": "Payload format: application/json or application/transit+json"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether deliveries are active"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Team the webhook belongs to"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook; deliveries stop until it is created again",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Deleted webhook id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "penpot.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List the webhooks of a team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "string",
+            "description": "Team id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id: string, uri?: string | null, mtype?: string | null, isActive?: boolean | null, teamId?: string | null }[]"
+      }
+    },
+    {
+      "path": "penpot.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a webhook URL, payload format or active state",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id"
+          },
+          {
+            "key": "uri",
+            "optional": false,
+            "type": "string",
+            "description": "Endpoint deliveries are posted to"
+          },
+          {
+            "key": "mtype",
+            "optional": false,
+            "type": "application/json",
+            "description": "Payload format"
+          },
+          {
+            "key": "isActive",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether deliveries are active"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "UUID"
+          },
+          {
+            "key": "uri",
+            "optional": true,
+            "type": "string | null",
+            "description": "Endpoint deliveries are posted to"
+          },
+          {
+            "key": "mtype",
+            "optional": true,
+            "type": "string | null",
+            "description": "Payload format: application/json or application/transit+json"
+          },
+          {
+            "key": "isActive",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether deliveries are active"
+          },
+          {
+            "key": "teamId",
+            "optional": true,
+            "type": "string | null",
+            "description": "Team the webhook belongs to"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "penpot.webhooks.penpot.event",
+      "shortPath": "penpot.event",
+      "description": "A Penpot webhook delivery: a team-level event notification",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The action that happened"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Audit event id"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Event type, e.g. action"
+          },
+          {
+            "key": "profileId",
+            "optional": false,
+            "type": "string",
+            "description": "Profile that performed the action"
+          },
+          {
+            "key": "props",
+            "optional": false,
+            "type": "Record<string, any>",
+            "description": "Details of the action"
+          }
+        ]
+      },
+      "responseType": "{ name: string, id?: string | null, type?: string | null, profileId: string, props: Record<string, any> }",
+      "usageExample": "penpot({\n    webhookHooks: {\n        penpot: {\n            event: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

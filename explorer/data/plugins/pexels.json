@@ -1,0 +1,750 @@
+{
+  "id": "pexels",
+  "displayName": "Pexels",
+  "description": "Pexels is a free stock photo and video library. This plugin searches photos and videos, reads their rendition URLs and metadata, lists the curated and popular feeds, and browses the media collections of the API key.",
+  "npmPackageName": "@corsair-dev/pexels",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 9,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "pexels.api.collections.list",
+      "shortPath": "collections.list",
+      "description": "List the collections of the API key",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, at most 80"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collections",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, description?: string | null, private?: boolean | null, media_count?: number | null, photos_count?: number | null, videos_count?: number | null }[]",
+            "description": "Collections on this page"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null",
+            "description": "Page returned"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null",
+            "description": "Results per page"
+          },
+          {
+            "key": "total_results",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total collections"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL of the next page"
+          },
+          {
+            "key": "prev_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL of the previous page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pexels.api.collections.listFeatured",
+      "shortPath": "collections.listFeatured",
+      "description": "List the featured collections",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, at most 80"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collections",
+            "optional": false,
+            "type": "{ id: string, title?: string | null, description?: string | null, private?: boolean | null, media_count?: number | null, photos_count?: number | null, videos_count?: number | null }[]",
+            "description": "Featured collections on this page"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null",
+            "description": "Page returned"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null",
+            "description": "Results per page"
+          },
+          {
+            "key": "total_results",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total featured collections"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL of the next page"
+          },
+          {
+            "key": "prev_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL of the previous page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pexels.api.collections.listMedia",
+      "shortPath": "collections.listMedia",
+      "description": "List the photos and videos of a collection, filtered by type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "collectionId",
+            "optional": false,
+            "type": "string",
+            "description": "Collection id"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "photos | videos",
+            "description": "Only photos or only videos; both when omitted"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Order by when the item was added"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, at most 80"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "media",
+            "optional": false,
+            "type": "{ id?: number | null, width?: number | null, height?: number | null, url?: string | null, photographer?: string | null, photographer_url?: string | null, photographer_id?: number | null, avg_color?: string | null, src?: { original?: string | null, large2x?: string | null, large?: string | null, medium?: string | null, small?: string | null, landscape?: string | null, portrait?: string | null, tiny?: string | null } | null, liked?: boolean | null, alt?: string | null, image?: string | null, duration?: number | null, full_res?: any | null, tags?: string[] | null, video_pictures?: { id?: number | null, nr?: number | null, picture?: string | null }[] | null, user?: { id?: number | null, name?: string | null, url?: string | null } | null, video_files?: { id?: number | null, quality?: string | null, file_type?: string | null, width?: number | null, height?: number | null, link?: string | null }[] | null, type?: string | null }[]",
+            "description": "Media items on this page"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null",
+            "description": "Page returned"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null",
+            "description": "Results per page"
+          },
+          {
+            "key": "total_results",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total media items"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL of the next page"
+          },
+          {
+            "key": "prev_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL of the previous page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pexels.api.photos.curated",
+      "shortPath": "photos.curated",
+      "description": "List the curated photo feed",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, at most 80"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "photos",
+            "optional": false,
+            "type": "{ id?: number | null, width?: number | null, height?: number | null, url?: string | null, photographer?: string | null, photographer_url?: string | null, photographer_id?: number | null, avg_color?: string | null, src?: { original?: string | null, large2x?: string | null, large?: string | null, medium?: string | null, small?: string | null, landscape?: string | null, portrait?: string | null, tiny?: string | null } | null, liked?: boolean | null, alt?: string | null }[]",
+            "description": "Curated photos on this page"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null",
+            "description": "Page returned"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null",
+            "description": "Results per page"
+          },
+          {
+            "key": "total_results",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total curated photos"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL of the next page"
+          },
+          {
+            "key": "prev_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL of the previous page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pexels.api.photos.get",
+      "shortPath": "photos.get",
+      "description": "Read one photo by id with its rendition URLs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "photoId",
+            "optional": false,
+            "type": "number",
+            "description": "Photo id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Photo id"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null",
+            "description": "Width in pixels"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null",
+            "description": "Height in pixels"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Photo page URL on Pexels"
+          },
+          {
+            "key": "photographer",
+            "optional": true,
+            "type": "string | null",
+            "description": "Photographer name"
+          },
+          {
+            "key": "photographer_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Photographer profile URL"
+          },
+          {
+            "key": "photographer_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Photographer id"
+          },
+          {
+            "key": "avg_color",
+            "optional": true,
+            "type": "string | null",
+            "description": "Average colour, e.g. #374824"
+          },
+          {
+            "key": "src",
+            "optional": true,
+            "type": "{ original?: string | null, large2x?: string | null, large?: string | null, medium?: string | null, small?: string | null, landscape?: string | null, portrait?: string | null, tiny?: string | null } | null",
+            "description": "Rendition URLs"
+          },
+          {
+            "key": "liked",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the API key has liked the photo"
+          },
+          {
+            "key": "alt",
+            "optional": true,
+            "type": "string | null",
+            "description": "Alt text"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pexels.api.photos.search",
+      "shortPath": "photos.search",
+      "description": "Search photos by query, orientation, size and color",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Search query"
+          },
+          {
+            "key": "orientation",
+            "optional": true,
+            "type": "landscape | portrait | square",
+            "description": "Aspect orientation filter"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "large | medium | small",
+            "description": "Minimum size filter"
+          },
+          {
+            "key": "color",
+            "optional": true,
+            "type": "string",
+            "description": "Dominant color filter: a color name or a hex value"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "Search locale, e.g. en-US, de-DE, ja-JP"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, at most 80"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "photos",
+            "optional": false,
+            "type": "{ id?: number | null, width?: number | null, height?: number | null, url?: string | null, photographer?: string | null, photographer_url?: string | null, photographer_id?: number | null, avg_color?: string | null, src?: { original?: string | null, large2x?: string | null, large?: string | null, medium?: string | null, small?: string | null, landscape?: string | null, portrait?: string | null, tiny?: string | null } | null, liked?: boolean | null, alt?: string | null }[]",
+            "description": "Photos on this page"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null",
+            "description": "Page returned"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null",
+            "description": "Results per page"
+          },
+          {
+            "key": "total_results",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total matching photos"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL of the next page"
+          },
+          {
+            "key": "prev_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL of the previous page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pexels.api.videos.get",
+      "shortPath": "videos.get",
+      "description": "Read one video by id with its downloadable renditions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "videoId",
+            "optional": false,
+            "type": "number",
+            "description": "Video id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Video id"
+          },
+          {
+            "key": "width",
+            "optional": true,
+            "type": "number | null",
+            "description": "Width in pixels"
+          },
+          {
+            "key": "height",
+            "optional": true,
+            "type": "number | null",
+            "description": "Height in pixels"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Video page URL on Pexels"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string | null",
+            "description": "Poster image URL"
+          },
+          {
+            "key": "duration",
+            "optional": true,
+            "type": "number | null",
+            "description": "Duration in seconds"
+          },
+          {
+            "key": "full_res",
+            "optional": true,
+            "type": "any | null",
+            "description": "Full-resolution info, when Pexels has it"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Tags"
+          },
+          {
+            "key": "avg_color",
+            "optional": true,
+            "type": "string | null",
+            "description": "Average colour"
+          },
+          {
+            "key": "video_pictures",
+            "optional": true,
+            "type": "{ id?: number | null, nr?: number | null, picture?: string | null }[] | null",
+            "description": "Preview pictures"
+          },
+          {
+            "key": "user",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, url?: string | null } | null",
+            "description": "Video creator"
+          },
+          {
+            "key": "video_files",
+            "optional": true,
+            "type": "{ id?: number | null, quality?: string | null, file_type?: string | null, width?: number | null, height?: number | null, link?: string | null }[] | null",
+            "description": "Downloadable renditions"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pexels.api.videos.popular",
+      "shortPath": "videos.popular",
+      "description": "List the popular videos, filtered by size and duration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "min_width",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum width in pixels"
+          },
+          {
+            "key": "min_height",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum height in pixels"
+          },
+          {
+            "key": "min_duration",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum duration in seconds"
+          },
+          {
+            "key": "max_duration",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum duration in seconds"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, at most 80"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "videos",
+            "optional": false,
+            "type": "{ id?: number | null, width?: number | null, height?: number | null, url?: string | null, image?: string | null, duration?: number | null, full_res?: any | null, tags?: string[] | null, avg_color?: string | null, video_pictures?: { id?: number | null, nr?: number | null, picture?: string | null }[] | null, user?: { id?: number | null, name?: string | null, url?: string | null } | null, video_files?: { id?: number | null, quality?: string | null, file_type?: string | null, width?: number | null, height?: number | null, link?: string | null }[] | null }[]",
+            "description": "Popular videos on this page"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null",
+            "description": "Page returned"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null",
+            "description": "Results per page"
+          },
+          {
+            "key": "total_results",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total popular videos"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL of the next page"
+          },
+          {
+            "key": "prev_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL of the previous page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pexels.api.videos.search",
+      "shortPath": "videos.search",
+      "description": "Search videos by query and orientation",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": false,
+            "type": "string",
+            "description": "Search query"
+          },
+          {
+            "key": "orientation",
+            "optional": true,
+            "type": "landscape | portrait | square",
+            "description": "Aspect orientation filter"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "large | medium | small",
+            "description": "Minimum size: large 4K, medium full HD, small HD"
+          },
+          {
+            "key": "locale",
+            "optional": true,
+            "type": "string",
+            "description": "Search locale, e.g. en-US, de-DE, ja-JP"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, at most 80"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "videos",
+            "optional": false,
+            "type": "{ id?: number | null, width?: number | null, height?: number | null, url?: string | null, image?: string | null, duration?: number | null, full_res?: any | null, tags?: string[] | null, avg_color?: string | null, video_pictures?: { id?: number | null, nr?: number | null, picture?: string | null }[] | null, user?: { id?: number | null, name?: string | null, url?: string | null } | null, video_files?: { id?: number | null, quality?: string | null, file_type?: string | null, width?: number | null, height?: number | null, link?: string | null }[] | null }[]",
+            "description": "Videos on this page"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null",
+            "description": "Page returned"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number | null",
+            "description": "Results per page"
+          },
+          {
+            "key": "total_results",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total matching videos"
+          },
+          {
+            "key": "next_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL of the next page"
+          },
+          {
+            "key": "prev_page",
+            "optional": true,
+            "type": "string | null",
+            "description": "URL of the previous page"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

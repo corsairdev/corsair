@@ -1,0 +1,1673 @@
+{
+  "id": "persona",
+  "displayName": "Persona",
+  "description": "Persona is an identity verification and KYC platform. This plugin manages accounts and inquiries, approves or declines inquiries, marks them for review, runs inquiry sessions and one-time links, reads inquiry templates, configures webhooks with signing-secret rotation, and verifies inbound webhook deliveries with HMAC-SHA256.",
+  "npmPackageName": "@corsair-dev/persona",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 36,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "persona.api.accounts.addTag",
+      "shortPath": "accounts.addTag",
+      "description": "Add a tag to an account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string",
+            "description": "Account id"
+          },
+          {
+            "key": "tagName",
+            "optional": true,
+            "type": "string",
+            "description": "Tag name"
+          },
+          {
+            "key": "tagId",
+            "optional": true,
+            "type": "string",
+            "description": "Tag id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { reference-id?: string | null, account-type-name?: string | null, account-status?: string | null, created-at?: string | null, updated-at?: string | null, redacted-at?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, name-first?: string | null, name-last?: string | null, email-address?: string | null, phone-number?: string | null, country-code?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona account"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.accounts.create",
+      "shortPath": "accounts.create",
+      "description": "Create an account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "{ account-type-id?: string, reference-id?: string, account-status?: string, tags?: string[], fields?: Record<string, any>, name-first?: string, name-middle?: string, name-last?: string, birthdate?: string, email-address?: string, phone-number?: string, country-code?: string, address-street-1?: string, address-street-2?: string, address-city?: string, address-subdivision?: string, address-postal-code?: string }",
+            "description": "Account attributes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { reference-id?: string | null, account-type-name?: string | null, account-status?: string | null, created-at?: string | null, updated-at?: string | null, redacted-at?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, name-first?: string | null, name-last?: string | null, email-address?: string | null, phone-number?: string | null, country-code?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona account"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.accounts.get",
+      "shortPath": "accounts.get",
+      "description": "Read one account by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string",
+            "description": "Account id (act_...)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { reference-id?: string | null, account-type-name?: string | null, account-status?: string | null, created-at?: string | null, updated-at?: string | null, redacted-at?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, name-first?: string | null, name-last?: string | null, email-address?: string | null, phone-number?: string | null, country-code?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona account"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.accounts.list",
+      "shortPath": "accounts.list",
+      "description": "List accounts, filtered by reference id, page by page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id after which the page starts (from links.next)"
+          },
+          {
+            "key": "pageBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id before which the page ends (from links.prev)"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "How many records per page"
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string",
+            "description": "Only accounts with this reference id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { reference-id?: string | null, account-type-name?: string | null, account-status?: string | null, created-at?: string | null, updated-at?: string | null, redacted-at?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, name-first?: string | null, name-last?: string | null, email-address?: string | null, phone-number?: string | null, country-code?: string | null } | null, relationships?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ prev?: string | null, next?: string | null } | null",
+            "description": "Pagination links"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.accounts.redact",
+      "shortPath": "accounts.redact",
+      "description": "Redact an account; the data is permanently removed",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string",
+            "description": "Account id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { reference-id?: string | null, account-type-name?: string | null, account-status?: string | null, created-at?: string | null, updated-at?: string | null, redacted-at?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, name-first?: string | null, name-last?: string | null, email-address?: string | null, phone-number?: string | null, country-code?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona account"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.accounts.removeTag",
+      "shortPath": "accounts.removeTag",
+      "description": "Remove a tag from an account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string",
+            "description": "Account id"
+          },
+          {
+            "key": "tagName",
+            "optional": true,
+            "type": "string",
+            "description": "Tag name"
+          },
+          {
+            "key": "tagId",
+            "optional": true,
+            "type": "string",
+            "description": "Tag id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { reference-id?: string | null, account-type-name?: string | null, account-status?: string | null, created-at?: string | null, updated-at?: string | null, redacted-at?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, name-first?: string | null, name-last?: string | null, email-address?: string | null, phone-number?: string | null, country-code?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona account"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.accounts.search",
+      "shortPath": "accounts.search",
+      "description": "Search accounts with a predicate query",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Search predicate tree, e.g. { attribute: \"reference-id\", operator: \"eq\", value: \"user_1\" } or { and: [...] }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ attribute: string, direction: asc | desc }",
+            "description": "Sort order"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ after?: string, before?: string, size?: number }",
+            "description": "Paging"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { reference-id?: string | null, account-type-name?: string | null, account-status?: string | null, created-at?: string | null, updated-at?: string | null, redacted-at?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, name-first?: string | null, name-last?: string | null, email-address?: string | null, phone-number?: string | null, country-code?: string | null } | null, relationships?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ prev?: string | null, next?: string | null } | null",
+            "description": "Pagination links"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.accounts.update",
+      "shortPath": "accounts.update",
+      "description": "Update an account's attributes, status or tags",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "accountId",
+            "optional": false,
+            "type": "string",
+            "description": "Account id"
+          },
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "{ reference-id?: string, account-status?: string, tags?: string[], fields?: Record<string, any>, name-first?: string, name-middle?: string, name-last?: string, birthdate?: string, email-address?: string, phone-number?: string, country-code?: string, address-street-1?: string, address-street-2?: string, address-city?: string, address-subdivision?: string, address-postal-code?: string }",
+            "description": "Account attributes to change"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { reference-id?: string | null, account-type-name?: string | null, account-status?: string | null, created-at?: string | null, updated-at?: string | null, redacted-at?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, name-first?: string | null, name-last?: string | null, email-address?: string | null, phone-number?: string | null, country-code?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona account"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquiries.addTag",
+      "shortPath": "inquiries.addTag",
+      "description": "Add a tag to an inquiry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inquiryId",
+            "optional": false,
+            "type": "string",
+            "description": "Inquiry id"
+          },
+          {
+            "key": "tagName",
+            "optional": true,
+            "type": "string",
+            "description": "Tag name"
+          },
+          {
+            "key": "tagId",
+            "optional": true,
+            "type": "string",
+            "description": "Tag id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, reference-id?: string | null, note?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, created-at?: string | null, updated-at?: string | null, completed-at?: string | null, decisioned-at?: string | null, expires-at?: string | null, redacted-at?: string | null, reviewer-comment?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona inquiry"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquiries.approve",
+      "shortPath": "inquiries.approve",
+      "description": "Approve an inquiry; the decision is final and runs any approval workflow",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inquiryId",
+            "optional": false,
+            "type": "string",
+            "description": "Inquiry id"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string",
+            "description": "Comment kept for auditing"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, reference-id?: string | null, note?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, created-at?: string | null, updated-at?: string | null, completed-at?: string | null, decisioned-at?: string | null, expires-at?: string | null, redacted-at?: string | null, reviewer-comment?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona inquiry"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquiries.create",
+      "shortPath": "inquiries.create",
+      "description": "Create an inquiry from a template",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "{ inquiry-template-id?: string, template-id?: string, inquiry-template-version-id?: string, account-id?: string, reference-id?: string, redirect-uri?: string, note?: string, fields?: Record<string, any>, tags?: string[] }",
+            "description": "Inquiry attributes"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ auto-create-account?: boolean, auto-create-account-reference-id?: string, auto-create-one-time-link?: boolean, expiration-after-create-interval-seconds?: number }",
+            "description": "Creation options"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, reference-id?: string | null, note?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, created-at?: string | null, updated-at?: string | null, completed-at?: string | null, decisioned-at?: string | null, expires-at?: string | null, redacted-at?: string | null, reviewer-comment?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona inquiry"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquiries.decline",
+      "shortPath": "inquiries.decline",
+      "description": "Decline an inquiry; the decision is final",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inquiryId",
+            "optional": false,
+            "type": "string",
+            "description": "Inquiry id"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "string",
+            "description": "Comment kept for auditing"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, reference-id?: string | null, note?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, created-at?: string | null, updated-at?: string | null, completed-at?: string | null, decisioned-at?: string | null, expires-at?: string | null, redacted-at?: string | null, reviewer-comment?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona inquiry"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquiries.generateOneTimeLink",
+      "shortPath": "inquiries.generateOneTimeLink",
+      "description": "Generate a one-time link for an inquiry; anyone with the link can resume it",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inquiryId",
+            "optional": false,
+            "type": "string",
+            "description": "Inquiry id (inq_...)"
+          },
+          {
+            "key": "expiresInSeconds",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds until the link expires; the template default when omitted"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, reference-id?: string | null, note?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, created-at?: string | null, updated-at?: string | null, completed-at?: string | null, decisioned-at?: string | null, expires-at?: string | null, redacted-at?: string | null, reviewer-comment?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona inquiry"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ one-time-link?: string | null, one-time-link-short?: string | null }",
+            "description": "The generated link"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquiries.get",
+      "shortPath": "inquiries.get",
+      "description": "Read one inquiry by id",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inquiryId",
+            "optional": false,
+            "type": "string",
+            "description": "Inquiry id (inq_...)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, reference-id?: string | null, note?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, created-at?: string | null, updated-at?: string | null, completed-at?: string | null, decisioned-at?: string | null, expires-at?: string | null, redacted-at?: string | null, reviewer-comment?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona inquiry"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquiries.list",
+      "shortPath": "inquiries.list",
+      "description": "List inquiries filtered by status, account, reference or template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id after which the page starts (from links.next)"
+          },
+          {
+            "key": "pageBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id before which the page ends (from links.prev)"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "How many records per page"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated statuses, e.g. completed,needs_review"
+          },
+          {
+            "key": "accountId",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated account ids"
+          },
+          {
+            "key": "referenceId",
+            "optional": true,
+            "type": "string",
+            "description": "Only inquiries with this reference id"
+          },
+          {
+            "key": "inquiryTemplateId",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated inquiry template ids (itmpl_...)"
+          },
+          {
+            "key": "templateId",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated legacy template ids (tmpl_...)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, reference-id?: string | null, note?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, created-at?: string | null, updated-at?: string | null, completed-at?: string | null, decisioned-at?: string | null, expires-at?: string | null, redacted-at?: string | null, reviewer-comment?: string | null } | null, relationships?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ prev?: string | null, next?: string | null } | null",
+            "description": "Pagination links"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquiries.markForReview",
+      "shortPath": "inquiries.markForReview",
+      "description": "Mark an inquiry for manual review",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inquiryId",
+            "optional": false,
+            "type": "string",
+            "description": "Inquiry id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, reference-id?: string | null, note?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, created-at?: string | null, updated-at?: string | null, completed-at?: string | null, decisioned-at?: string | null, expires-at?: string | null, redacted-at?: string | null, reviewer-comment?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona inquiry"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquiries.redact",
+      "shortPath": "inquiries.redact",
+      "description": "Redact an inquiry; the data is permanently removed",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inquiryId",
+            "optional": false,
+            "type": "string",
+            "description": "Inquiry id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, reference-id?: string | null, note?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, created-at?: string | null, updated-at?: string | null, completed-at?: string | null, decisioned-at?: string | null, expires-at?: string | null, redacted-at?: string | null, reviewer-comment?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona inquiry"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquiries.removeTag",
+      "shortPath": "inquiries.removeTag",
+      "description": "Remove a tag from an inquiry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inquiryId",
+            "optional": false,
+            "type": "string",
+            "description": "Inquiry id"
+          },
+          {
+            "key": "tagName",
+            "optional": true,
+            "type": "string",
+            "description": "Tag name"
+          },
+          {
+            "key": "tagId",
+            "optional": true,
+            "type": "string",
+            "description": "Tag id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, reference-id?: string | null, note?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, created-at?: string | null, updated-at?: string | null, completed-at?: string | null, decisioned-at?: string | null, expires-at?: string | null, redacted-at?: string | null, reviewer-comment?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona inquiry"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquiries.update",
+      "shortPath": "inquiries.update",
+      "description": "Update inquiry attributes",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inquiryId",
+            "optional": false,
+            "type": "string",
+            "description": "Inquiry id"
+          },
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "{ note?: string | null, fields?: Record<string, any>, tags?: string[], redirect-uri?: string | null }",
+            "description": "Inquiry attributes to change"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, reference-id?: string | null, note?: string | null, tags?: string[] | null, fields?: Record<string, any> | null, created-at?: string | null, updated-at?: string | null, completed-at?: string | null, decisioned-at?: string | null, expires-at?: string | null, redacted-at?: string | null, reviewer-comment?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona inquiry"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquirySessions.create",
+      "shortPath": "inquirySessions.create",
+      "description": "Create a session for an inquiry",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inquiryId",
+            "optional": false,
+            "type": "string",
+            "description": "Inquiry the session belongs to (inq_...)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, created-at?: string | null, started-at?: string | null, expired-at?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona inquiry session"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquirySessions.expire",
+      "shortPath": "inquirySessions.expire",
+      "description": "Expire one inquiry session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inquirySessionId",
+            "optional": false,
+            "type": "string",
+            "description": "Session id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, created-at?: string | null, started-at?: string | null, expired-at?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona inquiry session"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquirySessions.expireAll",
+      "shortPath": "inquirySessions.expireAll",
+      "description": "Expire every session of the given inquiries",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inquiryIds",
+            "optional": false,
+            "type": "string[]",
+            "description": "Inquiries whose sessions all expire"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, created-at?: string | null, started-at?: string | null, expired-at?: string | null } | null, relationships?: Record<string, any> | null }[]",
+            "description": "The expired sessions"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquirySessions.generateOneTimeLink",
+      "shortPath": "inquirySessions.generateOneTimeLink",
+      "description": "Generate a one-time link for an inquiry session",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inquirySessionId",
+            "optional": false,
+            "type": "string",
+            "description": "Session id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, created-at?: string | null, started-at?: string | null, expired-at?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona inquiry session"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ one-time-link?: string | null, one-time-link-short?: string | null }",
+            "description": "The generated link"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquirySessions.get",
+      "shortPath": "inquirySessions.get",
+      "description": "Read one inquiry session",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inquirySessionId",
+            "optional": false,
+            "type": "string",
+            "description": "Session id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, created-at?: string | null, started-at?: string | null, expired-at?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona inquiry session"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquiryTemplates.get",
+      "shortPath": "inquiryTemplates.get",
+      "description": "Read one inquiry template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inquiryTemplateId",
+            "optional": false,
+            "type": "string",
+            "description": "Template id (itmpl_...)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { name?: string | null, status?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona inquiry template"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquiryTemplates.list",
+      "shortPath": "inquiryTemplates.list",
+      "description": "List the inquiry templates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id after which the page starts (from links.next)"
+          },
+          {
+            "key": "pageBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id before which the page ends (from links.prev)"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "How many records per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { name?: string | null, status?: string | null } | null, relationships?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ prev?: string | null, next?: string | null } | null",
+            "description": "Pagination links"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.inquiryTemplates.listVersions",
+      "shortPath": "inquiryTemplates.listVersions",
+      "description": "List the versions of one inquiry template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "inquiryTemplateId",
+            "optional": false,
+            "type": "string",
+            "description": "Template whose versions to list (itmpl_...)"
+          },
+          {
+            "key": "pageAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id after which the page starts (from links.next)"
+          },
+          {
+            "key": "pageBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id before which the page ends (from links.prev)"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "How many records per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { name-display?: string | null, description?: string | null, status?: string | null, live?: boolean | null } | null, relationships?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ prev?: string | null, next?: string | null } | null",
+            "description": "Pagination links"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.webhooks.archive",
+      "shortPath": "webhooks.archive",
+      "description": "Archive a webhook; archived webhooks cannot be re-enabled",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, url?: string | null, name?: string | null, description?: string | null, enabled-events?: string[] | null, api-version?: string | null, api-key-inflection?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona webhook"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a webhook; the answer carries its signing secret",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "{ url: string, enabled-events: string[], name?: string, description?: string, api-version?: string, api-key-inflection?: kebab | camel | snake }",
+            "description": "Webhook attributes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, url?: string | null, name?: string | null, description?: string | null, enabled-events?: string[] | null, api-version?: string | null, api-key-inflection?: string | null, secret?: string | null, secrets?: any[] | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona webhook"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.webhooks.disable",
+      "shortPath": "webhooks.disable",
+      "description": "Disable a webhook; deliveries stop until it is enabled again",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, url?: string | null, name?: string | null, description?: string | null, enabled-events?: string[] | null, api-version?: string | null, api-key-inflection?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona webhook"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.webhooks.enable",
+      "shortPath": "webhooks.enable",
+      "description": "Enable a webhook",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, url?: string | null, name?: string | null, description?: string | null, enabled-events?: string[] | null, api-version?: string | null, api-key-inflection?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona webhook"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Read one webhook",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id (wbh_...)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, url?: string | null, name?: string | null, description?: string | null, enabled-events?: string[] | null, api-version?: string | null, api-key-inflection?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona webhook"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List the webhooks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pageAfter",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id after which the page starts (from links.next)"
+          },
+          {
+            "key": "pageBefore",
+            "optional": true,
+            "type": "string",
+            "description": "Cursor: the id before which the page ends (from links.prev)"
+          },
+          {
+            "key": "pageSize",
+            "optional": true,
+            "type": "number",
+            "description": "How many records per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, url?: string | null, name?: string | null, description?: string | null, enabled-events?: string[] | null, api-version?: string | null, api-key-inflection?: string | null } | null, relationships?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ prev?: string | null, next?: string | null } | null",
+            "description": "Pagination links"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.webhooks.rotateSecret",
+      "shortPath": "webhooks.rotateSecret",
+      "description": "Rotate the webhook signing secret; the old one stops signing once its window ends",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id"
+          },
+          {
+            "key": "expiresInSeconds",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds the current secret keeps signing beside the new one; Persona default when omitted"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, url?: string | null, name?: string | null, description?: string | null, enabled-events?: string[] | null, api-version?: string | null, api-key-inflection?: string | null, secret?: string | null, secrets?: any[] | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona webhook"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.webhooks.searchEvents",
+      "shortPath": "webhooks.searchEvents",
+      "description": "Search recorded webhook events",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Search predicate tree, e.g. { attribute: \"reference-id\", operator: \"eq\", value: \"user_1\" } or { and: [...] }"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "{ attribute: string, direction: asc | desc }",
+            "description": "Sort order"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "{ after?: string, before?: string, size?: number }",
+            "description": "Paging"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, created-at?: string | null } | null, relationships?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ prev?: string | null, next?: string | null } | null",
+            "description": "Pagination links"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          }
+        ]
+      }
+    },
+    {
+      "path": "persona.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a webhook URL, name or subscribed events",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id"
+          },
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "{ url?: string, enabled-events?: string[], name?: string, description?: string, api-version?: string, api-key-inflection?: kebab | camel | snake }",
+            "description": "Webhook attributes to change; use enable/disable for the state"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type?: string | null, attributes?: { status?: string | null, url?: string | null, name?: string | null, description?: string | null, enabled-events?: string[] | null, api-version?: string | null, api-key-inflection?: string | null } | null, relationships?: Record<string, any> | null }",
+            "description": "A Persona webhook"
+          },
+          {
+            "key": "included",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Related resources requested via include"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any> | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "persona.webhooks.persona.event",
+      "shortPath": "persona.event",
+      "description": "A Persona webhook delivery: an inquiry or verification event",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string | null, id: string, attributes: { name: string, payload?: { data: any, included?: any[] | null } | null, created-at?: string | null } }",
+            "description": "The event"
+          }
+        ]
+      },
+      "responseType": "{ data: { type?: string | null, id: string, attributes: { name: string, payload?: { data: any, included?: any[] | null } | null, created-at?: string | null } } }",
+      "usageExample": "persona({\n    webhookHooks: {\n        persona: {\n            event: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

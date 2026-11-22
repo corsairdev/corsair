@@ -1,0 +1,1662 @@
+{
+  "id": "laposta",
+  "displayName": "Laposta",
+  "description": "Dutch email marketing and newsletter platform for managing mailing lists, subscriber members, custom fields, segments, campaigns, webhook subscriptions, and delivery reports.",
+  "npmPackageName": "@corsair-dev/laposta",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 41,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "laposta.api.campaigns.create",
+      "shortPath": "campaigns.create",
+      "description": "Create a regular email campaign",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "regular"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "previewtext",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "{ name: string, email: string }"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "list_ids",
+            "optional": false,
+            "type": "(string | Record<string, string[]>)[]",
+            "description": "List IDs, or { '<list_id>': ['<segment_id>', ...] } entries to send to segments of a list"
+          },
+          {
+            "key": "stats",
+            "optional": true,
+            "type": "{ ga: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ account_id?: string | null, campaign_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, type?: regular, delivery_requested?: string | null, delivery_requested_iso?: string | null, delivery_started?: string | null, delivery_started_iso?: string | null, delivery_ended?: string | null, delivery_ended_iso?: string | null, name: string, subject?: string | null, previewtext?: string | null, from?: { name: string, email: string }, reply_to?: string | null, list_ids?: Record<string, string[]>, stats?: { ga: string }, web?: string | null, screenshot?: Record<string, string>, state?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.campaigns.delete",
+      "shortPath": "campaigns.delete",
+      "description": "Delete an unsent or previously sent campaign",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ account_id?: string | null, campaign_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, type?: regular, delivery_requested?: string | null, delivery_requested_iso?: string | null, delivery_started?: string | null, delivery_started_iso?: string | null, delivery_ended?: string | null, delivery_ended_iso?: string | null, name: string, subject?: string | null, previewtext?: string | null, from?: { name: string, email: string }, reply_to?: string | null, list_ids?: Record<string, string[]>, stats?: { ga: string }, web?: string | null, screenshot?: Record<string, string>, state?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.campaigns.get",
+      "shortPath": "campaigns.get",
+      "description": "Retrieve a specific campaign by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ account_id?: string | null, campaign_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, type?: regular, delivery_requested?: string | null, delivery_requested_iso?: string | null, delivery_started?: string | null, delivery_started_iso?: string | null, delivery_ended?: string | null, delivery_ended_iso?: string | null, name: string, subject?: string | null, previewtext?: string | null, from?: { name: string, email: string }, reply_to?: string | null, list_ids?: Record<string, string[]>, stats?: { ga: string }, web?: string | null, screenshot?: Record<string, string>, state?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.campaigns.get_content",
+      "shortPath": "campaigns.get_content",
+      "description": "Retrieve the HTML and plaintext campaign content",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ account_id?: string | null, campaign_id: string, plaintext?: string | null, html?: string | null, import_url?: string | null, report?: { javascript?: boolean, flash?: boolean, no_unsubscribe?: boolean, empty_unsubscribe?: boolean, css?: string[], images?: string[] } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.campaigns.history",
+      "shortPath": "campaigns.history",
+      "description": "Retrieve paginated events for a campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_date_from",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "event_date_to",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "event_date"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "desc | asc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ limit: number, has_more: boolean, next_cursor: string | null }"
+          },
+          {
+            "key": "order",
+            "optional": false,
+            "type": "{ order_by: string, order: desc | asc }"
+          },
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "Record<string, string | null>"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ event: { type: string, timezone: string, event_date: string, event_date_iso: string, campaign: { campaign_id: string, name: string, from_automation: boolean, deleted: boolean }, list?: { list_id: string, name: string, deleted: boolean }, member?: { member_id: string | null, email: string | null, deleted: boolean }, details: { source?: string | null, source_url?: string | null, unsubscribe_source?: string | null, url?: string | null, link_type?: string | null, reason?: string | null, automation_name?: string | null, feedback_reason?: string | null, feedback_comments?: string | null, bounce_type?: string | null, bounce_code?: string | number, softbounce_count?: number, softbounce_max_count?: number } | null } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.campaigns.list",
+      "shortPath": "campaigns.list",
+      "description": "Retrieve all email campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "draft | sent"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ campaign: { account_id?: string | null, campaign_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, type?: regular, delivery_requested?: string | null, delivery_requested_iso?: string | null, delivery_started?: string | null, delivery_started_iso?: string | null, delivery_ended?: string | null, delivery_ended_iso?: string | null, name: string, subject?: string | null, previewtext?: string | null, from?: { name: string, email: string }, reply_to?: string | null, list_ids?: Record<string, string[]>, stats?: { ga: string }, web?: string | null, screenshot?: Record<string, string>, state?: string | null } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ limit: number, has_more: boolean, next_cursor: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.campaigns.schedule",
+      "shortPath": "campaigns.schedule",
+      "description": "Schedule campaign delivery to its configured recipients",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "delivery_requested",
+            "optional": false,
+            "type": "string | string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ account_id?: string | null, campaign_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, type?: regular, delivery_requested?: string | null, delivery_requested_iso?: string | null, delivery_started?: string | null, delivery_started_iso?: string | null, delivery_ended?: string | null, delivery_ended_iso?: string | null, name: string, subject?: string | null, previewtext?: string | null, from?: { name: string, email: string }, reply_to?: string | null, list_ids?: Record<string, string[]>, stats?: { ga: string }, web?: string | null, screenshot?: Record<string, string>, state?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.campaigns.send",
+      "shortPath": "campaigns.send",
+      "description": "Send a campaign to its configured recipients",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ account_id?: string | null, campaign_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, type?: regular, delivery_requested?: string | null, delivery_requested_iso?: string | null, delivery_started?: string | null, delivery_started_iso?: string | null, delivery_ended?: string | null, delivery_ended_iso?: string | null, name: string, subject?: string | null, previewtext?: string | null, from?: { name: string, email: string }, reply_to?: string | null, list_ids?: Record<string, string[]>, stats?: { ga: string }, web?: string | null, screenshot?: Record<string, string>, state?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.campaigns.send_test",
+      "shortPath": "campaigns.send_test",
+      "description": "Send a campaign test email to the specified address",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ account_id?: string | null, campaign_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, type?: regular, delivery_requested?: string | null, delivery_requested_iso?: string | null, delivery_started?: string | null, delivery_started_iso?: string | null, delivery_ended?: string | null, delivery_ended_iso?: string | null, name: string, subject?: string | null, previewtext?: string | null, from?: { name: string, email: string }, reply_to?: string | null, list_ids?: Record<string, string[]>, stats?: { ga: string }, web?: string | null, screenshot?: Record<string, string>, state?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.campaigns.update",
+      "shortPath": "campaigns.update",
+      "description": "Update campaign metadata and recipients",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subject",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "previewtext",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "{ name?: string, email?: string }"
+          },
+          {
+            "key": "reply_to",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "list_ids",
+            "optional": true,
+            "type": "(string | Record<string, string[]>)[]",
+            "description": "List IDs, or { '<list_id>': ['<segment_id>', ...] } entries to send to segments of a list"
+          },
+          {
+            "key": "stats",
+            "optional": true,
+            "type": "{ ga: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ account_id?: string | null, campaign_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, type?: regular, delivery_requested?: string | null, delivery_requested_iso?: string | null, delivery_started?: string | null, delivery_started_iso?: string | null, delivery_ended?: string | null, delivery_ended_iso?: string | null, name: string, subject?: string | null, previewtext?: string | null, from?: { name: string, email: string }, reply_to?: string | null, list_ids?: Record<string, string[]>, stats?: { ga: string }, web?: string | null, screenshot?: Record<string, string>, state?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.campaigns.update_content",
+      "shortPath": "campaigns.update_content",
+      "description": "Set campaign content from HTML or an import URL",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "import_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "inline_css",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign",
+            "optional": false,
+            "type": "{ account_id?: string | null, campaign_id: string, plaintext?: string | null, html?: string | null, import_url?: string | null, report?: { javascript?: boolean, flash?: boolean, no_unsubscribe?: boolean, empty_unsubscribe?: boolean, css?: string[], images?: string[] } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.fields.create",
+      "shortPath": "fields.create",
+      "description": "Create a new custom field for a mailing list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "datatype",
+            "optional": false,
+            "type": "text | numeric | date | select_single | select_multiple"
+          },
+          {
+            "key": "datatype_display",
+            "optional": true,
+            "type": "select | radio | input | textarea"
+          },
+          {
+            "key": "defaultvalue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "string[]"
+          },
+          {
+            "key": "required",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "in_form",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "in_list",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field",
+            "optional": false,
+            "type": "{ field_id: string, list_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, state?: active | deleted, name: string, tag?: string | null, custom_name?: string | null, defaultvalue?: string | null, datatype: text | numeric | date | select_single | select_multiple | labels, datatype_display?: select | radio | input | textarea | null, options?: string[], options_full?: { id: number, value: string }[], required: boolean, in_form: boolean, in_list: boolean, is_email?: boolean, autocomplete?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.fields.delete",
+      "shortPath": "fields.delete",
+      "description": "Delete a custom field from a mailing list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field",
+            "optional": false,
+            "type": "{ field_id: string, list_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, state?: active | deleted, name: string, tag?: string | null, custom_name?: string | null, defaultvalue?: string | null, datatype: text | numeric | date | select_single | select_multiple | labels, datatype_display?: select | radio | input | textarea | null, options?: string[], options_full?: { id: number, value: string }[], required: boolean, in_form: boolean, in_list: boolean, is_email?: boolean, autocomplete?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.fields.get",
+      "shortPath": "fields.get",
+      "description": "Retrieve a specific custom field by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field",
+            "optional": false,
+            "type": "{ field_id: string, list_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, state?: active | deleted, name: string, tag?: string | null, custom_name?: string | null, defaultvalue?: string | null, datatype: text | numeric | date | select_single | select_multiple | labels, datatype_display?: select | radio | input | textarea | null, options?: string[], options_full?: { id: number, value: string }[], required: boolean, in_form: boolean, in_list: boolean, is_email?: boolean, autocomplete?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.fields.list",
+      "shortPath": "fields.list",
+      "description": "Retrieve custom fields for a mailing list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ field: { field_id: string, list_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, state?: active | deleted, name: string, tag?: string | null, custom_name?: string | null, defaultvalue?: string | null, datatype: text | numeric | date | select_single | select_multiple | labels, datatype_display?: select | radio | input | textarea | null, options?: string[], options_full?: { id: number, value: string }[], required: boolean, in_form: boolean, in_list: boolean, is_email?: boolean, autocomplete?: string | null } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.fields.update",
+      "shortPath": "fields.update",
+      "description": "Update a custom field; changing its datatype removes stored values",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "datatype",
+            "optional": true,
+            "type": "text | numeric | date | select_single | select_multiple"
+          },
+          {
+            "key": "datatype_display",
+            "optional": true,
+            "type": "select | radio | input | textarea"
+          },
+          {
+            "key": "options_full",
+            "optional": true,
+            "type": "Record<string, string> | { id: number | string, value: string }[]"
+          },
+          {
+            "key": "defaultvalue",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "required",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "in_form",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "in_list",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "field",
+            "optional": false,
+            "type": "{ field_id: string, list_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, state?: active | deleted, name: string, tag?: string | null, custom_name?: string | null, defaultvalue?: string | null, datatype: text | numeric | date | select_single | select_multiple | labels, datatype_display?: select | radio | input | textarea | null, options?: string[], options_full?: { id: number, value: string }[], required: boolean, in_form: boolean, in_list: boolean, is_email?: boolean, autocomplete?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.lists.create",
+      "shortPath": "lists.create",
+      "description": "Create a new mailing list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "remarks",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscribe_notification_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unsubscribe_notification_email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list",
+            "optional": false,
+            "type": "{ list_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, state: active | deleted, name: string, locked?: boolean, remarks?: string | null, subscribe_notification_email?: string | null, unsubscribe_notification_email?: string | null, members?: { active: number, unsubscribed: number, cleaned: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.lists.delete",
+      "shortPath": "lists.delete",
+      "description": "Delete a mailing list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list",
+            "optional": false,
+            "type": "{ list_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, state: active | deleted, name: string, locked?: boolean, remarks?: string | null, subscribe_notification_email?: string | null, unsubscribe_notification_email?: string | null, members?: { active: number, unsubscribed: number, cleaned: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.lists.get",
+      "shortPath": "lists.get",
+      "description": "Retrieve a specific mailing list by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list",
+            "optional": false,
+            "type": "{ list_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, state: active | deleted, name: string, locked?: boolean, remarks?: string | null, subscribe_notification_email?: string | null, unsubscribe_notification_email?: string | null, members?: { active: number, unsubscribed: number, cleaned: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.lists.list",
+      "shortPath": "lists.list",
+      "description": "Retrieve all mailing lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ list: { list_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, state: active | deleted, name: string, locked?: boolean, remarks?: string | null, subscribe_notification_email?: string | null, unsubscribe_notification_email?: string | null, members?: { active: number, unsubscribed: number, cleaned: number } } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.lists.purge_members",
+      "shortPath": "lists.purge_members",
+      "description": "Permanently remove every active member from a mailing list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list",
+            "optional": false,
+            "type": "{ list_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, state: active | deleted, name: string, locked?: boolean, remarks?: string | null, subscribe_notification_email?: string | null, unsubscribe_notification_email?: string | null, members?: { active: number, unsubscribed: number, cleaned: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.lists.sync_members",
+      "shortPath": "lists.sync_members",
+      "description": "Add, update, or bulk-unsubscribe members in a mailing list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "actions",
+            "optional": true,
+            "type": "(add | update | unsubscribe_excluded)[]"
+          },
+          {
+            "key": "mode",
+            "optional": true,
+            "type": "edit | add | add_and_edit"
+          },
+          {
+            "key": "members",
+            "optional": false,
+            "type": "{ member_id?: string, email?: string, state?: active | unsubscribed, source_url?: string, custom_fields?: Record<string, any> }[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "report",
+            "optional": false,
+            "type": "{ provided_count: number, errors_count: number, skipped_count: number, edited_count: number, added_count: number, unsubscribed_count?: number }"
+          },
+          {
+            "key": "errors",
+            "optional": false,
+            "type": "{ provided_data: { member_id?: string, email?: string, state?: active | unsubscribed, source_url?: string, custom_fields?: Record<string, any> }, error: { message: string, code: number, parameter?: string, id?: string, type?: string } }[]"
+          },
+          {
+            "key": "skipped",
+            "optional": false,
+            "type": "{ provided_data: { member_id?: string, email?: string, state?: active | unsubscribed, source_url?: string, custom_fields?: Record<string, any> }, member?: { member_id: string, list_id: string, email: string, state: active | unsubscribed | unconfirmed | cleaned | deleted, timezone?: string | null, signup_date?: string | null, signup_date_iso?: string | null, modified?: string | null, modified_iso?: string | null, confirm_date?: string | null, confirm_date_iso?: string | null, ip?: string | null, source_url?: string | null, custom_fields?: Record<string, any> } }[]"
+          },
+          {
+            "key": "edited",
+            "optional": false,
+            "type": "{ provided_data: { member_id?: string, email?: string, state?: active | unsubscribed, source_url?: string, custom_fields?: Record<string, any> }, member?: { member_id: string, list_id: string, email: string, state: active | unsubscribed | unconfirmed | cleaned | deleted, timezone?: string | null, signup_date?: string | null, signup_date_iso?: string | null, modified?: string | null, modified_iso?: string | null, confirm_date?: string | null, confirm_date_iso?: string | null, ip?: string | null, source_url?: string | null, custom_fields?: Record<string, any> } }[]"
+          },
+          {
+            "key": "added",
+            "optional": false,
+            "type": "{ provided_data: { member_id?: string, email?: string, state?: active | unsubscribed, source_url?: string, custom_fields?: Record<string, any> }, member?: { member_id: string, list_id: string, email: string, state: active | unsubscribed | unconfirmed | cleaned | deleted, timezone?: string | null, signup_date?: string | null, signup_date_iso?: string | null, modified?: string | null, modified_iso?: string | null, confirm_date?: string | null, confirm_date_iso?: string | null, ip?: string | null, source_url?: string | null, custom_fields?: Record<string, any> } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.lists.update",
+      "shortPath": "lists.update",
+      "description": "Update an existing mailing list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "locked",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "remarks",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "subscribe_notification_email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "unsubscribe_notification_email",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list",
+            "optional": false,
+            "type": "{ list_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, state: active | deleted, name: string, locked?: boolean, remarks?: string | null, subscribe_notification_email?: string | null, unsubscribe_notification_email?: string | null, members?: { active: number, unsubscribed: number, cleaned: number } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.members.create",
+      "shortPath": "members.create",
+      "description": "Subscribe a member, which may send a confirmation email",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "ip",
+            "optional": false,
+            "type": "string | string"
+          },
+          {
+            "key": "source_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "user_agent",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any>"
+          },
+          {
+            "key": "options",
+            "optional": true,
+            "type": "{ upsert?: boolean, suppress_reactivation?: boolean, suppress_email_notification?: boolean, ignore_doubleoptin?: boolean, spam_check?: boolean }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "member",
+            "optional": false,
+            "type": "{ member_id: string, list_id: string, email: string, state: active | unsubscribed | unconfirmed | cleaned | deleted, timezone?: string | null, signup_date?: string | null, signup_date_iso?: string | null, modified?: string | null, modified_iso?: string | null, confirm_date?: string | null, confirm_date_iso?: string | null, ip?: string | null, source_url?: string | null, custom_fields?: Record<string, any> }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.members.delete",
+      "shortPath": "members.delete",
+      "description": "Unsubscribe or delete a member from a list",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "member_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "member",
+            "optional": false,
+            "type": "{ member_id: string, list_id: string, email: string, state: active | unsubscribed | unconfirmed | cleaned | deleted, timezone?: string | null, signup_date?: string | null, signup_date_iso?: string | null, modified?: string | null, modified_iso?: string | null, confirm_date?: string | null, confirm_date_iso?: string | null, ip?: string | null, source_url?: string | null, custom_fields?: Record<string, any> }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.members.get",
+      "shortPath": "members.get",
+      "description": "Retrieve a specific subscriber by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "member_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "member",
+            "optional": false,
+            "type": "{ member_id: string, list_id: string, email: string, state: active | unsubscribed | unconfirmed | cleaned | deleted, timezone?: string | null, signup_date?: string | null, signup_date_iso?: string | null, modified?: string | null, modified_iso?: string | null, confirm_date?: string | null, confirm_date_iso?: string | null, ip?: string | null, source_url?: string | null, custom_fields?: Record<string, any> }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.members.history",
+      "shortPath": "members.history",
+      "description": "Retrieve a member event history with cursor pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "member_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "campaign_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "event_date_from",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "event_date_to",
+            "optional": true,
+            "type": "string | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "event_date"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "desc | asc"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ limit: number, has_more: boolean, next_cursor: string | null }"
+          },
+          {
+            "key": "order",
+            "optional": false,
+            "type": "{ order_by: string, order: desc | asc }"
+          },
+          {
+            "key": "filters",
+            "optional": false,
+            "type": "Record<string, string | null>"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ event: { type: string, timezone: string, event_date: string, event_date_iso: string, campaign: { campaign_id: string, name: string, from_automation?: boolean, deleted?: boolean } | null, details: { source?: string | null, source_url?: string | null, unsubscribe_source?: string | null, url?: string | null, link_type?: string | null, reason?: string | null, automation_name?: string | null, feedback_reason?: string | null, feedback_comments?: string | null, bounce_type?: string | null, bounce_code?: string | number, softbounce_count?: number, softbounce_max_count?: number } | null } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.members.list",
+      "shortPath": "members.list",
+      "description": "Retrieve subscribers for a mailing list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "active | unsubscribed | cleaned"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order_by",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc"
+          },
+          {
+            "key": "search",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ member: { member_id: string, list_id: string, email: string, state: active | unsubscribed | unconfirmed | cleaned | deleted, timezone?: string | null, signup_date?: string | null, signup_date_iso?: string | null, modified?: string | null, modified_iso?: string | null, confirm_date?: string | null, confirm_date_iso?: string | null, ip?: string | null, source_url?: string | null, custom_fields?: Record<string, any> } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ limit: number, has_more: boolean, next_cursor: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.members.update",
+      "shortPath": "members.update",
+      "description": "Update an existing subscriber",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "member_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "active | unsubscribed"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "member",
+            "optional": false,
+            "type": "{ member_id: string, list_id: string, email: string, state: active | unsubscribed | unconfirmed | cleaned | deleted, timezone?: string | null, signup_date?: string | null, signup_date_iso?: string | null, modified?: string | null, modified_iso?: string | null, confirm_date?: string | null, confirm_date_iso?: string | null, ip?: string | null, source_url?: string | null, custom_fields?: Record<string, any> }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.reports.get",
+      "shortPath": "reports.get",
+      "description": "Retrieve analytics and delivery report for a campaign",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "campaign_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "report",
+            "optional": false,
+            "type": "{ account_id: string, campaign_id: string, sent: number, accepted: number, cleaned: number, complained: number, hardbounced: number, unsubscribed: number, opened_unique: number, clicked_unique: number, webversion_unique: number, accepted_ratio: number, opened_ratio: number, clicked_ratio: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.reports.list",
+      "shortPath": "reports.list",
+      "description": "Retrieve paginated delivery reports for campaigns",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ report: { account_id: string, campaign_id: string, sent: number, accepted: number, cleaned: number, complained: number, hardbounced: number, unsubscribed: number, opened_unique: number, clicked_unique: number, webversion_unique: number, accepted_ratio: number, opened_ratio: number, clicked_ratio: number } }[]"
+          },
+          {
+            "key": "pagination",
+            "optional": true,
+            "type": "{ limit: number, has_more: boolean, next_cursor: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.segments.create",
+      "shortPath": "segments.create",
+      "description": "Create a segment for a mailing list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "definition",
+            "optional": false,
+            "type": "string",
+            "description": "Segment definition as a JSON string of blocks and rules, e.g. {\"blocks\":[{\"rules\":[...]}]}; read one from segments.get"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segment",
+            "optional": false,
+            "type": "{ segment_id: string, list_id: string, name: string, definition: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, state?: active | deleted }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.segments.delete",
+      "shortPath": "segments.delete",
+      "description": "Permanently delete a mailing-list segment",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "segment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segment",
+            "optional": false,
+            "type": "{ segment_id: string, list_id: string, name: string, definition: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, state?: active | deleted }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.segments.get",
+      "shortPath": "segments.get",
+      "description": "Retrieve one mailing-list segment and its definition",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "segment_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segment",
+            "optional": false,
+            "type": "{ segment_id: string, list_id: string, name: string, definition: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, state?: active | deleted }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.segments.list",
+      "shortPath": "segments.list",
+      "description": "Retrieve all segments belonging to a mailing list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ segment: { segment_id: string, list_id: string, name: string, definition: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, state?: active | deleted } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.segments.update",
+      "shortPath": "segments.update",
+      "description": "Change a segment name or definition",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "segment_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "definition",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "segment",
+            "optional": false,
+            "type": "{ segment_id: string, list_id: string, name: string, definition: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, state?: active | deleted }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a webhook subscription for a mailing list",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "subscribed | modified | deactivated"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "blocked",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ webhook_id: string, list_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, state: active | deleted, event: subscribed | modified | deactivated, url: string, blocked: boolean, secret: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Permanently delete a webhook subscription",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ webhook_id: string, list_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, state: active | deleted, event: subscribed | modified | deactivated, url: string, blocked: boolean, secret: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Retrieve a webhook subscription and its signing secret",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ webhook_id: string, list_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, state: active | deleted, event: subscribed | modified | deactivated, url: string, blocked: boolean, secret: string }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhook subscriptions configured for a mailing list",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ webhook: { webhook_id: string, list_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, state: active | deleted, event: subscribed | modified | deactivated, url: string, blocked: boolean, secret: string } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "laposta.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Change a webhook subscription configuration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "list_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "webhook_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "subscribed | modified | deactivated"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "blocked",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhook",
+            "optional": false,
+            "type": "{ webhook_id: string, list_id: string, timezone?: string | null, created?: string | null, created_iso?: string | null, modified?: string | null, modified_iso?: string | null, state: active | deleted, event: subscribed | modified | deactivated, url: string, blocked: boolean, secret: string }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

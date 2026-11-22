@@ -1,0 +1,53 @@
+{
+  "name": "@corsair-dev/pdf4me",
+  "version": "0.1.0",
+  "description": "PDF4me is a PDF and document processing SaaS. This plugin merges, splits, compresses and extracts PDFs, converts them to Word and from HTML, runs OCR, reads PDF metadata, and polls asynchronous processing jobs. Binary answers come back base64-encoded.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "dev-source": "./index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "rm -rf dist && tsc --build --force && tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "jest",
+    "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
+  },
+  "peerDependencies": {
+    "corsair": ">=0.1.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "corsair": "workspace:*",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.4.9",
+    "tsup": "^8.0.1",
+    "typescript": "catalog:",
+    "zod": "^4.1.13"
+  },
+  "keywords": [
+    "corsair",
+    "pdf4me",
+    "plugin",
+    "pdf",
+    "document-processing"
+  ],
+  "author": "Ambikeeshh",
+  "license": "Apache-2.0",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/corsairdev/corsair.git",
+    "directory": "packages/pdf4me"
+  },
+  "homepage": "https://pdf4me.com"
+}

@@ -160,6 +160,9 @@ const PLUGIN_ICON_URL_OVERRIDES: Record<string, string> = {
 	// interzoid.com serves no favicon (twenty-icons and Google both miss);
 	// its GitHub organisation logo is square.
 	interzoid: 'https://github.com/interzoid.png?size=256',
+	// passcreator.com only serves a 32 px favicon; its GitHub organisation
+	// logo is the same orange mark at a usable size.
+	passcreator: 'https://github.com/passcreator.png?size=256',
 	// plugin-docs.yaml names zoho.com, whose icon is the generic Zoho mark;
 	// App Store icon is Zoho Invoice's own.
 	zohoinvoice:
