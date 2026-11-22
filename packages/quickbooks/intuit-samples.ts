@@ -1,6 +1,6 @@
 // Request/response samples from Intuit's model catalog
 // (https://static.developer.intuit.com/JSONObjects/CodesModelsJsonObjects_v2.json),
-// trimmed to three items per array, email addresses replaced. Used by samples.test.ts only.
+// trimmed to three items per array, email addresses replaced. Used by samples.test.ts only; not imported by the plugin.
 // unknown because each sample is checked by the operation's own schema in the test.
 export const intuitSamples: Record<
 	string,

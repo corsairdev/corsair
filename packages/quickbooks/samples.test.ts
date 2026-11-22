@@ -1,5 +1,5 @@
 import { CatalogEndpoints } from './endpoints';
-import { intuitSamples } from './intuit-samples.fixtures';
+import { intuitSamples } from './intuit-samples';
 
 // Each case runs one operation with Intuit's documented request body and answers
 // with Intuit's documented response, as the closest thing to a live call.
