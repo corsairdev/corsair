@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-22T15:00:47.818Z",
+  "generatedAt": "2026-11-22T15:12:08.170Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
@@ -1259,7 +1259,7 @@
     "pagerduty": "twenty-icons",
     "pandadoc": "curated",
     "paperform": "twenty-icons",
-    "paradym": "twenty-icons",
+    "paradym": "curated",
     "parallel": "twenty-icons",
     "parma": "twenty-icons",
     "parsehub": "twenty-icons",
@@ -1681,6 +1681,7 @@
     "opensea",
     "outlook",
     "pandadoc",
+    "paradym",
     "parseur",
     "pdfapi",
     "perigon",

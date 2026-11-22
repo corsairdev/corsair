@@ -469,6 +469,10 @@
     "from": "https://media.brand.dev/b694e05f-1b73-4b48-941c-ab27e1167754.svg",
     "note": "found with the context.dev Brand API for pandadoc.com"
   },
+  "paradym": {
+    "from": "/tmp/claude-1000/-home-pranayasus-Corsair/51977f99-eac4-4df8-8d92-2a33fe9d2a3e/scratchpad/site/paradym.svg",
+    "note": "Paradym's own mark from paradym.id (inline header SVG) on its black rounded square, as in the site favicon"
+  },
   "parseur": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/parseur.svg"
   },
