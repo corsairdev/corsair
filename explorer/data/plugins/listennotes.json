@@ -1,0 +1,2041 @@
+{
+  "id": "listennotes",
+  "displayName": "Listen Notes",
+  "description": "Podcast search, directory, playlist, and audience insights API for exploring and managing podcast data.",
+  "npmPackageName": "@corsair-dev/listennotes",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 33,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "listennotes.api.curated.get",
+      "shortPath": "curated.get",
+      "description": "Fetch a curated list of podcasts by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Curated list ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pub_date_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "listennotes_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "podcasts",
+            "optional": false,
+            "type": "{ id?: string, title?: string | null, publisher?: string | null, image?: string | null, thumbnail?: string | null, listennotes_url?: string, is_claimed?: boolean, type?: episodic | serial, total_episodes?: number, audio_length_sec?: number, update_frequency_hours?: number, earliest_pub_date_ms?: number, rss?: string | null, latest_episode_id?: string, latest_pub_date_ms?: number, explicit_content?: boolean, description?: string | null, itunes_id?: number | null, language?: string | null, country?: string | null, website?: string | null, email?: string | null, genre_ids?: number[], listen_score?: number | null, listen_score_global_rank?: string | null, looking_for?: { cohosts?: boolean, cross_promotion?: boolean, sponsors?: boolean, guests?: boolean }, extra?: { youtube_url?: string, facebook_handle?: string, instagram_handle?: string, twitter_handle?: string, wechat_handle?: string, patreon_handle?: string, amazon_music_url?: string, linkedin_url?: string, spotify_url?: string, url1?: string, url2?: string, url3?: string }, has_guest_interviews?: boolean, has_sponsors?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.curated.list",
+      "shortPath": "curated.list",
+      "description": "Fetch curated lists of podcasts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_number",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "previous_page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "next_page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "has_next",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "has_previous",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "curated_lists",
+            "optional": false,
+            "type": "{ id: string, title: string, description?: string, source_url?: string, source_domain?: string, pub_date_ms?: number, listennotes_url?: string, total?: number, podcasts?: { id?: string, title?: string | null, publisher?: string | null, image?: string | null, thumbnail?: string | null, listennotes_url?: string, is_claimed?: boolean, type?: episodic | serial, total_episodes?: number, audio_length_sec?: number, update_frequency_hours?: number, earliest_pub_date_ms?: number, rss?: string | null, latest_episode_id?: string, latest_pub_date_ms?: number, explicit_content?: boolean, description?: string | null, itunes_id?: number | null, language?: string | null, country?: string | null, website?: string | null, email?: string | null, genre_ids?: number[], listen_score?: number | null, listen_score_global_rank?: string | null, looking_for?: { cohosts?: boolean, cross_promotion?: boolean, sponsors?: boolean, guests?: boolean }, extra?: { youtube_url?: string, facebook_handle?: string, instagram_handle?: string, twitter_handle?: string, wechat_handle?: string, patreon_handle?: string, amazon_music_url?: string, linkedin_url?: string, spotify_url?: string, url1?: string, url2?: string, url3?: string }, has_guest_interviews?: boolean, has_sponsors?: boolean }[] }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.episodes.get",
+      "shortPath": "episodes.get",
+      "description": "Fetch detailed metadata for an episode by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Episode ID"
+          },
+          {
+            "key": "show_transcript",
+            "optional": true,
+            "type": "number",
+            "description": "1 to fetch transcript if available"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pub_date_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "audio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "audio_length_sec",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "listennotes_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maybe_audio_invalid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "listennotes_edit_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "explicit_content",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "podcast",
+            "optional": true,
+            "type": "{ id?: string, title?: string | null, publisher?: string | null, image?: string | null, thumbnail?: string | null, listennotes_url?: string, is_claimed?: boolean, type?: episodic | serial, total_episodes?: number, audio_length_sec?: number, update_frequency_hours?: number, earliest_pub_date_ms?: number, rss?: string | null, latest_episode_id?: string, latest_pub_date_ms?: number, explicit_content?: boolean, description?: string | null, itunes_id?: number | null, language?: string | null, country?: string | null, website?: string | null, email?: string | null, genre_ids?: number[], listen_score?: number | null, listen_score_global_rank?: string | null, looking_for?: { cohosts?: boolean, cross_promotion?: boolean, sponsors?: boolean, guests?: boolean }, extra?: { youtube_url?: string, facebook_handle?: string, instagram_handle?: string, twitter_handle?: string, wechat_handle?: string, patreon_handle?: string, amazon_music_url?: string, linkedin_url?: string, spotify_url?: string, url1?: string, url2?: string, url3?: string }, has_guest_interviews?: boolean, has_sponsors?: boolean }"
+          },
+          {
+            "key": "transcript",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.episodes.getBatch",
+      "shortPath": "episodes.getBatch",
+      "description": "Fetch basic metadata for up to 10 episodes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string",
+            "description": "Comma-separated episode IDs"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "episodes",
+            "optional": false,
+            "type": "{ id: string, title: string, description?: string, pub_date_ms?: number, audio?: string, audio_length_sec?: number, listennotes_url?: string, image?: string, thumbnail?: string, maybe_audio_invalid?: boolean, listennotes_edit_url?: string, explicit_content?: boolean, link?: string | null, podcast?: { id?: string, title?: string | null, publisher?: string | null, image?: string | null, thumbnail?: string | null, listennotes_url?: string, is_claimed?: boolean, type?: episodic | serial, total_episodes?: number, audio_length_sec?: number, update_frequency_hours?: number, earliest_pub_date_ms?: number, rss?: string | null, latest_episode_id?: string, latest_pub_date_ms?: number, explicit_content?: boolean, description?: string | null, itunes_id?: number | null, language?: string | null, country?: string | null, website?: string | null, email?: string | null, genre_ids?: number[], listen_score?: number | null, listen_score_global_rank?: string | null, looking_for?: { cohosts?: boolean, cross_promotion?: boolean, sponsors?: boolean, guests?: boolean }, extra?: { youtube_url?: string, facebook_handle?: string, instagram_handle?: string, twitter_handle?: string, wechat_handle?: string, patreon_handle?: string, amazon_music_url?: string, linkedin_url?: string, spotify_url?: string, url1?: string, url2?: string, url3?: string }, has_guest_interviews?: boolean, has_sponsors?: boolean } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.episodes.getRecommendations",
+      "shortPath": "episodes.getRecommendations",
+      "description": "Fetch recommended episodes based on a given episode ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Episode ID"
+          },
+          {
+            "key": "safe_mode",
+            "optional": true,
+            "type": "number",
+            "description": "1 to restrict explicit content"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recommendations",
+            "optional": false,
+            "type": "{ id: string, title: string, description?: string, pub_date_ms?: number, audio?: string, audio_length_sec?: number, listennotes_url?: string, image?: string, thumbnail?: string, maybe_audio_invalid?: boolean, listennotes_edit_url?: string, explicit_content?: boolean, link?: string | null, podcast?: { id?: string, title?: string | null, publisher?: string | null, image?: string | null, thumbnail?: string | null, listennotes_url?: string, is_claimed?: boolean, type?: episodic | serial, total_episodes?: number, audio_length_sec?: number, update_frequency_hours?: number, earliest_pub_date_ms?: number, rss?: string | null, latest_episode_id?: string, latest_pub_date_ms?: number, explicit_content?: boolean, description?: string | null, itunes_id?: number | null, language?: string | null, country?: string | null, website?: string | null, email?: string | null, genre_ids?: number[], listen_score?: number | null, listen_score_global_rank?: string | null, looking_for?: { cohosts?: boolean, cross_promotion?: boolean, sponsors?: boolean, guests?: boolean }, extra?: { youtube_url?: string, facebook_handle?: string, instagram_handle?: string, twitter_handle?: string, wechat_handle?: string, patreon_handle?: string, amazon_music_url?: string, linkedin_url?: string, spotify_url?: string, url1?: string, url2?: string, url3?: string }, has_guest_interviews?: boolean, has_sponsors?: boolean } }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.episodes.justListen",
+      "shortPath": "episodes.justListen",
+      "description": "Fetch a random recently published podcast episode",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "pub_date_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "audio",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "audio_length_sec",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "listennotes_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "maybe_audio_invalid",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "listennotes_edit_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "explicit_content",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "link",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "podcast",
+            "optional": true,
+            "type": "{ id?: string, title?: string | null, publisher?: string | null, image?: string | null, thumbnail?: string | null, listennotes_url?: string, is_claimed?: boolean, type?: episodic | serial, total_episodes?: number, audio_length_sec?: number, update_frequency_hours?: number, earliest_pub_date_ms?: number, rss?: string | null, latest_episode_id?: string, latest_pub_date_ms?: number, explicit_content?: boolean, description?: string | null, itunes_id?: number | null, language?: string | null, country?: string | null, website?: string | null, email?: string | null, genre_ids?: number[], listen_score?: number | null, listen_score_global_rank?: string | null, looking_for?: { cohosts?: boolean, cross_promotion?: boolean, sponsors?: boolean, guests?: boolean }, extra?: { youtube_url?: string, facebook_handle?: string, instagram_handle?: string, twitter_handle?: string, wechat_handle?: string, patreon_handle?: string, amazon_music_url?: string, linkedin_url?: string, spotify_url?: string, url1?: string, url2?: string, url3?: string }, has_guest_interviews?: boolean, has_sponsors?: boolean }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.genres.list",
+      "shortPath": "genres.list",
+      "description": "Fetch a list of podcast genres supported by Listen Notes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "top_level_only",
+            "optional": true,
+            "type": "number",
+            "description": "1 for top level genres only"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "genres",
+            "optional": false,
+            "type": "{ id: number, name: string, parent_id?: number | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.languages.list",
+      "shortPath": "languages.list",
+      "description": "Fetch languages supported by the Listen Notes directory",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "languages",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.playlists.addItem",
+      "shortPath": "playlists.addItem",
+      "description": "Add an episode or podcast to a playlist",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "11-character playlist ID"
+          },
+          {
+            "key": "episode_id",
+            "optional": true,
+            "type": "string",
+            "description": "Episode ID (mutually exclusive with podcast_id)"
+          },
+          {
+            "key": "podcast_id",
+            "optional": true,
+            "type": "string",
+            "description": "Podcast ID (mutually exclusive with episode_id)"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "episode | custom_audio | podcast"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "added_at_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.playlists.create",
+      "shortPath": "playlists.create",
+      "description": "Create a playlist owned by the authenticated API account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Playlist name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | unlisted | private"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "episode_list | podcast_list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "listennotes_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | unlisted | private"
+          },
+          {
+            "key": "episode_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "podcast_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_audio_length_sec",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_timestamp_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "episode_list | podcast_list"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.playlists.delete",
+      "shortPath": "playlists.delete",
+      "description": "Permanently delete a playlist and its saved references",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "11-character playlist ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "true"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.playlists.deleteItem",
+      "shortPath": "playlists.deleteItem",
+      "description": "Remove an episode or podcast reference from a playlist",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "11-character playlist ID"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number",
+            "description": "Playlist item ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "deleted",
+            "optional": false,
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.playlists.get",
+      "shortPath": "playlists.get",
+      "description": "Fetch a playlist and its items by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "11-character playlist ID"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "episode_list | podcast_list",
+            "description": "Playlist type"
+          },
+          {
+            "key": "last_timestamp_ms",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination timestamp in ms"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "recent_added_first | oldest_added_first | recent_published_first | oldest_published_first",
+            "description": "Sort order"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "listennotes_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | unlisted | private"
+          },
+          {
+            "key": "last_timestamp_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_audio_length_sec",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "episode_list | podcast_list"
+          },
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ id: number, type: episode | custom_audio | podcast, notes?: string, added_at_ms?: number, data?: Record<string, any> }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.playlists.list",
+      "shortPath": "playlists.list",
+      "description": "Fetch a list of user playlists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "name_a_to_z | name_z_to_a",
+            "description": "Sort order"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_number",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "previous_page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "next_page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "has_next",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "has_previous",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "playlists",
+            "optional": false,
+            "type": "{ id: string, name: string, description?: string, image?: string | null, thumbnail?: string | null, listennotes_url?: string, visibility?: public | unlisted | private, episode_count?: number, podcast_count?: number, total_audio_length_sec?: number, last_timestamp_ms?: number, type?: episode_list | podcast_list }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.playlists.update",
+      "shortPath": "playlists.update",
+      "description": "Update playlist metadata or its saved default view",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "11-character playlist ID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | unlisted | private"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "episode_list | podcast_list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "listennotes_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "visibility",
+            "optional": true,
+            "type": "public | unlisted | private"
+          },
+          {
+            "key": "episode_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "podcast_count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total_audio_length_sec",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "last_timestamp_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "episode_list | podcast_list"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.playlists.updateItem",
+      "shortPath": "playlists.updateItem",
+      "description": "Update notes attached to a playlist item",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "11-character playlist ID"
+          },
+          {
+            "key": "item_id",
+            "optional": false,
+            "type": "number",
+            "description": "Playlist item ID"
+          },
+          {
+            "key": "notes",
+            "optional": false,
+            "type": "string",
+            "description": "New notes, or an empty string to clear"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "episode | custom_audio | podcast"
+          },
+          {
+            "key": "notes",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "added_at_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "data",
+            "optional": true,
+            "type": "Record<string, any>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.podcasts.delete",
+      "shortPath": "podcasts.delete",
+      "description": "Request removal of a podcast from the Listen Notes directory",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Podcast ID"
+          },
+          {
+            "key": "reason",
+            "optional": true,
+            "type": "string",
+            "description": "Reason for requesting deletion"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "deleted | in review"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.podcasts.get",
+      "shortPath": "podcasts.get",
+      "description": "Fetch detailed metadata and episodes for a podcast by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Podcast ID"
+          },
+          {
+            "key": "next_episode_pub_date",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination pub date in ms"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "recent_first | oldest_first",
+            "description": "Sort episodes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "publisher",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "image",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "thumbnail",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "listennotes_url",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "is_claimed",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "episodic | serial"
+          },
+          {
+            "key": "total_episodes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "audio_length_sec",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "update_frequency_hours",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "earliest_pub_date_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "rss",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "latest_episode_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "latest_pub_date_ms",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "explicit_content",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "itunes_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "genre_ids",
+            "optional": true,
+            "type": "number[]"
+          },
+          {
+            "key": "listen_score",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "listen_score_global_rank",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "looking_for",
+            "optional": true,
+            "type": "{ cohosts?: boolean, cross_promotion?: boolean, sponsors?: boolean, guests?: boolean }"
+          },
+          {
+            "key": "extra",
+            "optional": true,
+            "type": "{ youtube_url?: string, facebook_handle?: string, instagram_handle?: string, twitter_handle?: string, wechat_handle?: string, patreon_handle?: string, amazon_music_url?: string, linkedin_url?: string, spotify_url?: string, url1?: string, url2?: string, url3?: string }"
+          },
+          {
+            "key": "has_guest_interviews",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "has_sponsors",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "episodes",
+            "optional": false,
+            "type": "{ id: string, title: string, description?: string, pub_date_ms?: number, audio?: string, audio_length_sec?: number, listennotes_url?: string, image?: string, thumbnail?: string, maybe_audio_invalid?: boolean, listennotes_edit_url?: string, explicit_content?: boolean, link?: string | null }[]"
+          },
+          {
+            "key": "next_episode_pub_date",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.podcasts.getAudience",
+      "shortPath": "podcasts.getAudience",
+      "description": "Fetch available audience region demographics for a podcast",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Podcast ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "by_regions",
+            "optional": true,
+            "type": "{ region?: string, ratio?: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.podcasts.getBatch",
+      "shortPath": "podcasts.getBatch",
+      "description": "Fetch basic metadata for up to 10 podcasts by supported IDs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Listen Notes IDs"
+          },
+          {
+            "key": "rsses",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated RSS feed URLs"
+          },
+          {
+            "key": "itunes_ids",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Apple Podcasts IDs"
+          },
+          {
+            "key": "spotify_ids",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated Spotify IDs"
+          },
+          {
+            "key": "show_latest_episodes",
+            "optional": true,
+            "type": "number",
+            "description": "1 to include the latest episodes"
+          },
+          {
+            "key": "next_episode_pub_date",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination timestamp in epoch milliseconds"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "podcasts",
+            "optional": false,
+            "type": "{ id?: string, title?: string | null, publisher?: string | null, image?: string | null, thumbnail?: string | null, listennotes_url?: string, is_claimed?: boolean, type?: episodic | serial, total_episodes?: number, audio_length_sec?: number, update_frequency_hours?: number, earliest_pub_date_ms?: number, rss?: string | null, latest_episode_id?: string, latest_pub_date_ms?: number, explicit_content?: boolean, description?: string | null, itunes_id?: number | null, language?: string | null, country?: string | null, website?: string | null, email?: string | null, genre_ids?: number[], listen_score?: number | null, listen_score_global_rank?: string | null, looking_for?: { cohosts?: boolean, cross_promotion?: boolean, sponsors?: boolean, guests?: boolean }, extra?: { youtube_url?: string, facebook_handle?: string, instagram_handle?: string, twitter_handle?: string, wechat_handle?: string, patreon_handle?: string, amazon_music_url?: string, linkedin_url?: string, spotify_url?: string, url1?: string, url2?: string, url3?: string }, has_guest_interviews?: boolean, has_sponsors?: boolean }[]"
+          },
+          {
+            "key": "latest_episodes",
+            "optional": true,
+            "type": "{ id: string, title: string, description?: string, pub_date_ms?: number, audio?: string, audio_length_sec?: number, listennotes_url?: string, image?: string, thumbnail?: string, maybe_audio_invalid?: boolean, listennotes_edit_url?: string, explicit_content?: boolean, link?: string | null, podcast?: { id?: string, title?: string | null, publisher?: string | null, image?: string | null, thumbnail?: string | null, listennotes_url?: string, is_claimed?: boolean, type?: episodic | serial, total_episodes?: number, audio_length_sec?: number, update_frequency_hours?: number, earliest_pub_date_ms?: number, rss?: string | null, latest_episode_id?: string, latest_pub_date_ms?: number, explicit_content?: boolean, description?: string | null, itunes_id?: number | null, language?: string | null, country?: string | null, website?: string | null, email?: string | null, genre_ids?: number[], listen_score?: number | null, listen_score_global_rank?: string | null, looking_for?: { cohosts?: boolean, cross_promotion?: boolean, sponsors?: boolean, guests?: boolean }, extra?: { youtube_url?: string, facebook_handle?: string, instagram_handle?: string, twitter_handle?: string, wechat_handle?: string, patreon_handle?: string, amazon_music_url?: string, linkedin_url?: string, spotify_url?: string, url1?: string, url2?: string, url3?: string }, has_guest_interviews?: boolean, has_sponsors?: boolean } }[]"
+          },
+          {
+            "key": "next_episode_pub_date",
+            "optional": true,
+            "type": "number | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.podcasts.getBest",
+      "shortPath": "podcasts.getBest",
+      "description": "Fetch best podcasts by genre and region",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "genre_id",
+            "optional": true,
+            "type": "number | string",
+            "description": "Genre ID from genres.list (number or numeric string)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string",
+            "description": "Region code"
+          },
+          {
+            "key": "publisher_region",
+            "optional": true,
+            "type": "string",
+            "description": "Publisher region code"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Language"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "recent_added_first | oldest_added_first | recent_published_first | oldest_published_first | listen_score",
+            "description": "Sort option"
+          },
+          {
+            "key": "safe_mode",
+            "optional": true,
+            "type": "number",
+            "description": "1 to restrict explicit content"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "parent_id",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "has_next",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "has_previous",
+            "optional": false,
+            "type": "boolean"
+          },
+          {
+            "key": "page_number",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "previous_page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "next_page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "listennotes_url",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "podcasts",
+            "optional": false,
+            "type": "{ id?: string, title?: string | null, publisher?: string | null, image?: string | null, thumbnail?: string | null, listennotes_url?: string, is_claimed?: boolean, type?: episodic | serial, total_episodes?: number, audio_length_sec?: number, update_frequency_hours?: number, earliest_pub_date_ms?: number, rss?: string | null, latest_episode_id?: string, latest_pub_date_ms?: number, explicit_content?: boolean, description?: string | null, itunes_id?: number | null, language?: string | null, country?: string | null, website?: string | null, email?: string | null, genre_ids?: number[], listen_score?: number | null, listen_score_global_rank?: string | null, looking_for?: { cohosts?: boolean, cross_promotion?: boolean, sponsors?: boolean, guests?: boolean }, extra?: { youtube_url?: string, facebook_handle?: string, instagram_handle?: string, twitter_handle?: string, wechat_handle?: string, patreon_handle?: string, amazon_music_url?: string, linkedin_url?: string, spotify_url?: string, url1?: string, url2?: string, url3?: string }, has_guest_interviews?: boolean, has_sponsors?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.podcasts.getByDomain",
+      "shortPath": "podcasts.getByDomain",
+      "description": "Fetch podcasts published by a domain, with page pagination",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain_name",
+            "optional": false,
+            "type": "string",
+            "description": "Publisher's domain name"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "page_number",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "has_next",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "next_page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "has_previous",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "previous_page_number",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "podcasts",
+            "optional": false,
+            "type": "{ id?: string, title?: string | null, publisher?: string | null, image?: string | null, thumbnail?: string | null, listennotes_url?: string, is_claimed?: boolean, type?: episodic | serial, total_episodes?: number, audio_length_sec?: number, update_frequency_hours?: number, earliest_pub_date_ms?: number, rss?: string | null, latest_episode_id?: string, latest_pub_date_ms?: number, explicit_content?: boolean, description?: string | null, itunes_id?: number | null, language?: string | null, country?: string | null, website?: string | null, email?: string | null, genre_ids?: number[], listen_score?: number | null, listen_score_global_rank?: string | null, looking_for?: { cohosts?: boolean, cross_promotion?: boolean, sponsors?: boolean, guests?: boolean }, extra?: { youtube_url?: string, facebook_handle?: string, instagram_handle?: string, twitter_handle?: string, wechat_handle?: string, patreon_handle?: string, amazon_music_url?: string, linkedin_url?: string, spotify_url?: string, url1?: string, url2?: string, url3?: string }, has_guest_interviews?: boolean, has_sponsors?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.podcasts.getEpisodes",
+      "shortPath": "podcasts.getEpisodes",
+      "description": "Fetch paginated episodes for a podcast by ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Podcast ID"
+          },
+          {
+            "key": "next_episode_pub_date",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination pub date in ms"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "recent_first | oldest_first",
+            "description": "Sort episodes"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "total_episodes",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "next_episode_pub_date",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "episodes",
+            "optional": false,
+            "type": "{ id: string, title: string, description?: string, pub_date_ms?: number, audio?: string, audio_length_sec?: number, listennotes_url?: string, image?: string, thumbnail?: string, maybe_audio_invalid?: boolean, listennotes_edit_url?: string, explicit_content?: boolean, link?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.podcasts.getRecommendations",
+      "shortPath": "podcasts.getRecommendations",
+      "description": "Fetch recommended podcasts based on a given podcast ID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Podcast ID"
+          },
+          {
+            "key": "safe_mode",
+            "optional": true,
+            "type": "number",
+            "description": "1 to restrict explicit content"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "recommendations",
+            "optional": false,
+            "type": "{ id?: string, title?: string | null, publisher?: string | null, image?: string | null, thumbnail?: string | null, listennotes_url?: string, is_claimed?: boolean, type?: episodic | serial, total_episodes?: number, audio_length_sec?: number, update_frequency_hours?: number, earliest_pub_date_ms?: number, rss?: string | null, latest_episode_id?: string, latest_pub_date_ms?: number, explicit_content?: boolean, description?: string | null, itunes_id?: number | null, language?: string | null, country?: string | null, website?: string | null, email?: string | null, genre_ids?: number[], listen_score?: number | null, listen_score_global_rank?: string | null, looking_for?: { cohosts?: boolean, cross_promotion?: boolean, sponsors?: boolean, guests?: boolean }, extra?: { youtube_url?: string, facebook_handle?: string, instagram_handle?: string, twitter_handle?: string, wechat_handle?: string, patreon_handle?: string, amazon_music_url?: string, linkedin_url?: string, spotify_url?: string, url1?: string, url2?: string, url3?: string }, has_guest_interviews?: boolean, has_sponsors?: boolean }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.podcasts.refreshRss",
+      "shortPath": "podcasts.refreshRss",
+      "description": "Request an RSS refresh for a podcast (limited to hourly)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Podcast ID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "refreshing | refreshed"
+          },
+          {
+            "key": "last_refreshed_at_ms",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.podcasts.submit",
+      "shortPath": "podcasts.submit",
+      "description": "Submit an RSS feed for review in the Listen Notes directory",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rss",
+            "optional": false,
+            "type": "string",
+            "description": "RSS feed URL to submit"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Optional notification email"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "found | in review | rejected"
+          },
+          {
+            "key": "podcast",
+            "optional": false,
+            "type": "{ id?: string, title?: string, publisher?: string, image?: string, thumbnail?: string, listennotes_url?: string, listen_score?: number | null, listen_score_global_rank?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.regions.list",
+      "shortPath": "regions.list",
+      "description": "Fetch supported country and region codes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "regions",
+            "optional": false,
+            "type": "Record<string, string>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.search.relatedSearches",
+      "shortPath": "search.relatedSearches",
+      "description": "Find search terms related to a supplied topic",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Search term"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "terms",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.search.search",
+      "shortPath": "search.search",
+      "description": "Full-text search for podcast episodes, channels, or curated lists",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Search term"
+          },
+          {
+            "key": "sort_by_date",
+            "optional": true,
+            "type": "number",
+            "description": "0 for relevance, 1 for date"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "episode | podcast | curated",
+            "description": "Type of search results"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Pagination offset"
+          },
+          {
+            "key": "len_min",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum audio length in minutes"
+          },
+          {
+            "key": "len_max",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum audio length in minutes"
+          },
+          {
+            "key": "episode_count_min",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum number of episodes"
+          },
+          {
+            "key": "episode_count_max",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum number of episodes"
+          },
+          {
+            "key": "update_freq_min",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum update frequency in hours"
+          },
+          {
+            "key": "update_freq_max",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum update frequency in hours"
+          },
+          {
+            "key": "genre_ids",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-delimited genre IDs"
+          },
+          {
+            "key": "published_before",
+            "optional": true,
+            "type": "number",
+            "description": "Published before epoch ms"
+          },
+          {
+            "key": "published_after",
+            "optional": true,
+            "type": "number",
+            "description": "Published after epoch ms"
+          },
+          {
+            "key": "only_in",
+            "optional": true,
+            "type": "string",
+            "description": "Search only in title, description, author, or audio"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by language"
+          },
+          {
+            "key": "region",
+            "optional": true,
+            "type": "string",
+            "description": "Filter by region"
+          },
+          {
+            "key": "ocid",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-delimited podcast IDs to restrict search to"
+          },
+          {
+            "key": "ncid",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-delimited podcast IDs to exclude from search"
+          },
+          {
+            "key": "safe_mode",
+            "optional": true,
+            "type": "number",
+            "description": "1 to restrict explicit content, 0 otherwise"
+          },
+          {
+            "key": "unique_podcasts",
+            "optional": true,
+            "type": "number",
+            "description": "1 to return unique podcasts"
+          },
+          {
+            "key": "interviews_only",
+            "optional": true,
+            "type": "number",
+            "description": "1 to include only podcasts with guest interviews"
+          },
+          {
+            "key": "sponsored_only",
+            "optional": true,
+            "type": "number",
+            "description": "1 to include only podcasts with sponsors"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Number of results per page"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "took",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.search.searchEpisodeTitles",
+      "shortPath": "search.searchEpisodeTitles",
+      "description": "Search for episodes by title with optional podcast filtering",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Episode title to search for"
+          },
+          {
+            "key": "podcast_id",
+            "optional": true,
+            "type": "string",
+            "description": "Optional podcast identifier"
+          },
+          {
+            "key": "podcast_id_type",
+            "optional": true,
+            "type": "listennotes_id | itunes_id | spotify_id | rss",
+            "description": "Identifier format used by podcast_id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "next_offset",
+            "optional": true,
+            "type": "number",
+            "description": "Returned by the provider, but this operation does not document an offset request parameter."
+          },
+          {
+            "key": "took",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "total",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "results",
+            "optional": true,
+            "type": "Record<string, any>[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.search.spellcheck",
+      "shortPath": "search.spellcheck",
+      "description": "Suggest spelling corrections for a search term",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Search term"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tokens",
+            "optional": false,
+            "type": "{ offset?: number, token?: string, suggestion?: string }[]"
+          },
+          {
+            "key": "corrected_text_html",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.search.trendingSearches",
+      "shortPath": "search.trendingSearches",
+      "description": "Fetch the latest trending search terms",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "terms",
+            "optional": false,
+            "type": "string[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "listennotes.api.search.typeahead",
+      "shortPath": "search.typeahead",
+      "description": "Typeahead search for podcast titles, genres, and terms",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Search query for autocomplete"
+          },
+          {
+            "key": "show_podcasts",
+            "optional": true,
+            "type": "number",
+            "description": "1 to include podcasts in suggestions"
+          },
+          {
+            "key": "show_genres",
+            "optional": true,
+            "type": "number",
+            "description": "1 to include genres in suggestions"
+          },
+          {
+            "key": "safe_mode",
+            "optional": true,
+            "type": "number",
+            "description": "1 to restrict explicit content"
+          },
+          {
+            "key": "show_related_searches",
+            "optional": true,
+            "type": "number",
+            "description": "1 to include related searches"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "terms",
+            "optional": false,
+            "type": "string[]"
+          },
+          {
+            "key": "genres",
+            "optional": true,
+            "type": "{ id: number, name: string, parent_id?: number | null }[]"
+          },
+          {
+            "key": "podcasts",
+            "optional": true,
+            "type": "{ id: string, title_original?: string, title_highlighted?: string, publisher_original?: string, publisher_highlighted?: string, image?: string, thumbnail?: string, explicit_content?: boolean }[]"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

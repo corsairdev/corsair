@@ -1,0 +1,2141 @@
+---
+title: "Listen Notes API reference"
+sidebarTitle: "API"
+description: "API reference for the Listen Notes plugin in Corsair: every `listennotes.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Curated
+
+### get
+
+`curated.get`
+
+Fetch a curated list of podcasts by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.curated.get({ id: 'e4a6865261f945aeb78f2ebcb3fd46fb' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Curated list ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `source_url` | `string` | No | — |
+| `source_domain` | `string` | No | — |
+| `pub_date_ms` | `number` | No | — |
+| `listennotes_url` | `string` | No | — |
+| `total` | `number` | No | — |
+| `podcasts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="podcasts full type">
+
+```ts
+{
+  id?: string,
+  title?: string | null,
+  publisher?: string | null,
+  image?: string | null,
+  thumbnail?: string | null,
+  listennotes_url?: string,
+  is_claimed?: boolean,
+  type?: episodic | serial,
+  total_episodes?: number,
+  audio_length_sec?: number,
+  update_frequency_hours?: number,
+  earliest_pub_date_ms?: number,
+  rss?: string | null,
+  latest_episode_id?: string,
+  latest_pub_date_ms?: number,
+  explicit_content?: boolean,
+  description?: string | null,
+  itunes_id?: number | null,
+  language?: string | null,
+  country?: string | null,
+  website?: string | null,
+  email?: string | null,
+  genre_ids?: number[],
+  listen_score?: number | null,
+  listen_score_global_rank?: string | null,
+  looking_for?: {
+    cohosts?: boolean,
+    cross_promotion?: boolean,
+    sponsors?: boolean,
+    guests?: boolean
+  },
+  extra?: {
+    youtube_url?: string,
+    facebook_handle?: string,
+    instagram_handle?: string,
+    twitter_handle?: string,
+    wechat_handle?: string,
+    patreon_handle?: string,
+    amazon_music_url?: string,
+    linkedin_url?: string,
+    spotify_url?: string,
+    url1?: string,
+    url2?: string,
+    url3?: string
+  },
+  has_guest_interviews?: boolean,
+  has_sponsors?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`curated.list`
+
+Fetch curated lists of podcasts
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.curated.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_number` | `number` | Yes | — |
+| `previous_page_number` | `number \| null` | No | — |
+| `next_page_number` | `number \| null` | No | — |
+| `total` | `number` | Yes | — |
+| `has_next` | `boolean` | Yes | — |
+| `has_previous` | `boolean` | Yes | — |
+| `curated_lists` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="curated_lists full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  description?: string,
+  source_url?: string,
+  source_domain?: string,
+  pub_date_ms?: number,
+  listennotes_url?: string,
+  total?: number,
+  podcasts?: {
+    id?: string,
+    title?: string | null,
+    publisher?: string | null,
+    image?: string | null,
+    thumbnail?: string | null,
+    listennotes_url?: string,
+    is_claimed?: boolean,
+    type?: episodic | serial,
+    total_episodes?: number,
+    audio_length_sec?: number,
+    update_frequency_hours?: number,
+    earliest_pub_date_ms?: number,
+    rss?: string | null,
+    latest_episode_id?: string,
+    latest_pub_date_ms?: number,
+    explicit_content?: boolean,
+    description?: string | null,
+    itunes_id?: number | null,
+    language?: string | null,
+    country?: string | null,
+    website?: string | null,
+    email?: string | null,
+    genre_ids?: number[],
+    listen_score?: number | null,
+    listen_score_global_rank?: string | null,
+    looking_for?: {
+      cohosts?: boolean,
+      cross_promotion?: boolean,
+      sponsors?: boolean,
+      guests?: boolean
+    },
+    extra?: {
+      youtube_url?: string,
+      facebook_handle?: string,
+      instagram_handle?: string,
+      twitter_handle?: string,
+      wechat_handle?: string,
+      patreon_handle?: string,
+      amazon_music_url?: string,
+      linkedin_url?: string,
+      spotify_url?: string,
+      url1?: string,
+      url2?: string,
+      url3?: string
+    },
+    has_guest_interviews?: boolean,
+    has_sponsors?: boolean
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Episodes
+
+### get
+
+`episodes.get`
+
+Fetch detailed metadata for an episode by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.episodes.get({ id: '254444fa6cf64a43a95292a70eb6869b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Episode ID |
+| `show_transcript` | `number` | No | 1 to fetch transcript if available |
+
+`show_transcript: 1` requests a transcript when available; transcript data requires a PRO or ENTERPRISE plan.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `pub_date_ms` | `number` | No | — |
+| `audio` | `string` | No | — |
+| `audio_length_sec` | `number` | No | — |
+| `listennotes_url` | `string` | No | — |
+| `image` | `string` | No | — |
+| `thumbnail` | `string` | No | — |
+| `maybe_audio_invalid` | `boolean` | No | — |
+| `listennotes_edit_url` | `string` | No | — |
+| `explicit_content` | `boolean` | No | — |
+| `link` | `string \| null` | No | — |
+| `podcast` | `object` | No | — |
+| `transcript` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="podcast full type">
+
+```ts
+{
+  id?: string,
+  title?: string | null,
+  publisher?: string | null,
+  image?: string | null,
+  thumbnail?: string | null,
+  listennotes_url?: string,
+  is_claimed?: boolean,
+  type?: episodic | serial,
+  total_episodes?: number,
+  audio_length_sec?: number,
+  update_frequency_hours?: number,
+  earliest_pub_date_ms?: number,
+  rss?: string | null,
+  latest_episode_id?: string,
+  latest_pub_date_ms?: number,
+  explicit_content?: boolean,
+  description?: string | null,
+  itunes_id?: number | null,
+  language?: string | null,
+  country?: string | null,
+  website?: string | null,
+  email?: string | null,
+  genre_ids?: number[],
+  listen_score?: number | null,
+  listen_score_global_rank?: string | null,
+  looking_for?: {
+    cohosts?: boolean,
+    cross_promotion?: boolean,
+    sponsors?: boolean,
+    guests?: boolean
+  },
+  extra?: {
+    youtube_url?: string,
+    facebook_handle?: string,
+    instagram_handle?: string,
+    twitter_handle?: string,
+    wechat_handle?: string,
+    patreon_handle?: string,
+    amazon_music_url?: string,
+    linkedin_url?: string,
+    spotify_url?: string,
+    url1?: string,
+    url2?: string,
+    url3?: string
+  },
+  has_guest_interviews?: boolean,
+  has_sponsors?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBatch
+
+`episodes.getBatch`
+
+Fetch basic metadata for up to 10 episodes
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.episodes.getBatch({ ids: '254444fa6cf64a43a95292a70eb6869b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string` | Yes | Comma-separated episode IDs |
+
+Supports up to 10 episode IDs and is available only on PRO and ENTERPRISE plans.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `episodes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="episodes full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  description?: string,
+  pub_date_ms?: number,
+  audio?: string,
+  audio_length_sec?: number,
+  listennotes_url?: string,
+  image?: string,
+  thumbnail?: string,
+  maybe_audio_invalid?: boolean,
+  listennotes_edit_url?: string,
+  explicit_content?: boolean,
+  link?: string | null,
+  podcast?: {
+    id?: string,
+    title?: string | null,
+    publisher?: string | null,
+    image?: string | null,
+    thumbnail?: string | null,
+    listennotes_url?: string,
+    is_claimed?: boolean,
+    type?: episodic | serial,
+    total_episodes?: number,
+    audio_length_sec?: number,
+    update_frequency_hours?: number,
+    earliest_pub_date_ms?: number,
+    rss?: string | null,
+    latest_episode_id?: string,
+    latest_pub_date_ms?: number,
+    explicit_content?: boolean,
+    description?: string | null,
+    itunes_id?: number | null,
+    language?: string | null,
+    country?: string | null,
+    website?: string | null,
+    email?: string | null,
+    genre_ids?: number[],
+    listen_score?: number | null,
+    listen_score_global_rank?: string | null,
+    looking_for?: {
+      cohosts?: boolean,
+      cross_promotion?: boolean,
+      sponsors?: boolean,
+      guests?: boolean
+    },
+    extra?: {
+      youtube_url?: string,
+      facebook_handle?: string,
+      instagram_handle?: string,
+      twitter_handle?: string,
+      wechat_handle?: string,
+      patreon_handle?: string,
+      amazon_music_url?: string,
+      linkedin_url?: string,
+      spotify_url?: string,
+      url1?: string,
+      url2?: string,
+      url3?: string
+    },
+    has_guest_interviews?: boolean,
+    has_sponsors?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRecommendations
+
+`episodes.getRecommendations`
+
+Fetch recommended episodes based on a given episode ID
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.episodes.getRecommendations({ id: '254444fa6cf64a43a95292a70eb6869b' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Episode ID |
+| `safe_mode` | `number` | No | 1 to restrict explicit content |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recommendations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="recommendations full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  description?: string,
+  pub_date_ms?: number,
+  audio?: string,
+  audio_length_sec?: number,
+  listennotes_url?: string,
+  image?: string,
+  thumbnail?: string,
+  maybe_audio_invalid?: boolean,
+  listennotes_edit_url?: string,
+  explicit_content?: boolean,
+  link?: string | null,
+  podcast?: {
+    id?: string,
+    title?: string | null,
+    publisher?: string | null,
+    image?: string | null,
+    thumbnail?: string | null,
+    listennotes_url?: string,
+    is_claimed?: boolean,
+    type?: episodic | serial,
+    total_episodes?: number,
+    audio_length_sec?: number,
+    update_frequency_hours?: number,
+    earliest_pub_date_ms?: number,
+    rss?: string | null,
+    latest_episode_id?: string,
+    latest_pub_date_ms?: number,
+    explicit_content?: boolean,
+    description?: string | null,
+    itunes_id?: number | null,
+    language?: string | null,
+    country?: string | null,
+    website?: string | null,
+    email?: string | null,
+    genre_ids?: number[],
+    listen_score?: number | null,
+    listen_score_global_rank?: string | null,
+    looking_for?: {
+      cohosts?: boolean,
+      cross_promotion?: boolean,
+      sponsors?: boolean,
+      guests?: boolean
+    },
+    extra?: {
+      youtube_url?: string,
+      facebook_handle?: string,
+      instagram_handle?: string,
+      twitter_handle?: string,
+      wechat_handle?: string,
+      patreon_handle?: string,
+      amazon_music_url?: string,
+      linkedin_url?: string,
+      spotify_url?: string,
+      url1?: string,
+      url2?: string,
+      url3?: string
+    },
+    has_guest_interviews?: boolean,
+    has_sponsors?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### justListen
+
+`episodes.justListen`
+
+Fetch a random recently published podcast episode
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.episodes.justListen({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `pub_date_ms` | `number` | No | — |
+| `audio` | `string` | No | — |
+| `audio_length_sec` | `number` | No | — |
+| `listennotes_url` | `string` | No | — |
+| `image` | `string` | No | — |
+| `thumbnail` | `string` | No | — |
+| `maybe_audio_invalid` | `boolean` | No | — |
+| `listennotes_edit_url` | `string` | No | — |
+| `explicit_content` | `boolean` | No | — |
+| `link` | `string \| null` | No | — |
+| `podcast` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="podcast full type">
+
+```ts
+{
+  id?: string,
+  title?: string | null,
+  publisher?: string | null,
+  image?: string | null,
+  thumbnail?: string | null,
+  listennotes_url?: string,
+  is_claimed?: boolean,
+  type?: episodic | serial,
+  total_episodes?: number,
+  audio_length_sec?: number,
+  update_frequency_hours?: number,
+  earliest_pub_date_ms?: number,
+  rss?: string | null,
+  latest_episode_id?: string,
+  latest_pub_date_ms?: number,
+  explicit_content?: boolean,
+  description?: string | null,
+  itunes_id?: number | null,
+  language?: string | null,
+  country?: string | null,
+  website?: string | null,
+  email?: string | null,
+  genre_ids?: number[],
+  listen_score?: number | null,
+  listen_score_global_rank?: string | null,
+  looking_for?: {
+    cohosts?: boolean,
+    cross_promotion?: boolean,
+    sponsors?: boolean,
+    guests?: boolean
+  },
+  extra?: {
+    youtube_url?: string,
+    facebook_handle?: string,
+    instagram_handle?: string,
+    twitter_handle?: string,
+    wechat_handle?: string,
+    patreon_handle?: string,
+    amazon_music_url?: string,
+    linkedin_url?: string,
+    spotify_url?: string,
+    url1?: string,
+    url2?: string,
+    url3?: string
+  },
+  has_guest_interviews?: boolean,
+  has_sponsors?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Genres
+
+### list
+
+`genres.list`
+
+Fetch a list of podcast genres supported by Listen Notes
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.genres.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `top_level_only` | `number` | No | 1 for top level genres only |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `genres` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="genres full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  parent_id?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Languages
+
+### list
+
+`languages.list`
+
+Fetch languages supported by the Listen Notes directory
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.languages.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `languages` | `string[]` | Yes | — |
+
+
+
+---
+
+## Playlists
+
+### addItem
+
+`playlists.addItem`
+
+Add an episode or podcast to a playlist
+
+**Risk:** `write`
+
+```ts
+await corsair.listennotes.api.playlists.addItem({ id: 'm1pe7z60bsw', episode_id: '0123456789abcdef0123456789abcdef' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | 11-character playlist ID |
+| `episode_id` | `string` | No | Episode ID (mutually exclusive with podcast_id) |
+| `podcast_id` | `string` | No | Podcast ID (mutually exclusive with episode_id) |
+| `notes` | `string` | No | — |
+
+Supply exactly one 32-character episode ID or podcast ID. Existing active items are reused; the operation can restore deleted items.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `type` | `episode \| custom_audio \| podcast` | Yes | — |
+| `notes` | `string` | No | — |
+| `added_at_ms` | `number` | No | — |
+| `data` | `Record<string, any>` | No | — |
+
+
+
+---
+
+### create
+
+`playlists.create`
+
+Create a playlist owned by the authenticated API account
+
+**Risk:** `write`
+
+```ts
+await corsair.listennotes.api.playlists.create({ name: 'Research queue' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Playlist name |
+| `description` | `string` | No | — |
+| `visibility` | `public \| unlisted \| private` | No | — |
+| `type` | `episode_list \| podcast_list` | No | — |
+
+Creates an empty playlist owned by the API admin. Playlist changes require ownership by that admin account; contributor membership is not sufficient.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `image` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `listennotes_url` | `string` | No | — |
+| `visibility` | `public \| unlisted \| private` | No | — |
+| `episode_count` | `number` | No | — |
+| `podcast_count` | `number` | No | — |
+| `total_audio_length_sec` | `number` | No | — |
+| `last_timestamp_ms` | `number` | No | — |
+| `type` | `episode_list \| podcast_list` | No | — |
+
+
+
+---
+
+### delete
+
+`playlists.delete`
+
+Permanently delete a playlist and its saved references
+
+**Risk:** `destructive`
+
+```ts
+await corsair.listennotes.api.playlists.delete({ id: 'm1pe7z60bsw' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | 11-character playlist ID |
+
+Permanently deletes an owned playlist and its saved references. This cannot be undone; require an explicit confirmation before calling it.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `deleted` | `true` | Yes | — |
+
+
+
+---
+
+### deleteItem
+
+`playlists.deleteItem`
+
+Remove an episode or podcast reference from a playlist
+
+**Risk:** `destructive`
+
+```ts
+await corsair.listennotes.api.playlists.deleteItem({ id: 'm1pe7z60bsw', item_id: 23 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | 11-character playlist ID |
+| `item_id` | `number` | Yes | Playlist item ID |
+
+Removes the playlist reference (not the episode or podcast). Only playlists owned by the API admin can be modified.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `deleted` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`playlists.get`
+
+Fetch a playlist and its items by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.playlists.get({ id: 'm1pe7z60bsw' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | 11-character playlist ID |
+| `type` | `episode_list \| podcast_list` | No | Playlist type |
+| `last_timestamp_ms` | `number` | No | Pagination timestamp in ms |
+| `sort` | `recent_added_first \| oldest_added_first \| recent_published_first \| oldest_published_first` | No | Sort order |
+
+A playlist can hold both episodes and podcasts. Use `type` to choose the view and `last_timestamp_ms` from the response to paginate.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `image` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `listennotes_url` | `string` | No | — |
+| `visibility` | `public \| unlisted \| private` | No | — |
+| `last_timestamp_ms` | `number` | No | — |
+| `total` | `number` | No | — |
+| `total_audio_length_sec` | `number` | No | — |
+| `type` | `episode_list \| podcast_list` | No | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  type: episode | custom_audio | podcast,
+  notes?: string,
+  added_at_ms?: number,
+  data?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`playlists.list`
+
+Fetch a list of user playlists
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.playlists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `name_a_to_z \| name_z_to_a` | No | Sort order |
+| `page` | `number` | No | Page number |
+
+`sort` supports `name_a_to_z` and `name_z_to_a`; `page` paginates through playlists.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_number` | `number` | Yes | — |
+| `previous_page_number` | `number \| null` | No | — |
+| `next_page_number` | `number \| null` | No | — |
+| `total` | `number` | Yes | — |
+| `has_next` | `boolean` | Yes | — |
+| `has_previous` | `boolean` | Yes | — |
+| `playlists` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="playlists full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string,
+  image?: string | null,
+  thumbnail?: string | null,
+  listennotes_url?: string,
+  visibility?: public | unlisted | private,
+  episode_count?: number,
+  podcast_count?: number,
+  total_audio_length_sec?: number,
+  last_timestamp_ms?: number,
+  type?: episode_list | podcast_list
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`playlists.update`
+
+Update playlist metadata or its saved default view
+
+**Risk:** `write`
+
+```ts
+await corsair.listennotes.api.playlists.update({ id: 'm1pe7z60bsw', name: 'Updated queue' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | 11-character playlist ID |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `visibility` | `public \| unlisted \| private` | No | — |
+| `type` | `episode_list \| podcast_list` | No | — |
+
+Updates at least one of name, description, visibility, or type. Switching to private rotates the playlist RSS secret.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `image` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `listennotes_url` | `string` | No | — |
+| `visibility` | `public \| unlisted \| private` | No | — |
+| `episode_count` | `number` | No | — |
+| `podcast_count` | `number` | No | — |
+| `total_audio_length_sec` | `number` | No | — |
+| `last_timestamp_ms` | `number` | No | — |
+| `type` | `episode_list \| podcast_list` | No | — |
+
+
+
+---
+
+### updateItem
+
+`playlists.updateItem`
+
+Update notes attached to a playlist item
+
+**Risk:** `write`
+
+```ts
+await corsair.listennotes.api.playlists.updateItem({ id: 'm1pe7z60bsw', item_id: 23, notes: 'Revisit this episode' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | 11-character playlist ID |
+| `item_id` | `number` | Yes | Playlist item ID |
+| `notes` | `string` | Yes | New notes, or an empty string to clear |
+
+Replaces item notes; an empty string clears them. Only playlists owned by the API admin can be modified.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `type` | `episode \| custom_audio \| podcast` | Yes | — |
+| `notes` | `string` | No | — |
+| `added_at_ms` | `number` | No | — |
+| `data` | `Record<string, any>` | No | — |
+
+
+
+---
+
+## Podcasts
+
+### delete
+
+`podcasts.delete`
+
+Request removal of a podcast from the Listen Notes directory
+
+**Risk:** `destructive`
+
+```ts
+await corsair.listennotes.api.podcasts.delete({ id: '4d3fe717742d4963a85562e9f84d8c79', reason: 'testing' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Podcast ID |
+| `reason` | `string` | No | Reason for requesting deletion |
+
+This submits a podcast deletion request, which Listen Notes reviews within 12 hours. The provider documents `reason: testing` as a way to test without deleting; otherwise confirm the request before use.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `deleted \| in review` | Yes | — |
+
+
+
+---
+
+### get
+
+`podcasts.get`
+
+Fetch detailed metadata and episodes for a podcast by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.podcasts.get({ id: '4d3fe717742d4963a85562e9f84d8c79' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Podcast ID |
+| `next_episode_pub_date` | `number` | No | Pagination pub date in ms |
+| `sort` | `recent_first \| oldest_first` | No | Sort episodes |
+
+The response includes up to 10 episodes. Use `next_episode_pub_date` from the response to paginate; an empty `episodes` array means there are no more.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string \| null` | No | — |
+| `publisher` | `string \| null` | No | — |
+| `image` | `string \| null` | No | — |
+| `thumbnail` | `string \| null` | No | — |
+| `listennotes_url` | `string` | No | — |
+| `is_claimed` | `boolean` | No | — |
+| `type` | `episodic \| serial` | No | — |
+| `total_episodes` | `number` | No | — |
+| `audio_length_sec` | `number` | No | — |
+| `update_frequency_hours` | `number` | No | — |
+| `earliest_pub_date_ms` | `number` | No | — |
+| `rss` | `string \| null` | No | — |
+| `latest_episode_id` | `string` | No | — |
+| `latest_pub_date_ms` | `number` | No | — |
+| `explicit_content` | `boolean` | No | — |
+| `description` | `string \| null` | No | — |
+| `itunes_id` | `number \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `genre_ids` | `number[]` | No | — |
+| `listen_score` | `number \| null` | No | — |
+| `listen_score_global_rank` | `string \| null` | No | — |
+| `looking_for` | `object` | No | — |
+| `extra` | `object` | No | — |
+| `has_guest_interviews` | `boolean` | No | — |
+| `has_sponsors` | `boolean` | No | — |
+| `episodes` | `object[]` | Yes | — |
+| `next_episode_pub_date` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="looking_for full type">
+
+```ts
+{
+  cohosts?: boolean,
+  cross_promotion?: boolean,
+  sponsors?: boolean,
+  guests?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="extra full type">
+
+```ts
+{
+  youtube_url?: string,
+  facebook_handle?: string,
+  instagram_handle?: string,
+  twitter_handle?: string,
+  wechat_handle?: string,
+  patreon_handle?: string,
+  amazon_music_url?: string,
+  linkedin_url?: string,
+  spotify_url?: string,
+  url1?: string,
+  url2?: string,
+  url3?: string
+}
+```
+</Accordion>
+
+<Accordion title="episodes full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  description?: string,
+  pub_date_ms?: number,
+  audio?: string,
+  audio_length_sec?: number,
+  listennotes_url?: string,
+  image?: string,
+  thumbnail?: string,
+  maybe_audio_invalid?: boolean,
+  listennotes_edit_url?: string,
+  explicit_content?: boolean,
+  link?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAudience
+
+`podcasts.getAudience`
+
+Fetch available audience region demographics for a podcast
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.podcasts.getAudience({ id: '4d3fe717742d4963a85562e9f84d8c79' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Podcast ID |
+
+Audience estimates are available only for some podcasts; an empty response is valid when the provider has no regional data.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `by_regions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="by_regions full type">
+
+```ts
+{
+  region?: string,
+  ratio?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBatch
+
+`podcasts.getBatch`
+
+Fetch basic metadata for up to 10 podcasts by supported IDs
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.podcasts.getBatch({ ids: '4d3fe717742d4963a85562e9f84d8c79' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string` | No | Comma-separated Listen Notes IDs |
+| `rsses` | `string` | No | Comma-separated RSS feed URLs |
+| `itunes_ids` | `string` | No | Comma-separated Apple Podcasts IDs |
+| `spotify_ids` | `string` | No | Comma-separated Spotify IDs |
+| `show_latest_episodes` | `number` | No | 1 to include the latest episodes |
+| `next_episode_pub_date` | `number` | No | Pagination timestamp in epoch milliseconds |
+
+POSTs form-encoded selectors and supports up to 10 podcasts. This endpoint is available only on PRO and ENTERPRISE plans; supply at least one selector (`ids`, `rsses`, `itunes_ids`, or `spotify_ids`). With `show_latest_episodes: 1`, pass `next_episode_pub_date` from the response to paginate the latest episodes.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `podcasts` | `object[]` | Yes | — |
+| `latest_episodes` | `object[]` | No | — |
+| `next_episode_pub_date` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="podcasts full type">
+
+```ts
+{
+  id?: string,
+  title?: string | null,
+  publisher?: string | null,
+  image?: string | null,
+  thumbnail?: string | null,
+  listennotes_url?: string,
+  is_claimed?: boolean,
+  type?: episodic | serial,
+  total_episodes?: number,
+  audio_length_sec?: number,
+  update_frequency_hours?: number,
+  earliest_pub_date_ms?: number,
+  rss?: string | null,
+  latest_episode_id?: string,
+  latest_pub_date_ms?: number,
+  explicit_content?: boolean,
+  description?: string | null,
+  itunes_id?: number | null,
+  language?: string | null,
+  country?: string | null,
+  website?: string | null,
+  email?: string | null,
+  genre_ids?: number[],
+  listen_score?: number | null,
+  listen_score_global_rank?: string | null,
+  looking_for?: {
+    cohosts?: boolean,
+    cross_promotion?: boolean,
+    sponsors?: boolean,
+    guests?: boolean
+  },
+  extra?: {
+    youtube_url?: string,
+    facebook_handle?: string,
+    instagram_handle?: string,
+    twitter_handle?: string,
+    wechat_handle?: string,
+    patreon_handle?: string,
+    amazon_music_url?: string,
+    linkedin_url?: string,
+    spotify_url?: string,
+    url1?: string,
+    url2?: string,
+    url3?: string
+  },
+  has_guest_interviews?: boolean,
+  has_sponsors?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="latest_episodes full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  description?: string,
+  pub_date_ms?: number,
+  audio?: string,
+  audio_length_sec?: number,
+  listennotes_url?: string,
+  image?: string,
+  thumbnail?: string,
+  maybe_audio_invalid?: boolean,
+  listennotes_edit_url?: string,
+  explicit_content?: boolean,
+  link?: string | null,
+  podcast?: {
+    id?: string,
+    title?: string | null,
+    publisher?: string | null,
+    image?: string | null,
+    thumbnail?: string | null,
+    listennotes_url?: string,
+    is_claimed?: boolean,
+    type?: episodic | serial,
+    total_episodes?: number,
+    audio_length_sec?: number,
+    update_frequency_hours?: number,
+    earliest_pub_date_ms?: number,
+    rss?: string | null,
+    latest_episode_id?: string,
+    latest_pub_date_ms?: number,
+    explicit_content?: boolean,
+    description?: string | null,
+    itunes_id?: number | null,
+    language?: string | null,
+    country?: string | null,
+    website?: string | null,
+    email?: string | null,
+    genre_ids?: number[],
+    listen_score?: number | null,
+    listen_score_global_rank?: string | null,
+    looking_for?: {
+      cohosts?: boolean,
+      cross_promotion?: boolean,
+      sponsors?: boolean,
+      guests?: boolean
+    },
+    extra?: {
+      youtube_url?: string,
+      facebook_handle?: string,
+      instagram_handle?: string,
+      twitter_handle?: string,
+      wechat_handle?: string,
+      patreon_handle?: string,
+      amazon_music_url?: string,
+      linkedin_url?: string,
+      spotify_url?: string,
+      url1?: string,
+      url2?: string,
+      url3?: string
+    },
+    has_guest_interviews?: boolean,
+    has_sponsors?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBest
+
+`podcasts.getBest`
+
+Fetch best podcasts by genre and region
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.podcasts.getBest({ genre_id: '127' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `genre_id` | `number \| string` | No | Genre ID from genres.list (number or numeric string) |
+| `page` | `number` | No | Page number |
+| `region` | `string` | No | Region code |
+| `publisher_region` | `string` | No | Publisher region code |
+| `language` | `string` | No | Language |
+| `sort` | `recent_added_first \| oldest_added_first \| recent_published_first \| oldest_published_first \| listen_score` | No | Sort option |
+| `safe_mode` | `number` | No | 1 to restrict explicit content |
+
+Pass `next_page_number` as `page` for pagination. `sort` accepts recent_added_first, oldest_added_first, recent_published_first, oldest_published_first, and listen_score.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `name` | `string` | Yes | — |
+| `parent_id` | `number \| null` | No | — |
+| `total` | `number` | Yes | — |
+| `has_next` | `boolean` | Yes | — |
+| `has_previous` | `boolean` | Yes | — |
+| `page_number` | `number` | Yes | — |
+| `previous_page_number` | `number \| null` | No | — |
+| `next_page_number` | `number \| null` | No | — |
+| `listennotes_url` | `string` | Yes | — |
+| `podcasts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="podcasts full type">
+
+```ts
+{
+  id?: string,
+  title?: string | null,
+  publisher?: string | null,
+  image?: string | null,
+  thumbnail?: string | null,
+  listennotes_url?: string,
+  is_claimed?: boolean,
+  type?: episodic | serial,
+  total_episodes?: number,
+  audio_length_sec?: number,
+  update_frequency_hours?: number,
+  earliest_pub_date_ms?: number,
+  rss?: string | null,
+  latest_episode_id?: string,
+  latest_pub_date_ms?: number,
+  explicit_content?: boolean,
+  description?: string | null,
+  itunes_id?: number | null,
+  language?: string | null,
+  country?: string | null,
+  website?: string | null,
+  email?: string | null,
+  genre_ids?: number[],
+  listen_score?: number | null,
+  listen_score_global_rank?: string | null,
+  looking_for?: {
+    cohosts?: boolean,
+    cross_promotion?: boolean,
+    sponsors?: boolean,
+    guests?: boolean
+  },
+  extra?: {
+    youtube_url?: string,
+    facebook_handle?: string,
+    instagram_handle?: string,
+    twitter_handle?: string,
+    wechat_handle?: string,
+    patreon_handle?: string,
+    amazon_music_url?: string,
+    linkedin_url?: string,
+    spotify_url?: string,
+    url1?: string,
+    url2?: string,
+    url3?: string
+  },
+  has_guest_interviews?: boolean,
+  has_sponsors?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getByDomain
+
+`podcasts.getByDomain`
+
+Fetch podcasts published by a domain, with page pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.podcasts.getByDomain({ domain_name: 'publisher.example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain_name` | `string` | Yes | Publisher's domain name |
+| `page` | `number` | No | Page number |
+
+Returns up to 10 podcasts per page. Pass `next_page_number` as `page` to continue.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page_number` | `number` | No | — |
+| `has_next` | `boolean` | No | — |
+| `next_page_number` | `number \| null` | No | — |
+| `has_previous` | `boolean` | No | — |
+| `previous_page_number` | `number \| null` | No | — |
+| `podcasts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="podcasts full type">
+
+```ts
+{
+  id?: string,
+  title?: string | null,
+  publisher?: string | null,
+  image?: string | null,
+  thumbnail?: string | null,
+  listennotes_url?: string,
+  is_claimed?: boolean,
+  type?: episodic | serial,
+  total_episodes?: number,
+  audio_length_sec?: number,
+  update_frequency_hours?: number,
+  earliest_pub_date_ms?: number,
+  rss?: string | null,
+  latest_episode_id?: string,
+  latest_pub_date_ms?: number,
+  explicit_content?: boolean,
+  description?: string | null,
+  itunes_id?: number | null,
+  language?: string | null,
+  country?: string | null,
+  website?: string | null,
+  email?: string | null,
+  genre_ids?: number[],
+  listen_score?: number | null,
+  listen_score_global_rank?: string | null,
+  looking_for?: {
+    cohosts?: boolean,
+    cross_promotion?: boolean,
+    sponsors?: boolean,
+    guests?: boolean
+  },
+  extra?: {
+    youtube_url?: string,
+    facebook_handle?: string,
+    instagram_handle?: string,
+    twitter_handle?: string,
+    wechat_handle?: string,
+    patreon_handle?: string,
+    amazon_music_url?: string,
+    linkedin_url?: string,
+    spotify_url?: string,
+    url1?: string,
+    url2?: string,
+    url3?: string
+  },
+  has_guest_interviews?: boolean,
+  has_sponsors?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getEpisodes
+
+`podcasts.getEpisodes`
+
+Fetch paginated episodes for a podcast by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.podcasts.getEpisodes({ id: '4d3fe717742d4963a85562e9f84d8c79' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Podcast ID |
+| `next_episode_pub_date` | `number` | No | Pagination pub date in ms |
+| `sort` | `recent_first \| oldest_first` | No | Sort episodes |
+
+This convenience operation uses the documented `GET /podcasts/{id}` route and its `next_episode_pub_date` cursor; it is not a separate `/episodes` sub-route.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `total_episodes` | `number` | No | — |
+| `next_episode_pub_date` | `number \| null` | No | — |
+| `episodes` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="episodes full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  description?: string,
+  pub_date_ms?: number,
+  audio?: string,
+  audio_length_sec?: number,
+  listennotes_url?: string,
+  image?: string,
+  thumbnail?: string,
+  maybe_audio_invalid?: boolean,
+  listennotes_edit_url?: string,
+  explicit_content?: boolean,
+  link?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRecommendations
+
+`podcasts.getRecommendations`
+
+Fetch recommended podcasts based on a given podcast ID
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.podcasts.getRecommendations({ id: '4d3fe717742d4963a85562e9f84d8c79' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Podcast ID |
+| `safe_mode` | `number` | No | 1 to restrict explicit content |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recommendations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="recommendations full type">
+
+```ts
+{
+  id?: string,
+  title?: string | null,
+  publisher?: string | null,
+  image?: string | null,
+  thumbnail?: string | null,
+  listennotes_url?: string,
+  is_claimed?: boolean,
+  type?: episodic | serial,
+  total_episodes?: number,
+  audio_length_sec?: number,
+  update_frequency_hours?: number,
+  earliest_pub_date_ms?: number,
+  rss?: string | null,
+  latest_episode_id?: string,
+  latest_pub_date_ms?: number,
+  explicit_content?: boolean,
+  description?: string | null,
+  itunes_id?: number | null,
+  language?: string | null,
+  country?: string | null,
+  website?: string | null,
+  email?: string | null,
+  genre_ids?: number[],
+  listen_score?: number | null,
+  listen_score_global_rank?: string | null,
+  looking_for?: {
+    cohosts?: boolean,
+    cross_promotion?: boolean,
+    sponsors?: boolean,
+    guests?: boolean
+  },
+  extra?: {
+    youtube_url?: string,
+    facebook_handle?: string,
+    instagram_handle?: string,
+    twitter_handle?: string,
+    wechat_handle?: string,
+    patreon_handle?: string,
+    amazon_music_url?: string,
+    linkedin_url?: string,
+    spotify_url?: string,
+    url1?: string,
+    url2?: string,
+    url3?: string
+  },
+  has_guest_interviews?: boolean,
+  has_sponsors?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### refreshRss
+
+`podcasts.refreshRss`
+
+Request an RSS refresh for a podcast (limited to hourly)
+
+**Risk:** `write`
+
+```ts
+await corsair.listennotes.api.podcasts.refreshRss({ id: '4d3fe717742d4963a85562e9f84d8c79' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Podcast ID |
+
+Available on PRO and ENTERPRISE plans; each podcast can be refreshed at most once per hour and processing may take several minutes.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `refreshing \| refreshed` | Yes | — |
+| `last_refreshed_at_ms` | `number` | No | — |
+
+
+
+---
+
+### submit
+
+`podcasts.submit`
+
+Submit an RSS feed for review in the Listen Notes directory
+
+**Risk:** `write`
+
+```ts
+await corsair.listennotes.api.podcasts.submit({ rss: 'https://feeds.example.com/show.xml' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rss` | `string` | Yes | RSS feed URL to submit |
+| `email` | `string` | No | Optional notification email |
+
+Submissions may be found, reviewed, or rejected by Listen Notes. An email is optional and is used only for the provider's acceptance notification.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `found \| in review \| rejected` | Yes | — |
+| `podcast` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="podcast full type">
+
+```ts
+{
+  id?: string,
+  title?: string,
+  publisher?: string,
+  image?: string,
+  thumbnail?: string,
+  listennotes_url?: string,
+  listen_score?: number | null,
+  listen_score_global_rank?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Regions
+
+### list
+
+`regions.list`
+
+Fetch supported country and region codes
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.regions.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `regions` | `Record<string, string>` | Yes | — |
+
+
+
+---
+
+## Search
+
+### relatedSearches
+
+`search.relatedSearches`
+
+Find search terms related to a supplied topic
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.search.relatedSearches({ q: 'science' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Search term |
+
+This endpoint is available only on Listen Notes PRO and ENTERPRISE plans.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `terms` | `string[]` | Yes | — |
+
+
+
+---
+
+### search
+
+`search.search`
+
+Full-text search for podcast episodes, channels, or curated lists
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.search.search({ q: 'startup' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Search term |
+| `sort_by_date` | `number` | No | 0 for relevance, 1 for date |
+| `type` | `episode \| podcast \| curated` | No | Type of search results |
+| `offset` | `number` | No | Pagination offset |
+| `len_min` | `number` | No | Minimum audio length in minutes |
+| `len_max` | `number` | No | Maximum audio length in minutes |
+| `episode_count_min` | `number` | No | Minimum number of episodes |
+| `episode_count_max` | `number` | No | Maximum number of episodes |
+| `update_freq_min` | `number` | No | Minimum update frequency in hours |
+| `update_freq_max` | `number` | No | Maximum update frequency in hours |
+| `genre_ids` | `string` | No | Comma-delimited genre IDs |
+| `published_before` | `number` | No | Published before epoch ms |
+| `published_after` | `number` | No | Published after epoch ms |
+| `only_in` | `string` | No | Search only in title, description, author, or audio |
+| `language` | `string` | No | Filter by language |
+| `region` | `string` | No | Filter by region |
+| `ocid` | `string` | No | Comma-delimited podcast IDs to restrict search to |
+| `ncid` | `string` | No | Comma-delimited podcast IDs to exclude from search |
+| `safe_mode` | `number` | No | 1 to restrict explicit content, 0 otherwise |
+| `unique_podcasts` | `number` | No | 1 to return unique podcasts |
+| `interviews_only` | `number` | No | 1 to include only podcasts with guest interviews |
+| `sponsored_only` | `number` | No | 1 to include only podcasts with sponsors |
+| `page_size` | `number` | No | Number of results per page |
+
+Pass `next_offset` from a response as `offset` for pagination. Search results are limited by plan: FREE up to offset 30, PRO up to 300, and ENTERPRISE up to 10,000. `interviews_only` and `sponsored_only` are PRO/ENTERPRISE filters.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `count` | `number` | Yes | — |
+| `next_offset` | `number` | No | — |
+| `total` | `number` | Yes | — |
+| `took` | `number` | No | — |
+| `results` | `Record<string, any>[]` | Yes | — |
+
+
+
+---
+
+### searchEpisodeTitles
+
+`search.searchEpisodeTitles`
+
+Search for episodes by title with optional podcast filtering
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.search.searchEpisodeTitles({ q: 'Episode title' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Episode title to search for |
+| `podcast_id` | `string` | No | Optional podcast identifier |
+| `podcast_id_type` | `listennotes_id \| itunes_id \| spotify_id \| rss` | No | Identifier format used by podcast_id |
+
+The response may contain `next_offset`, but the official OpenAPI request parameter list for this operation includes only `q`, `podcast_id`, and `podcast_id_type`; it does not document `offset`. The field is returned as provider metadata, not as a supported pagination cursor. Source: https://listen-api.listennotes.com/api/v2/openapi.json#/paths/~1search_episode_titles/get.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `next_offset` | `number` | No | Returned by the provider, but this operation does not document an offset request parameter. |
+| `took` | `number` | No | — |
+| `total` | `number` | No | — |
+| `count` | `number` | No | — |
+| `results` | `Record<string, any>[]` | No | — |
+
+
+
+---
+
+### spellcheck
+
+`search.spellcheck`
+
+Suggest spelling corrections for a search term
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.search.spellcheck({ q: 'tecnology' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Search term |
+
+This endpoint is available only on Listen Notes PRO and ENTERPRISE plans.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tokens` | `object[]` | Yes | — |
+| `corrected_text_html` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tokens full type">
+
+```ts
+{
+  offset?: number,
+  token?: string,
+  suggestion?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trendingSearches
+
+`search.trendingSearches`
+
+Fetch the latest trending search terms
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.search.trendingSearches({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `terms` | `string[]` | Yes | — |
+
+
+
+---
+
+### typeahead
+
+`search.typeahead`
+
+Typeahead search for podcast titles, genres, and terms
+
+**Risk:** `read`
+
+```ts
+await corsair.listennotes.api.search.typeahead({ q: 'tech' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | Search query for autocomplete |
+| `show_podcasts` | `number` | No | 1 to include podcasts in suggestions |
+| `show_genres` | `number` | No | 1 to include genres in suggestions |
+| `safe_mode` | `number` | No | 1 to restrict explicit content |
+| `show_related_searches` | `number` | No | 1 to include related searches |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `terms` | `string[]` | Yes | — |
+| `genres` | `object[]` | No | — |
+| `podcasts` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="genres full type">
+
+```ts
+{
+  id: number,
+  name: string,
+  parent_id?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="podcasts full type">
+
+```ts
+{
+  id: string,
+  title_original?: string,
+  title_highlighted?: string,
+  publisher_original?: string,
+  publisher_highlighted?: string,
+  image?: string,
+  thumbnail?: string,
+  explicit_content?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

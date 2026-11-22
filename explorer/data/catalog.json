@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-21T11:21:41.575Z",
-  "corsairVersion": "0.2.21",
+  "generatedAt": "2026-11-22T16:33:47.190Z",
+  "corsairVersion": "0.2.24",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -5340,7 +5340,7 @@
       ],
       "defaultAuthType": "api_key",
       "counts": {
-        "api": 160,
+        "api": 168,
         "webhooks": 0,
         "db": 0
       }
@@ -6006,6 +6006,21 @@
       }
     },
     {
+      "id": "laposta",
+      "displayName": "Laposta",
+      "description": "Dutch email marketing and newsletter platform for managing mailing lists, subscriber members, custom fields, segments, campaigns, webhook subscriptions, and delivery reports.",
+      "npmPackageName": "@corsair-dev/laposta",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 41,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "launchdarkly",
       "displayName": "LaunchDarkly",
       "description": "Manage LaunchDarkly feature flags, environments, projects, user segments, audit logs, account members, teams, custom roles, and contexts via the LaunchDarkly REST API.",
@@ -6097,6 +6112,21 @@
       }
     },
     {
+      "id": "lexoffice",
+      "displayName": "Lexoffice",
+      "description": "Lexware Office accounting integration for contacts, vouchers, invoices, credit notes, payments, posting categories, and documents.",
+      "npmPackageName": "@corsair-dev/lexoffice",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 27,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "linear",
       "displayName": "Linear",
       "description": "Issue tracking tool for software teams managing projects, cycles, and product roadmaps.",
@@ -6155,6 +6185,21 @@
         "api": 12,
         "webhooks": 0,
         "db": 3
+      }
+    },
+    {
+      "id": "listennotes",
+      "displayName": "Listen Notes",
+      "description": "Podcast search, directory, playlist, and audience insights API for exploring and managing podcast data.",
+      "npmPackageName": "@corsair-dev/listennotes",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 33,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -7177,6 +7222,21 @@
       }
     },
     {
+      "id": "pandadoc",
+      "displayName": "PandaDoc",
+      "description": "PandaDoc is a document automation and e-signature platform. This plugin creates documents from templates or PDFs, sends them for signing, tracks their status, downloads the signed PDFs, and manages templates, contacts, folders and webhook subscriptions.",
+      "npmPackageName": "@corsair-dev/pandadoc",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 26,
+        "webhooks": 1,
+        "db": 0
+      }
+    },
+    {
       "id": "paperform",
       "displayName": "Paperform",
       "description": "Read Paperform forms, fields and submissions, and manage a form's products, coupons and webhooks.",
@@ -7189,6 +7249,21 @@
         "api": 24,
         "webhooks": 0,
         "db": 4
+      }
+    },
+    {
+      "id": "paradym",
+      "displayName": "Paradym",
+      "description": "Paradym is the easiest way to issue, verify, and manage verifiable credentials. This plugin manages wallets, SD-JWT VC credential templates and trusted entities, creates OpenID4VC issuance offers and verification requests, batch-revokes issued credentials, and manages webhook subscriptions with delivery history.",
+      "npmPackageName": "@corsair-dev/paradym",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 33,
+        "webhooks": 1,
+        "db": 0
       }
     },
     {
@@ -7238,6 +7313,21 @@
       }
     },
     {
+      "id": "parsera",
+      "displayName": "Parsera",
+      "description": "Parsera is an AI web scraper you drive with plain instructions. This plugin extracts structured data from pages or raw content, manages reusable extractor and agentic scrapers, runs them synchronously or as pollable async jobs, and tracks run progress and credits.",
+      "npmPackageName": "@corsair-dev/parsera",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 15,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "parseur",
       "displayName": "Parseur",
       "description": "Document parsing service that extracts structured data from emails and PDF attachments.",
@@ -7250,6 +7340,96 @@
         "api": 30,
         "webhooks": 0,
         "db": 6
+      }
+    },
+    {
+      "id": "parsio",
+      "displayName": "Parsio",
+      "description": "Parsio is an AI email and document parser that turns emails, PDFs and scans into structured JSON. This plugin manages mailboxes, parses HTML, text and uploaded files synchronously or asynchronously, reads parsed documents and collected data, and manages the webhooks that deliver parsed documents (HMAC-verified).",
+      "npmPackageName": "@corsair-dev/parsio",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 21,
+        "webhooks": 1,
+        "db": 0
+      }
+    },
+    {
+      "id": "passcreator",
+      "displayName": "Passcreator",
+      "description": "Passcreator is a wallet pass platform for Apple Wallet and Google Wallet. This plugin creates and updates passes from templates with personalised properties, delivers passes by email, pushes notifications to pass holders, reads pass statistics, copies templates, moves passes between templates (API v2), and manages webhook subscriptions whose deliveries carry verifiable ECDSA signatures.",
+      "npmPackageName": "@corsair-dev/passcreator",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 21,
+        "webhooks": 1,
+        "db": 0
+      }
+    },
+    {
+      "id": "payhere",
+      "displayName": "Payhere",
+      "description": "Payhere is a Stripe-backed payment links platform. This plugin reads the account user, company and 30-day stats, lists customers, payments, plans and subscriptions, reads a customer with their payment history, issues full or partial refunds, and receives HMAC-verified payment and subscription webhooks.",
+      "npmPackageName": "@corsair-dev/payhere",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 9,
+        "webhooks": 1,
+        "db": 0
+      }
+    },
+    {
+      "id": "payhip",
+      "displayName": "Payhip",
+      "description": "Payhip is a digital products storefront. This plugin creates and manages discount coupons with the account API key, and verifies, enables, disables and counts software license keys with the per-product secret key. Coupon bodies are form-encoded as the API requires.",
+      "npmPackageName": "@corsair-dev/payhip",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 8,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "paystack",
+      "displayName": "Paystack",
+      "description": "Paystack is a payments platform for African markets. This plugin starts checkouts and verifies transactions, manages customers including risk actions, creates and updates plans, subscribes customers and enables or disables subscriptions, issues refunds, and receives charge and transfer webhooks verified under either documented HMAC-SHA512 signature scheme.",
+      "npmPackageName": "@corsair-dev/paystack",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 21,
+        "webhooks": 1,
+        "db": 0
+      }
+    },
+    {
+      "id": "pdf4me",
+      "displayName": "PDF4me",
+      "description": "PDF4me is a PDF and document processing SaaS. This plugin merges, splits, compresses and organizes PDFs, converts them to Word and renders HTML to PDF, runs OCR, reads PDF metadata, extracts tables and form data, and polls asynchronous processing jobs. File answers come back base64-encoded.",
+      "npmPackageName": "@corsair-dev/pdf4me",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 12,
+        "webhooks": 0,
+        "db": 0
       }
     },
     {
@@ -7328,6 +7508,36 @@
       }
     },
     {
+      "id": "penpot",
+      "displayName": "Penpot",
+      "description": "Penpot is the open-source design tool. This plugin manages teams, projects and design files over the RPC API, creates file snapshots and share links, reads and writes comment threads, configures team webhooks, and lists and revokes the account's API access tokens.",
+      "npmPackageName": "@corsair-dev/penpot",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 31,
+        "webhooks": 1,
+        "db": 0
+      }
+    },
+    {
+      "id": "perigon",
+      "displayName": "Perigon",
+      "description": "Perigon is a news intelligence API over a large article index. This plugin searches articles (one result per published URL), lists story clusters, journalists and resolved people and company entities, and reads the account's usage and limits.",
+      "npmPackageName": "@corsair-dev/perigon",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 6,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "perplexityai",
       "displayName": "Perplexity",
       "description": "AI search and answer API for grounded responses with web citations and research.",
@@ -7338,6 +7548,51 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 1,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "persistiq",
+      "displayName": "PersistIQ",
+      "description": "PersistIQ is an outbound sales automation platform. This plugin manages leads and their custom attributes, campaigns and their lead membership, replies to inbox messages, do-not-contact domains, activity events, tags, lead fields and statuses, and the webhook plugin settings.",
+      "npmPackageName": "@corsair-dev/persistiq",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 21,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "persona",
+      "displayName": "Persona",
+      "description": "Persona is an identity verification and KYC platform. This plugin manages accounts and inquiries, approves or declines inquiries, marks them for review, runs inquiry sessions and one-time links, reads inquiry templates, configures webhooks with signing-secret rotation, and verifies inbound webhook deliveries with HMAC-SHA256.",
+      "npmPackageName": "@corsair-dev/persona",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 36,
+        "webhooks": 1,
+        "db": 0
+      }
+    },
+    {
+      "id": "pexels",
+      "displayName": "Pexels",
+      "description": "Pexels is a free stock photo and video library. This plugin searches photos and videos, reads their rendition URLs and metadata, lists the curated and popular feeds, and browses the media collections of the API key.",
+      "npmPackageName": "@corsair-dev/pexels",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 9,
         "webhooks": 0,
         "db": 0
       }
@@ -7358,6 +7613,51 @@
       }
     },
     {
+      "id": "piggy",
+      "displayName": "Piggy",
+      "description": "Piggy (rebranded Leat) is a loyalty platform. This plugin manages contacts and their credit, prepaid and tier state, records direct points and reward redemptions with their reversals, issues and redeems vouchers and giftcards, reads promotions, loyalty programs and business profiles, and manages webhook subscriptions with signature-verified deliveries.",
+      "npmPackageName": "@corsair-dev/piggy",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 47,
+        "webhooks": 1,
+        "db": 0
+      }
+    },
+    {
+      "id": "piloterr",
+      "displayName": "Piloterr",
+      "description": "Piloterr is a scraping API for public web data. This plugin fetches and renders pages, captures screenshots, detects website technology, extracts contact details, scrapes Google search and news, reads LinkedIn companies, profiles, jobs and posts, and finds and verifies professional emails.",
+      "npmPackageName": "@corsair-dev/piloterr",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 19,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "pilvio",
+      "displayName": "Pilvio",
+      "description": "Pilvio is an Estonian cloud IaaS for compute and storage. This plugin manages the user profile, API tokens and SSH keys, creates and controls virtual machines, provisions block storage disks and S3 buckets, and manages private networks and firewalls across Pilvio locations.",
+      "npmPackageName": "@corsair-dev/pilvio",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 40,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "pinecone",
       "displayName": "Pinecone",
       "description": "Vector database for semantic search, embeddings storage, and retrieval-augmented AI applications.",
@@ -7373,6 +7673,21 @@
       }
     },
     {
+      "id": "pingdom",
+      "displayName": "Pingdom",
+      "description": "Pingdom is a website uptime and performance monitoring service. This plugin manages uptime checks of every documented type, reads raw results, root cause analyses and summaries, runs one-off checks, schedules maintenance windows, and manages alerting teams and contacts.",
+      "npmPackageName": "@corsair-dev/pingdom",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 40,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
       "id": "pipedrive",
       "displayName": "Pipedrive",
       "description": "Manage selected Pipedrive v2 deals, contacts, activities, tasks, and product catalog operations with validated requests, responses, and cursor pagination.",
@@ -7384,6 +7699,21 @@
       "defaultAuthType": "api_key",
       "counts": {
         "api": 44,
+        "webhooks": 0,
+        "db": 0
+      }
+    },
+    {
+      "id": "pipelinecrm",
+      "displayName": "Pipeline CRM",
+      "description": "Pipeline CRM is a sales CRM for deals, people and companies. This plugin manages deals with stages and values, people and companies with their associations, records activities (notes) on any record, and reads the visible users.",
+      "npmPackageName": "@corsair-dev/pipelinecrm",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 29,
         "webhooks": 0,
         "db": 0
       }
@@ -106643,6 +106973,12 @@
     {
       "pluginId": "hunterio",
       "kind": "api",
+      "shortPath": "briefing.get",
+      "haystack": "briefing.get hunterio.api.briefing.get get what needs attention today: counts of new lead and monitored signals events, new opportunities this week, and the credit balance, each with its follow-up call read"
+    },
+    {
+      "pluginId": "hunterio",
+      "kind": "api",
       "shortPath": "companies.bulkCopy",
       "haystack": "companies.bulkcopy hunterio.api.companies.bulkcopy copy companies to another company list write"
     },
@@ -106771,6 +107107,12 @@
       "kind": "api",
       "shortPath": "companyLists.list",
       "haystack": "companylists.list hunterio.api.companylists.list list the company lists on the account read"
+    },
+    {
+      "pluginId": "hunterio",
+      "kind": "api",
+      "shortPath": "companyLists.listCompanies",
+      "haystack": "companylists.listcompanies hunterio.api.companylists.listcompanies list the companies in a static company list, most recently added first read"
     },
     {
       "pluginId": "hunterio",
@@ -106949,14 +107291,26 @@
     {
       "pluginId": "hunterio",
       "kind": "api",
+      "shortPath": "domainSearch.found",
+      "haystack": "domainsearch.found hunterio.api.domainsearch.found search the email addresses hunter found on the web for a domain, without generated guesses. charges 1 credit per 10 emails returned read"
+    },
+    {
+      "pluginId": "hunterio",
+      "kind": "api",
+      "shortPath": "domainSearch.foundPost",
+      "haystack": "domainsearch.foundpost hunterio.api.domainsearch.foundpost search found email addresses for a domain with body filters, including location. charges 1 credit per 10 emails returned read"
+    },
+    {
+      "pluginId": "hunterio",
+      "kind": "api",
       "shortPath": "domainSearch.search",
-      "haystack": "domainsearch.search hunterio.api.domainsearch.search list the email addresses found for a domain read"
+      "haystack": "domainsearch.search hunterio.api.domainsearch.search list the email addresses found for a domain. charges 1 credit per 10 emails returned read"
     },
     {
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "domainSearch.searchPost",
-      "haystack": "domainsearch.searchpost hunterio.api.domainsearch.searchpost list the email addresses found for a domain (post form) read"
+      "haystack": "domainsearch.searchpost hunterio.api.domainsearch.searchpost list the email addresses found for a domain (post form). charges 1 credit per 10 emails returned read"
     },
     {
       "pluginId": "hunterio",
@@ -107028,19 +107382,19 @@
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "emailFinder.find",
-      "haystack": "emailfinder.find hunterio.api.emailfinder.find find the most likely email of a person read"
+      "haystack": "emailfinder.find hunterio.api.emailfinder.find find the most likely email of a person. charges 1 credit when an email is found read"
     },
     {
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "emailFinder.findFound",
-      "haystack": "emailfinder.findfound hunterio.api.emailfinder.findfound check whether an email was already found for a person read"
+      "haystack": "emailfinder.findfound hunterio.api.emailfinder.findfound check whether an email was already found for a person. charges 1 credit when an email is found read"
     },
     {
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "emailFinder.findFoundPost",
-      "haystack": "emailfinder.findfoundpost hunterio.api.emailfinder.findfoundpost check whether an email was already found (post form) read"
+      "haystack": "emailfinder.findfoundpost hunterio.api.emailfinder.findfoundpost check whether an email was already found (post form). charges 1 credit when an email is found read"
     },
     {
       "pluginId": "hunterio",
@@ -107052,25 +107406,25 @@
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "emailVerifier.verify",
-      "haystack": "emailverifier.verify hunterio.api.emailverifier.verify verify the deliverability of an email address read"
+      "haystack": "emailverifier.verify hunterio.api.emailverifier.verify verify the deliverability of an email address. charges 0.5 credit per verification read"
     },
     {
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "enrichment.combined",
-      "haystack": "enrichment.combined hunterio.api.enrichment.combined enrich a person and their company together read"
+      "haystack": "enrichment.combined hunterio.api.enrichment.combined enrich a person and their company together. charges 0.2 credit when data is found read"
     },
     {
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "enrichment.company",
-      "haystack": "enrichment.company hunterio.api.enrichment.company enrich a company profile from a domain or name read"
+      "haystack": "enrichment.company hunterio.api.enrichment.company enrich a company profile from a domain or name. charges 0.2 credit when data is found read"
     },
     {
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "enrichment.person",
-      "haystack": "enrichment.person hunterio.api.enrichment.person enrich a person profile from an email or name read"
+      "haystack": "enrichment.person hunterio.api.enrichment.person enrich a person profile from an email or name. charges 0.2 credit when data is found read"
     },
     {
       "pluginId": "hunterio",
@@ -107280,7 +107634,7 @@
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "messages.send",
-      "haystack": "messages.send hunterio.api.messages.send send a message from a connected email account write"
+      "haystack": "messages.send hunterio.api.messages.send send a message from a connected email account. sends a real email [destructive · sends email] destructive"
     },
     {
       "pluginId": "hunterio",
@@ -107321,14 +107675,32 @@
     {
       "pluginId": "hunterio",
       "kind": "api",
+      "shortPath": "monitoredSignals.list",
+      "haystack": "monitoredsignals.list hunterio.api.monitoredsignals.list list the monitored signals of the team: funding signals, job openings signals and company follows read"
+    },
+    {
+      "pluginId": "hunterio",
+      "kind": "api",
       "shortPath": "multiDomainSearch.reveal",
-      "haystack": "multidomainsearch.reveal hunterio.api.multidomainsearch.reveal reveal the verified email addresses of a multi-domain search read"
+      "haystack": "multidomainsearch.reveal hunterio.api.multidomainsearch.reveal reveal the verified email addresses of a multi-domain search. charges 1 credit per email revealed for the first time this billing period read"
     },
     {
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "multiDomainSearch.search",
       "haystack": "multidomainsearch.search hunterio.api.multidomainsearch.search find email addresses across multiple domains read"
+    },
+    {
+      "pluginId": "hunterio",
+      "kind": "api",
+      "shortPath": "opportunities.list",
+      "haystack": "opportunities.list hunterio.api.opportunities.list list the opportunities of this week: groups of people or companies similar to the leads and companies you saved read"
+    },
+    {
+      "pluginId": "hunterio",
+      "kind": "api",
+      "shortPath": "opportunities.results",
+      "haystack": "opportunities.results hunterio.api.opportunities.results list the masked people or the companies of one opportunity; reveal emails with multidomainsearch.reveal read"
     },
     {
       "pluginId": "hunterio",
@@ -107436,13 +107808,13 @@
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "sequences.start",
-      "haystack": "sequences.start hunterio.api.sequences.start start a sequence write"
+      "haystack": "sequences.start hunterio.api.sequences.start start a sequence. starts sending emails to the recipients [destructive · sends email] destructive"
     },
     {
       "pluginId": "hunterio",
       "kind": "api",
       "shortPath": "sequences.test",
-      "haystack": "sequences.test hunterio.api.sequences.test send test emails for every step of a sequence write"
+      "haystack": "sequences.test hunterio.api.sequences.test send test emails for every step of a sequence. sends a real test email [destructive · sends email] destructive"
     },
     {
       "pluginId": "hunterio",
@@ -107455,6 +107827,12 @@
       "kind": "api",
       "shortPath": "sequenceStats.get",
       "haystack": "sequencestats.get hunterio.api.sequencestats.get get performance statistics for a sequence read"
+    },
+    {
+      "pluginId": "hunterio",
+      "kind": "api",
+      "shortPath": "signals.list",
+      "haystack": "signals.list hunterio.api.signals.list list signal events from the last 30 days (funding rounds, tech changes, new contacts, hires, job posts, contact moves) for your leads or your monitored signals read"
     },
     {
       "pluginId": "hunterio",
@@ -117615,6 +117993,252 @@
       "haystack": "transactions.list labs64netlicensing.api.transactions.list list transactions, newest first. read"
     },
     {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "campaigns.create",
+      "haystack": "campaigns.create laposta.api.campaigns.create create a regular email campaign write"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "campaigns.delete",
+      "haystack": "campaigns.delete laposta.api.campaigns.delete delete an unsent or previously sent campaign destructive"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "campaigns.get",
+      "haystack": "campaigns.get laposta.api.campaigns.get retrieve a specific campaign by id read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "campaigns.get_content",
+      "haystack": "campaigns.get_content laposta.api.campaigns.get_content retrieve the html and plaintext campaign content read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "campaigns.history",
+      "haystack": "campaigns.history laposta.api.campaigns.history retrieve paginated events for a campaign read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "campaigns.list",
+      "haystack": "campaigns.list laposta.api.campaigns.list retrieve all email campaigns read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "campaigns.schedule",
+      "haystack": "campaigns.schedule laposta.api.campaigns.schedule schedule campaign delivery to its configured recipients destructive"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "campaigns.send",
+      "haystack": "campaigns.send laposta.api.campaigns.send send a campaign to its configured recipients destructive"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "campaigns.send_test",
+      "haystack": "campaigns.send_test laposta.api.campaigns.send_test send a campaign test email to the specified address destructive"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "campaigns.update",
+      "haystack": "campaigns.update laposta.api.campaigns.update update campaign metadata and recipients write"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "campaigns.update_content",
+      "haystack": "campaigns.update_content laposta.api.campaigns.update_content set campaign content from html or an import url write"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "fields.create",
+      "haystack": "fields.create laposta.api.fields.create create a new custom field for a mailing list write"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "fields.delete",
+      "haystack": "fields.delete laposta.api.fields.delete delete a custom field from a mailing list destructive"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "fields.get",
+      "haystack": "fields.get laposta.api.fields.get retrieve a specific custom field by id read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "fields.list",
+      "haystack": "fields.list laposta.api.fields.list retrieve custom fields for a mailing list read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "fields.update",
+      "haystack": "fields.update laposta.api.fields.update update a custom field; changing its datatype removes stored values destructive"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "lists.create",
+      "haystack": "lists.create laposta.api.lists.create create a new mailing list write"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "lists.delete",
+      "haystack": "lists.delete laposta.api.lists.delete delete a mailing list destructive"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "lists.get",
+      "haystack": "lists.get laposta.api.lists.get retrieve a specific mailing list by id read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "lists.list",
+      "haystack": "lists.list laposta.api.lists.list retrieve all mailing lists read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "lists.purge_members",
+      "haystack": "lists.purge_members laposta.api.lists.purge_members permanently remove every active member from a mailing list destructive"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "lists.sync_members",
+      "haystack": "lists.sync_members laposta.api.lists.sync_members add, update, or bulk-unsubscribe members in a mailing list destructive"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "lists.update",
+      "haystack": "lists.update laposta.api.lists.update update an existing mailing list write"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "members.create",
+      "haystack": "members.create laposta.api.members.create subscribe a member, which may send a confirmation email destructive"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "members.delete",
+      "haystack": "members.delete laposta.api.members.delete unsubscribe or delete a member from a list destructive"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "members.get",
+      "haystack": "members.get laposta.api.members.get retrieve a specific subscriber by id read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "members.history",
+      "haystack": "members.history laposta.api.members.history retrieve a member event history with cursor pagination read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "members.list",
+      "haystack": "members.list laposta.api.members.list retrieve subscribers for a mailing list read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "members.update",
+      "haystack": "members.update laposta.api.members.update update an existing subscriber write"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "reports.get",
+      "haystack": "reports.get laposta.api.reports.get retrieve analytics and delivery report for a campaign read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "reports.list",
+      "haystack": "reports.list laposta.api.reports.list retrieve paginated delivery reports for campaigns read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "segments.create",
+      "haystack": "segments.create laposta.api.segments.create create a segment for a mailing list write"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "segments.delete",
+      "haystack": "segments.delete laposta.api.segments.delete permanently delete a mailing-list segment destructive"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "segments.get",
+      "haystack": "segments.get laposta.api.segments.get retrieve one mailing-list segment and its definition read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "segments.list",
+      "haystack": "segments.list laposta.api.segments.list retrieve all segments belonging to a mailing list read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "segments.update",
+      "haystack": "segments.update laposta.api.segments.update change a segment name or definition write"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create laposta.api.webhooks.create create a webhook subscription for a mailing list write"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete laposta.api.webhooks.delete permanently delete a webhook subscription destructive"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "webhooks.get",
+      "haystack": "webhooks.get laposta.api.webhooks.get retrieve a webhook subscription and its signing secret read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list laposta.api.webhooks.list list webhook subscriptions configured for a mailing list read"
+    },
+    {
+      "pluginId": "laposta",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update laposta.api.webhooks.update change a webhook subscription configuration write"
+    },
+    {
       "pluginId": "launchdarkly",
       "kind": "api",
       "shortPath": "accessTokens.create",
@@ -119403,6 +120027,168 @@
       "haystack": "webhooks.update lever.api.webhooks.update update a registered webhook write"
     },
     {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "contacts.create",
+      "haystack": "contacts.create lexoffice.api.contacts.create create a new customer or vendor contact in lexoffice write"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get lexoffice.api.contacts.get retrieve a lexoffice contact by id read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list lexoffice.api.contacts.list list and filter lexoffice contacts with pagination read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "contacts.update",
+      "haystack": "contacts.update lexoffice.api.contacts.update update an existing contact in lexoffice write"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "creditNotes.create",
+      "haystack": "creditnotes.create lexoffice.api.creditnotes.create create a credit note, optionally finalizing or pursuing it destructive"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "creditNotes.download",
+      "haystack": "creditnotes.download lexoffice.api.creditnotes.download download a credit note document as base64-encoded binary data read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "creditNotes.get",
+      "haystack": "creditnotes.get lexoffice.api.creditnotes.get retrieve credit note details by id read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "creditNotes.list",
+      "haystack": "creditnotes.list lexoffice.api.creditnotes.list list credit notes with pagination read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "creditNotes.render",
+      "haystack": "creditnotes.render lexoffice.api.creditnotes.render use the deprecated credit-note document endpoint to retrieve a file id read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "downPaymentInvoices.download",
+      "haystack": "downpaymentinvoices.download lexoffice.api.downpaymentinvoices.download download a down-payment invoice document as base64 data read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "downPaymentInvoices.get",
+      "haystack": "downpaymentinvoices.get lexoffice.api.downpaymentinvoices.get retrieve a down-payment invoice by id read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "files.download",
+      "haystack": "files.download lexoffice.api.files.download download a bookkeeping file as base64-encoded binary data read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "files.upload",
+      "haystack": "files.upload lexoffice.api.files.upload upload a voucher file, which creates a bookkeeping voucher destructive"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "invoices.create",
+      "haystack": "invoices.create lexoffice.api.invoices.create create an invoice in draft or finalized state destructive"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "invoices.download",
+      "haystack": "invoices.download lexoffice.api.invoices.download download an invoice document as base64-encoded binary data read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "invoices.get",
+      "haystack": "invoices.get lexoffice.api.invoices.get retrieve invoice details by id read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "invoices.list",
+      "haystack": "invoices.list lexoffice.api.invoices.list list outgoing invoices with pagination read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "invoices.render",
+      "haystack": "invoices.render lexoffice.api.invoices.render use the deprecated invoice document endpoint to retrieve a file id read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "payments.get",
+      "haystack": "payments.get lexoffice.api.payments.get retrieve payment status and payment entries for a voucher read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "postingCategories.list",
+      "haystack": "postingcategories.list lexoffice.api.postingcategories.list list the available bookkeeping posting categories read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "profile.get",
+      "haystack": "profile.get lexoffice.api.profile.get retrieve organization and account profile details read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "voucherlist.list",
+      "haystack": "voucherlist.list lexoffice.api.voucherlist.list search all documented lexware voucher types with paging read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "vouchers.attachFile",
+      "haystack": "vouchers.attachfile lexoffice.api.vouchers.attachfile upload a bookkeeping document to an existing voucher destructive"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "vouchers.create",
+      "haystack": "vouchers.create lexoffice.api.vouchers.create create a new bookkeeping voucher destructive"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "vouchers.get",
+      "haystack": "vouchers.get lexoffice.api.vouchers.get retrieve voucher details by id read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "vouchers.list",
+      "haystack": "vouchers.list lexoffice.api.vouchers.list list bookkeeping vouchers with optional voucher number filter read"
+    },
+    {
+      "pluginId": "lexoffice",
+      "kind": "api",
+      "shortPath": "vouchers.update",
+      "haystack": "vouchers.update lexoffice.api.vouchers.update update a bookkeeping voucher including its assigned files destructive"
+    },
+    {
       "pluginId": "linear",
       "kind": "api",
       "shortPath": "comments.create",
@@ -119779,6 +120565,204 @@
       "kind": "api",
       "shortPath": "tasks.list",
       "haystack": "tasks.list linkup.api.tasks.list list background tasks, filtered by type and status, paged, with the in-flight quota. read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "curated.get",
+      "haystack": "curated.get listennotes.api.curated.get fetch a curated list of podcasts by id read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "curated.list",
+      "haystack": "curated.list listennotes.api.curated.list fetch curated lists of podcasts read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "episodes.get",
+      "haystack": "episodes.get listennotes.api.episodes.get fetch detailed metadata for an episode by id read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "episodes.getBatch",
+      "haystack": "episodes.getbatch listennotes.api.episodes.getbatch fetch basic metadata for up to 10 episodes read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "episodes.getRecommendations",
+      "haystack": "episodes.getrecommendations listennotes.api.episodes.getrecommendations fetch recommended episodes based on a given episode id read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "episodes.justListen",
+      "haystack": "episodes.justlisten listennotes.api.episodes.justlisten fetch a random recently published podcast episode read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "genres.list",
+      "haystack": "genres.list listennotes.api.genres.list fetch a list of podcast genres supported by listen notes read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "languages.list",
+      "haystack": "languages.list listennotes.api.languages.list fetch languages supported by the listen notes directory read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "playlists.addItem",
+      "haystack": "playlists.additem listennotes.api.playlists.additem add an episode or podcast to a playlist write"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "playlists.create",
+      "haystack": "playlists.create listennotes.api.playlists.create create a playlist owned by the authenticated api account write"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "playlists.delete",
+      "haystack": "playlists.delete listennotes.api.playlists.delete permanently delete a playlist and its saved references destructive"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "playlists.deleteItem",
+      "haystack": "playlists.deleteitem listennotes.api.playlists.deleteitem remove an episode or podcast reference from a playlist destructive"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "playlists.get",
+      "haystack": "playlists.get listennotes.api.playlists.get fetch a playlist and its items by id read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "playlists.list",
+      "haystack": "playlists.list listennotes.api.playlists.list fetch a list of user playlists read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "playlists.update",
+      "haystack": "playlists.update listennotes.api.playlists.update update playlist metadata or its saved default view write"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "playlists.updateItem",
+      "haystack": "playlists.updateitem listennotes.api.playlists.updateitem update notes attached to a playlist item write"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "podcasts.delete",
+      "haystack": "podcasts.delete listennotes.api.podcasts.delete request removal of a podcast from the listen notes directory destructive"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "podcasts.get",
+      "haystack": "podcasts.get listennotes.api.podcasts.get fetch detailed metadata and episodes for a podcast by id read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "podcasts.getAudience",
+      "haystack": "podcasts.getaudience listennotes.api.podcasts.getaudience fetch available audience region demographics for a podcast read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "podcasts.getBatch",
+      "haystack": "podcasts.getbatch listennotes.api.podcasts.getbatch fetch basic metadata for up to 10 podcasts by supported ids read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "podcasts.getBest",
+      "haystack": "podcasts.getbest listennotes.api.podcasts.getbest fetch best podcasts by genre and region read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "podcasts.getByDomain",
+      "haystack": "podcasts.getbydomain listennotes.api.podcasts.getbydomain fetch podcasts published by a domain, with page pagination read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "podcasts.getEpisodes",
+      "haystack": "podcasts.getepisodes listennotes.api.podcasts.getepisodes fetch paginated episodes for a podcast by id read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "podcasts.getRecommendations",
+      "haystack": "podcasts.getrecommendations listennotes.api.podcasts.getrecommendations fetch recommended podcasts based on a given podcast id read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "podcasts.refreshRss",
+      "haystack": "podcasts.refreshrss listennotes.api.podcasts.refreshrss request an rss refresh for a podcast (limited to hourly) write"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "podcasts.submit",
+      "haystack": "podcasts.submit listennotes.api.podcasts.submit submit an rss feed for review in the listen notes directory write"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "regions.list",
+      "haystack": "regions.list listennotes.api.regions.list fetch supported country and region codes read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "search.relatedSearches",
+      "haystack": "search.relatedsearches listennotes.api.search.relatedsearches find search terms related to a supplied topic read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "search.search",
+      "haystack": "search.search listennotes.api.search.search full-text search for podcast episodes, channels, or curated lists read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "search.searchEpisodeTitles",
+      "haystack": "search.searchepisodetitles listennotes.api.search.searchepisodetitles search for episodes by title with optional podcast filtering read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "search.spellcheck",
+      "haystack": "search.spellcheck listennotes.api.search.spellcheck suggest spelling corrections for a search term read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "search.trendingSearches",
+      "haystack": "search.trendingsearches listennotes.api.search.trendingsearches fetch the latest trending search terms read"
+    },
+    {
+      "pluginId": "listennotes",
+      "kind": "api",
+      "shortPath": "search.typeahead",
+      "haystack": "search.typeahead listennotes.api.search.typeahead typeahead search for podcast titles, genres, and terms read"
     },
     {
       "pluginId": "litescrape",
@@ -133137,6 +134121,168 @@
       "haystack": "incidents.triggered pagerduty.webhooks.incidents.triggered an incident was triggered (created)"
     },
     {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "contacts.create",
+      "haystack": "contacts.create pandadoc.api.contacts.create create a contact write"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "contacts.delete",
+      "haystack": "contacts.delete pandadoc.api.contacts.delete delete a contact destructive"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get pandadoc.api.contacts.get read one contact by id read"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list pandadoc.api.contacts.list list contacts, optionally filtered by exact email address read"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "contacts.update",
+      "haystack": "contacts.update pandadoc.api.contacts.update update a contact write"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "documents.create",
+      "haystack": "documents.create pandadoc.api.documents.create create a draft document from a template or from a public pdf url write"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "documents.createFields",
+      "haystack": "documents.createfields pandadoc.api.documents.createfields place new fields on a document write"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "documents.delete",
+      "haystack": "documents.delete pandadoc.api.documents.delete delete a document, optionally permanently (forever) destructive"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "documents.download",
+      "haystack": "documents.download pandadoc.api.documents.download download a document as pdf, with optional watermarking read"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "documents.downloadProtected",
+      "haystack": "documents.downloadprotected pandadoc.api.documents.downloadprotected download a completed document as a protected (flattened) pdf; needs a production key (sandbox keys get 401) read"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "documents.get",
+      "haystack": "documents.get pandadoc.api.documents.get read one document with its recipients, status and metadata read"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "documents.list",
+      "haystack": "documents.list pandadoc.api.documents.list list documents, filtered by status, folder, contact, dates or metadata read"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "documents.listFields",
+      "haystack": "documents.listfields pandadoc.api.documents.listfields read the fields placed on a document with their coordinates read"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "documents.move",
+      "haystack": "documents.move pandadoc.api.documents.move move a document into a folder write"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "documents.send",
+      "haystack": "documents.send pandadoc.api.documents.send send a document to its recipients for signing; the signing emails cannot be recalled (silent: true sends without emails) destructive"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "documents.update",
+      "haystack": "documents.update pandadoc.api.documents.update update a draft document: name, recipients, fields, tokens, metadata or tags write"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "folders.create",
+      "haystack": "folders.create pandadoc.api.folders.create create a documents folder write"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "folders.list",
+      "haystack": "folders.list pandadoc.api.folders.list list document folders, optionally under one parent folder read"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "folders.rename",
+      "haystack": "folders.rename pandadoc.api.folders.rename rename a documents folder write"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "templates.delete",
+      "haystack": "templates.delete pandadoc.api.templates.delete delete a template destructive"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "templates.get",
+      "haystack": "templates.get pandadoc.api.templates.get read one template with its fields, tokens and roles read"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "templates.list",
+      "haystack": "templates.list pandadoc.api.templates.list list templates, filtered by name, folder, tag or shared state read"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "webhooks.createSubscription",
+      "haystack": "webhooks.createsubscription pandadoc.api.webhooks.createsubscription create a webhook subscription for the events you choose write"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "webhooks.deleteSubscription",
+      "haystack": "webhooks.deletesubscription pandadoc.api.webhooks.deletesubscription delete a webhook subscription; deliveries stop until it is created again destructive"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "webhooks.getEvent",
+      "haystack": "webhooks.getevent pandadoc.api.webhooks.getevent read one webhook event by the id a delivery carries read"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "api",
+      "shortPath": "webhooks.listSubscriptions",
+      "haystack": "webhooks.listsubscriptions pandadoc.api.webhooks.listsubscriptions list the workspace webhook subscriptions, including their shared keys read"
+    },
+    {
+      "pluginId": "pandadoc",
+      "kind": "webhook",
+      "shortPath": "pandadoc.event",
+      "haystack": "pandadoc.event pandadoc.webhooks.pandadoc.event a pandadoc event delivery: an array of event objects"
+    },
+    {
       "pluginId": "paperform",
       "kind": "api",
       "shortPath": "coupons.create",
@@ -133279,6 +134425,210 @@
       "kind": "api",
       "shortPath": "webhooks.list",
       "haystack": "webhooks.list paperform.api.webhooks.list list a form's webhooks. read"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "credentialTemplates.archive",
+      "haystack": "credentialtemplates.archive paradym.api.credentialtemplates.archive archive an sd-jwt vc credential template destructive"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "credentialTemplates.create",
+      "haystack": "credentialtemplates.create paradym.api.credentialtemplates.create create an sd-jwt vc credential template with its attributes write"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "credentialTemplates.get",
+      "haystack": "credentialtemplates.get paradym.api.credentialtemplates.get read one sd-jwt vc credential template read"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "credentialTemplates.list",
+      "haystack": "credentialtemplates.list paradym.api.credentialtemplates.list list sd-jwt vc credential templates read"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "credentialTemplates.unarchive",
+      "haystack": "credentialtemplates.unarchive paradym.api.credentialtemplates.unarchive unarchive an sd-jwt vc credential template write"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "credentialTemplates.update",
+      "haystack": "credentialtemplates.update paradym.api.credentialtemplates.update update an sd-jwt vc credential template write"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "issuance.createOffer",
+      "haystack": "issuance.createoffer paradym.api.issuance.createoffer create a credential offer a holder wallet can accept write"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "issuance.getSession",
+      "haystack": "issuance.getsession paradym.api.issuance.getsession read one openid4vc issuance session read"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "issuance.listSessions",
+      "haystack": "issuance.listsessions paradym.api.issuance.listsessions list openid4vc issuance sessions with their statuses read"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "presentationTemplates.archive",
+      "haystack": "presentationtemplates.archive paradym.api.presentationtemplates.archive archive a presentation template destructive"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "presentationTemplates.create",
+      "haystack": "presentationtemplates.create paradym.api.presentationtemplates.create create a presentation template defining what a holder must present write"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "presentationTemplates.get",
+      "haystack": "presentationtemplates.get paradym.api.presentationtemplates.get read one presentation template read"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "presentationTemplates.list",
+      "haystack": "presentationtemplates.list paradym.api.presentationtemplates.list list presentation templates read"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "presentationTemplates.update",
+      "haystack": "presentationtemplates.update paradym.api.presentationtemplates.update update a presentation template write"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "revocation.batch",
+      "haystack": "revocation.batch paradym.api.revocation.batch revoke issued credentials in one batch; revocation cannot be undone destructive"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "trustedEntities.create",
+      "haystack": "trustedentities.create paradym.api.trustedentities.create create a trusted entity from dids or x.509 certificates write"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "trustedEntities.delete",
+      "haystack": "trustedentities.delete paradym.api.trustedentities.delete delete a trusted entity destructive"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "trustedEntities.get",
+      "haystack": "trustedentities.get paradym.api.trustedentities.get read one trusted entity read"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "trustedEntities.list",
+      "haystack": "trustedentities.list paradym.api.trustedentities.list list trusted entities with their dids and certificates read"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "verification.complete",
+      "haystack": "verification.complete paradym.api.verification.complete mark a succeeded verification session as completed write"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "verification.createRequest",
+      "haystack": "verification.createrequest paradym.api.verification.createrequest create a verification session a holder wallet responds to write"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "verification.getSession",
+      "haystack": "verification.getsession paradym.api.verification.getsession read one openid4vc verification session, including presented credentials read"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "verification.listSessions",
+      "haystack": "verification.listsessions paradym.api.verification.listsessions list openid4vc verification sessions with their statuses read"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "wallets.create",
+      "haystack": "wallets.create paradym.api.wallets.create create a wallet with its own agent, templates and credentials write"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "wallets.get",
+      "haystack": "wallets.get paradym.api.wallets.get read one wallet by id read"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "wallets.list",
+      "haystack": "wallets.list paradym.api.wallets.list list wallets, searched by name or filtered by id and name read"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "wallets.update",
+      "haystack": "wallets.update paradym.api.wallets.update rename a wallet or change its verification data access write"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "webhooks.createSubscription",
+      "haystack": "webhooks.createsubscription paradym.api.webhooks.createsubscription create a webhook subscription for the event types you choose write"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "webhooks.deleteSubscription",
+      "haystack": "webhooks.deletesubscription paradym.api.webhooks.deletesubscription delete a webhook subscription; deliveries stop until it is created again destructive"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "webhooks.getDelivery",
+      "haystack": "webhooks.getdelivery paradym.api.webhooks.getdelivery read one webhook delivery with its attempt history read"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "webhooks.listDeliveries",
+      "haystack": "webhooks.listdeliveries paradym.api.webhooks.listdeliveries list webhook deliveries with their statuses read"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "webhooks.listSubscriptions",
+      "haystack": "webhooks.listsubscriptions paradym.api.webhooks.listsubscriptions list the wallet webhook subscriptions read"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "api",
+      "shortPath": "webhooks.redeliverDelivery",
+      "haystack": "webhooks.redeliverdelivery paradym.api.webhooks.redeliverdelivery redeliver a pending or failed webhook delivery: the payload is posted to the subscription url again destructive"
+    },
+    {
+      "pluginId": "paradym",
+      "kind": "webhook",
+      "shortPath": "paradym.event",
+      "haystack": "paradym.event paradym.webhooks.paradym.event a paradym webhook event: issuance, verification or didcomm updates"
     },
     {
       "pluginId": "parallel",
@@ -133749,6 +135099,96 @@
       "haystack": "runs.getdata parsehub.api.runs.getdata get the data a run extracted, as json or csv. read"
     },
     {
+      "pluginId": "parsera",
+      "kind": "api",
+      "shortPath": "agent.createScraper",
+      "haystack": "agent.createscraper parsera.api.agent.createscraper create an empty agentic scraper write"
+    },
+    {
+      "pluginId": "parsera",
+      "kind": "api",
+      "shortPath": "agent.deleteScraper",
+      "haystack": "agent.deletescraper parsera.api.agent.deletescraper delete an agentic scraper destructive"
+    },
+    {
+      "pluginId": "parsera",
+      "kind": "api",
+      "shortPath": "agent.extract",
+      "haystack": "agent.extract parsera.api.agent.extract start a one-shot agentic extraction; answers a task_id to poll, stop or wait on read"
+    },
+    {
+      "pluginId": "parsera",
+      "kind": "api",
+      "shortPath": "agent.generateScraper",
+      "haystack": "agent.generatescraper parsera.api.agent.generatescraper build or regenerate an agentic scraper from a page and an instruction destructive"
+    },
+    {
+      "pluginId": "parsera",
+      "kind": "api",
+      "shortPath": "agent.getScraper",
+      "haystack": "agent.getscraper parsera.api.agent.getscraper read one agentic scraper with its build status and parameters schema read"
+    },
+    {
+      "pluginId": "parsera",
+      "kind": "api",
+      "shortPath": "agent.getTask",
+      "haystack": "agent.gettask parsera.api.agent.gettask read one agentic extraction task with its status and results read"
+    },
+    {
+      "pluginId": "parsera",
+      "kind": "api",
+      "shortPath": "agent.stopTask",
+      "haystack": "agent.stoptask parsera.api.agent.stoptask cancel a running agentic extraction write"
+    },
+    {
+      "pluginId": "parsera",
+      "kind": "api",
+      "shortPath": "extractor.createScraper",
+      "haystack": "extractor.createscraper parsera.api.extractor.createscraper create an empty extractor scraper write"
+    },
+    {
+      "pluginId": "parsera",
+      "kind": "api",
+      "shortPath": "extractor.deleteScraper",
+      "haystack": "extractor.deletescraper parsera.api.extractor.deletescraper delete an extractor scraper destructive"
+    },
+    {
+      "pluginId": "parsera",
+      "kind": "api",
+      "shortPath": "extractor.extract",
+      "haystack": "extractor.extract parsera.api.extractor.extract extract structured data from a url with the llm extractor; each call charges credits read"
+    },
+    {
+      "pluginId": "parsera",
+      "kind": "api",
+      "shortPath": "extractor.getScraper",
+      "haystack": "extractor.getscraper parsera.api.extractor.getscraper read one extractor scraper read"
+    },
+    {
+      "pluginId": "parsera",
+      "kind": "api",
+      "shortPath": "extractor.parse",
+      "haystack": "extractor.parse parsera.api.extractor.parse parse data from html or text content you already have; each call charges credits read"
+    },
+    {
+      "pluginId": "parsera",
+      "kind": "api",
+      "shortPath": "scrapers.getRun",
+      "haystack": "scrapers.getrun parsera.api.scrapers.getrun read one async scraper run with its progress and results read"
+    },
+    {
+      "pluginId": "parsera",
+      "kind": "api",
+      "shortPath": "scrapers.run",
+      "haystack": "scrapers.run parsera.api.scrapers.run run a scraper and wait for results; the api defers past five minutes to a pollable run read"
+    },
+    {
+      "pluginId": "parsera",
+      "kind": "api",
+      "shortPath": "scrapers.runAsync",
+      "haystack": "scrapers.runasync parsera.api.scrapers.runasync run a scraper asynchronously; answers a run_id to poll read"
+    },
+    {
       "pluginId": "parseur",
       "kind": "api",
       "shortPath": "bootstrap.getBootstrap",
@@ -133927,6 +135367,582 @@
       "kind": "api",
       "shortPath": "webhooks.listWebhooks",
       "haystack": "webhooks.listwebhooks parseur.api.webhooks.listwebhooks list active (webhook_set) and paused (available_webhook_set) webhooks for a mailbox via get /parser/{id}. read"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "data.getParsed",
+      "haystack": "data.getparsed parsio.api.data.getparsed read the parsed data records of a mailbox, paged by date read"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "data.listEmails",
+      "haystack": "data.listemails parsio.api.data.listemails list the email addresses the mailbox collected read"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "documents.createAsync",
+      "haystack": "documents.createasync parsio.api.documents.createasync parse html or text content asynchronously; poll documents.get for the result destructive"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "documents.createSync",
+      "haystack": "documents.createsync parsio.api.documents.createsync parse html or text content and wait for the result; template and gpt parsers only, each parse consumes credits destructive"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "documents.get",
+      "haystack": "documents.get parsio.api.documents.get read one parsed document; this is the payload parsio webhooks deliver read"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "documents.list",
+      "haystack": "documents.list parsio.api.documents.list list the documents of a mailbox, filtered by date, name or status read"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "documents.reparse",
+      "haystack": "documents.reparse parsio.api.documents.reparse queue a document for reprocessing; each reparse consumes credits destructive"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "documents.skipMany",
+      "haystack": "documents.skipmany parsio.api.documents.skipmany skip parsing for the given documents write"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "documents.uploadAsync",
+      "haystack": "documents.uploadasync parsio.api.documents.uploadasync upload one file (max 50mb, zip supported) and parse it asynchronously destructive"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "documents.uploadSync",
+      "haystack": "documents.uploadsync parsio.api.documents.uploadsync upload one file (max 20mb, no zip) and wait for the parsed result destructive"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "mailboxes.create",
+      "haystack": "mailboxes.create parsio.api.mailboxes.create create a mailbox with a parser preset write"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "mailboxes.delete",
+      "haystack": "mailboxes.delete parsio.api.mailboxes.delete delete a mailbox destructive"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "mailboxes.get",
+      "haystack": "mailboxes.get parsio.api.mailboxes.get read one mailbox with its settings and configuration read"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "mailboxes.list",
+      "haystack": "mailboxes.list parsio.api.mailboxes.list list all mailboxes available to the authenticated user read"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "mailboxes.tableFields",
+      "haystack": "mailboxes.tablefields parsio.api.mailboxes.tablefields list the table fields configured in a mailbox read"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "mailboxes.update",
+      "haystack": "mailboxes.update parsio.api.mailboxes.update update mailbox settings: name, email prefix, attachments, alerts write"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create parsio.api.webhooks.create create a webhook subscription for doc.parsed, doc.fail, doc.received or table.parsed events write"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete parsio.api.webhooks.delete delete webhook subscriptions; deliveries stop until they are created again destructive"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "webhooks.get",
+      "haystack": "webhooks.get parsio.api.webhooks.get read one webhook subscription read"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "webhooks.listForMailbox",
+      "haystack": "webhooks.listformailbox parsio.api.webhooks.listformailbox list the webhook subscriptions of a mailbox read"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update parsio.api.webhooks.update update a webhook subscription write"
+    },
+    {
+      "pluginId": "parsio",
+      "kind": "webhook",
+      "shortPath": "parsio.event",
+      "haystack": "parsio.event parsio.webhooks.parsio.event a parsed document parsio delivered to a webhook subscription"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.activeHistory",
+      "haystack": "passes.activehistory passcreator.api.passes.activehistory read the history of active and inactive passes of a template read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.create",
+      "haystack": "passes.create passcreator.api.passes.create create a pass from a pass template with personalised properties write"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.delete",
+      "haystack": "passes.delete passcreator.api.passes.delete delete a pass destructive"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.enableDownload",
+      "haystack": "passes.enabledownload passcreator.api.passes.enabledownload enable the download of a pass write"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.get",
+      "haystack": "passes.get passcreator.api.passes.get read one pass by uid, barcode value or user-provided id read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.list",
+      "haystack": "passes.list passcreator.api.passes.list list the passes of a pass template, paged by cursor and date read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.pushNotification",
+      "haystack": "passes.pushnotification passcreator.api.passes.pushnotification push a notification message to one pass holder; the message goes out and cannot be recalled destructive"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.search",
+      "haystack": "passes.search passcreator.api.passes.search search the passes of a template by content read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.sendEmail",
+      "haystack": "passes.sendemail passcreator.api.passes.sendemail send the pass to an email address; the email goes out and cannot be recalled destructive"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.statistics",
+      "haystack": "passes.statistics passcreator.api.passes.statistics read pass usage statistics of a template by day, week or month read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.update",
+      "haystack": "passes.update passcreator.api.passes.update update pass properties or mark the pass voided or not voided write"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.uris",
+      "haystack": "passes.uris passcreator.api.passes.uris read the resource uris of a pass read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "templates.copy",
+      "haystack": "templates.copy passcreator.api.templates.copy copy a pass template write"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "templates.delete",
+      "haystack": "templates.delete passcreator.api.templates.delete delete a pass template; the api refuses when scheduled tasks exist destructive"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "templates.fields",
+      "haystack": "templates.fields passcreator.api.templates.fields read the required and optional fields of a pass template read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "templates.list",
+      "haystack": "templates.list passcreator.api.templates.list list all pass templates of the account read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "templates.movePass",
+      "haystack": "templates.movepass passcreator.api.templates.movepass move a pass to a different template of the same project (api v2) write"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "webhooks.getPublicKey",
+      "haystack": "webhooks.getpublickey passcreator.api.webhooks.getpublickey read the pem public key that verifies webhook payload signatures read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list passcreator.api.webhooks.list list the active webhook subscriptions, including pull-mode entries read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "webhooks.subscribe",
+      "haystack": "webhooks.subscribe passcreator.api.webhooks.subscribe subscribe a url to a webhook event, optionally scoped to one template write"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "webhooks.unsubscribe",
+      "haystack": "webhooks.unsubscribe passcreator.api.webhooks.unsubscribe unsubscribe a webhook; deliveries stop until it is subscribed again destructive"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "webhook",
+      "shortPath": "passcreator.event",
+      "haystack": "passcreator.event passcreator.webhooks.passcreator.event a signed passcreator delivery; the result is the verified pass data from signeddata"
+    },
+    {
+      "pluginId": "payhere",
+      "kind": "api",
+      "shortPath": "company.get",
+      "haystack": "company.get payhere.api.company.get read the company of the authenticated user read"
+    },
+    {
+      "pluginId": "payhere",
+      "kind": "api",
+      "shortPath": "company.stats",
+      "haystack": "company.stats payhere.api.company.stats read the payment stats of the last 30 days with comparisons read"
+    },
+    {
+      "pluginId": "payhere",
+      "kind": "api",
+      "shortPath": "customers.get",
+      "haystack": "customers.get payhere.api.customers.get read one customer with their subscriptions and payment history read"
+    },
+    {
+      "pluginId": "payhere",
+      "kind": "api",
+      "shortPath": "customers.list",
+      "haystack": "customers.list payhere.api.customers.list list customers, most recent first, paged read"
+    },
+    {
+      "pluginId": "payhere",
+      "kind": "api",
+      "shortPath": "payments.list",
+      "haystack": "payments.list payhere.api.payments.list list payments, most recent first, paged read"
+    },
+    {
+      "pluginId": "payhere",
+      "kind": "api",
+      "shortPath": "plans.list",
+      "haystack": "plans.list payhere.api.plans.list list the payment plans, paged read"
+    },
+    {
+      "pluginId": "payhere",
+      "kind": "api",
+      "shortPath": "refunds.create",
+      "haystack": "refunds.create payhere.api.refunds.create refund a payment fully or partially; money leaves the account and the refund cannot be undone destructive"
+    },
+    {
+      "pluginId": "payhere",
+      "kind": "api",
+      "shortPath": "subscriptions.list",
+      "haystack": "subscriptions.list payhere.api.subscriptions.list list subscriptions, most recent payment first, paged read"
+    },
+    {
+      "pluginId": "payhere",
+      "kind": "api",
+      "shortPath": "user.get",
+      "haystack": "user.get payhere.api.user.get read the authenticated payhere user read"
+    },
+    {
+      "pluginId": "payhere",
+      "kind": "webhook",
+      "shortPath": "payhere.event",
+      "haystack": "payhere.event payhere.webhooks.payhere.event a payhere payment or subscription event delivery"
+    },
+    {
+      "pluginId": "payhip",
+      "kind": "api",
+      "shortPath": "coupons.create",
+      "haystack": "coupons.create payhip.api.coupons.create create a discount coupon for one product, all products or a collection write"
+    },
+    {
+      "pluginId": "payhip",
+      "kind": "api",
+      "shortPath": "coupons.get",
+      "haystack": "coupons.get payhip.api.coupons.get read one coupon by id read"
+    },
+    {
+      "pluginId": "payhip",
+      "kind": "api",
+      "shortPath": "coupons.list",
+      "haystack": "coupons.list payhip.api.coupons.list list the coupons of the account, paged by limit and offset read"
+    },
+    {
+      "pluginId": "payhip",
+      "kind": "api",
+      "shortPath": "license.decreaseUsage",
+      "haystack": "license.decreaseusage payhip.api.license.decreaseusage decrease the usage count of a license key (a deactivation) write"
+    },
+    {
+      "pluginId": "payhip",
+      "kind": "api",
+      "shortPath": "license.disable",
+      "haystack": "license.disable payhip.api.license.disable disable a license key so it stops validating write"
+    },
+    {
+      "pluginId": "payhip",
+      "kind": "api",
+      "shortPath": "license.enable",
+      "haystack": "license.enable payhip.api.license.enable enable a license key that was disabled write"
+    },
+    {
+      "pluginId": "payhip",
+      "kind": "api",
+      "shortPath": "license.increaseUsage",
+      "haystack": "license.increaseusage payhip.api.license.increaseusage increase the usage count of a license key (an activation) write"
+    },
+    {
+      "pluginId": "payhip",
+      "kind": "api",
+      "shortPath": "license.verify",
+      "haystack": "license.verify payhip.api.license.verify verify a license key against a product secret; read-only check read"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "customers.create",
+      "haystack": "customers.create paystack.api.customers.create create a customer write"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "customers.get",
+      "haystack": "customers.get paystack.api.customers.get read one customer by email address or code read"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "customers.list",
+      "haystack": "customers.list paystack.api.customers.list list customers, paged and filtered by creation date read"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "customers.setRiskAction",
+      "haystack": "customers.setriskaction paystack.api.customers.setriskaction whitelist, blacklist or reset a customer write"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "customers.update",
+      "haystack": "customers.update paystack.api.customers.update update a customer name and contact details write"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "plans.create",
+      "haystack": "plans.create paystack.api.plans.create create a payment plan write"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "plans.get",
+      "haystack": "plans.get paystack.api.plans.get read one plan by id or code read"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "plans.list",
+      "haystack": "plans.list paystack.api.plans.list list payment plans, filtered by interval and amount read"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "plans.update",
+      "haystack": "plans.update paystack.api.plans.update update a plan, optionally applying the changes to existing subscriptions write"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "refunds.create",
+      "haystack": "refunds.create paystack.api.refunds.create refund a transaction fully or partially; money leaves the account and refunds cannot be undone destructive"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "refunds.get",
+      "haystack": "refunds.get paystack.api.refunds.get read one refund by id read"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "refunds.list",
+      "haystack": "refunds.list paystack.api.refunds.list list refunds, filtered by transaction, currency and dates read"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "subscriptions.create",
+      "haystack": "subscriptions.create paystack.api.subscriptions.create subscribe a customer to a plan; paystack then debits the customer's saved card on every interval destructive"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "subscriptions.disable",
+      "haystack": "subscriptions.disable paystack.api.subscriptions.disable disable a subscription with its email token; debits stop until it is enabled again write"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "subscriptions.enable",
+      "haystack": "subscriptions.enable paystack.api.subscriptions.enable enable a subscription with its email token; debits of the customer's card resume destructive"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "subscriptions.get",
+      "haystack": "subscriptions.get paystack.api.subscriptions.get read one subscription by id or code read"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "subscriptions.list",
+      "haystack": "subscriptions.list paystack.api.subscriptions.list list subscriptions, filtered by customer and plan read"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "transactions.get",
+      "haystack": "transactions.get paystack.api.transactions.get read one transaction by id read"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "transactions.initialize",
+      "haystack": "transactions.initialize paystack.api.transactions.initialize start a checkout and get the authorization_url to redirect the customer to write"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "transactions.list",
+      "haystack": "transactions.list paystack.api.transactions.list list transactions, filtered by customer, status and dates read"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "api",
+      "shortPath": "transactions.verify",
+      "haystack": "transactions.verify paystack.api.transactions.verify verify a transaction by its reference and read its final status read"
+    },
+    {
+      "pluginId": "paystack",
+      "kind": "webhook",
+      "shortPath": "paystack.event",
+      "haystack": "paystack.event paystack.webhooks.paystack.event a paystack webhook delivery: charge, transfer or refund events"
+    },
+    {
+      "pluginId": "pdf4me",
+      "kind": "api",
+      "shortPath": "convert.htmlToPdf",
+      "haystack": "convert.htmltopdf pdf4me.api.convert.htmltopdf render html content into a pdf destructive"
+    },
+    {
+      "pluginId": "pdf4me",
+      "kind": "api",
+      "shortPath": "convert.ocrPdf",
+      "haystack": "convert.ocrpdf pdf4me.api.convert.ocrpdf run ocr on a scanned pdf to make its text editable; the api answers a job, so poll jobs.status for the file destructive"
+    },
+    {
+      "pluginId": "pdf4me",
+      "kind": "api",
+      "shortPath": "convert.pdfToWord",
+      "haystack": "convert.pdftoword pdf4me.api.convert.pdftoword convert a pdf to a word document; the api answers a job, so poll jobs.status for the file destructive"
+    },
+    {
+      "pluginId": "pdf4me",
+      "kind": "api",
+      "shortPath": "extract.pdfFormData",
+      "haystack": "extract.pdfformdata pdf4me.api.extract.pdfformdata extract the values of filled pdf form fields read"
+    },
+    {
+      "pluginId": "pdf4me",
+      "kind": "api",
+      "shortPath": "extract.tableFromPdf",
+      "haystack": "extract.tablefrompdf pdf4me.api.extract.tablefrompdf extract tables from a pdf read"
+    },
+    {
+      "pluginId": "pdf4me",
+      "kind": "api",
+      "shortPath": "jobs.status",
+      "haystack": "jobs.status pdf4me.api.jobs.status poll a job (isasync, or pdf-to-word and ocr, which always run as jobs); a finished job answers its file read"
+    },
+    {
+      "pluginId": "pdf4me",
+      "kind": "api",
+      "shortPath": "pdf.compress",
+      "haystack": "pdf.compress pdf4me.api.pdf.compress compress a pdf with a documented profile (max, web, print, default) destructive"
+    },
+    {
+      "pluginId": "pdf4me",
+      "kind": "api",
+      "shortPath": "pdf.deletePages",
+      "haystack": "pdf.deletepages pdf4me.api.pdf.deletepages return a copy of a pdf without the given pages; the source file is not changed destructive"
+    },
+    {
+      "pluginId": "pdf4me",
+      "kind": "api",
+      "shortPath": "pdf.extractPages",
+      "haystack": "pdf.extractpages pdf4me.api.pdf.extractpages extract the given pages into a new pdf destructive"
+    },
+    {
+      "pluginId": "pdf4me",
+      "kind": "api",
+      "shortPath": "pdf.getInfo",
+      "haystack": "pdf.getinfo pdf4me.api.pdf.getinfo read pdf metadata: page count, dimensions, author and more read"
+    },
+    {
+      "pluginId": "pdf4me",
+      "kind": "api",
+      "shortPath": "pdf.merge",
+      "haystack": "pdf.merge pdf4me.api.pdf.merge merge multiple pdfs into one; array order is the merge order destructive"
+    },
+    {
+      "pluginId": "pdf4me",
+      "kind": "api",
+      "shortPath": "pdf.split",
+      "haystack": "pdf.split pdf4me.api.pdf.split split a pdf after a page, every n pages, after listed pages or by page ranges; the parts come back in documents destructive"
     },
     {
       "pluginId": "pdfapi",
@@ -134331,10 +136347,640 @@
       "haystack": "school.clean pdl.api.school.clean normalize a school name or website (free) read"
     },
     {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "accessTokens.delete",
+      "haystack": "accesstokens.delete penpot.api.accesstokens.delete revoke an api access token; apps using it stop working destructive"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "accessTokens.list",
+      "haystack": "accesstokens.list penpot.api.accesstokens.list list the api access tokens of the account (names only, never values) read"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "comments.create",
+      "haystack": "comments.create penpot.api.comments.create comment on a thread write"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "comments.list",
+      "haystack": "comments.list penpot.api.comments.list list the comments of a thread read"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "comments.threadCreate",
+      "haystack": "comments.threadcreate penpot.api.comments.threadcreate open a comment thread on a file page write"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "comments.threadGet",
+      "haystack": "comments.threadget penpot.api.comments.threadget read one comment thread read"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "comments.threadsList",
+      "haystack": "comments.threadslist penpot.api.comments.threadslist list the comment threads of a file read"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "files.create",
+      "haystack": "files.create penpot.api.files.create create a design file in a project write"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "files.delete",
+      "haystack": "files.delete penpot.api.files.delete delete a design file destructive"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "files.duplicate",
+      "haystack": "files.duplicate penpot.api.files.duplicate duplicate a design file write"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "files.get",
+      "haystack": "files.get penpot.api.files.get read one design file with its data read"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "files.rename",
+      "haystack": "files.rename penpot.api.files.rename rename a design file write"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "files.shareLinkCreate",
+      "haystack": "files.sharelinkcreate penpot.api.files.sharelinkcreate create a share link for a file write"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "files.shareLinkDelete",
+      "haystack": "files.sharelinkdelete penpot.api.files.sharelinkdelete delete a share link; the link stops working immediately write"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "files.snapshotsCreate",
+      "haystack": "files.snapshotscreate penpot.api.files.snapshotscreate create a snapshot of a file write"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "files.snapshotsDelete",
+      "haystack": "files.snapshotsdelete penpot.api.files.snapshotsdelete delete a file snapshot destructive"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "files.snapshotsList",
+      "haystack": "files.snapshotslist penpot.api.files.snapshotslist list the snapshots of a file read"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "projects.create",
+      "haystack": "projects.create penpot.api.projects.create create a project in a team write"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "projects.delete",
+      "haystack": "projects.delete penpot.api.projects.delete delete a project with its files destructive"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "projects.duplicate",
+      "haystack": "projects.duplicate penpot.api.projects.duplicate duplicate a project write"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "projects.get",
+      "haystack": "projects.get penpot.api.projects.get read one project by id read"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "projects.listAll",
+      "haystack": "projects.listall penpot.api.projects.listall list all projects of the authenticated profile read"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "projects.rename",
+      "haystack": "projects.rename penpot.api.projects.rename rename a project write"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "teams.create",
+      "haystack": "teams.create penpot.api.teams.create create a team write"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "teams.delete",
+      "haystack": "teams.delete penpot.api.teams.delete delete a team with its projects and files destructive"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "teams.get",
+      "haystack": "teams.get penpot.api.teams.get read one team read"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "teams.list",
+      "haystack": "teams.list penpot.api.teams.list list the teams of the authenticated profile read"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create penpot.api.webhooks.create create a webhook for a team write"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete penpot.api.webhooks.delete delete a webhook; deliveries stop until it is created again destructive"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list penpot.api.webhooks.list list the webhooks of a team read"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update penpot.api.webhooks.update update a webhook url, payload format or active state write"
+    },
+    {
+      "pluginId": "penpot",
+      "kind": "webhook",
+      "shortPath": "penpot.event",
+      "haystack": "penpot.event penpot.webhooks.penpot.event a penpot webhook delivery: a team-level event notification"
+    },
+    {
+      "pluginId": "perigon",
+      "kind": "api",
+      "shortPath": "articles.list",
+      "haystack": "articles.list perigon.api.articles.list search news articles: one result per published url, filterable by query, topic, category, source, country, language and dates read"
+    },
+    {
+      "pluginId": "perigon",
+      "kind": "api",
+      "shortPath": "companies.list",
+      "haystack": "companies.list perigon.api.companies.list search resolved company entities read"
+    },
+    {
+      "pluginId": "perigon",
+      "kind": "api",
+      "shortPath": "journalists.list",
+      "haystack": "journalists.list perigon.api.journalists.list search the journalist directory by name or publisher read"
+    },
+    {
+      "pluginId": "perigon",
+      "kind": "api",
+      "shortPath": "limits.get",
+      "haystack": "limits.get perigon.api.limits.get read account usage and limits; free to poll and not rate-limited read"
+    },
+    {
+      "pluginId": "perigon",
+      "kind": "api",
+      "shortPath": "people.list",
+      "haystack": "people.list perigon.api.people.list search resolved person entities read"
+    },
+    {
+      "pluginId": "perigon",
+      "kind": "api",
+      "shortPath": "stories.list",
+      "haystack": "stories.list perigon.api.stories.list list story clusters: one narrative across many articles read"
+    },
+    {
       "pluginId": "perplexityai",
       "kind": "api",
       "shortPath": "chat.completions",
       "haystack": "chat.completions perplexityai.api.chat.completions create a chat completion read"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "campaigns.addLead",
+      "haystack": "campaigns.addlead persistiq.api.campaigns.addlead add leads to a campaign; the campaign's automated emails start going to them destructive"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "campaigns.create",
+      "haystack": "campaigns.create persistiq.api.campaigns.create create a campaign write"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "campaigns.duplicate",
+      "haystack": "campaigns.duplicate persistiq.api.campaigns.duplicate copy a campaign to a new owner write"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "campaigns.list",
+      "haystack": "campaigns.list persistiq.api.campaigns.list list the campaigns read"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "campaigns.listLeads",
+      "haystack": "campaigns.listleads persistiq.api.campaigns.listleads list the leads in a campaign read"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "campaigns.listReplies",
+      "haystack": "campaigns.listreplies persistiq.api.campaigns.listreplies list the replies in a campaign read"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "campaigns.removeLead",
+      "haystack": "campaigns.removelead persistiq.api.campaigns.removelead remove a lead from a campaign write"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "campaigns.replyToMessage",
+      "haystack": "campaigns.replytomessage persistiq.api.campaigns.replytomessage reply to a message received in a campaign; the email goes out and cannot be recalled destructive"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "dncDomains.create",
+      "haystack": "dncdomains.create persistiq.api.dncdomains.create add a domain to the do-not-contact list; emails to it stop write"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "dncDomains.list",
+      "haystack": "dncdomains.list persistiq.api.dncdomains.list list the do-not-contact domains read"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "events.list",
+      "haystack": "events.list persistiq.api.events.list list activity events, with filters, page by page read"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "leadFields.list",
+      "haystack": "leadfields.list persistiq.api.leadfields.list list the lead field definitions read"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "leads.create",
+      "haystack": "leads.create persistiq.api.leads.create create a lead with its attributes write"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "leads.get",
+      "haystack": "leads.get persistiq.api.leads.get read one lead by id read"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "leads.list",
+      "haystack": "leads.list persistiq.api.leads.list list leads, with filters, page by page read"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "leads.update",
+      "haystack": "leads.update persistiq.api.leads.update update a lead's status, owner, flags or attributes write"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "leadStatuses.list",
+      "haystack": "leadstatuses.list persistiq.api.leadstatuses.list list the lead status vocabulary read"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "tags.list",
+      "haystack": "tags.list persistiq.api.tags.list list the tags read"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list persistiq.api.users.list list the team members read"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "webhooks.getSettings",
+      "haystack": "webhooks.getsettings persistiq.api.webhooks.getsettings read the webhook plugin settings read"
+    },
+    {
+      "pluginId": "persistiq",
+      "kind": "api",
+      "shortPath": "webhooks.updateSettings",
+      "haystack": "webhooks.updatesettings persistiq.api.webhooks.updatesettings turn webhook deliveries on or off and set the url each one posts to write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "accounts.addTag",
+      "haystack": "accounts.addtag persona.api.accounts.addtag add a tag to an account write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "accounts.create",
+      "haystack": "accounts.create persona.api.accounts.create create an account write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "accounts.get",
+      "haystack": "accounts.get persona.api.accounts.get read one account by id read"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "accounts.list",
+      "haystack": "accounts.list persona.api.accounts.list list accounts, filtered by reference id, page by page read"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "accounts.redact",
+      "haystack": "accounts.redact persona.api.accounts.redact redact an account; the data is permanently removed destructive"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "accounts.removeTag",
+      "haystack": "accounts.removetag persona.api.accounts.removetag remove a tag from an account write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "accounts.search",
+      "haystack": "accounts.search persona.api.accounts.search search accounts with a predicate query read"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "accounts.update",
+      "haystack": "accounts.update persona.api.accounts.update update an account's attributes, status or tags write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquiries.addTag",
+      "haystack": "inquiries.addtag persona.api.inquiries.addtag add a tag to an inquiry write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquiries.approve",
+      "haystack": "inquiries.approve persona.api.inquiries.approve approve an inquiry; the decision is final and runs any approval workflow destructive"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquiries.create",
+      "haystack": "inquiries.create persona.api.inquiries.create create an inquiry from a template write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquiries.decline",
+      "haystack": "inquiries.decline persona.api.inquiries.decline decline an inquiry; the decision is final destructive"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquiries.generateOneTimeLink",
+      "haystack": "inquiries.generateonetimelink persona.api.inquiries.generateonetimelink generate a one-time link for an inquiry; anyone with the link can resume it write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquiries.get",
+      "haystack": "inquiries.get persona.api.inquiries.get read one inquiry by id read"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquiries.list",
+      "haystack": "inquiries.list persona.api.inquiries.list list inquiries filtered by status, account, reference or template read"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquiries.markForReview",
+      "haystack": "inquiries.markforreview persona.api.inquiries.markforreview mark an inquiry for manual review write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquiries.redact",
+      "haystack": "inquiries.redact persona.api.inquiries.redact redact an inquiry; the data is permanently removed destructive"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquiries.removeTag",
+      "haystack": "inquiries.removetag persona.api.inquiries.removetag remove a tag from an inquiry write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquiries.update",
+      "haystack": "inquiries.update persona.api.inquiries.update update inquiry attributes write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquirySessions.create",
+      "haystack": "inquirysessions.create persona.api.inquirysessions.create create a session for an inquiry write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquirySessions.expire",
+      "haystack": "inquirysessions.expire persona.api.inquirysessions.expire expire one inquiry session write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquirySessions.expireAll",
+      "haystack": "inquirysessions.expireall persona.api.inquirysessions.expireall expire every session of the given inquiries destructive"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquirySessions.generateOneTimeLink",
+      "haystack": "inquirysessions.generateonetimelink persona.api.inquirysessions.generateonetimelink generate a one-time link for an inquiry session write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquirySessions.get",
+      "haystack": "inquirysessions.get persona.api.inquirysessions.get read one inquiry session read"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquiryTemplates.get",
+      "haystack": "inquirytemplates.get persona.api.inquirytemplates.get read one inquiry template read"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquiryTemplates.list",
+      "haystack": "inquirytemplates.list persona.api.inquirytemplates.list list the inquiry templates read"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "inquiryTemplates.listVersions",
+      "haystack": "inquirytemplates.listversions persona.api.inquirytemplates.listversions list the versions of one inquiry template read"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "webhooks.archive",
+      "haystack": "webhooks.archive persona.api.webhooks.archive archive a webhook; archived webhooks cannot be re-enabled destructive"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create persona.api.webhooks.create create a webhook; the answer carries its signing secret write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "webhooks.disable",
+      "haystack": "webhooks.disable persona.api.webhooks.disable disable a webhook; deliveries stop until it is enabled again write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "webhooks.enable",
+      "haystack": "webhooks.enable persona.api.webhooks.enable enable a webhook write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "webhooks.get",
+      "haystack": "webhooks.get persona.api.webhooks.get read one webhook read"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list persona.api.webhooks.list list the webhooks read"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "webhooks.rotateSecret",
+      "haystack": "webhooks.rotatesecret persona.api.webhooks.rotatesecret rotate the webhook signing secret; the old one stops signing once its window ends destructive"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "webhooks.searchEvents",
+      "haystack": "webhooks.searchevents persona.api.webhooks.searchevents search recorded webhook events read"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update persona.api.webhooks.update update a webhook url, name or subscribed events write"
+    },
+    {
+      "pluginId": "persona",
+      "kind": "webhook",
+      "shortPath": "persona.event",
+      "haystack": "persona.event persona.webhooks.persona.event a persona webhook delivery: an inquiry or verification event"
+    },
+    {
+      "pluginId": "pexels",
+      "kind": "api",
+      "shortPath": "collections.list",
+      "haystack": "collections.list pexels.api.collections.list list the collections of the api key read"
+    },
+    {
+      "pluginId": "pexels",
+      "kind": "api",
+      "shortPath": "collections.listFeatured",
+      "haystack": "collections.listfeatured pexels.api.collections.listfeatured list the featured collections read"
+    },
+    {
+      "pluginId": "pexels",
+      "kind": "api",
+      "shortPath": "collections.listMedia",
+      "haystack": "collections.listmedia pexels.api.collections.listmedia list the photos and videos of a collection, filtered by type read"
+    },
+    {
+      "pluginId": "pexels",
+      "kind": "api",
+      "shortPath": "photos.curated",
+      "haystack": "photos.curated pexels.api.photos.curated list the curated photo feed read"
+    },
+    {
+      "pluginId": "pexels",
+      "kind": "api",
+      "shortPath": "photos.get",
+      "haystack": "photos.get pexels.api.photos.get read one photo by id with its rendition urls read"
+    },
+    {
+      "pluginId": "pexels",
+      "kind": "api",
+      "shortPath": "photos.search",
+      "haystack": "photos.search pexels.api.photos.search search photos by query, orientation, size and color read"
+    },
+    {
+      "pluginId": "pexels",
+      "kind": "api",
+      "shortPath": "videos.get",
+      "haystack": "videos.get pexels.api.videos.get read one video by id with its downloadable renditions read"
+    },
+    {
+      "pluginId": "pexels",
+      "kind": "api",
+      "shortPath": "videos.popular",
+      "haystack": "videos.popular pexels.api.videos.popular list the popular videos, filtered by size and duration read"
+    },
+    {
+      "pluginId": "pexels",
+      "kind": "api",
+      "shortPath": "videos.search",
+      "haystack": "videos.search pexels.api.videos.search search videos by query and orientation read"
     },
     {
       "pluginId": "phantombuster",
@@ -134673,6 +137319,648 @@
       "haystack": "users.updateme phantombuster.api.users.updateme update the current user's info write"
     },
     {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "businesses.getProfile",
+      "haystack": "businesses.getprofile piggy.api.businesses.getprofile read one business profile by uuid read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "businesses.listProfiles",
+      "haystack": "businesses.listprofiles piggy.api.businesses.listprofiles list the account business profiles read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "contacts.claim",
+      "haystack": "contacts.claim piggy.api.contacts.claim claim an anonymous contact with a real email; merges into a matching contact, which cannot be undone destructive"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "contacts.create",
+      "haystack": "contacts.create piggy.api.contacts.create create a contact from an email address write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "contacts.createAnonymous",
+      "haystack": "contacts.createanonymous piggy.api.contacts.createanonymous create an anonymous contact with a fictional email write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "contacts.delete",
+      "haystack": "contacts.delete piggy.api.contacts.delete delete a contact (default or gdpr); cannot be undone destructive"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "contacts.findOneByEmail",
+      "haystack": "contacts.findonebyemail piggy.api.contacts.findonebyemail read one contact by email address read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "contacts.findOrCreate",
+      "haystack": "contacts.findorcreate piggy.api.contacts.findorcreate read a contact by email, creating one when missing write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get piggy.api.contacts.get read one contact by uuid with balances and subscriptions read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "contacts.getCreditBalance",
+      "haystack": "contacts.getcreditbalance piggy.api.contacts.getcreditbalance read a contact credit balance read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "contacts.getPrepaidBalance",
+      "haystack": "contacts.getprepaidbalance piggy.api.contacts.getprepaidbalance read a contact prepaid balance read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "contacts.getTier",
+      "haystack": "contacts.gettier piggy.api.contacts.gettier read the contact current loyalty tier read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list piggy.api.contacts.list list contacts with paging, date and attribute filters read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "contacts.merge",
+      "haystack": "contacts.merge piggy.api.contacts.merge merge a source contact into a destination contact; cannot be undone destructive"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "contacts.update",
+      "haystack": "contacts.update piggy.api.contacts.update update contact attributes keyed by attribute name write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "giftcards.create",
+      "haystack": "giftcards.create piggy.api.giftcards.create issue a digital giftcard with a balance; it carries real value and uses leat tokens destructive"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "giftcards.findOneByHash",
+      "haystack": "giftcards.findonebyhash piggy.api.giftcards.findonebyhash read one giftcard by hash or qr value read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "giftcards.get",
+      "haystack": "giftcards.get piggy.api.giftcards.get read one giftcard by uuid read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "giftcards.list",
+      "haystack": "giftcards.list piggy.api.giftcards.list list giftcards with program and paging filters read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "giftcards.listPrograms",
+      "haystack": "giftcards.listprograms piggy.api.giftcards.listprograms list the giftcard programs read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "giftcards.sendByEmail",
+      "haystack": "giftcards.sendbyemail piggy.api.giftcards.sendbyemail email a giftcard to a contact; the email cannot be recalled destructive"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "loyalty.getProgram",
+      "haystack": "loyalty.getprogram piggy.api.loyalty.getprogram read the account loyalty program settings read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "loyalty.listTransactions",
+      "haystack": "loyalty.listtransactions piggy.api.loyalty.listtransactions list loyalty transactions with type, shop and date filters read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "points.create",
+      "haystack": "points.create piggy.api.points.create add or subtract points on a contact balance directly write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "points.get",
+      "haystack": "points.get piggy.api.points.get read one direct points transaction read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "points.reverse",
+      "haystack": "points.reverse piggy.api.points.reverse reverse a direct points transaction (once per transaction) write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "promotions.get",
+      "haystack": "promotions.get piggy.api.promotions.get read one promotion by uuid read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "promotions.list",
+      "haystack": "promotions.list piggy.api.promotions.list list the account promotions read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "rewards.get",
+      "haystack": "rewards.get piggy.api.rewards.get read one reward by uuid read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "rewards.list",
+      "haystack": "rewards.list piggy.api.rewards.list list rewards, optionally claimable by a contact read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "rewards.redeem",
+      "haystack": "rewards.redeem piggy.api.rewards.redeem create a reward reception: claim a reward for a contact write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "rewards.reverseRedemption",
+      "haystack": "rewards.reverseredemption piggy.api.rewards.reverseredemption reverse a reward redemption, reissuing the credits write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "rewards.update",
+      "haystack": "rewards.update piggy.api.rewards.update update a reward title, description or required credits write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "vouchers.create",
+      "haystack": "vouchers.create piggy.api.vouchers.create create a voucher for a promotion write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "vouchers.find",
+      "haystack": "vouchers.find piggy.api.vouchers.find read one voucher by code read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "vouchers.list",
+      "haystack": "vouchers.list piggy.api.vouchers.list list vouchers with promotion, contact and status filters read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "vouchers.lock",
+      "haystack": "vouchers.lock piggy.api.vouchers.lock lock a voucher and receive a release key write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "vouchers.redeem",
+      "haystack": "vouchers.redeem piggy.api.vouchers.redeem redeem a voucher by code at a business profile write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "vouchers.release",
+      "haystack": "vouchers.release piggy.api.vouchers.release release a locked voucher with its release key write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "vouchers.reverseRedemption",
+      "haystack": "vouchers.reverseredemption piggy.api.vouchers.reverseredemption reverse a voucher redemption write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "vouchers.update",
+      "haystack": "vouchers.update piggy.api.vouchers.update update voucher status, attributes or expiration write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "vouchers.validate",
+      "haystack": "vouchers.validate piggy.api.vouchers.validate check whether a voucher is redeemable at a business profile read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create piggy.api.webhooks.create create a webhook subscription for one event type write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete piggy.api.webhooks.delete delete a webhook subscription; it cannot be restored destructive"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "webhooks.get",
+      "haystack": "webhooks.get piggy.api.webhooks.get read one webhook subscription by uuid read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list piggy.api.webhooks.list list webhook subscriptions with event type and status filters read"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "api",
+      "shortPath": "webhooks.update",
+      "haystack": "webhooks.update piggy.api.webhooks.update update a subscription name, url or status write"
+    },
+    {
+      "pluginId": "piggy",
+      "kind": "webhook",
+      "shortPath": "piggy.event",
+      "haystack": "piggy.event piggy.webhooks.piggy.event a piggy webhook delivery: a v1 single event or a v2 batch, signature-verified"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "account.getJob",
+      "haystack": "account.getjob piloterr.api.account.getjob poll the status and result of an async job (free) read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "account.usage",
+      "haystack": "account.usage piloterr.api.account.usage read remaining quota, packs, credits and rate limits (free) read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "email.analyzes",
+      "haystack": "email.analyzes piloterr.api.email.analyzes analyze a domain email infrastructure and spf records read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "email.finder",
+      "haystack": "email.finder piloterr.api.email.finder find a verified professional email by name and company read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "email.verify",
+      "haystack": "email.verify piloterr.api.email.verify verify whether an email address is deliverable read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "google.news",
+      "haystack": "google.news piloterr.api.google.news scrape google news results for a query read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "google.search",
+      "haystack": "google.search piloterr.api.google.search scrape google search results with filters and pagination read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "google.searchAutocomplete",
+      "haystack": "google.searchautocomplete piloterr.api.google.searchautocomplete fetch google autocomplete suggestions for a query read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "linkedin.companyInfo",
+      "haystack": "linkedin.companyinfo piloterr.api.linkedin.companyinfo read linkedin company firmographics by slug, url, id or domain read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "linkedin.jobInfo",
+      "haystack": "linkedin.jobinfo piloterr.api.linkedin.jobinfo read a linkedin job posting by id or url read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "linkedin.jobSearch",
+      "haystack": "linkedin.jobsearch piloterr.api.linkedin.jobsearch search linkedin jobs with seniority, type and location filters read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "linkedin.postInfo",
+      "haystack": "linkedin.postinfo piloterr.api.linkedin.postinfo read a linkedin post with its comments read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "linkedin.profileInfo",
+      "haystack": "linkedin.profileinfo piloterr.api.linkedin.profileinfo read a linkedin member profile by username, url or member id read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "web.crawler",
+      "haystack": "web.crawler piloterr.api.web.crawler fetch a public page with fast http crawling, no javascript read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "web.emailPhoneExtractor",
+      "haystack": "web.emailphoneextractor piloterr.api.web.emailphoneextractor extract emails, phone numbers and social profiles from a site read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "web.rendering",
+      "haystack": "web.rendering piloterr.api.web.rendering render a javascript-heavy page in a headless browser read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "web.screenshot",
+      "haystack": "web.screenshot piloterr.api.web.screenshot capture a webpage as an image or pdf file read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "web.technology",
+      "haystack": "web.technology piloterr.api.web.technology detect the technology stack behind a website read"
+    },
+    {
+      "pluginId": "piloterr",
+      "kind": "api",
+      "shortPath": "web.webunlocker",
+      "haystack": "web.webunlocker piloterr.api.web.webunlocker unlock a bot-protected page on a whitelisted domain read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "account.getUser",
+      "haystack": "account.getuser pilvio.api.account.getuser read the authenticated user and profile read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "account.sshKeys.create",
+      "haystack": "account.sshkeys.create pilvio.api.account.sshkeys.create add an ssh public key write"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "account.sshKeys.delete",
+      "haystack": "account.sshkeys.delete pilvio.api.account.sshkeys.delete delete an ssh key destructive"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "account.sshKeys.list",
+      "haystack": "account.sshkeys.list pilvio.api.account.sshkeys.list list the ssh public keys of the user read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "account.sshKeys.rename",
+      "haystack": "account.sshkeys.rename pilvio.api.account.sshkeys.rename rename an ssh key write"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "account.tokens.delete",
+      "haystack": "account.tokens.delete pilvio.api.account.tokens.delete delete an api token destructive"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "account.tokens.list",
+      "haystack": "account.tokens.list pilvio.api.account.tokens.list list the api tokens of the user read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "account.tokens.update",
+      "haystack": "account.tokens.update pilvio.api.account.tokens.update update a token description or restriction write"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "account.updateProfile",
+      "haystack": "account.updateprofile pilvio.api.account.updateprofile update the user profile fields write"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "config.getPricingPolicy",
+      "haystack": "config.getpricingpolicy pilvio.api.config.getpricingpolicy read the pricing policy lines read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "config.listAppCatalogImages",
+      "haystack": "config.listappcatalogimages pilvio.api.config.listappcatalogimages list the app catalog images read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "config.listBootImages",
+      "haystack": "config.listbootimages pilvio.api.config.listbootimages list bootable media images read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "config.listLocations",
+      "haystack": "config.listlocations pilvio.api.config.listlocations list the pilvio data centre locations read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "config.listPlainOsImages",
+      "haystack": "config.listplainosimages pilvio.api.config.listplainosimages list the plain os images read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "config.listResourcePools",
+      "haystack": "config.listresourcepools pilvio.api.config.listresourcepools list vm server classes (resource pools) read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "config.listVmImages",
+      "haystack": "config.listvmimages pilvio.api.config.listvmimages list the vm image catalog read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "network.firewalls.create",
+      "haystack": "network.firewalls.create pilvio.api.network.firewalls.create create a firewall with rules write"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "network.firewalls.delete",
+      "haystack": "network.firewalls.delete pilvio.api.network.firewalls.delete delete a firewall destructive"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "network.firewalls.list",
+      "haystack": "network.firewalls.list pilvio.api.network.firewalls.list list the firewalls and their rules read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "network.networks.create",
+      "haystack": "network.networks.create pilvio.api.network.networks.create create a private network write"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "network.networks.delete",
+      "haystack": "network.networks.delete pilvio.api.network.networks.delete delete an empty, non-default network destructive"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "network.networks.get",
+      "haystack": "network.networks.get pilvio.api.network.networks.get read one network by uuid read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "network.networks.list",
+      "haystack": "network.networks.list pilvio.api.network.networks.list list the private networks read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "storage.buckets.create",
+      "haystack": "storage.buckets.create pilvio.api.storage.buckets.create create an s3 bucket with a globally unique name destructive"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "storage.buckets.delete",
+      "haystack": "storage.buckets.delete pilvio.api.storage.buckets.delete delete a bucket destructive"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "storage.buckets.get",
+      "haystack": "storage.buckets.get pilvio.api.storage.buckets.get read one bucket by name read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "storage.buckets.list",
+      "haystack": "storage.buckets.list pilvio.api.storage.buckets.list list the object storage buckets read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "storage.buckets.update",
+      "haystack": "storage.buckets.update pilvio.api.storage.buckets.update move a bucket to another billing account write"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "storage.disks.create",
+      "haystack": "storage.disks.create pilvio.api.storage.disks.create create a disk from empty, an os image, a disk or a snapshot destructive"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "storage.disks.delete",
+      "haystack": "storage.disks.delete pilvio.api.storage.disks.delete delete a disk destructive"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "storage.disks.get",
+      "haystack": "storage.disks.get pilvio.api.storage.disks.get read one disk by uuid read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "storage.disks.list",
+      "haystack": "storage.disks.list pilvio.api.storage.disks.list list the block storage disks read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "storage.disks.update",
+      "haystack": "storage.disks.update pilvio.api.storage.disks.update update disk metadata write"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "vm.create",
+      "haystack": "vm.create pilvio.api.vm.create create a virtual machine from an image or source destructive"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "vm.delete",
+      "haystack": "vm.delete pilvio.api.vm.delete delete a virtual machine destructive"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "vm.get",
+      "haystack": "vm.get pilvio.api.vm.get read one vm by uuid read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "vm.list",
+      "haystack": "vm.list pilvio.api.vm.list list the virtual machines read"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "vm.reinstall",
+      "haystack": "vm.reinstall pilvio.api.vm.reinstall reinstall a vm with a new os; existing data is replaced destructive"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "vm.start",
+      "haystack": "vm.start pilvio.api.vm.start start a stopped vm; billing for it resumes destructive"
+    },
+    {
+      "pluginId": "pilvio",
+      "kind": "api",
+      "shortPath": "vm.stop",
+      "haystack": "vm.stop pilvio.api.vm.stop stop a running vm write"
+    },
+    {
       "pluginId": "pinecone",
       "kind": "api",
       "shortPath": "assistantChat.chat",
@@ -134961,6 +138249,246 @@
       "haystack": "vectors.upsert pinecone.api.vectors.upsert insert or replace a batch of vectors in an index namespace. write"
     },
     {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "alerting.contacts.create",
+      "haystack": "alerting.contacts.create pingdom.api.alerting.contacts.create create an alerting contact with notification targets write"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "alerting.contacts.delete",
+      "haystack": "alerting.contacts.delete pingdom.api.alerting.contacts.delete delete an alerting contact destructive"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "alerting.contacts.get",
+      "haystack": "alerting.contacts.get pingdom.api.alerting.contacts.get read one alerting contact read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "alerting.contacts.list",
+      "haystack": "alerting.contacts.list pingdom.api.alerting.contacts.list list the alerting contacts read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "alerting.contacts.update",
+      "haystack": "alerting.contacts.update pingdom.api.alerting.contacts.update modify an alerting contact write"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "alerting.teams.create",
+      "haystack": "alerting.teams.create pingdom.api.alerting.teams.create create an alerting team write"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "alerting.teams.delete",
+      "haystack": "alerting.teams.delete pingdom.api.alerting.teams.delete delete an alerting team destructive"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "alerting.teams.get",
+      "haystack": "alerting.teams.get pingdom.api.alerting.teams.get read one alerting team read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "alerting.teams.list",
+      "haystack": "alerting.teams.list pingdom.api.alerting.teams.list list the alerting teams read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "alerting.teams.update",
+      "haystack": "alerting.teams.update pingdom.api.alerting.teams.update modify an alerting team write"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "analysis.get",
+      "haystack": "analysis.get pingdom.api.analysis.get read one raw root cause analysis read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "analysis.list",
+      "haystack": "analysis.list pingdom.api.analysis.list list the latest root cause analyses of a check read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "checks.create",
+      "haystack": "checks.create pingdom.api.checks.create create an uptime check of any documented type write"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "checks.delete",
+      "haystack": "checks.delete pingdom.api.checks.delete delete a check destructive"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "checks.deleteMulti",
+      "haystack": "checks.deletemulti pingdom.api.checks.deletemulti delete several checks at once destructive"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "checks.get",
+      "haystack": "checks.get pingdom.api.checks.get read one check with its type settings read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "checks.list",
+      "haystack": "checks.list pingdom.api.checks.list list the checks with paging and tag filters read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "checks.update",
+      "haystack": "checks.update pingdom.api.checks.update modify the settings of one check write"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "checks.updateMulti",
+      "haystack": "checks.updatemulti pingdom.api.checks.updatemulti pause, unpause or re-time the listed checks at once write"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "maintenance.create",
+      "haystack": "maintenance.create pingdom.api.maintenance.create create a maintenance window write"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "maintenance.delete",
+      "haystack": "maintenance.delete pingdom.api.maintenance.delete delete a maintenance window destructive"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "maintenance.deleteMulti",
+      "haystack": "maintenance.deletemulti pingdom.api.maintenance.deletemulti delete several maintenance windows at once destructive"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "maintenance.get",
+      "haystack": "maintenance.get pingdom.api.maintenance.get read one maintenance window read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "maintenance.list",
+      "haystack": "maintenance.list pingdom.api.maintenance.list list the maintenance windows read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "maintenance.update",
+      "haystack": "maintenance.update pingdom.api.maintenance.update modify a maintenance window write"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "occurrences.delete",
+      "haystack": "occurrences.delete pingdom.api.occurrences.delete delete a maintenance occurrence destructive"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "occurrences.get",
+      "haystack": "occurrences.get pingdom.api.occurrences.get read one maintenance occurrence read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "occurrences.list",
+      "haystack": "occurrences.list pingdom.api.occurrences.list list maintenance occurrences read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "occurrences.update",
+      "haystack": "occurrences.update pingdom.api.occurrences.update move a maintenance occurrence write"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "results.list",
+      "haystack": "results.list pingdom.api.results.list list the raw test results of a check read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "summaries.average",
+      "haystack": "summaries.average pingdom.api.summaries.average read the average time and uptime summary of a check read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "summaries.hoursOfDay",
+      "haystack": "summaries.hoursofday pingdom.api.summaries.hoursofday read the per-hour response time summary read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "summaries.outage",
+      "haystack": "summaries.outage pingdom.api.summaries.outage read the status change history of a check read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "summaries.performance",
+      "haystack": "summaries.performance pingdom.api.summaries.performance read the per-interval performance summary read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "summaries.probes",
+      "haystack": "summaries.probes pingdom.api.summaries.probes read the per-probe test counts of a check read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "tools.getCredits",
+      "haystack": "tools.getcredits pingdom.api.tools.getcredits read the account check slots and sms credits read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "tools.getReference",
+      "haystack": "tools.getreference pingdom.api.tools.getreference read region, timezone and format references read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "tools.listActions",
+      "haystack": "tools.listactions pingdom.api.tools.listactions list the alert actions across checks read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "tools.listProbes",
+      "haystack": "tools.listprobes pingdom.api.tools.listprobes list the pingdom probe servers read"
+    },
+    {
+      "pluginId": "pingdom",
+      "kind": "api",
+      "shortPath": "tools.runSingle",
+      "haystack": "tools.runsingle pingdom.api.tools.runsingle run a one-off check against a host write"
+    },
+    {
       "pluginId": "pipedrive",
       "kind": "api",
       "shortPath": "activities.create",
@@ -135223,6 +138751,180 @@
       "kind": "api",
       "shortPath": "tasks.update",
       "haystack": "tasks.update pipedrive.api.tasks.update update a project task write"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "companies.autocomplete",
+      "haystack": "companies.autocomplete pipelinecrm.api.companies.autocomplete search companies by text for autocomplete read"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "companies.create",
+      "haystack": "companies.create pipelinecrm.api.companies.create create a company write"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "companies.delete",
+      "haystack": "companies.delete pipelinecrm.api.companies.delete delete a company destructive"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "companies.get",
+      "haystack": "companies.get pipelinecrm.api.companies.get read one company read"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "companies.list",
+      "haystack": "companies.list pipelinecrm.api.companies.list list companies with conditions filters and paging read"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "companies.listPeople",
+      "haystack": "companies.listpeople pipelinecrm.api.companies.listpeople list the people of a company read"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "companies.update",
+      "haystack": "companies.update pipelinecrm.api.companies.update update a company write"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "deals.create",
+      "haystack": "deals.create pipelinecrm.api.deals.create create a deal write"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "deals.delete",
+      "haystack": "deals.delete pipelinecrm.api.deals.delete delete a deal destructive"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "deals.get",
+      "haystack": "deals.get pipelinecrm.api.deals.get read one deal read"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "deals.list",
+      "haystack": "deals.list pipelinecrm.api.deals.list list deals with conditions filters and paging read"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "deals.listNotes",
+      "haystack": "deals.listnotes pipelinecrm.api.deals.listnotes list the activities of a deal read"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "deals.totalsByStage",
+      "haystack": "deals.totalsbystage pipelinecrm.api.deals.totalsbystage deal count and value per stage read"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "deals.update",
+      "haystack": "deals.update pipelinecrm.api.deals.update update a deal write"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "notes.create",
+      "haystack": "notes.create pipelinecrm.api.notes.create create an activity on a record write"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "notes.delete",
+      "haystack": "notes.delete pipelinecrm.api.notes.delete delete an activity destructive"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "notes.get",
+      "haystack": "notes.get pipelinecrm.api.notes.get read one activity read"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "notes.list",
+      "haystack": "notes.list pipelinecrm.api.notes.list list activities filtered by deal, company or person read"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "notes.update",
+      "haystack": "notes.update pipelinecrm.api.notes.update update an activity write"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "people.autocomplete",
+      "haystack": "people.autocomplete pipelinecrm.api.people.autocomplete search people by text for autocomplete read"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "people.create",
+      "haystack": "people.create pipelinecrm.api.people.create create a person write"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "people.delete",
+      "haystack": "people.delete pipelinecrm.api.people.delete delete a person destructive"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "people.get",
+      "haystack": "people.get pipelinecrm.api.people.get read one person read"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "people.list",
+      "haystack": "people.list pipelinecrm.api.people.list list people with conditions filters and paging read"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "people.listDeals",
+      "haystack": "people.listdeals pipelinecrm.api.people.listdeals list the deals of a person read"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "people.listNotes",
+      "haystack": "people.listnotes pipelinecrm.api.people.listnotes list the activities of a person read"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "people.update",
+      "haystack": "people.update pipelinecrm.api.people.update update a person write"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "users.get",
+      "haystack": "users.get pipelinecrm.api.users.get read one visible user read"
+    },
+    {
+      "pluginId": "pipelinecrm",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list pipelinecrm.api.users.list list the visible users read"
     },
     {
       "pluginId": "placid",
