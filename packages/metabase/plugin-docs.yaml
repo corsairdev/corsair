@@ -4,20 +4,22 @@ domain: metabase.com
 recommendedAuth: api_key
 factory:
   note: >-
-    Configure the administrator-controlled Metabase instance origin. Use HTTPS, or HTTP only for localhost development.
-    Store each tenant's API key separately; Metabase grants that key the permissions of its assigned group.
+    Each account stores its Metabase instance origin as `base_url` (for example https://example.metabaseapp.com) next to
+    its API key; `metabase({ baseUrl })` overrides it for a single-instance setup. Use HTTPS, or HTTP only for localhost
+    development. Metabase grants each API key the permissions of its assigned group.
 overviewNote: >-
   Metabase's REST API is unversioned. The current latest documentation is for Metabase 65, but available routes depend
   on the installed instance. This plugin implements JSON-schema-backed OpenAPI routes compatible with Corsair;
   the custom-viz Server-Sent Events proxy and inbound Slack event receiver are excluded. API keys use the documented X-API-Key
-  header and inherit permissions from their assigned group. Configure the instance in metabase({ baseUrl }); agent
-  inputs cannot change the host. Cookies are omitted and redirects are not followed.
+  header and inherit permissions from their assigned group. The instance comes from the account's stored `base_url` or
+  metabase({ baseUrl }); agent inputs cannot change the host. Cookies are omitted and redirects are not followed.
+  Operations under `ee.` call Pro/Enterprise routes, which an open-source instance answers with 404. Metabase's
+  MCP Apps routes (`/api/embed-mcp/*`) are left out: they need an MCP session header that only Metabase's embed sets.
 apiNotes:
   "collections.delete": "DELETE /api/collection/{id} permanently removes a collection; the operation is marked destructive."
   "collectionPermissions.graph.update": "The permission-graph update can overwrite supplied entries. force=true persists the supplied graph without a revision check and can overwrite concurrent updates; the operation is marked destructive."
   "collections.items.list": "Collection item rows are heterogeneous and the OpenAPI schema intentionally leaves their item fields open. The plugin preserves JSON-compatible fields instead of claiming a fixed model."
   "collections.root.items.list": "Root item rows are heterogeneous and the OpenAPI schema intentionally leaves their item fields open. The plugin preserves JSON-compatible fields instead of claiming a fixed model."
-  "embedMcp.postFeedback": "The OpenAPI models a JSON response wrapper with status 204, but HTTP 204 responses have no body. The adapter returns and validates null for the successful empty response."
   "metabot.postFeedback": "The OpenAPI models a JSON response wrapper with status 204, but HTTP 204 responses have no body. The adapter returns and validates null for the successful empty response."
   "metabot.postSourceFeedback": "The OpenAPI models a JSON response wrapper with status 204, but HTTP 204 responses have no body. The adapter returns and validates null for the successful empty response."
   "apiKey.putByIdRegenerate": "The OpenAPI pattern `^mb_.*{4}\\*+$` is invalid ECMAScript. Metabase's schema description says masked values start with `mb_` and end in asterisks; the plugin validates that documented shape."
@@ -413,12 +415,6 @@ apiExamples:
     call: "{ \"path\": { \"id\": 1, \"lens-id\": \"a\" } }"
   "ee.postTransformsByIdInspectByLensIdQuery":
     call: "{ \"path\": { \"id\": 1, \"lens-id\": \"a\" }, \"body\": { \"query\": { \"stages\": [{ \"lib/type\": \"mbql.stage/native\" }] } } }"
-  "embedMcp.getBootstrap":
-    call: "{  }"
-  "embedMcp.postFeedback":
-    call: "{ \"body\": { \"feedback\": { \"positive\": false }, \"conversation_data\": { \"source\": \"mcp\" } } }"
-  "embedMcp.getQueriesByHandle":
-    call: "{ \"path\": { \"handle\": \"00000000-0000-4000-8000-000000000001\" } }"
   "embedTheme.get":
     call: "{  }"
   "embedTheme.post":

@@ -1,6 +1,6 @@
 # @corsair-dev/metabase
 
-Metabase plugin for Corsair: 309 verified REST operations from the official v65 OpenAPI document. The REST API is unversioned, and route availability depends on the installed instance.
+Metabase plugin for Corsair: 306 verified REST operations from the official v65 OpenAPI document. The REST API is unversioned, and route availability depends on the installed instance.
 
 ## Install and configure
 
@@ -18,7 +18,7 @@ const plugin = metabase({ baseUrl: process.env.METABASE_URL });
 
 ## Operations
 
-All 309 operations below are selected from routes with an official 2xx schema. Inputs and outputs are validated with operation-specific Zod schemas; documented binary routes use a bounded binary artifact wrapper where appropriate. Unknown request fields are rejected except where the OpenAPI contract explicitly defines extensible maps.
+All 306 operations below are selected from routes with an official 2xx schema. Inputs and outputs are validated with operation-specific Zod schemas; documented binary routes use a bounded binary artifact wrapper where appropriate. Unknown request fields are rejected except where the OpenAPI contract explicitly defines extensible maps.
 
 | Operation | Method and path | Risk | Official contract |
 | --- | --- | --- | --- |
@@ -205,9 +205,6 @@ All 309 operations below are selected from routes with an official 2xx schema. I
 | `ee.putTransformTestById` | `PUT /api/ee/transform-test/{id}` | write | [OpenAPI](https://www.metabase.com/docs/latest/api.json) |
 | `embeddingHub.getChecklist` | `GET /api/embedding-hub/checklist` | read | [OpenAPI](https://www.metabase.com/docs/latest/api.json) |
 | `embeddingSdk.getReact18Hosts` | `GET /api/embedding-sdk/react-18-hosts` | read | [OpenAPI](https://www.metabase.com/docs/latest/api.json) |
-| `embedMcp.getBootstrap` | `GET /api/embed-mcp/bootstrap` | read | [OpenAPI](https://www.metabase.com/docs/latest/api.json) |
-| `embedMcp.getQueriesByHandle` | `GET /api/embed-mcp/queries/{handle}` | read | [OpenAPI](https://www.metabase.com/docs/latest/api.json) |
-| `embedMcp.postFeedback` | `POST /api/embed-mcp/feedback` | write | [OpenAPI](https://www.metabase.com/docs/latest/api.json) |
 | `embedTheme.deleteById` | `DELETE /api/embed-theme/{id}` | destructive | [OpenAPI](https://www.metabase.com/docs/latest/api.json) |
 | `embedTheme.get` | `GET /api/embed-theme` | read | [OpenAPI](https://www.metabase.com/docs/latest/api.json) |
 | `embedTheme.getById` | `GET /api/embed-theme/{id}` | read | [OpenAPI](https://www.metabase.com/docs/latest/api.json) |
