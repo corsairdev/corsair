@@ -14,7 +14,11 @@ export const create: WisprFlowEndpoints['transcriptionsCreate'] = async (
 	const response = WisprFlowEndpointOutputSchemas.transcriptionsCreate.parse(
 		await makeWisprFlowRequest('/api', ctx.key, { method: 'POST', body }),
 	);
-	await ctx.db.transcription.upsertByEntityId(response.id, response);
+	// The transcription is already billed here, so a client without a database still gets its text
+	// (core's no-database stub throws on upsert).
+	if (ctx.database) {
+		await ctx.db.transcription.upsertByEntityId(response.id, response);
+	}
 	// Audio, screenshots and the context fields carry user content, so only the language hint is logged.
 	await logEventFromContext(
 		ctx,

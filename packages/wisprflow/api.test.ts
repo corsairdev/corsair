@@ -25,6 +25,7 @@ function ctxWithKey(key: string | undefined) {
 	// Safe: the endpoints read only `key` and `db.transcription`; the runtime builds the rest from a live database.
 	return {
 		key,
+		database: {},
 		db: {
 			transcription: {
 				// `unknown`: same fake database record.

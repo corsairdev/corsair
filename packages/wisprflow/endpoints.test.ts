@@ -17,9 +17,10 @@ type Ctx = Parameters<typeof create>[0];
 // `unknown`: the fake database records whatever the endpoint stores.
 const upserts: Array<[string, unknown]> = [];
 
-// Safe: the endpoints read only `key` and `db.transcription`; the runtime builds the rest from a live database.
+// Safe: the endpoints read only `key`, `database` (as a flag) and `db.transcription`; the runtime builds the rest.
 const ctx = {
 	key: 'fl-test',
+	database: {},
 	db: {
 		transcription: {
 			// `unknown`: same fake database record.
@@ -146,6 +147,33 @@ describe('Wispr Flow endpoints', () => {
 
 		await expect(create(ctx, { audio: 'UklGRiQA' })).rejects.toThrow();
 		expect(upserts).toEqual([]);
+	});
+
+	it('transcriptions.create returns the billed text when no database is configured', async () => {
+		const transcription = {
+			id: '550e8400-e29b-41d4-a716-446655440000',
+			text: 'Hello from Corsair',
+			detected_language: 'en',
+			total_time: 432,
+			generated_tokens: 9,
+		};
+		fetchMock.mockResolvedValue(json(200, transcription));
+		// Safe: the same fake context without a database, like createCorsair without one.
+		const noDatabase = {
+			...ctx,
+			database: undefined,
+			db: {
+				transcription: {
+					upsertByEntityId: async () => {
+						throw new Error('Database not configured');
+					},
+				},
+			},
+		} as unknown as Ctx;
+
+		await expect(create(noDatabase, { audio: 'UklGRiQA' })).resolves.toEqual(
+			transcription,
+		);
 	});
 
 	it('transcriptions.warmup GETs /warmup_dash', async () => {
