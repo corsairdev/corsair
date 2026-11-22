@@ -1,6 +1,6 @@
 # @corsair-dev/zohobooks
 
-Zoho Books API v3 integration for Corsair. The package implements 884 of the 885 REST operations documented across all 45 resource documents in Zoho's official OpenAPI bundle. Every included operation has Zod input/output validation based on its operation contract.
+Zoho Books API v3 integration for Corsair. The package implements 884 of the 885 REST operations documented across all 45 resource documents in Zoho's official OpenAPI bundle. Every included operation has a Zod input schema built from its operation contract (named path, query and header parameters and request-body fields) and checks responses for JSON or the documented binary shape. Responses are not checked against Zoho's published response schemas, which disagree with the live API in places (for example, list `page_context` is documented as an array and returned as an object).
 
 ## Installation and authentication
 
@@ -20,7 +20,7 @@ The three multipart upload routes accept binary file values as { filename, conte
 
 ## Limits and errors
 
-Zoho documents 100 API calls per minute per organization, along with plan-specific daily request quotas and concurrent-call limits. Recoverable HTTP 429 responses are retried once by the plugin error handler and honor Retry-After; the documented daily-quota code 45 is not retried. Failed writes are not retried on server or network errors. Propagated ApiErrors preserve HTTP and retry metadata but redact request/response payloads that may contain customer or financial data.
+Zoho documents 100 API calls per minute per organization, along with plan-specific daily request quotas and concurrent-call limits. Recoverable HTTP 429 responses are retried once by the plugin error handler and honor Retry-After; the documented daily-quota code 45 is not retried. Failed writes are not retried on server or network errors. Propagated ApiErrors keep the HTTP status, retry metadata and Zoho's error `code` and `message` (email addresses masked, capped at 300 characters); the request URL, query and body are dropped.
 
 ## Scope and exclusions
 
