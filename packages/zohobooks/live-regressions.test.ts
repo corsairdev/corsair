@@ -352,3 +352,33 @@ describe('Zoho Books bot-round fixes (live-checked 11-22)', () => {
 		).toBe('destructive');
 	});
 });
+
+describe('Zoho Books response shape check (bot round 2)', () => {
+	it('rejects non-object responses and a non-numeric code, but not the live shapes', () => {
+		const listInvoices = ZohoBooksEndpointOutputSchemas.list_invoices;
+		for (const wrong of [[], null, 'text', { code: 'zero', invoices: [] }]) {
+			expect(listInvoices?.safeParse(wrong).success).toBe(false);
+		}
+		expect(
+			listInvoices?.safeParse({
+				code: 0,
+				message: 'success',
+				invoices: [],
+				page_context: { page: 1, per_page: 200, has_more_page: false },
+			}).success,
+		).toBe(true);
+		// Live: get/create sales order return `salesorder` as an object, documented as an array.
+		expect(
+			ZohoBooksEndpointOutputSchemas.get_sales_order?.safeParse({
+				code: 0,
+				message: 'success',
+				salesorder: { salesorder_id: '1', status: 'draft' },
+			}).success,
+		).toBe(true);
+		const salesOrder: ZohoBooksOperationOutputFor<'get_sales_order'> = {
+			code: 0,
+			salesorder: { customer_id: '1' },
+		};
+		expect(salesOrder).toBeDefined();
+	});
+});
