@@ -103,9 +103,9 @@ const writes = adminWrites({
 	body: recipientBody,
 	name: (parsed) => String(parsed.recipient ?? parsed.name),
 	filter: (parsed) => String(parsed.transaction_type),
+	// A Recipient's name can be a person's name, so only the Transaction Type is logged.
 	logCreate: (parsed) => ({
 		transaction_type: parsed.transaction_type,
-		recipient: parsed.name ?? parsed.recipient,
 	}),
 });
 

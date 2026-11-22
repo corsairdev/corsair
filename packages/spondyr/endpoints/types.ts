@@ -16,13 +16,11 @@ const EnvelopeSchema = z.object(EnvelopeFields).loose();
 
 /**
  * A document payload. Spondyr accepts whatever the Transaction Type's JSON
- * sample defines, so values are open JSON rather than a fixed object. The union
- * is what the reference page can render; `z.unknown()` would print as `any`.
+ * sample defines, nested objects and arrays included: its own e-commerce
+ * example has a `Customer` object and a `Details` array of line items with an
+ * `Options` array each, which become `BeginLoopDetails` mail-merge loops.
  */
-const DocumentDataSchema = z.record(
-	z.string(),
-	z.union([z.string(), z.number(), z.boolean(), z.null()]),
-);
+const DocumentDataSchema = z.record(z.string(), z.json());
 
 /** A write's envelope, which carries the reference ID a caller polls with. */
 const ReferenceEnvelopeSchema = EnvelopeSchema.extend({
@@ -276,6 +274,17 @@ const NewRecipientSchema = z
 				message: '`Fax` is required when `TargetedDeliveryMethod` is Fax',
 				path: ['Fax'],
 			});
+		}
+		if (value.TargetedDeliveryMethod === 'Mail') {
+			for (const field of ['Address1', 'City', 'State', 'Zip'] as const) {
+				if (!value[field]) {
+					ctx.addIssue({
+						code: 'custom',
+						message: `\`${field}\` is required when \`TargetedDeliveryMethod\` is Mail`,
+						path: [field],
+					});
+				}
+			}
 		}
 	});
 export type NewRecipientInput = z.input<typeof NewRecipientSchema>;
@@ -639,7 +648,13 @@ export type ListSearchFiltersOutput = z.output<
 	typeof ListSearchFiltersOutputSchema
 >;
 
+// Spondyr answers GET/DELETE /Search without TransactionType with
+// "Transaction Type not specified!" (seen live 11-23), though the docs list only Search.
 const SearchFilterInputSchema = z.object({
+	transaction_type: z
+		.string()
+		.min(1)
+		.describe('The Transaction Type the Search Filter belongs to'),
 	search: z.string().min(1),
 });
 export type SearchFilterInput = z.input<typeof SearchFilterInputSchema>;

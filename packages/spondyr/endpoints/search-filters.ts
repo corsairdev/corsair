@@ -45,9 +45,17 @@ export const get: SpondyrEndpoints['searchFiltersGet'] = async (ctx, input) =>
 		(parsed) => ({
 			method: 'GET',
 			path: 'Search',
-			query: { Search: parsed.search },
+			query: {
+				TransactionType: parsed.transaction_type,
+				Search: parsed.search,
+			},
 		}),
-		{ log: (parsed) => ({ search: parsed.search }) },
+		{
+			log: (parsed) => ({
+				transaction_type: parsed.transaction_type,
+				search: parsed.search,
+			}),
+		},
 	);
 
 const writes = adminWrites({
@@ -72,6 +80,7 @@ const writes = adminWrites({
 		...(parsed.search === undefined ? {} : { Search: parsed.search }),
 	}),
 	name: (parsed) => String(parsed.search),
+	filter: (parsed) => String(parsed.transaction_type),
 	logCreate: (parsed) => ({
 		transaction_type: parsed.transaction_type,
 		search: parsed.name ?? parsed.search,
