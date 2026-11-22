@@ -335,6 +335,16 @@ describe('FreeAgent schemas', () => {
 				},
 			}).success,
 		).toBe(false);
+		for (const depreciation_profile of [
+			{ method: 'straight_line', asset_life_years: 3, frequency: 'weekly' },
+			{ method: 'reducing_balance', annual_depreciation_percentage: 12.5 },
+		]) {
+			expect(
+				create.safeParse({
+					expense: { ...expense, capital_asset: { depreciation_profile } },
+				}).success,
+			).toBe(false);
+		}
 		expect(
 			ExpensesBillsEndpointSchemas['bills.create'].input.safeParse({
 				bill: {

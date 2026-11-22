@@ -15,9 +15,14 @@ export const CapitalAssetWrite = z
 					'reducing_balance',
 					'no_depreciation',
 				]),
-				frequency: z.string().optional(),
+				frequency: z.enum(['monthly', 'annually']).optional(),
 				asset_life_years: z.number().int().min(2).max(25).optional(),
-				annual_depreciation_percentage: z.number().min(1).max(99).optional(),
+				annual_depreciation_percentage: z
+					.number()
+					.int()
+					.min(1)
+					.max(99)
+					.optional(),
 			})
 			.strict()
 			.superRefine((profile, context) => {
