@@ -95,6 +95,47 @@ function resolveNextPageQuery(
 	return query;
 }
 
+const MAX_ERROR_TEXT_LENGTH = 300;
+
+function maskErrorText(text: string): string {
+	const masked = text
+		.replace(/[^\s@()<>"',;]+@[^\s@()<>"',;]+/g, '[email]')
+		.replace(/\s+/g, ' ')
+		.trim();
+	return masked.length > MAX_ERROR_TEXT_LENGTH
+		? `${masked.slice(0, MAX_ERROR_TEXT_LENGTH - 1)}…`
+		: masked;
+}
+
+// Mailcoach answers validation failures with Laravel's `{ message, errors: { field: [..] } }`.
+// The field names and messages tell a caller what to fix ("The email field must be a
+// valid email address."); they can quote a submitted value, so emails are masked.
+function safeErrorBody(
+	// `unknown`: the provider's error body is untrusted until checked below.
+	body: unknown,
+): { message?: string; errors?: Record<string, string[]> } | undefined {
+	if (typeof body !== 'object' || body === null || Array.isArray(body))
+		return undefined;
+	// `unknown` values: each field is type-checked before use.
+	const record = body as Record<string, unknown>;
+	const result: { message?: string; errors?: Record<string, string[]> } = {};
+	if (typeof record.message === 'string' && record.message.trim())
+		result.message = maskErrorText(record.message);
+	const errors = record.errors;
+	if (typeof errors === 'object' && errors !== null && !Array.isArray(errors)) {
+		const fields: Record<string, string[]> = {};
+		for (const [field, messages] of Object.entries(errors).slice(0, 20)) {
+			if (!Array.isArray(messages)) continue;
+			fields[maskErrorText(field)] = messages
+				.filter((message): message is string => typeof message === 'string')
+				.slice(0, 5)
+				.map(maskErrorText);
+		}
+		if (Object.keys(fields).length > 0) result.errors = fields;
+	}
+	return result.message || result.errors ? result : undefined;
+}
+
 function sanitizedApiError(error: ApiError): ApiError {
 	const requestOptions: ApiRequestOptions = {
 		...error.request,
@@ -106,6 +147,7 @@ function sanitizedApiError(error: ApiError): ApiError {
 		formData: undefined,
 		body: undefined,
 	};
+	const body = safeErrorBody(error.body);
 	return new ApiError(
 		requestOptions,
 		{
@@ -113,9 +155,11 @@ function sanitizedApiError(error: ApiError): ApiError {
 			ok: false,
 			status: error.status,
 			statusText: 'Mailcoach API response',
-			body: 'Mailcoach error response omitted to protect submitted data.',
+			body: body ?? 'Mailcoach error response omitted (no JSON message).',
 		},
-		`Mailcoach API request failed with HTTP ${error.status}. Provider response details are omitted to protect submitted data.`,
+		`Mailcoach API request failed with HTTP ${error.status}${
+			body?.message ? `: ${body.message}` : '.'
+		}`,
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,

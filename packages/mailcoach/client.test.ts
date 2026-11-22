@@ -142,7 +142,53 @@ describe('Mailcoach client', () => {
 			throw new Error('Expected sanitized ApiError');
 		expect(caught.status).toBe(422);
 		expect(caught.message).not.toContain('recipient@example.invalid');
-		expect(caught.body).toContain('omitted to protect submitted data');
+		expect(caught.body).toContain('omitted');
+	});
+
+	it("keeps Mailcoach's validation message and field errors, masking emails", async () => {
+		// Live 11-22: subscribing an example.com address answers this 422.
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					message: 'The email field must be a valid email address.',
+					errors: {
+						email: [
+							'The email field must be a valid email address.',
+							'nobody@example.com is not allowed.',
+						],
+					},
+				}),
+				{ status: 422, headers: { 'Content-Type': 'application/json' } },
+			),
+		);
+
+		// `unknown` because rejection values are untyped until checked below.
+		const caught = await makeMailcoachRequest(
+			'/email-lists/x/subscribers',
+			API_KEY,
+			{
+				apiUrl: API_URL,
+				method: 'POST',
+				body: { email: 'nobody@example.com' },
+			},
+		).catch((error: unknown) => error);
+
+		expect(caught).toBeInstanceOf(ApiError);
+		if (!(caught instanceof ApiError))
+			throw new Error('Expected sanitized ApiError');
+		expect(caught.message).toBe(
+			'Mailcoach API request failed with HTTP 422: The email field must be a valid email address.',
+		);
+		expect(caught.body).toEqual({
+			message: 'The email field must be a valid email address.',
+			errors: {
+				email: [
+					'The email field must be a valid email address.',
+					'[email] is not allowed.',
+				],
+			},
+		});
+		expect(caught.request.body).toBeUndefined();
 	});
 
 	it('uses the real Corsair transport to extract Retry-After milliseconds', async () => {
