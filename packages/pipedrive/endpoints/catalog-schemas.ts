@@ -240,54 +240,52 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							name: z.string(),
-							icon_key: z.union([
-								z.literal('task'),
-								z.literal('email'),
-								z.literal('meeting'),
-								z.literal('deadline'),
-								z.literal('call'),
-								z.literal('lunch'),
-								z.literal('calendar'),
-								z.literal('downarrow'),
-								z.literal('document'),
-								z.literal('smartphone'),
-								z.literal('camera'),
-								z.literal('scissors'),
-								z.literal('cogs'),
-								z.literal('bubble'),
-								z.literal('uparrow'),
-								z.literal('checkbox'),
-								z.literal('signpost'),
-								z.literal('shuffle'),
-								z.literal('addressbook'),
-								z.literal('linegraph'),
-								z.literal('picture'),
-								z.literal('car'),
-								z.literal('world'),
-								z.literal('search'),
-								z.literal('clip'),
-								z.literal('sound'),
-								z.literal('brush'),
-								z.literal('key'),
-								z.literal('padlock'),
-								z.literal('pricetag'),
-								z.literal('suitcase'),
-								z.literal('finish'),
-								z.literal('plane'),
-								z.literal('loop'),
-								z.literal('wifi'),
-								z.literal('truck'),
-								z.literal('cart'),
-								z.literal('bulb'),
-								z.literal('bell'),
-								z.literal('presentation'),
-							]),
-							color: z.string().optional(),
-						})
-						.optional(),
+					body: z.strictObject({
+						name: z.string(),
+						icon_key: z.union([
+							z.literal('task'),
+							z.literal('email'),
+							z.literal('meeting'),
+							z.literal('deadline'),
+							z.literal('call'),
+							z.literal('lunch'),
+							z.literal('calendar'),
+							z.literal('downarrow'),
+							z.literal('document'),
+							z.literal('smartphone'),
+							z.literal('camera'),
+							z.literal('scissors'),
+							z.literal('cogs'),
+							z.literal('bubble'),
+							z.literal('uparrow'),
+							z.literal('checkbox'),
+							z.literal('signpost'),
+							z.literal('shuffle'),
+							z.literal('addressbook'),
+							z.literal('linegraph'),
+							z.literal('picture'),
+							z.literal('car'),
+							z.literal('world'),
+							z.literal('search'),
+							z.literal('clip'),
+							z.literal('sound'),
+							z.literal('brush'),
+							z.literal('key'),
+							z.literal('padlock'),
+							z.literal('pricetag'),
+							z.literal('suitcase'),
+							z.literal('finish'),
+							z.literal('plane'),
+							z.literal('loop'),
+							z.literal('wifi'),
+							z.literal('truck'),
+							z.literal('cart'),
+							z.literal('bulb'),
+							z.literal('bell'),
+							z.literal('presentation'),
+						]),
+						color: z.string().optional(),
+					}),
 				}),
 			);
 		},
@@ -649,31 +647,29 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							user_id: z.number().int().optional(),
-							activity_id: z.number().int().optional(),
-							subject: z.string().optional(),
-							duration: z.string().optional(),
-							outcome: z.union([
-								z.literal('connected'),
-								z.literal('no_answer'),
-								z.literal('left_message'),
-								z.literal('left_voicemail'),
-								z.literal('wrong_number'),
-								z.literal('busy'),
-							]),
-							from_phone_number: z.string().optional(),
-							to_phone_number: z.string(),
-							start_time: z.string(),
-							end_time: z.string(),
-							person_id: z.number().int().optional(),
-							org_id: z.number().int().optional(),
-							deal_id: z.number().int().optional(),
-							lead_id: z.string().optional(),
-							note: z.string().optional(),
-						})
-						.optional(),
+					body: z.strictObject({
+						user_id: z.number().int().optional(),
+						activity_id: z.number().int().optional(),
+						subject: z.string().optional(),
+						duration: z.string().optional(),
+						outcome: z.union([
+							z.literal('connected'),
+							z.literal('no_answer'),
+							z.literal('left_message'),
+							z.literal('left_voicemail'),
+							z.literal('wrong_number'),
+							z.literal('busy'),
+						]),
+						from_phone_number: z.string().optional(),
+						to_phone_number: z.string(),
+						start_time: z.string(),
+						end_time: z.string(),
+						person_id: z.number().int().optional(),
+						org_id: z.number().int().optional(),
+						deal_id: z.number().int().optional(),
+						lead_id: z.string().optional(),
+						note: z.string().optional(),
+					}),
 				}),
 			);
 		},
@@ -921,7 +917,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.string() }),
-					body: z.strictObject({ file: z.instanceof(Blob) }).optional(),
+					body: z.strictObject({ file: z.instanceof(Blob) }),
 				}),
 			);
 		},
@@ -953,21 +949,19 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							name: z.string(),
-							provider_channel_id: z.string(),
-							avatar_url: z.string().url().optional(),
-							template_support: z.boolean().optional(),
-							provider_type: z
-								.union([
-									z.literal('facebook'),
-									z.literal('whatsapp'),
-									z.literal('other'),
-								])
-								.optional(),
-						})
-						.optional(),
+					body: z.strictObject({
+						name: z.string(),
+						provider_channel_id: z.string(),
+						avatar_url: z.string().url().optional(),
+						template_support: z.boolean().optional(),
+						provider_type: z
+							.union([
+								z.literal('facebook'),
+								z.literal('whatsapp'),
+								z.literal('other'),
+							])
+							.optional(),
+					}),
 				}),
 			);
 		},
@@ -1054,37 +1048,35 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							id: z.string(),
-							channel_id: z.string(),
-							sender_id: z.string(),
-							conversation_id: z.string(),
-							message: z.string(),
-							status: z.union([
-								z.literal('sent'),
-								z.literal('delivered'),
-								z.literal('read'),
-								z.literal('failed'),
-							]),
-							created_at: z.string(),
-							reply_by: z.string().optional(),
-							conversation_link: z.string().url().optional(),
-							attachments: z
-								.array(
-									z.strictObject({
-										id: z.string(),
-										type: z.string(),
-										name: z.string().optional(),
-										size: z.number().optional(),
-										url: z.string(),
-										preview_url: z.string().optional(),
-										link_expires: z.boolean().optional(),
-									}),
-								)
-								.optional(),
-						})
-						.optional(),
+					body: z.strictObject({
+						id: z.string(),
+						channel_id: z.string(),
+						sender_id: z.string(),
+						conversation_id: z.string(),
+						message: z.string(),
+						status: z.union([
+							z.literal('sent'),
+							z.literal('delivered'),
+							z.literal('read'),
+							z.literal('failed'),
+						]),
+						created_at: z.string(),
+						reply_by: z.string().optional(),
+						conversation_link: z.string().url().optional(),
+						attachments: z
+							.array(
+								z.strictObject({
+									id: z.string(),
+									type: z.string(),
+									name: z.string().optional(),
+									size: z.number().optional(),
+									url: z.string(),
+									preview_url: z.string().optional(),
+									link_expires: z.boolean().optional(),
+								}),
+							)
+							.optional(),
+					}),
 				}),
 			);
 		},
@@ -1716,24 +1708,22 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							start_date: z.string(),
-							interval: z.union([
-								z.literal('day'),
-								z.literal('week'),
-								z.literal('month'),
-								z.literal('quarter'),
-							]),
-							amount: z.number().int(),
-							field_key: z.string(),
-							user_id: z.number().int().optional(),
-							pipeline_id: z.number().int().optional(),
-							filter_id: z.number().int().optional(),
-							exclude_deals: z.union([z.literal(0), z.literal(1)]).optional(),
-							totals_convert_currency: z.string().optional(),
-						})
-						.optional(),
+					query: z.strictObject({
+						start_date: z.string(),
+						interval: z.union([
+							z.literal('day'),
+							z.literal('week'),
+							z.literal('month'),
+							z.literal('quarter'),
+						]),
+						amount: z.number().int(),
+						field_key: z.string(),
+						user_id: z.number().int().optional(),
+						pipeline_id: z.number().int().optional(),
+						filter_id: z.number().int().optional(),
+						exclude_deals: z.union([z.literal(0), z.literal(1)]).optional(),
+						totals_convert_currency: z.string().optional(),
+					}),
 				}),
 			);
 		},
@@ -1897,24 +1887,22 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							start_date: z.string(),
-							interval: z.union([
-								z.literal('day'),
-								z.literal('week'),
-								z.literal('month'),
-								z.literal('quarter'),
-							]),
-							amount: z.number().int(),
-							field_key: z.string(),
-							user_id: z.number().int().optional(),
-							pipeline_id: z.number().int().optional(),
-							filter_id: z.number().int().optional(),
-							exclude_deals: z.union([z.literal(0), z.literal(1)]).optional(),
-							totals_convert_currency: z.string().optional(),
-						})
-						.optional(),
+					query: z.strictObject({
+						start_date: z.string(),
+						interval: z.union([
+							z.literal('day'),
+							z.literal('week'),
+							z.literal('month'),
+							z.literal('quarter'),
+						]),
+						amount: z.number().int(),
+						field_key: z.string(),
+						user_id: z.number().int().optional(),
+						pipeline_id: z.number().int().optional(),
+						filter_id: z.number().int().optional(),
+						exclude_deals: z.union([z.literal(0), z.literal(1)]).optional(),
+						totals_convert_currency: z.string().optional(),
+					}),
 				}),
 			);
 		},
@@ -2611,7 +2599,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ user_id: z.number().int() }).optional(),
+					body: z.strictObject({ user_id: z.number().int() }),
 				}),
 			);
 		},
@@ -2927,7 +2915,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ merge_with_id: z.number().int() }).optional(),
+					body: z.strictObject({ merge_with_id: z.number().int() }),
 				}),
 			);
 		},
@@ -3392,7 +3380,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ person_id: z.number().int() }).optional(),
+					body: z.strictObject({ person_id: z.number().int() }),
 				}),
 			);
 		},
@@ -3898,34 +3886,30 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							name: z.string(),
-							options: z
-								.array(z.strictObject({ label: z.string() }))
-								.optional(),
-							add_visible_flag: z.boolean().optional(),
-							field_type: z.union([
-								z.literal('address'),
-								z.literal('date'),
-								z.literal('daterange'),
-								z.literal('double'),
-								z.literal('enum'),
-								z.literal('monetary'),
-								z.literal('org'),
-								z.literal('people'),
-								z.literal('phone'),
-								z.literal('set'),
-								z.literal('text'),
-								z.literal('time'),
-								z.literal('timerange'),
-								z.literal('user'),
-								z.literal('varchar'),
-								z.literal('varchar_auto'),
-								z.literal('visible_to'),
-							]),
-						})
-						.optional(),
+					body: z.strictObject({
+						name: z.string(),
+						options: z.array(z.strictObject({ label: z.string() })).optional(),
+						add_visible_flag: z.boolean().optional(),
+						field_type: z.union([
+							z.literal('address'),
+							z.literal('date'),
+							z.literal('daterange'),
+							z.literal('double'),
+							z.literal('enum'),
+							z.literal('monetary'),
+							z.literal('org'),
+							z.literal('people'),
+							z.literal('phone'),
+							z.literal('set'),
+							z.literal('text'),
+							z.literal('time'),
+							z.literal('timerange'),
+							z.literal('user'),
+							z.literal('varchar'),
+							z.literal('varchar_auto'),
+							z.literal('visible_to'),
+						]),
+					}),
 				}),
 			);
 		},
@@ -4032,17 +4016,15 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							ids: z
-								.array(z.number().int())
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								),
-						})
-						.optional(),
+					query: z.strictObject({
+						ids: z
+							.array(z.number().int())
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							),
+					}),
 				}),
 			);
 		},
@@ -4447,18 +4429,16 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							file: z.instanceof(Blob),
-							deal_id: z.number().int().optional(),
-							person_id: z.number().int().optional(),
-							org_id: z.number().int().optional(),
-							product_id: z.number().int().optional(),
-							activity_id: z.number().int().optional(),
-							lead_id: z.string().optional(),
-							project_id: z.number().int().optional(),
-						})
-						.optional(),
+					body: z.strictObject({
+						file: z.instanceof(Blob),
+						deal_id: z.number().int().optional(),
+						person_id: z.number().int().optional(),
+						org_id: z.number().int().optional(),
+						product_id: z.number().int().optional(),
+						activity_id: z.number().int().optional(),
+						lead_id: z.string().optional(),
+						project_id: z.number().int().optional(),
+					}),
 				}),
 			);
 		},
@@ -4529,25 +4509,23 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							file_type: z.union([
-								z.literal('gdoc'),
-								z.literal('gslides'),
-								z.literal('gsheet'),
-								z.literal('gform'),
-								z.literal('gdraw'),
-							]),
-							title: z.string(),
-							item_type: z.union([
-								z.literal('deal'),
-								z.literal('organization'),
-								z.literal('person'),
-							]),
-							item_id: z.number().int(),
-							remote_location: z.literal('googledrive'),
-						})
-						.optional(),
+					body: z.strictObject({
+						file_type: z.union([
+							z.literal('gdoc'),
+							z.literal('gslides'),
+							z.literal('gsheet'),
+							z.literal('gform'),
+							z.literal('gdraw'),
+						]),
+						title: z.string(),
+						item_type: z.union([
+							z.literal('deal'),
+							z.literal('organization'),
+							z.literal('person'),
+						]),
+						item_id: z.number().int(),
+						remote_location: z.literal('googledrive'),
+					}),
 				}),
 			);
 		},
@@ -4618,18 +4596,16 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							item_type: z.union([
-								z.literal('deal'),
-								z.literal('organization'),
-								z.literal('person'),
-							]),
-							item_id: z.number().int(),
-							remote_id: z.string(),
-							remote_location: z.literal('googledrive'),
-						})
-						.optional(),
+					body: z.strictObject({
+						item_type: z.union([
+							z.literal('deal'),
+							z.literal('organization'),
+							z.literal('person'),
+						]),
+						item_id: z.number().int(),
+						remote_id: z.string(),
+						remote_location: z.literal('googledrive'),
+					}),
 				}),
 			);
 		},
@@ -4934,17 +4910,15 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							ids: z
-								.array(z.number().int())
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								),
-						})
-						.optional(),
+					query: z.strictObject({
+						ids: z
+							.array(z.number().int())
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							),
+					}),
 				}),
 			);
 		},
@@ -5091,63 +5065,61 @@ export const PipedriveCatalog = {
 					query: z
 						.strictObject({ include_field_code: z.boolean().optional() })
 						.optional(),
-					body: z
-						.strictObject({
-							name: z.string(),
-							conditions: z.strictObject({
-								glue: z.literal('and'),
-								conditions: z
-									.array(
-										z.strictObject({
-											glue: z.enum(['and', 'or']),
-											conditions: z.array(
-												z.strictObject({
-													object: z.enum([
-														'person',
-														'deal',
-														'organization',
-														'product',
-														'activity',
-													]),
-													field_id: z.string(),
-													operator: z.enum([
-														'IS NOT NULL',
-														'IS NULL',
-														'<=',
-														'>=',
-														'<',
-														'>',
-														'!=',
-														'=',
-														"LIKE '$%'",
-														"LIKE '%$%'",
-														"NOT LIKE '$%'",
-													]),
-													value: z.string(),
-													extra_value: z.string(),
-												}),
-											),
-										}),
-									)
-									.refine(
-										(groups) =>
-											groups.reduce(
-												(count, group) => count + group.conditions.length,
-												0,
-											) <= 16,
-									),
-							}),
-							type: z.union([
-								z.literal('deals'),
-								z.literal('leads'),
-								z.literal('org'),
-								z.literal('people'),
-								z.literal('products'),
-								z.literal('activity'),
-								z.literal('projects'),
-							]),
-						})
-						.optional(),
+					body: z.strictObject({
+						name: z.string(),
+						conditions: z.strictObject({
+							glue: z.literal('and'),
+							conditions: z
+								.array(
+									z.strictObject({
+										glue: z.enum(['and', 'or']),
+										conditions: z.array(
+											z.strictObject({
+												object: z.enum([
+													'person',
+													'deal',
+													'organization',
+													'product',
+													'activity',
+												]),
+												field_id: z.string(),
+												operator: z.enum([
+													'IS NOT NULL',
+													'IS NULL',
+													'<=',
+													'>=',
+													'<',
+													'>',
+													'!=',
+													'=',
+													"LIKE '$%'",
+													"LIKE '%$%'",
+													"NOT LIKE '$%'",
+												]),
+												value: z.string(),
+												extra_value: z.string(),
+											}),
+										),
+									}),
+								)
+								.refine(
+									(groups) =>
+										groups.reduce(
+											(count, group) => count + group.conditions.length,
+											0,
+										) <= 16,
+								),
+						}),
+						type: z.union([
+							z.literal('deals'),
+							z.literal('leads'),
+							z.literal('org'),
+							z.literal('people'),
+							z.literal('products'),
+							z.literal('activity'),
+							z.literal('projects'),
+						]),
+					}),
 				}),
 			);
 		},
@@ -5460,54 +5432,52 @@ export const PipedriveCatalog = {
 					query: z
 						.strictObject({ include_field_code: z.boolean().optional() })
 						.optional(),
-					body: z
-						.strictObject({
-							name: z.string().optional(),
-							conditions: z.strictObject({
-								glue: z.literal('and'),
-								conditions: z
-									.array(
-										z.strictObject({
-											glue: z.enum(['and', 'or']),
-											conditions: z.array(
-												z.strictObject({
-													object: z.enum([
-														'person',
-														'deal',
-														'organization',
-														'product',
-														'activity',
-													]),
-													field_id: z.string(),
-													operator: z.enum([
-														'IS NOT NULL',
-														'IS NULL',
-														'<=',
-														'>=',
-														'<',
-														'>',
-														'!=',
-														'=',
-														"LIKE '$%'",
-														"LIKE '%$%'",
-														"NOT LIKE '$%'",
-													]),
-													value: z.string(),
-													extra_value: z.string(),
-												}),
-											),
-										}),
-									)
-									.refine(
-										(groups) =>
-											groups.reduce(
-												(count, group) => count + group.conditions.length,
-												0,
-											) <= 16,
-									),
-							}),
-						})
-						.optional(),
+					body: z.strictObject({
+						name: z.string().optional(),
+						conditions: z.strictObject({
+							glue: z.literal('and'),
+							conditions: z
+								.array(
+									z.strictObject({
+										glue: z.enum(['and', 'or']),
+										conditions: z.array(
+											z.strictObject({
+												object: z.enum([
+													'person',
+													'deal',
+													'organization',
+													'product',
+													'activity',
+												]),
+												field_id: z.string(),
+												operator: z.enum([
+													'IS NOT NULL',
+													'IS NULL',
+													'<=',
+													'>=',
+													'<',
+													'>',
+													'!=',
+													'=',
+													"LIKE '$%'",
+													"LIKE '%$%'",
+													"NOT LIKE '$%'",
+												]),
+												value: z.string(),
+												extra_value: z.string(),
+											}),
+										),
+									}),
+								)
+								.refine(
+									(groups) =>
+										groups.reduce(
+											(count, group) => count + group.conditions.length,
+											0,
+										) <= 16,
+								),
+						}),
+					}),
 				}),
 			);
 		},
@@ -5616,53 +5586,48 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							title: z.string().optional(),
-							assignee: z.strictObject({
-								id: z.number().int(),
-								type: z.enum(['person', 'company', 'team']),
-							}),
-							type: z.strictObject({
-								name: z.enum([
-									'deals_won',
-									'deals_progressed',
-									'activities_completed',
-									'activities_added',
-									'deals_started',
-									'revenue_forecast',
-								]),
-								params: z
-									.strictObject({
-										pipeline_id: z
-											.array(z.number().int())
-											.nullable()
-											.optional(),
-										stage_id: z.number().int().optional(),
-										activity_type_id: z
-											.array(z.number().int())
-											.nullable()
-											.optional(),
-									})
-									.optional(),
-							}),
-							expected_outcome: z.strictObject({
-								target: z.number(),
-								tracking_metric: z.enum(['quantity', 'sum']),
-								currency_id: z.number().int().optional(),
-							}),
-							duration: z.strictObject({
-								start: z.string(),
-								end: z.string().nullable(),
-							}),
-							interval: z.union([
-								z.literal('weekly'),
-								z.literal('monthly'),
-								z.literal('quarterly'),
-								z.literal('yearly'),
+					body: z.strictObject({
+						title: z.string().optional(),
+						assignee: z.strictObject({
+							id: z.number().int(),
+							type: z.enum(['person', 'company', 'team']),
+						}),
+						type: z.strictObject({
+							name: z.enum([
+								'deals_won',
+								'deals_progressed',
+								'activities_completed',
+								'activities_added',
+								'deals_started',
+								'revenue_forecast',
 							]),
-						})
-						.optional(),
+							params: z
+								.strictObject({
+									pipeline_id: z.array(z.number().int()).nullable().optional(),
+									stage_id: z.number().int().optional(),
+									activity_type_id: z
+										.array(z.number().int())
+										.nullable()
+										.optional(),
+								})
+								.optional(),
+						}),
+						expected_outcome: z.strictObject({
+							target: z.number(),
+							tracking_metric: z.enum(['quantity', 'sum']),
+							currency_id: z.number().int().optional(),
+						}),
+						duration: z.strictObject({
+							start: z.string(),
+							end: z.string().nullable(),
+						}),
+						interval: z.union([
+							z.literal('weekly'),
+							z.literal('monthly'),
+							z.literal('quarterly'),
+							z.literal('yearly'),
+						]),
+					}),
 				}),
 			);
 		},
@@ -6108,13 +6073,11 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.string() }),
-					query: z
-						.strictObject({
-							'period.start': z.string(),
-							'period.end': z.string(),
-							timezone: z.string().optional(),
-						})
-						.optional(),
+					query: z.strictObject({
+						'period.start': z.string(),
+						'period.end': z.string(),
+						timezone: z.string().optional(),
+					}),
 				}),
 			);
 		},
@@ -6318,32 +6281,30 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							title: z.string(),
-							owner_id: z.number().int().optional(),
-							label_ids: z.array(z.string()).optional(),
-							person_id: z.number().int().optional(),
-							organization_id: z.number().int().optional(),
-							value: z
-								.strictObject({ amount: z.number(), currency: z.string() })
-								.nullable()
-								.optional(),
-							expected_close_date: z.string().optional(),
-							visible_to: z
-								.union([
-									z.literal('1'),
-									z.literal('3'),
-									z.literal('5'),
-									z.literal('7'),
-								])
-								.optional(),
-							was_seen: z.boolean().optional(),
-							origin_id: z.string().nullable().optional(),
-							channel: z.number().int().nullable().optional(),
-							channel_id: z.string().nullable().optional(),
-						})
-						.optional(),
+					body: z.strictObject({
+						title: z.string(),
+						owner_id: z.number().int().optional(),
+						label_ids: z.array(z.string()).optional(),
+						person_id: z.number().int().optional(),
+						organization_id: z.number().int().optional(),
+						value: z
+							.strictObject({ amount: z.number(), currency: z.string() })
+							.nullable()
+							.optional(),
+						expected_close_date: z.string().optional(),
+						visible_to: z
+							.union([
+								z.literal('1'),
+								z.literal('3'),
+								z.literal('5'),
+								z.literal('7'),
+							])
+							.optional(),
+						was_seen: z.boolean().optional(),
+						origin_id: z.string().nullable().optional(),
+						channel: z.number().int().nullable().optional(),
+						channel_id: z.string().nullable().optional(),
+					}),
 				}),
 			);
 		},
@@ -6801,38 +6762,36 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							term: z.string(),
-							fields: z
-								.array(
-									z.union([
-										z.literal('custom_fields'),
-										z.literal('notes'),
-										z.literal('title'),
-									]),
-								)
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								)
-								.optional(),
-							exact_match: z.boolean().optional(),
-							person_id: z.number().int().optional(),
-							organization_id: z.number().int().optional(),
-							include_fields: z
-								.array(z.literal('lead.was_seen'))
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								)
-								.optional(),
-							start: z.number().int().optional(),
-							limit: z.number().int().optional(),
-						})
-						.optional(),
+					query: z.strictObject({
+						term: z.string(),
+						fields: z
+							.array(
+								z.union([
+									z.literal('custom_fields'),
+									z.literal('notes'),
+									z.literal('title'),
+								]),
+							)
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							)
+							.optional(),
+						exact_match: z.boolean().optional(),
+						person_id: z.number().int().optional(),
+						organization_id: z.number().int().optional(),
+						include_fields: z
+							.array(z.literal('lead.was_seen'))
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							)
+							.optional(),
+						start: z.number().int().optional(),
+						limit: z.number().int().optional(),
+					}),
 				}),
 			);
 		},
@@ -7116,23 +7075,21 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							name: z.string(),
-							color: z.union([
-								z.literal('blue'),
-								z.literal('brown'),
-								z.literal('dark-gray'),
-								z.literal('gray'),
-								z.literal('green'),
-								z.literal('orange'),
-								z.literal('pink'),
-								z.literal('purple'),
-								z.literal('red'),
-								z.literal('yellow'),
-							]),
-						})
-						.optional(),
+					body: z.strictObject({
+						name: z.string(),
+						color: z.union([
+							z.literal('blue'),
+							z.literal('brown'),
+							z.literal('dark-gray'),
+							z.literal('gray'),
+							z.literal('green'),
+							z.literal('orange'),
+							z.literal('pink'),
+							z.literal('purple'),
+							z.literal('red'),
+							z.literal('yellow'),
+						]),
+					}),
 				}),
 			);
 		},
@@ -7412,14 +7369,12 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							name: z.string(),
-							description: z.string().optional(),
-							manager_id: z.number().int(),
-							users: z.array(z.number().int()).optional(),
-						})
-						.optional(),
+					body: z.strictObject({
+						name: z.string(),
+						description: z.string().optional(),
+						manager_id: z.number().int(),
+						users: z.array(z.number().int()).optional(),
+					}),
 				}),
 			);
 		},
@@ -7622,7 +7577,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ users: z.array(z.number().int()) }).optional(),
+					body: z.strictObject({ users: z.array(z.number().int()) }),
 				}),
 			);
 		},
@@ -7660,7 +7615,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ users: z.array(z.number().int()) }).optional(),
+					body: z.strictObject({ users: z.array(z.number().int()) }),
 				}),
 			);
 		},
@@ -7937,18 +7892,16 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							folder: z.union([
-								z.literal('inbox'),
-								z.literal('drafts'),
-								z.literal('sent'),
-								z.literal('archive'),
-							]),
-							start: z.number().int().optional(),
-							limit: z.number().int().optional(),
-						})
-						.optional(),
+					query: z.strictObject({
+						folder: z.union([
+							z.literal('inbox'),
+							z.literal('drafts'),
+							z.literal('sent'),
+							z.literal('archive'),
+						]),
+						start: z.number().int().optional(),
+						limit: z.number().int().optional(),
+					}),
 				}),
 			);
 		},
@@ -8703,14 +8656,12 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							user_provider_id: z.string(),
-							user_id: z.number().int(),
-							company_id: z.number().int(),
-							marketplace_client_id: z.string(),
-						})
-						.optional(),
+					body: z.strictObject({
+						user_provider_id: z.string(),
+						user_id: z.number().int(),
+						company_id: z.number().int(),
+						marketplace_client_id: z.string(),
+					}),
 				}),
 			);
 		},
@@ -9013,8 +8964,7 @@ export const PipedriveCatalog = {
 								.union([z.literal(0), z.literal(1)])
 								.optional(),
 						})
-						.catchall(z.json())
-						.optional(),
+						.catchall(z.json()),
 				}),
 			);
 		},
@@ -9435,7 +9385,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ content: z.string() }).optional(),
+					body: z.strictObject({ content: z.string() }),
 				}),
 			);
 		},
@@ -9538,7 +9488,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int(), commentId: z.string() }),
-					body: z.strictObject({ content: z.string() }).optional(),
+					body: z.strictObject({ content: z.string() }),
 				}),
 			);
 		},
@@ -10056,7 +10006,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ user_id: z.number().int() }).optional(),
+					body: z.strictObject({ user_id: z.number().int() }),
 				}),
 			);
 		},
@@ -10372,7 +10322,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ merge_with_id: z.number().int() }).optional(),
+					body: z.strictObject({ merge_with_id: z.number().int() }),
 				}),
 			);
 		},
@@ -10582,34 +10532,30 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							name: z.string(),
-							options: z
-								.array(z.strictObject({ label: z.string() }))
-								.optional(),
-							add_visible_flag: z.boolean().optional(),
-							field_type: z.union([
-								z.literal('address'),
-								z.literal('date'),
-								z.literal('daterange'),
-								z.literal('double'),
-								z.literal('enum'),
-								z.literal('monetary'),
-								z.literal('org'),
-								z.literal('people'),
-								z.literal('phone'),
-								z.literal('set'),
-								z.literal('text'),
-								z.literal('time'),
-								z.literal('timerange'),
-								z.literal('user'),
-								z.literal('varchar'),
-								z.literal('varchar_auto'),
-								z.literal('visible_to'),
-							]),
-						})
-						.optional(),
+					body: z.strictObject({
+						name: z.string(),
+						options: z.array(z.strictObject({ label: z.string() })).optional(),
+						add_visible_flag: z.boolean().optional(),
+						field_type: z.union([
+							z.literal('address'),
+							z.literal('date'),
+							z.literal('daterange'),
+							z.literal('double'),
+							z.literal('enum'),
+							z.literal('monetary'),
+							z.literal('org'),
+							z.literal('people'),
+							z.literal('phone'),
+							z.literal('set'),
+							z.literal('text'),
+							z.literal('time'),
+							z.literal('timerange'),
+							z.literal('user'),
+							z.literal('varchar'),
+							z.literal('varchar_auto'),
+							z.literal('visible_to'),
+						]),
+					}),
 				}),
 			);
 		},
@@ -10716,17 +10662,15 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							ids: z
-								.array(z.number().int())
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								),
-						})
-						.optional(),
+					query: z.strictObject({
+						ids: z
+							.array(z.number().int())
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							),
+					}),
 				}),
 			);
 		},
@@ -11033,7 +10977,7 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z.strictObject({ org_id: z.number().int() }).optional(),
+					query: z.strictObject({ org_id: z.number().int() }),
 				}),
 			);
 		},
@@ -11136,14 +11080,12 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							org_id: z.number().int().optional(),
-							type: z.union([z.literal('parent'), z.literal('related')]),
-							rel_owner_org_id: z.number().int(),
-							rel_linked_org_id: z.number().int(),
-						})
-						.optional(),
+					body: z.strictObject({
+						org_id: z.number().int().optional(),
+						type: z.union([z.literal('parent'), z.literal('related')]),
+						rel_owner_org_id: z.number().int(),
+						rel_linked_org_id: z.number().int(),
+					}),
 				}),
 			);
 		},
@@ -12037,7 +11979,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ user_id: z.number().int() }).optional(),
+					body: z.strictObject({ user_id: z.number().int() }),
 				}),
 			);
 		},
@@ -12353,7 +12295,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ merge_with_id: z.number().int() }).optional(),
+					body: z.strictObject({ merge_with_id: z.number().int() }),
 				}),
 			);
 		},
@@ -12552,15 +12494,13 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z
-						.strictObject({
-							file: z.instanceof(Blob),
-							crop_x: z.number().int().optional(),
-							crop_y: z.number().int().optional(),
-							crop_width: z.number().int().optional(),
-							crop_height: z.number().int().optional(),
-						})
-						.optional(),
+					body: z.strictObject({
+						file: z.instanceof(Blob),
+						crop_x: z.number().int().optional(),
+						crop_y: z.number().int().optional(),
+						crop_width: z.number().int().optional(),
+						crop_height: z.number().int().optional(),
+					}),
 				}),
 			);
 		},
@@ -12933,34 +12873,30 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							name: z.string(),
-							options: z
-								.array(z.strictObject({ label: z.string() }))
-								.optional(),
-							add_visible_flag: z.boolean().optional(),
-							field_type: z.union([
-								z.literal('address'),
-								z.literal('date'),
-								z.literal('daterange'),
-								z.literal('double'),
-								z.literal('enum'),
-								z.literal('monetary'),
-								z.literal('org'),
-								z.literal('people'),
-								z.literal('phone'),
-								z.literal('set'),
-								z.literal('text'),
-								z.literal('time'),
-								z.literal('timerange'),
-								z.literal('user'),
-								z.literal('varchar'),
-								z.literal('varchar_auto'),
-								z.literal('visible_to'),
-							]),
-						})
-						.optional(),
+					body: z.strictObject({
+						name: z.string(),
+						options: z.array(z.strictObject({ label: z.string() })).optional(),
+						add_visible_flag: z.boolean().optional(),
+						field_type: z.union([
+							z.literal('address'),
+							z.literal('date'),
+							z.literal('daterange'),
+							z.literal('double'),
+							z.literal('enum'),
+							z.literal('monetary'),
+							z.literal('org'),
+							z.literal('people'),
+							z.literal('phone'),
+							z.literal('set'),
+							z.literal('text'),
+							z.literal('time'),
+							z.literal('timerange'),
+							z.literal('user'),
+							z.literal('varchar'),
+							z.literal('varchar_auto'),
+							z.literal('visible_to'),
+						]),
+					}),
 				}),
 			);
 		},
@@ -13067,17 +13003,15 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							ids: z
-								.array(z.number().int())
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								),
-						})
-						.optional(),
+					query: z.strictObject({
+						ids: z
+							.array(z.number().int())
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							),
+					}),
 				}),
 			);
 		},
@@ -13387,13 +13321,11 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					query: z
-						.strictObject({
-							start_date: z.string(),
-							end_date: z.string(),
-							user_id: z.number().int().optional(),
-						})
-						.optional(),
+					query: z.strictObject({
+						start_date: z.string(),
+						end_date: z.string(),
+						user_id: z.number().int().optional(),
+					}),
 				}),
 			);
 		},
@@ -13598,13 +13530,11 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					query: z
-						.strictObject({
-							start_date: z.string(),
-							end_date: z.string(),
-							user_id: z.number().int().optional(),
-						})
-						.optional(),
+					query: z.strictObject({
+						start_date: z.string(),
+						end_date: z.string(),
+						user_id: z.number().int().optional(),
+					}),
 				}),
 			);
 		},
@@ -14176,7 +14106,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ user_id: z.number().int() }).optional(),
+					body: z.strictObject({ user_id: z.number().int() }),
 				}),
 			);
 		},
@@ -14301,17 +14231,15 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							ids: z
-								.array(z.number().int())
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								),
-						})
-						.optional(),
+					query: z.strictObject({
+						ids: z
+							.array(z.number().int())
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							),
+					}),
 				}),
 			);
 		},
@@ -14458,32 +14386,28 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							name: z.string(),
-							options: z
-								.array(z.strictObject({ label: z.string() }))
-								.optional(),
-							field_type: z.union([
-								z.literal('varchar'),
-								z.literal('varchar_auto'),
-								z.literal('text'),
-								z.literal('double'),
-								z.literal('monetary'),
-								z.literal('date'),
-								z.literal('set'),
-								z.literal('enum'),
-								z.literal('user'),
-								z.literal('org'),
-								z.literal('people'),
-								z.literal('phone'),
-								z.literal('time'),
-								z.literal('timerange'),
-								z.literal('daterange'),
-								z.literal('address'),
-							]),
-						})
-						.optional(),
+					body: z.strictObject({
+						name: z.string(),
+						options: z.array(z.strictObject({ label: z.string() })).optional(),
+						field_type: z.union([
+							z.literal('varchar'),
+							z.literal('varchar_auto'),
+							z.literal('text'),
+							z.literal('double'),
+							z.literal('monetary'),
+							z.literal('date'),
+							z.literal('set'),
+							z.literal('enum'),
+							z.literal('user'),
+							z.literal('org'),
+							z.literal('people'),
+							z.literal('phone'),
+							z.literal('time'),
+							z.literal('timerange'),
+							z.literal('daterange'),
+							z.literal('address'),
+						]),
+					}),
 				}),
 			);
 		},
@@ -14847,24 +14771,22 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							title: z.string(),
-							board_id: z.number().optional(),
-							phase_id: z.number().optional(),
-							description: z.string().optional(),
-							status: z.string().optional(),
-							owner_id: z.number().optional(),
-							start_date: z.string().optional(),
-							end_date: z.string().optional(),
-							deal_ids: z.array(z.number().int()).optional(),
-							org_id: z.number().optional(),
-							person_id: z.number().optional(),
-							labels: z.array(z.number().int()).optional(),
-							health_status: z.number().int().nullable().optional(),
-							template_id: z.number().optional(),
-						})
-						.optional(),
+					body: z.strictObject({
+						title: z.string(),
+						board_id: z.number().optional(),
+						phase_id: z.number().optional(),
+						description: z.string().optional(),
+						status: z.string().optional(),
+						owner_id: z.number().optional(),
+						start_date: z.string().optional(),
+						end_date: z.string().optional(),
+						deal_ids: z.array(z.number().int()).optional(),
+						org_id: z.number().optional(),
+						person_id: z.number().optional(),
+						labels: z.array(z.number().int()).optional(),
+						health_status: z.number().int().nullable().optional(),
+						template_id: z.number().optional(),
+					}),
 				}),
 			);
 		},
@@ -15606,7 +15528,7 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z.strictObject({ board_id: z.number().int() }).optional(),
+					query: z.strictObject({ board_id: z.number().int() }),
 				}),
 			);
 		},
@@ -15818,29 +15740,27 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							since_timestamp: z.string(),
-							items: z
-								.union([
-									z.literal('activity'),
-									z.literal('activityType'),
-									z.literal('deal'),
-									z.literal('file'),
-									z.literal('filter'),
-									z.literal('note'),
-									z.literal('person'),
-									z.literal('organization'),
-									z.literal('pipeline'),
-									z.literal('product'),
-									z.literal('stage'),
-									z.literal('user'),
-								])
-								.optional(),
-							start: z.number().int().optional(),
-							limit: z.number().int().optional(),
-						})
-						.optional(),
+					query: z.strictObject({
+						since_timestamp: z.string(),
+						items: z
+							.union([
+								z.literal('activity'),
+								z.literal('activityType'),
+								z.literal('deal'),
+								z.literal('file'),
+								z.literal('filter'),
+								z.literal('note'),
+								z.literal('person'),
+								z.literal('organization'),
+								z.literal('pipeline'),
+								z.literal('product'),
+								z.literal('stage'),
+								z.literal('user'),
+							])
+							.optional(),
+						start: z.number().int().optional(),
+						limit: z.number().int().optional(),
+					}),
 				}),
 			);
 		},
@@ -16715,12 +16635,10 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							name: z.string(),
-							parent_role_id: z.number().int().nullable().optional(),
-						})
-						.optional(),
+					body: z.strictObject({
+						name: z.string(),
+						parent_role_id: z.number().int().nullable().optional(),
+					}),
 				}),
 			);
 		},
@@ -16909,7 +16827,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ user_id: z.number().int() }).optional(),
+					body: z.strictObject({ user_id: z.number().int() }),
 				}),
 			);
 		},
@@ -17022,7 +16940,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ user_id: z.number().int() }).optional(),
+					body: z.strictObject({ user_id: z.number().int() }),
 				}),
 			);
 		},
@@ -17114,23 +17032,21 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z
-						.strictObject({
-							setting_key: z.union([
-								z.literal('deal_default_visibility'),
-								z.literal('lead_default_visibility'),
-								z.literal('org_default_visibility'),
-								z.literal('person_default_visibility'),
-								z.literal('product_default_visibility'),
-							]),
-							value: z.union([
-								z.literal(1),
-								z.literal(3),
-								z.literal(5),
-								z.literal(7),
-							]),
-						})
-						.optional(),
+					body: z.strictObject({
+						setting_key: z.union([
+							z.literal('deal_default_visibility'),
+							z.literal('lead_default_visibility'),
+							z.literal('org_default_visibility'),
+							z.literal('person_default_visibility'),
+							z.literal('product_default_visibility'),
+						]),
+						value: z.union([
+							z.literal(1),
+							z.literal(3),
+							z.literal(5),
+							z.literal(7),
+						]),
+					}),
 				}),
 			);
 		},
@@ -17227,14 +17143,12 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z
-						.strictObject({
-							visible_pipeline_ids: z.strictObject({
-								add: z.string(),
-								remove: z.string(),
-							}),
-						})
-						.optional(),
+					body: z.strictObject({
+						visible_pipeline_ids: z.strictObject({
+							add: z.string(),
+							remove: z.string(),
+						}),
+					}),
 				}),
 			);
 		},
@@ -17497,26 +17411,24 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							title: z.string(),
-							project_id: z.number(),
-							description: z.string().optional(),
-							parent_task_id: z.number().optional(),
-							assignee_id: z.number().optional(),
-							assignee_ids: z
-								.array(z.number())
-								.max(10)
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								)
-								.optional(),
-							done: z.union([z.literal(0), z.literal(1)]).optional(),
-							due_date: z.string().optional(),
-						})
-						.optional(),
+					body: z.strictObject({
+						title: z.string(),
+						project_id: z.number(),
+						description: z.string().optional(),
+						parent_task_id: z.number().optional(),
+						assignee_id: z.number().optional(),
+						assignee_ids: z
+							.array(z.number())
+							.max(10)
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							)
+							.optional(),
+						done: z.union([z.literal(0), z.literal(1)]).optional(),
+						due_date: z.string().optional(),
+					}),
 				}),
 			);
 		},
@@ -17846,29 +17758,27 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							email: z.string(),
-							access: z
-								.array(
-									z.strictObject({
-										app: z.union([
-											z.literal('global'),
-											z.literal('sales'),
-											z.literal('campaigns'),
-											z.literal('projects'),
-											z.literal('account_settings'),
-											z.literal('partnership'),
-											z.literal('nova'),
-										]),
-										admin: z.boolean().optional(),
-										permission_set_id: z.string().optional(),
-									}),
-								)
-								.optional(),
-							active_flag: z.boolean().optional(),
-						})
-						.optional(),
+					body: z.strictObject({
+						email: z.string(),
+						access: z
+							.array(
+								z.strictObject({
+									app: z.union([
+										z.literal('global'),
+										z.literal('sales'),
+										z.literal('campaigns'),
+										z.literal('projects'),
+										z.literal('account_settings'),
+										z.literal('partnership'),
+										z.literal('nova'),
+									]),
+									admin: z.boolean().optional(),
+									permission_set_id: z.string().optional(),
+								}),
+							)
+							.optional(),
+						active_flag: z.boolean().optional(),
+					}),
 				}),
 			);
 		},
@@ -17952,12 +17862,10 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							term: z.string(),
-							search_by_email: z.union([z.literal(0), z.literal(1)]).optional(),
-						})
-						.optional(),
+					query: z.strictObject({
+						term: z.string(),
+						search_by_email: z.union([z.literal(0), z.literal(1)]).optional(),
+					}),
 				}),
 			);
 		},
@@ -18208,7 +18116,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ active_flag: z.boolean() }).optional(),
+					body: z.strictObject({ active_flag: z.boolean() }),
 				}),
 			);
 		},
@@ -19101,7 +19009,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ user_id: z.number().int() }).optional(),
+					body: z.strictObject({ user_id: z.number().int() }),
 				}),
 			);
 		},
@@ -19379,41 +19287,39 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							term: z.string().max(100),
-							fields: z
-								.array(
-									z.union([
-										z.literal('custom_fields'),
-										z.literal('notes'),
-										z.literal('title'),
-									]),
-								)
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								)
-								.optional(),
-							exact_match: z.boolean().optional(),
-							person_id: z.number().int().optional(),
-							organization_id: z.number().int().optional(),
-							status: z
-								.union([z.literal('open'), z.literal('won'), z.literal('lost')])
-								.optional(),
-							include_fields: z
-								.array(z.literal('deal.cc_email'))
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								)
-								.optional(),
-							limit: z.number().int().min(1).max(100).optional(),
-							cursor: z.string().optional(),
-						})
-						.optional(),
+					query: z.strictObject({
+						term: z.string().max(100),
+						fields: z
+							.array(
+								z.union([
+									z.literal('custom_fields'),
+									z.literal('notes'),
+									z.literal('title'),
+								]),
+							)
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							)
+							.optional(),
+						exact_match: z.boolean().optional(),
+						person_id: z.number().int().optional(),
+						organization_id: z.number().int().optional(),
+						status: z
+							.union([z.literal('open'), z.literal('won'), z.literal('lost')])
+							.optional(),
+						include_fields: z
+							.array(z.literal('deal.cc_email'))
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							)
+							.optional(),
+						limit: z.number().int().min(1).max(100).optional(),
+						cursor: z.string().optional(),
+					}),
 				}),
 			);
 		},
@@ -19626,40 +19532,38 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z
-						.strictObject({
-							product_id: z.number().int(),
-							item_price: z.number(),
-							quantity: z.number(),
-							tax: z.number().optional(),
-							comments: z.string().optional(),
-							discount: z.number().optional(),
-							is_enabled: z.boolean().optional(),
-							tax_method: z
-								.union([
-									z.literal('exclusive'),
-									z.literal('inclusive'),
-									z.literal('none'),
-								])
-								.optional(),
-							discount_type: z
-								.union([z.literal('percentage'), z.literal('amount')])
-								.optional(),
-							product_variation_id: z.number().int().nullable().optional(),
-							billing_frequency: z
-								.union([
-									z.literal('one-time'),
-									z.literal('annually'),
-									z.literal('semi-annually'),
-									z.literal('quarterly'),
-									z.literal('monthly'),
-									z.literal('weekly'),
-								])
-								.optional(),
-							billing_frequency_cycles: z.number().int().nullable().optional(),
-							billing_start_date: z.string().nullable().optional(),
-						})
-						.optional(),
+					body: z.strictObject({
+						product_id: z.number().int(),
+						item_price: z.number(),
+						quantity: z.number(),
+						tax: z.number().optional(),
+						comments: z.string().optional(),
+						discount: z.number().optional(),
+						is_enabled: z.boolean().optional(),
+						tax_method: z
+							.union([
+								z.literal('exclusive'),
+								z.literal('inclusive'),
+								z.literal('none'),
+							])
+							.optional(),
+						discount_type: z
+							.union([z.literal('percentage'), z.literal('amount')])
+							.optional(),
+						product_variation_id: z.number().int().nullable().optional(),
+						billing_frequency: z
+							.union([
+								z.literal('one-time'),
+								z.literal('annually'),
+								z.literal('semi-annually'),
+								z.literal('quarterly'),
+								z.literal('monthly'),
+								z.literal('weekly'),
+							])
+							.optional(),
+						billing_frequency_cycles: z.number().int().nullable().optional(),
+						billing_start_date: z.string().nullable().optional(),
+					}),
 				}),
 			);
 		},
@@ -19966,54 +19870,48 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z
-						.strictObject({
-							data: z
-								.array(
-									z.strictObject({
-										product_id: z.number().int(),
-										item_price: z.number(),
-										quantity: z.number(),
-										tax: z.number().optional(),
-										comments: z.string().optional(),
-										discount: z.number().optional(),
-										is_enabled: z.boolean().optional(),
-										tax_method: z
-											.union([
-												z.literal('exclusive'),
-												z.literal('inclusive'),
-												z.literal('none'),
-											])
-											.optional(),
-										discount_type: z
-											.union([z.literal('percentage'), z.literal('amount')])
-											.optional(),
-										product_variation_id: z
-											.number()
-											.int()
-											.nullable()
-											.optional(),
-										billing_frequency: z
-											.union([
-												z.literal('one-time'),
-												z.literal('annually'),
-												z.literal('semi-annually'),
-												z.literal('quarterly'),
-												z.literal('monthly'),
-												z.literal('weekly'),
-											])
-											.optional(),
-										billing_frequency_cycles: z
-											.number()
-											.int()
-											.nullable()
-											.optional(),
-										billing_start_date: z.string().nullable().optional(),
-									}),
-								)
-								.max(100),
-						})
-						.optional(),
+					body: z.strictObject({
+						data: z
+							.array(
+								z.strictObject({
+									product_id: z.number().int(),
+									item_price: z.number(),
+									quantity: z.number(),
+									tax: z.number().optional(),
+									comments: z.string().optional(),
+									discount: z.number().optional(),
+									is_enabled: z.boolean().optional(),
+									tax_method: z
+										.union([
+											z.literal('exclusive'),
+											z.literal('inclusive'),
+											z.literal('none'),
+										])
+										.optional(),
+									discount_type: z
+										.union([z.literal('percentage'), z.literal('amount')])
+										.optional(),
+									product_variation_id: z.number().int().nullable().optional(),
+									billing_frequency: z
+										.union([
+											z.literal('one-time'),
+											z.literal('annually'),
+											z.literal('semi-annually'),
+											z.literal('quarterly'),
+											z.literal('monthly'),
+											z.literal('weekly'),
+										])
+										.optional(),
+									billing_frequency_cycles: z
+										.number()
+										.int()
+										.nullable()
+										.optional(),
+									billing_start_date: z.string().nullable().optional(),
+								}),
+							)
+							.max(100),
+					}),
 				}),
 			);
 		},
@@ -20157,13 +20055,11 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z
-						.strictObject({
-							description: z.string(),
-							amount: z.number(),
-							type: z.union([z.literal('percentage'), z.literal('amount')]),
-						})
-						.optional(),
+					body: z.strictObject({
+						description: z.string(),
+						amount: z.number(),
+						type: z.union([z.literal('percentage'), z.literal('amount')]),
+					}),
 				}),
 			);
 		},
@@ -20392,13 +20288,11 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z
-						.strictObject({
-							description: z.string(),
-							amount: z.number(),
-							billing_date: z.string(),
-						})
-						.optional(),
+					body: z.strictObject({
+						description: z.string(),
+						amount: z.number(),
+						billing_date: z.string(),
+					}),
 				}),
 			);
 		},
@@ -21607,7 +21501,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ user_id: z.number().int() }).optional(),
+					body: z.strictObject({ user_id: z.number().int() }),
 				}),
 			);
 		},
@@ -22718,7 +22612,7 @@ export const PipedriveCatalog = {
 				'input',
 				z.strictObject({
 					path: z.strictObject({ id: z.number().int() }),
-					body: z.strictObject({ user_id: z.number().int() }).optional(),
+					body: z.strictObject({ user_id: z.number().int() }),
 				}),
 			);
 		},
@@ -24507,38 +24401,36 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							term: z.string().max(100),
-							fields: z
-								.array(
-									z.union([
-										z.literal('custom_fields'),
-										z.literal('notes'),
-										z.literal('title'),
-									]),
-								)
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								)
-								.optional(),
-							exact_match: z.boolean().optional(),
-							person_id: z.number().int().optional(),
-							organization_id: z.number().int().optional(),
-							include_fields: z
-								.array(z.literal('lead.was_seen'))
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								)
-								.optional(),
-							limit: z.number().int().min(1).max(100).optional(),
-							cursor: z.string().optional(),
-						})
-						.optional(),
+					query: z.strictObject({
+						term: z.string().max(100),
+						fields: z
+							.array(
+								z.union([
+									z.literal('custom_fields'),
+									z.literal('notes'),
+									z.literal('title'),
+								]),
+							)
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							)
+							.optional(),
+						exact_match: z.boolean().optional(),
+						person_id: z.number().int().optional(),
+						organization_id: z.number().int().optional(),
+						include_fields: z
+							.array(z.literal('lead.was_seen'))
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							)
+							.optional(),
+						limit: z.number().int().min(1).max(100).optional(),
+						cursor: z.string().optional(),
+					}),
 				}),
 			);
 		},
@@ -24731,29 +24623,27 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							term: z.string().max(100),
-							fields: z
-								.array(
-									z.union([
-										z.literal('address'),
-										z.literal('custom_fields'),
-										z.literal('notes'),
-										z.literal('name'),
-									]),
-								)
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								)
-								.optional(),
-							exact_match: z.boolean().optional(),
-							limit: z.number().int().min(1).max(100).optional(),
-							cursor: z.string().optional(),
-						})
-						.optional(),
+					query: z.strictObject({
+						term: z.string().max(100),
+						fields: z
+							.array(
+								z.union([
+									z.literal('address'),
+									z.literal('custom_fields'),
+									z.literal('notes'),
+									z.literal('name'),
+								]),
+							)
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							)
+							.optional(),
+						exact_match: z.boolean().optional(),
+						limit: z.number().int().min(1).max(100).optional(),
+						cursor: z.string().optional(),
+					}),
 				}),
 			);
 		},
@@ -24836,39 +24726,37 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							term: z.string().max(100),
-							fields: z
-								.array(
-									z.union([
-										z.literal('custom_fields'),
-										z.literal('email'),
-										z.literal('notes'),
-										z.literal('phone'),
-										z.literal('name'),
-									]),
-								)
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								)
-								.optional(),
-							exact_match: z.boolean().optional(),
-							organization_id: z.number().int().optional(),
-							include_fields: z
-								.array(z.literal('person.picture'))
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								)
-								.optional(),
-							limit: z.number().int().min(1).max(100).optional(),
-							cursor: z.string().optional(),
-						})
-						.optional(),
+					query: z.strictObject({
+						term: z.string().max(100),
+						fields: z
+							.array(
+								z.union([
+									z.literal('custom_fields'),
+									z.literal('email'),
+									z.literal('notes'),
+									z.literal('phone'),
+									z.literal('name'),
+								]),
+							)
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							)
+							.optional(),
+						exact_match: z.boolean().optional(),
+						organization_id: z.number().int().optional(),
+						include_fields: z
+							.array(z.literal('person.picture'))
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							)
+							.optional(),
+						limit: z.number().int().min(1).max(100).optional(),
+						cursor: z.string().optional(),
+					}),
 				}),
 			);
 		},
@@ -24960,68 +24848,66 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							term: z.string().max(100),
-							item_types: z
-								.array(
-									z.union([
-										z.literal('deal'),
-										z.literal('person'),
-										z.literal('organization'),
-										z.literal('product'),
-										z.literal('lead'),
-										z.literal('file'),
-										z.literal('mail_attachment'),
-										z.literal('project'),
-									]),
-								)
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								)
-								.optional(),
-							fields: z
-								.array(
-									z.union([
-										z.literal('address'),
-										z.literal('code'),
-										z.literal('custom_fields'),
-										z.literal('email'),
-										z.literal('name'),
-										z.literal('notes'),
-										z.literal('phone'),
-										z.literal('title'),
-										z.literal('description'),
-									]),
-								)
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								)
-								.optional(),
-							search_for_related_items: z.boolean().optional(),
-							exact_match: z.boolean().optional(),
-							include_fields: z
-								.array(
-									z.union([
-										z.literal('deal.cc_email'),
-										z.literal('person.picture'),
-										z.literal('product.price'),
-									]),
-								)
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								)
-								.optional(),
-							limit: z.number().int().min(1).max(100).optional(),
-							cursor: z.string().optional(),
-						})
-						.optional(),
+					query: z.strictObject({
+						term: z.string().max(100),
+						item_types: z
+							.array(
+								z.union([
+									z.literal('deal'),
+									z.literal('person'),
+									z.literal('organization'),
+									z.literal('product'),
+									z.literal('lead'),
+									z.literal('file'),
+									z.literal('mail_attachment'),
+									z.literal('project'),
+								]),
+							)
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							)
+							.optional(),
+						fields: z
+							.array(
+								z.union([
+									z.literal('address'),
+									z.literal('code'),
+									z.literal('custom_fields'),
+									z.literal('email'),
+									z.literal('name'),
+									z.literal('notes'),
+									z.literal('phone'),
+									z.literal('title'),
+									z.literal('description'),
+								]),
+							)
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							)
+							.optional(),
+						search_for_related_items: z.boolean().optional(),
+						exact_match: z.boolean().optional(),
+						include_fields: z
+							.array(
+								z.union([
+									z.literal('deal.cc_email'),
+									z.literal('person.picture'),
+									z.literal('product.price'),
+								]),
+							)
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							)
+							.optional(),
+						limit: z.number().int().min(1).max(100).optional(),
+						cursor: z.string().optional(),
+					}),
 				}),
 			);
 		},
@@ -25093,29 +24979,27 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							term: z.string().max(100),
-							entity_type: z.union([
-								z.literal('deal'),
-								z.literal('lead'),
-								z.literal('person'),
-								z.literal('organization'),
-								z.literal('product'),
-								z.literal('project'),
-							]),
-							match: z
-								.union([
-									z.literal('exact'),
-									z.literal('beginning'),
-									z.literal('middle'),
-								])
-								.optional(),
-							field: z.string(),
-							limit: z.number().int().min(1).max(500).optional(),
-							cursor: z.string().optional(),
-						})
-						.optional(),
+					query: z.strictObject({
+						term: z.string().max(100),
+						entity_type: z.union([
+							z.literal('deal'),
+							z.literal('lead'),
+							z.literal('person'),
+							z.literal('organization'),
+							z.literal('product'),
+							z.literal('project'),
+						]),
+						match: z
+							.union([
+								z.literal('exact'),
+								z.literal('beginning'),
+								z.literal('middle'),
+							])
+							.optional(),
+						field: z.string(),
+						limit: z.number().int().min(1).max(500).optional(),
+						cursor: z.string().optional(),
+					}),
 				}),
 			);
 		},
@@ -25246,15 +25130,13 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							name: z.string(),
-							pipeline_id: z.number().int(),
-							deal_probability: z.number().int().optional(),
-							is_deal_rot_enabled: z.boolean().optional(),
-							days_to_rotten: z.number().int().nullable().optional(),
-						})
-						.optional(),
+					body: z.strictObject({
+						name: z.string(),
+						pipeline_id: z.number().int(),
+						deal_probability: z.number().int().optional(),
+						is_deal_rot_enabled: z.boolean().optional(),
+						days_to_rotten: z.number().int().nullable().optional(),
+					}),
 				}),
 			);
 		},
@@ -25527,12 +25409,10 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					body: z
-						.strictObject({
-							name: z.string(),
-							is_deal_probability_enabled: z.boolean().optional(),
-						})
-						.optional(),
+					body: z.strictObject({
+						name: z.string(),
+						is_deal_probability_enabled: z.boolean().optional(),
+					}),
 				}),
 			);
 		},
@@ -27029,31 +26909,29 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z
-						.strictObject({
-							term: z.string().max(100),
-							fields: z
-								.array(
-									z.union([
-										z.literal('custom_fields'),
-										z.literal('notes'),
-										z.literal('title'),
-										z.literal('description'),
-									]),
-								)
-								.refine(
-									(values) =>
-										new Set(values.map((value) => JSON.stringify(value)))
-											.size === values.length,
-								)
-								.optional(),
-							exact_match: z.boolean().optional(),
-							person_id: z.number().int().optional(),
-							organization_id: z.number().int().optional(),
-							limit: z.number().int().min(1).max(100).optional(),
-							cursor: z.string().optional(),
-						})
-						.optional(),
+					query: z.strictObject({
+						term: z.string().max(100),
+						fields: z
+							.array(
+								z.union([
+									z.literal('custom_fields'),
+									z.literal('notes'),
+									z.literal('title'),
+									z.literal('description'),
+								]),
+							)
+							.refine(
+								(values) =>
+									new Set(values.map((value) => JSON.stringify(value))).size ===
+									values.length,
+							)
+							.optional(),
+						exact_match: z.boolean().optional(),
+						person_id: z.number().int().optional(),
+						organization_id: z.number().int().optional(),
+						limit: z.number().int().min(1).max(100).optional(),
+						cursor: z.string().optional(),
+					}),
 				}),
 			);
 		},
@@ -27546,7 +27424,7 @@ export const PipedriveCatalog = {
 				this,
 				'input',
 				z.strictObject({
-					query: z.strictObject({ board_id: z.number().int() }).optional(),
+					query: z.strictObject({ board_id: z.number().int() }),
 				}),
 			);
 		},
