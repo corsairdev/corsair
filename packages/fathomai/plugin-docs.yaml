@@ -10,7 +10,8 @@ overviewNote: |
   - **Rate limits:** 60 requests per minute per account. Summary and transcript calls, and `meetings.list` with `include_summary` or `include_transcript`, count against a stricter 30 per minute. `recordings.requestDownload` has its own 30 per minute limit.
   - **Webhooks:** Create one with `webhooks.create` and store the returned `whsec_` secret with `keys.set_webhook_signature`, or pass it as the `webhookSecret` option. Deliveries are verified with the Standard Webhooks signature and a five minute replay window. Fathom sends one delivery shape, a meeting whose content is ready.
   - **Admin only:** `users.list` returns 403 unless the key belongs to an account admin.
-  - **Recording downloads:** `recordings.requestDownload` starts a job. Poll `recordings.getDownload` until `status` is `completed`, then fetch the signed `video.url` before `expires_at`.
+  - **Recording downloads:** `recordings.requestDownload` starts a job. Poll `recordings.getDownload` until `status` is `completed`, then fetch the signed `url` of whichever file came back before its `expires_at`: `video` for a video recording, `audio` for an audio-only one, which can complete straight away.
+  - **Stored data:** `meetings.list` and the webhook store meeting metadata only. Transcripts, summaries, action items, highlights and CRM matches are returned but not stored.
 references:
   - title: Fathom API Reference
     url: https://developers.fathom.ai/api-reference
