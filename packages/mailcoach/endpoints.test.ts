@@ -397,6 +397,20 @@ const cases: OperationCase[] = [
 		`/api/campaigns/${U}`,
 	),
 	operationCase(
+		'campaigns.schedule',
+		MailcoachOperations['campaigns.schedule'],
+		{
+			campaignUuid: U,
+			body: {
+				name: 'November notes',
+				email_list_uuid: L,
+				html: '<p>Updated</p>',
+				schedule_at: '2027-01-02 03:04:05',
+			},
+		},
+		`/api/campaigns/${U}`,
+	),
+	operationCase(
 		'campaigns.delete',
 		MailcoachOperations['campaigns.delete'],
 		{ campaignUuid: U },
@@ -705,6 +719,6 @@ describe('Mailcoach endpoints', () => {
 		expect(Object.keys(MailcoachEndpointInputSchemas).sort()).toEqual(
 			Object.keys(MailcoachOperations).sort(),
 		);
-		expect(Object.keys(MailcoachEndpointInputSchemas).length).toBe(69);
+		expect(Object.keys(MailcoachEndpointInputSchemas).length).toBe(70);
 	});
 });

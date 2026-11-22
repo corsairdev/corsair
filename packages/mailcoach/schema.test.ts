@@ -18,7 +18,7 @@ describe('Mailcoach schemas', () => {
 		const outputKeys = Object.keys(MailcoachEndpointOutputSchemas).sort();
 		const registryKeys = Object.keys(mailcoachEndpointSchemas).sort();
 
-		expect(inputKeys).toHaveLength(69);
+		expect(inputKeys).toHaveLength(70);
 		expect(inputKeys).toEqual(outputKeys);
 		expect(inputKeys).toEqual(registryKeys);
 	});
@@ -114,20 +114,13 @@ describe('Mailcoach schemas', () => {
 				query: { filter: { status: 'pending' } },
 			}).success,
 		).toBe(false);
-		expect(
-			MailcoachEndpointInputSchemas['campaigns.create'].safeParse({
-				name: 'Draft',
-				email_list_uuid: UUID,
-				schedule_at: '2027-01-02T03:04:05Z',
-			}).success,
-		).toBe(false);
-		expect(
-			MailcoachEndpointInputSchemas['campaigns.create'].safeParse({
-				name: 'Draft',
-				email_list_uuid: UUID,
-				schedule_at: '2027-01-02 03:04:05',
-			}).success,
-		).toBe(true);
+		const schedule = (schedule_at: string) =>
+			MailcoachEndpointInputSchemas['campaigns.schedule'].safeParse({
+				campaignUuid: UUID,
+				body: { name: 'Draft', email_list_uuid: UUID, schedule_at },
+			}).success;
+		expect(schedule('2027-01-02T03:04:05Z')).toBe(false);
+		expect(schedule('2027-01-02 03:04:05')).toBe(true);
 	});
 
 	it('accepts quoted CSV headers in import creation and update', () => {

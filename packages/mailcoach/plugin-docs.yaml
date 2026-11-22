@@ -52,8 +52,9 @@ apiNotes:
   segments.update: "Send the complete desired positive and negative tag conditions; updates replace existing conditions."
   templates.create: "structured_html is editor-specific and has no editor-independent schema; omit it unless required by the chosen editor."
   templates.update: "Include name along with the content to update."
-  campaigns.create: "Creates a draft. Without schedule_at nothing is sent; with schedule_at Mailcoach schedules the send for that UTC time. Use either template fields or inline HTML as appropriate."
-  campaigns.update: "This is not a sparse patch: omitted content, segment, or scheduling values can reset. Resend the full intended draft settings. schedule_at uses UTC in YYYY-MM-DD HH:mm:ss form and schedules the campaign to send."
+  campaigns.create: "Creates a draft; nothing is sent. Scheduling is campaigns.schedule and sending is campaigns.send, both destructive. Use either template fields or inline HTML as appropriate."
+  campaigns.update: "This is not a sparse patch: omitted content, segment, or scheduling values can reset. Resend the full intended draft settings. Updating a scheduled campaign through this operation clears its schedule."
+  campaigns.schedule: "Schedules delivery to the campaign audience at schedule_at (UTC, YYYY-MM-DD HH:mm:ss). This is a full PUT: resend every campaign setting."
   campaigns.sendTest: "Sends a test email to up to ten comma-separated addresses. This sends real mail."
   campaigns.send: "Sends to the campaign audience. Never blindly retry after a timeout because the first request may already have been accepted."
   campaigns.clicks: "Has an additional 5 requests/second burst limit per team, in addition to the normal authenticated limit."
@@ -161,6 +162,8 @@ apiExamples:
     args: { campaignUuid: "0762df4d-8516-4eb3-95db-b26492cf221c" }
   campaigns.sendTest:
     args: { campaignUuid: "0762df4d-8516-4eb3-95db-b26492cf221c", email: "test@example.com" }
+  campaigns.schedule:
+    args: { campaignUuid: "0762df4d-8516-4eb3-95db-b26492cf221c", body: { name: "November newsletter", email_list_uuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", html: "<p>Latest news</p>", schedule_at: "2026-12-01 09:00:00" } }
   campaigns.send:
     args: { campaignUuid: "0762df4d-8516-4eb3-95db-b26492cf221c" }
   campaigns.opens:

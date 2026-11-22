@@ -270,6 +270,10 @@ export const mailcoachEndpointSchemas = {
 		input: MailcoachEndpointInputSchemas['campaigns.sendTest'],
 		output: MailcoachEndpointOutputSchemas['campaigns.sendTest'],
 	},
+	'campaigns.schedule': {
+		input: MailcoachEndpointInputSchemas['campaigns.schedule'],
+		output: MailcoachEndpointOutputSchemas['campaigns.schedule'],
+	},
 	'campaigns.send': {
 		input: MailcoachEndpointInputSchemas['campaigns.send'],
 		output: MailcoachEndpointOutputSchemas['campaigns.send'],
@@ -554,6 +558,10 @@ export const mailcoachEndpointMeta = {
 	'campaigns.sendTest': {
 		riskLevel: MailcoachOperations['campaigns.sendTest'].riskLevel,
 		description: MailcoachOperations['campaigns.sendTest'].description,
+	},
+	'campaigns.schedule': {
+		riskLevel: MailcoachOperations['campaigns.schedule'].riskLevel,
+		description: MailcoachOperations['campaigns.schedule'].description,
 	},
 	'campaigns.send': {
 		riskLevel: MailcoachOperations['campaigns.send'].riskLevel,

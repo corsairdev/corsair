@@ -75,6 +75,7 @@ Only HTTPS team subdomains under `mailcoach.app` are accepted. Self-hosted insta
 | `campaigns.update` | PUT | `/campaigns/{campaignUuid}` | [Campaigns](https://www.mailcoach.app/docs/api/endpoints/campaigns/) |
 | `campaigns.delete` | DELETE | `/campaigns/{campaignUuid}` | [Campaigns](https://www.mailcoach.app/docs/api/endpoints/campaigns/) |
 | `campaigns.sendTest` | POST | `/campaigns/{campaignUuid}/send-test` | [Campaigns](https://www.mailcoach.app/docs/api/endpoints/campaigns/) |
+| `campaigns.schedule` | PUT | `/campaigns/{campaignUuid}` with `schedule_at` | [Campaigns](https://www.mailcoach.app/docs/api/endpoints/campaigns/) |
 | `campaigns.send` | POST | `/campaigns/{campaignUuid}/send` | [Campaigns](https://www.mailcoach.app/docs/api/endpoints/campaigns/) |
 | `campaigns.opens` | GET | `/campaigns/{campaignUuid}/opens` | [Campaigns](https://www.mailcoach.app/docs/api/endpoints/campaigns/) |
 | `campaigns.clicks` | GET | `/campaigns/{campaignUuid}/clicks` | [Campaigns](https://www.mailcoach.app/docs/api/endpoints/campaigns/) |
@@ -108,7 +109,7 @@ Successful `204 No Content` operations return `undefined`; no JSON body is parse
 
 ## Safety and scope notes
 
-- `campaigns.create` creates a draft. With `schedule_at` (on create or update) Mailcoach schedules it to send at that time. `campaigns.send` sends to the campaign audience; `campaigns.sendTest` sends mail to the supplied test addresses.
+- `campaigns.create` and `campaigns.update` only edit drafts. `campaigns.schedule` (destructive) sets `schedule_at`, which makes Mailcoach send at that time. `campaigns.send` sends to the campaign audience; `campaigns.sendTest` sends mail to the supplied test addresses.
 - `transactionalMails.send` supports `fake: true` for a no-delivery test and accepts either a saved template (`mail_name`) or inline content (`subject` plus `html` and/or `text`).
 - A subscriber import is a draft until `subscriberImports.start`. Imports bypass confirmation; the resubscribe and unsubscribe flags can affect existing contacts. Import only addresses with consent.
 - `subscribers.subscribe` can restart an unsubscribed address. Use `subscribers.update` for routine profile changes to opted-out contacts.

@@ -65,6 +65,7 @@ export const Campaigns = {
 	update: MailcoachOperations['campaigns.update'].endpoint,
 	delete: MailcoachOperations['campaigns.delete'].endpoint,
 	sendTest: MailcoachOperations['campaigns.sendTest'].endpoint,
+	schedule: MailcoachOperations['campaigns.schedule'].endpoint,
 	send: MailcoachOperations['campaigns.send'].endpoint,
 	opens: MailcoachOperations['campaigns.opens'].endpoint,
 	clicks: MailcoachOperations['campaigns.clicks'].endpoint,

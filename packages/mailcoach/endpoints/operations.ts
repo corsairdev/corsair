@@ -426,7 +426,7 @@ export const MailcoachOperations = {
 		body: (requestBody) => requestBody,
 		riskLevel: 'write',
 		description:
-			'Create a campaign draft. Without schedule_at it is not sent; with schedule_at Mailcoach schedules it to send at that time.',
+			'Create a campaign draft; it is not sent. Use campaigns.schedule or campaigns.send to deliver it.',
 	}),
 	'campaigns.update': defineMailcoachOperation({
 		inputSchema: input['campaigns.update'],
@@ -436,7 +436,17 @@ export const MailcoachOperations = {
 		body: ({ body }) => body,
 		riskLevel: 'write',
 		description:
-			'Replace campaign settings; include all intended fields because omitted values can reset. Setting schedule_at schedules the campaign to send.',
+			'Replace draft campaign settings; include all intended fields because omitted values (including a schedule) reset.',
+	}),
+	'campaigns.schedule': defineMailcoachOperation({
+		inputSchema: input['campaigns.schedule'],
+		outputSchema: output['campaigns.schedule'],
+		method: 'PUT',
+		path: ({ campaignUuid }) => `/campaigns/${encoded(campaignUuid)}`,
+		body: ({ body }) => body,
+		riskLevel: 'destructive',
+		description:
+			'Schedule a campaign to send to its audience at schedule_at (UTC). Resend all campaign settings; this is a full update.',
 	}),
 	'campaigns.delete': defineMailcoachOperation({
 		inputSchema: input['campaigns.delete'],

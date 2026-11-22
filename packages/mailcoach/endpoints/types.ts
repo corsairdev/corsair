@@ -318,6 +318,7 @@ const TemplateCreateBody = z
 	})
 	.strict();
 const TemplateUpdateBody = TemplateCreateBody;
+// Drafts only: schedule_at would schedule delivery, so it lives on campaigns.schedule.
 const CampaignBody = z
 	.object({
 		name: z.string().min(1),
@@ -327,13 +328,15 @@ const CampaignBody = z
 		fields: JsonObjectSchema.optional(),
 		segment_uuid: UuidSchema.optional(),
 		html: z.string().optional(),
-		schedule_at: CampaignScheduleSchema.optional(),
 		utm_tags: z.boolean().optional(),
 		add_subscriber_tags: z.boolean().optional(),
 		add_subscriber_link_tags: z.boolean().optional(),
 		disable_webview: z.boolean().optional(),
 	})
 	.strict();
+const CampaignScheduleBody = CampaignBody.extend({
+	schedule_at: CampaignScheduleSchema,
+}).strict();
 const AttachmentSchema = z
 	.object({
 		name: z.string().min(1),
@@ -635,6 +638,9 @@ export const MailcoachEndpointInputSchemas = {
 	'campaigns.update': z
 		.object({ campaignUuid: UuidSchema, body: CampaignBody })
 		.strict(),
+	'campaigns.schedule': z
+		.object({ campaignUuid: UuidSchema, body: CampaignScheduleBody })
+		.strict(),
 	'campaigns.delete': z.object({ campaignUuid: UuidSchema }).strict(),
 	'campaigns.sendTest': z
 		.object({
@@ -788,6 +794,7 @@ export const MailcoachEndpointOutputSchemas = {
 	'campaigns.get': data(CampaignSchema),
 	'campaigns.create': data(CampaignSchema),
 	'campaigns.update': data(CampaignSchema),
+	'campaigns.schedule': data(CampaignSchema),
 	'campaigns.delete': EmptyOutput,
 	'campaigns.sendTest': EmptyOutput,
 	'campaigns.send': EmptyOutput,
