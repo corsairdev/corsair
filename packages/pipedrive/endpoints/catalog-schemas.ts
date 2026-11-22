@@ -1,15 +1,77 @@
 // Generated from Pipedrive's official v1/v2 OpenAPI contracts; do not hand-edit route schemas.
 import { z } from 'zod';
+import { relaxResponseSchema } from './catalog-relax';
 
 // Building all 642 route schemas at import cost about 130 MB of heap (Hub loads every
 // plugin), so each one is built the first time it is read and then kept on the entry.
 function cacheSchema<T extends object, V>(
 	entry: T,
-	field: 'input' | 'output',
+	field: 'input',
 	schema: V,
 ): V {
 	Object.defineProperty(entry, field, { value: schema, enumerable: true });
 	return schema;
+}
+
+// Pipedrive sends the `user` recents item with `data` as an array of users (live run 11-23);
+// its spec documents a single object, so both are accepted.
+function recentsUserData() {
+	return z
+		.object({
+			id: z.number().int().optional(),
+			name: z.string().optional(),
+			default_currency: z.string().optional(),
+			locale: z.string().optional(),
+			lang: z.number().int().optional(),
+			email: z.string().optional(),
+			phone: z.string().nullable().optional(),
+			activated: z.boolean().optional(),
+			last_login: z.string().optional(),
+			created: z.string().optional(),
+			modified: z.string().nullable().optional(),
+			has_created_company: z.boolean().optional(),
+			access: z
+				.array(
+					z
+						.object({
+							app: z
+								.union([
+									z.literal('global'),
+									z.literal('sales'),
+									z.literal('campaigns'),
+									z.literal('projects'),
+									z.literal('account_settings'),
+									z.literal('partnership'),
+									z.literal('nova'),
+								])
+								.optional(),
+							admin: z.boolean().optional(),
+							permission_set_id: z.string().optional(),
+						})
+						.passthrough(),
+				)
+				.optional(),
+			active_flag: z.boolean().optional(),
+			timezone_name: z.string().optional(),
+			timezone_offset: z.string().optional(),
+			role_id: z.number().int().optional(),
+			icon_url: z.string().nullable().optional(),
+			is_you: z.boolean().optional(),
+			is_deleted: z.boolean().optional(),
+		})
+		.passthrough();
+}
+
+// v2 field options for boolean fields use true/false as the option id (live run 11-23),
+// so option ids in field responses also accept booleans.
+// Responses are parsed through a relaxed copy (see catalog-relax.ts).
+function cacheResponseSchema<T extends object, S extends z.ZodType>(
+	entry: T,
+	schema: S,
+) {
+	const response = relaxResponseSchema(schema);
+	Object.defineProperty(entry, 'output', { value: response, enumerable: true });
+	return response;
 }
 
 export const PipedriveCatalog = {
@@ -32,9 +94,8 @@ export const PipedriveCatalog = {
 			return cacheSchema(this, 'input', z.strictObject({}));
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -102,7 +163,10 @@ export const PipedriveCatalog = {
 										searchable_flag: z.boolean().optional(),
 										filtering_allowed: z.boolean().optional(),
 										sortable_flag: z.boolean().optional(),
-										mandatory_flag: z.boolean().optional(),
+										// Pipedrive sends a condition object for conditionally required fields.
+										mandatory_flag: z
+											.union([z.boolean(), z.record(z.string(), z.unknown())])
+											.optional(),
 										options: z
 											.array(z.object({}).passthrough())
 											.nullable()
@@ -148,9 +212,8 @@ export const PipedriveCatalog = {
 			return cacheSchema(this, 'input', z.strictObject({}));
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -290,9 +353,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -382,9 +444,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -527,9 +588,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -615,9 +675,8 @@ export const PipedriveCatalog = {
 			return cacheSchema(this, 'input', z.strictObject({}));
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -674,9 +733,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -747,9 +805,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -826,9 +883,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z.object({ success: z.boolean().optional() }).passthrough(),
 			);
 		},
@@ -856,9 +912,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -922,9 +977,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z.object({ success: z.boolean().optional() }).passthrough(),
 			);
 		},
@@ -966,9 +1020,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -1021,9 +1074,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z.object({ success: z.boolean().optional() }).passthrough(),
 			);
 		},
@@ -1081,9 +1133,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -1154,9 +1205,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z.object({ success: z.boolean().optional() }).passthrough(),
 			);
 		},
@@ -1188,9 +1238,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -1275,9 +1324,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -1550,9 +1598,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -1632,9 +1679,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -1728,9 +1774,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -1907,9 +1952,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -2065,9 +2109,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -2119,9 +2162,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -2239,9 +2281,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -2339,9 +2380,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -2493,9 +2533,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -2547,9 +2586,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -2604,9 +2642,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -2652,9 +2689,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -2703,9 +2739,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -2920,9 +2955,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -3039,9 +3073,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -3385,9 +3418,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -3691,9 +3723,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -3729,9 +3760,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z.object({ success: z.boolean().optional() }).passthrough(),
 			);
 		},
@@ -3769,9 +3799,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -3839,7 +3868,10 @@ export const PipedriveCatalog = {
 										searchable_flag: z.boolean().optional(),
 										filtering_allowed: z.boolean().optional(),
 										sortable_flag: z.boolean().optional(),
-										mandatory_flag: z.boolean().optional(),
+										// Pipedrive sends a condition object for conditionally required fields.
+										mandatory_flag: z
+											.union([z.boolean(), z.record(z.string(), z.unknown())])
+											.optional(),
 										options: z
 											.array(z.object({}).passthrough())
 											.nullable()
@@ -3914,9 +3946,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -3978,7 +4009,10 @@ export const PipedriveCatalog = {
 								searchable_flag: z.boolean().optional(),
 								filtering_allowed: z.boolean().optional(),
 								sortable_flag: z.boolean().optional(),
-								mandatory_flag: z.boolean().optional(),
+								// Pipedrive sends a condition object for conditionally required fields.
+								mandatory_flag: z
+									.union([z.boolean(), z.record(z.string(), z.unknown())])
+									.optional(),
 								options: z
 									.array(z.object({}).passthrough())
 									.nullable()
@@ -4029,9 +4063,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -4067,9 +4100,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -4131,7 +4163,10 @@ export const PipedriveCatalog = {
 								searchable_flag: z.boolean().optional(),
 								filtering_allowed: z.boolean().optional(),
 								sortable_flag: z.boolean().optional(),
-								mandatory_flag: z.boolean().optional(),
+								// Pipedrive sends a condition object for conditionally required fields.
+								mandatory_flag: z
+									.union([z.boolean(), z.record(z.string(), z.unknown())])
+									.optional(),
 								options: z
 									.array(z.object({}).passthrough())
 									.nullable()
@@ -4170,9 +4205,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -4224,9 +4258,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -4288,7 +4321,10 @@ export const PipedriveCatalog = {
 								searchable_flag: z.boolean().optional(),
 								filtering_allowed: z.boolean().optional(),
 								sortable_flag: z.boolean().optional(),
-								mandatory_flag: z.boolean().optional(),
+								// Pipedrive sends a condition object for conditionally required fields.
+								mandatory_flag: z
+									.union([z.boolean(), z.record(z.string(), z.unknown())])
+									.optional(),
 								options: z
 									.array(z.object({}).passthrough())
 									.nullable()
@@ -4346,9 +4382,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -4443,9 +4478,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -4530,9 +4564,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -4610,9 +4643,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -4679,9 +4711,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -4724,9 +4755,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -4801,9 +4831,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -4877,9 +4906,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z.strictObject({
 					content_type: z.string(),
 					base64: z.string(),
@@ -4923,9 +4951,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -4986,9 +5013,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -5124,9 +5150,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -5234,7 +5259,7 @@ export const PipedriveCatalog = {
 			return cacheSchema(this, 'input', z.strictObject({}));
 		},
 		get output() {
-			return cacheSchema(this, 'output', z.object({}).passthrough());
+			return cacheResponseSchema(this, z.object({}).passthrough());
 		},
 	},
 	'apiV1.filters.deleteFilter': {
@@ -5260,9 +5285,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -5317,9 +5341,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -5482,9 +5505,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -5632,9 +5654,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -5802,9 +5823,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -5951,9 +5971,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -6041,9 +6060,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z.object({ success: z.boolean().optional() }).passthrough(),
 			);
 		},
@@ -6082,9 +6100,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -6200,9 +6217,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -6309,9 +6325,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -6419,9 +6434,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -6503,9 +6517,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -6605,9 +6618,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -6678,9 +6690,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -6716,9 +6727,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -6796,9 +6806,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -6902,9 +6911,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -6972,7 +6980,10 @@ export const PipedriveCatalog = {
 										searchable_flag: z.boolean().optional(),
 										filtering_allowed: z.boolean().optional(),
 										sortable_flag: z.boolean().optional(),
-										mandatory_flag: z.boolean().optional(),
+										// Pipedrive sends a condition object for conditionally required fields.
+										mandatory_flag: z
+											.union([z.boolean(), z.record(z.string(), z.unknown())])
+											.optional(),
 										options: z
 											.array(z.object({}).passthrough())
 											.nullable()
@@ -7018,9 +7029,8 @@ export const PipedriveCatalog = {
 			return cacheSchema(this, 'input', z.strictObject({}));
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -7094,9 +7104,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -7172,9 +7181,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -7229,9 +7237,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -7263,9 +7270,8 @@ export const PipedriveCatalog = {
 			return cacheSchema(this, 'input', z.strictObject({}));
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -7317,9 +7323,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -7379,9 +7384,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -7436,9 +7440,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -7496,9 +7499,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -7544,9 +7546,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -7582,9 +7583,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -7620,9 +7620,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -7673,9 +7672,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -7737,9 +7735,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -7906,9 +7903,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -8089,9 +8085,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -8127,9 +8122,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -8301,9 +8295,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -8464,9 +8457,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -8666,9 +8658,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -8705,9 +8696,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -8829,9 +8819,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -8969,9 +8958,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -9060,9 +9048,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -9095,9 +9082,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -9219,9 +9205,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -9321,9 +9306,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -9390,9 +9374,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -9441,9 +9424,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -9493,9 +9475,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -9544,9 +9525,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -9575,9 +9555,8 @@ export const PipedriveCatalog = {
 			return cacheSchema(this, 'input', z.strictObject({}));
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -9629,7 +9608,10 @@ export const PipedriveCatalog = {
 										active_flag: z.boolean().optional(),
 										edit_flag: z.boolean().optional(),
 										bulk_edit_allowed: z.boolean().optional(),
-										mandatory_flag: z.boolean().optional(),
+										// Pipedrive sends a condition object for conditionally required fields.
+										mandatory_flag: z
+											.union([z.boolean(), z.record(z.string(), z.unknown())])
+											.optional(),
 										options: z
 											.array(
 												z
@@ -9691,9 +9673,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -9758,9 +9739,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -9858,9 +9838,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -9948,9 +9927,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -10011,9 +9989,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -10059,9 +10036,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -10110,9 +10086,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -10327,9 +10302,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -10365,9 +10339,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -10415,9 +10388,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -10485,7 +10457,10 @@ export const PipedriveCatalog = {
 										searchable_flag: z.boolean().optional(),
 										filtering_allowed: z.boolean().optional(),
 										sortable_flag: z.boolean().optional(),
-										mandatory_flag: z.boolean().optional(),
+										// Pipedrive sends a condition object for conditionally required fields.
+										mandatory_flag: z
+											.union([z.boolean(), z.record(z.string(), z.unknown())])
+											.optional(),
 										options: z
 											.array(z.object({}).passthrough())
 											.nullable()
@@ -10560,9 +10535,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -10624,7 +10598,10 @@ export const PipedriveCatalog = {
 								searchable_flag: z.boolean().optional(),
 								filtering_allowed: z.boolean().optional(),
 								sortable_flag: z.boolean().optional(),
-								mandatory_flag: z.boolean().optional(),
+								// Pipedrive sends a condition object for conditionally required fields.
+								mandatory_flag: z
+									.union([z.boolean(), z.record(z.string(), z.unknown())])
+									.optional(),
 								options: z
 									.array(z.object({}).passthrough())
 									.nullable()
@@ -10675,9 +10652,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -10718,9 +10694,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -10782,7 +10757,10 @@ export const PipedriveCatalog = {
 								searchable_flag: z.boolean().optional(),
 								filtering_allowed: z.boolean().optional(),
 								sortable_flag: z.boolean().optional(),
-								mandatory_flag: z.boolean().optional(),
+								// Pipedrive sends a condition object for conditionally required fields.
+								mandatory_flag: z
+									.union([z.boolean(), z.record(z.string(), z.unknown())])
+									.optional(),
 								options: z
 									.array(z.object({}).passthrough())
 									.nullable()
@@ -10821,9 +10799,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -10875,9 +10852,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -10939,7 +10915,10 @@ export const PipedriveCatalog = {
 								searchable_flag: z.boolean().optional(),
 								filtering_allowed: z.boolean().optional(),
 								sortable_flag: z.boolean().optional(),
-								mandatory_flag: z.boolean().optional(),
+								// Pipedrive sends a condition object for conditionally required fields.
+								mandatory_flag: z
+									.union([z.boolean(), z.record(z.string(), z.unknown())])
+									.optional(),
 								options: z
 									.array(z.object({}).passthrough())
 									.nullable()
@@ -10982,9 +10961,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -11090,9 +11068,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -11177,9 +11154,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -11222,9 +11198,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -11323,9 +11298,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -11428,9 +11402,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -11493,9 +11466,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						id: z.string().optional(),
@@ -11561,9 +11533,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -11617,9 +11588,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -11684,9 +11654,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -11784,9 +11753,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -11927,9 +11895,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -11984,9 +11951,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -12032,9 +11998,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -12083,9 +12048,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -12300,9 +12264,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -12423,9 +12386,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -12458,9 +12420,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -12505,9 +12466,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -12574,9 +12534,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -12756,9 +12715,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -12826,7 +12784,10 @@ export const PipedriveCatalog = {
 										searchable_flag: z.boolean().optional(),
 										filtering_allowed: z.boolean().optional(),
 										sortable_flag: z.boolean().optional(),
-										mandatory_flag: z.boolean().optional(),
+										// Pipedrive sends a condition object for conditionally required fields.
+										mandatory_flag: z
+											.union([z.boolean(), z.record(z.string(), z.unknown())])
+											.optional(),
 										options: z
 											.array(z.object({}).passthrough())
 											.nullable()
@@ -12901,9 +12862,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -12965,7 +12925,10 @@ export const PipedriveCatalog = {
 								searchable_flag: z.boolean().optional(),
 								filtering_allowed: z.boolean().optional(),
 								sortable_flag: z.boolean().optional(),
-								mandatory_flag: z.boolean().optional(),
+								// Pipedrive sends a condition object for conditionally required fields.
+								mandatory_flag: z
+									.union([z.boolean(), z.record(z.string(), z.unknown())])
+									.optional(),
 								options: z
 									.array(z.object({}).passthrough())
 									.nullable()
@@ -13016,9 +12979,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -13059,9 +13021,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -13123,7 +13084,10 @@ export const PipedriveCatalog = {
 								searchable_flag: z.boolean().optional(),
 								filtering_allowed: z.boolean().optional(),
 								sortable_flag: z.boolean().optional(),
-								mandatory_flag: z.boolean().optional(),
+								// Pipedrive sends a condition object for conditionally required fields.
+								mandatory_flag: z
+									.union([z.boolean(), z.record(z.string(), z.unknown())])
+									.optional(),
 								options: z
 									.array(z.object({}).passthrough())
 									.nullable()
@@ -13162,9 +13126,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -13216,9 +13179,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -13280,7 +13242,10 @@ export const PipedriveCatalog = {
 								searchable_flag: z.boolean().optional(),
 								filtering_allowed: z.boolean().optional(),
 								sortable_flag: z.boolean().optional(),
-								mandatory_flag: z.boolean().optional(),
+								// Pipedrive sends a condition object for conditionally required fields.
+								mandatory_flag: z
+									.union([z.boolean(), z.record(z.string(), z.unknown())])
+									.optional(),
 								options: z
 									.array(z.object({}).passthrough())
 									.nullable()
@@ -13330,9 +13295,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -13410,9 +13374,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -13539,9 +13502,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -13679,9 +13641,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -13977,9 +13938,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -14054,9 +14014,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -14111,9 +14070,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -14159,9 +14117,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -14197,9 +14154,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -14244,9 +14200,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -14292,9 +14247,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -14355,7 +14309,10 @@ export const PipedriveCatalog = {
 										searchable_flag: z.boolean().optional(),
 										filtering_allowed: z.boolean().optional(),
 										sortable_flag: z.boolean().optional(),
-										mandatory_flag: z.boolean().optional(),
+										// Pipedrive sends a condition object for conditionally required fields.
+										mandatory_flag: z
+											.union([z.boolean(), z.record(z.string(), z.unknown())])
+											.optional(),
 									})
 									.passthrough(),
 							)
@@ -14412,9 +14369,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -14455,7 +14411,10 @@ export const PipedriveCatalog = {
 								searchable_flag: z.boolean().optional(),
 								filtering_allowed: z.boolean().optional(),
 								sortable_flag: z.boolean().optional(),
-								mandatory_flag: z.boolean().optional(),
+								// Pipedrive sends a condition object for conditionally required fields.
+								mandatory_flag: z
+									.union([z.boolean(), z.record(z.string(), z.unknown())])
+									.optional(),
 							})
 							.passthrough()
 							.optional(),
@@ -14487,9 +14446,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -14525,9 +14483,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -14568,7 +14525,10 @@ export const PipedriveCatalog = {
 								searchable_flag: z.boolean().optional(),
 								filtering_allowed: z.boolean().optional(),
 								sortable_flag: z.boolean().optional(),
-								mandatory_flag: z.boolean().optional(),
+								// Pipedrive sends a condition object for conditionally required fields.
+								mandatory_flag: z
+									.union([z.boolean(), z.record(z.string(), z.unknown())])
+									.optional(),
 							})
 							.passthrough()
 							.optional(),
@@ -14612,9 +14572,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -14655,7 +14614,10 @@ export const PipedriveCatalog = {
 								searchable_flag: z.boolean().optional(),
 								filtering_allowed: z.boolean().optional(),
 								sortable_flag: z.boolean().optional(),
-								mandatory_flag: z.boolean().optional(),
+								// Pipedrive sends a condition object for conditionally required fields.
+								mandatory_flag: z
+									.union([z.boolean(), z.record(z.string(), z.unknown())])
+									.optional(),
 							})
 							.passthrough()
 							.optional(),
@@ -14710,9 +14672,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -14791,9 +14752,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -14849,9 +14809,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -14926,9 +14885,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -14984,9 +14942,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -15029,9 +14986,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -15087,9 +15043,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -15145,9 +15100,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -15200,9 +15154,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -15244,9 +15197,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -15290,9 +15242,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -15357,9 +15308,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -15436,9 +15386,8 @@ export const PipedriveCatalog = {
 			return cacheSchema(this, 'input', z.strictObject({}));
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -15484,9 +15433,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -15533,9 +15481,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -15582,9 +15529,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -15638,9 +15584,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -15691,9 +15636,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -15765,9 +15709,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -16474,49 +16417,7 @@ export const PipedriveCatalog = {
 											item: z.literal('user').optional(),
 											id: z.number().int().optional(),
 											data: z
-												.object({
-													id: z.number().int().optional(),
-													name: z.string().optional(),
-													default_currency: z.string().optional(),
-													locale: z.string().optional(),
-													lang: z.number().int().optional(),
-													email: z.string().optional(),
-													phone: z.string().nullable().optional(),
-													activated: z.boolean().optional(),
-													last_login: z.string().optional(),
-													created: z.string().optional(),
-													modified: z.string().nullable().optional(),
-													has_created_company: z.boolean().optional(),
-													access: z
-														.array(
-															z
-																.object({
-																	app: z
-																		.union([
-																			z.literal('global'),
-																			z.literal('sales'),
-																			z.literal('campaigns'),
-																			z.literal('projects'),
-																			z.literal('account_settings'),
-																			z.literal('partnership'),
-																			z.literal('nova'),
-																		])
-																		.optional(),
-																	admin: z.boolean().optional(),
-																	permission_set_id: z.string().optional(),
-																})
-																.passthrough(),
-														)
-														.optional(),
-													active_flag: z.boolean().optional(),
-													timezone_name: z.string().optional(),
-													timezone_offset: z.string().optional(),
-													role_id: z.number().int().optional(),
-													icon_url: z.string().nullable().optional(),
-													is_you: z.boolean().optional(),
-													is_deleted: z.boolean().optional(),
-												})
-												.passthrough()
+												.union([recentsUserData(), z.array(recentsUserData())])
 												.optional(),
 										})
 										.passthrough(),
@@ -16576,9 +16477,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -16643,9 +16543,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -16681,9 +16580,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -16719,9 +16617,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -16791,9 +16688,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -16832,9 +16728,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -16881,9 +16776,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -16945,9 +16839,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -16986,9 +16879,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -17051,9 +16943,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -17104,9 +16995,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -17153,9 +17043,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -17211,9 +17100,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -17347,9 +17235,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -17433,9 +17320,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -17494,9 +17380,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -17577,9 +17462,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -17638,9 +17522,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -17679,9 +17562,8 @@ export const PipedriveCatalog = {
 			return cacheSchema(this, 'input', z.strictObject({}));
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -17783,9 +17665,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -17870,9 +17751,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -17948,9 +17828,8 @@ export const PipedriveCatalog = {
 			return cacheSchema(this, 'input', z.strictObject({}));
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -18039,9 +17918,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -18121,9 +17999,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -18200,9 +18077,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -18235,9 +18111,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -18316,9 +18191,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -18377,9 +18251,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -18421,9 +18294,8 @@ export const PipedriveCatalog = {
 			return cacheSchema(this, 'input', z.strictObject({}));
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -18455,9 +18327,8 @@ export const PipedriveCatalog = {
 			return cacheSchema(this, 'input', z.strictObject({}));
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -18521,9 +18392,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -18575,7 +18445,11 @@ export const PipedriveCatalog = {
 												z
 													.object({
 														id: z
-															.union([z.number().int(), z.string()])
+															.union([
+																z.number().int(),
+																z.string(),
+																z.boolean(),
+															])
 															.optional(),
 														label: z.string().optional(),
 														color: z.string().nullable().optional(),
@@ -18659,9 +18533,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -18710,7 +18583,9 @@ export const PipedriveCatalog = {
 									.array(
 										z
 											.object({
-												id: z.union([z.number().int(), z.string()]).optional(),
+												id: z
+													.union([z.number().int(), z.string(), z.boolean()])
+													.optional(),
 												label: z.string().optional(),
 												color: z.string().nullable().optional(),
 												update_time: z.string().nullable().optional(),
@@ -18874,9 +18749,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -18963,9 +18837,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -19014,9 +18887,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -19066,9 +18938,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -19121,9 +18992,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -19183,9 +19053,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -19324,9 +19193,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -19442,9 +19310,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -19568,9 +19435,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -19666,9 +19532,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -19748,9 +19613,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -19834,9 +19698,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -19916,9 +19779,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -20004,9 +19866,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -20064,9 +19925,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -20128,9 +19988,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -20183,9 +20042,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -20243,9 +20101,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -20297,9 +20154,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -20353,9 +20209,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -20402,9 +20257,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -20440,9 +20294,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -20504,9 +20357,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -20557,7 +20409,11 @@ export const PipedriveCatalog = {
 												z
 													.object({
 														id: z
-															.union([z.number().int(), z.string()])
+															.union([
+																z.number().int(),
+																z.string(),
+																z.boolean(),
+															])
 															.optional(),
 														label: z.string().optional(),
 														color: z.string().nullable().optional(),
@@ -20713,9 +20569,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -20763,7 +20618,9 @@ export const PipedriveCatalog = {
 									.array(
 										z
 											.object({
-												id: z.union([z.number().int(), z.string()]).optional(),
+												id: z
+													.union([z.number().int(), z.string(), z.boolean()])
+													.optional(),
 												label: z.string().optional(),
 												color: z.string().nullable().optional(),
 												update_time: z.string().nullable().optional(),
@@ -20875,9 +20732,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -20925,7 +20781,9 @@ export const PipedriveCatalog = {
 									.array(
 										z
 											.object({
-												id: z.union([z.number().int(), z.string()]).optional(),
+												id: z
+													.union([z.number().int(), z.string(), z.boolean()])
+													.optional(),
 												label: z.string().optional(),
 												color: z.string().nullable().optional(),
 												update_time: z.string().nullable().optional(),
@@ -21057,9 +20915,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -21107,7 +20964,9 @@ export const PipedriveCatalog = {
 									.array(
 										z
 											.object({
-												id: z.union([z.number().int(), z.string()]).optional(),
+												id: z
+													.union([z.number().int(), z.string(), z.boolean()])
+													.optional(),
 												label: z.string().optional(),
 												color: z.string().nullable().optional(),
 												update_time: z.string().nullable().optional(),
@@ -21197,9 +21056,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -21253,9 +21111,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -21298,9 +21155,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -21348,9 +21204,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -21395,9 +21250,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean(),
@@ -21455,9 +21309,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -21506,9 +21359,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -21558,9 +21410,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -21613,9 +21464,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -21651,9 +21501,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -21733,9 +21582,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -21785,7 +21633,11 @@ export const PipedriveCatalog = {
 												z
 													.object({
 														id: z
-															.union([z.number().int(), z.string()])
+															.union([
+																z.number().int(),
+																z.string(),
+																z.boolean(),
+															])
 															.optional(),
 														label: z.string().optional(),
 														color: z.string().nullable().optional(),
@@ -21918,9 +21770,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -21967,7 +21818,9 @@ export const PipedriveCatalog = {
 									.array(
 										z
 											.object({
-												id: z.union([z.number().int(), z.string()]).optional(),
+												id: z
+													.union([z.number().int(), z.string(), z.boolean()])
+													.optional(),
 												label: z.string().optional(),
 												color: z.string().nullable().optional(),
 												update_time: z.string().nullable().optional(),
@@ -22074,9 +21927,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -22123,7 +21975,9 @@ export const PipedriveCatalog = {
 									.array(
 										z
 											.object({
-												id: z.union([z.number().int(), z.string()]).optional(),
+												id: z
+													.union([z.number().int(), z.string(), z.boolean()])
+													.optional(),
 												label: z.string().optional(),
 												color: z.string().nullable().optional(),
 												update_time: z.string().nullable().optional(),
@@ -22234,9 +22088,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -22283,7 +22136,9 @@ export const PipedriveCatalog = {
 									.array(
 										z
 											.object({
-												id: z.union([z.number().int(), z.string()]).optional(),
+												id: z
+													.union([z.number().int(), z.string(), z.boolean()])
+													.optional(),
 												label: z.string().optional(),
 												color: z.string().nullable().optional(),
 												update_time: z.string().nullable().optional(),
@@ -22363,9 +22218,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -22418,9 +22272,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -22463,9 +22316,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -22513,9 +22365,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -22566,9 +22417,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -22617,9 +22467,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -22669,9 +22518,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -22724,9 +22572,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -22792,9 +22639,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -22844,7 +22690,11 @@ export const PipedriveCatalog = {
 												z
 													.object({
 														id: z
-															.union([z.number().int(), z.string()])
+															.union([
+																z.number().int(),
+																z.string(),
+																z.boolean(),
+															])
 															.optional(),
 														label: z.string().optional(),
 														color: z.string().nullable().optional(),
@@ -22993,9 +22843,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -23042,7 +22891,9 @@ export const PipedriveCatalog = {
 									.array(
 										z
 											.object({
-												id: z.union([z.number().int(), z.string()]).optional(),
+												id: z
+													.union([z.number().int(), z.string(), z.boolean()])
+													.optional(),
 												label: z.string().optional(),
 												color: z.string().nullable().optional(),
 												update_time: z.string().nullable().optional(),
@@ -23159,9 +23010,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -23208,7 +23058,9 @@ export const PipedriveCatalog = {
 									.array(
 										z
 											.object({
-												id: z.union([z.number().int(), z.string()]).optional(),
+												id: z
+													.union([z.number().int(), z.string(), z.boolean()])
+													.optional(),
 												label: z.string().optional(),
 												color: z.string().nullable().optional(),
 												update_time: z.string().nullable().optional(),
@@ -23335,9 +23187,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -23384,7 +23235,9 @@ export const PipedriveCatalog = {
 									.array(
 										z
 											.object({
-												id: z.union([z.number().int(), z.string()]).optional(),
+												id: z
+													.union([z.number().int(), z.string(), z.boolean()])
+													.optional(),
 												label: z.string().optional(),
 												color: z.string().nullable().optional(),
 												update_time: z.string().nullable().optional(),
@@ -23474,9 +23327,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -23529,9 +23381,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -23574,9 +23425,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -23624,9 +23474,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -23685,9 +23534,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -23737,7 +23585,11 @@ export const PipedriveCatalog = {
 												z
 													.object({
 														id: z
-															.union([z.number().int(), z.string()])
+															.union([
+																z.number().int(),
+																z.string(),
+																z.boolean(),
+															])
 															.optional(),
 														label: z.string().optional(),
 														color: z.string().nullable().optional(),
@@ -23835,9 +23687,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -23884,7 +23735,9 @@ export const PipedriveCatalog = {
 									.array(
 										z
 											.object({
-												id: z.union([z.number().int(), z.string()]).optional(),
+												id: z
+													.union([z.number().int(), z.string(), z.boolean()])
+													.optional(),
 												label: z.string().optional(),
 												color: z.string().nullable().optional(),
 												update_time: z.string().nullable().optional(),
@@ -23962,9 +23815,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -24011,7 +23863,9 @@ export const PipedriveCatalog = {
 									.array(
 										z
 											.object({
-												id: z.union([z.number().int(), z.string()]).optional(),
+												id: z
+													.union([z.number().int(), z.string(), z.boolean()])
+													.optional(),
 												label: z.string().optional(),
 												color: z.string().nullable().optional(),
 												update_time: z.string().nullable().optional(),
@@ -24087,9 +23941,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -24136,7 +23989,9 @@ export const PipedriveCatalog = {
 									.array(
 										z
 											.object({
-												id: z.union([z.number().int(), z.string()]).optional(),
+												id: z
+													.union([z.number().int(), z.string(), z.boolean()])
+													.optional(),
 												label: z.string().optional(),
 												color: z.string().nullable().optional(),
 												update_time: z.string().nullable().optional(),
@@ -24198,9 +24053,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -24253,9 +24107,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -24298,9 +24151,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -24348,9 +24200,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -24435,9 +24286,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -24530,9 +24380,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -24571,9 +24420,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean(),
@@ -24648,9 +24496,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -24761,9 +24608,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -24912,9 +24758,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -25004,9 +24849,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -25077,9 +24921,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -25141,9 +24984,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -25190,9 +25032,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -25228,9 +25069,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -25288,9 +25128,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -25359,9 +25198,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -25417,9 +25255,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -25463,9 +25300,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -25501,9 +25337,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -25555,9 +25390,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -25611,9 +25445,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -25664,7 +25497,11 @@ export const PipedriveCatalog = {
 												z
 													.object({
 														id: z
-															.union([z.number().int(), z.string()])
+															.union([
+																z.number().int(),
+																z.string(),
+																z.boolean(),
+															])
 															.optional(),
 														label: z.string().optional(),
 														color: z.string().nullable().optional(),
@@ -25784,9 +25621,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -25834,7 +25670,9 @@ export const PipedriveCatalog = {
 									.array(
 										z
 											.object({
-												id: z.union([z.number().int(), z.string()]).optional(),
+												id: z
+													.union([z.number().int(), z.string(), z.boolean()])
+													.optional(),
 												label: z.string().optional(),
 												color: z.string().nullable().optional(),
 												update_time: z.string().nullable().optional(),
@@ -25907,9 +25745,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -25957,7 +25794,9 @@ export const PipedriveCatalog = {
 									.array(
 										z
 											.object({
-												id: z.union([z.number().int(), z.string()]).optional(),
+												id: z
+													.union([z.number().int(), z.string(), z.boolean()])
+													.optional(),
 												label: z.string().optional(),
 												color: z.string().nullable().optional(),
 												update_time: z.string().nullable().optional(),
@@ -26055,9 +25894,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -26105,7 +25943,9 @@ export const PipedriveCatalog = {
 									.array(
 										z
 											.object({
-												id: z.union([z.number().int(), z.string()]).optional(),
+												id: z
+													.union([z.number().int(), z.string(), z.boolean()])
+													.optional(),
 												label: z.string().optional(),
 												color: z.string().nullable().optional(),
 												update_time: z.string().nullable().optional(),
@@ -26178,9 +26018,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -26233,9 +26072,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -26278,9 +26116,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -26328,9 +26165,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -26392,9 +26228,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -26475,9 +26310,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -26549,9 +26383,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -26614,9 +26447,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -26693,9 +26525,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -26751,9 +26582,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -26799,9 +26629,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -26852,9 +26681,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -26936,9 +26764,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -27042,9 +26869,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -27100,9 +26926,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -27146,9 +26971,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -27194,9 +27018,8 @@ export const PipedriveCatalog = {
 			return cacheSchema(this, 'input', z.strictObject({}));
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -27247,9 +27070,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -27291,9 +27113,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -27343,9 +27164,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -27387,9 +27207,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -27429,9 +27248,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -27484,9 +27302,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -27529,9 +27346,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -27583,9 +27399,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -27628,9 +27443,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
@@ -27677,9 +27491,8 @@ export const PipedriveCatalog = {
 			);
 		},
 		get output() {
-			return cacheSchema(
+			return cacheResponseSchema(
 				this,
-				'output',
 				z
 					.object({
 						success: z.boolean().optional(),
