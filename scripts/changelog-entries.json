@@ -11271,5 +11271,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/parsera",
+    "dir": "packages/parsera",
+    "name": "Parsera",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/penpot",
+    "dir": "packages/penpot",
+    "name": "Penpot",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/piloterr",
+    "dir": "packages/piloterr",
+    "name": "Piloterr",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
