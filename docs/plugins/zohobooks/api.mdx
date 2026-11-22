@@ -48,7 +48,12 @@ await corsair.zohobooks.api.bankAccounts.addBankReconciliationAttachment({
 
 ```ts
 {
-  organization_id: string
+  organization_id: string,
+  attachment?: {
+    filename: string,
+    contentType: string,
+    base64: string
+  } | string
 }
 ```
 </Accordion>
@@ -8251,7 +8256,12 @@ await corsair.zohobooks.api.contacts.addContactAttachment({
 
 ```ts
 {
-  organization_id: string
+  organization_id: string,
+  attachment?: {
+    filename: string,
+    contentType: string,
+    base64: string
+  } | string
 }
 ```
 </Accordion>
@@ -19161,7 +19171,22 @@ await corsair.zohobooks.api.customerDebitNotes.listCustomerDebitNotes({
   search_text?: string,
   sort_column?: string,
   page?: number,
-  per_page?: number
+  per_page?: number,
+  invoice_number?: string,
+  reference_number?: string,
+  recurring_invoice_id?: string,
+  date_start?: string,
+  date_end?: string,
+  date_before?: string,
+  date_after?: string,
+  due_date_start?: string,
+  due_date_end?: string,
+  due_date_before?: string,
+  due_date_after?: string,
+  created_date_start?: string,
+  created_date_end?: string,
+  zcrm_potential_id?: string,
+  response_option?: number
 }
 ```
 </Accordion>
@@ -47730,7 +47755,7 @@ await corsair.zohobooks.api.recurringInvoices.disableRecurringInvoiceAutobill({
 
 Enable auto-bill for a recurring invoice. Zoho Books API v3.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.zohobooks.api.recurringInvoices.enableRecurringInvoiceAutobill({
@@ -47936,7 +47961,9 @@ await corsair.zohobooks.api.recurringInvoices.listRecurringInvoiceChildInvoices(
   organization_id: string,
   filter_by?: string,
   search_text?: string,
-  sort_column?: string
+  sort_column?: string,
+  page?: number,
+  per_page?: number
 }
 ```
 </Accordion>

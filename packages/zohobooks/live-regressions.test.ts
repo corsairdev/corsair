@@ -8,6 +8,7 @@ import {
 	ZohoBooksEndpointInputSchemas,
 	ZohoBooksEndpointOutputSchemas,
 } from './schema/openapi-validation';
+import type { ZohoBooksOperationOutputFor } from './schema/operation-types';
 
 // Regressions found running the plugin against a Zoho Books trial organization (India DC, 11-22).
 
@@ -24,6 +25,7 @@ describe('Zoho Books live-run regressions', () => {
 		// Trimmed from live responses: page_context is an object, creditnotes an array,
 		// chart-of-accounts depth a number and is_child_present a boolean.
 		const pageContext = { page: 1, per_page: 200, has_more_page: false };
+		// `unknown`: each fixture is a different operation's response body, checked by its own schema.
 		const cases: [string, Record<string, unknown>][] = [
 			['list_invoices', { invoices: [], page_context: pageContext }],
 			['list_estimates', { estimates: [], page_context: pageContext }],
@@ -151,6 +153,7 @@ describe('Zoho Books live-run regressions', () => {
 				{ key: 'test-access-token', options: { region: 'in' } },
 				operation('list_bank_account_match_filters'),
 				{ query: { ...org, account_id: '1' } },
+				// `unknown`: a rejected promise can carry any value; narrowed by instanceof below.
 			).catch((error: unknown) => error);
 			expect(failure).toBeInstanceOf(ApiError);
 			if (!(failure instanceof ApiError)) return;
@@ -270,5 +273,82 @@ describe('Zoho Books review-round fixes (live-checked 11-22)', () => {
 		] as const) {
 			expect(zohoBooksEndpointMeta[key].riskLevel).toBe('destructive');
 		}
+	});
+});
+
+describe('Zoho Books bot-round fixes (live-checked 11-22)', () => {
+	it('types page_context as the object Zoho returns and creditnotes as an array', () => {
+		// Compile-time checks: these fail to type-check if the types follow the old contract.
+		const invoices: ZohoBooksOperationOutputFor<'list_invoices'> = {
+			code: 0,
+			message: 'success',
+			invoices: [],
+			page_context: { page: 1, per_page: 200, has_more_page: false },
+		};
+		const creditNotes: ZohoBooksOperationOutputFor<'list_credit_notes'> = {
+			code: 0,
+			message: 'success',
+			creditnotes: [{ creditnote_id: '1' }],
+		};
+		expect(
+			typeof invoices === 'object' &&
+				invoices !== null &&
+				'page_context' in invoices &&
+				invoices.page_context?.has_more_page,
+		).toBe(false);
+		expect(creditNotes).toBeDefined();
+	});
+
+	it('accepts the debit note list filters the shared invoices route takes', () => {
+		expect(
+			ZohoBooksEndpointInputSchemas.list_customer_debit_notes?.safeParse({
+				query: {
+					...org,
+					filter_by: 'Type.DebitNote',
+					date_start: '2026-01-01',
+					date_end: '2026-12-31',
+				},
+			}).success,
+		).toBe(true);
+	});
+
+	it('pages through a recurring invoice child list', () => {
+		expect(
+			ZohoBooksEndpointInputSchemas.list_recurring_invoice_child_invoices?.safeParse(
+				{
+					pathParams: { recurring_invoice_id: '1' },
+					query: { ...org, page: 2, per_page: 50 },
+				},
+			).success,
+		).toBe(true);
+	});
+
+	it('takes a file on contact and bank reconciliation attachments', () => {
+		const file = {
+			filename: 'note.txt',
+			contentType: 'text/plain',
+			base64: 'bm90ZQ==',
+		};
+		expect(
+			ZohoBooksEndpointInputSchemas.add_contact_attachment?.safeParse({
+				pathParams: { contact_id: '1' },
+				query: { ...org, attachment: file },
+			}).success,
+		).toBe(true);
+		expect(
+			ZohoBooksEndpointInputSchemas.add_bank_reconciliation_attachment?.safeParse(
+				{
+					pathParams: { account_id: '1', reconciliation_id: '1' },
+					query: { ...org, attachment: file },
+				},
+			).success,
+		).toBe(true);
+	});
+
+	it('marks recurring invoice autobill destructive', () => {
+		expect(
+			zohoBooksEndpointMeta['recurringInvoices.enableRecurringInvoiceAutobill']
+				.riskLevel,
+		).toBe('destructive');
 	});
 });
