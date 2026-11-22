@@ -1,0 +1,360 @@
+displayName: MailerLite
+description: Manage MailerLite subscribers, campaigns, automations, and ecommerce data through the current REST API.
+overviewNote: >-
+  Connect an API key generated in MailerLite Integrations. Subscriber reactivation
+  requires explicit renewed consent; never set resubscribe unless the contact has
+  asked to subscribe again. Campaign scheduling sends email to the selected audience.
+apiNotes:
+  subscribers.create: >-
+    The plugin pins X-Version to the implementation date and preserves MailerLite's
+    Retry-After value. Subscriber status and group changes follow MailerLite's consent
+    rules; do not use resubscribe without renewed consent.
+  groups.importSubscribers: >-
+    This import route is limited to five creation requests per minute and can enter
+    subscribers into automations when trigger_automations is true.
+  campaigns.schedule: >-
+    Scheduling with delivery=instant sends the campaign immediately; scheduled and
+    timezone-based delivery also sends once MailerLite reaches the configured time.
+  automations.enable: >-
+    Enabling activates workflow triggers and may start sending automation emails.
+  orders.create: >-
+    Orders marked complete can trigger purchase automations and revenue attribution.
+  customers.create: >-
+    Set accepts_marketing from the customer's actual consent; create_subscriber is
+    passed explicitly and does not imply consent by itself.
+  productVariants.create: >-
+    E-commerce product variant creation with resource_id can delete variants omitted
+    from the submitted list.
+apiExamples:
+  automations.list:
+    args: {}
+  automations.get:
+    args: {"automationId":"1"}
+  automations.activity:
+    args: {"automationId":"1","query":{"filter[status]":"completed"}}
+  automations.create:
+    args: {"body":{"name":"1"}}
+  automations.update:
+    args: {"automationId":"1","body":{}}
+  automations.copy:
+    args: {"automationId":"1"}
+  automations.enable:
+    args: {"automationId":"1"}
+  automations.disable:
+    args: {"automationId":"1"}
+  automations.test:
+    args: {"automationId":"1","body":{"email":"test@mailerlite.test"}}
+  automations.addSubscribers:
+    args: {"automationId":"automation-1","body":{"emails":["active@mailerlite.test"]}}
+  automations.readd:
+    args: {"automationId":"1","body":{"readd_subscribers_to":"last_completed_step","filter":{"status":"completed"}}}
+  automations.addToGroup:
+    args: {"automationId":"1","body":{"destination_groups":["1"],"filter":{"status":"active"}}}
+  automations.cancelRuns:
+    args: {"automationId":"1","body":{"filter":{"status":"active"}}}
+  automations.skipDelay:
+    args: {"automationId":"1","body":{"filter":{"status":"active"}}}
+  automations.delete:
+    args: {"automationId":"1"}
+  automationSteps.list:
+    args: {"automationId":"1"}
+  automationSteps.get:
+    args: {"automationId":"1","stepId":"1"}
+  automationSteps.create:
+    args: {"automationId":"1","body":{"type":"email"}}
+  automationSteps.update:
+    args: {"automationId":"1","stepId":"1","body":{}}
+  automationSteps.delete:
+    args: {"automationId":"1","stepId":"1"}
+  automationSteps.copy:
+    args: {"automationId":"1","stepId":"1"}
+  automationSteps.reorder:
+    args: {"automationId":"automation-1","body":{"dragged_step_id":"step-1"}}
+  automationSteps.selectWinner:
+    args: {"automationId":"1","stepId":"1","body":{"ab_test_winner":"a_path"}}
+  automationTriggers.list:
+    args: {"automationId":"1"}
+  automationTriggers.get:
+    args: {"automationId":"1","triggerId":"1"}
+  automationTriggers.create:
+    args: {"automationId":"1","body":{"type":"subscriber_joins_group"}}
+  automationTriggers.update:
+    args: {"automationId":"1","triggerId":"1","body":{}}
+  automationTriggers.delete:
+    args: {"automationId":"1","triggerId":"1"}
+  automationTemplates.list:
+    args: {}
+  automationTemplates.createFromTemplate:
+    args: {"templateId":"1"}
+  automationReports.stepRunCounts:
+    args: {"automationId":"1"}
+  automationReports.stepRunCount:
+    args: {"automationId":"1","stepId":"1"}
+  automationReports.triggerRunCounts:
+    args: {"automationId":"1"}
+  automationReports.triggerRunCount:
+    args: {"automationId":"1","triggerId":"1"}
+  automationReports.abStepStats:
+    args: {"automationId":"1"}
+  automationReports.abStepStat:
+    args: {"automationId":"1","stepId":"1"}
+  automationReports.stepSubscribers:
+    args: {"automationId":"1","stepId":"1","query":{"status":"queued"}}
+  automationReports.triggerSubscribers:
+    args: {"automationId":"1","triggerId":"1","query":{"status":"queued"}}
+  automationReports.orders:
+    args: {"automationId":"1","query":{"time_frame":"week"}}
+  automationReports.emailTotals:
+    args: {"automationId":"1"}
+  automationReports.ecommerceTotals:
+    args: {"automationId":"1"}
+  automationEmails.getContent:
+    args: {"automationId":"1","emailId":"1"}
+  automationEmails.setContent:
+    args: {"automationId":"1","emailId":"1","body":{"html":"<html><body>Test</body></html>"}}
+  automationEmails.stats:
+    args: {"automationId":"1","emailId":"1"}
+  automationEmails.ecommerceStats:
+    args: {"automationId":"1","emailId":"1"}
+  automationEmails.unsubscribeReasons:
+    args: {"automationId":"1","emailId":"1"}
+  shops.list:
+    args: {}
+  shops.create:
+    args: {"body":{"name":"Test shop","url":"https://mailer.test","currency":"USD"}}
+  shops.get:
+    args: {"shopId":"1"}
+  shops.update:
+    args: {"shopId":"shop-1","body":{"name":"Test shop","url":"https://mailer.test","currency":"USD"}}
+  shops.count:
+    args: {}
+  shops.delete:
+    args: {"shopId":"1"}
+  shops.stats:
+    args: {"shopId":"1","query":{"start_date":"2026-11-01","end_date":"2026-11-21"}}
+  ecommerceSettings.get:
+    args: {}
+  carts.list:
+    args: {"shopId":"1"}
+  carts.get:
+    args: {"shopId":"1","cartId":"1"}
+  carts.count:
+    args: {"shopId":"1"}
+  carts.update:
+    args: {"shopId":"1","cartId":"1","body":{}}
+  cartItems.list:
+    args: {"shopId":"1","cartId":"1"}
+  cartItems.get:
+    args: {"shopId":"1","cartId":"1","itemId":"1"}
+  cartItems.count:
+    args: {"shopId":"1","cartId":"1"}
+  cartItems.create:
+    args: {"shopId":"shop-1","cartId":"cart-1","body":{"ecommerce_product_id":"product-1"}}
+  cartItems.update:
+    args: {"shopId":"shop-1","cartId":"cart-1","itemId":"item-1","body":{"ecommerce_product_id":"product-1"}}
+  cartItems.delete:
+    args: {"shopId":"1","cartId":"1","itemId":"1"}
+  categories.list:
+    args: {"shopId":"1"}
+  categories.get:
+    args: {"shopId":"1","categoryId":"1"}
+  categories.count:
+    args: {"shopId":"1"}
+  categories.create:
+    args: {"shopId":"1","body":{"name":"1"}}
+  categories.update:
+    args: {"shopId":"1","categoryId":"1","body":{"name":"1"}}
+  categories.delete:
+    args: {"shopId":"1","categoryId":"1"}
+  categoryProducts.list:
+    args: {"shopId":"1","categoryId":"1"}
+  categoryProducts.assign:
+    args: {"shopId":"1","categoryId":"1","productId":"1"}
+  categoryProducts.unassign:
+    args: {"shopId":"1","categoryId":"1","productId":"1"}
+  categoryProducts.assignMultiple:
+    args: {"shopId":"1","productId":"1","body":{"categories":["1"]}}
+  customers.list:
+    args: {"shopId":"1"}
+  customers.get:
+    args: {"shopId":"1","customerId":"1"}
+  customers.count:
+    args: {"shopId":"1"}
+  customers.create:
+    args: {"shopId":"1","body":{"email":"test@mailerlite.test"}}
+  customers.update:
+    args: {"shopId":"1","customerId":"1","body":{"email":"test@mailerlite.test"}}
+  customers.delete:
+    args: {"shopId":"1","customerId":"1"}
+  orders.list:
+    args: {"shopId":"1"}
+  orders.get:
+    args: {"shopId":"1","orderId":"1"}
+  orders.count:
+    args: {"shopId":"1"}
+  orders.create:
+    args: {"shopId":"shop-1","body":{"customer":{"email":"buyer@mailerlite.test","accepts_marketing":false},"cart":{"items":[{"ecommerce_product_id":"product-1"}]},"status":"pending"}}
+  orders.update:
+    args: {"shopId":"1","orderId":"1","body":{}}
+  orders.delete:
+    args: {"shopId":"1","orderId":"1"}
+  products.list:
+    args: {"shopId":"1"}
+  products.get:
+    args: {"shopId":"1","productId":"1"}
+  products.count:
+    args: {"shopId":"1"}
+  products.create:
+    args: {"shopId":"1","body":{"name":"1"}}
+  products.update:
+    args: {"shopId":"1","productId":"1","body":{"name":"1"}}
+  products.changeStatus:
+    args: {"shopId":"1","productId":"1","body":{"status":true}}
+  products.delete:
+    args: {"shopId":"1","productId":"1"}
+  productVariants.list:
+    args: {"shopId":"1","productId":"1"}
+  productVariants.create:
+    args: {"shopId":"1","productId":"1","body":[{"name":"1","attributes":{}}]}
+  productVariants.update:
+    args: {"shopId":"1","productId":"1","variantId":"1","body":{"name":"1","attributes":{}}}
+  productVariants.delete:
+    args: {"shopId":"1","productId":"1","variantId":"1"}
+  ecommerceImports.categories:
+    args: {"shopId":"1","body":[{"name":"1"}]}
+  ecommerceImports.customers:
+    args: {"shopId":"1","body":[{"email":"test@mailerlite.test"}]}
+  ecommerceImports.products:
+    args: {"shopId":"1","body":[{"name":"1"}]}
+  ecommerceImports.orders:
+    args: {"shopId":"shop-1","body":{"orders":[{"customer_id":"customer-1","cart":{"items":[{"ecommerce_product_id":"product-1"}]}}]}}
+  emails.get:
+    args: {"emailId":"1"}
+  emails.html:
+    args: {"emailId":"1"}
+  emails.getBlock:
+    args: {"emailId":"1","blockId":"1"}
+  emails.insertBlock:
+    args: {"emailId":"1","body":{"type":"divider","etag":"42","editor_content":{}}}
+  emails.validateBlock:
+    args: {"body":{"type":"blockquote","editor_content":{}}}
+  emails.updateBlock:
+    args: {"emailId":"1","blockId":"1","body":{"editor_content":{},"etag":"1"}}
+  emails.moveBlock:
+    args: {"emailId":"1","blockId":"1","body":{"etag":"1","placement":{"position":"start"}}}
+  emails.deleteBlock:
+    args: {"emailId":"1","blockId":"1","body":{"etag":"1"}}
+  emails.updateSettings:
+    args: {"emailId":"1","body":{"etag":"1"}}
+  emails.validateSettings:
+    args: {"emailId":"1","body":{}}
+  emails.saveTemplate:
+    args: {"emailId":"1","body":{"name":"1"}}
+  emails.versions:
+    args: {"emailId":"1"}
+  emails.saveVersion:
+    args: {"emailId":"1"}
+  emails.restoreVersion:
+    args: {"emailId":"1","versionId":"1"}
+  subscribers.list:
+    args: {}
+  subscribers.create:
+    args: {"body":{"email":"test@mailerlite.test"}}
+  subscribers.update:
+    args: {"id":"1","body":{}}
+  subscribers.get:
+    args: {"identifier":"1"}
+  subscribers.count:
+    args: {"query":{"limit":0}}
+  subscribers.activity:
+    args: {"id":"1"}
+  subscribers.delete:
+    args: {"id":"1"}
+  subscribers.forget:
+    args: {"id":"1"}
+  subscribers.importStatus:
+    args: {"importId":"1"}
+  subscribers.ecommerceStats:
+    args: {"id":"1","query":{"shop_id":1}}
+  subscribers.ecommerceOrders:
+    args: {"id":"1","query":{"shop_id":1}}
+  subscribers.addToGroup:
+    args: {"subscriberId":"1","groupId":"1"}
+  subscribers.removeFromGroup:
+    args: {"subscriberId":"1","groupId":"1"}
+  groups.list:
+    args: {}
+  groups.create:
+    args: {"body":{"name":"Newsletter subscribers"}}
+  groups.update:
+    args: {"groupId":"1","body":{"name":"Newsletter subscribers"}}
+  groups.delete:
+    args: {"groupId":"1"}
+  groups.subscribers:
+    args: {"groupId":"1"}
+  groups.importSubscribers:
+    args: {"groupId":"1","body":{"subscribers":[{"email":"test@mailerlite.test"}]}}
+  fields.list:
+    args: {}
+  fields.create:
+    args: {"body":{"name":"Customer score","type":"number"}}
+  fields.update:
+    args: {"fieldId":"1","body":{"name":"Customer score"}}
+  fields.delete:
+    args: {"fieldId":"1"}
+  segments.list:
+    args: {}
+  segments.update:
+    args: {"segmentId":"1","body":{"name":"Active subscribers"}}
+  segments.delete:
+    args: {"segmentId":"1"}
+  segments.subscribers:
+    args: {"segmentId":"1"}
+  campaigns.list:
+    args: {}
+  campaigns.get:
+    args: {"campaignId":"1"}
+  campaigns.create:
+    args: {"body":{"name":"Welcome note","type":"regular","emails":[{"subject":"Welcome","from_name":"Team","from":"sender@mailerlite.test"}]}}
+  campaigns.update:
+    args: {"campaignId":"1","body":{"name":"1"}}
+  campaigns.schedule:
+    args: {"campaignId":"1","body":{"delivery":"instant"}}
+  campaigns.cancel:
+    args: {"campaignId":"1"}
+  campaigns.delete:
+    args: {"campaignId":"1"}
+  campaigns.ecommerceReport:
+    args: {"campaignId":"1"}
+  campaigns.ecommerceOrders:
+    args: {"campaignId":"1"}
+  campaigns.subscriberActivity:
+    args: {"campaignId":"1"}
+  forms.list:
+    args: {"type":"popup"}
+  forms.get:
+    args: {"formId":"1"}
+  forms.update:
+    args: {"formId":"1","body":{"name":"Newsletter form"}}
+  forms.delete:
+    args: {"formId":"1"}
+  forms.subscribers:
+    args: {"formId":"1"}
+  brandStyles.list:
+    args: {}
+  files.list:
+    args: {}
+  timezones.list:
+    args: {}
+  campaignLanguages.list:
+    args: {}
+  webhooks.list:
+    args: {}
+  webhooks.get:
+    args: {"webhookId":"1"}
+  webhooks.create:
+    args: {"body":{"events":["subscriber.created"],"url":"https://mailer.test"}}
+  webhooks.update:
+    args: {"webhookId":"1","body":{}}
+  webhooks.delete:
+    args: {"webhookId":"1"}

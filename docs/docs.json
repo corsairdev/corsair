@@ -3593,6 +3593,14 @@
                 ]
               },
               {
+                "group": "MailerLite",
+                "pages": [
+                  "plugins/mailerlite/overview",
+                  "plugins/mailerlite/api",
+                  "plugins/mailerlite/database"
+                ]
+              },
+              {
                 "group": "Mails.so",
                 "pages": [
                   "plugins/mailsso/overview",
