@@ -918,7 +918,7 @@ const metaAdsEndpointMeta = {
 		description: 'Rename a label shared by ad objects',
 	},
 	'labels.delete': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete an ad label from an account',
 	},
 	'labels.adsList': {

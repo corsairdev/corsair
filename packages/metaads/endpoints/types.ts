@@ -147,7 +147,8 @@ const StudyViewersListSchema = z.object({
 	data: z.array(StudyActorSchema),
 	paging: MetaAdsListSchema.shape.paging.optional(),
 });
-const AdPreviewSchema = z.object({ body: z.string() }).strict();
+// Graph may add preview fields; keep the documented HTML body and pass the rest through.
+const AdPreviewSchema = z.object({ body: z.string() }).passthrough();
 const AdPreviewsListSchema = z.object({
 	data: z.array(AdPreviewSchema),
 	paging: MetaAdsListSchema.shape.paging.optional(),
@@ -162,7 +163,7 @@ const CreativeInsightsListSchema = z.object({
 	data: z.array(CreativeInsightsSchema),
 	paging: MetaAdsListSchema.shape.paging.optional(),
 });
-const AudienceAdAccountSchema = z.object({ id: z.string() }).strict();
+const AudienceAdAccountSchema = z.object({ id: z.string() }).passthrough();
 const AudienceAdAccountsListSchema = z.object({
 	data: z.array(AudienceAdAccountSchema),
 	paging: MetaAdsListSchema.shape.paging.optional(),
@@ -225,7 +226,8 @@ const AdImageSchema = z
 		original_height: z.number().int().optional(),
 		original_width: z.number().int().optional(),
 		permalink_url: z.string().optional(),
-		status: z.enum(['ACTIVE', 'INTERNAL', 'DELETED']).optional(),
+		// Known values ACTIVE, INTERNAL, DELETED; open so a new Meta status doesn't fail the read.
+		status: z.enum(['ACTIVE', 'INTERNAL', 'DELETED']).or(z.string()).optional(),
 		updated_time: z.string().optional(),
 		url: z.string().optional(),
 		url_128: z.string().optional(),
@@ -396,6 +398,7 @@ const pixelFields = z.enum([
 const pixelGetInput = z
 	.object({ pixelId: id, fields: z.array(pixelFields).min(1).optional() })
 	.strict();
+// Response objects stay open: Meta adds pixel fields between versions.
 const pixelSchema = z
 	.object({
 		id,
@@ -428,7 +431,7 @@ const pixelSchema = z
 		name: z.string().optional(),
 		valid_entries: z.number().int().optional(),
 	})
-	.strict();
+	.passthrough();
 const accountPixelsListSchema = z.object({
 	data: z.array(pixelSchema),
 	paging: MetaAdsListSchema.shape.paging.optional(),
@@ -705,16 +708,17 @@ const AsyncRequestSetSchema = z
 		success_count: z.number().int().optional(),
 		error_count: z.number().int().optional(),
 		canceled_count: z.number().int().optional(),
-		notification_mode: z.enum(['OFF', 'ON_COMPLETE']).optional(),
+		notification_mode: z.enum(['OFF', 'ON_COMPLETE']).or(z.string()).optional(),
 	})
-	.strict();
+	.passthrough();
 const AsyncRequestSchema = z
 	.object({
 		id: numericId,
 		scope_object_id: numericId.optional(),
-		status: asyncRequestStatus.optional(),
+		// Open so a status Meta adds later doesn't fail the list.
+		status: asyncRequestStatus.or(z.string()).optional(),
 	})
-	.strict();
+	.passthrough();
 const AsyncRequestSetsListSchema = z.object({
 	data: z.array(AsyncRequestSetSchema),
 	paging: MetaAdsListSchema.shape.paging.optional(),
@@ -726,7 +730,12 @@ const AsyncRequestsListSchema = z.object({
 const AsyncRequestSetCreateSchema = z.object({
 	id: numericId,
 });
-const AsyncRequestSetUpdateSchema = z.literal(true);
+// Graph answers these node writes with `true` or `{ success: true }` depending on the node version.
+const GraphBooleanResultSchema = z.union([
+	z.literal(true),
+	z.object({ success: z.boolean() }).passthrough(),
+]);
+const AsyncRequestSetUpdateSchema = GraphBooleanResultSchema;
 
 const adLabelListInput = z.object({ accountId: id, ...cursorOptions }).strict();
 const adLabelGetInput = z.object({ labelId: id, fields }).strict();
@@ -1041,18 +1050,20 @@ const accountReachEstimateInput = z
 		targetingSpec: reachEstimateTargetingSpec,
 	})
 	.strict();
+// AdAccountReachEstimate also returns `estimate_ready`; keep the node open for fields Meta adds.
 const ReachEstimateSchema = z
 	.object({
 		users_lower_bound: z.number().int(),
 		users_upper_bound: z.number().int(),
+		estimate_ready: z.boolean().optional(),
 	})
-	.strict();
+	.passthrough();
 const ReachEstimateResponseSchema = z
 	.object({
 		data: ReachEstimateSchema,
 		paging: MetaAdsListSchema.shape.paging.optional(),
 	})
-	.strict();
+	.passthrough();
 const reachFrequencyPredictionFields = z.enum([
 	'id',
 	'account_id',
@@ -1159,22 +1170,20 @@ const reachFrequencyPredictionSchema = z
 				instream_videos: z.number().optional(),
 				suggested_videos: z.number().optional(),
 			})
-			.strict()
+			.passthrough()
 			.optional(),
-		prediction_mode: z.union([z.literal(0), z.literal(1)]).optional(),
+		// Documented codes: prediction_mode 0/1, reservation_status 0/1/2, story_event_type 0/128/256/384.
+		// Kept as integers so a code Meta adds later doesn't fail the read.
+		prediction_mode: z.number().int().optional(),
 		prediction_progress: z.number().int().min(0).max(100).optional(),
-		reservation_status: z
-			.union([z.literal(0), z.literal(1), z.literal(2)])
-			.optional(),
+		reservation_status: z.number().int().optional(),
 		status: z.number().int().optional(),
-		story_event_type: z
-			.union([z.literal(0), z.literal(128), z.literal(256), z.literal(384)])
-			.optional(),
+		story_event_type: z.number().int().optional(),
 		target_spec: z.string().optional(),
 		time_created: z.string().optional(),
 		time_updated: z.string().optional(),
 	})
-	.strict();
+	.passthrough();
 const reachFrequencyPredictionsListSchema = z.object({
 	data: z.array(reachFrequencyPredictionSchema),
 	paging: MetaAdsListSchema.shape.paging.optional(),
@@ -1462,6 +1471,8 @@ const campaignCreateInput = z
 		status: z.enum(['ACTIVE', 'PAUSED']).optional(),
 		dailyBudget: budget.optional(),
 		lifetimeBudget: budget.optional(),
+		// Meta v24+ requires is_adset_budget_sharing_enabled when the budget sits on the ad sets.
+		adsetBudgetSharing: z.boolean().optional(),
 		idempotencyKey: z
 			.string()
 			.regex(/^[A-Za-z0-9_-]{1,128}$/)
@@ -1471,6 +1482,17 @@ const campaignCreateInput = z
 	.refine(
 		(value) =>
 			!(value.dailyBudget !== undefined && value.lifetimeBudget !== undefined),
+	)
+	.refine(
+		(value) =>
+			!(
+				value.adsetBudgetSharing === true &&
+				(value.dailyBudget !== undefined || value.lifetimeBudget !== undefined)
+			),
+		{
+			message:
+				'adsetBudgetSharing only applies to campaigns without a campaign budget',
+		},
 	);
 const campaignUpdateInput = z
 	.object({
@@ -1608,6 +1630,35 @@ const adSetCreateInput = z
 			'LISTING_INTERACTION',
 		]),
 		targeting,
+		bidStrategy: z
+			.enum([
+				'LOWEST_COST_WITHOUT_CAP',
+				'LOWEST_COST_WITH_BID_CAP',
+				'COST_CAP',
+				'LOWEST_COST_WITH_MIN_ROAS',
+			])
+			.optional(),
+		bidAmount: budget.optional(),
+		// Documented promoted_object keys; Meta requires one for conversion, lead, app and page-like goals.
+		promotedObject: z
+			.object({
+				pixel_id: id.optional(),
+				custom_event_type: z.string().min(1).optional(),
+				custom_conversion_id: id.optional(),
+				page_id: id.optional(),
+				application_id: id.optional(),
+				object_store_url: z.string().url().optional(),
+				product_catalog_id: id.optional(),
+				product_set_id: id.optional(),
+				event_id: id.optional(),
+				offline_conversion_data_set_id: id.optional(),
+				whatsapp_phone_number: z.string().min(1).optional(),
+			})
+			.strict()
+			.refine((value) => Object.values(value).some((v) => v !== undefined), {
+				message: 'promotedObject needs at least one field',
+			})
+			.optional(),
 		status: z.enum(['ACTIVE', 'PAUSED']).optional(),
 		dailyBudget: budget.optional(),
 		lifetimeBudget: budget.optional(),
@@ -1626,6 +1677,16 @@ const adSetCreateInput = z
 	.refine(
 		(value) =>
 			value.lifetimeBudget === undefined || value.endTime !== undefined,
+	)
+	.refine(
+		(value) =>
+			value.bidAmount !== undefined ||
+			(value.bidStrategy !== 'LOWEST_COST_WITH_BID_CAP' &&
+				value.bidStrategy !== 'COST_CAP'),
+		{
+			message:
+				'bidAmount is required for LOWEST_COST_WITH_BID_CAP and COST_CAP',
+		},
 	);
 const adSetUpdateInput = z
 	.object({
@@ -2309,17 +2370,20 @@ const InsightsAsyncCreateSchema = z.object({
 });
 const copiedObjectIdsSchema = z.array(
 	z.object({
-		ad_object_type: z.enum([
-			'unique_adcreative',
-			'ad',
-			'ad_set',
-			'campaign',
-			'opportunities',
-			'privacy_info_center',
-			'topline',
-			'ad_account',
-			'product',
-		]),
+		// Open enum: Meta adds copied object types over time.
+		ad_object_type: z
+			.enum([
+				'unique_adcreative',
+				'ad',
+				'ad_set',
+				'campaign',
+				'opportunities',
+				'privacy_info_center',
+				'topline',
+				'ad_account',
+				'product',
+			])
+			.or(z.string()),
 		source_id: id,
 		copied_id: id,
 	}),
@@ -2341,7 +2405,10 @@ const HighDemandPeriodSchema = z
 	.object({
 		id: z.string(),
 		budget_value: z.union([z.number(), z.string()]).optional(),
-		budget_value_type: z.enum(['ABSOLUTE', 'MULTIPLIER']).optional(),
+		budget_value_type: z
+			.enum(['ABSOLUTE', 'MULTIPLIER'])
+			.or(z.string())
+			.optional(),
 		recurrence_type: z.string().optional(),
 		time_end: z.union([z.string(), z.number()]).optional(),
 		time_start: z.union([z.string(), z.number()]).optional(),
@@ -2364,11 +2431,12 @@ const InsightsFeaturesListInput = z
 const InsightsEnabledFeaturesListInput = z
 	.object({ accountId: id, ...cursorOptions })
 	.strict();
+// Outputs stay open (feature names and types Meta adds later); the enable input stays strict.
 const InsightsFeaturesListSchema = z.object({
 	data: z.array(
 		z.object({
-			feature_name: InsightsFeatureName,
-			feature_type: z.literal('breakdown'),
+			feature_name: InsightsFeatureName.or(z.string()),
+			feature_type: z.string(),
 		}),
 	),
 	paging: MetaAdsListSchema.shape.paging.optional(),
@@ -2376,8 +2444,8 @@ const InsightsFeaturesListSchema = z.object({
 const InsightsEnabledFeaturesListSchema = z.object({
 	data: z.array(
 		z.object({
-			feature_name: InsightsFeatureName,
-			status: z.literal('enabled'),
+			feature_name: InsightsFeatureName.or(z.string()),
+			status: z.string(),
 			insights_effective_date: z.string().optional(),
 		}),
 	),
@@ -2987,10 +3055,10 @@ export const MetaAdsEndpointOutputSchemas = {
 	asyncRequestSetsCreate: AsyncRequestSetCreateSchema,
 	asyncRequestSetsGet: AsyncRequestSetSchema,
 	asyncRequestSetsUpdate: AsyncRequestSetUpdateSchema,
-	asyncRequestSetsCancel: z.literal(true),
+	asyncRequestSetsCancel: GraphBooleanResultSchema,
 	asyncRequestsListForSet: AsyncRequestsListSchema,
 	asyncRequestsListForAdSet: AsyncRequestsListSchema,
-	asyncRequestsCancel: z.literal(true),
+	asyncRequestsCancel: GraphBooleanResultSchema,
 	insightsList: InsightsListSchema,
 	insightsListForCampaign: InsightsListSchema,
 	insightsListForAdSet: InsightsListSchema,

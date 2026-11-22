@@ -1051,6 +1051,11 @@ export const campaignsCreate = operation({
 				status: input.status ?? 'PAUSED',
 				daily_budget: input.dailyBudget,
 				lifetime_budget: input.lifetimeBudget,
+				// Meta v24+ rejects ad-set-budget campaigns without this flag (error 4834011).
+				is_adset_budget_sharing_enabled:
+					input.dailyBudget === undefined && input.lifetimeBudget === undefined
+						? String(input.adsetBudgetSharing ?? false)
+						: undefined,
 			},
 			input.idempotencyKey,
 		),
@@ -1225,6 +1230,9 @@ export const adSetsCreate = operation({
 				optimization_goal: input.optimizationGoal,
 				billing_event: input.billingEvent,
 				targeting: input.targeting,
+				bid_strategy: input.bidStrategy,
+				bid_amount: input.bidAmount,
+				promoted_object: input.promotedObject,
 				status: input.status ?? 'PAUSED',
 				daily_budget: input.dailyBudget,
 				lifetime_budget: input.lifetimeBudget,
@@ -1355,17 +1363,16 @@ export const adsCreate = operation({
 				name: input.name,
 				adset_id: input.adSetId,
 				conversion_domain: input.conversionDomain,
-				// Meta's Ad Account ads edge requires this AdCreative envelope for inline specs.
+				// The creative field is an AdCreative: `{ creative_id }` or the inline spec itself
+				// (Meta's curl examples send creative={"name":...,"object_story_spec":{...}}).
 				creative:
 					input.creativeId !== undefined
 						? { creative_id: input.creativeId }
 						: {
-								creative: {
-									name: input.creativeSpec?.name,
-									object_story_spec: input.creativeSpec?.objectStorySpec,
-									authorization_category:
-										input.creativeSpec?.authorizationCategory,
-								},
+								name: input.creativeSpec?.name,
+								object_story_spec: input.creativeSpec?.objectStorySpec,
+								authorization_category:
+									input.creativeSpec?.authorizationCategory,
 							},
 				status: input.status ?? 'PAUSED',
 			},

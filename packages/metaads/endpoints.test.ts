@@ -22,6 +22,7 @@ import {
 	Videos,
 } from './endpoints';
 import type { MetaAdsContext } from './index';
+import { metaads } from './index';
 
 jest.mock('corsair/core', () => {
 	const actual = jest.requireActual('corsair/core');
@@ -1253,13 +1254,11 @@ const cases: Case[] = [
 			name: 'Inline ad',
 			adset_id: 'adset-1',
 			creative: {
-				creative: {
-					name: 'Inline creative',
-					authorization_category: 'POLITICAL_WITH_DIGITALLY_CREATED_MEDIA',
-					object_story_spec: {
-						page_id: 'page-1',
-						link_data: { link: 'https://shop.test/landing', message: 'Hello' },
-					},
+				name: 'Inline creative',
+				authorization_category: 'POLITICAL_WITH_DIGITALLY_CREATED_MEDIA',
+				object_story_spec: {
+					page_id: 'page-1',
+					link_data: { link: 'https://shop.test/landing', message: 'Hello' },
 				},
 			},
 			status: 'PAUSED',
@@ -2199,6 +2198,151 @@ beforeEach(() => {
 });
 
 describe('Meta Ads operations', () => {
+	it('sends is_adset_budget_sharing_enabled when the campaign has no campaign budget', async () => {
+		mockedRequest.mockResolvedValue({ id: 'campaign-1' });
+
+		await Campaigns.create(ctx, {
+			accountId: '123',
+			name: 'Ad set budget campaign',
+			objective: 'OUTCOME_TRAFFIC',
+			specialAdCategories: [],
+		});
+		await Campaigns.create(ctx, {
+			accountId: '123',
+			name: 'Shared ad set budget campaign',
+			objective: 'OUTCOME_TRAFFIC',
+			specialAdCategories: [],
+			adsetBudgetSharing: true,
+		});
+		await Campaigns.create(ctx, {
+			accountId: '123',
+			name: 'Campaign budget campaign',
+			objective: 'OUTCOME_TRAFFIC',
+			specialAdCategories: [],
+			dailyBudget: 500,
+		});
+
+		expect(mockedRequest.mock.calls[0]?.[2]?.body).toMatchObject({
+			is_adset_budget_sharing_enabled: 'false',
+		});
+		expect(mockedRequest.mock.calls[1]?.[2]?.body).toMatchObject({
+			is_adset_budget_sharing_enabled: 'true',
+		});
+		expect(
+			mockedRequest.mock.calls[2]?.[2]?.body?.is_adset_budget_sharing_enabled,
+		).toBeUndefined();
+		await expect(
+			Campaigns.create(ctx, {
+				accountId: '123',
+				name: 'Invalid',
+				objective: 'OUTCOME_TRAFFIC',
+				specialAdCategories: [],
+				dailyBudget: 500,
+				adsetBudgetSharing: true,
+			}),
+		).rejects.toThrow();
+	});
+
+	it('forwards ad set bid strategy, bid amount and promoted object', async () => {
+		mockedRequest.mockResolvedValue({ id: 'adset-1' });
+
+		await AdSets.create(ctx, {
+			accountId: '123',
+			campaignId: 'campaign-1',
+			name: 'Conversions ad set',
+			optimizationGoal: 'OFFSITE_CONVERSIONS',
+			billingEvent: 'IMPRESSIONS',
+			targeting: { geo_locations: { countries: ['US'] } },
+			bidStrategy: 'COST_CAP',
+			bidAmount: 250,
+			promotedObject: { pixel_id: 'pixel-1', custom_event_type: 'PURCHASE' },
+			dailyBudget: 1000,
+		});
+
+		expect(mockedRequest.mock.calls[0]?.[2]?.body).toMatchObject({
+			bid_strategy: 'COST_CAP',
+			bid_amount: 250,
+			promoted_object: { pixel_id: 'pixel-1', custom_event_type: 'PURCHASE' },
+		});
+		await expect(
+			AdSets.create(ctx, {
+				accountId: '123',
+				campaignId: 'campaign-1',
+				name: 'Missing bid',
+				optimizationGoal: 'LINK_CLICKS',
+				billingEvent: 'IMPRESSIONS',
+				targeting: { geo_locations: { countries: ['US'] } },
+				bidStrategy: 'LOWEST_COST_WITH_BID_CAP',
+				dailyBudget: 1000,
+			}),
+		).rejects.toThrow();
+	});
+
+	it('accepts fields and codes Meta adds to read responses', async () => {
+		mockedRequest.mockResolvedValueOnce({
+			data: {
+				users_lower_bound: 1000,
+				users_upper_bound: 2000,
+				estimate_ready: true,
+			},
+		});
+		await expect(
+			Accounts.reachEstimate(ctx, {
+				accountId: '123',
+				targetingSpec: { geo_locations: { countries: ['US'] } },
+			}),
+		).resolves.toMatchObject({ data: { estimate_ready: true } });
+
+		mockedRequest.mockResolvedValueOnce({
+			id: 'pixel-1',
+			name: 'Pixel',
+			owner_business: { id: 'business-1' },
+		});
+		await expect(
+			Pixels.get(ctx, { pixelId: 'pixel-1' }),
+		).resolves.toMatchObject({ id: 'pixel-1' });
+
+		mockedRequest.mockResolvedValueOnce({
+			id: 'prediction-1',
+			prediction_mode: 2,
+			story_event_type: 512,
+		});
+		await expect(
+			ReachFrequencyPredictions.get(ctx, { predictionId: 'prediction-1' }),
+		).resolves.toMatchObject({ prediction_mode: 2 });
+
+		mockedRequest.mockResolvedValueOnce({
+			data: [{ hash: 'hash-1', status: 'ARCHIVED' }],
+		});
+		await expect(Images.list(ctx, { accountId: '123' })).resolves.toMatchObject(
+			{ data: [{ status: 'ARCHIVED' }] },
+		);
+
+		mockedRequest.mockResolvedValueOnce({
+			data: [{ feature_name: 'new_breakdown', feature_type: 'metric' }],
+		});
+		await expect(
+			Insights.listFeatures(ctx, { accountId: '123' }),
+		).resolves.toMatchObject({ data: [{ feature_name: 'new_breakdown' }] });
+	});
+
+	it('marks label deletion destructive', () => {
+		expect(metaads().endpointMeta['labels.delete'].riskLevel).toBe(
+			'destructive',
+		);
+	});
+
+	it('accepts { success: true } from async request set writes', async () => {
+		mockedRequest.mockResolvedValueOnce({ success: true });
+		await expect(
+			AsyncRequestSets.cancel(ctx, { requestSetId: 'set-1' }),
+		).resolves.toEqual({ success: true });
+		mockedRequest.mockResolvedValueOnce(true);
+		await expect(
+			AsyncRequests.cancel(ctx, { requestId: 'request-1' }),
+		).resolves.toBe(true);
+	});
+
 	it('defaults audience subtype when callers omit it', async () => {
 		mockedRequest.mockResolvedValue(createResponse);
 
