@@ -490,6 +490,7 @@ export const BaseProviders = [
 	'oura',
 	'outlook',
 	'pagerduty',
+	'pandadoc',
 	'paperform',
 	'parallel',
 	'parma',
@@ -504,6 +505,7 @@ export const BaseProviders = [
 	'phantombuster',
 	'pinecone',
 	'pipedrive',
+	'perigon',
 	'pipelinecrm',
 	'placid',
 	'plain',
@@ -1240,6 +1242,7 @@ export const ProviderDisplayNames = {
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	pandadoc: 'PandaDoc',
 	paperform: 'Paperform',
 	parallel: 'Parallel',
 	parma: 'Parma',
@@ -1254,6 +1257,7 @@ export const ProviderDisplayNames = {
 	phantombuster: 'PhantomBuster',
 	pinecone: 'Pinecone',
 	pipedrive: 'Pipedrive',
+	perigon: 'Perigon',
 	pipelinecrm: 'Pipeline CRM',
 	placid: 'Placid',
 	plain: 'Plain',
@@ -1997,6 +2001,7 @@ export type AllProviders =
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'pandadoc'
 	| 'paperform'
 	| 'parallel'
 	| 'parma'
@@ -2011,6 +2016,7 @@ export type AllProviders =
 	| 'phantombuster'
 	| 'pinecone'
 	| 'pipedrive'
+	| 'perigon'
 	| 'pipelinecrm'
 	| 'placid'
 	| 'plain'

@@ -4063,6 +4063,15 @@
                 ]
               },
               {
+                "group": "PandaDoc",
+                "pages": [
+                  "plugins/pandadoc/overview",
+                  "plugins/pandadoc/api",
+                  "plugins/pandadoc/database",
+                  "plugins/pandadoc/webhooks"
+                ]
+              },
+              {
                 "group": "Paperform",
                 "pages": [
                   "plugins/paperform/overview",
@@ -4142,6 +4151,14 @@
                   "plugins/pdl/overview",
                   "plugins/pdl/api",
                   "plugins/pdl/database"
+                ]
+              },
+              {
+                "group": "Perigon",
+                "pages": [
+                  "plugins/perigon/overview",
+                  "plugins/perigon/api",
+                  "plugins/perigon/database"
                 ]
               },
               {
