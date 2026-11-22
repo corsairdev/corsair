@@ -4,7 +4,7 @@ QuickBooks Online Accounting API operations for Corsair.
 
 ## Verified implementation coverage
 
-Intuit's first-party Accounting entity route catalog contains **74 resources, 237 resource-operation entries, and 154 distinct route-definition strings**. This package registers **236 of 237 entries**. Every registered operation has its own strict Zod request/response contract and a mocked request test. Route variants with distinct paths, query/body semantics, or response types have distinct operation IDs. There is no live API verification claim.
+Intuit's first-party Accounting entity route catalog contains **74 resources, 237 resource-operation entries, and 154 distinct route-definition strings**. This package registers **236 of 237 entries**. Every registered operation has its own Zod request/response contract (see [Validation](#validation)) and a mocked request test. Route variants with distinct paths, query/body semantics, or response types have distinct operation IDs. There is no live API verification claim.
 
 The one unregistered entry is `Entitlements.READ`; its source-verified blocker is recorded under [Explicit exclusions](#explicit-exclusions). Webhooks, QuickBooks Payments, and GraphQL are not part of these 237 Accounting REST entries.
 
@@ -126,11 +126,20 @@ Operations named `.update` use the corresponding provider update model; for full
 
 ## Realm ID input
 
-Each operation requires `realmId`, the company ID returned as a query parameter
-on Intuit's OAuth redirect. Corsair's generic OAuth callback does not persist
-that provider query parameter as a plugin account field, so callers must pass
-the realm ID from their verified callback to each operation. The plugin does
-not guess a company or derive the realm ID from the token.
+Each operation requires `realmId`, the QuickBooks company ID. Intuit sends it
+only as the `realmId` query parameter on the OAuth redirect; there is no API
+call that returns it for a token. Corsair does not store that parameter as an
+account field, so the caller passes it to each operation:
+
+- With your own OAuth app (BYO), read `realmId` from the redirect your app
+  handles and keep it with the connection.
+- With a Hub-connected account, Hub does not forward the redirect's query
+  parameters today, so the realm ID is not saved. The company admin can read it
+  in QuickBooks under Settings > Account and settings > Billing & subscription
+  (Company ID); for a sandbox company it is listed on the Intuit developer
+  dashboard under Sandbox.
+
+The plugin does not guess a company or derive the realm ID from the token.
 
 ## Setup
 
@@ -170,8 +179,20 @@ Install with `pnpm add @corsair-dev/quickbooks`.
 
 ## Local test evidence
 
-`pnpm --dir packages/quickbooks test` runs the mocked/local package suite. It
-does not call a live QuickBooks company and is not a live API demo. The optional
-read-only live smoke test requires `QUICKBOOKS_ACCESS_TOKEN` and
-`QUICKBOOKS_REALM_ID` and can be run with `pnpm --dir packages/quickbooks
-test:live`.
+`pnpm --dir packages/quickbooks test` runs the mocked/local package suite,
+including `samples.test.ts`, which sends Intuit's documented request bodies and
+parses its documented responses from the model catalog. It does not call a live
+QuickBooks company. The optional read-only live smoke test requires
+`QUICKBOOKS_ACCESS_TOKEN` and `QUICKBOOKS_REALM_ID` and can be run with
+`pnpm --dir packages/quickbooks test:live`.
+
+## Validation
+
+The request and response models come from Intuit's model catalog, which lists
+only some of each entity's fields. Request bodies are checked for the fields it
+documents and may carry the entity's other documented fields; line and address
+`Id`s are optional because QuickBooks assigns them, and update bodies need only
+`Id` and `SyncToken`. Responses are parsed leniently: unknown fields are kept,
+reads still require their envelope (`Invoice`, `QueryResponse`), and a write
+never fails on the response shape after QuickBooks has applied it. Schemas are
+built the first time an operation runs.
