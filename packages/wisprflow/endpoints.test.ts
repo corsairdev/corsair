@@ -1,11 +1,14 @@
-import { logEventFromContext } from 'corsair/core';
+import { createCorsair, logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { generate, revoke, revokeClient } from './endpoints/tokens';
 import { create, warmup } from './endpoints/transcriptions';
 import { errorHandlers } from './error-handlers';
+import { wisprflow } from './index';
 import { WisprFlowSchema } from './schema';
 
 jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
 	logEventFromContext: jest.fn().mockResolvedValue(undefined),
 }));
 
@@ -240,6 +243,92 @@ describe('Wispr Flow error handlers', () => {
 		await expect(errorHandlers.RATE_LIMIT_ERROR.handler()).resolves.toEqual({
 			maxRetries: 0,
 		});
+		await expect(errorHandlers.AUTH_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
+		});
+	});
+});
+
+describe('Wispr Flow through a Corsair client', () => {
+	const originalFetch = global.fetch;
+	let fetchMock: jest.Mock;
+
+	async function createClient(options: { key?: string }) {
+		const testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'wisprflow', 'default');
+		const corsair = createCorsair({
+			plugins: [wisprflow(options)],
+			database: testDb.db,
+			kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
+		});
+		await corsair.wisprflow.keys.issue_new_dek();
+		await corsair.wisprflow.keys.set_api_key('fl-stored');
+		return { corsair, testDb };
+	}
+
+	beforeEach(() => {
+		fetchMock = jest.fn();
+		global.fetch = fetchMock;
+	});
+
+	afterAll(() => {
+		global.fetch = originalFetch;
+	});
+
+	it('sends the stored key as a Bearer token and syncs the transcription', async () => {
+		fetchMock.mockResolvedValue(json(200, TRANSCRIPTION));
+		const { corsair, testDb } = await createClient({});
+		try {
+			const result = await corsair.wisprflow.api.transcriptions.create({
+				audio: 'UklGRiQA',
+			});
+
+			const [url, init] = fetchMock.mock.calls[0];
+			expect(String(url)).toBe(`${BASE}/api`);
+			expect(new Headers(init.headers).get('Authorization')).toBe(
+				'Bearer fl-stored',
+			);
+			expect(result).toEqual(TRANSCRIPTION);
+			const stored = await corsair.wisprflow.db.transcription.findByEntityId(
+				TRANSCRIPTION.id,
+			);
+			expect(stored?.data).toEqual(TRANSCRIPTION);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('prefers the key plugin option over the stored key', async () => {
+		fetchMock.mockResolvedValue(json(200, { status: 'warmed' }));
+		const { corsair, testDb } = await createClient({ key: 'fl-option' });
+		try {
+			await corsair.wisprflow.api.transcriptions.warmup({});
+
+			const [, init] = fetchMock.mock.calls[0];
+			expect(new Headers(init.headers).get('Authorization')).toBe(
+				'Bearer fl-option',
+			);
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it('fails a rejected key once, without retrying', async () => {
+		fetchMock.mockImplementation(async () =>
+			json(401, { detail: 'Unauthorized' }),
+		);
+		const { corsair, testDb } = await createClient({});
+		try {
+			const error = await corsair.wisprflow.api.transcriptions
+				.warmup({})
+				.catch((e: unknown) => e);
+
+			expect(error).toBeInstanceOf(ApiError);
+			expect((error as ApiError).status).toBe(401);
+			expect(fetchMock).toHaveBeenCalledTimes(1);
+		} finally {
+			testDb.cleanup();
+		}
 	});
 });
 
