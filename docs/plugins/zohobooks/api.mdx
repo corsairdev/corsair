@@ -2512,7 +2512,7 @@ List match filters. Zoho Books API v3.
 
 ```ts
 await corsair.zohobooks.api.bankRules.listBankAccountMatchFilters({
-	query: { organization_id: '999999999999999' },
+	query: { organization_id: '999999999999999', account_id: '999999999999999' },
 });
 ```
 
@@ -2537,7 +2537,8 @@ await corsair.zohobooks.api.bankRules.listBankAccountMatchFilters({
 
 ```ts
 {
-  organization_id: string
+  organization_id: string,
+  account_id: string
 }
 ```
 </Accordion>
@@ -10355,7 +10356,7 @@ Get contact card count. Zoho Books API v3.
 
 ```ts
 await corsair.zohobooks.api.contacts.getContactCardCount({
-	query: { organization_id: '999999999999999' },
+	query: { organization_id: '999999999999999', contact_ids: '999999999999999' },
 });
 ```
 
@@ -10380,7 +10381,8 @@ await corsair.zohobooks.api.contacts.getContactCardCount({
 
 ```ts
 {
-  organization_id: string
+  organization_id: string,
+  contact_ids: string
 }
 ```
 </Accordion>
@@ -11400,7 +11402,7 @@ List all contact bank accounts. Zoho Books API v3.
 
 ```ts
 await corsair.zohobooks.api.contacts.listAllContactBankAccounts({
-	query: { organization_id: '999999999999999' },
+	query: { organization_id: '999999999999999', contact_ids: '999999999999999' },
 });
 ```
 
@@ -11425,7 +11427,8 @@ await corsair.zohobooks.api.contacts.listAllContactBankAccounts({
 
 ```ts
 {
-  organization_id: string
+  organization_id: string,
+  contact_ids: string
 }
 ```
 </Accordion>
@@ -14176,7 +14179,7 @@ await corsair.zohobooks.api.creditNotes.addCreditNoteComment({
 
 Add a digital signature to a credit note. Zoho Books API v3.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.zohobooks.api.creditNotes.addCreditNoteDigitalSignature({
@@ -14754,11 +14757,11 @@ await corsair.zohobooks.api.creditNotes.createCreditNote({
     line_item_category?: string
   }[],
   location_id?: string,
-  creditnote_number: string,
+  creditnote_number?: string,
   gst_treatment?: string,
   tax_treatment?: string,
   tax_reg_no?: string,
-  reason_for_credit_debit_note: string,
+  reason_for_credit_debit_note?: string,
   registration_details?: {
     company_registration_no?: string,
     indirect_tax_no?: string,
@@ -16358,7 +16361,7 @@ List credit note e-invoices. Zoho Books API v3.
 
 ```ts
 await corsair.zohobooks.api.creditNotes.listCreditNotesEinvoice({
-	query: { organization_id: '999999999999999' },
+	query: { organization_id: '999999999999999', creditnote_ids: '999999999999999' },
 });
 ```
 
@@ -16383,7 +16386,8 @@ await corsair.zohobooks.api.creditNotes.listCreditNotesEinvoice({
 
 ```ts
 {
-  organization_id: string
+  organization_id: string,
+  creditnote_ids: string
 }
 ```
 </Accordion>
@@ -16946,7 +16950,7 @@ File responses use the response Content-Type supplied by Zoho and are returned b
 
 Push a credit note e-invoice. Zoho Books API v3.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.zohobooks.api.creditNotes.pushCreditNoteEinvoice({
@@ -17062,7 +17066,7 @@ await corsair.zohobooks.api.creditNotes.pushCreditNoteRefundEinvoice({
 
 Push credit note e-invoices. Zoho Books API v3.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.zohobooks.api.creditNotes.pushCreditNotesEinvoice({
@@ -17457,11 +17461,11 @@ await corsair.zohobooks.api.creditNotes.updateCreditNote({
     line_item_category?: string
   }[],
   location_id?: string,
-  creditnote_number: string,
+  creditnote_number?: string,
   gst_treatment?: string,
   tax_treatment?: string,
   tax_reg_no?: string,
-  reason_for_credit_debit_note: string,
+  reason_for_credit_debit_note?: string,
   registration_details?: {
     company_registration_no?: string,
     indirect_tax_no?: string,
@@ -18110,11 +18114,11 @@ await corsair.zohobooks.api.creditNotes.updateCreditNoteUsingCustomField({
     line_item_category?: string
   }[],
   location_id?: string,
-  creditnote_number: string,
+  creditnote_number?: string,
   gst_treatment?: string,
   tax_treatment?: string,
   tax_reg_no?: string,
-  reason_for_credit_debit_note: string,
+  reason_for_credit_debit_note?: string,
   registration_details?: {
     company_registration_no?: string,
     indirect_tax_no?: string,
@@ -19113,7 +19117,7 @@ List customer debit notes. Zoho Books API v3.
 
 ```ts
 await corsair.zohobooks.api.customerDebitNotes.listCustomerDebitNotes({
-	query: { organization_id: '999999999999999' },
+	query: { organization_id: '999999999999999', filter_by: 'Type.DebitNote' },
 });
 ```
 
@@ -19153,7 +19157,7 @@ await corsair.zohobooks.api.customerDebitNotes.listCustomerDebitNotes({
   last_modified_time?: string,
   status?: string,
   customer_id?: string,
-  filter_by?: string,
+  filter_by: Type.DebitNote,
   search_text?: string,
   sort_column?: string,
   page?: number,
@@ -26948,7 +26952,7 @@ await corsair.zohobooks.api.invoices.addInvoiceComment({
 
 Add a digital signature to an invoice. Zoho Books API v3.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.zohobooks.api.invoices.addInvoiceDigitalSignature({
@@ -27065,7 +27069,7 @@ await corsair.zohobooks.api.invoices.addInvoiceDocument({
 
 Add a bank account for invoice online payments. Zoho Books API v3.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.zohobooks.api.invoices.addInvoiceOnlinePaymentBankAccount({
@@ -31004,7 +31008,7 @@ List invoice e-invoices. Zoho Books API v3.
 
 ```ts
 await corsair.zohobooks.api.invoices.listInvoicesEinvoice({
-	query: { organization_id: '999999999999999' },
+	query: { organization_id: '999999999999999', invoice_ids: '999999999999999' },
 });
 ```
 
@@ -31029,7 +31033,8 @@ await corsair.zohobooks.api.invoices.listInvoicesEinvoice({
 
 ```ts
 {
-  organization_id: string
+  organization_id: string,
+  invoice_ids: string
 }
 ```
 </Accordion>
@@ -32047,7 +32052,7 @@ File responses use the response Content-Type supplied by Zoho and are returned b
 
 Push an invoice e-invoice. Zoho Books API v3.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.zohobooks.api.invoices.pushInvoiceEinvoice({
@@ -32105,7 +32110,7 @@ await corsair.zohobooks.api.invoices.pushInvoiceEinvoice({
 
 Push invoice e-invoices. Zoho Books API v3.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.zohobooks.api.invoices.pushInvoicesEinvoice({
@@ -51885,7 +51890,7 @@ Bulk export sales orders. Zoho Books API v3.
 
 ```ts
 await corsair.zohobooks.api.salesOrder.bulkExportSalesOrdersAsPdf({
-	query: { organization_id: '999999999999999' },
+	query: { organization_id: '999999999999999', salesorder_ids: '999999999999999' },
 });
 ```
 
@@ -51910,7 +51915,8 @@ await corsair.zohobooks.api.salesOrder.bulkExportSalesOrdersAsPdf({
 
 ```ts
 {
-  organization_id: string
+  organization_id: string,
+  salesorder_ids: string
 }
 ```
 </Accordion>
@@ -51941,7 +51947,7 @@ Bulk print sales orders. Zoho Books API v3.
 
 ```ts
 await corsair.zohobooks.api.salesOrder.bulkPrintSalesOrders({
-	query: { organization_id: '999999999999999' },
+	query: { organization_id: '999999999999999', salesorder_ids: '999999999999999' },
 });
 ```
 
@@ -51966,7 +51972,8 @@ await corsair.zohobooks.api.salesOrder.bulkPrintSalesOrders({
 
 ```ts
 {
-  organization_id: string
+  organization_id: string,
+  salesorder_ids: string
 }
 ```
 </Accordion>
@@ -54572,7 +54579,7 @@ await corsair.zohobooks.api.selfBilledInvoices.listSelfBilledInvoices({
 
 Push a self-billed invoice e-invoice. Zoho Books API v3.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.zohobooks.api.selfBilledInvoices.pushSelfBilledInvoiceEinvoice({

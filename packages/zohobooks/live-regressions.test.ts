@@ -197,3 +197,78 @@ describe('Zoho Books live-run regressions', () => {
 		});
 	});
 });
+
+describe('Zoho Books review-round fixes (live-checked 11-22)', () => {
+	it('creates and updates credit notes without the number or the UAE-only reason', () => {
+		// Zoho numbers credit notes itself and asks for the reason only in the UAE edition.
+		const body = {
+			customer_id: '999999999999999',
+			date: '2026-11-22',
+			line_items: [{ item_id: '999999999999999', quantity: 1 }],
+		};
+		expect(
+			ZohoBooksEndpointInputSchemas.create_credit_note?.safeParse({
+				query: org,
+				body,
+			}).success,
+		).toBe(true);
+		expect(
+			ZohoBooksEndpointInputSchemas.update_credit_note?.safeParse({
+				pathParams: { creditnote_id: '999999999999999' },
+				query: org,
+				body,
+			}).success,
+		).toBe(true);
+	});
+
+	it('requires the debit-note filter on the shared invoices list route', () => {
+		const schema = ZohoBooksEndpointInputSchemas.list_customer_debit_notes;
+		expect(schema?.safeParse({ query: org }).success).toBe(false);
+		expect(
+			schema?.safeParse({ query: { ...org, filter_by: 'Type.Invoice' } })
+				.success,
+		).toBe(false);
+		expect(
+			schema?.safeParse({ query: { ...org, filter_by: 'Type.DebitNote' } })
+				.success,
+		).toBe(true);
+	});
+
+	it('accepts the PDF and HTML documents that accept=pdf|html returns', () => {
+		for (const id of [
+			'get_invoice',
+			'get_estimate',
+			'get_sales_order',
+			'get_credit_note',
+		]) {
+			for (const contentType of [
+				'application/pdf',
+				'text/html; charset=UTF-8',
+			]) {
+				expect(
+					ZohoBooksEndpointOutputSchemas[id]?.safeParse({
+						kind: 'binary',
+						contentType,
+						base64: 'JVBERg==',
+						byteLength: 4,
+					}).success,
+				).toBe(true);
+			}
+		}
+	});
+
+	it('marks e-invoice pushes, signature requests and bank-account charges destructive', () => {
+		for (const key of [
+			'creditNotes.pushCreditNotesEinvoice',
+			'creditNotes.pushCreditNoteEinvoice',
+			'invoices.pushInvoicesEinvoice',
+			'invoices.pushInvoiceEinvoice',
+			'selfBilledInvoices.pushSelfBilledInvoiceEinvoice',
+			'invoices.addInvoiceDigitalSignature',
+			'creditNotes.addCreditNoteDigitalSignature',
+			'invoices.addInvoiceOnlinePaymentBankAccount',
+		] as const) {
+			expect(zohoBooksEndpointMeta[key].riskLevel).toBe('destructive');
+		}
+	});
+});
