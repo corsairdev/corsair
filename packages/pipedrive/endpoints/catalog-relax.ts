@@ -63,10 +63,24 @@ function buildRelaxed(schema: z.core.$ZodType): z.ZodType {
 		return z.array(relax(schema.element));
 	}
 	if (schema instanceof z.ZodUnion) {
-		const options: z.ZodType[] = schema.options.map((option: z.core.$ZodType) =>
-			relax(option),
-		);
-		return options.reduce((union, option) => union.or(option));
+		const options: readonly z.core.$ZodType[] = schema.options;
+		if (options.every((option) => option instanceof z.ZodLiteral)) {
+			// An enum: keep its documented values and accept each base type once.
+			const values = options.flatMap((option) =>
+				option instanceof z.ZodLiteral ? [...option.values] : [],
+			);
+			const baseTypes = new Map<string, z.ZodType>();
+			for (const value of values) {
+				const base = baseOfLiteral(value);
+				if (base) baseTypes.set(typeof value, base);
+			}
+			return [...baseTypes.values()].reduce<z.ZodType>(
+				(union, base) => union.or(base),
+				schema,
+			);
+		}
+		const relaxedOptions = options.map((option) => relax(option));
+		return relaxedOptions.reduce((union, option) => union.or(option));
 	}
 	if (schema instanceof z.ZodLiteral) {
 		const bases = [...schema.values]

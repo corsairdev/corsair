@@ -612,7 +612,7 @@ GET https://api.pipedrive.com/v1/activityFields. The official OpenAPI x-token-co
   key?: string | null,
   name?: string | null,
   order_nr?: number | null,
-  field_type?: boolean | string | double | string | int | string | json | string | date | string | daterange | string | time | string | timerange | string | text | string | varchar | string | varchar_auto | string | varchar_options | string | address | string | enum | string | monetary | string | phone | string | set | string | activity | string | deal | string | lead | string | org | string | people | string | pipeline | string | product | string | project | string | stage | string | user | string | billing_frequency | string | picture | string | price_list | string | projects_board | string | projects_phase | string | status | string | visible_to | string | null,
+  field_type?: boolean | double | int | json | date | daterange | time | timerange | text | varchar | varchar_auto | varchar_options | address | enum | monetary | phone | set | activity | deal | lead | org | people | pipeline | product | project | stage | user | billing_frequency | picture | price_list | projects_board | projects_phase | status | visible_to | string | null,
   add_time?: string | null,
   update_time?: string | null | null,
   last_updated_by_user_id?: number | null | null,
@@ -704,7 +704,7 @@ POST https://api.pipedrive.com/v1/activityTypes. The official OpenAPI x-token-co
 {
   id?: number | null,
   name?: string | null,
-  icon_key?: task | string | email | string | meeting | string | deadline | string | call | string | lunch | string | calendar | string | downarrow | string | document | string | smartphone | string | camera | string | scissors | string | cogs | string | bubble | string | uparrow | string | checkbox | string | signpost | string | shuffle | string | addressbook | string | linegraph | string | picture | string | car | string | world | string | search | string | clip | string | sound | string | brush | string | key | string | padlock | string | pricetag | string | suitcase | string | finish | string | plane | string | loop | string | wifi | string | truck | string | cart | string | bulb | string | bell | string | presentation | string | null,
+  icon_key?: task | email | meeting | deadline | call | lunch | calendar | downarrow | document | smartphone | camera | scissors | cogs | bubble | uparrow | checkbox | signpost | shuffle | addressbook | linegraph | picture | car | world | search | clip | sound | brush | key | padlock | pricetag | suitcase | finish | plane | loop | wifi | truck | cart | bulb | bell | presentation | string | null,
   color?: string | null,
   order_nr?: number | null,
   key_string?: string | null,
@@ -768,7 +768,7 @@ DELETE https://api.pipedrive.com/v1/activityTypes/&#123;id&#125;. The official O
 {
   id?: number | null,
   name?: string | null,
-  icon_key?: task | string | email | string | meeting | string | deadline | string | call | string | lunch | string | calendar | string | downarrow | string | document | string | smartphone | string | camera | string | scissors | string | cogs | string | bubble | string | uparrow | string | checkbox | string | signpost | string | shuffle | string | addressbook | string | linegraph | string | picture | string | car | string | world | string | search | string | clip | string | sound | string | brush | string | key | string | padlock | string | pricetag | string | suitcase | string | finish | string | plane | string | loop | string | wifi | string | truck | string | cart | string | bulb | string | bell | string | presentation | string | null,
+  icon_key?: task | email | meeting | deadline | call | lunch | calendar | downarrow | document | smartphone | camera | scissors | cogs | bubble | uparrow | checkbox | signpost | shuffle | addressbook | linegraph | picture | car | world | search | clip | sound | brush | key | padlock | pricetag | suitcase | finish | plane | loop | wifi | truck | cart | bulb | bell | presentation | string | null,
   color?: string | null,
   order_nr?: number | null,
   key_string?: string | null,
@@ -816,7 +816,7 @@ GET https://api.pipedrive.com/v1/activityTypes. The official OpenAPI x-token-cos
 {
   id?: number | null,
   name?: string | null,
-  icon_key?: task | string | email | string | meeting | string | deadline | string | call | string | lunch | string | calendar | string | downarrow | string | document | string | smartphone | string | camera | string | scissors | string | cogs | string | bubble | string | uparrow | string | checkbox | string | signpost | string | shuffle | string | addressbook | string | linegraph | string | picture | string | car | string | world | string | search | string | clip | string | sound | string | brush | string | key | string | padlock | string | pricetag | string | suitcase | string | finish | string | plane | string | loop | string | wifi | string | truck | string | cart | string | bulb | string | bell | string | presentation | string | null,
+  icon_key?: task | email | meeting | deadline | call | lunch | calendar | downarrow | document | smartphone | camera | scissors | cogs | bubble | uparrow | checkbox | signpost | shuffle | addressbook | linegraph | picture | car | world | search | clip | sound | brush | key | padlock | pricetag | suitcase | finish | plane | loop | wifi | truck | cart | bulb | bell | presentation | string | null,
   color?: string | null,
   order_nr?: number | null,
   key_string?: string | null,
@@ -893,7 +893,7 @@ PUT https://api.pipedrive.com/v1/activityTypes/&#123;id&#125;. The official Open
 {
   id?: number | null,
   name?: string | null,
-  icon_key?: task | string | email | string | meeting | string | deadline | string | call | string | lunch | string | calendar | string | downarrow | string | document | string | smartphone | string | camera | string | scissors | string | cogs | string | bubble | string | uparrow | string | checkbox | string | signpost | string | shuffle | string | addressbook | string | linegraph | string | picture | string | car | string | world | string | search | string | clip | string | sound | string | brush | string | key | string | padlock | string | pricetag | string | suitcase | string | finish | string | plane | string | loop | string | wifi | string | truck | string | cart | string | bulb | string | bell | string | presentation | string | null,
+  icon_key?: task | email | meeting | deadline | call | lunch | calendar | downarrow | document | smartphone | camera | scissors | cogs | bubble | uparrow | checkbox | signpost | shuffle | addressbook | linegraph | picture | car | world | search | clip | sound | brush | key | padlock | pricetag | suitcase | finish | plane | loop | wifi | truck | cart | bulb | bell | presentation | string | null,
   color?: string | null,
   order_nr?: number | null,
   key_string?: string | null,
@@ -1010,7 +1010,7 @@ POST https://api.pipedrive.com/v1/callLogs. The official OpenAPI x-token-cost is
   activity_id?: number | null,
   subject?: string | null,
   duration?: string | null,
-  outcome?: connected | string | no_answer | string | left_message | string | left_voicemail | string | wrong_number | string | busy | string | null,
+  outcome?: connected | no_answer | left_message | left_voicemail | wrong_number | busy | string | null,
   from_phone_number?: string | null,
   to_phone_number?: string | null,
   start_time?: string | null,
@@ -1177,7 +1177,7 @@ GET https://api.pipedrive.com/v1/callLogs/&#123;id&#125;. The official OpenAPI x
   activity_id?: number | null,
   subject?: string | null,
   duration?: string | null,
-  outcome?: connected | string | no_answer | string | left_message | string | left_voicemail | string | wrong_number | string | busy | string | null,
+  outcome?: connected | no_answer | left_message | left_voicemail | wrong_number | busy | string | null,
   from_phone_number?: string | null,
   to_phone_number?: string | null,
   start_time?: string | null,
@@ -1250,7 +1250,7 @@ GET https://api.pipedrive.com/v1/callLogs. The official OpenAPI x-token-cost is 
   activity_id?: number | null,
   subject?: string | null,
   duration?: string | null,
-  outcome?: connected | string | no_answer | string | left_message | string | left_voicemail | string | wrong_number | string | busy | string | null,
+  outcome?: connected | no_answer | left_message | left_voicemail | wrong_number | busy | string | null,
   from_phone_number?: string | null,
   to_phone_number?: string | null,
   start_time?: string | null,
@@ -1342,7 +1342,7 @@ POST https://api.pipedrive.com/v1/channels. The official OpenAPI x-token-cost is
   pd_company_id?: number | null,
   pd_user_id?: number | null,
   created_at?: string | null,
-  provider_type?: facebook | string | whatsapp | string | other | string | null,
+  provider_type?: facebook | whatsapp | other | string | null,
   template_support?: boolean | null
 } | null
 ```
@@ -1507,7 +1507,7 @@ POST https://api.pipedrive.com/v1/channels/messages/receive. The official OpenAP
   sender_id?: string | null,
   conversation_id?: string | null,
   message?: string | null,
-  status?: sent | string | delivered | string | read | string | failed | string | null,
+  status?: sent | delivered | read | failed | string | null,
   created_at?: string | null,
   reply_by?: string | null,
   conversation_link?: string | null,
@@ -1644,7 +1644,7 @@ POST https://api.pipedrive.com/v1/dealFields. The official OpenAPI x-token-cost 
   key?: string | null,
   name?: string | null,
   order_nr?: number | null,
-  field_type?: boolean | string | double | string | int | string | json | string | date | string | daterange | string | time | string | timerange | string | text | string | varchar | string | varchar_auto | string | varchar_options | string | address | string | enum | string | monetary | string | phone | string | set | string | activity | string | deal | string | lead | string | org | string | people | string | pipeline | string | product | string | project | string | stage | string | user | string | billing_frequency | string | picture | string | price_list | string | projects_board | string | projects_phase | string | status | string | visible_to | string | null,
+  field_type?: boolean | double | int | json | date | daterange | time | timerange | text | varchar | varchar_auto | varchar_options | address | enum | monetary | phone | set | activity | deal | lead | org | people | pipeline | product | project | stage | user | billing_frequency | picture | price_list | projects_board | projects_phase | status | visible_to | string | null,
   add_time?: string | null,
   update_time?: string | null | null,
   last_updated_by_user_id?: number | null | null,
@@ -1835,7 +1835,7 @@ GET https://api.pipedrive.com/v1/dealFields/&#123;id&#125;. The official OpenAPI
   key?: string | null,
   name?: string | null,
   order_nr?: number | null,
-  field_type?: boolean | string | double | string | int | string | json | string | date | string | daterange | string | time | string | timerange | string | text | string | varchar | string | varchar_auto | string | varchar_options | string | address | string | enum | string | monetary | string | phone | string | set | string | activity | string | deal | string | lead | string | org | string | people | string | pipeline | string | product | string | project | string | stage | string | user | string | billing_frequency | string | picture | string | price_list | string | projects_board | string | projects_phase | string | status | string | visible_to | string | null,
+  field_type?: boolean | double | int | json | date | daterange | time | timerange | text | varchar | varchar_auto | varchar_options | address | enum | monetary | phone | set | activity | deal | lead | org | people | pipeline | product | project | stage | user | billing_frequency | picture | price_list | projects_board | projects_phase | status | visible_to | string | null,
   add_time?: string | null,
   update_time?: string | null | null,
   last_updated_by_user_id?: number | null | null,
@@ -1918,7 +1918,7 @@ GET https://api.pipedrive.com/v1/dealFields. The official OpenAPI x-token-cost i
   key?: string | null,
   name?: string | null,
   order_nr?: number | null,
-  field_type?: boolean | string | double | string | int | string | json | string | date | string | daterange | string | time | string | timerange | string | text | string | varchar | string | varchar_auto | string | varchar_options | string | address | string | enum | string | monetary | string | phone | string | set | string | activity | string | deal | string | lead | string | org | string | people | string | pipeline | string | product | string | project | string | stage | string | user | string | billing_frequency | string | picture | string | price_list | string | projects_board | string | projects_phase | string | status | string | visible_to | string | null,
+  field_type?: boolean | double | int | json | date | daterange | time | timerange | text | varchar | varchar_auto | varchar_options | address | enum | monetary | phone | set | activity | deal | lead | org | people | pipeline | product | project | stage | user | billing_frequency | picture | price_list | projects_board | projects_phase | status | visible_to | string | null,
   add_time?: string | null,
   update_time?: string | null | null,
   last_updated_by_user_id?: number | null | null,
@@ -2025,7 +2025,7 @@ PUT https://api.pipedrive.com/v1/dealFields/&#123;id&#125;. The official OpenAPI
   key?: string | null,
   name?: string | null,
   order_nr?: number | null,
-  field_type?: boolean | string | double | string | int | string | json | string | date | string | daterange | string | time | string | timerange | string | text | string | varchar | string | varchar_auto | string | varchar_options | string | address | string | enum | string | monetary | string | phone | string | set | string | activity | string | deal | string | lead | string | org | string | people | string | pipeline | string | product | string | project | string | stage | string | user | string | billing_frequency | string | picture | string | price_list | string | projects_board | string | projects_phase | string | status | string | visible_to | string | null,
+  field_type?: boolean | double | int | json | date | daterange | time | timerange | text | varchar | varchar_auto | varchar_options | address | enum | monetary | phone | set | activity | deal | lead | org | people | pipeline | product | project | stage | user | billing_frequency | picture | price_list | projects_board | projects_phase | status | visible_to | string | null,
   add_time?: string | null,
   update_time?: string | null | null,
   last_updated_by_user_id?: number | null | null,
@@ -2302,7 +2302,7 @@ POST https://api.pipedrive.com/v1/deals/&#123;id&#125;/participants. The officia
       modified?: string | null | null,
       has_created_company?: boolean | null,
       access?: {
-        app?: global | string | sales | string | campaigns | string | projects | string | account_settings | string | partnership | string | nova | string | null,
+        app?: global | sales | campaigns | projects | account_settings | partnership | nova | string | null,
         admin?: boolean | null,
         permission_set_id?: string | null
       }[] | null,
@@ -3412,23 +3412,23 @@ GET https://api.pipedrive.com/v1/deals/&#123;id&#125;/mailMessages. The official
     mail_thread_id?: number | null,
     subject?: string | null,
     snippet?: string | null,
-    mail_tracking_status?: opened | string | not opened | string | null | null,
-    mail_link_tracking_enabled_flag?: 0 | number | 1 | number | null,
-    read_flag?: 0 | number | 1 | number | null,
+    mail_tracking_status?: opened | not opened | string | null | null,
+    mail_link_tracking_enabled_flag?: 0 | 1 | number | null,
+    read_flag?: 0 | 1 | number | null,
     draft?: string | null | null,
-    draft_flag?: 0 | number | 1 | number | null,
-    synced_flag?: 0 | number | 1 | number | null,
-    deleted_flag?: 0 | number | 1 | number | null,
-    has_body_flag?: 0 | number | 1 | number | null,
-    sent_flag?: 0 | number | 1 | number | null,
-    sent_from_pipedrive_flag?: 0 | number | 1 | number | null,
-    smart_bcc_flag?: 0 | number | 1 | number | null,
+    draft_flag?: 0 | 1 | number | null,
+    synced_flag?: 0 | 1 | number | null,
+    deleted_flag?: 0 | 1 | number | null,
+    has_body_flag?: 0 | 1 | number | null,
+    sent_flag?: 0 | 1 | number | null,
+    sent_from_pipedrive_flag?: 0 | 1 | number | null,
+    smart_bcc_flag?: 0 | 1 | number | null,
     message_time?: string | null,
     add_time?: string | null,
     update_time?: string | null,
-    has_attachments_flag?: 0 | number | 1 | number | null,
-    has_inline_attachments_flag?: 0 | number | 1 | number | null,
-    has_real_attachments_flag?: 0 | number | 1 | number | null,
+    has_attachments_flag?: 0 | 1 | number | null,
+    has_inline_attachments_flag?: 0 | 1 | number | null,
+    has_real_attachments_flag?: 0 | 1 | number | null,
     nylas_id?: string | null,
     s3_bucket?: string | null,
     s3_bucket_path?: string | null,
@@ -3638,7 +3638,7 @@ GET https://api.pipedrive.com/v1/deals/&#123;id&#125;/participants. The official
       modified?: string | null | null,
       has_created_company?: boolean | null,
       access?: {
-        app?: global | string | sales | string | campaigns | string | projects | string | account_settings | string | partnership | string | nova | string | null,
+        app?: global | sales | campaigns | projects | account_settings | partnership | nova | string | null,
         admin?: boolean | null,
         permission_set_id?: string | null
       }[] | null,
@@ -5062,18 +5062,18 @@ POST https://api.pipedrive.com/v1/filters. The official OpenAPI x-token-cost is 
   filter_code?: string | null | null,
   is_editable?: boolean | null,
   active_flag?: boolean | null,
-  type?: deals | string | leads | string | org | string | people | string | products | string | activity | string | projects | string | null,
+  type?: deals | leads | org | people | products | activity | projects | string | null,
   temporary_flag?: boolean | null | null,
   user_id?: number | null,
   add_time?: string | null,
   update_time?: string | null | null,
-  visible_to?: 1 | string | 3 | string | 5 | string | 7 | string | null,
+  visible_to?: 1 | 3 | 5 | 7 | string | null,
   last_used_time?: string | null | null,
   custom_view_id?: number | null | null,
   conditions?: {
     glue?: and | string | null,
     conditions?: {
-      glue?: and | string | or | string | null,
+      glue?: and | or | string | null,
       conditions?: {
         object?: string | null,
         field_id?: string | null,
@@ -5264,18 +5264,18 @@ GET https://api.pipedrive.com/v1/filters/&#123;id&#125;. The official OpenAPI x-
   filter_code?: string | null | null,
   is_editable?: boolean | null,
   active_flag?: boolean | null,
-  type?: deals | string | leads | string | org | string | people | string | products | string | activity | string | projects | string | null,
+  type?: deals | leads | org | people | products | activity | projects | string | null,
   temporary_flag?: boolean | null | null,
   user_id?: number | null,
   add_time?: string | null,
   update_time?: string | null | null,
-  visible_to?: 1 | string | 3 | string | 5 | string | 7 | string | null,
+  visible_to?: 1 | 3 | 5 | 7 | string | null,
   last_used_time?: string | null | null,
   custom_view_id?: number | null | null,
   conditions?: {
     glue?: and | string | null,
     conditions?: {
-      glue?: and | string | or | string | null,
+      glue?: and | or | string | null,
       conditions?: {
         object?: string | null,
         field_id?: string | null,
@@ -5368,12 +5368,12 @@ GET https://api.pipedrive.com/v1/filters. The official OpenAPI x-token-cost is 2
   filter_code?: string | null | null,
   is_editable?: boolean | null,
   active_flag?: boolean | null,
-  type?: deals | string | leads | string | org | string | people | string | products | string | activity | string | projects | string | null,
+  type?: deals | leads | org | people | products | activity | projects | string | null,
   temporary_flag?: boolean | null | null,
   user_id?: number | null,
   add_time?: string | null,
   update_time?: string | null | null,
-  visible_to?: 1 | string | 3 | string | 5 | string | 7 | string | null,
+  visible_to?: 1 | 3 | 5 | 7 | string | null,
   last_used_time?: string | null | null,
   custom_view_id?: number | null | null
 }[] | null
@@ -5468,18 +5468,18 @@ PUT https://api.pipedrive.com/v1/filters/&#123;id&#125;. The official OpenAPI x-
   filter_code?: string | null | null,
   is_editable?: boolean | null,
   active_flag?: boolean | null,
-  type?: deals | string | leads | string | org | string | people | string | products | string | activity | string | projects | string | null,
+  type?: deals | leads | org | people | products | activity | projects | string | null,
   temporary_flag?: boolean | null | null,
   user_id?: number | null,
   add_time?: string | null,
   update_time?: string | null | null,
-  visible_to?: 1 | string | 3 | string | 5 | string | 7 | string | null,
+  visible_to?: 1 | 3 | 5 | 7 | string | null,
   last_used_time?: string | null | null,
   custom_view_id?: number | null | null,
   conditions?: {
     glue?: and | string | null,
     conditions?: {
-      glue?: and | string | or | string | null,
+      glue?: and | or | string | null,
       conditions?: {
         object?: string | null,
         field_id?: string | null,
@@ -5997,7 +5997,7 @@ GET https://api.pipedrive.com/v1/leadFields. The official OpenAPI x-token-cost i
   key?: string | null,
   name?: string | null,
   order_nr?: number | null,
-  field_type?: boolean | string | double | string | int | string | json | string | date | string | daterange | string | time | string | timerange | string | text | string | varchar | string | varchar_auto | string | varchar_options | string | address | string | enum | string | monetary | string | phone | string | set | string | activity | string | deal | string | lead | string | org | string | people | string | pipeline | string | product | string | project | string | stage | string | user | string | billing_frequency | string | picture | string | price_list | string | projects_board | string | projects_phase | string | status | string | visible_to | string | null,
+  field_type?: boolean | double | int | json | date | daterange | time | timerange | text | varchar | varchar_auto | varchar_options | address | enum | monetary | phone | set | activity | deal | lead | org | people | pipeline | product | project | stage | user | billing_frequency | picture | price_list | projects_board | projects_phase | status | visible_to | string | null,
   add_time?: string | null,
   update_time?: string | null | null,
   last_updated_by_user_id?: number | null | null,
@@ -6088,7 +6088,7 @@ POST https://api.pipedrive.com/v1/leadLabels. The official OpenAPI x-token-cost 
 {
   id?: string | null,
   name?: string | null,
-  color?: blue | string | brown | string | dark-gray | string | gray | string | green | string | orange | string | pink | string | purple | string | red | string | yellow | string | null,
+  color?: blue | brown | dark-gray | gray | green | orange | pink | purple | red | yellow | string | null,
   add_time?: string | null,
   update_time?: string | null
 } | null
@@ -6186,7 +6186,7 @@ GET https://api.pipedrive.com/v1/leadLabels. The official OpenAPI x-token-cost i
 {
   id?: string | null,
   name?: string | null,
-  color?: blue | string | brown | string | dark-gray | string | gray | string | green | string | orange | string | pink | string | purple | string | red | string | yellow | string | null,
+  color?: blue | brown | dark-gray | gray | green | orange | pink | purple | red | yellow | string | null,
   add_time?: string | null,
   update_time?: string | null
 }[] | null
@@ -6256,7 +6256,7 @@ PATCH https://api.pipedrive.com/v1/leadLabels/&#123;id&#125;. The official OpenA
 {
   id?: string | null,
   name?: string | null,
-  color?: blue | string | brown | string | dark-gray | string | gray | string | green | string | orange | string | pink | string | purple | string | red | string | yellow | string | null,
+  color?: blue | brown | dark-gray | gray | green | orange | pink | purple | red | yellow | string | null,
   add_time?: string | null,
   update_time?: string | null
 } | null
@@ -6351,7 +6351,7 @@ POST https://api.pipedrive.com/v1/leads. The official OpenAPI x-token-cost is 10
   next_activity_id?: number | null | null,
   add_time?: string | null,
   update_time?: string | null,
-  visible_to?: 1 | string | 3 | string | 5 | string | 7 | string | null,
+  visible_to?: 1 | 3 | 5 | 7 | string | null,
   cc_email?: string | null
 } | null
 ```
@@ -6493,7 +6493,7 @@ GET https://api.pipedrive.com/v1/leads/archived. The official OpenAPI x-token-co
   next_activity_id?: number | null | null,
   add_time?: string | null,
   update_time?: string | null,
-  visible_to?: 1 | string | 3 | string | 5 | string | 7 | string | null,
+  visible_to?: 1 | 3 | 5 | 7 | string | null,
   cc_email?: string | null
 }[] | null
 ```
@@ -6584,7 +6584,7 @@ GET https://api.pipedrive.com/v1/leads/&#123;id&#125;. The official OpenAPI x-to
   next_activity_id?: number | null | null,
   add_time?: string | null,
   update_time?: string | null,
-  visible_to?: 1 | string | 3 | string | 5 | string | 7 | string | null,
+  visible_to?: 1 | 3 | 5 | 7 | string | null,
   cc_email?: string | null
 } | null
 ```
@@ -6672,7 +6672,7 @@ GET https://api.pipedrive.com/v1/leads. The official OpenAPI x-token-cost is 20 
   next_activity_id?: number | null | null,
   add_time?: string | null,
   update_time?: string | null,
-  visible_to?: 1 | string | 3 | string | 5 | string | 7 | string | null,
+  visible_to?: 1 | 3 | 5 | 7 | string | null,
   cc_email?: string | null
 }[] | null
 ```
@@ -6935,7 +6935,7 @@ PATCH https://api.pipedrive.com/v1/leads/&#123;id&#125;. The official OpenAPI x-
   next_activity_id?: number | null | null,
   add_time?: string | null,
   update_time?: string | null,
-  visible_to?: 1 | string | 3 | string | 5 | string | 7 | string | null,
+  visible_to?: 1 | 3 | 5 | 7 | string | null,
   cc_email?: string | null
 } | null
 ```
@@ -7038,8 +7038,8 @@ POST https://api.pipedrive.com/v1/legacyTeams. The official OpenAPI x-token-cost
   description?: string | null,
   manager_id?: number | null,
   users?: number[] | null,
-  active_flag?: 0 | number | 1 | number | null,
-  deleted_flag?: 0 | number | 1 | number | null,
+  active_flag?: 0 | 1 | number | null,
+  deleted_flag?: 0 | 1 | number | null,
   add_time?: string | null,
   created_by_user_id?: number | null
 } | null
@@ -7219,8 +7219,8 @@ GET https://api.pipedrive.com/v1/legacyTeams/&#123;id&#125;. The official OpenAP
   description?: string | null,
   manager_id?: number | null,
   users?: number[] | null,
-  active_flag?: 0 | number | 1 | number | null,
-  deleted_flag?: 0 | number | 1 | number | null,
+  active_flag?: 0 | 1 | number | null,
+  deleted_flag?: 0 | 1 | number | null,
   add_time?: string | null,
   created_by_user_id?: number | null
 } | null
@@ -7283,8 +7283,8 @@ GET https://api.pipedrive.com/v1/legacyTeams. The official OpenAPI x-token-cost 
   description?: string | null,
   manager_id?: number | null,
   users?: number[] | null,
-  active_flag?: 0 | number | 1 | number | null,
-  deleted_flag?: 0 | number | 1 | number | null,
+  active_flag?: 0 | 1 | number | null,
+  deleted_flag?: 0 | 1 | number | null,
   add_time?: string | null,
   created_by_user_id?: number | null
 }[] | null
@@ -7401,8 +7401,8 @@ GET https://api.pipedrive.com/v1/legacyTeams/user/&#123;id&#125;. The official O
   description?: string | null,
   manager_id?: number | null,
   users?: number[] | null,
-  active_flag?: 0 | number | 1 | number | null,
-  deleted_flag?: 0 | number | 1 | number | null,
+  active_flag?: 0 | 1 | number | null,
+  deleted_flag?: 0 | 1 | number | null,
   add_time?: string | null,
   created_by_user_id?: number | null
 }[] | null
@@ -7479,8 +7479,8 @@ PUT https://api.pipedrive.com/v1/legacyTeams/&#123;id&#125;. The official OpenAP
   description?: string | null,
   manager_id?: number | null,
   users?: number[] | null,
-  active_flag?: 0 | number | 1 | number | null,
-  deleted_flag?: 0 | number | 1 | number | null,
+  active_flag?: 0 | 1 | number | null,
+  deleted_flag?: 0 | 1 | number | null,
   add_time?: string | null,
   created_by_user_id?: number | null
 } | null
@@ -7645,23 +7645,23 @@ GET https://api.pipedrive.com/v1/mailbox/mailMessages/&#123;id&#125;. The offici
   mail_thread_id?: number | null,
   subject?: string | null,
   snippet?: string | null,
-  mail_tracking_status?: opened | string | not opened | string | null | null,
-  mail_link_tracking_enabled_flag?: 0 | number | 1 | number | null,
-  read_flag?: 0 | number | 1 | number | null,
+  mail_tracking_status?: opened | not opened | string | null | null,
+  mail_link_tracking_enabled_flag?: 0 | 1 | number | null,
+  read_flag?: 0 | 1 | number | null,
   draft?: string | null | null,
-  draft_flag?: 0 | number | 1 | number | null,
-  synced_flag?: 0 | number | 1 | number | null,
-  deleted_flag?: 0 | number | 1 | number | null,
-  has_body_flag?: 0 | number | 1 | number | null,
-  sent_flag?: 0 | number | 1 | number | null,
-  sent_from_pipedrive_flag?: 0 | number | 1 | number | null,
-  smart_bcc_flag?: 0 | number | 1 | number | null,
+  draft_flag?: 0 | 1 | number | null,
+  synced_flag?: 0 | 1 | number | null,
+  deleted_flag?: 0 | 1 | number | null,
+  has_body_flag?: 0 | 1 | number | null,
+  sent_flag?: 0 | 1 | number | null,
+  sent_from_pipedrive_flag?: 0 | 1 | number | null,
+  smart_bcc_flag?: 0 | 1 | number | null,
   message_time?: string | null,
   add_time?: string | null,
   update_time?: string | null,
-  has_attachments_flag?: 0 | number | 1 | number | null,
-  has_inline_attachments_flag?: 0 | number | 1 | number | null,
-  has_real_attachments_flag?: 0 | number | 1 | number | null
+  has_attachments_flag?: 0 | 1 | number | null,
+  has_inline_attachments_flag?: 0 | 1 | number | null,
+  has_real_attachments_flag?: 0 | 1 | number | null
 } | null
 ```
 </Accordion>
@@ -7721,15 +7721,15 @@ GET https://api.pipedrive.com/v1/mailbox/mailThreads/&#123;id&#125;. The officia
   user_id?: number | null,
   subject?: string | null,
   snippet?: string | null,
-  read_flag?: 0 | number | 1 | number | null,
+  read_flag?: 0 | 1 | number | null,
   mail_tracking_status?: string | null | null,
-  has_attachments_flag?: 0 | number | 1 | number | null,
-  has_inline_attachments_flag?: 0 | number | 1 | number | null,
-  has_real_attachments_flag?: 0 | number | 1 | number | null,
-  deleted_flag?: 0 | number | 1 | number | null,
-  synced_flag?: 0 | number | 1 | number | null,
-  smart_bcc_flag?: 0 | number | 1 | number | null,
-  mail_link_tracking_enabled_flag?: 0 | number | 1 | number | null,
+  has_attachments_flag?: 0 | 1 | number | null,
+  has_inline_attachments_flag?: 0 | 1 | number | null,
+  has_real_attachments_flag?: 0 | 1 | number | null,
+  deleted_flag?: 0 | 1 | number | null,
+  synced_flag?: 0 | 1 | number | null,
+  smart_bcc_flag?: 0 | 1 | number | null,
+  mail_link_tracking_enabled_flag?: 0 | 1 | number | null,
   parties?: {
     to?: {
       id?: number | null,
@@ -7761,12 +7761,12 @@ GET https://api.pipedrive.com/v1/mailbox/mailThreads/&#123;id&#125;. The officia
   snippet_draft?: string | null | null,
   snippet_sent?: string | null | null,
   message_count?: number | null,
-  has_draft_flag?: 0 | number | 1 | number | null,
-  has_sent_flag?: 0 | number | 1 | number | null,
-  archived_flag?: 0 | number | 1 | number | null | null,
-  shared_flag?: 0 | number | 1 | number | null,
-  external_deleted_flag?: 0 | number | 1 | number | null,
-  first_message_to_me_flag?: 0 | number | 1 | number | null,
+  has_draft_flag?: 0 | 1 | number | null,
+  has_sent_flag?: 0 | 1 | number | null,
+  archived_flag?: 0 | 1 | number | null | null,
+  shared_flag?: 0 | 1 | number | null,
+  external_deleted_flag?: 0 | 1 | number | null,
+  first_message_to_me_flag?: 0 | 1 | number | null,
   last_message_timestamp?: string | null,
   first_message_timestamp?: string | null,
   last_message_sent_timestamp?: string | null | null,
@@ -7776,7 +7776,7 @@ GET https://api.pipedrive.com/v1/mailbox/mailThreads/&#123;id&#125;. The officia
   deal_id?: number | null | null,
   deal_status?: string | null | null,
   lead_id?: string | null | null,
-  all_messages_sent_flag?: 0 | number | 1 | number | null
+  all_messages_sent_flag?: 0 | 1 | number | null
 } | null
 ```
 </Accordion>
@@ -7836,15 +7836,15 @@ GET https://api.pipedrive.com/v1/mailbox/mailThreads/&#123;id&#125;/mailMessages
   user_id?: number | null,
   subject?: string | null,
   snippet?: string | null,
-  read_flag?: 0 | number | 1 | number | null,
+  read_flag?: 0 | 1 | number | null,
   mail_tracking_status?: string | null | null,
-  has_attachments_flag?: 0 | number | 1 | number | null,
-  has_inline_attachments_flag?: 0 | number | 1 | number | null,
-  has_real_attachments_flag?: 0 | number | 1 | number | null,
-  deleted_flag?: 0 | number | 1 | number | null,
-  synced_flag?: 0 | number | 1 | number | null,
-  smart_bcc_flag?: 0 | number | 1 | number | null,
-  mail_link_tracking_enabled_flag?: 0 | number | 1 | number | null,
+  has_attachments_flag?: 0 | 1 | number | null,
+  has_inline_attachments_flag?: 0 | 1 | number | null,
+  has_real_attachments_flag?: 0 | 1 | number | null,
+  deleted_flag?: 0 | 1 | number | null,
+  synced_flag?: 0 | 1 | number | null,
+  smart_bcc_flag?: 0 | 1 | number | null,
+  mail_link_tracking_enabled_flag?: 0 | 1 | number | null,
   from?: {
     id?: number | null,
     name?: string | null,
@@ -7892,9 +7892,9 @@ GET https://api.pipedrive.com/v1/mailbox/mailThreads/&#123;id&#125;/mailMessages
   body_url?: string | null,
   mail_thread_id?: number | null,
   draft?: string | null | null,
-  has_body_flag?: 0 | number | 1 | number | null,
-  sent_flag?: 0 | number | 1 | number | null,
-  sent_from_pipedrive_flag?: 0 | number | 1 | number | null,
+  has_body_flag?: 0 | 1 | number | null,
+  sent_flag?: 0 | 1 | number | null,
+  sent_from_pipedrive_flag?: 0 | 1 | number | null,
   message_time?: string | null,
   add_time?: string | null,
   update_time?: string | null
@@ -7959,15 +7959,15 @@ GET https://api.pipedrive.com/v1/mailbox/mailThreads. The official OpenAPI x-tok
   user_id?: number | null,
   subject?: string | null,
   snippet?: string | null,
-  read_flag?: 0 | number | 1 | number | null,
+  read_flag?: 0 | 1 | number | null,
   mail_tracking_status?: string | null | null,
-  has_attachments_flag?: 0 | number | 1 | number | null,
-  has_inline_attachments_flag?: 0 | number | 1 | number | null,
-  has_real_attachments_flag?: 0 | number | 1 | number | null,
-  deleted_flag?: 0 | number | 1 | number | null,
-  synced_flag?: 0 | number | 1 | number | null,
-  smart_bcc_flag?: 0 | number | 1 | number | null,
-  mail_link_tracking_enabled_flag?: 0 | number | 1 | number | null,
+  has_attachments_flag?: 0 | 1 | number | null,
+  has_inline_attachments_flag?: 0 | 1 | number | null,
+  has_real_attachments_flag?: 0 | 1 | number | null,
+  deleted_flag?: 0 | 1 | number | null,
+  synced_flag?: 0 | 1 | number | null,
+  smart_bcc_flag?: 0 | 1 | number | null,
+  mail_link_tracking_enabled_flag?: 0 | 1 | number | null,
   parties?: {
     to?: {
       id?: number | null,
@@ -7999,12 +7999,12 @@ GET https://api.pipedrive.com/v1/mailbox/mailThreads. The official OpenAPI x-tok
   snippet_draft?: string | null | null,
   snippet_sent?: string | null | null,
   message_count?: number | null,
-  has_draft_flag?: 0 | number | 1 | number | null,
-  has_sent_flag?: 0 | number | 1 | number | null,
-  archived_flag?: 0 | number | 1 | number | null | null,
-  shared_flag?: 0 | number | 1 | number | null,
-  external_deleted_flag?: 0 | number | 1 | number | null,
-  first_message_to_me_flag?: 0 | number | 1 | number | null,
+  has_draft_flag?: 0 | 1 | number | null,
+  has_sent_flag?: 0 | 1 | number | null,
+  archived_flag?: 0 | 1 | number | null | null,
+  shared_flag?: 0 | 1 | number | null,
+  external_deleted_flag?: 0 | 1 | number | null,
+  first_message_to_me_flag?: 0 | 1 | number | null,
   last_message_timestamp?: string | null,
   first_message_timestamp?: string | null,
   last_message_sent_timestamp?: string | null | null,
@@ -8014,7 +8014,7 @@ GET https://api.pipedrive.com/v1/mailbox/mailThreads. The official OpenAPI x-tok
   deal_id?: number | null | null,
   deal_status?: string | null | null,
   lead_id?: string | null | null,
-  all_messages_sent_flag?: 0 | number | 1 | number | null
+  all_messages_sent_flag?: 0 | 1 | number | null
 }[] | null
 ```
 </Accordion>
@@ -8088,15 +8088,15 @@ PUT https://api.pipedrive.com/v1/mailbox/mailThreads/&#123;id&#125;. The officia
   user_id?: number | null,
   subject?: string | null,
   snippet?: string | null,
-  read_flag?: 0 | number | 1 | number | null,
+  read_flag?: 0 | 1 | number | null,
   mail_tracking_status?: string | null | null,
-  has_attachments_flag?: 0 | number | 1 | number | null,
-  has_inline_attachments_flag?: 0 | number | 1 | number | null,
-  has_real_attachments_flag?: 0 | number | 1 | number | null,
-  deleted_flag?: 0 | number | 1 | number | null,
-  synced_flag?: 0 | number | 1 | number | null,
-  smart_bcc_flag?: 0 | number | 1 | number | null,
-  mail_link_tracking_enabled_flag?: 0 | number | 1 | number | null,
+  has_attachments_flag?: 0 | 1 | number | null,
+  has_inline_attachments_flag?: 0 | 1 | number | null,
+  has_real_attachments_flag?: 0 | 1 | number | null,
+  deleted_flag?: 0 | 1 | number | null,
+  synced_flag?: 0 | 1 | number | null,
+  smart_bcc_flag?: 0 | 1 | number | null,
+  mail_link_tracking_enabled_flag?: 0 | 1 | number | null,
   parties?: {
     to?: {
       id?: number | null,
@@ -8128,12 +8128,12 @@ PUT https://api.pipedrive.com/v1/mailbox/mailThreads/&#123;id&#125;. The officia
   snippet_draft?: string | null | null,
   snippet_sent?: string | null | null,
   message_count?: number | null,
-  has_draft_flag?: 0 | number | 1 | number | null,
-  has_sent_flag?: 0 | number | 1 | number | null,
-  archived_flag?: 0 | number | 1 | number | null | null,
-  shared_flag?: 0 | number | 1 | number | null,
-  external_deleted_flag?: 0 | number | 1 | number | null,
-  first_message_to_me_flag?: 0 | number | 1 | number | null,
+  has_draft_flag?: 0 | 1 | number | null,
+  has_sent_flag?: 0 | 1 | number | null,
+  archived_flag?: 0 | 1 | number | null | null,
+  shared_flag?: 0 | 1 | number | null,
+  external_deleted_flag?: 0 | 1 | number | null,
+  first_message_to_me_flag?: 0 | 1 | number | null,
   last_message_timestamp?: string | null,
   first_message_timestamp?: string | null,
   last_message_sent_timestamp?: string | null | null,
@@ -8143,7 +8143,7 @@ PUT https://api.pipedrive.com/v1/mailbox/mailThreads/&#123;id&#125;. The officia
   deal_id?: number | null | null,
   deal_status?: string | null | null,
   lead_id?: string | null | null,
-  all_messages_sent_flag?: 0 | number | 1 | number | null
+  all_messages_sent_flag?: 0 | 1 | number | null
 } | null
 ```
 </Accordion>
@@ -8299,7 +8299,7 @@ GET https://api.pipedrive.com/v1/noteFields. The official OpenAPI x-token-cost i
   id?: number | null,
   key?: string | null,
   name?: string | null,
-  field_type?: boolean | string | double | string | int | string | json | string | date | string | daterange | string | time | string | timerange | string | text | string | varchar | string | varchar_auto | string | varchar_options | string | address | string | enum | string | monetary | string | phone | string | set | string | activity | string | deal | string | lead | string | org | string | people | string | pipeline | string | product | string | project | string | stage | string | user | string | billing_frequency | string | picture | string | price_list | string | projects_board | string | projects_phase | string | status | string | visible_to | string | null,
+  field_type?: boolean | double | int | json | date | daterange | time | timerange | text | varchar | varchar_auto | varchar_options | address | enum | monetary | phone | set | activity | deal | lead | org | people | pipeline | product | project | stage | user | billing_frequency | picture | price_list | projects_board | projects_phase | status | visible_to | string | null,
   active_flag?: boolean | null,
   edit_flag?: boolean | null,
   bulk_edit_allowed?: boolean | null,
@@ -9218,7 +9218,7 @@ POST https://api.pipedrive.com/v1/organizationFields. The official OpenAPI x-tok
   key?: string | null,
   name?: string | null,
   order_nr?: number | null,
-  field_type?: boolean | string | double | string | int | string | json | string | date | string | daterange | string | time | string | timerange | string | text | string | varchar | string | varchar_auto | string | varchar_options | string | address | string | enum | string | monetary | string | phone | string | set | string | activity | string | deal | string | lead | string | org | string | people | string | pipeline | string | product | string | project | string | stage | string | user | string | billing_frequency | string | picture | string | price_list | string | projects_board | string | projects_phase | string | status | string | visible_to | string | null,
+  field_type?: boolean | double | int | json | date | daterange | time | timerange | text | varchar | varchar_auto | varchar_options | address | enum | monetary | phone | set | activity | deal | lead | org | people | pipeline | product | project | stage | user | billing_frequency | picture | price_list | projects_board | projects_phase | status | visible_to | string | null,
   add_time?: string | null,
   update_time?: string | null | null,
   last_updated_by_user_id?: number | null | null,
@@ -9409,7 +9409,7 @@ GET https://api.pipedrive.com/v1/organizationFields/&#123;id&#125;. The official
   key?: string | null,
   name?: string | null,
   order_nr?: number | null,
-  field_type?: boolean | string | double | string | int | string | json | string | date | string | daterange | string | time | string | timerange | string | text | string | varchar | string | varchar_auto | string | varchar_options | string | address | string | enum | string | monetary | string | phone | string | set | string | activity | string | deal | string | lead | string | org | string | people | string | pipeline | string | product | string | project | string | stage | string | user | string | billing_frequency | string | picture | string | price_list | string | projects_board | string | projects_phase | string | status | string | visible_to | string | null,
+  field_type?: boolean | double | int | json | date | daterange | time | timerange | text | varchar | varchar_auto | varchar_options | address | enum | monetary | phone | set | activity | deal | lead | org | people | pipeline | product | project | stage | user | billing_frequency | picture | price_list | projects_board | projects_phase | status | visible_to | string | null,
   add_time?: string | null,
   update_time?: string | null | null,
   last_updated_by_user_id?: number | null | null,
@@ -9492,7 +9492,7 @@ GET https://api.pipedrive.com/v1/organizationFields. The official OpenAPI x-toke
   key?: string | null,
   name?: string | null,
   order_nr?: number | null,
-  field_type?: boolean | string | double | string | int | string | json | string | date | string | daterange | string | time | string | timerange | string | text | string | varchar | string | varchar_auto | string | varchar_options | string | address | string | enum | string | monetary | string | phone | string | set | string | activity | string | deal | string | lead | string | org | string | people | string | pipeline | string | product | string | project | string | stage | string | user | string | billing_frequency | string | picture | string | price_list | string | projects_board | string | projects_phase | string | status | string | visible_to | string | null,
+  field_type?: boolean | double | int | json | date | daterange | time | timerange | text | varchar | varchar_auto | varchar_options | address | enum | monetary | phone | set | activity | deal | lead | org | people | pipeline | product | project | stage | user | billing_frequency | picture | price_list | projects_board | projects_phase | status | visible_to | string | null,
   add_time?: string | null,
   update_time?: string | null | null,
   last_updated_by_user_id?: number | null | null,
@@ -9599,7 +9599,7 @@ PUT https://api.pipedrive.com/v1/organizationFields/&#123;id&#125;. The official
   key?: string | null,
   name?: string | null,
   order_nr?: number | null,
-  field_type?: boolean | string | double | string | int | string | json | string | date | string | daterange | string | time | string | timerange | string | text | string | varchar | string | varchar_auto | string | varchar_options | string | address | string | enum | string | monetary | string | phone | string | set | string | activity | string | deal | string | lead | string | org | string | people | string | pipeline | string | product | string | project | string | stage | string | user | string | billing_frequency | string | picture | string | price_list | string | projects_board | string | projects_phase | string | status | string | visible_to | string | null,
+  field_type?: boolean | double | int | json | date | daterange | time | timerange | text | varchar | varchar_auto | varchar_options | address | enum | monetary | phone | set | activity | deal | lead | org | people | pipeline | product | project | stage | user | billing_frequency | picture | price_list | projects_board | projects_phase | status | visible_to | string | null,
   add_time?: string | null,
   update_time?: string | null | null,
   last_updated_by_user_id?: number | null | null,
@@ -10592,23 +10592,23 @@ GET https://api.pipedrive.com/v1/organizations/&#123;id&#125;/mailMessages. The 
     mail_thread_id?: number | null,
     subject?: string | null,
     snippet?: string | null,
-    mail_tracking_status?: opened | string | not opened | string | null | null,
-    mail_link_tracking_enabled_flag?: 0 | number | 1 | number | null,
-    read_flag?: 0 | number | 1 | number | null,
+    mail_tracking_status?: opened | not opened | string | null | null,
+    mail_link_tracking_enabled_flag?: 0 | 1 | number | null,
+    read_flag?: 0 | 1 | number | null,
     draft?: string | null | null,
-    draft_flag?: 0 | number | 1 | number | null,
-    synced_flag?: 0 | number | 1 | number | null,
-    deleted_flag?: 0 | number | 1 | number | null,
-    has_body_flag?: 0 | number | 1 | number | null,
-    sent_flag?: 0 | number | 1 | number | null,
-    sent_from_pipedrive_flag?: 0 | number | 1 | number | null,
-    smart_bcc_flag?: 0 | number | 1 | number | null,
+    draft_flag?: 0 | 1 | number | null,
+    synced_flag?: 0 | 1 | number | null,
+    deleted_flag?: 0 | 1 | number | null,
+    has_body_flag?: 0 | 1 | number | null,
+    sent_flag?: 0 | 1 | number | null,
+    sent_from_pipedrive_flag?: 0 | 1 | number | null,
+    smart_bcc_flag?: 0 | 1 | number | null,
     message_time?: string | null,
     add_time?: string | null,
     update_time?: string | null,
-    has_attachments_flag?: 0 | number | 1 | number | null,
-    has_inline_attachments_flag?: 0 | number | 1 | number | null,
-    has_real_attachments_flag?: 0 | number | 1 | number | null,
+    has_attachments_flag?: 0 | 1 | number | null,
+    has_inline_attachments_flag?: 0 | 1 | number | null,
+    has_real_attachments_flag?: 0 | 1 | number | null,
     nylas_id?: string | null,
     s3_bucket?: string | null,
     s3_bucket_path?: string | null,
@@ -10900,8 +10900,8 @@ GET https://api.pipedrive.com/v1/permissionSets/&#123;id&#125;. The official Ope
 | `id` | `string \| null` | No | — |
 | `name` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
-| `app` | `sales \| string \| projects \| string \| campaigns \| string \| global \| string \| account_settings \| string \| partnership \| string \| nova \| string \| null` | No | — |
-| `type` | `admin \| string \| manager \| string \| regular \| string \| custom \| string \| null` | No | — |
+| `app` | `sales \| projects \| campaigns \| global \| account_settings \| partnership \| nova \| string \| null` | No | — |
+| `type` | `admin \| manager \| regular \| custom \| string \| null` | No | — |
 | `assignment_count` | `number \| null` | No | — |
 | `contents` | `string[] \| null` | No | — |
 
@@ -11025,8 +11025,8 @@ GET https://api.pipedrive.com/v1/permissionSets. The official OpenAPI x-token-co
   id?: string | null,
   name?: string | null,
   description?: string | null,
-  app?: sales | string | projects | string | campaigns | string | global | string | account_settings | string | partnership | string | nova | string | null,
-  type?: admin | string | manager | string | regular | string | custom | string | null,
+  app?: sales | projects | campaigns | global | account_settings | partnership | nova | string | null,
+  type?: admin | manager | regular | custom | string | null,
   assignment_count?: number | null
 }[] | null
 ```
@@ -11091,7 +11091,7 @@ POST https://api.pipedrive.com/v1/personFields. The official OpenAPI x-token-cos
   key?: string | null,
   name?: string | null,
   order_nr?: number | null,
-  field_type?: boolean | string | double | string | int | string | json | string | date | string | daterange | string | time | string | timerange | string | text | string | varchar | string | varchar_auto | string | varchar_options | string | address | string | enum | string | monetary | string | phone | string | set | string | activity | string | deal | string | lead | string | org | string | people | string | pipeline | string | product | string | project | string | stage | string | user | string | billing_frequency | string | picture | string | price_list | string | projects_board | string | projects_phase | string | status | string | visible_to | string | null,
+  field_type?: boolean | double | int | json | date | daterange | time | timerange | text | varchar | varchar_auto | varchar_options | address | enum | monetary | phone | set | activity | deal | lead | org | people | pipeline | product | project | stage | user | billing_frequency | picture | price_list | projects_board | projects_phase | status | visible_to | string | null,
   add_time?: string | null,
   update_time?: string | null | null,
   last_updated_by_user_id?: number | null | null,
@@ -11282,7 +11282,7 @@ GET https://api.pipedrive.com/v1/personFields/&#123;id&#125;. The official OpenA
   key?: string | null,
   name?: string | null,
   order_nr?: number | null,
-  field_type?: boolean | string | double | string | int | string | json | string | date | string | daterange | string | time | string | timerange | string | text | string | varchar | string | varchar_auto | string | varchar_options | string | address | string | enum | string | monetary | string | phone | string | set | string | activity | string | deal | string | lead | string | org | string | people | string | pipeline | string | product | string | project | string | stage | string | user | string | billing_frequency | string | picture | string | price_list | string | projects_board | string | projects_phase | string | status | string | visible_to | string | null,
+  field_type?: boolean | double | int | json | date | daterange | time | timerange | text | varchar | varchar_auto | varchar_options | address | enum | monetary | phone | set | activity | deal | lead | org | people | pipeline | product | project | stage | user | billing_frequency | picture | price_list | projects_board | projects_phase | status | visible_to | string | null,
   add_time?: string | null,
   update_time?: string | null | null,
   last_updated_by_user_id?: number | null | null,
@@ -11365,7 +11365,7 @@ GET https://api.pipedrive.com/v1/personFields. The official OpenAPI x-token-cost
   key?: string | null,
   name?: string | null,
   order_nr?: number | null,
-  field_type?: boolean | string | double | string | int | string | json | string | date | string | daterange | string | time | string | timerange | string | text | string | varchar | string | varchar_auto | string | varchar_options | string | address | string | enum | string | monetary | string | phone | string | set | string | activity | string | deal | string | lead | string | org | string | people | string | pipeline | string | product | string | project | string | stage | string | user | string | billing_frequency | string | picture | string | price_list | string | projects_board | string | projects_phase | string | status | string | visible_to | string | null,
+  field_type?: boolean | double | int | json | date | daterange | time | timerange | text | varchar | varchar_auto | varchar_options | address | enum | monetary | phone | set | activity | deal | lead | org | people | pipeline | product | project | stage | user | billing_frequency | picture | price_list | projects_board | projects_phase | status | visible_to | string | null,
   add_time?: string | null,
   update_time?: string | null | null,
   last_updated_by_user_id?: number | null | null,
@@ -11472,7 +11472,7 @@ PUT https://api.pipedrive.com/v1/personFields/&#123;id&#125;. The official OpenA
   key?: string | null,
   name?: string | null,
   order_nr?: number | null,
-  field_type?: boolean | string | double | string | int | string | json | string | date | string | daterange | string | time | string | timerange | string | text | string | varchar | string | varchar_auto | string | varchar_options | string | address | string | enum | string | monetary | string | phone | string | set | string | activity | string | deal | string | lead | string | org | string | people | string | pipeline | string | product | string | project | string | stage | string | user | string | billing_frequency | string | picture | string | price_list | string | projects_board | string | projects_phase | string | status | string | visible_to | string | null,
+  field_type?: boolean | double | int | json | date | daterange | time | timerange | text | varchar | varchar_auto | varchar_options | address | enum | monetary | phone | set | activity | deal | lead | org | people | pipeline | product | project | stage | user | billing_frequency | picture | price_list | projects_board | projects_phase | status | visible_to | string | null,
   add_time?: string | null,
   update_time?: string | null | null,
   last_updated_by_user_id?: number | null | null,
@@ -12124,23 +12124,23 @@ GET https://api.pipedrive.com/v1/persons/&#123;id&#125;/mailMessages. The offici
     mail_thread_id?: number | null,
     subject?: string | null,
     snippet?: string | null,
-    mail_tracking_status?: opened | string | not opened | string | null | null,
-    mail_link_tracking_enabled_flag?: 0 | number | 1 | number | null,
-    read_flag?: 0 | number | 1 | number | null,
+    mail_tracking_status?: opened | not opened | string | null | null,
+    mail_link_tracking_enabled_flag?: 0 | 1 | number | null,
+    read_flag?: 0 | 1 | number | null,
     draft?: string | null | null,
-    draft_flag?: 0 | number | 1 | number | null,
-    synced_flag?: 0 | number | 1 | number | null,
-    deleted_flag?: 0 | number | 1 | number | null,
-    has_body_flag?: 0 | number | 1 | number | null,
-    sent_flag?: 0 | number | 1 | number | null,
-    sent_from_pipedrive_flag?: 0 | number | 1 | number | null,
-    smart_bcc_flag?: 0 | number | 1 | number | null,
+    draft_flag?: 0 | 1 | number | null,
+    synced_flag?: 0 | 1 | number | null,
+    deleted_flag?: 0 | 1 | number | null,
+    has_body_flag?: 0 | 1 | number | null,
+    sent_flag?: 0 | 1 | number | null,
+    sent_from_pipedrive_flag?: 0 | 1 | number | null,
+    smart_bcc_flag?: 0 | 1 | number | null,
     message_time?: string | null,
     add_time?: string | null,
     update_time?: string | null,
-    has_attachments_flag?: 0 | number | 1 | number | null,
-    has_inline_attachments_flag?: 0 | number | 1 | number | null,
-    has_real_attachments_flag?: 0 | number | 1 | number | null,
+    has_attachments_flag?: 0 | 1 | number | null,
+    has_inline_attachments_flag?: 0 | 1 | number | null,
+    has_real_attachments_flag?: 0 | 1 | number | null,
     nylas_id?: string | null,
     s3_bucket?: string | null,
     s3_bucket_path?: string | null,
@@ -12286,7 +12286,7 @@ GET https://api.pipedrive.com/v1/persons/&#123;id&#125;/products. The official O
       active_flag?: boolean | null,
       selectable?: boolean | null,
       first_char?: string | null,
-      visible_to?: 1 | string | 3 | string | 5 | string | 7 | string | null,
+      visible_to?: 1 | 3 | 5 | 7 | string | null,
       owner_id?: number | null,
       files_count?: number | null,
       add_time?: string | null,
@@ -13007,7 +13007,7 @@ POST https://api.pipedrive.com/v1/productFields. The official OpenAPI x-token-co
   name?: string | null,
   options?: {
   }[] | null,
-  field_type?: varchar | string | varchar_auto | string | text | string | double | string | monetary | string | date | string | set | string | enum | string | user | string | org | string | people | string | phone | string | time | string | timerange | string | daterange | string | address | string | null,
+  field_type?: varchar | varchar_auto | text | double | monetary | date | set | enum | user | org | people | phone | time | timerange | daterange | address | string | null,
   id?: number | null,
   key?: string | null,
   order_nr?: number | null,
@@ -13191,7 +13191,7 @@ GET https://api.pipedrive.com/v1/productFields/&#123;id&#125;. The official Open
   name?: string | null,
   options?: {
   }[] | null,
-  field_type?: varchar | string | varchar_auto | string | text | string | double | string | monetary | string | date | string | set | string | enum | string | user | string | org | string | people | string | phone | string | time | string | timerange | string | daterange | string | address | string | null,
+  field_type?: varchar | varchar_auto | text | double | monetary | date | set | enum | user | org | people | phone | time | timerange | daterange | address | string | null,
   id?: number | null,
   key?: string | null,
   order_nr?: number | null,
@@ -13267,7 +13267,7 @@ GET https://api.pipedrive.com/v1/productFields. The official OpenAPI x-token-cos
   name?: string | null,
   options?: {
   }[] | null,
-  field_type?: boolean | string | double | string | int | string | json | string | date | string | daterange | string | time | string | timerange | string | text | string | varchar | string | varchar_auto | string | varchar_options | string | address | string | enum | string | monetary | string | phone | string | set | string | activity | string | deal | string | lead | string | org | string | people | string | pipeline | string | product | string | project | string | stage | string | user | string | billing_frequency | string | picture | string | price_list | string | projects_board | string | projects_phase | string | status | string | visible_to | string | null,
+  field_type?: boolean | double | int | json | date | daterange | time | timerange | text | varchar | varchar_auto | varchar_options | address | enum | monetary | phone | set | activity | deal | lead | org | people | pipeline | product | project | stage | user | billing_frequency | picture | price_list | projects_board | projects_phase | status | visible_to | string | null,
   id?: number | null,
   key?: string | null,
   order_nr?: number | null,
@@ -13363,7 +13363,7 @@ PUT https://api.pipedrive.com/v1/productFields/&#123;id&#125;. The official Open
   name?: string | null,
   options?: {
   }[] | null,
-  field_type?: varchar | string | varchar_auto | string | text | string | double | string | monetary | string | date | string | set | string | enum | string | user | string | org | string | people | string | phone | string | time | string | timerange | string | daterange | string | address | string | null,
+  field_type?: varchar | varchar_auto | text | double | monetary | date | set | enum | user | org | people | phone | time | timerange | daterange | address | string | null,
   id?: number | null,
   key?: string | null,
   order_nr?: number | null,
@@ -14941,7 +14941,7 @@ GET https://api.pipedrive.com/v1/projects/&#123;id&#125;/tasks. The official Ope
   parent_task_id?: number | null,
   assignee_id?: number | null,
   assignee_ids?: number[] | null,
-  done?: 0 | number | 1 | number | null,
+  done?: 0 | 1 | number | null,
   due_date?: string | null,
   creator_id?: number | null,
   add_time?: string | null,
@@ -15494,7 +15494,7 @@ GET https://api.pipedrive.com/v1/recents. The official OpenAPI x-token-cost is 2
     data?: {
       id?: number | null,
       name?: string | null,
-      icon_key?: task | string | email | string | meeting | string | deadline | string | call | string | lunch | string | calendar | string | downarrow | string | document | string | smartphone | string | camera | string | scissors | string | cogs | string | bubble | string | uparrow | string | checkbox | string | signpost | string | shuffle | string | addressbook | string | linegraph | string | picture | string | car | string | world | string | search | string | clip | string | sound | string | brush | string | key | string | padlock | string | pricetag | string | suitcase | string | finish | string | plane | string | loop | string | wifi | string | truck | string | cart | string | bulb | string | bell | string | presentation | string | null,
+      icon_key?: task | email | meeting | deadline | call | lunch | calendar | downarrow | document | smartphone | camera | scissors | cogs | bubble | uparrow | checkbox | signpost | shuffle | addressbook | linegraph | picture | car | world | search | clip | sound | brush | key | padlock | pricetag | suitcase | finish | plane | loop | wifi | truck | cart | bulb | bell | presentation | string | null,
       color?: string | null,
       order_nr?: number | null,
       key_string?: string | null,
@@ -15618,12 +15618,12 @@ GET https://api.pipedrive.com/v1/recents. The official OpenAPI x-token-cost is 2
       filter_code?: string | null | null,
       is_editable?: boolean | null,
       active_flag?: boolean | null,
-      type?: deals | string | leads | string | org | string | people | string | products | string | activity | string | projects | string | null,
+      type?: deals | leads | org | people | products | activity | projects | string | null,
       temporary_flag?: boolean | null | null,
       user_id?: number | null,
       add_time?: string | null,
       update_time?: string | null | null,
-      visible_to?: 1 | string | 3 | string | 5 | string | 7 | string | null,
+      visible_to?: 1 | 3 | 5 | 7 | string | null,
       last_used_time?: string | null | null,
       custom_view_id?: number | null | null
     } | null
@@ -15880,7 +15880,7 @@ GET https://api.pipedrive.com/v1/recents. The official OpenAPI x-token-cost is 2
       modified?: string | null | null,
       has_created_company?: boolean | null,
       access?: {
-        app?: global | string | sales | string | campaigns | string | projects | string | account_settings | string | partnership | string | nova | string | null,
+        app?: global | sales | campaigns | projects | account_settings | partnership | nova | string | null,
         admin?: boolean | null,
         permission_set_id?: string | null
       }[] | null,
@@ -15905,7 +15905,7 @@ GET https://api.pipedrive.com/v1/recents. The official OpenAPI x-token-cost is 2
       modified?: string | null | null,
       has_created_company?: boolean | null,
       access?: {
-        app?: global | string | sales | string | campaigns | string | projects | string | account_settings | string | partnership | string | nova | string | null,
+        app?: global | sales | campaigns | projects | account_settings | partnership | nova | string | null,
         admin?: boolean | null,
         permission_set_id?: string | null
       }[] | null,
@@ -15999,7 +15999,7 @@ POST https://api.pipedrive.com/v1/roles/&#123;id&#125;/settings. The official Op
 ```ts
 {
   id?: number | null,
-  deal_default_visibility?: 1 | number | 3 | number | 5 | number | 7 | number | null
+  deal_default_visibility?: 1 | 3 | 5 | 7 | number | null
 } | null
 ```
 </Accordion>
@@ -16964,7 +16964,7 @@ POST https://api.pipedrive.com/v1/tasks. The official OpenAPI x-token-cost is 10
   parent_task_id?: number | null,
   assignee_id?: number | null,
   assignee_ids?: number[] | null,
-  done?: 0 | number | 1 | number | null,
+  done?: 0 | 1 | number | null,
   due_date?: string | null,
   creator_id?: number | null,
   add_time?: string | null,
@@ -17107,7 +17107,7 @@ GET https://api.pipedrive.com/v1/tasks/&#123;id&#125;. The official OpenAPI x-to
   parent_task_id?: number | null,
   assignee_id?: number | null,
   assignee_ids?: number[] | null,
-  done?: 0 | number | 1 | number | null,
+  done?: 0 | 1 | number | null,
   due_date?: string | null,
   creator_id?: number | null,
   add_time?: string | null,
@@ -17188,7 +17188,7 @@ GET https://api.pipedrive.com/v1/tasks. The official OpenAPI x-token-cost is 20 
   parent_task_id?: number | null,
   assignee_id?: number | null,
   assignee_ids?: number[] | null,
-  done?: 0 | number | 1 | number | null,
+  done?: 0 | 1 | number | null,
   due_date?: string | null,
   creator_id?: number | null,
   add_time?: string | null,
@@ -17282,7 +17282,7 @@ PUT https://api.pipedrive.com/v1/tasks/&#123;id&#125;. The official OpenAPI x-to
   parent_task_id?: number | null,
   assignee_id?: number | null,
   assignee_ids?: number[] | null,
-  done?: 0 | number | 1 | number | null,
+  done?: 0 | 1 | number | null,
   due_date?: string | null,
   creator_id?: number | null,
   add_time?: string | null,
@@ -17408,7 +17408,7 @@ POST https://api.pipedrive.com/v1/users. The official OpenAPI x-token-cost is 10
   modified?: string | null | null,
   has_created_company?: boolean | null,
   access?: {
-    app?: global | string | sales | string | campaigns | string | projects | string | account_settings | string | partnership | string | nova | string | null,
+    app?: global | sales | campaigns | projects | account_settings | partnership | nova | string | null,
     admin?: boolean | null,
     permission_set_id?: string | null
   }[] | null,
@@ -17487,7 +17487,7 @@ GET https://api.pipedrive.com/v1/users/find. The official OpenAPI x-token-cost i
   modified?: string | null | null,
   has_created_company?: boolean | null,
   access?: {
-    app?: global | string | sales | string | campaigns | string | projects | string | account_settings | string | partnership | string | nova | string | null,
+    app?: global | sales | campaigns | projects | account_settings | partnership | nova | string | null,
     admin?: boolean | null,
     permission_set_id?: string | null
   }[] | null,
@@ -17549,7 +17549,7 @@ GET https://api.pipedrive.com/v1/users/me. The official OpenAPI x-token-cost is 
   modified?: string | null | null,
   has_created_company?: boolean | null,
   access?: {
-    app?: global | string | sales | string | campaigns | string | projects | string | account_settings | string | partnership | string | nova | string | null,
+    app?: global | sales | campaigns | projects | account_settings | partnership | nova | string | null,
     admin?: boolean | null,
     permission_set_id?: string | null
   }[] | null,
@@ -17636,7 +17636,7 @@ GET https://api.pipedrive.com/v1/users/&#123;id&#125;. The official OpenAPI x-to
   modified?: string | null | null,
   has_created_company?: boolean | null,
   access?: {
-    app?: global | string | sales | string | campaigns | string | projects | string | account_settings | string | partnership | string | nova | string | null,
+    app?: global | sales | campaigns | projects | account_settings | partnership | nova | string | null,
     admin?: boolean | null,
     permission_set_id?: string | null
   }[] | null,
@@ -17975,7 +17975,7 @@ GET https://api.pipedrive.com/v1/users. The official OpenAPI x-token-cost is 20 
   modified?: string | null | null,
   has_created_company?: boolean | null,
   access?: {
-    app?: global | string | sales | string | campaigns | string | projects | string | account_settings | string | partnership | string | nova | string | null,
+    app?: global | sales | campaigns | projects | account_settings | partnership | nova | string | null,
     admin?: boolean | null,
     permission_set_id?: string | null
   }[] | null,
@@ -18063,7 +18063,7 @@ PUT https://api.pipedrive.com/v1/users/&#123;id&#125;. The official OpenAPI x-to
   modified?: string | null | null,
   has_created_company?: boolean | null,
   access?: {
-    app?: global | string | sales | string | campaigns | string | projects | string | account_settings | string | partnership | string | nova | string | null,
+    app?: global | sales | campaigns | projects | account_settings | partnership | nova | string | null,
     admin?: boolean | null,
     permission_set_id?: string | null
   }[] | null,
@@ -18188,7 +18188,7 @@ GET https://api.pipedrive.com/api/v2/activityFields/&#123;field_code&#125;. The 
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | participants | string | attendees | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | participants | attendees | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -18266,7 +18266,7 @@ GET https://api.pipedrive.com/api/v2/activityFields. The official OpenAPI x-toke
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | participants | string | attendees | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | participants | attendees | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -18375,7 +18375,7 @@ POST https://api.pipedrive.com/api/v2/dealFields. The official OpenAPI x-token-c
   field_name?: string | null,
   field_code?: string | null,
   description?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -18690,7 +18690,7 @@ GET https://api.pipedrive.com/api/v2/dealFields/&#123;field_code&#125;. The offi
   field_name?: string | null,
   field_code?: string | null,
   description?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -18784,7 +18784,7 @@ GET https://api.pipedrive.com/api/v2/dealFields. The official OpenAPI x-token-co
   field_name?: string | null,
   field_code?: string | null,
   description?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -18914,7 +18914,7 @@ PATCH https://api.pipedrive.com/api/v2/dealFields/&#123;field_code&#125;. The of
   field_name?: string | null,
   field_code?: string | null,
   description?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -19375,12 +19375,12 @@ POST https://api.pipedrive.com/api/v2/deals/&#123;id&#125;/products. The officia
   comments?: string | null,
   currency?: string | null,
   discount?: number | null,
-  discount_type?: percentage | string | amount | string | null,
+  discount_type?: percentage | amount | string | null,
   quantity?: number | null,
   item_price?: number | null,
-  tax_method?: exclusive | string | inclusive | string | none | string | null,
+  tax_method?: exclusive | inclusive | none | string | null,
   is_enabled?: boolean | null,
-  billing_frequency?: one-time | string | annually | string | semi-annually | string | quarterly | string | monthly | string | weekly | string | null,
+  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly | string | null,
   billing_frequency_cycles?: number | null | null,
   billing_start_date?: string | null | null
 } | null
@@ -19474,12 +19474,12 @@ POST https://api.pipedrive.com/api/v2/deals/&#123;id&#125;/products/bulk. The of
   comments?: string | null,
   currency?: string | null,
   discount?: number | null,
-  discount_type?: percentage | string | amount | string | null,
+  discount_type?: percentage | amount | string | null,
   quantity?: number | null,
   item_price?: number | null,
-  tax_method?: exclusive | string | inclusive | string | none | string | null,
+  tax_method?: exclusive | inclusive | none | string | null,
   is_enabled?: boolean | null,
-  billing_frequency?: one-time | string | annually | string | semi-annually | string | quarterly | string | monthly | string | weekly | string | null,
+  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly | string | null,
   billing_frequency_cycles?: number | null | null,
   billing_start_date?: string | null | null
 }[] | null
@@ -19694,12 +19694,12 @@ GET https://api.pipedrive.com/api/v2/deals/&#123;id&#125;/products. The official
   comments?: string | null,
   currency?: string | null,
   discount?: number | null,
-  discount_type?: percentage | string | amount | string | null,
+  discount_type?: percentage | amount | string | null,
   quantity?: number | null,
   item_price?: number | null,
-  tax_method?: exclusive | string | inclusive | string | none | string | null,
+  tax_method?: exclusive | inclusive | none | string | null,
   is_enabled?: boolean | null,
-  billing_frequency?: one-time | string | annually | string | semi-annually | string | quarterly | string | monthly | string | weekly | string | null,
+  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly | string | null,
   billing_frequency_cycles?: number | null | null,
   billing_start_date?: string | null | null
 }[] | null
@@ -19783,12 +19783,12 @@ GET https://api.pipedrive.com/api/v2/deals/products. The official OpenAPI x-toke
   comments?: string | null,
   currency?: string | null,
   discount?: number | null,
-  discount_type?: percentage | string | amount | string | null,
+  discount_type?: percentage | amount | string | null,
   quantity?: number | null,
   item_price?: number | null,
-  tax_method?: exclusive | string | inclusive | string | none | string | null,
+  tax_method?: exclusive | inclusive | none | string | null,
   is_enabled?: boolean | null,
-  billing_frequency?: one-time | string | annually | string | semi-annually | string | quarterly | string | monthly | string | weekly | string | null,
+  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly | string | null,
   billing_frequency_cycles?: number | null | null,
   billing_start_date?: string | null | null
 }[] | null
@@ -19890,12 +19890,12 @@ PATCH https://api.pipedrive.com/api/v2/deals/&#123;id&#125;/products/&#123;produ
   comments?: string | null,
   currency?: string | null,
   discount?: number | null,
-  discount_type?: percentage | string | amount | string | null,
+  discount_type?: percentage | amount | string | null,
   quantity?: number | null,
   item_price?: number | null,
-  tax_method?: exclusive | string | inclusive | string | none | string | null,
+  tax_method?: exclusive | inclusive | none | string | null,
   is_enabled?: boolean | null,
-  billing_frequency?: one-time | string | annually | string | semi-annually | string | quarterly | string | monthly | string | weekly | string | null,
+  billing_frequency?: one-time | annually | semi-annually | quarterly | monthly | weekly | string | null,
   billing_frequency_cycles?: number | null | null,
   billing_start_date?: string | null | null
 } | null
@@ -20195,7 +20195,7 @@ GET https://api.pipedrive.com/api/v2/deals/&#123;id&#125;/discounts. The officia
 ```ts
 {
   id?: string | null,
-  type?: percentage | string | amount | string | null,
+  type?: percentage | amount | string | null,
   amount?: number | null,
   description?: string | null,
   deal_id?: number | null,
@@ -20374,7 +20374,7 @@ GET https://api.pipedrive.com/api/v2/deals/&#123;id&#125;/convert/status/&#123;c
   lead_id?: string | null,
   deal_id?: number | null,
   conversion_id?: string | null,
-  status?: not_started | string | running | string | completed | string | failed | string | rejected | string | null
+  status?: not_started | running | completed | failed | rejected | string | null
 } | null
 ```
 </Accordion>
@@ -20606,7 +20606,7 @@ POST https://api.pipedrive.com/api/v2/deals/&#123;id&#125;/discounts. The offici
 ```ts
 {
   id?: string | null,
-  type?: percentage | string | amount | string | null,
+  type?: percentage | amount | string | null,
   amount?: number | null,
   description?: string | null,
   deal_id?: number | null,
@@ -20784,7 +20784,7 @@ PATCH https://api.pipedrive.com/api/v2/deals/&#123;id&#125;/discounts/&#123;disc
 ```ts
 {
   id?: string | null,
-  type?: percentage | string | amount | string | null,
+  type?: percentage | amount | string | null,
   amount?: number | null,
   description?: string | null,
   deal_id?: number | null,
@@ -21079,7 +21079,7 @@ GET https://api.pipedrive.com/api/v2/leads/&#123;id&#125;/convert/status/&#123;c
   lead_id?: string | null,
   deal_id?: number | null,
   conversion_id?: string | null,
-  status?: not_started | string | running | string | completed | string | failed | string | rejected | string | null
+  status?: not_started | running | completed | failed | rejected | string | null
 } | null
 ```
 </Accordion>
@@ -21265,7 +21265,7 @@ POST https://api.pipedrive.com/api/v2/organizationFields. The official OpenAPI x
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -21581,7 +21581,7 @@ GET https://api.pipedrive.com/api/v2/organizationFields/&#123;field_code&#125;. 
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -21677,7 +21677,7 @@ GET https://api.pipedrive.com/api/v2/organizationFields. The official OpenAPI x-
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -21808,7 +21808,7 @@ PATCH https://api.pipedrive.com/api/v2/organizationFields/&#123;field_code&#125;
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -22357,7 +22357,7 @@ POST https://api.pipedrive.com/api/v2/personFields. The official OpenAPI x-token
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -22666,7 +22666,7 @@ GET https://api.pipedrive.com/api/v2/personFields/&#123;field_code&#125;. The of
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -22755,7 +22755,7 @@ GET https://api.pipedrive.com/api/v2/personFields. The official OpenAPI x-token-
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -22875,7 +22875,7 @@ PATCH https://api.pipedrive.com/api/v2/personFields/&#123;field_code&#125;. The 
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -23801,7 +23801,7 @@ POST https://api.pipedrive.com/api/v2/productFields. The official OpenAPI x-toke
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -24099,7 +24099,7 @@ GET https://api.pipedrive.com/api/v2/productFields/&#123;field_code&#125;. The o
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -24177,7 +24177,7 @@ GET https://api.pipedrive.com/api/v2/productFields. The official OpenAPI x-token
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -24275,7 +24275,7 @@ PATCH https://api.pipedrive.com/api/v2/productFields/&#123;field_code&#125;. The
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -24737,7 +24737,7 @@ POST https://api.pipedrive.com/api/v2/projectFields. The official OpenAPI x-toke
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | orgs | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | orgs | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -25032,7 +25032,7 @@ GET https://api.pipedrive.com/api/v2/projectFields/&#123;field_code&#125;. The o
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | orgs | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | orgs | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -25116,7 +25116,7 @@ GET https://api.pipedrive.com/api/v2/projectFields. The official OpenAPI x-token
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | orgs | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | orgs | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
@@ -25228,7 +25228,7 @@ PATCH https://api.pipedrive.com/api/v2/projectFields/&#123;field_code&#125;. The
 {
   field_name?: string | null,
   field_code?: string | null,
-  field_type?: int | string | double | string | boolean | string | varchar | string | text | string | phone | string | varchar_options | string | varchar_auto | string | date | string | daterange | string | time | string | timerange | string | enum | string | set | string | address | string | monetary | string | deal | string | deals | string | lead | string | org | string | people | string | project | string | stage | string | user | string | activity | string | json | string | picture | string | status | string | visible_to | string | price_list | string | billing_frequency | string | projects_board | string | projects_phase | string | orgs | string | null,
+  field_type?: int | double | boolean | varchar | text | phone | varchar_options | varchar_auto | date | daterange | time | timerange | enum | set | address | monetary | deal | deals | lead | org | people | project | stage | user | activity | json | picture | status | visible_to | price_list | billing_frequency | projects_board | projects_phase | orgs | string | null,
   options?: {
     id?: number | string | boolean | null,
     label?: string | null,
