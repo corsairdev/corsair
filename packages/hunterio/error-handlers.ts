@@ -1,5 +1,6 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { isHunterThrottleBody } from './client';
 
 export const errorHandlers = {
 	// The framework tries handlers in object order (first match wins), so
@@ -21,9 +22,12 @@ export const errorHandlers = {
 	},
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			// Hunter signals throttling with 403 (docs: 40 requests per 10s
-			// window) and sets Retry-After.
-			if (error instanceof ApiError && error.status === 403) return true;
+			// Hunter signals throttling with 403 `too_many_requests` and sets
+			// Retry-After. Other 403 ids (no_signals_access,
+			// no_opportunities_access, ...) are permanent and fall through.
+			if (error instanceof ApiError && error.status === 403) {
+				return isHunterThrottleBody(error.body);
+			}
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('too many requests') ||

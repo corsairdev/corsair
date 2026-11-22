@@ -3422,6 +3422,14 @@
                 ]
               },
               {
+                "group": "Laposta",
+                "pages": [
+                  "plugins/laposta/overview",
+                  "plugins/laposta/api",
+                  "plugins/laposta/database"
+                ]
+              },
+              {
                 "group": "LaunchDarkly",
                 "pages": [
                   "plugins/launchdarkly/overview",
@@ -3470,6 +3478,14 @@
                 ]
               },
               {
+                "group": "Lexoffice",
+                "pages": [
+                  "plugins/lexoffice/overview",
+                  "plugins/lexoffice/api",
+                  "plugins/lexoffice/database"
+                ]
+              },
+              {
                 "group": "Linear",
                 "pages": [
                   "plugins/linear/overview",
@@ -3501,6 +3517,14 @@
                   "plugins/linkup/overview",
                   "plugins/linkup/api",
                   "plugins/linkup/database"
+                ]
+              },
+              {
+                "group": "Listen Notes",
+                "pages": [
+                  "plugins/listennotes/overview",
+                  "plugins/listennotes/api",
+                  "plugins/listennotes/database"
                 ]
               },
               {
@@ -4063,6 +4087,15 @@
                 ]
               },
               {
+                "group": "PandaDoc",
+                "pages": [
+                  "plugins/pandadoc/overview",
+                  "plugins/pandadoc/api",
+                  "plugins/pandadoc/database",
+                  "plugins/pandadoc/webhooks"
+                ]
+              },
+              {
                 "group": "Paperform",
                 "pages": [
                   "plugins/paperform/overview",
@@ -4101,6 +4134,14 @@
                   "plugins/parseur/overview",
                   "plugins/parseur/api",
                   "plugins/parseur/database"
+                ]
+              },
+              {
+                "group": "Payhip",
+                "pages": [
+                  "plugins/payhip/overview",
+                  "plugins/payhip/api",
+                  "plugins/payhip/database"
                 ]
               },
               {
@@ -4153,6 +4194,14 @@
                 ]
               },
               {
+                "group": "Perigon",
+                "pages": [
+                  "plugins/perigon/overview",
+                  "plugins/perigon/api",
+                  "plugins/perigon/database"
+                ]
+              },
+              {
                 "group": "Perplexity",
                 "pages": [
                   "plugins/perplexityai/overview",
@@ -4177,11 +4226,27 @@
                 ]
               },
               {
+                "group": "Pingdom",
+                "pages": [
+                  "plugins/pingdom/overview",
+                  "plugins/pingdom/api",
+                  "plugins/pingdom/database"
+                ]
+              },
+              {
                 "group": "Pipedrive",
                 "pages": [
                   "plugins/pipedrive/overview",
                   "plugins/pipedrive/api",
                   "plugins/pipedrive/database"
+                ]
+              },
+              {
+                "group": "Pipeline CRM",
+                "pages": [
+                  "plugins/pipelinecrm/overview",
+                  "plugins/pipelinecrm/api",
+                  "plugins/pipelinecrm/database"
                 ]
               },
               {

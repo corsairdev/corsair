@@ -1,0 +1,437 @@
+---
+title: "Perigon API reference"
+sidebarTitle: "API"
+description: "API reference for the Perigon plugin in Corsair: every `perigon.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Articles
+
+### list
+
+`articles.list`
+
+Search news articles: one result per published URL, filterable by query, topic, category, source, country, language and dates
+
+**Risk:** `read`
+
+```ts
+await corsair.perigon.api.articles.list({ q: "climate AND policy", category: "Business", source: ["reuters.com", "apnews.com"], from: "2025-11-01", sortBy: "date", size: 25 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Keyword or boolean query (AND, OR, NOT, quotes) across title, description and content |
+| `from` | `string` | No | Published after this time: ISO 8601 or yyyy-mm-dd |
+| `to` | `string` | No | Published before this time: ISO 8601 or yyyy-mm-dd |
+| `topic` | `string \| string[]` | No | Topic, e.g. Markets, Cryptocurrency; several values are ORed |
+| `category` | `string \| string[]` | No | Category, e.g. Tech, Business, Politics; several values are ORed |
+| `source` | `string \| string[]` | No | Publisher domain, wildcards allowed (*.cnn.com); several values are ORed |
+| `country` | `string \| string[]` | No | Country code, e.g. us; several values are ORed |
+| `title` | `string` | No | Query scoped to titles |
+| `language` | `string \| string[]` | No | ISO-639 language code, e.g. en; several values are ORed |
+| `label` | `string \| string[]` | No | Label, e.g. Opinion, Paid News; several values are ORed |
+| `excludeLabel` | `string \| string[]` | No | Label to leave out; several values are ORed |
+| `showReprints` | `boolean` | No | Include syndicated reprints (Perigon default true) |
+| `sortBy` | `relevance \| date \| reverseDate \| addDate \| reverseAddDate \| pubDate \| refreshDate` | No | Sort order |
+| `page` | `number` | No | Page number, starting at 0 |
+| `size` | `number` | No | Results per page (at most 100 on the free plan) |
+
+One result per published article URL; showReprints: false drops syndicated copies. Content may be plan-truncated; limits.get reports articleContentTruncation.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| null` | No | HTTP status Perigon echoes, 200 on success |
+| `numResults` | `number \| null` | No | Total matching records across all pages |
+| `articles` | `object[]` | Yes | Articles on this page |
+
+<AccordionGroup>
+<Accordion title="articles full type">
+
+```ts
+{
+  articleId?: string | null,
+  url?: string | null,
+  title?: string | null,
+  description?: string | null,
+  content?: string | null,
+  summary?: string | null,
+  imageUrl?: string | null,
+  pubDate?: string | null,
+  addDate?: string | null,
+  refreshDate?: string | null,
+  authorsByline?: string | null,
+  clusterId?: string | null,
+  country?: string | null,
+  language?: string | null,
+  medium?: string | null,
+  score?: number | null,
+  reprint?: boolean | null,
+  source?: {
+    domain?: string | null,
+    location?: any | null
+  } | null,
+  sentiment?: {
+    positive?: number | null,
+    negative?: number | null,
+    neutral?: number | null
+  } | null,
+  keywords?: any[] | null,
+  topics?: any[] | null,
+  categories?: any[] | null,
+  labels?: any[] | null,
+  entities?: any[] | null,
+  companies?: any[] | null,
+  people?: any[] | null,
+  locations?: any[] | null,
+  places?: any[] | null,
+  links?: string[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Companies
+
+### list
+
+`companies.list`
+
+Search resolved company entities
+
+**Risk:** `read`
+
+```ts
+await corsair.perigon.api.companies.list({ q: "semiconductor", country: "us", size: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Query across company names and descriptions |
+| `name` | `string` | No | Company name |
+| `domain` | `string \| string[]` | No | Company web domain; several values are ORed |
+| `symbol` | `string \| string[]` | No | Stock symbol; several values are ORed |
+| `industry` | `string` | No | Industry |
+| `sector` | `string` | No | Sector |
+| `country` | `string \| string[]` | No | Country code; several values are ORed |
+| `page` | `number` | No | Page number, starting at 0 |
+| `size` | `number` | No | Results per page (at most 100 on the free plan) |
+
+Company entities with domains, symbols, sector and size.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| null` | No | HTTP status Perigon echoes, 200 on success |
+| `numResults` | `number \| null` | No | Total matching records across all pages |
+| `results` | `object[]` | Yes | Companies on this page |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  altNames?: string[] | null,
+  domains?: string[] | null,
+  description?: string | null,
+  ceo?: string | null,
+  industry?: string | null,
+  sector?: string | null,
+  country?: string | null,
+  city?: string | null,
+  state?: string | null,
+  fullTimeEmployees?: number | null,
+  yearFounded?: number | null,
+  revenue?: string | number | null,
+  symbols?: any[] | null,
+  isin?: string | null,
+  logo?: string | null,
+  favicon?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Journalists
+
+### list
+
+`journalists.list`
+
+Search the journalist directory by name or publisher
+
+**Risk:** `read`
+
+```ts
+await corsair.perigon.api.journalists.list({ q: "technology", source: "example.com" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Query across name, title and bio |
+| `name` | `string` | No | Journalist name |
+| `source` | `string \| string[]` | No | Publisher domain they write for; several values are ORed |
+| `topic` | `string \| string[]` | No | Topic they cover; several values are ORed |
+| `country` | `string \| string[]` | No | Country code they cover; several values are ORed |
+| `sortBy` | `avgMonthlyPosts \| linkedinConnections \| linkedinFollowers` | No | Sort order |
+| `page` | `number` | No | Page number, starting at 0 |
+| `size` | `number` | No | Results per page (at most 100 on the free plan) |
+
+q searches names, titles and bios; filter by publisher domain, topic or country.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| null` | No | HTTP status Perigon echoes, 200 on success |
+| `numResults` | `number \| null` | No | Total matching records across all pages |
+| `results` | `object[]` | Yes | Journalists on this page |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  fullName?: string | null,
+  title?: string | null,
+  headline?: string | null,
+  description?: string | null,
+  imageUrl?: string | null,
+  updatedAt?: string | null,
+  avgMonthlyPosts?: number | null,
+  twitterHandle?: string | null,
+  linkedinUrl?: string | null,
+  websiteUrl?: string | null,
+  topSources?: any[] | null,
+  topTopics?: any[] | null,
+  topCategories?: any[] | null,
+  topCountries?: any[] | null,
+  locations?: any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Limits
+
+### get
+
+`limits.get`
+
+Read account usage and limits; free to poll and not rate-limited
+
+**Risk:** `read`
+
+```ts
+await corsair.perigon.api.limits.get({});
+```
+
+**Input:** _empty object_
+
+Answers &#123; data: &#123; requestsUsed, requestLimit, maxPageSize, paginationLimit, resetAt &#125; &#125;.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | The plan limits and usage |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  organizationName?: string | null,
+  requestsUsed?: number | null,
+  requestLimit?: number | null,
+  maxPageSize?: number | null,
+  paginationLimit?: number | null,
+  articleContentTruncation?: number | null,
+  since?: string | null,
+  lastMadeAt?: string | null,
+  resetAt?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## People
+
+### list
+
+`people.list`
+
+Search resolved person entities
+
+**Risk:** `read`
+
+```ts
+await corsair.perigon.api.people.list({ name: "Ada Lovelace" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | Person name |
+| `wikidataId` | `string \| string[]` | No | Wikidata id, e.g. Q312556; several values are ORed |
+| `occupationLabel` | `string` | No | Occupation, e.g. politician |
+| `page` | `number` | No | Page number, starting at 0 |
+| `size` | `number` | No | Results per page (at most 100 on the free plan) |
+
+Person entities keyed by Wikidata id; search by name (this route has no q).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| null` | No | HTTP status Perigon echoes, 200 on success |
+| `numResults` | `number \| null` | No | Total matching records across all pages |
+| `results` | `object[]` | Yes | People on this page |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  wikidataId?: string | null,
+  name?: string | null,
+  description?: string | null,
+  abstract?: string | null,
+  aliases?: string[] | null,
+  occupation?: any[] | null,
+  position?: any[] | null,
+  politicalParty?: any[] | null,
+  gender?: any | null,
+  dateOfBirth?: any | null,
+  dateOfDeath?: any | null,
+  image?: any | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Stories
+
+### list
+
+`stories.list`
+
+List story clusters: one narrative across many articles
+
+**Risk:** `read`
+
+```ts
+await corsair.perigon.api.stories.list({ q: "semiconductor", minUniqueSources: 3, sortBy: "updatedAt" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | Keyword or boolean query (AND, OR, NOT, quotes) across title, description and content |
+| `from` | `string` | No | Published after this time: ISO 8601 or yyyy-mm-dd |
+| `to` | `string` | No | Published before this time: ISO 8601 or yyyy-mm-dd |
+| `topic` | `string \| string[]` | No | Topic, e.g. Markets, Cryptocurrency; several values are ORed |
+| `category` | `string \| string[]` | No | Category, e.g. Tech, Business, Politics; several values are ORed |
+| `source` | `string \| string[]` | No | Publisher domain, wildcards allowed (*.cnn.com); several values are ORed |
+| `country` | `string \| string[]` | No | Country code, e.g. us; several values are ORed |
+| `name` | `string` | No | Query scoped to story names |
+| `minUniqueSources` | `number` | No | Only stories covered by at least this many publishers |
+| `sortBy` | `createdAt \| updatedAt \| relevance \| count \| totalCount` | No | Sort order |
+| `page` | `number` | No | Page number, starting at 0 |
+| `size` | `number` | No | Results per page (at most 100 on the free plan) |
+
+Clustered narratives; use clusterId from an article to reach its story.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| null` | No | HTTP status Perigon echoes, 200 on success |
+| `numResults` | `number \| null` | No | Total matching records across all pages |
+| `results` | `object[]` | Yes | Stories on this page |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  summary?: string | null,
+  shortSummary?: string | null,
+  keyPoints?: any[] | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  initializedAt?: string | null,
+  uniqueCount?: number | null,
+  reprintCount?: number | null,
+  totalCount?: number | null,
+  uniqueSourcesCount?: number | null,
+  sourceDiversity?: number | null,
+  sentiment?: any | null,
+  topTopics?: any[] | null,
+  topCategories?: any[] | null,
+  topCountries?: any[] | null,
+  topPeople?: any[] | null,
+  topCompanies?: any[] | null,
+  topLocations?: any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
