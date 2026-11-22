@@ -6782,7 +6782,7 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
         name?: string,
         value: string
       },
-      TotalAmt: number,
+      TotalAmt?: number,
       ExchangeRate?: number,
       Line?: {
         Amount: number,
@@ -12575,7 +12575,7 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
           name?: string,
           value: string
         },
-        TotalAmt: number,
+        TotalAmt?: number,
         ExchangeRate?: number,
         Line?: {
           Amount: number,
@@ -16797,7 +16797,7 @@ Submit 1–30 strictly modelled create, update, delete, or Query batch items. Us
         name?: string,
         value: string
       },
-      TotalAmt: number,
+      TotalAmt?: number,
       ExchangeRate?: number,
       Line?: {
         Amount: number,
@@ -23745,7 +23745,7 @@ changedSince must be within the previous 30 days. JournalCode, TaxAgency, TimeAc
             name?: string,
             value: string
           },
-          TotalAmt: number,
+          TotalAmt?: number,
           ExchangeRate?: number,
           Line?: {
             Amount: number,
@@ -44004,7 +44004,7 @@ await corsair.quickbooks.api.payment.create({"realmId":"12345678","body":{"Total
     name?: string,
     value: string
   },
-  TotalAmt: number,
+  TotalAmt?: number,
   ExchangeRate?: number,
   Line?: {
     Amount: number,
@@ -44166,7 +44166,7 @@ await corsair.quickbooks.api.payment.get({"realmId":"12345678","paymentId":"35"}
     name?: string,
     value: string
   },
-  TotalAmt: number,
+  TotalAmt?: number,
   ExchangeRate?: number,
   Line?: {
     Amount: number,
@@ -44310,7 +44310,7 @@ await corsair.quickbooks.api.payment.list({"realmId":"12345678"});
       name?: string,
       value: string
     },
-    TotalAmt: number,
+    TotalAmt?: number,
     ExchangeRate?: number,
     Line?: {
       Amount: number,
@@ -44417,7 +44417,7 @@ await corsair.quickbooks.api.payment.send({"realmId":"12345678","paymentId":"35"
     name?: string,
     value: string
   },
-  TotalAmt: number,
+  TotalAmt?: number,
   ExchangeRate?: number,
   Line?: {
     Amount: number,
@@ -44595,7 +44595,7 @@ await corsair.quickbooks.api.payment.update({"realmId":"12345678","body":{"Total
     name?: string,
     value: string
   },
-  TotalAmt: number,
+  TotalAmt?: number,
   ExchangeRate?: number,
   Line?: {
     Amount: number,
@@ -44713,7 +44713,7 @@ await corsair.quickbooks.api.payment.void({"realmId":"12345678","body":{"Id":"35
     name?: string,
     value: string
   },
-  TotalAmt: number,
+  TotalAmt?: number,
   ExchangeRate?: number,
   Line?: {
     Amount: number,
