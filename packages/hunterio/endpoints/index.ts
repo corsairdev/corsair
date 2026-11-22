@@ -7,6 +7,7 @@ import {
 	replace as apiKeysReplace,
 	update as apiKeysUpdate,
 } from './api-keys';
+import { get as briefingGet } from './briefing';
 import {
 	bulkCopy as companiesBulkCopy,
 	bulkDelete as companiesBulkDelete,
@@ -33,6 +34,7 @@ import {
 	favorite as companyListsFavorite,
 	get as companyListsGet,
 	list as companyListsList,
+	listCompanies as companyListsListCompanies,
 	remove as companyListsRemove,
 	removeCompany as companyListsRemoveCompany,
 	replace as companyListsReplace,
@@ -77,6 +79,8 @@ import {
 	findPost as domainFinderFindPost,
 } from './domain-finder';
 import {
+	found as domainSearchFound,
+	foundPost as domainSearchFoundPost,
 	search as domainSearchSearch,
 	searchPost as domainSearchSearchPost,
 } from './domain-search';
@@ -155,10 +159,15 @@ import {
 	update as messageTemplatesUpdate,
 } from './message-templates';
 import { list as messagesList, send as messagesSend } from './messages';
+import { list as monitoredSignalsList } from './monitored-signals';
 import {
 	reveal as multiDomainSearchReveal,
 	search as multiDomainSearchSearch,
 } from './multi-domain-search';
+import {
+	list as opportunitiesList,
+	results as opportunitiesResults,
+} from './opportunities';
 import {
 	create as sequenceFollowUpsCreate,
 	get as sequenceFollowUpsGet,
@@ -186,6 +195,7 @@ import {
 	test as sequencesTest,
 	update as sequencesUpdate,
 } from './sequences';
+import { list as signalsList } from './signals';
 import {
 	create as tagsCreate,
 	get as tagsGet,
@@ -271,6 +281,8 @@ export const DomainsSuggestion = {
 export const DomainSearch = {
 	search: domainSearchSearch,
 	searchPost: domainSearchSearchPost,
+	found: domainSearchFound,
+	foundPost: domainSearchFoundPost,
 };
 
 export const MultiDomainSearch = {
@@ -304,6 +316,23 @@ export const Enrichment = {
 
 export const Lookalikes = {
 	list: lookalikesList,
+};
+
+export const Briefing = {
+	get: briefingGet,
+};
+
+export const Signals = {
+	list: signalsList,
+};
+
+export const MonitoredSignals = {
+	list: monitoredSignalsList,
+};
+
+export const Opportunities = {
+	list: opportunitiesList,
+	results: opportunitiesResults,
 };
 
 export const Leads = {
@@ -387,6 +416,7 @@ export const CompanyLists = {
 	update: companyListsUpdate,
 	replace: companyListsReplace,
 	delete: companyListsRemove,
+	listCompanies: companyListsListCompanies,
 	addCompany: companyListsAddCompany,
 	removeCompany: companyListsRemoveCompany,
 	favorite: companyListsFavorite,
