@@ -511,6 +511,7 @@ export const BaseProviders = [
 	'pingdom',
 	'pinecone',
 	'pipedrive',
+	'penpot',
 	'perigon',
 	'pipelinecrm',
 	'placid',
@@ -1269,6 +1270,7 @@ export const ProviderDisplayNames = {
 	pingdom: 'Pingdom',
 	pinecone: 'Pinecone',
 	pipedrive: 'Pipedrive',
+	penpot: 'Penpot',
 	perigon: 'Perigon',
 	pipelinecrm: 'Pipeline CRM',
 	placid: 'Placid',
@@ -2034,6 +2036,7 @@ export type AllProviders =
 	| 'pinecone'
 	| 'pingdom'
 	| 'pipedrive'
+	| 'penpot'
 	| 'perigon'
 	| 'pipelinecrm'
 	| 'placid'
