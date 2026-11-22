@@ -4189,6 +4189,15 @@
                 ]
               },
               {
+                "group": "Passcreator",
+                "pages": [
+                  "plugins/passcreator/overview",
+                  "plugins/passcreator/api",
+                  "plugins/passcreator/database",
+                  "plugins/passcreator/webhooks"
+                ]
+              },
+              {
                 "group": "PDF-API.io",
                 "pages": [
                   "plugins/pdfapi/overview",
