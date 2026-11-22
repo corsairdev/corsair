@@ -2,7 +2,12 @@ import { ApiError } from 'corsair/http';
 import { errorHandlers } from './error-handlers';
 import { hunterio } from './index';
 
-function apiError(status: number, message: string, retryAfter?: number) {
+function apiError(
+	status: number,
+	message: string,
+	retryAfter?: number,
+	body: unknown = {},
+) {
 	return new ApiError(
 		{ method: 'GET', url: '/account' },
 		{
@@ -10,7 +15,7 @@ function apiError(status: number, message: string, retryAfter?: number) {
 			ok: false,
 			status,
 			statusText: message,
-			body: {},
+			body,
 		},
 		message,
 		retryAfter === undefined ? undefined : { retryAfter },
@@ -35,6 +40,29 @@ describe('Hunterio errorHandlers', () => {
 			maxRetries: 5,
 			headersRetryAfterMs: 1500,
 		});
+	});
+
+	it('routes 403 too_many_requests to RATE_LIMIT_ERROR', () => {
+		const error = apiError(403, 'Forbidden', 1000, {
+			errors: [{ id: 'too_many_requests', code: 403, details: 'Slow down' }],
+		});
+		expect(route(error)).toBe('RATE_LIMIT_ERROR');
+	});
+
+	it('does not retry permanent 403 refusals such as no_opportunities_access', async () => {
+		for (const id of [
+			'no_signals_access',
+			'no_opportunities_access',
+			'ai_access_revoked',
+		]) {
+			const error = apiError(403, 'Forbidden', undefined, {
+				errors: [{ id, code: 403, details: 'Not enabled on your plan.' }],
+			});
+			expect(route(error)).toBe('DEFAULT');
+			await expect(errorHandlers.DEFAULT.handler()).resolves.toEqual({
+				maxRetries: 0,
+			});
+		}
 	});
 
 	it('routes 403 without Retry-After to a retrying handler with no header delay', async () => {

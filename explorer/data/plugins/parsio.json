@@ -1,0 +1,1326 @@
+{
+  "id": "parsio",
+  "displayName": "Parsio",
+  "description": "Parsio is an AI email and document parser that turns emails, PDFs and scans into structured JSON. This plugin manages mailboxes, parses HTML, text and uploaded files synchronously or asynchronously, reads parsed documents and collected data, and manages the webhooks that deliver parsed documents (HMAC-verified).",
+  "npmPackageName": "@corsair-dev/parsio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 21,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "parsio.api.data.getParsed",
+      "shortPath": "data.getParsed",
+      "description": "Read the parsed data records of a mailbox, paged by date",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox id"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Start date in YYYY-MM-DD format"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "End date in YYYY-MM-DD format"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docs",
+            "optional": false,
+            "type": "{ doc_id?: string | null }[]",
+            "description": "The parsed data records on this page"
+          },
+          {
+            "key": "docIds",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "Ids of the documents on this page"
+          },
+          {
+            "key": "totalDocs",
+            "optional": true,
+            "type": "number | null",
+            "description": "Documents in total"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null",
+            "description": "Page size"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null",
+            "description": "Current page"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number | null",
+            "description": "Pages in total"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether another page follows"
+          },
+          {
+            "key": "nextPage",
+            "optional": true,
+            "type": "number | null",
+            "description": "Next page number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsio.api.data.listEmails",
+      "shortPath": "data.listEmails",
+      "description": "List the email addresses the mailbox collected",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ email?: string | null }[]"
+      }
+    },
+    {
+      "path": "parsio.api.documents.createAsync",
+      "shortPath": "documents.createAsync",
+      "description": "Parse HTML or text content asynchronously; poll documents.get for the result",
+      "riskLevel": "destructive",
+      "job": {
+        "idPath": "doc_id",
+        "status": {
+          "op": "documents.get",
+          "idArg": "documentId",
+          "statusPath": "status",
+          "done": ["parsed"],
+          "failed": []
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox id that parses the document"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string",
+            "description": "HTML content to parse; wins when both html and text are sent"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "Plain text content to parse"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom payload; the parsed JSON returns it as __meta__"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          },
+          {
+            "key": "parsing_in_progress",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether parsing is still running"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document status, e.g. parsing, parsed"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document name; null while parsing"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Media type of the source document"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "processed_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When parsing finished"
+          },
+          {
+            "key": "json",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The parsed data"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsio.api.documents.createSync",
+      "shortPath": "documents.createSync",
+      "description": "Parse HTML or text content and wait for the result; template and GPT parsers only, each parse consumes credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox id that parses the document"
+          },
+          {
+            "key": "html",
+            "optional": true,
+            "type": "string",
+            "description": "HTML content to parse; wins when both html and text are sent"
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "Plain text content to parse"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom payload; the parsed JSON returns it as __meta__"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          },
+          {
+            "key": "parsing_in_progress",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether parsing is still running"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document status, e.g. parsing, parsed"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document name; null while parsing"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Media type of the source document"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "processed_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When parsing finished"
+          },
+          {
+            "key": "json",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The parsed data"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsio.api.documents.get",
+      "shortPath": "documents.get",
+      "description": "Read one parsed document; this is the payload Parsio webhooks deliver",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          },
+          {
+            "key": "parsing_in_progress",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether parsing is still running"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document status, e.g. parsing, parsed"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document name; null while parsing"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Media type of the source document"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "processed_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When parsing finished"
+          },
+          {
+            "key": "json",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The parsed data"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsio.api.documents.list",
+      "shortPath": "documents.list",
+      "description": "List the documents of a mailbox, filtered by date, name or status",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox id"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "per_page",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page, at most 500"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Start date in YYYY-MM-DD format"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "End date in YYYY-MM-DD format"
+          },
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Search by document name"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string[]",
+            "description": "Filter by document status, e.g. parsed, parsing"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "docs",
+            "optional": false,
+            "type": "{ _id: string, name?: string | null, status?: string | null, type?: string | null, created_at?: string | null, processed_at?: string | null }[]",
+            "description": "The documents on this page"
+          },
+          {
+            "key": "totalDocs",
+            "optional": true,
+            "type": "number | null",
+            "description": "Documents in total"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number | null",
+            "description": "Page size"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number | null",
+            "description": "Current page"
+          },
+          {
+            "key": "totalPages",
+            "optional": true,
+            "type": "number | null",
+            "description": "Pages in total"
+          },
+          {
+            "key": "hasNextPage",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether another page follows"
+          },
+          {
+            "key": "nextPage",
+            "optional": true,
+            "type": "number | null",
+            "description": "Next page number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsio.api.documents.reparse",
+      "shortPath": "documents.reparse",
+      "description": "Queue a document for reprocessing; each reparse consumes credits",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "documentId",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string",
+            "description": "The document queued for parsing again"
+          },
+          {
+            "key": "queued",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether Parsio accepted the request"
+          },
+          {
+            "key": "result",
+            "optional": true,
+            "type": "any",
+            "description": "What the API answered"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsio.api.documents.skipMany",
+      "shortPath": "documents.skipMany",
+      "description": "Skip parsing for the given documents",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox id"
+          },
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "Document ids to skip"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number",
+            "description": "Number of documents skipped"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the skip succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsio.api.documents.uploadAsync",
+      "shortPath": "documents.uploadAsync",
+      "description": "Upload one file (max 50MB, ZIP supported) and parse it asynchronously",
+      "riskLevel": "destructive",
+      "job": {
+        "idPath": "doc_id",
+        "status": {
+          "op": "documents.get",
+          "idArg": "documentId",
+          "statusPath": "status",
+          "done": ["parsed"],
+          "failed": []
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox id that parses the document"
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the file, e.g. receipts.zip"
+          },
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string",
+            "description": "The file, base64-encoded; async upload accepts one file of at most 50MB, ZIPs included"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          },
+          {
+            "key": "parsing_in_progress",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether parsing is still running"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document status, e.g. parsing, parsed"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document name; null while parsing"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Media type of the source document"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "processed_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When parsing finished"
+          },
+          {
+            "key": "json",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The parsed data"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsio.api.documents.uploadSync",
+      "shortPath": "documents.uploadSync",
+      "description": "Upload one file (max 20MB, no ZIP) and wait for the parsed result",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox id that parses the document"
+          },
+          {
+            "key": "filename",
+            "optional": false,
+            "type": "string",
+            "description": "Name of the file, e.g. receipt.pdf"
+          },
+          {
+            "key": "contentBase64",
+            "optional": false,
+            "type": "string",
+            "description": "The file, base64-encoded; sync upload accepts one file of at most 20MB, no ZIP"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          },
+          {
+            "key": "parsing_in_progress",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether parsing is still running"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document status, e.g. parsing, parsed"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document name; null while parsing"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Media type of the source document"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "processed_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When parsing finished"
+          },
+          {
+            "key": "json",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The parsed data"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsio.api.mailboxes.create",
+      "shortPath": "mailboxes.create",
+      "description": "Create a mailbox with a parser preset",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox name"
+          },
+          {
+            "key": "preset",
+            "optional": true,
+            "type": "string",
+            "description": "Parser type or preset"
+          },
+          {
+            "key": "ml_model",
+            "optional": true,
+            "type": "string",
+            "description": "OCR or AI model, depending on mailbox type"
+          },
+          {
+            "key": "has_raw_data",
+            "optional": true,
+            "type": "boolean",
+            "description": "Keep the raw document content"
+          },
+          {
+            "key": "parse_sig",
+            "optional": true,
+            "type": "boolean",
+            "description": "Parse email signatures"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Mailbox name"
+          },
+          {
+            "key": "preset",
+            "optional": true,
+            "type": "string | null",
+            "description": "Parser type or preset"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsio.api.mailboxes.delete",
+      "shortPath": "mailboxes.delete",
+      "description": "Delete a mailbox",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Deleted mailbox id"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsio.api.mailboxes.get",
+      "shortPath": "mailboxes.get",
+      "description": "Read one mailbox with its settings and configuration",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Mailbox name"
+          },
+          {
+            "key": "preset",
+            "optional": true,
+            "type": "string | null",
+            "description": "Parser type or preset"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsio.api.mailboxes.list",
+      "shortPath": "mailboxes.list",
+      "description": "List all mailboxes available to the authenticated user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string | null, preset?: string | null }[]"
+      }
+    },
+    {
+      "path": "parsio.api.mailboxes.tableFields",
+      "shortPath": "mailboxes.tableFields",
+      "description": "List the table fields configured in a mailbox",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "parsio.api.mailboxes.update",
+      "shortPath": "mailboxes.update",
+      "description": "Update mailbox settings: name, email prefix, attachments, alerts",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Mailbox name"
+          },
+          {
+            "key": "email_prefix",
+            "optional": true,
+            "type": "string",
+            "description": "Prefix of the mailbox email address"
+          },
+          {
+            "key": "process_attachments",
+            "optional": true,
+            "type": "boolean",
+            "description": "Store or ignore email attachments"
+          },
+          {
+            "key": "collect_emails",
+            "optional": true,
+            "type": "boolean",
+            "description": "Collect email addresses automatically"
+          },
+          {
+            "key": "alert_email_h",
+            "optional": true,
+            "type": "number",
+            "description": "Email alert frequency in hours"
+          },
+          {
+            "key": "receive_email",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether the mailbox accepts incoming emails"
+          },
+          {
+            "key": "preset",
+            "optional": true,
+            "type": "string",
+            "description": "Parser type or preset"
+          },
+          {
+            "key": "ml_model",
+            "optional": true,
+            "type": "string",
+            "description": "OCR or AI model"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether Parsio refused it"
+          },
+          {
+            "key": "errMsg",
+            "optional": true,
+            "type": "string | null",
+            "description": "Why, when it did"
+          },
+          {
+            "key": "errFields",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Per-field errors"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsio.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a webhook subscription for doc.parsed, doc.fail, doc.received or table.parsed events",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox the webhook belongs to"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Webhook name"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "Endpoint deliveries are posted to"
+          },
+          {
+            "key": "event",
+            "optional": false,
+            "type": "doc.parsed | doc.parsed.flat | doc.fail | doc.received | table.parsed",
+            "description": "Event the webhook delivers"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether deliveries are active"
+          },
+          {
+            "key": "table_id",
+            "optional": true,
+            "type": "string",
+            "description": "Required only when the event is table.parsed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Webhook name"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Endpoint deliveries are posted to"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | null",
+            "description": "Event the webhook delivers"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether deliveries are active"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsio.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete webhook subscriptions; deliveries stop until they are created again",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "Webhook ids to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "Deleted webhook ids"
+          },
+          {
+            "key": "success",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether the delete succeeded"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsio.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Read one webhook subscription",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "_id",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Webhook name"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Endpoint deliveries are posted to"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "string | null",
+            "description": "Event the webhook delivers"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether deliveries are active"
+          }
+        ]
+      }
+    },
+    {
+      "path": "parsio.api.webhooks.listForMailbox",
+      "shortPath": "webhooks.listForMailbox",
+      "description": "List the webhook subscriptions of a mailbox",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mailboxId",
+            "optional": false,
+            "type": "string",
+            "description": "Mailbox id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ _id: string, name?: string | null, url?: string | null, event?: string | null, enabled?: boolean | null }[]"
+      }
+    },
+    {
+      "path": "parsio.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a webhook subscription",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string",
+            "description": "Webhook id (sent as _id)"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Webhook name"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "Endpoint deliveries are posted to"
+          },
+          {
+            "key": "event",
+            "optional": true,
+            "type": "doc.parsed | doc.parsed.flat | doc.fail | doc.received | table.parsed",
+            "description": "Event the webhook delivers"
+          },
+          {
+            "key": "enabled",
+            "optional": true,
+            "type": "boolean",
+            "description": "Whether deliveries are active"
+          },
+          {
+            "key": "table_id",
+            "optional": true,
+            "type": "string",
+            "description": "Required only when the event is table.parsed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "isError",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether Parsio refused it"
+          },
+          {
+            "key": "errMsg",
+            "optional": true,
+            "type": "string | null",
+            "description": "Why, when it did"
+          },
+          {
+            "key": "errFields",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Per-field errors"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "parsio.webhooks.parsio.event",
+      "shortPath": "parsio.event",
+      "description": "A parsed document Parsio delivered to a webhook subscription",
+      "payload": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "doc_id",
+            "optional": false,
+            "type": "string",
+            "description": "Document id"
+          },
+          {
+            "key": "parsing_in_progress",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether parsing is still running"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document status, e.g. parsing, parsed"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Document name; null while parsing"
+          },
+          {
+            "key": "content_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "Media type of the source document"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "processed_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "When parsing finished"
+          },
+          {
+            "key": "json",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "The parsed data"
+          }
+        ]
+      },
+      "responseType": "{ doc_id: string, parsing_in_progress?: boolean | null, status?: string | null, name?: string | null, content_type?: string | null, created_at?: string | null, processed_at?: string | null, json?: Record<string, any> | null }",
+      "usageExample": "parsio({\n    webhookHooks: {\n        parsio: {\n            event: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

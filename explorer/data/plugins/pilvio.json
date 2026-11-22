@@ -1,0 +1,2445 @@
+{
+  "id": "pilvio",
+  "displayName": "Pilvio",
+  "description": "Pilvio is an Estonian cloud IaaS for compute and storage. This plugin manages the user profile, API tokens and SSH keys, creates and controls virtual machines, provisions block storage disks and S3 buckets, and manages private networks and firewalls across Pilvio locations.",
+  "npmPackageName": "@corsair-dev/pilvio",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 40,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "pilvio.api.account.getUser",
+      "shortPath": "account.getUser",
+      "description": "Read the authenticated user and profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "User id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Login name"
+          },
+          {
+            "key": "last_activity",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last activity timestamp"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "{ id?: number | null, user_id?: number | null, email?: string | null, first_name?: string | null, last_name?: string | null, phone_number?: string | null, personal_id_number?: string | null, avatar?: string | null, created_at?: string | null, updated_at?: string | null } | null",
+            "description": "Profile details"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "any | null",
+            "description": "User state"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.account.sshKeys.create",
+      "shortPath": "account.sshKeys.create",
+      "description": "Add an SSH public key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Key name"
+          },
+          {
+            "key": "publicKey",
+            "optional": false,
+            "type": "string",
+            "description": "OpenSSH public key material"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Key UUID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Key name"
+          },
+          {
+            "key": "public_key",
+            "optional": true,
+            "type": "string | null",
+            "description": "OpenSSH public key material"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owner user id"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.account.sshKeys.delete",
+      "shortPath": "account.sshKeys.delete",
+      "description": "Delete an SSH key",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the key to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "pilvio.api.account.sshKeys.list",
+      "shortPath": "account.sshKeys.list",
+      "description": "List the SSH public keys of the user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ uuid?: string | null, name?: string | null, public_key?: string | null, user_id?: number | null, created_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "pilvio.api.account.sshKeys.rename",
+      "shortPath": "account.sshKeys.rename",
+      "description": "Rename an SSH key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the key to rename"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "New key name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Key UUID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Key name"
+          },
+          {
+            "key": "public_key",
+            "optional": true,
+            "type": "string | null",
+            "description": "OpenSSH public key material"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owner user id"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.account.tokens.delete",
+      "shortPath": "account.tokens.delete",
+      "description": "Delete an API token",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tokenId",
+            "optional": false,
+            "type": "number",
+            "description": "Id of the token to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "pilvio.api.account.tokens.list",
+      "shortPath": "account.tokens.list",
+      "description": "List the API tokens of the user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | null, tokenEnding?: string | null, description?: string | null, restricted?: boolean | null, billing_account_id?: number | null, user_id?: number | null, consumer_id?: string | null, kong_id?: string | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "pilvio.api.account.tokens.update",
+      "shortPath": "account.tokens.update",
+      "description": "Update a token description or restriction",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "tokenId",
+            "optional": false,
+            "type": "number",
+            "description": "Id of the token to update"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "New description"
+          },
+          {
+            "key": "restricted",
+            "optional": true,
+            "type": "true",
+            "description": "true restricts the token to billingAccountId; false is not supported"
+          },
+          {
+            "key": "billingAccountId",
+            "optional": true,
+            "type": "number",
+            "description": "Billing account for a restricted token"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Token id"
+          },
+          {
+            "key": "tokenEnding",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last four characters of the token, to tell tokens apart"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Token description"
+          },
+          {
+            "key": "restricted",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the token is bound to one billing account"
+          },
+          {
+            "key": "billing_account_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Billing account a restricted token is bound to"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owner user id"
+          },
+          {
+            "key": "consumer_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Gateway consumer id"
+          },
+          {
+            "key": "kong_id",
+            "optional": true,
+            "type": "string | null",
+            "description": "Gateway token id"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.account.updateProfile",
+      "shortPath": "account.updateProfile",
+      "description": "Update the user profile fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string",
+            "description": "New first name"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string",
+            "description": "New last name"
+          },
+          {
+            "key": "phoneNumber",
+            "optional": true,
+            "type": "string",
+            "description": "New phone number"
+          },
+          {
+            "key": "personalIdNumber",
+            "optional": true,
+            "type": "string",
+            "description": "New personal id number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "User id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Login name"
+          },
+          {
+            "key": "last_activity",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last activity timestamp"
+          },
+          {
+            "key": "profile",
+            "optional": true,
+            "type": "{ id?: number | null, user_id?: number | null, email?: string | null, first_name?: string | null, last_name?: string | null, phone_number?: string | null, personal_id_number?: string | null, avatar?: string | null, created_at?: string | null, updated_at?: string | null } | null",
+            "description": "Profile details"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "any | null",
+            "description": "User state"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.config.getPricingPolicy",
+      "shortPath": "config.getPricingPolicy",
+      "description": "Read the pricing policy lines",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "policy",
+            "optional": false,
+            "type": "{ policyId?: number | null, resourceType?: string | null, price?: number | null, serviceNameUserFriendly?: string | null, numCpus?: number | null, megsRam?: number | null, serviceNameInUptime?: any | null }[]",
+            "description": "Pricing lines per resource type"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.config.listAppCatalogImages",
+      "shortPath": "config.listAppCatalogImages",
+      "description": "List the app catalog images",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ os_name?: string | null, os_version?: string | null }[]"
+      }
+    },
+    {
+      "path": "pilvio.api.config.listBootImages",
+      "shortPath": "config.listBootImages",
+      "description": "List bootable media images",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "pilvio.api.config.listLocations",
+      "shortPath": "config.listLocations",
+      "description": "List the Pilvio data centre locations",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ slug?: string | null, display_name?: string | null, description?: string | null, country_code?: string | null, is_default?: boolean | null, is_preferred?: boolean | null, order_nr?: number | null }[]"
+      }
+    },
+    {
+      "path": "pilvio.api.config.listPlainOsImages",
+      "shortPath": "config.listPlainOsImages",
+      "description": "List the plain OS images",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ os_name?: string | null, os_version?: string | null }[]"
+      }
+    },
+    {
+      "path": "pilvio.api.config.listResourcePools",
+      "shortPath": "config.listResourcePools",
+      "description": "List VM server classes (resource pools)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{}[]"
+      }
+    },
+    {
+      "path": "pilvio.api.config.listVmImages",
+      "shortPath": "config.listVmImages",
+      "description": "List the VM image catalog",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ os_name?: string | null, os_version?: string | null }[]"
+      }
+    },
+    {
+      "path": "pilvio.api.network.firewalls.create",
+      "shortPath": "network.firewalls.create",
+      "description": "Create a firewall with rules",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "displayName",
+            "optional": false,
+            "type": "string",
+            "description": "Firewall name"
+          },
+          {
+            "key": "billingAccountId",
+            "optional": true,
+            "type": "number",
+            "description": "Billing account"
+          },
+          {
+            "key": "rules",
+            "optional": false,
+            "type": "{ protocol: tcp | udp | icmp, direction: inbound | outbound, portStart?: number, portEnd?: number, endpointSpecType: ip_prefixes | any, endpointSpec?: string[] }[]",
+            "description": "The firewall rules"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Firewall UUID"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Firewall name"
+          },
+          {
+            "key": "billing_account_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Billing account id"
+          },
+          {
+            "key": "rules",
+            "optional": true,
+            "type": "{ uuid?: string | null, protocol?: tcp | udp | icmp | null, direction?: inbound | outbound | null, port_start?: number | null, port_end?: number | null, endpoint_spec_type?: ip_prefixes | any | null, endpoint_spec?: string[] | null }[] | null",
+            "description": "Firewall rules"
+          },
+          {
+            "key": "resources_assigned",
+            "optional": true,
+            "type": "any[] | null",
+            "description": "Resources the firewall is assigned to"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owner user id"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "deleted_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deletion timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.network.firewalls.delete",
+      "shortPath": "network.firewalls.delete",
+      "description": "Delete a firewall",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the firewall to delete"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "pilvio.api.network.firewalls.list",
+      "shortPath": "network.firewalls.list",
+      "description": "List the firewalls and their rules",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ uuid?: string | null, display_name?: string | null, billing_account_id?: number | null, rules?: { uuid?: string | null, protocol?: tcp | udp | icmp | null, direction?: inbound | outbound | null, port_start?: number | null, port_end?: number | null, endpoint_spec_type?: ip_prefixes | any | null, endpoint_spec?: string[] | null }[] | null, resources_assigned?: any[] | null, user_id?: number | null, created_at?: string | null, deleted_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "pilvio.api.network.networks.create",
+      "shortPath": "network.networks.create",
+      "description": "Create a private network",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Descriptive network name, sent as the name query parameter"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Network UUID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Network name"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "private or default"
+          },
+          {
+            "key": "vlan_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "VLAN id"
+          },
+          {
+            "key": "subnet",
+            "optional": true,
+            "type": "string | null",
+            "description": "IPv4 subnet in CIDR notation"
+          },
+          {
+            "key": "subnet_ipv6",
+            "optional": true,
+            "type": "string | null",
+            "description": "IPv6 subnet in CIDR notation"
+          },
+          {
+            "key": "is_default",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether this is the user default network"
+          },
+          {
+            "key": "vm_uuids",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "UUIDs of VMs on the network"
+          },
+          {
+            "key": "resources_count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Resources on the network"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.network.networks.delete",
+      "shortPath": "network.networks.delete",
+      "description": "Delete an empty, non-default network",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the network; it must be empty and not the default"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "pilvio.api.network.networks.get",
+      "shortPath": "network.networks.get",
+      "description": "Read one network by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the network"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Network UUID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Network name"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "string | null",
+            "description": "private or default"
+          },
+          {
+            "key": "vlan_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "VLAN id"
+          },
+          {
+            "key": "subnet",
+            "optional": true,
+            "type": "string | null",
+            "description": "IPv4 subnet in CIDR notation"
+          },
+          {
+            "key": "subnet_ipv6",
+            "optional": true,
+            "type": "string | null",
+            "description": "IPv6 subnet in CIDR notation"
+          },
+          {
+            "key": "is_default",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether this is the user default network"
+          },
+          {
+            "key": "vm_uuids",
+            "optional": true,
+            "type": "string[] | null",
+            "description": "UUIDs of VMs on the network"
+          },
+          {
+            "key": "resources_count",
+            "optional": true,
+            "type": "number | null",
+            "description": "Resources on the network"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.network.networks.list",
+      "shortPath": "network.networks.list",
+      "description": "List the private networks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ uuid?: string | null, name?: string | null, type?: string | null, vlan_id?: number | null, subnet?: string | null, subnet_ipv6?: string | null, is_default?: boolean | null, vm_uuids?: string[] | null, resources_count?: number | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "pilvio.api.storage.buckets.create",
+      "shortPath": "storage.buckets.create",
+      "description": "Create an S3 bucket with a globally unique name",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Bucket name following S3 naming rules; globally unique"
+          },
+          {
+            "key": "billingAccountId",
+            "optional": true,
+            "type": "number",
+            "description": "Billing account; required for global API tokens"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Bucket name"
+          },
+          {
+            "key": "size_bytes",
+            "optional": true,
+            "type": "number | null",
+            "description": "Stored bytes"
+          },
+          {
+            "key": "num_objects",
+            "optional": true,
+            "type": "number | null",
+            "description": "Object count"
+          },
+          {
+            "key": "billing_account_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Billing account id"
+          },
+          {
+            "key": "is_suspended",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the bucket is suspended"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "modified_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.storage.buckets.delete",
+      "shortPath": "storage.buckets.delete",
+      "description": "Delete a bucket",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The bucket name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "pilvio.api.storage.buckets.get",
+      "shortPath": "storage.buckets.get",
+      "description": "Read one bucket by name",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The bucket name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Bucket name"
+          },
+          {
+            "key": "size_bytes",
+            "optional": true,
+            "type": "number | null",
+            "description": "Stored bytes"
+          },
+          {
+            "key": "num_objects",
+            "optional": true,
+            "type": "number | null",
+            "description": "Object count"
+          },
+          {
+            "key": "billing_account_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Billing account id"
+          },
+          {
+            "key": "is_suspended",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the bucket is suspended"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "modified_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.storage.buckets.list",
+      "shortPath": "storage.buckets.list",
+      "description": "List the object storage buckets",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ name?: string | null, size_bytes?: number | null, num_objects?: number | null, billing_account_id?: number | null, is_suspended?: boolean | null, created_at?: string | null, modified_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "pilvio.api.storage.buckets.update",
+      "shortPath": "storage.buckets.update",
+      "description": "Move a bucket to another billing account",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "The bucket name"
+          },
+          {
+            "key": "billingAccountId",
+            "optional": false,
+            "type": "number",
+            "description": "Billing account to move it to"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Bucket name"
+          },
+          {
+            "key": "size_bytes",
+            "optional": true,
+            "type": "number | null",
+            "description": "Stored bytes"
+          },
+          {
+            "key": "num_objects",
+            "optional": true,
+            "type": "number | null",
+            "description": "Object count"
+          },
+          {
+            "key": "billing_account_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Billing account id"
+          },
+          {
+            "key": "is_suspended",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the bucket is suspended"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "modified_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last modification timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.storage.disks.create",
+      "shortPath": "storage.disks.create",
+      "description": "Create a disk from empty, an OS image, a disk or a snapshot",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sizeGb",
+            "optional": true,
+            "type": "number",
+            "description": "Size in GiB; required when not apparent from the source image"
+          },
+          {
+            "key": "sourceImageType",
+            "optional": true,
+            "type": "EMPTY | OS_BASE | DISK | SNAPSHOT",
+            "description": "What the disk starts from (default EMPTY)"
+          },
+          {
+            "key": "sourceImage",
+            "optional": true,
+            "type": "string",
+            "description": "Image reference: e.g. ubuntu_20.04 for OS_BASE or a UUID"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string",
+            "description": "Display name"
+          },
+          {
+            "key": "billingAccountId",
+            "optional": true,
+            "type": "number",
+            "description": "Billing account"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Disk UUID"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Disk numeric id"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Active, …"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name"
+          },
+          {
+            "key": "size_gb",
+            "optional": true,
+            "type": "number | null",
+            "description": "Size in GiB"
+          },
+          {
+            "key": "source_image_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "EMPTY, OS_BASE, DISK or SNAPSHOT"
+          },
+          {
+            "key": "billing_account_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Billing account id"
+          },
+          {
+            "key": "storage_pool_uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Storage pool"
+          },
+          {
+            "key": "snapshots",
+            "optional": true,
+            "type": "{ uuid?: string | null, size_gb?: number | null, display_name?: string | null, created_at?: string | null, disk_uuid?: string | null }[] | null",
+            "description": "Disk snapshots"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owner user id"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.storage.disks.delete",
+      "shortPath": "storage.disks.delete",
+      "description": "Delete a disk",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the disk to delete"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "pilvio.api.storage.disks.get",
+      "shortPath": "storage.disks.get",
+      "description": "Read one disk by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the disk"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Disk UUID"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Disk numeric id"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Active, …"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name"
+          },
+          {
+            "key": "size_gb",
+            "optional": true,
+            "type": "number | null",
+            "description": "Size in GiB"
+          },
+          {
+            "key": "source_image_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "EMPTY, OS_BASE, DISK or SNAPSHOT"
+          },
+          {
+            "key": "billing_account_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Billing account id"
+          },
+          {
+            "key": "storage_pool_uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Storage pool"
+          },
+          {
+            "key": "snapshots",
+            "optional": true,
+            "type": "{ uuid?: string | null, size_gb?: number | null, display_name?: string | null, created_at?: string | null, disk_uuid?: string | null }[] | null",
+            "description": "Disk snapshots"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owner user id"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.storage.disks.list",
+      "shortPath": "storage.disks.list",
+      "description": "List the block storage disks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ uuid?: string | null, id?: number | null, status?: string | null, display_name?: string | null, size_gb?: number | null, source_image_type?: string | null, billing_account_id?: number | null, storage_pool_uuid?: string | null, snapshots?: { uuid?: string | null, size_gb?: number | null, display_name?: string | null, created_at?: string | null, disk_uuid?: string | null }[] | null, created_at?: string | null, updated_at?: string | null, user_id?: number | null }[]"
+      }
+    },
+    {
+      "path": "pilvio.api.storage.disks.update",
+      "shortPath": "storage.disks.update",
+      "description": "Update disk metadata",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the disk to update"
+          },
+          {
+            "key": "displayName",
+            "optional": true,
+            "type": "string",
+            "description": "New display name"
+          },
+          {
+            "key": "billingAccountId",
+            "optional": true,
+            "type": "number",
+            "description": "Billing account"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Disk UUID"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Disk numeric id"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "Active, …"
+          },
+          {
+            "key": "display_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name"
+          },
+          {
+            "key": "size_gb",
+            "optional": true,
+            "type": "number | null",
+            "description": "Size in GiB"
+          },
+          {
+            "key": "source_image_type",
+            "optional": true,
+            "type": "string | null",
+            "description": "EMPTY, OS_BASE, DISK or SNAPSHOT"
+          },
+          {
+            "key": "billing_account_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Billing account id"
+          },
+          {
+            "key": "storage_pool_uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "Storage pool"
+          },
+          {
+            "key": "snapshots",
+            "optional": true,
+            "type": "{ uuid?: string | null, size_gb?: number | null, display_name?: string | null, created_at?: string | null, disk_uuid?: string | null }[] | null",
+            "description": "Disk snapshots"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owner user id"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.vm.create",
+      "shortPath": "vm.create",
+      "description": "Create a virtual machine from an image or source",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "VM name"
+          },
+          {
+            "key": "osName",
+            "optional": false,
+            "type": "string",
+            "description": "OS name from the image catalog, or _custom for an empty disk"
+          },
+          {
+            "key": "osVersion",
+            "optional": false,
+            "type": "string",
+            "description": "OS version from the image catalog, or _ for an empty disk"
+          },
+          {
+            "key": "disks",
+            "optional": true,
+            "type": "number",
+            "description": "Boot disk size in GiB"
+          },
+          {
+            "key": "vcpu",
+            "optional": true,
+            "type": "number",
+            "description": "Virtual CPUs"
+          },
+          {
+            "key": "ram",
+            "optional": true,
+            "type": "number",
+            "description": "RAM in MiB"
+          },
+          {
+            "key": "designatedPoolUuid",
+            "optional": true,
+            "type": "string",
+            "description": "Server class (resource pool) to host the VM on"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string",
+            "description": "Login username"
+          },
+          {
+            "key": "password",
+            "optional": true,
+            "type": "string",
+            "description": "Login password"
+          },
+          {
+            "key": "billingAccountId",
+            "optional": true,
+            "type": "number",
+            "description": "Billing account; optional for account-restricted tokens"
+          },
+          {
+            "key": "networkUuid",
+            "optional": true,
+            "type": "string",
+            "description": "Private network; the default network when omitted"
+          },
+          {
+            "key": "reservePublicIp",
+            "optional": true,
+            "type": "boolean",
+            "description": "Set false to create the VM without a public IPv4"
+          },
+          {
+            "key": "cloudInit",
+            "optional": true,
+            "type": "string",
+            "description": "Cloud-init user data as a YAML or JSON object"
+          },
+          {
+            "key": "sourceUuid",
+            "optional": true,
+            "type": "string",
+            "description": "VM UUID to create the VM from (copy of a backup or snapshot)"
+          },
+          {
+            "key": "sourceReplica",
+            "optional": true,
+            "type": "string",
+            "description": "Snapshot or backup UUID used with sourceUuid"
+          },
+          {
+            "key": "diskUuid",
+            "optional": true,
+            "type": "string",
+            "description": "Existing unattached disk to use as the boot disk"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "VM UUID"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "VM numeric id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "VM name"
+          },
+          {
+            "key": "hostname",
+            "optional": true,
+            "type": "string | null",
+            "description": "Hostname"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "running, stopped, …"
+          },
+          {
+            "key": "os_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "OS name, e.g. ubuntu"
+          },
+          {
+            "key": "os_version",
+            "optional": true,
+            "type": "string | null",
+            "description": "OS version"
+          },
+          {
+            "key": "vcpu",
+            "optional": true,
+            "type": "number | null",
+            "description": "Virtual CPUs"
+          },
+          {
+            "key": "memory",
+            "optional": true,
+            "type": "number | null",
+            "description": "RAM in MiB"
+          },
+          {
+            "key": "mac",
+            "optional": true,
+            "type": "string | null",
+            "description": "MAC address"
+          },
+          {
+            "key": "private_ipv4",
+            "optional": true,
+            "type": "string | null",
+            "description": "Private IPv4"
+          },
+          {
+            "key": "public_ipv6",
+            "optional": true,
+            "type": "string | null",
+            "description": "Public IPv6"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null",
+            "description": "Login username"
+          },
+          {
+            "key": "backup",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether auto backup is on"
+          },
+          {
+            "key": "billing_account",
+            "optional": true,
+            "type": "number | null",
+            "description": "Billing account id"
+          },
+          {
+            "key": "storage",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null, pool?: string | null, primary?: boolean | null, replica?: any[] | null, shared?: boolean | null, size?: number | null, type?: string | null, created_at?: string | null, updated_at?: string | null, user_id?: number | null, id?: number | null }[] | null",
+            "description": "Attached disks"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "any | null",
+            "description": "Tags"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owner user id"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.vm.delete",
+      "shortPath": "vm.delete",
+      "description": "Delete a virtual machine",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the VM to delete"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "pilvio.api.vm.get",
+      "shortPath": "vm.get",
+      "description": "Read one VM by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the VM"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "VM UUID"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "VM numeric id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "VM name"
+          },
+          {
+            "key": "hostname",
+            "optional": true,
+            "type": "string | null",
+            "description": "Hostname"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "running, stopped, …"
+          },
+          {
+            "key": "os_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "OS name, e.g. ubuntu"
+          },
+          {
+            "key": "os_version",
+            "optional": true,
+            "type": "string | null",
+            "description": "OS version"
+          },
+          {
+            "key": "vcpu",
+            "optional": true,
+            "type": "number | null",
+            "description": "Virtual CPUs"
+          },
+          {
+            "key": "memory",
+            "optional": true,
+            "type": "number | null",
+            "description": "RAM in MiB"
+          },
+          {
+            "key": "mac",
+            "optional": true,
+            "type": "string | null",
+            "description": "MAC address"
+          },
+          {
+            "key": "private_ipv4",
+            "optional": true,
+            "type": "string | null",
+            "description": "Private IPv4"
+          },
+          {
+            "key": "public_ipv6",
+            "optional": true,
+            "type": "string | null",
+            "description": "Public IPv6"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null",
+            "description": "Login username"
+          },
+          {
+            "key": "backup",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether auto backup is on"
+          },
+          {
+            "key": "billing_account",
+            "optional": true,
+            "type": "number | null",
+            "description": "Billing account id"
+          },
+          {
+            "key": "storage",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null, pool?: string | null, primary?: boolean | null, replica?: any[] | null, shared?: boolean | null, size?: number | null, type?: string | null, created_at?: string | null, updated_at?: string | null, user_id?: number | null, id?: number | null }[] | null",
+            "description": "Attached disks"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "any | null",
+            "description": "Tags"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owner user id"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.vm.list",
+      "shortPath": "vm.list",
+      "description": "List the virtual machines",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ uuid?: string | null, id?: number | null, name?: string | null, hostname?: string | null, description?: string | null, status?: string | null, os_name?: string | null, os_version?: string | null, vcpu?: number | null, memory?: number | null, mac?: string | null, private_ipv4?: string | null, public_ipv6?: string | null, username?: string | null, backup?: boolean | null, billing_account?: number | null, storage?: { uuid?: string | null, name?: string | null, pool?: string | null, primary?: boolean | null, replica?: any[] | null, shared?: boolean | null, size?: number | null, type?: string | null, created_at?: string | null, updated_at?: string | null, user_id?: number | null, id?: number | null }[] | null, tags?: any | null, user_id?: number | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "pilvio.api.vm.reinstall",
+      "shortPath": "vm.reinstall",
+      "description": "Reinstall a VM with a new OS; existing data is replaced",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the VM to reinstall"
+          },
+          {
+            "key": "osName",
+            "optional": false,
+            "type": "string",
+            "description": "New OS name"
+          },
+          {
+            "key": "osVersion",
+            "optional": false,
+            "type": "string",
+            "description": "New OS version"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "VM UUID"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "VM numeric id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "VM name"
+          },
+          {
+            "key": "hostname",
+            "optional": true,
+            "type": "string | null",
+            "description": "Hostname"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "running, stopped, …"
+          },
+          {
+            "key": "os_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "OS name, e.g. ubuntu"
+          },
+          {
+            "key": "os_version",
+            "optional": true,
+            "type": "string | null",
+            "description": "OS version"
+          },
+          {
+            "key": "vcpu",
+            "optional": true,
+            "type": "number | null",
+            "description": "Virtual CPUs"
+          },
+          {
+            "key": "memory",
+            "optional": true,
+            "type": "number | null",
+            "description": "RAM in MiB"
+          },
+          {
+            "key": "mac",
+            "optional": true,
+            "type": "string | null",
+            "description": "MAC address"
+          },
+          {
+            "key": "private_ipv4",
+            "optional": true,
+            "type": "string | null",
+            "description": "Private IPv4"
+          },
+          {
+            "key": "public_ipv6",
+            "optional": true,
+            "type": "string | null",
+            "description": "Public IPv6"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null",
+            "description": "Login username"
+          },
+          {
+            "key": "backup",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether auto backup is on"
+          },
+          {
+            "key": "billing_account",
+            "optional": true,
+            "type": "number | null",
+            "description": "Billing account id"
+          },
+          {
+            "key": "storage",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null, pool?: string | null, primary?: boolean | null, replica?: any[] | null, shared?: boolean | null, size?: number | null, type?: string | null, created_at?: string | null, updated_at?: string | null, user_id?: number | null, id?: number | null }[] | null",
+            "description": "Attached disks"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "any | null",
+            "description": "Tags"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owner user id"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.vm.start",
+      "shortPath": "vm.start",
+      "description": "Start a stopped VM; billing for it resumes",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the VM"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "VM UUID"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "VM numeric id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "VM name"
+          },
+          {
+            "key": "hostname",
+            "optional": true,
+            "type": "string | null",
+            "description": "Hostname"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "running, stopped, …"
+          },
+          {
+            "key": "os_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "OS name, e.g. ubuntu"
+          },
+          {
+            "key": "os_version",
+            "optional": true,
+            "type": "string | null",
+            "description": "OS version"
+          },
+          {
+            "key": "vcpu",
+            "optional": true,
+            "type": "number | null",
+            "description": "Virtual CPUs"
+          },
+          {
+            "key": "memory",
+            "optional": true,
+            "type": "number | null",
+            "description": "RAM in MiB"
+          },
+          {
+            "key": "mac",
+            "optional": true,
+            "type": "string | null",
+            "description": "MAC address"
+          },
+          {
+            "key": "private_ipv4",
+            "optional": true,
+            "type": "string | null",
+            "description": "Private IPv4"
+          },
+          {
+            "key": "public_ipv6",
+            "optional": true,
+            "type": "string | null",
+            "description": "Public IPv6"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null",
+            "description": "Login username"
+          },
+          {
+            "key": "backup",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether auto backup is on"
+          },
+          {
+            "key": "billing_account",
+            "optional": true,
+            "type": "number | null",
+            "description": "Billing account id"
+          },
+          {
+            "key": "storage",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null, pool?: string | null, primary?: boolean | null, replica?: any[] | null, shared?: boolean | null, size?: number | null, type?: string | null, created_at?: string | null, updated_at?: string | null, user_id?: number | null, id?: number | null }[] | null",
+            "description": "Attached disks"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "any | null",
+            "description": "Tags"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owner user id"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pilvio.api.vm.stop",
+      "shortPath": "vm.stop",
+      "description": "Stop a running VM",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the VM"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "string",
+            "description": "Location slug, e.g. tll01; the default location when unset"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": true,
+            "type": "string | null",
+            "description": "VM UUID"
+          },
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "VM numeric id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "VM name"
+          },
+          {
+            "key": "hostname",
+            "optional": true,
+            "type": "string | null",
+            "description": "Hostname"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null",
+            "description": "running, stopped, …"
+          },
+          {
+            "key": "os_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "OS name, e.g. ubuntu"
+          },
+          {
+            "key": "os_version",
+            "optional": true,
+            "type": "string | null",
+            "description": "OS version"
+          },
+          {
+            "key": "vcpu",
+            "optional": true,
+            "type": "number | null",
+            "description": "Virtual CPUs"
+          },
+          {
+            "key": "memory",
+            "optional": true,
+            "type": "number | null",
+            "description": "RAM in MiB"
+          },
+          {
+            "key": "mac",
+            "optional": true,
+            "type": "string | null",
+            "description": "MAC address"
+          },
+          {
+            "key": "private_ipv4",
+            "optional": true,
+            "type": "string | null",
+            "description": "Private IPv4"
+          },
+          {
+            "key": "public_ipv6",
+            "optional": true,
+            "type": "string | null",
+            "description": "Public IPv6"
+          },
+          {
+            "key": "username",
+            "optional": true,
+            "type": "string | null",
+            "description": "Login username"
+          },
+          {
+            "key": "backup",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether auto backup is on"
+          },
+          {
+            "key": "billing_account",
+            "optional": true,
+            "type": "number | null",
+            "description": "Billing account id"
+          },
+          {
+            "key": "storage",
+            "optional": true,
+            "type": "{ uuid?: string | null, name?: string | null, pool?: string | null, primary?: boolean | null, replica?: any[] | null, shared?: boolean | null, size?: number | null, type?: string | null, created_at?: string | null, updated_at?: string | null, user_id?: number | null, id?: number | null }[] | null",
+            "description": "Attached disks"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "any | null",
+            "description": "Tags"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owner user id"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
