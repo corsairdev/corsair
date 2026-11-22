@@ -11262,5 +11262,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/pdf4me",
+    "dir": "packages/pdf4me",
+    "name": "PDF4me",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
