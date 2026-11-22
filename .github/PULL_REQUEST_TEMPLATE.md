@@ -4,7 +4,7 @@
 ## Description
 
 <!-- Briefly describe the changes you've made and why they're necessary. -->
-<!-- Link to any related issues (e.g. "Fixes #123"). -->
+<!-- Link to any related issues (e.g. "Fixes #123"). Comment /assign on that issue first. -->
 
 ## Checklist
 
