@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-22T15:00:35.428Z",
-  "corsairVersion": "0.2.23",
+  "generatedAt": "2026-11-22T16:33:47.190Z",
+  "corsairVersion": "0.2.24",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -7347,6 +7347,21 @@
       "displayName": "Parsio",
       "description": "Parsio is an AI email and document parser that turns emails, PDFs and scans into structured JSON. This plugin manages mailboxes, parses HTML, text and uploaded files synchronously or asynchronously, reads parsed documents and collected data, and manages the webhooks that deliver parsed documents (HMAC-verified).",
       "npmPackageName": "@corsair-dev/parsio",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 21,
+        "webhooks": 1,
+        "db": 0
+      }
+    },
+    {
+      "id": "passcreator",
+      "displayName": "Passcreator",
+      "description": "Passcreator is a wallet pass platform for Apple Wallet and Google Wallet. This plugin creates and updates passes from templates with personalised properties, delivers passes by email, pushes notifications to pass holders, reads pass statistics, copies templates, moves passes between templates (API v2), and manages webhook subscriptions whose deliveries carry verifiable ECDSA signatures.",
+      "npmPackageName": "@corsair-dev/passcreator",
       "authTypes": [
         "api_key"
       ],
@@ -135484,6 +135499,138 @@
       "kind": "webhook",
       "shortPath": "parsio.event",
       "haystack": "parsio.event parsio.webhooks.parsio.event a parsed document parsio delivered to a webhook subscription"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.activeHistory",
+      "haystack": "passes.activehistory passcreator.api.passes.activehistory read the history of active and inactive passes of a template read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.create",
+      "haystack": "passes.create passcreator.api.passes.create create a pass from a pass template with personalised properties write"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.delete",
+      "haystack": "passes.delete passcreator.api.passes.delete delete a pass destructive"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.enableDownload",
+      "haystack": "passes.enabledownload passcreator.api.passes.enabledownload enable the download of a pass write"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.get",
+      "haystack": "passes.get passcreator.api.passes.get read one pass by uid, barcode value or user-provided id read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.list",
+      "haystack": "passes.list passcreator.api.passes.list list the passes of a pass template, paged by cursor and date read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.pushNotification",
+      "haystack": "passes.pushnotification passcreator.api.passes.pushnotification push a notification message to one pass holder; the message goes out and cannot be recalled destructive"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.search",
+      "haystack": "passes.search passcreator.api.passes.search search the passes of a template by content read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.sendEmail",
+      "haystack": "passes.sendemail passcreator.api.passes.sendemail send the pass to an email address; the email goes out and cannot be recalled destructive"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.statistics",
+      "haystack": "passes.statistics passcreator.api.passes.statistics read pass usage statistics of a template by day, week or month read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.update",
+      "haystack": "passes.update passcreator.api.passes.update update pass properties or mark the pass voided or not voided write"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "passes.uris",
+      "haystack": "passes.uris passcreator.api.passes.uris read the resource uris of a pass read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "templates.copy",
+      "haystack": "templates.copy passcreator.api.templates.copy copy a pass template write"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "templates.delete",
+      "haystack": "templates.delete passcreator.api.templates.delete delete a pass template; the api refuses when scheduled tasks exist destructive"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "templates.fields",
+      "haystack": "templates.fields passcreator.api.templates.fields read the required and optional fields of a pass template read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "templates.list",
+      "haystack": "templates.list passcreator.api.templates.list list all pass templates of the account read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "templates.movePass",
+      "haystack": "templates.movepass passcreator.api.templates.movepass move a pass to a different template of the same project (api v2) write"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "webhooks.getPublicKey",
+      "haystack": "webhooks.getpublickey passcreator.api.webhooks.getpublickey read the pem public key that verifies webhook payload signatures read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "webhooks.list",
+      "haystack": "webhooks.list passcreator.api.webhooks.list list the active webhook subscriptions, including pull-mode entries read"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "webhooks.subscribe",
+      "haystack": "webhooks.subscribe passcreator.api.webhooks.subscribe subscribe a url to a webhook event, optionally scoped to one template write"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "api",
+      "shortPath": "webhooks.unsubscribe",
+      "haystack": "webhooks.unsubscribe passcreator.api.webhooks.unsubscribe unsubscribe a webhook; deliveries stop until it is subscribed again destructive"
+    },
+    {
+      "pluginId": "passcreator",
+      "kind": "webhook",
+      "shortPath": "passcreator.event",
+      "haystack": "passcreator.event passcreator.webhooks.passcreator.event a signed passcreator delivery; the result is the verified pass data from signeddata"
     },
     {
       "pluginId": "payhere",
