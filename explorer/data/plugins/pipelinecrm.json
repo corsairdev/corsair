@@ -1,0 +1,3120 @@
+{
+  "id": "pipelinecrm",
+  "displayName": "Pipeline CRM",
+  "description": "Pipeline CRM is a sales CRM for deals, people and companies. This plugin manages deals with stages and values, people and companies with their associations, records activities (notes) on any record, and reads the visible users.",
+  "npmPackageName": "@corsair-dev/pipelinecrm",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 29,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "pipelinecrm.api.companies.autocomplete",
+      "shortPath": "companies.autocomplete",
+      "description": "Search companies by text for autocomplete",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Search text"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | null, name?: string | null, description?: string | null, email?: string | null, web?: string | null, address_1?: string | null, city?: string | null, state?: string | null, postal_code?: string | null, country?: string | null, phone1?: string | null, facebook_url?: string | null, linked_in_url?: string | null, twitter?: string | null, custom_fields?: Record<string, any> | null, user_id?: number | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "pipelinecrm.api.companies.create",
+      "shortPath": "companies.create",
+      "description": "Create a company",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Company name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Email"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "string",
+            "description": "Website"
+          },
+          {
+            "key": "address1",
+            "optional": true,
+            "type": "string",
+            "description": "Address line 1"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string",
+            "description": "Address line 2"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string",
+            "description": "City"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "State"
+          },
+          {
+            "key": "postalCode",
+            "optional": true,
+            "type": "string",
+            "description": "Postal code"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Country"
+          },
+          {
+            "key": "phone1",
+            "optional": true,
+            "type": "string",
+            "description": "Primary phone"
+          },
+          {
+            "key": "phone2",
+            "optional": true,
+            "type": "string",
+            "description": "Secondary phone"
+          },
+          {
+            "key": "facebookUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Facebook URL"
+          },
+          {
+            "key": "linkedInUrl",
+            "optional": true,
+            "type": "string",
+            "description": "LinkedIn URL"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string",
+            "description": "Twitter username"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Owning user id"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom field values keyed by custom_label_<id>"
+          },
+          {
+            "key": "checkForDuplicates",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let the API detect and report possible duplicates"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Company id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Email"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "string | null",
+            "description": "Website"
+          },
+          {
+            "key": "address_1",
+            "optional": true,
+            "type": "string | null",
+            "description": "Address line 1"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null",
+            "description": "City"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null",
+            "description": "State"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string | null",
+            "description": "Postal code"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null",
+            "description": "Country"
+          },
+          {
+            "key": "phone1",
+            "optional": true,
+            "type": "string | null",
+            "description": "Primary phone"
+          },
+          {
+            "key": "facebook_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Facebook URL"
+          },
+          {
+            "key": "linked_in_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "LinkedIn URL"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string | null",
+            "description": "Twitter username"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Custom field values"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owning user id"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.companies.delete",
+      "shortPath": "companies.delete",
+      "description": "Delete a company",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "pipelinecrm.api.companies.get",
+      "shortPath": "companies.get",
+      "description": "Read one company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Company id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Email"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "string | null",
+            "description": "Website"
+          },
+          {
+            "key": "address_1",
+            "optional": true,
+            "type": "string | null",
+            "description": "Address line 1"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null",
+            "description": "City"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null",
+            "description": "State"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string | null",
+            "description": "Postal code"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null",
+            "description": "Country"
+          },
+          {
+            "key": "phone1",
+            "optional": true,
+            "type": "string | null",
+            "description": "Primary phone"
+          },
+          {
+            "key": "facebook_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Facebook URL"
+          },
+          {
+            "key": "linked_in_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "LinkedIn URL"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string | null",
+            "description": "Twitter username"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Custom field values"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owning user id"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.companies.list",
+      "shortPath": "companies.list",
+      "description": "List companies with conditions filters and paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conditions",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Filter conditions as Pipeline CRM query parameters: each key is the full bracketed key (e.g. \"conditions[deal_stage][]\" or \"conditions[deal_created][selection]\") with its value; unknown keys are ignored by the API"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Record field to sort by, e.g. value, name, created_at; prefix - for descending"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, at most 200"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, description?: string | null, email?: string | null, web?: string | null, address_1?: string | null, city?: string | null, state?: string | null, postal_code?: string | null, country?: string | null, phone1?: string | null, facebook_url?: string | null, linked_in_url?: string | null, twitter?: string | null, custom_fields?: Record<string, any> | null, user_id?: number | null, created_at?: string | null, updated_at?: string | null }[]",
+            "description": "The records on this page"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number | null, per_page: number | null, total: number | null }",
+            "description": "Pagination metadata"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.companies.listPeople",
+      "shortPath": "companies.listPeople",
+      "description": "List the people of a company",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record id"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, at most 200"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ id?: number | null, first_name?: string | null, last_name?: string | null, full_name?: string | null, summary?: string | null, phone?: string | null, email?: string | null, position?: string | null, website?: string | null, company_id?: number | null, company_name?: string | null, user_id?: number | null, lead_status_id?: number | null, lead_source_id?: number | null, image_thumb_url?: string | null, custom_fields?: Record<string, any> | null, created_at?: string | null, updated_at?: string | null }[]",
+            "description": "The records on this page"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number | null, per_page: number | null, total: number | null }",
+            "description": "Pagination metadata"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.companies.update",
+      "shortPath": "companies.update",
+      "description": "Update a company",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Company id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Company name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Email"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "string",
+            "description": "Website"
+          },
+          {
+            "key": "address1",
+            "optional": true,
+            "type": "string",
+            "description": "Address line 1"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string",
+            "description": "Address line 2"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string",
+            "description": "City"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string",
+            "description": "State"
+          },
+          {
+            "key": "postalCode",
+            "optional": true,
+            "type": "string",
+            "description": "Postal code"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string",
+            "description": "Country"
+          },
+          {
+            "key": "phone1",
+            "optional": true,
+            "type": "string",
+            "description": "Primary phone"
+          },
+          {
+            "key": "phone2",
+            "optional": true,
+            "type": "string",
+            "description": "Secondary phone"
+          },
+          {
+            "key": "facebookUrl",
+            "optional": true,
+            "type": "string",
+            "description": "Facebook URL"
+          },
+          {
+            "key": "linkedInUrl",
+            "optional": true,
+            "type": "string",
+            "description": "LinkedIn URL"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string",
+            "description": "Twitter username"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "New owning user id"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom field values keyed by custom_label_<id>"
+          },
+          {
+            "key": "deliverReassignmentEmail",
+            "optional": true,
+            "type": "boolean",
+            "description": "Email the new owner on reassignment"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Company id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company name"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string | null",
+            "description": "Description"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Email"
+          },
+          {
+            "key": "web",
+            "optional": true,
+            "type": "string | null",
+            "description": "Website"
+          },
+          {
+            "key": "address_1",
+            "optional": true,
+            "type": "string | null",
+            "description": "Address line 1"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string | null",
+            "description": "City"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string | null",
+            "description": "State"
+          },
+          {
+            "key": "postal_code",
+            "optional": true,
+            "type": "string | null",
+            "description": "Postal code"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | null",
+            "description": "Country"
+          },
+          {
+            "key": "phone1",
+            "optional": true,
+            "type": "string | null",
+            "description": "Primary phone"
+          },
+          {
+            "key": "facebook_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Facebook URL"
+          },
+          {
+            "key": "linked_in_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "LinkedIn URL"
+          },
+          {
+            "key": "twitter",
+            "optional": true,
+            "type": "string | null",
+            "description": "Twitter username"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Custom field values"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owning user id"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.deals.create",
+      "shortPath": "deals.create",
+      "description": "Create a deal",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Deal name"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string",
+            "description": "Deal description"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Owning user id"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number",
+            "description": "Deal status id"
+          },
+          {
+            "key": "expectedCloseDate",
+            "optional": true,
+            "type": "string",
+            "description": "Expected close date, YYYY-MM-DD"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number | string",
+            "description": "Deal value; a number or numeric string"
+          },
+          {
+            "key": "primaryContactId",
+            "optional": true,
+            "type": "number",
+            "description": "Primary contact person id"
+          },
+          {
+            "key": "personIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Associated person ids"
+          },
+          {
+            "key": "sharedUserIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Collaborator user ids"
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "number",
+            "description": "Company id"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string",
+            "description": "Creates and links a company of this name when no id matches"
+          },
+          {
+            "key": "probability",
+            "optional": true,
+            "type": "number",
+            "description": "Win probability 0-100; 0 or 100 closes the deal"
+          },
+          {
+            "key": "dealStageId",
+            "optional": true,
+            "type": "number",
+            "description": "Deal stage id"
+          },
+          {
+            "key": "dealLossReasonId",
+            "optional": true,
+            "type": "number",
+            "description": "Loss reason id"
+          },
+          {
+            "key": "dealLossReasonNotes",
+            "optional": true,
+            "type": "string",
+            "description": "Loss reason notes"
+          },
+          {
+            "key": "dealWonReasonId",
+            "optional": true,
+            "type": "number",
+            "description": "Won reason id"
+          },
+          {
+            "key": "dealWonReasonNotes",
+            "optional": true,
+            "type": "string",
+            "description": "Won reason notes"
+          },
+          {
+            "key": "dealSource",
+            "optional": true,
+            "type": "number",
+            "description": "Lead source id"
+          },
+          {
+            "key": "tagIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Tag ids"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom field values keyed by custom_label_<id>"
+          },
+          {
+            "key": "deliverAssignmentEmail",
+            "optional": true,
+            "type": "boolean",
+            "description": "Email the new owner when the deal is assigned to another user"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Deal id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deal name"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deal description"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owning user id"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null",
+            "description": "Deal status id"
+          },
+          {
+            "key": "expected_close_date",
+            "optional": true,
+            "type": "string | null",
+            "description": "Expected close, YYYY-MM-DD"
+          },
+          {
+            "key": "closed_time",
+            "optional": true,
+            "type": "string | null",
+            "description": "Actual close date"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Archived flag"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deal value as a decimal string"
+          },
+          {
+            "key": "primary_contact_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Primary contact person id"
+          },
+          {
+            "key": "person_ids",
+            "optional": true,
+            "type": "number[] | null",
+            "description": "Associated person ids"
+          },
+          {
+            "key": "shared_user_ids",
+            "optional": true,
+            "type": "number[] | null",
+            "description": "Collaborator user ids"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Company id"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company name"
+          },
+          {
+            "key": "probability",
+            "optional": true,
+            "type": "number | null",
+            "description": "Win probability, 0-100"
+          },
+          {
+            "key": "deal_stage_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Deal stage id"
+          },
+          {
+            "key": "deal_stage_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deal stage name"
+          },
+          {
+            "key": "deal_loss_reason_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Loss reason id"
+          },
+          {
+            "key": "deal_loss_reason_notes",
+            "optional": true,
+            "type": "string | null",
+            "description": "Loss reason notes"
+          },
+          {
+            "key": "deal_won_reason_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Won reason id"
+          },
+          {
+            "key": "deal_won_reason_notes",
+            "optional": true,
+            "type": "string | null",
+            "description": "Won reason notes"
+          },
+          {
+            "key": "deal_source",
+            "optional": true,
+            "type": "number | null",
+            "description": "Lead source id"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "any | null",
+            "description": "Currency record"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Custom field values"
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "number[] | null",
+            "description": "Tag ids"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, email?: string | null } | null",
+            "description": "The owning user"
+          },
+          {
+            "key": "next_task_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Next task name"
+          },
+          {
+            "key": "next_task_due",
+            "optional": true,
+            "type": "string | null",
+            "description": "Next task due date"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.deals.delete",
+      "shortPath": "deals.delete",
+      "description": "Delete a deal",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "pipelinecrm.api.deals.get",
+      "shortPath": "deals.get",
+      "description": "Read one deal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Deal id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deal name"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deal description"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owning user id"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null",
+            "description": "Deal status id"
+          },
+          {
+            "key": "expected_close_date",
+            "optional": true,
+            "type": "string | null",
+            "description": "Expected close, YYYY-MM-DD"
+          },
+          {
+            "key": "closed_time",
+            "optional": true,
+            "type": "string | null",
+            "description": "Actual close date"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Archived flag"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deal value as a decimal string"
+          },
+          {
+            "key": "primary_contact_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Primary contact person id"
+          },
+          {
+            "key": "person_ids",
+            "optional": true,
+            "type": "number[] | null",
+            "description": "Associated person ids"
+          },
+          {
+            "key": "shared_user_ids",
+            "optional": true,
+            "type": "number[] | null",
+            "description": "Collaborator user ids"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Company id"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company name"
+          },
+          {
+            "key": "probability",
+            "optional": true,
+            "type": "number | null",
+            "description": "Win probability, 0-100"
+          },
+          {
+            "key": "deal_stage_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Deal stage id"
+          },
+          {
+            "key": "deal_stage_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deal stage name"
+          },
+          {
+            "key": "deal_loss_reason_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Loss reason id"
+          },
+          {
+            "key": "deal_loss_reason_notes",
+            "optional": true,
+            "type": "string | null",
+            "description": "Loss reason notes"
+          },
+          {
+            "key": "deal_won_reason_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Won reason id"
+          },
+          {
+            "key": "deal_won_reason_notes",
+            "optional": true,
+            "type": "string | null",
+            "description": "Won reason notes"
+          },
+          {
+            "key": "deal_source",
+            "optional": true,
+            "type": "number | null",
+            "description": "Lead source id"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "any | null",
+            "description": "Currency record"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Custom field values"
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "number[] | null",
+            "description": "Tag ids"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, email?: string | null } | null",
+            "description": "The owning user"
+          },
+          {
+            "key": "next_task_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Next task name"
+          },
+          {
+            "key": "next_task_due",
+            "optional": true,
+            "type": "string | null",
+            "description": "Next task due date"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.deals.list",
+      "shortPath": "deals.list",
+      "description": "List deals with conditions filters and paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conditions",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Filter conditions as Pipeline CRM query parameters: each key is the full bracketed key (e.g. \"conditions[deal_stage][]\" or \"conditions[deal_created][selection]\") with its value; unknown keys are ignored by the API"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Record field to sort by, e.g. value, name, created_at; prefix - for descending"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, at most 200"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, summary?: string | null, user_id?: number | null, status?: number | null, expected_close_date?: string | null, closed_time?: string | null, is_archived?: boolean | null, value?: string | null, primary_contact_id?: number | null, person_ids?: number[] | null, shared_user_ids?: number[] | null, company_id?: number | null, company_name?: string | null, probability?: number | null, deal_stage_id?: number | null, deal_stage_name?: string | null, deal_loss_reason_id?: number | null, deal_loss_reason_notes?: string | null, deal_won_reason_id?: number | null, deal_won_reason_notes?: string | null, deal_source?: number | null, currency?: any | null, custom_fields?: Record<string, any> | null, tag_ids?: number[] | null, owner?: { id?: number | null, name?: string | null, email?: string | null } | null, next_task_name?: string | null, next_task_due?: string | null, created_at?: string | null, updated_at?: string | null }[]",
+            "description": "The records on this page"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number | null, per_page: number | null, total: number | null }",
+            "description": "Pagination metadata"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.deals.listNotes",
+      "shortPath": "deals.listNotes",
+      "description": "List the activities of a deal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record id"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, at most 200"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, content?: string | null, user_id?: number | null, deal_id?: number | null, company_id?: number | null, person_id?: number | null, milestone_id?: number | null, note_category_id?: number | null, notify_user_ids?: number[] | null, created_at?: string | null, updated_at?: string | null }[]",
+            "description": "The records on this page"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number | null, per_page: number | null, total: number | null }",
+            "description": "Pagination metadata"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.deals.totalsByStage",
+      "shortPath": "deals.totalsByStage",
+      "description": "Deal count and value per stage",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ deal_stage_id?: number | null, deal_stage_name?: string | null, count?: number | null, total?: string | number | null }[]"
+      }
+    },
+    {
+      "path": "pipelinecrm.api.deals.update",
+      "shortPath": "deals.update",
+      "description": "Update a deal",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Deal id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New deal name"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string",
+            "description": "New description"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "New owning user id"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number",
+            "description": "New deal status id"
+          },
+          {
+            "key": "expectedCloseDate",
+            "optional": true,
+            "type": "string",
+            "description": "New expected close date, YYYY-MM-DD"
+          },
+          {
+            "key": "closedTime",
+            "optional": true,
+            "type": "string",
+            "description": "Actual close date, YYYY-MM-DD"
+          },
+          {
+            "key": "isArchived",
+            "optional": true,
+            "type": "boolean",
+            "description": "Archived flag"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "number | string",
+            "description": "Deal value; a number or numeric string"
+          },
+          {
+            "key": "primaryContactId",
+            "optional": true,
+            "type": "number",
+            "description": "Primary contact person id"
+          },
+          {
+            "key": "personIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Associated person ids"
+          },
+          {
+            "key": "sharedUserIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Collaborator user ids"
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "number",
+            "description": "Company id"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string",
+            "description": "Creates and links a company of this name"
+          },
+          {
+            "key": "probability",
+            "optional": true,
+            "type": "number",
+            "description": "Win probability; 0 or 100 closes, 1-99 reopens"
+          },
+          {
+            "key": "dealStageId",
+            "optional": true,
+            "type": "number",
+            "description": "Deal stage id"
+          },
+          {
+            "key": "dealLossReasonId",
+            "optional": true,
+            "type": "number",
+            "description": "Loss reason id"
+          },
+          {
+            "key": "dealLossReasonNotes",
+            "optional": true,
+            "type": "string",
+            "description": "Loss reason notes"
+          },
+          {
+            "key": "dealWonReasonId",
+            "optional": true,
+            "type": "number",
+            "description": "Won reason id"
+          },
+          {
+            "key": "dealWonReasonNotes",
+            "optional": true,
+            "type": "string",
+            "description": "Won reason notes"
+          },
+          {
+            "key": "dealSource",
+            "optional": true,
+            "type": "number",
+            "description": "Lead source id"
+          },
+          {
+            "key": "tagIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Tag ids"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom field values keyed by custom_label_<id>"
+          },
+          {
+            "key": "deliverReassignmentEmail",
+            "optional": true,
+            "type": "boolean",
+            "description": "Email the new owner on reassignment"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Deal id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deal name"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deal description"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owning user id"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null",
+            "description": "Deal status id"
+          },
+          {
+            "key": "expected_close_date",
+            "optional": true,
+            "type": "string | null",
+            "description": "Expected close, YYYY-MM-DD"
+          },
+          {
+            "key": "closed_time",
+            "optional": true,
+            "type": "string | null",
+            "description": "Actual close date"
+          },
+          {
+            "key": "is_archived",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Archived flag"
+          },
+          {
+            "key": "value",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deal value as a decimal string"
+          },
+          {
+            "key": "primary_contact_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Primary contact person id"
+          },
+          {
+            "key": "person_ids",
+            "optional": true,
+            "type": "number[] | null",
+            "description": "Associated person ids"
+          },
+          {
+            "key": "shared_user_ids",
+            "optional": true,
+            "type": "number[] | null",
+            "description": "Collaborator user ids"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Company id"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company name"
+          },
+          {
+            "key": "probability",
+            "optional": true,
+            "type": "number | null",
+            "description": "Win probability, 0-100"
+          },
+          {
+            "key": "deal_stage_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Deal stage id"
+          },
+          {
+            "key": "deal_stage_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deal stage name"
+          },
+          {
+            "key": "deal_loss_reason_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Loss reason id"
+          },
+          {
+            "key": "deal_loss_reason_notes",
+            "optional": true,
+            "type": "string | null",
+            "description": "Loss reason notes"
+          },
+          {
+            "key": "deal_won_reason_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Won reason id"
+          },
+          {
+            "key": "deal_won_reason_notes",
+            "optional": true,
+            "type": "string | null",
+            "description": "Won reason notes"
+          },
+          {
+            "key": "deal_source",
+            "optional": true,
+            "type": "number | null",
+            "description": "Lead source id"
+          },
+          {
+            "key": "currency",
+            "optional": true,
+            "type": "any | null",
+            "description": "Currency record"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Custom field values"
+          },
+          {
+            "key": "tag_ids",
+            "optional": true,
+            "type": "number[] | null",
+            "description": "Tag ids"
+          },
+          {
+            "key": "owner",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, email?: string | null } | null",
+            "description": "The owning user"
+          },
+          {
+            "key": "next_task_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Next task name"
+          },
+          {
+            "key": "next_task_due",
+            "optional": true,
+            "type": "string | null",
+            "description": "Next task due date"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.notes.create",
+      "shortPath": "notes.create",
+      "description": "Create an activity on a record",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Title, if any"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "Note content"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Owning user id"
+          },
+          {
+            "key": "dealId",
+            "optional": true,
+            "type": "number",
+            "description": "Linked deal id"
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "number",
+            "description": "Linked company id"
+          },
+          {
+            "key": "personId",
+            "optional": true,
+            "type": "number",
+            "description": "Linked person id"
+          },
+          {
+            "key": "noteCategoryId",
+            "optional": true,
+            "type": "number",
+            "description": "Category id"
+          },
+          {
+            "key": "notifyUserIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Users emailed on new comments"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Note id"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null",
+            "description": "Title, if any"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null",
+            "description": "Content"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owning user id"
+          },
+          {
+            "key": "deal_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Linked deal id"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Linked company id"
+          },
+          {
+            "key": "person_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Linked person id"
+          },
+          {
+            "key": "milestone_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Milestone id"
+          },
+          {
+            "key": "note_category_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Category id"
+          },
+          {
+            "key": "notify_user_ids",
+            "optional": true,
+            "type": "number[] | null",
+            "description": "Users emailed on new comments"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.notes.delete",
+      "shortPath": "notes.delete",
+      "description": "Delete an activity",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "pipelinecrm.api.notes.get",
+      "shortPath": "notes.get",
+      "description": "Read one activity",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Note id"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null",
+            "description": "Title, if any"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null",
+            "description": "Content"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owning user id"
+          },
+          {
+            "key": "deal_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Linked deal id"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Linked company id"
+          },
+          {
+            "key": "person_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Linked person id"
+          },
+          {
+            "key": "milestone_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Milestone id"
+          },
+          {
+            "key": "note_category_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Category id"
+          },
+          {
+            "key": "notify_user_ids",
+            "optional": true,
+            "type": "number[] | null",
+            "description": "Users emailed on new comments"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.notes.list",
+      "shortPath": "notes.list",
+      "description": "List activities filtered by deal, company or person",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conditions",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Filter conditions; one of conditions[deal_id], conditions[company_id] or conditions[person_id] is required by the API"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, at most 200"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, content?: string | null, user_id?: number | null, deal_id?: number | null, company_id?: number | null, person_id?: number | null, milestone_id?: number | null, note_category_id?: number | null, notify_user_ids?: number[] | null, created_at?: string | null, updated_at?: string | null }[]",
+            "description": "The records on this page"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number | null, per_page: number | null, total: number | null }",
+            "description": "Pagination metadata"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.notes.update",
+      "shortPath": "notes.update",
+      "description": "Update an activity",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Note id"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Title, if any"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "Note content"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Owning user id"
+          },
+          {
+            "key": "noteCategoryId",
+            "optional": true,
+            "type": "number",
+            "description": "Category id"
+          },
+          {
+            "key": "notifyUserIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Users emailed on new comments"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Note id"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string | null",
+            "description": "Title, if any"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string | null",
+            "description": "Content"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owning user id"
+          },
+          {
+            "key": "deal_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Linked deal id"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Linked company id"
+          },
+          {
+            "key": "person_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Linked person id"
+          },
+          {
+            "key": "milestone_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Milestone id"
+          },
+          {
+            "key": "note_category_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Category id"
+          },
+          {
+            "key": "notify_user_ids",
+            "optional": true,
+            "type": "number[] | null",
+            "description": "Users emailed on new comments"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.people.autocomplete",
+      "shortPath": "people.autocomplete",
+      "description": "Search people by text for autocomplete",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": false,
+            "type": "string",
+            "description": "Search text"
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "number",
+            "description": "Restrict to this company"
+          },
+          {
+            "key": "dealId",
+            "optional": true,
+            "type": "number",
+            "description": "Restrict to this deal"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "{ id?: number | null, first_name?: string | null, last_name?: string | null, full_name?: string | null, summary?: string | null, phone?: string | null, email?: string | null, position?: string | null, website?: string | null, company_id?: number | null, company_name?: string | null, user_id?: number | null, lead_status_id?: number | null, lead_source_id?: number | null, image_thumb_url?: string | null, custom_fields?: Record<string, any> | null, created_at?: string | null, updated_at?: string | null }[]"
+      }
+    },
+    {
+      "path": "pipelinecrm.api.people.create",
+      "shortPath": "people.create",
+      "description": "Create a person",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string",
+            "description": "First name"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string",
+            "description": "Last name"
+          },
+          {
+            "key": "fullName",
+            "optional": true,
+            "type": "string",
+            "description": "Full name; splits on whitespace into first and last"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string",
+            "description": "Summary or notes"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string",
+            "description": "Primary phone"
+          },
+          {
+            "key": "homePhone",
+            "optional": true,
+            "type": "string",
+            "description": "Home phone"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string",
+            "description": "Mobile phone"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string",
+            "description": "Professional position"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string",
+            "description": "Website URL"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Primary email"
+          },
+          {
+            "key": "email2",
+            "optional": true,
+            "type": "string",
+            "description": "Secondary email"
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "number",
+            "description": "Company id"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string",
+            "description": "Creates and links a company of this name when no id matches"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Owning user id"
+          },
+          {
+            "key": "leadStatusId",
+            "optional": true,
+            "type": "number",
+            "description": "Lead status id"
+          },
+          {
+            "key": "leadSourceId",
+            "optional": true,
+            "type": "number",
+            "description": "Lead source id"
+          },
+          {
+            "key": "tagIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Predefined contact tag ids"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom field values keyed by custom_label_<id>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Person id"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "First name"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last name"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Full name"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null",
+            "description": "Summary or notes"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null",
+            "description": "Primary phone"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Primary email"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string | null",
+            "description": "Professional position"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null",
+            "description": "Website URL"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Company id"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company name"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owning user id"
+          },
+          {
+            "key": "lead_status_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Lead status id"
+          },
+          {
+            "key": "lead_source_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Lead source id"
+          },
+          {
+            "key": "image_thumb_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Avatar URL"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Custom field values"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.people.delete",
+      "shortPath": "people.delete",
+      "description": "Delete a person",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "any"
+      }
+    },
+    {
+      "path": "pipelinecrm.api.people.get",
+      "shortPath": "people.get",
+      "description": "Read one person",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Person id"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "First name"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last name"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Full name"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null",
+            "description": "Summary or notes"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null",
+            "description": "Primary phone"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Primary email"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string | null",
+            "description": "Professional position"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null",
+            "description": "Website URL"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Company id"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company name"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owning user id"
+          },
+          {
+            "key": "lead_status_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Lead status id"
+          },
+          {
+            "key": "lead_source_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Lead source id"
+          },
+          {
+            "key": "image_thumb_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Avatar URL"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Custom field values"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.people.list",
+      "shortPath": "people.list",
+      "description": "List people with conditions filters and paging",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conditions",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Filter conditions as Pipeline CRM query parameters: each key is the full bracketed key (e.g. \"conditions[deal_stage][]\" or \"conditions[deal_created][selection]\") with its value; unknown keys are ignored by the API"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "string",
+            "description": "Record field to sort by, e.g. value, name, created_at; prefix - for descending"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, at most 200"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ id?: number | null, first_name?: string | null, last_name?: string | null, full_name?: string | null, summary?: string | null, phone?: string | null, email?: string | null, position?: string | null, website?: string | null, company_id?: number | null, company_name?: string | null, user_id?: number | null, lead_status_id?: number | null, lead_source_id?: number | null, image_thumb_url?: string | null, custom_fields?: Record<string, any> | null, created_at?: string | null, updated_at?: string | null }[]",
+            "description": "The records on this page"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number | null, per_page: number | null, total: number | null }",
+            "description": "Pagination metadata"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.people.listDeals",
+      "shortPath": "people.listDeals",
+      "description": "List the deals of a person",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record id"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, at most 200"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, summary?: string | null, user_id?: number | null, status?: number | null, expected_close_date?: string | null, closed_time?: string | null, is_archived?: boolean | null, value?: string | null, primary_contact_id?: number | null, person_ids?: number[] | null, shared_user_ids?: number[] | null, company_id?: number | null, company_name?: string | null, probability?: number | null, deal_stage_id?: number | null, deal_stage_name?: string | null, deal_loss_reason_id?: number | null, deal_loss_reason_notes?: string | null, deal_won_reason_id?: number | null, deal_won_reason_notes?: string | null, deal_source?: number | null, currency?: any | null, custom_fields?: Record<string, any> | null, tag_ids?: number[] | null, owner?: { id?: number | null, name?: string | null, email?: string | null } | null, next_task_name?: string | null, next_task_due?: string | null, created_at?: string | null, updated_at?: string | null }[]",
+            "description": "The records on this page"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number | null, per_page: number | null, total: number | null }",
+            "description": "Pagination metadata"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.people.listNotes",
+      "shortPath": "people.listNotes",
+      "description": "List the activities of a person",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record id"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, at most 200"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ id?: number | null, title?: string | null, content?: string | null, user_id?: number | null, deal_id?: number | null, company_id?: number | null, person_id?: number | null, milestone_id?: number | null, note_category_id?: number | null, notify_user_ids?: number[] | null, created_at?: string | null, updated_at?: string | null }[]",
+            "description": "The records on this page"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number | null, per_page: number | null, total: number | null }",
+            "description": "Pagination metadata"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.people.update",
+      "shortPath": "people.update",
+      "description": "Update a person",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "Person id"
+          },
+          {
+            "key": "firstName",
+            "optional": true,
+            "type": "string",
+            "description": "First name"
+          },
+          {
+            "key": "lastName",
+            "optional": true,
+            "type": "string",
+            "description": "Last name"
+          },
+          {
+            "key": "fullName",
+            "optional": true,
+            "type": "string",
+            "description": "Full name; splits on whitespace"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string",
+            "description": "Summary or notes"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string",
+            "description": "Primary phone"
+          },
+          {
+            "key": "homePhone",
+            "optional": true,
+            "type": "string",
+            "description": "Home phone"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string",
+            "description": "Mobile phone"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string",
+            "description": "Professional position"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string",
+            "description": "Website URL"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string",
+            "description": "Primary email"
+          },
+          {
+            "key": "email2",
+            "optional": true,
+            "type": "string",
+            "description": "Secondary email"
+          },
+          {
+            "key": "companyId",
+            "optional": true,
+            "type": "number",
+            "description": "Company id"
+          },
+          {
+            "key": "companyName",
+            "optional": true,
+            "type": "string",
+            "description": "Creates and links a company of this name"
+          },
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "number",
+            "description": "Owning user id"
+          },
+          {
+            "key": "leadStatusId",
+            "optional": true,
+            "type": "number",
+            "description": "Lead status id"
+          },
+          {
+            "key": "leadSourceId",
+            "optional": true,
+            "type": "number",
+            "description": "Lead source id"
+          },
+          {
+            "key": "tagIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Predefined contact tag ids"
+          },
+          {
+            "key": "customFields",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Custom field values keyed by custom_label_<id>"
+          },
+          {
+            "key": "deliverReassignmentEmail",
+            "optional": true,
+            "type": "boolean",
+            "description": "Email the new owner on reassignment"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Person id"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "First name"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last name"
+          },
+          {
+            "key": "full_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Full name"
+          },
+          {
+            "key": "summary",
+            "optional": true,
+            "type": "string | null",
+            "description": "Summary or notes"
+          },
+          {
+            "key": "phone",
+            "optional": true,
+            "type": "string | null",
+            "description": "Primary phone"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Primary email"
+          },
+          {
+            "key": "position",
+            "optional": true,
+            "type": "string | null",
+            "description": "Professional position"
+          },
+          {
+            "key": "website",
+            "optional": true,
+            "type": "string | null",
+            "description": "Website URL"
+          },
+          {
+            "key": "company_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Company id"
+          },
+          {
+            "key": "company_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Company name"
+          },
+          {
+            "key": "user_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Owning user id"
+          },
+          {
+            "key": "lead_status_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Lead status id"
+          },
+          {
+            "key": "lead_source_id",
+            "optional": true,
+            "type": "number | null",
+            "description": "Lead source id"
+          },
+          {
+            "key": "image_thumb_url",
+            "optional": true,
+            "type": "string | null",
+            "description": "Avatar URL"
+          },
+          {
+            "key": "custom_fields",
+            "optional": true,
+            "type": "Record<string, any> | null",
+            "description": "Custom field values"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.users.get",
+      "shortPath": "users.get",
+      "description": "Read one visible user",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The record id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "number | null",
+            "description": "User id"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string | null",
+            "description": "Email"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Display name"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "First name"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last name"
+          },
+          {
+            "key": "work_phone",
+            "optional": true,
+            "type": "string | null",
+            "description": "Work phone"
+          },
+          {
+            "key": "mobile",
+            "optional": true,
+            "type": "string | null",
+            "description": "Mobile phone"
+          },
+          {
+            "key": "admin",
+            "optional": true,
+            "type": "boolean | null",
+            "description": "Whether the user is an admin"
+          },
+          {
+            "key": "user_level",
+            "optional": true,
+            "type": "any | null",
+            "description": "Role level record"
+          },
+          {
+            "key": "created_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Creation timestamp"
+          },
+          {
+            "key": "updated_at",
+            "optional": true,
+            "type": "string | null",
+            "description": "Last update timestamp"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pipelinecrm.api.users.list",
+      "shortPath": "users.list",
+      "description": "List the visible users",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "conditions",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Filter conditions: \"conditions[email]\" for an exact email match, \"conditions[admin]\" for admins only, \"conditions[including_inactive]\" to include deactivated users"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "perPage",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page, at most 200"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "entries",
+            "optional": false,
+            "type": "{ id?: number | null, email?: string | null, name?: string | null, first_name?: string | null, last_name?: string | null, work_phone?: string | null, mobile?: string | null, admin?: boolean | null, user_level?: any | null, created_at?: string | null, updated_at?: string | null }[]",
+            "description": "The records on this page"
+          },
+          {
+            "key": "pagination",
+            "optional": false,
+            "type": "{ page: number | null, per_page: number | null, total: number | null }",
+            "description": "Pagination metadata"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

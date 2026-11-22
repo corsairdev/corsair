@@ -1,0 +1,1768 @@
+{
+  "id": "pingdom",
+  "displayName": "Pingdom",
+  "description": "Pingdom is a website uptime and performance monitoring service. This plugin manages uptime checks of every documented type, reads raw results, root cause analyses and summaries, runs one-off checks, schedules maintenance windows, and manages alerting teams and contacts.",
+  "npmPackageName": "@corsair-dev/pingdom",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 40,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "pingdom.api.alerting.contacts.create",
+      "shortPath": "alerting.contacts.create",
+      "description": "Create an alerting contact with notification targets",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Contact name"
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean",
+            "description": "Create the contact paused"
+          },
+          {
+            "key": "notificationTargets",
+            "optional": false,
+            "type": "{ severity: HIGH | LOW, email?: string, number?: string, countryCode?: string, provider?: string }[]",
+            "description": "Notification targets, each an email or a number (+countryCode) with severity HIGH or LOW; Pingdom wants at least one HIGH and one LOW"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": false,
+            "type": "{ id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.alerting.contacts.delete",
+      "shortPath": "alerting.contacts.delete",
+      "description": "Delete an alerting contact",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "number",
+            "description": "The contact id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deletion result"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.alerting.contacts.get",
+      "shortPath": "alerting.contacts.get",
+      "description": "Read one alerting contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "number",
+            "description": "The contact id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, paused?: boolean | null, type?: string | null, notification_targets?: { email?: { severity?: string | null, address?: string | null, country_code?: string | null, number?: string | null, provider?: string | null }[] | null, sms?: { severity?: string | null, address?: string | null, country_code?: string | null, number?: string | null, provider?: string | null }[] | null } | null } | null",
+            "description": "The contact"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.alerting.contacts.list",
+      "shortPath": "alerting.contacts.list",
+      "description": "List the alerting contacts",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contacts",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, paused?: boolean | null, type?: string | null, notification_targets?: { email?: { severity?: string | null, address?: string | null, country_code?: string | null, number?: string | null, provider?: string | null }[] | null, sms?: { severity?: string | null, address?: string | null, country_code?: string | null, number?: string | null, provider?: string | null }[] | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.alerting.contacts.update",
+      "shortPath": "alerting.contacts.update",
+      "description": "Modify an alerting contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactId",
+            "optional": false,
+            "type": "number",
+            "description": "The contact id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Contact name"
+          },
+          {
+            "key": "paused",
+            "optional": false,
+            "type": "boolean",
+            "description": "Whether alerts are paused"
+          },
+          {
+            "key": "notificationTargets",
+            "optional": false,
+            "type": "{ severity: HIGH | LOW, email?: string, number?: string, countryCode?: string, provider?: string }[]",
+            "description": "Notification targets, each an email or a number (+countryCode) with severity HIGH or LOW; Pingdom wants at least one HIGH and one LOW"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contact",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, paused?: boolean | null, type?: string | null, notification_targets?: { email?: { severity?: string | null, address?: string | null, country_code?: string | null, number?: string | null, provider?: string | null }[] | null, sms?: { severity?: string | null, address?: string | null, country_code?: string | null, number?: string | null, provider?: string | null }[] | null } | null } | null",
+            "description": "The contact"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.alerting.teams.create",
+      "shortPath": "alerting.teams.create",
+      "description": "Create an alerting team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Team name"
+          },
+          {
+            "key": "memberIds",
+            "optional": false,
+            "type": "number[]",
+            "description": "Contact ids of the team members"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team",
+            "optional": false,
+            "type": "{ id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.alerting.teams.delete",
+      "shortPath": "alerting.teams.delete",
+      "description": "Delete an alerting team",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "number",
+            "description": "The team id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deletion result"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.alerting.teams.get",
+      "shortPath": "alerting.teams.get",
+      "description": "Read one alerting team",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "number",
+            "description": "The team id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, members?: { id?: number | null, name?: string | null }[] | null } | null",
+            "description": "The team"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.alerting.teams.list",
+      "shortPath": "alerting.teams.list",
+      "description": "List the alerting teams",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teams",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, members?: { id?: number | null, name?: string | null }[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.alerting.teams.update",
+      "shortPath": "alerting.teams.update",
+      "description": "Modify an alerting team",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "teamId",
+            "optional": false,
+            "type": "number",
+            "description": "The team id"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Team name"
+          },
+          {
+            "key": "memberIds",
+            "optional": false,
+            "type": "number[]",
+            "description": "Contact ids of the team members"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "team",
+            "optional": true,
+            "type": "{ id?: number | null, name?: string | null, members?: { id?: number | null, name?: string | null }[] | null } | null",
+            "description": "The team"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.analysis.get",
+      "shortPath": "analysis.get",
+      "description": "Read one raw root cause analysis",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checkId",
+            "optional": false,
+            "type": "number",
+            "description": "The check id"
+          },
+          {
+            "key": "analysisId",
+            "optional": false,
+            "type": "number",
+            "description": "The analysis id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "pingdom.api.analysis.list",
+      "shortPath": "analysis.list",
+      "description": "List the latest root cause analyses of a check",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checkId",
+            "optional": false,
+            "type": "number",
+            "description": "The check id"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum analyses returned"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Offset for pagination"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "analysis",
+            "optional": false,
+            "type": "{ id?: number | null, time?: number | null, rootcause?: any | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.checks.create",
+      "shortPath": "checks.create",
+      "description": "Create an uptime check of any documented type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Check name"
+          },
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string",
+            "description": "Target host"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "http | httpcustom | tcp | ping | dns | udp | smtp | pop3 | imap",
+            "description": "Type of check"
+          },
+          {
+            "key": "typeSettings",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Type-specific settings as flat body fields, per the check type docs: http takes url/encryption/port/shouldcontain/shouldnotcontain/postdata/requestheaders/verify_certificate/ssl_down_days_before; tcp takes port/encryption/stringtoexpect; dns takes nameserver/expectedip; udp/smtp/pop3/imap take port/stringtoexpect"
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean",
+            "description": "Create or leave the check paused"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "1 | 5 | 15 | 30 | 60 | 1 | 5 | 15 | 30 | 60",
+            "description": "Test interval in minutes (1, 5, 15, 30 or 60)"
+          },
+          {
+            "key": "userIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "User ids to alert"
+          },
+          {
+            "key": "teamIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Team ids to alert"
+          },
+          {
+            "key": "integrationIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Integration ids to alert"
+          },
+          {
+            "key": "sendNotificationWhenDown",
+            "optional": true,
+            "type": "number",
+            "description": "Alert after this many consecutive failures"
+          },
+          {
+            "key": "notifyAgainEvery",
+            "optional": true,
+            "type": "number",
+            "description": "Re-notify every N failures"
+          },
+          {
+            "key": "notifyWhenBackup",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send an alert when the check recovers"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated tags for filtering"
+          },
+          {
+            "key": "probeFilters",
+            "optional": true,
+            "type": "string[]",
+            "description": "Probe region filters, e.g. [\"region: EU\"] or [\"region: NA\"]"
+          },
+          {
+            "key": "ipv6",
+            "optional": true,
+            "type": "boolean",
+            "description": "Test over IPv6"
+          },
+          {
+            "key": "responseTimeThreshold",
+            "optional": true,
+            "type": "number",
+            "description": "Response time threshold in ms"
+          },
+          {
+            "key": "customMessage",
+            "optional": true,
+            "type": "string",
+            "description": "Custom alert message"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "check",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.checks.delete",
+      "shortPath": "checks.delete",
+      "description": "Delete a check",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checkId",
+            "optional": false,
+            "type": "number",
+            "description": "The check id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deletion result"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.checks.deleteMulti",
+      "shortPath": "checks.deleteMulti",
+      "description": "Delete several checks at once",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checkIds",
+            "optional": false,
+            "type": "number[]",
+            "description": "Ids of the checks to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deletion result"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.checks.get",
+      "shortPath": "checks.get",
+      "description": "Read one check with its type settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checkId",
+            "optional": false,
+            "type": "number",
+            "description": "The check id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "check",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, hostname?: string | null, type?: Record<string, any> | null, created?: number | null, paused?: any | null, resolution?: number | null, sendnotificationwhendown?: number | null, notifyagainevery?: number | null, notifywhenbackup?: boolean | null, userids?: number[] | null, teamids?: number[] | null, integrationids?: number[] | null, tags?: any | null, probe_filters?: any[] | null, ipv6?: boolean | null, status?: string | null, lasterrortime?: number | null, lasttesttime?: number | null, lastresponsetime?: number | null }",
+            "description": "A Pingdom check with its settings"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.checks.list",
+      "shortPath": "checks.list",
+      "description": "List the checks with paging and tag filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum checks returned"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Offset for pagination"
+          },
+          {
+            "key": "showEncryption",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include encryption state for http checks"
+          },
+          {
+            "key": "includeTags",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include tags"
+          },
+          {
+            "key": "includeSeverity",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include severity of the latest error"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated tag filter"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checks",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, type?: any | null, hostname?: string | null, lasterrortime?: number | null, lasttesttime?: number | null, lastresponsetime?: number | null, lastdownstart?: number | null, lastdownend?: number | null, created?: number | null, paused?: any | null, resolution?: number | null, status?: string | null, tags?: any | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.checks.update",
+      "shortPath": "checks.update",
+      "description": "Modify the settings of one check",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checkId",
+            "optional": false,
+            "type": "number",
+            "description": "The check id"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "New check name"
+          },
+          {
+            "key": "host",
+            "optional": true,
+            "type": "string",
+            "description": "New target host"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "http | httpcustom | tcp | ping | dns | udp | smtp | pop3 | imap",
+            "description": "New type of check"
+          },
+          {
+            "key": "typeSettings",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Type-specific settings as flat body fields"
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean",
+            "description": "Create or leave the check paused"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "1 | 5 | 15 | 30 | 60 | 1 | 5 | 15 | 30 | 60",
+            "description": "Test interval in minutes (1, 5, 15, 30 or 60)"
+          },
+          {
+            "key": "userIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "User ids to alert"
+          },
+          {
+            "key": "teamIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Team ids to alert"
+          },
+          {
+            "key": "integrationIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Integration ids to alert"
+          },
+          {
+            "key": "sendNotificationWhenDown",
+            "optional": true,
+            "type": "number",
+            "description": "Alert after this many consecutive failures"
+          },
+          {
+            "key": "notifyAgainEvery",
+            "optional": true,
+            "type": "number",
+            "description": "Re-notify every N failures"
+          },
+          {
+            "key": "notifyWhenBackup",
+            "optional": true,
+            "type": "boolean",
+            "description": "Send an alert when the check recovers"
+          },
+          {
+            "key": "tags",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated tags for filtering"
+          },
+          {
+            "key": "probeFilters",
+            "optional": true,
+            "type": "string[]",
+            "description": "Probe region filters, e.g. [\"region: EU\"] or [\"region: NA\"]"
+          },
+          {
+            "key": "ipv6",
+            "optional": true,
+            "type": "boolean",
+            "description": "Test over IPv6"
+          },
+          {
+            "key": "responseTimeThreshold",
+            "optional": true,
+            "type": "number",
+            "description": "Response time threshold in ms"
+          },
+          {
+            "key": "customMessage",
+            "optional": true,
+            "type": "string",
+            "description": "Custom alert message"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Modification result"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.checks.updateMulti",
+      "shortPath": "checks.updateMulti",
+      "description": "Pause, unpause or re-time the listed checks at once",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checkIds",
+            "optional": false,
+            "type": "number[]",
+            "description": "Checks to modify (sent as checkids); Pingdom changes every check in the account when the list is missing"
+          },
+          {
+            "key": "paused",
+            "optional": true,
+            "type": "boolean",
+            "description": "Pause (true) or unpause (false)"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "1 | 5 | 15 | 30 | 60 | 1 | 5 | 15 | 30 | 60",
+            "description": "New test interval in minutes (1, 5, 15, 30 or 60)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Modification result"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.maintenance.create",
+      "shortPath": "maintenance.create",
+      "description": "Create a maintenance window",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "description",
+            "optional": false,
+            "type": "string",
+            "description": "Description"
+          },
+          {
+            "key": "from",
+            "optional": false,
+            "type": "number",
+            "description": "Window start, UNIX time (future only)"
+          },
+          {
+            "key": "to",
+            "optional": false,
+            "type": "number",
+            "description": "Window end, UNIX time (future only)"
+          },
+          {
+            "key": "recurrenceType",
+            "optional": true,
+            "type": "none | day | week | month",
+            "description": "Recurrence (sent as recurrencetype); default none"
+          },
+          {
+            "key": "repeatEvery",
+            "optional": true,
+            "type": "number",
+            "description": "Repeat every N recurrence units (sent as repeatevery)"
+          },
+          {
+            "key": "effectiveTo",
+            "optional": true,
+            "type": "number",
+            "description": "When the recurrence stops, UNIX time (sent as effectiveto)"
+          },
+          {
+            "key": "uptimeIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Uptime check ids the window covers (sent as uptimeids)"
+          },
+          {
+            "key": "tmsIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Transaction check ids the window covers (sent as tmsids)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maintenance",
+            "optional": false,
+            "type": "{ id?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.maintenance.delete",
+      "shortPath": "maintenance.delete",
+      "description": "Delete a maintenance window",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The maintenance window id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deletion result"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.maintenance.deleteMulti",
+      "shortPath": "maintenance.deleteMulti",
+      "description": "Delete several maintenance windows at once",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "windowIds",
+            "optional": false,
+            "type": "number[]",
+            "description": "Ids of the windows to delete"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deletion result"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.maintenance.get",
+      "shortPath": "maintenance.get",
+      "description": "Read one maintenance window",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The maintenance window id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maintenance",
+            "optional": true,
+            "type": "{ id?: number | null, description?: string | null, from?: number | null, to?: number | null, duration?: number | null, durationunit?: string | null, recurrencetype?: string | null, repeatevery?: number | null, effectiveto?: number | null, checks?: { uptime?: number[] | null, tms?: number[] | null } | null } | null",
+            "description": "The window"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.maintenance.list",
+      "shortPath": "maintenance.list",
+      "description": "List the maintenance windows",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum windows returned"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Offset for pagination"
+          },
+          {
+            "key": "orderBy",
+            "optional": true,
+            "type": "string",
+            "description": "Ordering column"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Ordering direction"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maintenance",
+            "optional": false,
+            "type": "{ id?: number | null, description?: string | null, from?: number | null, to?: number | null, duration?: number | null, durationunit?: string | null, recurrencetype?: string | null, repeatevery?: number | null, effectiveto?: number | null, checks?: { uptime?: number[] | null, tms?: number[] | null } | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.maintenance.update",
+      "shortPath": "maintenance.update",
+      "description": "Modify a maintenance window",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The maintenance window id"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "Description"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Window start, UNIX time (future only)"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number",
+            "description": "Window end, UNIX time (future only)"
+          },
+          {
+            "key": "recurrenceType",
+            "optional": true,
+            "type": "none | day | week | month",
+            "description": "Recurrence (sent as recurrencetype); default none"
+          },
+          {
+            "key": "repeatEvery",
+            "optional": true,
+            "type": "number",
+            "description": "Repeat every N recurrence units (sent as repeatevery)"
+          },
+          {
+            "key": "effectiveTo",
+            "optional": true,
+            "type": "number",
+            "description": "When the recurrence stops, UNIX time (sent as effectiveto)"
+          },
+          {
+            "key": "uptimeIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Uptime check ids the window covers (sent as uptimeids)"
+          },
+          {
+            "key": "tmsIds",
+            "optional": true,
+            "type": "number[]",
+            "description": "Transaction check ids the window covers (sent as tmsids)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Modification result"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.occurrences.delete",
+      "shortPath": "occurrences.delete",
+      "description": "Delete a maintenance occurrence",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The occurrence id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deletion result"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.occurrences.get",
+      "shortPath": "occurrences.get",
+      "description": "Read one maintenance occurrence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The occurrence id"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "occurrence",
+            "optional": true,
+            "type": "{ id?: number | null, maintenanceid?: number | null, from?: number | null, to?: number | null, duration?: number | null, durationunit?: string | null } | null",
+            "description": "The occurrence"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.occurrences.list",
+      "shortPath": "occurrences.list",
+      "description": "List maintenance occurrences",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "maintenanceId",
+            "optional": true,
+            "type": "number",
+            "description": "Only occurrences of this window"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Start of the period, UNIX time"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number",
+            "description": "End of the period, UNIX time"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "occurrences",
+            "optional": false,
+            "type": "{ id?: number | null, maintenanceid?: number | null, from?: number | null, to?: number | null, duration?: number | null, durationunit?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.occurrences.update",
+      "shortPath": "occurrences.update",
+      "description": "Move a maintenance occurrence",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number",
+            "description": "The occurrence id"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "New start, UNIX time (only future allowed)"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number",
+            "description": "New end, UNIX time (only future allowed)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "message",
+            "optional": true,
+            "type": "string | null",
+            "description": "Deletion result"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.results.list",
+      "shortPath": "results.list",
+      "description": "List the raw test results of a check",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checkId",
+            "optional": false,
+            "type": "number",
+            "description": "The check id"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Start of the period, UNIX time"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number",
+            "description": "End of the period, UNIX time"
+          },
+          {
+            "key": "probes",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated probe ids to filter on"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "up | down | unconfirmed | unknown",
+            "description": "Result status filter"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum results returned"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Offset for pagination"
+          },
+          {
+            "key": "includeAnalysis",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include root cause analysis links"
+          },
+          {
+            "key": "maxResponse",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum response time filter"
+          },
+          {
+            "key": "minResponse",
+            "optional": true,
+            "type": "number",
+            "description": "Minimum response time filter"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ probeid?: number | null, time?: number | null, status?: string | null, responsetime?: number | null, probedesc?: string | null, probeip?: string | null, version?: string | null, activelytested?: boolean | null, checkid?: number | null, checkname?: string | null, hostname?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.summaries.average",
+      "shortPath": "summaries.average",
+      "description": "Read the average time and uptime summary of a check",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checkId",
+            "optional": false,
+            "type": "number",
+            "description": "The check id"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Start of the period, UNIX time"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number",
+            "description": "End of the period, UNIX time"
+          },
+          {
+            "key": "probes",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated probe ids to filter on"
+          },
+          {
+            "key": "includeUptime",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include uptime"
+          },
+          {
+            "key": "byCountry",
+            "optional": true,
+            "type": "boolean",
+            "description": "Group by country"
+          },
+          {
+            "key": "byProbe",
+            "optional": true,
+            "type": "boolean",
+            "description": "Group by probe"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "summary",
+            "optional": false,
+            "type": "{ responsetime?: any | null, status?: any | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.summaries.hoursOfDay",
+      "shortPath": "summaries.hoursOfDay",
+      "description": "Read the per-hour response time summary",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checkId",
+            "optional": false,
+            "type": "number",
+            "description": "The check id"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Start of the period, UNIX time"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number",
+            "description": "End of the period, UNIX time"
+          },
+          {
+            "key": "probes",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated probe ids to filter on"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hoursofday",
+            "optional": false,
+            "type": "{ hour?: number | null, avgresponse?: number | null }[]",
+            "description": "Per-hour average response times"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.summaries.outage",
+      "shortPath": "summaries.outage",
+      "description": "Read the status change history of a check",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checkId",
+            "optional": false,
+            "type": "number",
+            "description": "The check id"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Start of the period, UNIX time"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number",
+            "description": "End of the period, UNIX time"
+          },
+          {
+            "key": "probes",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated probe ids to filter on"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "summary",
+            "optional": false,
+            "type": "{ state?: string | null, outages?: any[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.summaries.performance",
+      "shortPath": "summaries.performance",
+      "description": "Read the per-interval performance summary",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checkId",
+            "optional": false,
+            "type": "number",
+            "description": "The check id"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Start of the period, UNIX time"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number",
+            "description": "End of the period, UNIX time"
+          },
+          {
+            "key": "resolution",
+            "optional": true,
+            "type": "hour | day | week",
+            "description": "Interval size: hour (default), day or week"
+          },
+          {
+            "key": "includeUptime",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include uptime"
+          },
+          {
+            "key": "probes",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated probe ids to filter on"
+          },
+          {
+            "key": "order",
+            "optional": true,
+            "type": "asc | desc",
+            "description": "Interval order"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "summary",
+            "optional": false,
+            "type": "{ weeks?: any[] | null, hours?: any[] | null, days?: any[] | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.summaries.probes",
+      "shortPath": "summaries.probes",
+      "description": "Read the per-probe test counts of a check",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checkId",
+            "optional": false,
+            "type": "number",
+            "description": "The check id"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Start of the period, UNIX time"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number",
+            "description": "End of the period, UNIX time"
+          },
+          {
+            "key": "probes",
+            "optional": true,
+            "type": "string",
+            "description": "Comma-separated probe ids to filter on"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "probes",
+            "optional": false,
+            "type": "number[]",
+            "description": "Ids of the probes that tested the check in the period"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.tools.getCredits",
+      "shortPath": "tools.getCredits",
+      "description": "Read the account check slots and SMS credits",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "credits",
+            "optional": false,
+            "type": "{ checklimit?: number | null, availablechecks?: number | null, useddefault?: number | null, usedtransaction?: number | null, availablesms?: number | null, availablesmstests?: number | null }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.tools.getReference",
+      "shortPath": "tools.getReference",
+      "description": "Read region, timezone and format references",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "pingdom.api.tools.listActions",
+      "shortPath": "tools.listActions",
+      "description": "List the alert actions across checks",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "checkId",
+            "optional": true,
+            "type": "number",
+            "description": "Only actions for this check"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "number",
+            "description": "Start of the period, UNIX time"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "number",
+            "description": "End of the period, UNIX time"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Maximum actions returned"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Offset for pagination"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "actions",
+            "optional": false,
+            "type": "{ alerts: { username?: string | null, userid?: number | null, checkid?: number | null, checkname?: string | null, time?: number | null, via?: string | null }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.tools.listProbes",
+      "shortPath": "tools.listProbes",
+      "description": "List the Pingdom probe servers",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Probes to return"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number",
+            "description": "Offset for paging"
+          },
+          {
+            "key": "onlyActive",
+            "optional": true,
+            "type": "boolean",
+            "description": "Only active probes (sent as onlyactive)"
+          },
+          {
+            "key": "includeDeleted",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include deleted probes (sent as includedeleted)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "probes",
+            "optional": false,
+            "type": "{ id?: number | null, country?: string | null, city?: string | null, name?: string | null, active?: boolean | null, hostname?: string | null, ip?: string | null, ipv6?: string | null, region?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "pingdom.api.tools.runSingle",
+      "shortPath": "tools.runSingle",
+      "description": "Run a one-off check against a host",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "host",
+            "optional": false,
+            "type": "string",
+            "description": "Target host to test"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "http | httpcustom | tcp | ping | dns | udp | smtp | pop3 | imap",
+            "description": "Type of test"
+          },
+          {
+            "key": "probeId",
+            "optional": true,
+            "type": "number",
+            "description": "Run from this probe (sent as probeid)"
+          },
+          {
+            "key": "ipv6",
+            "optional": true,
+            "type": "boolean",
+            "description": "Use IPv6 instead of IPv4"
+          },
+          {
+            "key": "typeSettings",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Type-specific query fields, e.g. http: url, encryption, port, shouldcontain, verify_certificate; dns: nameserver, expectedip"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "result",
+            "optional": false,
+            "type": "{ status?: string | null, responsetime?: number | null, statusdesc?: string | null, statusdesclong?: string | null, probeid?: number | null, probedesc?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

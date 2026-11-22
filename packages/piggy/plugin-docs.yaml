@@ -1,0 +1,156 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Piggy"
+description: "Piggy (rebranded Leat) is a loyalty platform. This plugin manages contacts and their credit, prepaid and tier state, records direct points and reward redemptions with their reversals, issues and redeems vouchers and giftcards, reads promotions, loyalty programs and business profiles, and manages webhook subscriptions with signature-verified deliveries."
+domain: leat.com
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with a Personal Access Token created for a private app in the
+  Piggy Business Dashboard Marketplace; the plugin sends it as an
+  Authorization Bearer token. Resource paths sit under
+  https://api.leat.com/api/v3/oauth/clients/.
+
+  Piggy is the same product as Leat: the developer docs live at
+  docs.leat.com (docs.piggy.eu redirects there) and the token is created in
+  the Leat-branded dashboard. Answers carry a { data, meta } envelope;
+  errors carry { message, code, status_code } with a numeric business code
+  (e.g. 55031 Contact not found). Deletion and merge of contacts cannot be
+  undone; reversal calls (points, rewards, vouchers) compensate a write and
+  a transaction can be reversed once.
+
+  Webhook deliveries carry an HMAC-SHA256 signature of the raw body in the
+  Signature header, keyed with the subscription secret (or the account
+  secret). Store the subscription secret with keys.set_webhook_signature
+  (or set webhookSecret on the plugin). Piggy sends two envelope versions:
+  V1 posts one event per request (deduplicate on uuid) and V2 posts a batch
+  under events[] (deduplicate on events[].event_uuid); the receiver
+  verifies the signature and branches on version, so one endpoint serves
+  both.
+
+  The API documents far more resources than this plugin covers (orders,
+  bookings, unit transactions, prepaid transactions, portal sessions,
+  stamp cards, referrals, tiers management, custom attributes, automations
+  and more, all on the same shapes). The deprecated credit-receptions
+  endpoints and the legacy shops paths are intentionally not part of this
+  plugin.
+
+  Every operation is described in the official reference:
+  https://docs.leat.com/v3
+examples:
+  read:
+    path: contacts.get
+    title: Read a contact
+    args:
+      contactUuid: 1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c
+  write:
+    path: contacts.findOrCreate
+    title: Find or create a contact
+    args:
+      email: spongebob@bikinibottom.sea
+apiExamples:
+  contacts.list:
+    call: '{ limit: 25, page: 1, createdAtGte: "2026-01-01" }'
+  contacts.create:
+    call: '{ email: "spongebob@bikinibottom.sea" }'
+  contacts.createAnonymous:
+    call: '{}'
+  contacts.findOneByEmail:
+    call: '{ email: "spongebob@bikinibottom.sea" }'
+  contacts.findOrCreate:
+    call: '{ email: "spongebob@bikinibottom.sea" }'
+  contacts.get:
+    call: '{ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c" }'
+  contacts.update:
+    call: '{ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c", attributes: { firstname: "Patrick" } }'
+  contacts.delete:
+    call: '{ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c", type: "GDPR" }'
+  contacts.claim:
+    call: '{ anonymousContactUuid: "3a685add-1711-425d-9184-fc6db18e0e1d", email: "patrick@bikinibottom.sea" }'
+  contacts.merge:
+    call: '{ sourceContactUuid: "cd183615-d1cb-402a-b618-6472d5e13890", destinationContactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c" }'
+  contacts.getCreditBalance:
+    call: '{ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c" }'
+  contacts.getPrepaidBalance:
+    call: '{ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c" }'
+  contacts.getTier:
+    call: '{ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c" }'
+  loyalty.getProgram:
+    call: '{}'
+  loyalty.listTransactions:
+    call: '{ type: "reward_receptions", limit: 50 }'
+  points.create:
+    call: '{ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c", businessProfileUuid: "123123", points: 50 }'
+  points.get:
+    call: '{ uuid: "8d1e4b7c-2a50-4f3e-b6c9-0e7a5d4c3b12" }'
+  points.reverse:
+    call: '{ uuid: "8d1e4b7c-2a50-4f3e-b6c9-0e7a5d4c3b12" }'
+  rewards.list:
+    call: '{ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c" }'
+  rewards.get:
+    call: '{ rewardUuid: "539483d0-fab4-40db-add5-2ec65ef12901" }'
+  rewards.update:
+    call: '{ rewardUuid: "539483d0-fab4-40db-add5-2ec65ef12901", requiredCredits: 40 }'
+  rewards.redeem:
+    call: '{ contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c", rewardUuid: "539483d0-fab4-40db-add5-2ec65ef12901", shopUuid: "123123" }'
+  rewards.reverseRedemption:
+    call: '{ rewardReceptionUuid: "55537e6c-23e8-4c0c-bbce-65f587fb543a" }'
+  promotions.list:
+    call: '{}'
+  promotions.get:
+    call: '{ promotionUuid: "9c966b16-6212-4169-ae2f-a523566b533f" }'
+  vouchers.list:
+    call: '{ status: "ACTIVE", limit: 100 }'
+  vouchers.create:
+    call: '{ promotionUuid: "9c966b16-6212-4169-ae2f-a523566b533f" }'
+  vouchers.find:
+    call: '{ code: "ABC123" }'
+  vouchers.update:
+    call: '{ voucherUuid: "57d93a44-1c9d-4548-8c0e-e6cd71d6170a", status: "DEACTIVATED" }'
+  vouchers.validate:
+    call: '{ voucherUuid: "57d93a44-1c9d-4548-8c0e-e6cd71d6170a", shopUuid: "123123" }'
+  vouchers.redeem:
+    call: '{ code: "ABC123", shopUuid: "123123" }'
+  vouchers.lock:
+    call: '{ voucherUuid: "57d93a44-1c9d-4548-8c0e-e6cd71d6170a" }'
+  vouchers.release:
+    call: '{ voucherUuid: "57d93a44-1c9d-4548-8c0e-e6cd71d6170a", releaseKey: "5cc7e94a-7aa2-4f4a-8a8c-c20ab3a086ce" }'
+  vouchers.reverseRedemption:
+    call: '{ voucherUuid: "57d93a44-1c9d-4548-8c0e-e6cd71d6170a" }'
+  giftcards.list:
+    call: '{ giftcardProgramUuid: "8fb59dcf-fb5b-4cee-88d8-35e361e55a12" }'
+  giftcards.get:
+    call: '{ giftcardUuid: "5b3dab1c-bdde-4313-a74d-67de815c751c" }'
+  giftcards.findOneByHash:
+    call: '{ hash: "41654" }'
+  giftcards.create:
+    call: '{ giftcardProgramUuid: "8fb59dcf-fb5b-4cee-88d8-35e361e55a12" }'
+  giftcards.sendByEmail:
+    call: '{ giftcardUuid: "5b3dab1c-bdde-4313-a74d-67de815c751c", contactUuid: "1b7e3c4a-5f2d-4e8b-9a6c-0d2f4e6a8b1c" }'
+  giftcards.listPrograms:
+    call: '{}'
+  businesses.listProfiles:
+    call: '{}'
+  businesses.getProfile:
+    call: '{ uuid: "123123" }'
+  webhooks.list:
+    call: '{}'
+  webhooks.create:
+    call: '{ name: "Contact alerts", eventType: "contact_created", url: "https://example.com/piggy/webhooks", version: "V2" }'
+  webhooks.get:
+    call: '{ webhookSubscriptionUuid: "f1dc2d67-caa8-4919-a537-66491a94ed2f" }'
+  webhooks.update:
+    call: '{ webhookSubscriptionUuid: "f1dc2d67-caa8-4919-a537-66491a94ed2f", status: "INACTIVE" }'
+  webhooks.delete:
+    call: '{ webhookSubscriptionUuid: "f1dc2d67-caa8-4919-a537-66491a94ed2f" }'
+apiNotes:
+  contacts.list: 'Attribute filters ride through attributesQuery with Piggy bracketed parameter names, e.g. "attributes[visits][gte]": 10 or "attributes[likes_pizza]": true; a contact must match every filter.'
+  contacts.create: 'Only the email is required; Piggy answers with the new UUID only. Use contacts.update to add attributes.'
+  contacts.delete: 'Schedules the removal; DEFAULT keeps a detailed log and GDPR removes personal data references. Cannot be undone.'
+  contacts.merge: 'The source contact ceases to exist and the merge cannot be undone; verify both emails belong to the same person first.'
+  loyalty.listTransactions: 'type filters to credit_receptions or reward_receptions; shopUuid takes a business profile UUID.'
+  points.create: 'A negative points value subtracts; the transaction can be reversed once with points.reverse.'
+  rewards.redeem: 'The claim fails with documented codes when credits are insufficient (1017), stock is empty (1018) or the per-contact limit is reached (1019).'
+  vouchers.redeem: 'contactUuid is required when the voucher has no linked contact; pass the releaseKey from vouchers.lock for locked vouchers.'
+  vouchers.lock: 'Returns a release_key needed for later redemption or release; Piggy auto-releases the lock after one hour.'
+  giftcards.create: 'The public API only creates digital giftcards (the plugin sends type 1); physical cards are refused with error 55021.'
+  webhooks.create: 'One subscription per event type: creating again for the same event_type overwrites the existing subscription. version V2 batches events and is the recommended envelope.'

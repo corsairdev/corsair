@@ -1,0 +1,142 @@
+---
+title: "Payhere plugin"
+sidebarTitle: "Overview"
+description: "Payhere is a Stripe-backed payment links platform. This plugin reads the account user, company and 30-day stats, lists customers, payments, plans and subscriptions, reads a customer with their payment history, issues full or partial refunds, and receives HMAC-verified payment and subscription webhooks."
+---
+
+Use **Payhere** through Corsair: one client, typed API calls, and incoming webhooks.
+
+Authenticate with the API key from the integrations section of the merchants admin; the plugin sends it as an Authorization Bearer token. Every list endpoint pages with page and per_page (default 20, maximum 100) and answers &#123; data, meta &#125; where meta.next_page is the next page number.
+Webhook deliveries are signed in the X-Signature header: HMAC-SHA1 hex of the raw body with the shared secret from the merchants admin. Store that secret with keys.set_webhook_signature (or set webhookSecret on the plugin) so deliveries can be verified. Events include payment.success, payment.failed and subscription.cancelled.
+The plugin covers nine read and refund operations. Creating plans and cancelling subscriptions (POST /api/v1/plans, DELETE /api/v1/subscriptions/:id) are not wrapped yet.
+Every operation is described in the official docs: https://developers.payhere.co/docs/api-auth
+
+**What you get:**
+
+- 9 typed API operations
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/payhere better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/payhere better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/payhere better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/payhere better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { payhere } from '@corsair-dev/payhere';
+
+export const corsair = createCorsair({
+	plugins: [
+		payhere(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Payhere API key before the first call: `pnpm corsair setup --plugin=payhere --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+payhere()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'payhere',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read a customer with their history**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.payhere.api.customers.get({ customerId: 989899294 });
+```
+
+
+**Refund a payment**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.payhere.api.refunds.create({ payment_id: 373, amount: 0.5, reason: 'requested_by_customer' });
+```
+
+
+See the full list on the [API](/plugins/payhere/api) page.
+
+## Webhooks
+
+This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/payhere/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/payhere/api">
+    Every `payhere.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/payhere/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

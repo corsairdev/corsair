@@ -1,0 +1,1889 @@
+{
+  "id": "piggy",
+  "displayName": "Piggy",
+  "description": "Piggy (rebranded Leat) is a loyalty platform. This plugin manages contacts and their credit, prepaid and tier state, records direct points and reward redemptions with their reversals, issues and redeems vouchers and giftcards, reads promotions, loyalty programs and business profiles, and manages webhook subscriptions with signature-verified deliveries.",
+  "npmPackageName": "@corsair-dev/piggy",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 47,
+    "webhooks": 1,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "piggy.api.businesses.getProfile",
+      "shortPath": "businesses.getProfile",
+      "description": "Read one business profile by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The business profile UUID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, type?: string | null, reference?: string | null }",
+            "description": "The business profile"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.businesses.listProfiles",
+      "shortPath": "businesses.listProfiles",
+      "description": "List the account business profiles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, type?: string | null, reference?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page?: number | null, limit?: number | null, viewing_from?: number | null, viewing_to?: number | null, last_page?: number | null, total?: number | null } | any[] | Record<string, any>",
+            "description": "Paging metadata; an empty value on lists Piggy does not page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.contacts.claim",
+      "shortPath": "contacts.claim",
+      "description": "Claim an anonymous contact with a real email; merges into a matching contact, which cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "anonymousContactUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The anonymous contact UUID with a fictional email"
+          },
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The real email address to claim the contact with"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, email?: string | null, attributes?: any[] | null, tier?: { uuid?: string | null, name?: string | null, description?: string | null, position?: number | null, media?: any | null, perks?: any[] | null } | null, subscriptions?: { is_subscribed?: boolean | null, status?: string | null, subscription_type?: { id?: number | null, uuid?: string | null, name?: string | null, active?: boolean | null, description?: string | null, strategy?: string | null } | null }[] | null, credit_balance?: { id?: number | null, balance?: number | null } | null, prepaid_balance?: { balance_in_cents?: number | null } | null, current_values?: Record<string, any> | null, current_display_values?: Record<string, any> | null }",
+            "description": "The contact"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.contacts.create",
+      "shortPath": "contacts.create",
+      "description": "Create a contact from an email address",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The contact email address"
+          },
+          {
+            "key": "referralCode",
+            "optional": true,
+            "type": "string",
+            "description": "A referral code for the referral programme"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string }",
+            "description": "The created contact UUID"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.contacts.createAnonymous",
+      "shortPath": "contacts.createAnonymous",
+      "description": "Create an anonymous contact with a fictional email",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactIdentifierValue",
+            "optional": true,
+            "type": "string",
+            "description": "Value for the contact identifier to serve as the identifier"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid: string }",
+            "description": "The created contact UUID"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.contacts.delete",
+      "shortPath": "contacts.delete",
+      "description": "Delete a contact (DEFAULT or GDPR); cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The contact UUID"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "DEFAULT | GDPR",
+            "description": "DEFAULT keeps a detailed log; GDPR removes personal data references"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "null | null",
+            "description": "Piggy answers with a null data value"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.contacts.findOneByEmail",
+      "shortPath": "contacts.findOneByEmail",
+      "description": "Read one contact by email address",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The contact email address"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, email?: string | null, attributes?: any[] | null, tier?: { uuid?: string | null, name?: string | null, description?: string | null, position?: number | null, media?: any | null, perks?: any[] | null } | null, subscriptions?: { is_subscribed?: boolean | null, status?: string | null, subscription_type?: { id?: number | null, uuid?: string | null, name?: string | null, active?: boolean | null, description?: string | null, strategy?: string | null } | null }[] | null, credit_balance?: { id?: number | null, balance?: number | null } | null, prepaid_balance?: { balance_in_cents?: number | null } | null, current_values?: Record<string, any> | null, current_display_values?: Record<string, any> | null }",
+            "description": "The contact"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.contacts.findOrCreate",
+      "shortPath": "contacts.findOrCreate",
+      "description": "Read a contact by email, creating one when missing",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "email",
+            "optional": false,
+            "type": "string",
+            "description": "The contact email address"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, email?: string | null, attributes?: any[] | null, tier?: { uuid?: string | null, name?: string | null, description?: string | null, position?: number | null, media?: any | null, perks?: any[] | null } | null, subscriptions?: { is_subscribed?: boolean | null, status?: string | null, subscription_type?: { id?: number | null, uuid?: string | null, name?: string | null, active?: boolean | null, description?: string | null, strategy?: string | null } | null }[] | null, credit_balance?: { id?: number | null, balance?: number | null } | null, prepaid_balance?: { balance_in_cents?: number | null } | null, current_values?: Record<string, any> | null, current_display_values?: Record<string, any> | null }",
+            "description": "The contact"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.contacts.get",
+      "shortPath": "contacts.get",
+      "description": "Read one contact by UUID with balances and subscriptions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The contact UUID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, email?: string | null, attributes?: any[] | null, tier?: { uuid?: string | null, name?: string | null, description?: string | null, position?: number | null, media?: any | null, perks?: any[] | null } | null, subscriptions?: { is_subscribed?: boolean | null, status?: string | null, subscription_type?: { id?: number | null, uuid?: string | null, name?: string | null, active?: boolean | null, description?: string | null, strategy?: string | null } | null }[] | null, credit_balance?: { id?: number | null, balance?: number | null } | null, prepaid_balance?: { balance_in_cents?: number | null } | null, current_values?: Record<string, any> | null, current_display_values?: Record<string, any> | null }",
+            "description": "The contact"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.contacts.getCreditBalance",
+      "shortPath": "contacts.getCreditBalance",
+      "description": "Read a contact credit balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The contact UUID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ balance: number }",
+            "description": "The credit balance"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.contacts.getPrepaidBalance",
+      "shortPath": "contacts.getPrepaidBalance",
+      "description": "Read a contact prepaid balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The contact UUID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ balance_in_cents: number, balance?: string | null }",
+            "description": "The prepaid balance"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.contacts.getTier",
+      "shortPath": "contacts.getTier",
+      "description": "Read the contact current loyalty tier",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The contact UUID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, description?: string | null, position?: number | null, media?: any | null, perks?: any[] | null }",
+            "description": "The current tier"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.contacts.list",
+      "shortPath": "contacts.list",
+      "description": "List contacts with paging, date and attribute filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page (default 10, max 100)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (default 1)"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "created_at | -created_at",
+            "description": "Sort field; prefix - for descending"
+          },
+          {
+            "key": "createdAtGt",
+            "optional": true,
+            "type": "string",
+            "description": "created_at after this ISO 8601 value"
+          },
+          {
+            "key": "createdAtGte",
+            "optional": true,
+            "type": "string",
+            "description": "created_at at or after this ISO 8601 value"
+          },
+          {
+            "key": "createdAtLt",
+            "optional": true,
+            "type": "string",
+            "description": "created_at before this ISO 8601 value"
+          },
+          {
+            "key": "createdAtLte",
+            "optional": true,
+            "type": "string",
+            "description": "created_at at or before this ISO 8601 value"
+          },
+          {
+            "key": "attributesQuery",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Attribute filters as Piggy query parameters: each key is the full bracketed parameter name, e.g. \"attributes[likes_pizza]\" or \"attributes[visits][gte]\". See the attribute operators in the Piggy contacts docs"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, email?: string | null, attributes?: any[] | null, tier?: { uuid?: string | null, name?: string | null, description?: string | null, position?: number | null, media?: any | null, perks?: any[] | null } | null, subscriptions?: { is_subscribed?: boolean | null, status?: string | null, subscription_type?: { id?: number | null, uuid?: string | null, name?: string | null, active?: boolean | null, description?: string | null, strategy?: string | null } | null }[] | null, credit_balance?: { id?: number | null, balance?: number | null } | null, prepaid_balance?: { balance_in_cents?: number | null } | null, current_values?: Record<string, any> | null, current_display_values?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page?: number | null, limit?: number | null, viewing_from?: number | null, viewing_to?: number | null, last_page?: number | null, total?: number | null } | any[] | Record<string, any>",
+            "description": "Paging metadata; an empty value on lists Piggy does not page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.contacts.merge",
+      "shortPath": "contacts.merge",
+      "description": "Merge a source contact into a destination contact; cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "sourceContactUuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the contact that ceases to exist"
+          },
+          {
+            "key": "destinationContactUuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the contact that remains"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "piggy.api.contacts.update",
+      "shortPath": "contacts.update",
+      "description": "Update contact attributes keyed by attribute name",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The contact UUID"
+          },
+          {
+            "key": "attributes",
+            "optional": false,
+            "type": "Record<string, string | number | boolean | null>",
+            "description": "Attribute values keyed by attribute name; system values such as credit balance cannot be updated"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, email?: string | null, attributes?: any[] | null, tier?: { uuid?: string | null, name?: string | null, description?: string | null, position?: number | null, media?: any | null, perks?: any[] | null } | null, subscriptions?: { is_subscribed?: boolean | null, status?: string | null, subscription_type?: { id?: number | null, uuid?: string | null, name?: string | null, active?: boolean | null, description?: string | null, strategy?: string | null } | null }[] | null, credit_balance?: { id?: number | null, balance?: number | null } | null, prepaid_balance?: { balance_in_cents?: number | null } | null, current_values?: Record<string, any> | null, current_display_values?: Record<string, any> | null }",
+            "description": "The contact"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.giftcards.create",
+      "shortPath": "giftcards.create",
+      "description": "Issue a digital giftcard with a balance; it carries real value and uses Leat tokens",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "giftcardProgramUuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the giftcard program to link the card to"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, type?: string | null, hash?: string | null, amount_in_cents?: number | null, amount?: number | null, display_amount?: string | null, upgradeable?: boolean | null, active?: boolean | null, expiration_date?: string | null, formatted_expiration_date?: string | null, url?: string | null, giftcard_program?: { id?: number | null, uuid?: string | null, name?: string | null, active?: boolean | null, card_count?: number | null, settles?: number | null, expiration_days?: number | null, max_amount_in_cents?: number | null, min_amount_in_cents?: number | null, calculator_flow?: string | null } | null, giftcard_recipients?: any[] | null }",
+            "description": "The giftcard"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.giftcards.findOneByHash",
+      "shortPath": "giftcards.findOneByHash",
+      "description": "Read one giftcard by hash or QR value",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "hash",
+            "optional": false,
+            "type": "string",
+            "description": "The giftcard's unique hash or QR value"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, type?: string | null, hash?: string | null, amount_in_cents?: number | null, amount?: number | null, display_amount?: string | null, upgradeable?: boolean | null, active?: boolean | null, expiration_date?: string | null, formatted_expiration_date?: string | null, url?: string | null, giftcard_program?: { id?: number | null, uuid?: string | null, name?: string | null, active?: boolean | null, card_count?: number | null, settles?: number | null, expiration_days?: number | null, max_amount_in_cents?: number | null, min_amount_in_cents?: number | null, calculator_flow?: string | null } | null, giftcard_recipients?: any[] | null }",
+            "description": "The giftcard"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.giftcards.get",
+      "shortPath": "giftcards.get",
+      "description": "Read one giftcard by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "giftcardUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The giftcard UUID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, type?: string | null, hash?: string | null, amount_in_cents?: number | null, amount?: number | null, display_amount?: string | null, upgradeable?: boolean | null, active?: boolean | null, expiration_date?: string | null, formatted_expiration_date?: string | null, url?: string | null, giftcard_program?: { id?: number | null, uuid?: string | null, name?: string | null, active?: boolean | null, card_count?: number | null, settles?: number | null, expiration_days?: number | null, max_amount_in_cents?: number | null, min_amount_in_cents?: number | null, calculator_flow?: string | null } | null, giftcard_recipients?: any[] | null }",
+            "description": "The giftcard"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.giftcards.list",
+      "shortPath": "giftcards.list",
+      "description": "List giftcards with program and paging filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "giftcardProgramUuid",
+            "optional": true,
+            "type": "string",
+            "description": "Giftcard program UUID filter"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page (default 30, max 100)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, type?: string | null, hash?: string | null, amount_in_cents?: number | null, amount?: number | null, display_amount?: string | null, upgradeable?: boolean | null, active?: boolean | null, expiration_date?: string | null, formatted_expiration_date?: string | null, url?: string | null, giftcard_program?: { id?: number | null, uuid?: string | null, name?: string | null, active?: boolean | null, card_count?: number | null, settles?: number | null, expiration_days?: number | null, max_amount_in_cents?: number | null, min_amount_in_cents?: number | null, calculator_flow?: string | null } | null, giftcard_recipients?: any[] | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page?: number | null, limit?: number | null, viewing_from?: number | null, viewing_to?: number | null, last_page?: number | null, total?: number | null } | any[] | Record<string, any>",
+            "description": "Paging metadata; an empty value on lists Piggy does not page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.giftcards.listPrograms",
+      "shortPath": "giftcards.listPrograms",
+      "description": "List the giftcard programs",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, uuid?: string | null, name?: string | null, active?: boolean | null, card_count?: number | null, settles?: number | null, expiration_days?: number | null, max_amount_in_cents?: number | null, min_amount_in_cents?: number | null, calculator_flow?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page?: number | null, limit?: number | null, viewing_from?: number | null, viewing_to?: number | null, last_page?: number | null, total?: number | null } | any[] | Record<string, any>",
+            "description": "Paging metadata; an empty value on lists Piggy does not page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.giftcards.sendByEmail",
+      "shortPath": "giftcards.sendByEmail",
+      "description": "Email a giftcard to a contact; the email cannot be recalled",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "giftcardUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The giftcard UUID to send"
+          },
+          {
+            "key": "contactUuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the contact to email"
+          },
+          {
+            "key": "emailUuid",
+            "optional": true,
+            "type": "string",
+            "description": "Email template UUID; must contain the giftcard.hash token"
+          },
+          {
+            "key": "mergeTags",
+            "optional": true,
+            "type": "Record<string, string>",
+            "description": "Custom merge tags; keys must start with custom."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ message?: string | null, data?: string | null }",
+            "description": "The send result"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.loyalty.getProgram",
+      "shortPath": "loyalty.getProgram",
+      "description": "Read the account loyalty program settings",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id?: number | null, name?: string | null, max_amount?: number | null, custom_credit_name?: string | null, unit?: { name?: string | null, label?: string | null, prefix?: string | null } | null }",
+            "description": "The loyalty program"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.loyalty.listTransactions",
+      "shortPath": "loyalty.listTransactions",
+      "description": "List loyalty transactions with type, shop and date filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page (default 10, max 100)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number (default 1)"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "credit_receptions | reward_receptions",
+            "description": "Transaction type filter"
+          },
+          {
+            "key": "shopUuid",
+            "optional": true,
+            "type": "string",
+            "description": "Business profile UUID filter"
+          },
+          {
+            "key": "sort",
+            "optional": true,
+            "type": "created_at | -created_at",
+            "description": "Sort field; prefix - for descending"
+          },
+          {
+            "key": "createdAtGt",
+            "optional": true,
+            "type": "string",
+            "description": "created_at after this ISO 8601 value"
+          },
+          {
+            "key": "createdAtGte",
+            "optional": true,
+            "type": "string",
+            "description": "created_at at or after this ISO 8601 value"
+          },
+          {
+            "key": "createdAtLt",
+            "optional": true,
+            "type": "string",
+            "description": "created_at before this ISO 8601 value"
+          },
+          {
+            "key": "createdAtLte",
+            "optional": true,
+            "type": "string",
+            "description": "created_at at or before this ISO 8601 value"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, credits?: number | null, created_at?: string | null, type?: string | null, contact_identifier?: string | null, contact?: { uuid?: string | null, email?: string | null, credit_balance?: { id?: number | null, balance?: number | null } | null } | null, shop?: { id?: number | null, uuid?: string | null, type?: string | null, name?: string | null, address?: any | null } | null, unit_value?: number | null, unit?: { id?: number | null, name?: string | null, label?: string | null, prefix?: string | null, is_default?: boolean | null } | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page?: number | null, limit?: number | null, viewing_from?: number | null, viewing_to?: number | null, last_page?: number | null, total?: number | null } | any[] | Record<string, any>",
+            "description": "Paging metadata; an empty value on lists Piggy does not page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.points.create",
+      "shortPath": "points.create",
+      "description": "Add or subtract points on a contact balance directly",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactUuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the contact the points are for"
+          },
+          {
+            "key": "businessProfileUuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the business profile the points are given at"
+          },
+          {
+            "key": "points",
+            "optional": false,
+            "type": "number",
+            "description": "Whole number of points; a negative number subtracts"
+          },
+          {
+            "key": "customAttributes",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Custom attribute values keyed by attribute name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, contact?: { uuid?: string | null, email?: string | null, credit_balance?: { id?: number | null, balance?: number | null } | null } | null, business_profile?: { uuid?: string | null, name?: string | null } | null, points?: number | null, channel?: string | null, custom_attributes?: Record<string, any> | null, created_at?: string | null }",
+            "description": "The points transaction"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.points.get",
+      "shortPath": "points.get",
+      "description": "Read one direct points transaction",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the points transaction"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, contact?: { uuid?: string | null, email?: string | null, credit_balance?: { id?: number | null, balance?: number | null } | null } | null, business_profile?: { uuid?: string | null, name?: string | null } | null, points?: number | null, channel?: string | null, custom_attributes?: Record<string, any> | null, created_at?: string | null }",
+            "description": "The points transaction"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.points.reverse",
+      "shortPath": "points.reverse",
+      "description": "Reverse a direct points transaction (once per transaction)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "uuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the points transaction to reverse"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, contact?: { uuid?: string | null, email?: string | null, credit_balance?: { id?: number | null, balance?: number | null } | null } | null, business_profile?: { uuid?: string | null, name?: string | null } | null, points?: number | null, channel?: string | null, custom_attributes?: Record<string, any> | null, created_at?: string | null }",
+            "description": "The points transaction"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.promotions.get",
+      "shortPath": "promotions.get",
+      "description": "Read one promotion by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "promotionUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The promotion UUID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, description?: string | null, voucher_limit?: number | null, limit_per_contact?: number | null, expiration_duration?: number | null, attributes?: Record<string, any> | null, media?: any | null }",
+            "description": "The promotion"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.promotions.list",
+      "shortPath": "promotions.list",
+      "description": "List the account promotions",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, description?: string | null, voucher_limit?: number | null, limit_per_contact?: number | null, expiration_duration?: number | null, attributes?: Record<string, any> | null, media?: any | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page?: number | null, limit?: number | null, viewing_from?: number | null, viewing_to?: number | null, last_page?: number | null, total?: number | null } | any[] | Record<string, any>",
+            "description": "Paging metadata; an empty value on lists Piggy does not page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.rewards.get",
+      "shortPath": "rewards.get",
+      "description": "Read one reward by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rewardUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The reward UUID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, title?: string | null, type?: string | null, reward_type?: string | null, is_active?: boolean | null, active?: boolean | null, description?: string | null, required_credits?: number | null, stock?: number | null, media?: any | null }",
+            "description": "The reward"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.rewards.list",
+      "shortPath": "rewards.list",
+      "description": "List rewards, optionally claimable by a contact",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "shopUuid",
+            "optional": true,
+            "type": "string",
+            "description": "Business profile UUID filter"
+          },
+          {
+            "key": "contactUuid",
+            "optional": true,
+            "type": "string",
+            "description": "List the rewards claimable by this contact"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, title?: string | null, type?: string | null, reward_type?: string | null, is_active?: boolean | null, active?: boolean | null, description?: string | null, required_credits?: number | null, stock?: number | null, media?: any | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page?: number | null, limit?: number | null, viewing_from?: number | null, viewing_to?: number | null, last_page?: number | null, total?: number | null } | any[] | Record<string, any>",
+            "description": "Paging metadata; an empty value on lists Piggy does not page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.rewards.redeem",
+      "shortPath": "rewards.redeem",
+      "description": "Create a reward reception: claim a reward for a contact",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contactUuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the contact claiming the reward"
+          },
+          {
+            "key": "rewardUuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the reward to claim"
+          },
+          {
+            "key": "shopUuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the business profile the claim is for"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ title?: string | null, type?: string | null, uuid?: string | null, credits?: number | null, contact?: { uuid?: string | null, email?: string | null, credit_balance?: { id?: number | null, balance?: number | null } | null } | null, shop?: { id?: number | null, uuid?: string | null, type?: string | null, name?: string | null, address?: any | null } | null, contact_identifier?: string | null, created_at?: string | null, reward?: { uuid?: string | null, title?: string | null, type?: string | null, reward_type?: string | null, is_active?: boolean | null, active?: boolean | null, description?: string | null, required_credits?: number | null, stock?: number | null, media?: any | null } | null }",
+            "description": "The reward reception"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.rewards.reverseRedemption",
+      "shortPath": "rewards.reverseRedemption",
+      "description": "Reverse a reward redemption, reissuing the credits",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rewardReceptionUuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the reward reception to reverse"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ type?: string | null, contact_identifier?: string | null, contact?: { uuid?: string | null, email?: string | null, credit_balance?: { id?: number | null, balance?: number | null } | null } | null, shop?: { id?: number | null, uuid?: string | null, type?: string | null, name?: string | null, address?: any | null } | null, credits?: number | null, created_at?: string | null, uuid?: string | null, unit?: { id?: number | null, name?: string | null, label?: string | null, prefix?: string | null, is_default?: boolean | null } | null, unit_value?: number | null }",
+            "description": "The credit reception reissuing the credits"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.rewards.update",
+      "shortPath": "rewards.update",
+      "description": "Update a reward title, description or required credits",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "rewardUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The reward UUID"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "A new title"
+          },
+          {
+            "key": "description",
+            "optional": true,
+            "type": "string",
+            "description": "A new description"
+          },
+          {
+            "key": "requiredCredits",
+            "optional": true,
+            "type": "number",
+            "description": "Credits required to claim this reward"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, title?: string | null, type?: string | null, reward_type?: string | null, is_active?: boolean | null, active?: boolean | null, description?: string | null, required_credits?: number | null, stock?: number | null, media?: any | null }",
+            "description": "The reward"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.vouchers.create",
+      "shortPath": "vouchers.create",
+      "description": "Create a voucher for a promotion",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "promotionUuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the promotion to create the voucher for"
+          },
+          {
+            "key": "code",
+            "optional": true,
+            "type": "string",
+            "description": "Unique voucher code; Piggy generates one when omitted"
+          },
+          {
+            "key": "contactUuid",
+            "optional": true,
+            "type": "string",
+            "description": "Contact UUID to link the voucher to"
+          },
+          {
+            "key": "expirationDate",
+            "optional": true,
+            "type": "string",
+            "description": "Expiration date in ISO 8601, stored in UTC"
+          },
+          {
+            "key": "activationDate",
+            "optional": true,
+            "type": "string",
+            "description": "Activation date in ISO 8601, stored in UTC"
+          },
+          {
+            "key": "totalRedemptionsAllowed",
+            "optional": true,
+            "type": "number",
+            "description": "Times this voucher can be redeemed"
+          },
+          {
+            "key": "customAttributes",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Custom attribute values keyed by attribute name"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, code?: string | null, status?: string | null, name?: string | null, description?: string | null, expiration_date?: string | null, activation_date?: string | null, redeemed_at?: string | null, is_redeemed?: boolean | null, attributes?: Record<string, any> | null, contact?: { uuid?: string | null, email?: string | null, credit_balance?: { id?: number | null, balance?: number | null } | null } | null, promotion?: { uuid?: string | null, name?: string | null, description?: string | null, voucher_limit?: number | null, limit_per_contact?: number | null, expiration_duration?: number | null, media?: any | null, type?: string | null } | null, total_redemptions_allowed?: number | null, times_redeemed?: number | null, redemptions_remaining?: number | null, add_to_wallet_url?: string | null, voucher_redemption?: Record<string, any> | null }",
+            "description": "The voucher"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.vouchers.find",
+      "shortPath": "vouchers.find",
+      "description": "Read one voucher by code",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string",
+            "description": "The voucher code"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, code?: string | null, status?: string | null, name?: string | null, description?: string | null, expiration_date?: string | null, activation_date?: string | null, redeemed_at?: string | null, is_redeemed?: boolean | null, attributes?: Record<string, any> | null, contact?: { uuid?: string | null, email?: string | null, credit_balance?: { id?: number | null, balance?: number | null } | null } | null, promotion?: { uuid?: string | null, name?: string | null, description?: string | null, voucher_limit?: number | null, limit_per_contact?: number | null, expiration_duration?: number | null, media?: any | null, type?: string | null } | null, total_redemptions_allowed?: number | null, times_redeemed?: number | null, redemptions_remaining?: number | null, add_to_wallet_url?: string | null, voucher_redemption?: Record<string, any> | null }",
+            "description": "The voucher"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.vouchers.list",
+      "shortPath": "vouchers.list",
+      "description": "List vouchers with promotion, contact and status filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "promotionUuid",
+            "optional": true,
+            "type": "string",
+            "description": "Promotion UUID filter"
+          },
+          {
+            "key": "contactUuid",
+            "optional": true,
+            "type": "string",
+            "description": "Contact UUID filter"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "ACTIVE | REDEEMED | EXPIRED | DEACTIVATED | INACTIVE | LOCKED",
+            "description": "Voucher status filter"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number",
+            "description": "Records per page (default 30, max 500)"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, code?: string | null, status?: string | null, name?: string | null, description?: string | null, expiration_date?: string | null, activation_date?: string | null, redeemed_at?: string | null, is_redeemed?: boolean | null, attributes?: Record<string, any> | null, contact?: { uuid?: string | null, email?: string | null, credit_balance?: { id?: number | null, balance?: number | null } | null } | null, promotion?: { uuid?: string | null, name?: string | null, description?: string | null, voucher_limit?: number | null, limit_per_contact?: number | null, expiration_duration?: number | null, media?: any | null, type?: string | null } | null, total_redemptions_allowed?: number | null, times_redeemed?: number | null, redemptions_remaining?: number | null, add_to_wallet_url?: string | null, voucher_redemption?: Record<string, any> | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page?: number | null, limit?: number | null, viewing_from?: number | null, viewing_to?: number | null, last_page?: number | null, total?: number | null } | any[] | Record<string, any>",
+            "description": "Paging metadata; an empty value on lists Piggy does not page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.vouchers.lock",
+      "shortPath": "vouchers.lock",
+      "description": "Lock a voucher and receive a release key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voucherUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The voucher UUID to lock"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ voucher?: { uuid?: string | null, status?: string | null } | null, lock?: { release_key?: string | null, locked_at?: string | null, unlocked_at?: string | null, system_release_at?: string | null } | null }",
+            "description": "The lock with its release key"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.vouchers.redeem",
+      "shortPath": "vouchers.redeem",
+      "description": "Redeem a voucher by code at a business profile",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "code",
+            "optional": false,
+            "type": "string",
+            "description": "The voucher code"
+          },
+          {
+            "key": "shopUuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the business profile the voucher is redeemed through"
+          },
+          {
+            "key": "contactUuid",
+            "optional": true,
+            "type": "string",
+            "description": "Required when the voucher has no linked contact"
+          },
+          {
+            "key": "releaseKey",
+            "optional": true,
+            "type": "string",
+            "description": "Release key from vouchers.lock, when the voucher is locked"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, code?: string | null, status?: string | null, name?: string | null, description?: string | null, expiration_date?: string | null, activation_date?: string | null, redeemed_at?: string | null, is_redeemed?: boolean | null, attributes?: Record<string, any> | null, contact?: { uuid?: string | null, email?: string | null, credit_balance?: { id?: number | null, balance?: number | null } | null } | null, promotion?: { uuid?: string | null, name?: string | null, description?: string | null, voucher_limit?: number | null, limit_per_contact?: number | null, expiration_duration?: number | null, media?: any | null, type?: string | null } | null, total_redemptions_allowed?: number | null, times_redeemed?: number | null, redemptions_remaining?: number | null, add_to_wallet_url?: string | null, voucher_redemption?: Record<string, any> | null }",
+            "description": "The redeemed voucher"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.vouchers.release",
+      "shortPath": "vouchers.release",
+      "description": "Release a locked voucher with its release key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voucherUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The voucher UUID to release"
+          },
+          {
+            "key": "releaseKey",
+            "optional": false,
+            "type": "string",
+            "description": "The release key returned when the voucher was locked"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ voucher?: { uuid?: string | null, status?: string | null } | null, lock?: { release_key?: string | null, locked_at?: string | null, unlocked_at?: string | null, system_release_at?: string | null } | null }",
+            "description": "The lock with its release key"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.vouchers.reverseRedemption",
+      "shortPath": "vouchers.reverseRedemption",
+      "description": "Reverse a voucher redemption",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voucherUuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the voucher whose redemption is reversed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "piggy.api.vouchers.update",
+      "shortPath": "vouchers.update",
+      "description": "Update voucher status, attributes or expiration",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voucherUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The voucher UUID"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "ACTIVE | DEACTIVATED",
+            "description": "The new voucher status"
+          },
+          {
+            "key": "customAttributes",
+            "optional": true,
+            "type": "Record<string, string | number | boolean>",
+            "description": "Custom attribute values keyed by attribute name"
+          },
+          {
+            "key": "expirationDate",
+            "optional": true,
+            "type": "string",
+            "description": "New expiration date in ISO 8601; only for active and inactive vouchers"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, code?: string | null, status?: string | null, name?: string | null, description?: string | null, expiration_date?: string | null, activation_date?: string | null, redeemed_at?: string | null, is_redeemed?: boolean | null, attributes?: Record<string, any> | null, contact?: { uuid?: string | null, email?: string | null, credit_balance?: { id?: number | null, balance?: number | null } | null } | null, promotion?: { uuid?: string | null, name?: string | null, description?: string | null, voucher_limit?: number | null, limit_per_contact?: number | null, expiration_duration?: number | null, media?: any | null, type?: string | null } | null, total_redemptions_allowed?: number | null, times_redeemed?: number | null, redemptions_remaining?: number | null, add_to_wallet_url?: string | null, voucher_redemption?: Record<string, any> | null }",
+            "description": "The voucher"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.vouchers.validate",
+      "shortPath": "vouchers.validate",
+      "description": "Check whether a voucher is redeemable at a business profile",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "voucherUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The voucher UUID to check"
+          },
+          {
+            "key": "contactUuid",
+            "optional": true,
+            "type": "string",
+            "description": "UUID of the contact who would redeem; required when no contact is linked"
+          },
+          {
+            "key": "shopUuid",
+            "optional": false,
+            "type": "string",
+            "description": "UUID of the business profile where the voucher would be redeemed"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": []
+      }
+    },
+    {
+      "path": "piggy.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a webhook subscription for one event type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "A name for the subscription"
+          },
+          {
+            "key": "eventType",
+            "optional": false,
+            "type": "string",
+            "description": "The event type to listen to (see the Piggy webhook event catalogue)"
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The endpoint deliveries are sent to"
+          },
+          {
+            "key": "secret",
+            "optional": true,
+            "type": "string",
+            "description": "Secret used to sign the Signature header; defaults to the account secret"
+          },
+          {
+            "key": "version",
+            "optional": true,
+            "type": "V1 | V2",
+            "description": "Delivery envelope; V2 batches events and is the recommended version"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, event_type?: string | null, url?: string | null, status?: string | null, version?: string | null, properties?: any | null, created_at?: string | null }",
+            "description": "The webhook subscription"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Delete a webhook subscription; it cannot be restored",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookSubscriptionUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook subscription UUID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "any",
+            "description": "Piggy answers with an empty data array"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Read one webhook subscription by UUID",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookSubscriptionUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook subscription UUID"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, event_type?: string | null, url?: string | null, status?: string | null, version?: string | null, properties?: any | null, created_at?: string | null }",
+            "description": "The webhook subscription"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhook subscriptions with event type and status filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "eventType",
+            "optional": true,
+            "type": "string",
+            "description": "Only subscriptions of this event type"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "ACTIVE | INACTIVE",
+            "description": "Only subscriptions of this status"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, event_type?: string | null, url?: string | null, status?: string | null, version?: string | null, properties?: any | null, created_at?: string | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ page?: number | null, limit?: number | null, viewing_from?: number | null, viewing_to?: number | null, last_page?: number | null, total?: number | null } | any[] | Record<string, any>",
+            "description": "Paging metadata; an empty value on lists Piggy does not page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "piggy.api.webhooks.update",
+      "shortPath": "webhooks.update",
+      "description": "Update a subscription name, URL or status",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookSubscriptionUuid",
+            "optional": false,
+            "type": "string",
+            "description": "The webhook subscription UUID"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "A new subscription name"
+          },
+          {
+            "key": "url",
+            "optional": true,
+            "type": "string",
+            "description": "A new delivery URL"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "ACTIVE | INACTIVE",
+            "description": "The new status"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ uuid?: string | null, name?: string | null, event_type?: string | null, url?: string | null, status?: string | null, version?: string | null, properties?: any | null, created_at?: string | null }",
+            "description": "The webhook subscription"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "any"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [
+    {
+      "path": "piggy.webhooks.piggy.event",
+      "shortPath": "piggy.event",
+      "description": "A Piggy webhook delivery: a V1 single event or a V2 batch, signature-verified",
+      "payload": {
+        "kind": "inline",
+        "type": "{ uuid: string, version: V1, type: string, data: Record<string, any> } | { batch_uuid: string, version: V2, event_type: string, count: number, events: { event_uuid: string, event_type: string, data: Record<string, any> }[] }"
+      },
+      "responseType": "{ uuid: string, version: V1, type: string, data: Record<string, any> } | { batch_uuid: string, version: V2, event_type: string, count: number, events: { event_uuid: string, event_type: string, data: Record<string, any> }[] }",
+      "usageExample": "piggy({\n    webhookHooks: {\n        piggy: {\n            event: {\n                before(ctx, args) {\n                    return { ctx, args };\n                },\n                after(ctx, response) {\n                },\n            },\n        },\n    },\n})"
+    }
+  ],
+  "db": []
+}

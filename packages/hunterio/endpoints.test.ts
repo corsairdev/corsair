@@ -4,10 +4,18 @@ import * as client from './client';
 import {
 	Account,
 	ApiKeys,
+	Briefing,
 	Companies,
+	CompanyLists,
+	DomainSearch,
+	Enrichment,
 	Leads,
+	LeadsLists,
 	Messages,
+	MonitoredSignals,
+	Opportunities,
 	Sequences,
+	Signals,
 	Webhooks,
 } from './endpoints';
 import { toBracketQuery } from './endpoints/query';
@@ -395,6 +403,475 @@ describe('destructive endpoint operations', () => {
 	});
 });
 
+// Fixtures copied from the response examples at
+// https://hunter.io/api-documentation/v2#briefing, #signals,
+// #monitored-signals, #opportunities and #opportunity-results.
+const NEXT_CALL_SIGNALS = {
+	endpoint: 'GET /v2/signals',
+	params: { source: 'leads', since: '2026-10-29T09:00:00.000000Z', limit: 100 },
+	mcp_tool: 'List-Signals',
+	charges_credits: false,
+};
+
+const BRIEFING_FIXTURE = {
+	data: {
+		needs_attention: {
+			items: [
+				{
+					type: 'lead_signals',
+					status: 'ok',
+					reason: null,
+					count: 12,
+					count_exact: true,
+					next_call: NEXT_CALL_SIGNALS,
+					next_since: '2026-11-03T21:00:00.000000Z',
+				},
+				{
+					type: 'monitored_signals',
+					status: 'unavailable',
+					reason: null,
+					count: null,
+					count_exact: null,
+					next_call: null,
+					next_since: '2026-10-29T09:00:00.000000Z',
+				},
+			],
+		},
+		new_this_week: {
+			items: [
+				{
+					type: 'opportunities',
+					status: 'no_access',
+					reason: 'no_opportunities_access',
+					count: null,
+					count_exact: null,
+					next_call: null,
+					next_since: null,
+				},
+			],
+		},
+		account: {
+			status: 'ok',
+			plan_name: 'Growth',
+			plan_level: 2,
+			reset_date: '2026-11-21',
+			requests: {
+				credits: { used: 120, available: 5000, remaining: 4880 },
+				searches: { used: 100, available: 5000, remaining: 4900 },
+				verifications: { used: 40, available: 10000, remaining: 9960 },
+			},
+			next_call: {
+				endpoint: 'GET /v2/account',
+				params: {},
+				mcp_tool: 'Get-Account-Details',
+				charges_credits: false,
+			},
+		},
+	},
+	meta: {
+		since: '2026-10-29T09:00:00.000000Z',
+		next_since: '2026-10-29T09:00:00.000000Z',
+	},
+};
+
+const SIGNALS_FIXTURE = {
+	data: [
+		{
+			id: 'evt_1',
+			source: 'leads',
+			type: 'funding_round',
+			occurred_at: '2026-11-02T10:00:00Z',
+			company: { domain: 'example.com', name: null },
+			details: {
+				round_type: 'series_a',
+				amount_usd: null,
+				announced_on: '2026-11-02',
+			},
+			signal_id: null,
+			next_call: {
+				endpoint: 'GET /v2/domain-search',
+				params: { domain: 'example.com' },
+				mcp_tool: 'Domain-Search',
+				charges_credits: true,
+			},
+		},
+	],
+	meta: {
+		limit: 20,
+		next_cursor: null,
+		next_since: '2026-11-03T21:00:00Z',
+		window_start: '2026-10-22T21:00:00Z',
+	},
+};
+
+const MONITORED_SIGNALS_FIXTURE = {
+	data: [
+		{
+			id: 123,
+			name: 'Series A in fintech',
+			type: 'funding_rounds',
+			status: 'active',
+			filters: {
+				countries: ['FR'],
+				series: ['series_a'],
+				published_date: '1m',
+			},
+			event_types: ['funding_round'],
+			created_at: '2026-09-01T10:00:00Z',
+		},
+	],
+	meta: { total: 1, limit: 20, offset: 0 },
+};
+
+const OPPORTUNITIES_FIXTURE = {
+	data: [
+		{
+			id: 812345,
+			type: 'people',
+			source: 'leads',
+			description:
+				'Chief Financial Officers at software companies in Germany are recommended based on your saved leads.',
+			results_count: 174,
+			score: 92,
+			seen_at: null,
+			created_at: '2026-11-02T06:14:09Z',
+			next_call: {
+				endpoint: 'GET /v2/opportunities/812345/results',
+				params: {},
+				mcp_tool: 'Get-Opportunity-Results',
+				charges_credits: false,
+			},
+		},
+	],
+	meta: { results: 1, limit: 20, offset: 0 },
+};
+
+const OPPORTUNITY_RESULTS_FIXTURE = {
+	data: [
+		{
+			name: 'Ada L.',
+			position: 'Chief Financial Officer',
+			department: 'finance',
+			seniority: 'executive',
+			type: 'personal',
+			provenance: 'found',
+			decision_maker: true,
+			domain: 'example.com',
+			company_name: 'example',
+			full_name_exists: true,
+			phone_number_exists: false,
+			verification: { date: null, status: 'valid' },
+			reveal_handle: 'aAKWnmY9z-P8kCj6sBQjZ8yiYnNSMKb0',
+		},
+	],
+	meta: { type: 'people', results: 174, limit: 20, offset: 0 },
+};
+
+describe('briefing, signals and opportunities', () => {
+	it('briefing.get sends the since filters as query parameters', async () => {
+		mockedRequest.mockResolvedValue(BRIEFING_FIXTURE);
+
+		const result = await Briefing.get(ctx, {
+			since: '2026-11-01T00:00:00Z',
+			leads_since: '2026-11-02T00:00:00Z',
+		});
+
+		expect(result.data.needs_attention.items[0]?.count).toBe(12);
+		expect(result.data.new_this_week.items[0]?.status).toBe('no_access');
+		expect(mockedRequest).toHaveBeenCalledWith('/briefing', 'test-api-key', {
+			method: 'GET',
+			query: {
+				since: '2026-11-01T00:00:00Z',
+				leads_since: '2026-11-02T00:00:00Z',
+			},
+		});
+		expect(mockedLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'hunterio.briefing.get',
+			{},
+			'completed',
+		);
+	});
+
+	it('signals.list requires a source and pages by cursor', async () => {
+		mockedRequest.mockResolvedValue(SIGNALS_FIXTURE);
+
+		const result = await Signals.list(ctx, {
+			source: 'monitored',
+			signal_id: 123,
+			types: ['funding_round', 'job_posted'],
+			cursor: 'abc',
+		});
+
+		expect(result.data[0]?.company.domain).toBe('example.com');
+		expect(result.meta.next_cursor).toBeNull();
+		expect(mockedRequest).toHaveBeenCalledWith('/signals', 'test-api-key', {
+			method: 'GET',
+			query: {
+				source: 'monitored',
+				signal_id: 123,
+				types: ['funding_round', 'job_posted'],
+				cursor: 'abc',
+			},
+		});
+		await expect(
+			Signals.list(ctx, {} as Parameters<typeof Signals.list>[1]),
+		).rejects.toThrow();
+		await expect(
+			Signals.list(ctx, {
+				source: 'leads',
+				types: ['not_a_type'],
+				// Stricter typing is not feasible because the test feeds an input the schema must reject; the double cast gets the invalid value past the compiler.
+			} as unknown as Parameters<typeof Signals.list>[1]),
+		).rejects.toThrow();
+	});
+
+	it('monitoredSignals.list pages with limit and offset', async () => {
+		mockedRequest.mockResolvedValue(MONITORED_SIGNALS_FIXTURE);
+
+		const result = await MonitoredSignals.list(ctx, { limit: 50, offset: 20 });
+
+		expect(result.data[0]?.type).toBe('funding_rounds');
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/monitored-signals',
+			'test-api-key',
+			{ method: 'GET', query: { limit: 50, offset: 20 } },
+		);
+	});
+
+	it('opportunities.results puts the id in the path, not the query', async () => {
+		mockedRequest.mockResolvedValue(OPPORTUNITY_RESULTS_FIXTURE);
+
+		const result = await Opportunities.results(ctx, { id: 812345, limit: 5 });
+
+		expect(result.meta.type).toBe('people');
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/opportunities/812345/results',
+			'test-api-key',
+			{ method: 'GET', query: { limit: 5 } },
+		);
+		expect(mockedLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'hunterio.opportunities.results',
+			{ id: 812345 },
+			'completed',
+		);
+	});
+
+	it('opportunities.results accepts a person with a null name and no provenance', async () => {
+		const { provenance: _omitted, ...person } =
+			OPPORTUNITY_RESULTS_FIXTURE.data[0] ?? {};
+		mockedRequest.mockResolvedValue({
+			...OPPORTUNITY_RESULTS_FIXTURE,
+			data: [{ ...person, name: null }],
+		});
+
+		const result = await Opportunities.results(ctx, { id: 812345 });
+
+		const first = result.data[0];
+		expect(
+			first && 'reveal_handle' in first ? first.name : 'wrong branch',
+		).toBeNull();
+	});
+
+	it('opportunities.list parses the documented example', async () => {
+		mockedRequest.mockResolvedValue(OPPORTUNITIES_FIXTURE);
+
+		const result = await Opportunities.list(ctx, {});
+
+		expect(result.data[0]?.next_call.charges_credits).toBe(false);
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/opportunities',
+			'test-api-key',
+			{ method: 'GET', query: {} },
+		);
+	});
+});
+
+describe('enrichment with the live response shape', () => {
+	// Values from a live Combined Enrichment call on 2026-11-21.
+	it('parses string emailProvider, employees ranges and funding amounts', async () => {
+		mockedRequest.mockResolvedValue({
+			data: {
+				person: {
+					email: 'person@example.com',
+					github: { handle: null, id: null },
+					twitter: { handle: null, id: null },
+					emailProvider: 'google.com',
+				},
+				company: {
+					domain: 'example.com',
+					emailProvider: 'google.com',
+					tags: ['financial services', 'payment processing'],
+					emailsCount: null,
+					metrics: {
+						trafficRank: 'very_high',
+						employees: '10K-50K',
+						marketCap: null,
+						estimatedAnnualRevenue: null,
+						fiscalYearEnd: null,
+						raised: 7708000000,
+					},
+					fundingRounds: [
+						{ date: '2020-04-16', type: 'Series G', amount: '$600M' },
+					],
+				},
+			},
+		});
+
+		const result = await Enrichment.combined(ctx, {
+			email: 'person@example.com',
+		});
+
+		expect(result).toMatchObject({
+			data: {
+				person: { emailProvider: 'google.com' },
+				company: { metrics: { employees: '10K-50K' } },
+			},
+		});
+	});
+});
+
+describe('leads.list with an auto-saved lead', () => {
+	it('parses a lead that sits in no list (all-null leads_list)', async () => {
+		mockedRequest.mockResolvedValue({
+			data: {
+				leads: [
+					{
+						id: 458491747,
+						email: 'saved@example.com',
+						leads_list: { id: null, name: null, leads_count: null },
+					},
+				],
+			},
+			meta: { count: 1, total: 1 },
+		});
+
+		const result = await Leads.list(ctx, { email: 'saved@example.com' });
+
+		expect(result.data.leads[0]?.leads_list?.id).toBeNull();
+	});
+});
+
+describe('company list companies, domain search found, leads list merge', () => {
+	it('companyLists.listCompanies reads one static list', async () => {
+		mockedRequest.mockResolvedValue({
+			data: [{ id: 84, domain: 'example.com', organization: 'Example' }],
+			meta: { results: 1, limit: 20, offset: 0 },
+		});
+
+		const result = await CompanyLists.listCompanies(ctx, {
+			company_list_id: 1,
+			limit: 100,
+		});
+
+		expect(result.data[0]?.domain).toBe('example.com');
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/company-lists/1/companies',
+			'test-api-key',
+			{ method: 'GET', query: { limit: 100 } },
+		);
+		await expect(
+			CompanyLists.listCompanies(ctx, { company_list_id: 1, limit: 101 }),
+		).rejects.toThrow();
+	});
+
+	it('domainSearch.found and foundPost call /domain-search/found', async () => {
+		mockedRequest.mockResolvedValue({
+			data: { domain: 'stripe.com', emails: [] },
+		});
+
+		await DomainSearch.found(ctx, { domain: 'stripe.com', limit: 1 });
+		await DomainSearch.foundPost(ctx, {
+			domain: 'stripe.com',
+			location: { include: [{ country: 'US' }] },
+		});
+
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			1,
+			'/domain-search/found',
+			'test-api-key',
+			{ method: 'GET', query: { domain: 'stripe.com', limit: 1 } },
+		);
+		expect(mockedRequest).toHaveBeenNthCalledWith(
+			2,
+			'/domain-search/found',
+			'test-api-key',
+			{
+				method: 'POST',
+				body: {
+					domain: 'stripe.com',
+					location: { include: [{ country: 'US' }] },
+				},
+			},
+		);
+	});
+
+	it('leadsLists.merge sends the destination list in the body', async () => {
+		mockedRequest.mockResolvedValue(undefined);
+
+		await LeadsLists.merge(ctx, { id: 10, destination_leads_list_id: 20 });
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/leads_lists/10/merge',
+			'test-api-key',
+			{ method: 'POST', body: { destination_leads_list_id: 20 } },
+		);
+		await expect(
+			LeadsLists.merge(ctx, { id: 10 } as Parameters<
+				typeof LeadsLists.merge
+			>[1]),
+		).rejects.toThrow();
+	});
+});
+
+describe('risk levels', () => {
+	const meta = hunterio({ key: 'k' }).endpointMeta as unknown as Record<
+		string,
+		{ riskLevel: string; description: string }
+	>;
+
+	it.each(['messages.send', 'sequences.start', 'sequences.test'])(
+		'%s sends real email, so it is destructive',
+		(key) => {
+			expect(meta[key]?.riskLevel).toBe('destructive');
+		},
+	);
+
+	// R8: a metered read (a lookup or search whose only cost is credits)
+	// stays read. The description names the cost.
+	it.each([
+		'domainSearch.search',
+		'domainSearch.searchPost',
+		'domainSearch.found',
+		'domainSearch.foundPost',
+		'emailFinder.find',
+		'emailFinder.findFound',
+		'emailFinder.findFoundPost',
+		'emailVerifier.verify',
+		'enrichment.person',
+		'enrichment.company',
+		'enrichment.combined',
+		'multiDomainSearch.reveal',
+	])('%s is a metered read and names its credit cost', (key) => {
+		expect(meta[key]?.riskLevel).toBe('read');
+		expect(meta[key]?.description).toMatch(/Charges .*credit/);
+	});
+
+	it.each([
+		'briefing.get',
+		'signals.list',
+		'monitoredSignals.list',
+		'opportunities.list',
+		'opportunities.results',
+		'companyLists.listCompanies',
+		'multiDomainSearch.search',
+		'discover.companies',
+	])('%s is free and read-only', (key) => {
+		expect(meta[key]?.riskLevel).toBe('read');
+	});
+});
+
 describe('toBracketQuery', () => {
 	it('flattens nested objects and array values into bracket keys', () => {
 		expect(
@@ -474,7 +951,22 @@ function getMockResponse(key: string, outputSchema: z.ZodType): unknown {
 	if (key === 'companyListFolders.list')
 		return { data: { folders: [{ id: 1, name: 'Folder' }] } };
 	if (key === 'companyTags.list')
-		return { data: { tags: [{ id: 1, name: 'Tag' }] } };
+		return { data: { company_tags: [{ id: 1, name: 'Tag' }] } };
+	if (key === 'discoverViews.list')
+		return { data: { views: [{ id: 1, name: 'View' }] }, meta: { total: 1 } };
+	if (key === 'companyLists.listCompanies')
+		return {
+			data: [{ id: 84, domain: 'example.com', organization: 'Example' }],
+			meta: { results: 1, limit: 20, offset: 0 },
+		};
+	if (key === 'domainSearch.found' || key === 'domainSearch.foundPost') {
+		return { data: { domain: 'example.com', emails: [] } };
+	}
+	if (key === 'briefing.get') return BRIEFING_FIXTURE;
+	if (key === 'signals.list') return SIGNALS_FIXTURE;
+	if (key === 'monitoredSignals.list') return MONITORED_SIGNALS_FIXTURE;
+	if (key === 'opportunities.list') return OPPORTUNITIES_FIXTURE;
+	if (key === 'opportunities.results') return OPPORTUNITY_RESULTS_FIXTURE;
 	if (key === 'sequences.list')
 		return { data: { sequences: [{ id: 1, title: 'Seq' }] } };
 	if (key === 'sequenceRecipients.list')
@@ -541,6 +1033,7 @@ function getSampleInput(key: string): Record<string, unknown> {
 		company_list_id: 1,
 		leads_list_id: 1,
 		target_leads_list_id: 2,
+		destination_leads_list_id: 2,
 		target_company_list_id: 2,
 		sequence_id: 1,
 		tag_id: 1,
@@ -570,9 +1063,12 @@ function getSampleInput(key: string): Record<string, unknown> {
 		recipients: [{ email: 'test@example.com' }],
 	};
 
+	if (key === 'signals.list') return { source: 'leads', limit: 10 };
 	if (
 		key === 'domainSearch.search' ||
 		key === 'domainSearch.searchPost' ||
+		key === 'domainSearch.found' ||
+		key === 'domainSearch.foundPost' ||
 		key === 'emailCount.get'
 	) {
 		const { ...rest } = common;
@@ -608,8 +1104,8 @@ describe('comprehensive operations coverage', () => {
 		}
 	}
 
-	it('covers all 160 operations across all resource groups', () => {
-		expect(allOps).toHaveLength(160);
+	it('covers all 168 operations across all resource groups', () => {
+		expect(allOps).toHaveLength(168);
 	});
 
 	it.each(allOps.map((op) => [op.key, op] as const))(

@@ -3422,6 +3422,14 @@
                 ]
               },
               {
+                "group": "Laposta",
+                "pages": [
+                  "plugins/laposta/overview",
+                  "plugins/laposta/api",
+                  "plugins/laposta/database"
+                ]
+              },
+              {
                 "group": "LaunchDarkly",
                 "pages": [
                   "plugins/launchdarkly/overview",
@@ -3470,6 +3478,14 @@
                 ]
               },
               {
+                "group": "Lexoffice",
+                "pages": [
+                  "plugins/lexoffice/overview",
+                  "plugins/lexoffice/api",
+                  "plugins/lexoffice/database"
+                ]
+              },
+              {
                 "group": "Linear",
                 "pages": [
                   "plugins/linear/overview",
@@ -3501,6 +3517,14 @@
                   "plugins/linkup/overview",
                   "plugins/linkup/api",
                   "plugins/linkup/database"
+                ]
+              },
+              {
+                "group": "Listen Notes",
+                "pages": [
+                  "plugins/listennotes/overview",
+                  "plugins/listennotes/api",
+                  "plugins/listennotes/database"
                 ]
               },
               {
@@ -4063,11 +4087,29 @@
                 ]
               },
               {
+                "group": "PandaDoc",
+                "pages": [
+                  "plugins/pandadoc/overview",
+                  "plugins/pandadoc/api",
+                  "plugins/pandadoc/database",
+                  "plugins/pandadoc/webhooks"
+                ]
+              },
+              {
                 "group": "Paperform",
                 "pages": [
                   "plugins/paperform/overview",
                   "plugins/paperform/api",
                   "plugins/paperform/database"
+                ]
+              },
+              {
+                "group": "Paradym",
+                "pages": [
+                  "plugins/paradym/overview",
+                  "plugins/paradym/api",
+                  "plugins/paradym/database",
+                  "plugins/paradym/webhooks"
                 ]
               },
               {
@@ -4096,11 +4138,54 @@
                 ]
               },
               {
+                "group": "Parsera",
+                "pages": [
+                  "plugins/parsera/overview",
+                  "plugins/parsera/api",
+                  "plugins/parsera/database"
+                ]
+              },
+              {
                 "group": "Parseur",
                 "pages": [
                   "plugins/parseur/overview",
                   "plugins/parseur/api",
                   "plugins/parseur/database"
+                ]
+              },
+              {
+                "group": "Parsio",
+                "pages": [
+                  "plugins/parsio/overview",
+                  "plugins/parsio/api",
+                  "plugins/parsio/database",
+                  "plugins/parsio/webhooks"
+                ]
+              },
+              {
+                "group": "Payhip",
+                "pages": [
+                  "plugins/payhip/overview",
+                  "plugins/payhip/api",
+                  "plugins/payhip/database"
+                ]
+              },
+              {
+                "group": "Paystack",
+                "pages": [
+                  "plugins/paystack/overview",
+                  "plugins/paystack/api",
+                  "plugins/paystack/database",
+                  "plugins/paystack/webhooks"
+                ]
+              },
+              {
+                "group": "Payhere",
+                "pages": [
+                  "plugins/payhere/overview",
+                  "plugins/payhere/api",
+                  "plugins/payhere/database",
+                  "plugins/payhere/webhooks"
                 ]
               },
               {
@@ -4129,6 +4214,14 @@
                 ]
               },
               {
+                "group": "PDF4me",
+                "pages": [
+                  "plugins/pdf4me/overview",
+                  "plugins/pdf4me/api",
+                  "plugins/pdf4me/database"
+                ]
+              },
+              {
                 "group": "PDFLess",
                 "pages": [
                   "plugins/pdfless/overview",
@@ -4146,11 +4239,28 @@
                 ]
               },
               {
+                "group": "Penpot",
+                "pages": [
+                  "plugins/penpot/overview",
+                  "plugins/penpot/api",
+                  "plugins/penpot/database",
+                  "plugins/penpot/webhooks"
+                ]
+              },
+              {
                 "group": "People Data Labs",
                 "pages": [
                   "plugins/pdl/overview",
                   "plugins/pdl/api",
                   "plugins/pdl/database"
+                ]
+              },
+              {
+                "group": "Perigon",
+                "pages": [
+                  "plugins/perigon/overview",
+                  "plugins/perigon/api",
+                  "plugins/perigon/database"
                 ]
               },
               {
@@ -4162,11 +4272,61 @@
                 ]
               },
               {
+                "group": "PersistIQ",
+                "pages": [
+                  "plugins/persistiq/overview",
+                  "plugins/persistiq/api",
+                  "plugins/persistiq/database"
+                ]
+              },
+              {
+                "group": "Persona",
+                "pages": [
+                  "plugins/persona/overview",
+                  "plugins/persona/api",
+                  "plugins/persona/database",
+                  "plugins/persona/webhooks"
+                ]
+              },
+              {
+                "group": "Pexels",
+                "pages": [
+                  "plugins/pexels/overview",
+                  "plugins/pexels/api",
+                  "plugins/pexels/database"
+                ]
+              },
+              {
                 "group": "PhantomBuster",
                 "pages": [
                   "plugins/phantombuster/overview",
                   "plugins/phantombuster/api",
                   "plugins/phantombuster/database"
+                ]
+              },
+              {
+                "group": "Piggy",
+                "pages": [
+                  "plugins/piggy/overview",
+                  "plugins/piggy/api",
+                  "plugins/piggy/database",
+                  "plugins/piggy/webhooks"
+                ]
+              },
+              {
+                "group": "Piloterr",
+                "pages": [
+                  "plugins/piloterr/overview",
+                  "plugins/piloterr/api",
+                  "plugins/piloterr/database"
+                ]
+              },
+              {
+                "group": "Pilvio",
+                "pages": [
+                  "plugins/pilvio/overview",
+                  "plugins/pilvio/api",
+                  "plugins/pilvio/database"
                 ]
               },
               {
@@ -4178,11 +4338,27 @@
                 ]
               },
               {
+                "group": "Pingdom",
+                "pages": [
+                  "plugins/pingdom/overview",
+                  "plugins/pingdom/api",
+                  "plugins/pingdom/database"
+                ]
+              },
+              {
                 "group": "Pipedrive",
                 "pages": [
                   "plugins/pipedrive/overview",
                   "plugins/pipedrive/api",
                   "plugins/pipedrive/database"
+                ]
+              },
+              {
+                "group": "Pipeline CRM",
+                "pages": [
+                  "plugins/pipelinecrm/overview",
+                  "plugins/pipelinecrm/api",
+                  "plugins/pipelinecrm/database"
                 ]
               },
               {

@@ -1,0 +1,440 @@
+---
+title: "Payhip API reference"
+sidebarTitle: "API"
+description: "API reference for the Payhip plugin in Corsair: every `payhip.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Coupons
+
+### create
+
+`coupons.create`
+
+Create a discount coupon for one product, all products or a collection
+
+**Risk:** `write`
+
+```ts
+await corsair.payhip.api.coupons.create({ code: "example123", coupon_type: "multi", percent_off: 20, usage_limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | Code the customer enters at checkout |
+| `coupon_type` | `single \| multi \| collection` | Yes | What the coupon applies to |
+| `percent_off` | `number` | No | Percentage discount; required unless amount_off is passed |
+| `amount_off` | `number` | No | Fixed discount in cents; required unless percent_off is passed |
+| `product_key` | `string` | No | Product key; required when coupon_type is single |
+| `collection_id` | `string` | No | Collection id; required when coupon_type is collection |
+| `start_date` | `string` | No | When the coupon becomes valid |
+| `end_date` | `string` | No | When the coupon expires |
+| `minimum_purchase_amount` | `number` | No | Minimum cart total in cents before redemption |
+| `usage_limit` | `number` | No | Maximum redemptions |
+| `notes` | `string` | No | Administrative note, not visible to customers |
+
+Exactly one of percent_off (0-100) or amount_off (cents) is required; coupon_type single needs product_key, collection needs collection_id. Subscriptions priced with a recurring amount cannot be discounted through the API yet.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Payhip coupon |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  code?: string | null,
+  coupon_type?: single | multi | collection | string | null,
+  percent_off?: number | null,
+  amount_off?: number | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  product_key?: string | null,
+  collection_id?: string | null,
+  minimum_purchase_amount?: number | null,
+  usage_limit?: number | null,
+  notes?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`coupons.get`
+
+Read one coupon by id
+
+**Risk:** `read`
+
+```ts
+await corsair.payhip.api.coupons.get({ couponId: 1495522137 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `couponId` | `number` | Yes | Coupon id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Payhip coupon |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  code?: string | null,
+  coupon_type?: single | multi | collection | string | null,
+  percent_off?: number | null,
+  amount_off?: number | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  product_key?: string | null,
+  collection_id?: string | null,
+  minimum_purchase_amount?: number | null,
+  usage_limit?: number | null,
+  notes?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`coupons.list`
+
+List the coupons of the account, paged by limit and offset
+
+**Risk:** `read`
+
+```ts
+await corsair.payhip.api.coupons.list({ limit: 10, offset: 0 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Results per page |
+| `offset` | `number` | No | Offset of the first result |
+
+Paged with limit and offset.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  coupons: {
+    id: number,
+    code?: string | null,
+    coupon_type?: single | multi | collection | string | null,
+    percent_off?: number | null,
+    amount_off?: number | null,
+    start_date?: string | null,
+    end_date?: string | null,
+    product_key?: string | null,
+    collection_id?: string | null,
+    minimum_purchase_amount?: number | null,
+    usage_limit?: number | null,
+    notes?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## License
+
+### decreaseUsage
+
+`license.decreaseUsage`
+
+Decrease the usage count of a license key (a deactivation)
+
+**Risk:** `write`
+
+```ts
+await corsair.payhip.api.license.decreaseUsage({ license_key: "WTKP4-66NL5-HMKQW-GFSCZ" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `license_key` | `string` | Yes | The license key to change |
+
+Decrements the uses counter (a deactivation). The docs' endpoint list names /license/decrease while the example reuses /license/usage; see the overview note.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Payhip license key |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  license_key: string,
+  enabled: boolean,
+  product_link?: string | null,
+  product_name?: string | null,
+  variant_name?: string | null,
+  variant_id?: string | null,
+  buyer_email?: string | null,
+  uses?: number | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### disable
+
+`license.disable`
+
+Disable a license key so it stops validating
+
+**Risk:** `write`
+
+```ts
+await corsair.payhip.api.license.disable({ license_key: "WTKP4-66NL5-HMKQW-GFSCZ" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `license_key` | `string` | Yes | The license key to change |
+
+Payhip disables a license key automatically when a purchase is refunded.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Payhip license key |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  license_key: string,
+  enabled: boolean,
+  product_link?: string | null,
+  product_name?: string | null,
+  variant_name?: string | null,
+  variant_id?: string | null,
+  buyer_email?: string | null,
+  uses?: number | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enable
+
+`license.enable`
+
+Enable a license key that was disabled
+
+**Risk:** `write`
+
+```ts
+await corsair.payhip.api.license.enable({ license_key: "WTKP4-66NL5-HMKQW-GFSCZ" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `license_key` | `string` | Yes | The license key to change |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Payhip license key |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  license_key: string,
+  enabled: boolean,
+  product_link?: string | null,
+  product_name?: string | null,
+  variant_name?: string | null,
+  variant_id?: string | null,
+  buyer_email?: string | null,
+  uses?: number | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### increaseUsage
+
+`license.increaseUsage`
+
+Increase the usage count of a license key (an activation)
+
+**Risk:** `write`
+
+```ts
+await corsair.payhip.api.license.increaseUsage({ license_key: "WTKP4-66NL5-HMKQW-GFSCZ" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `license_key` | `string` | Yes | The license key to change |
+
+Increments the uses counter (an activation).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Payhip license key |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  license_key: string,
+  enabled: boolean,
+  product_link?: string | null,
+  product_name?: string | null,
+  variant_name?: string | null,
+  variant_id?: string | null,
+  buyer_email?: string | null,
+  uses?: number | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### verify
+
+`license.verify`
+
+Verify a license key against a product secret; read-only check
+
+**Risk:** `read`
+
+```ts
+await corsair.payhip.api.license.verify({ license_key: "WTKP4-66NL5-HMKQW-GFSCZ" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `license_key` | `string` | Yes | The license key to verify |
+
+Answers the license key with enabled, uses, buyer_email and product fields.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | A Payhip license key |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  license_key: string,
+  enabled: boolean,
+  product_link?: string | null,
+  product_name?: string | null,
+  variant_name?: string | null,
+  variant_id?: string | null,
+  buyer_email?: string | null,
+  uses?: number | null,
+  date?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
