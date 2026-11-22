@@ -265,6 +265,43 @@ describe('Metabase request client', () => {
 		).toBe('*/*');
 	});
 
+	it('stops reading a JSON response once it passes maxResponseBytes', async () => {
+		const body = JSON.stringify({ data: 'x'.repeat(64) });
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(body, {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		await expect(
+			makeMetabaseRequest(
+				'/api/collection',
+				'api-key-secret',
+				'https://metabase.test',
+				{
+					maxResponseBytes: 16,
+				},
+			),
+		).rejects.toThrow('Metabase JSON response exceeds the 16-byte limit');
+
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue(
+			new Response(body, {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		await expect(
+			makeMetabaseRequest(
+				'/api/collection',
+				'api-key-secret',
+				'https://metabase.test',
+				{
+					maxResponseBytes: body.length,
+				},
+			),
+		).resolves.toEqual({ data: 'x'.repeat(64) });
+	});
+
 	it('rejects binary responses and multipart uploads above configured limits', async () => {
 		const fetchMock = jest.spyOn(globalThis, 'fetch').mockResolvedValue(
 			new Response(new Uint8Array([1, 2, 3]), {
@@ -279,7 +316,7 @@ describe('Metabase request client', () => {
 				'https://metabase.test',
 				{ responseType: 'binary', maxResponseBytes: 2 },
 			),
-		).rejects.toThrow('Metabase binary response could not be read');
+		).rejects.toThrow('Metabase binary response exceeds the 2-byte limit');
 
 		const file = new Blob(['bundle contents']);
 		const formData = createMetabaseMultipartFileForm({

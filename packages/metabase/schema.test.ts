@@ -201,8 +201,8 @@ describe('Metabase schema', () => {
 		const outputKeys = Object.keys(MetabaseEndpointOutputSchemas).sort();
 		expect(inputKeys).toEqual(outputKeys);
 		expect(inputKeys).toHaveLength(18);
-		expect(Object.keys(metabaseEndpointSchemas)).toHaveLength(309);
-		expect(MetabaseOpenApiTestCases).toHaveLength(291);
+		expect(Object.keys(metabaseEndpointSchemas)).toHaveLength(306);
+		expect(MetabaseOpenApiTestCases).toHaveLength(288);
 	});
 
 	it('validates generated request and response fixtures for all additional routes', () => {

@@ -45,6 +45,8 @@ function buildContext(): EndpointContext {
 			issue_new_dek: () => Promise.resolve('test-dek'),
 			get_api_key: () => Promise.resolve('metabase-test-key'),
 			set_api_key: () => Promise.resolve(),
+			get_base_url: () => Promise.resolve(null),
+			set_base_url: () => Promise.resolve(),
 			get_webhook_signature: () => Promise.resolve(null),
 			set_webhook_signature: () => Promise.resolve(),
 		},
@@ -318,7 +320,7 @@ describe('Metabase collection operations', () => {
 
 	it('registers matching schemas and declares no webhooks', () => {
 		const plugin = metabase({ baseUrl: 'https://metabase.test' });
-		expect(Object.keys(metabaseEndpointSchemas)).toHaveLength(309);
+		expect(Object.keys(metabaseEndpointSchemas)).toHaveLength(306);
 		expect(plugin.endpoints?.collections.list).toBeDefined();
 		expect(plugin.endpoints?.collectionPermissions.graph.update).toBeDefined();
 		expect(plugin.webhooks).toEqual({});
@@ -326,7 +328,7 @@ describe('Metabase collection operations', () => {
 
 	describe('OpenAPI-declared operations', () => {
 		it('sends and validates a documented request for every generated route', async () => {
-			expect(MetabaseOpenApiTestCases).toHaveLength(291);
+			expect(MetabaseOpenApiTestCases).toHaveLength(288);
 			for (const route of MetabaseOpenApiTestCases) {
 				mockedRequest.mockReset();
 				mockedLogEvent.mockReset();
@@ -367,9 +369,21 @@ describe('Metabase collection operations', () => {
 			for (const route of MetabaseOpenApiTestCases) {
 				mockedRequest.mockReset();
 				mockedLogEvent.mockReset();
+				// Call the registered handler with the raw input, so the endpoint's own validation is what rejects it.
+				const [group, action] = route.shortPath.split('.');
+				const registered = metabase().endpoints as unknown as Record<
+					string,
+					Record<
+						string,
+						(ctx: MetabaseContext, input: unknown) => Promise<unknown>
+					>
+				>;
+				const handler =
+					group && action ? registered[group]?.[action] : undefined;
+				if (!handler) throw new Error(`${route.shortPath} is not registered`);
 				await expect(
-					route.invoke(context, addUndocumentedInputField(route.input)),
-				).rejects.toThrow();
+					handler(context, addUndocumentedInputField(route.input)),
+				).rejects.toThrow('Metabase request input failed validation');
 				expect(mockedRequest).not.toHaveBeenCalled();
 				expect(mockedLogEvent).not.toHaveBeenCalled();
 			}
@@ -381,7 +395,8 @@ describe('Metabase collection operations', () => {
 					candidateRoute.shortPath === 'apiKey.putByIdRegenerate',
 			);
 			if (!route) throw new Error('API-key regeneration is not registered');
-			mockedRequest.mockResolvedValue({});
+			// Generated response fields are nullish (R9), so a malformed response is one of the wrong type.
+			mockedRequest.mockResolvedValue([]);
 
 			await expect(route.invoke(context, route.input)).rejects.toThrow(
 				'Metabase response failed validation',
@@ -427,13 +442,11 @@ describe('Metabase collection operations', () => {
 
 		it('accepts empty HTTP 204 responses for feedback operations', async () => {
 			const feedbackRoutes = MetabaseOpenApiTestCases.filter((route) =>
-				[
-					'embedMcp.postFeedback',
-					'metabot.postFeedback',
-					'metabot.postSourceFeedback',
-				].includes(route.shortPath),
+				['metabot.postFeedback', 'metabot.postSourceFeedback'].includes(
+					route.shortPath,
+				),
 			);
-			expect(feedbackRoutes).toHaveLength(3);
+			expect(feedbackRoutes).toHaveLength(2);
 
 			const fetchMock = jest
 				.spyOn(globalThis, 'fetch')
@@ -447,14 +460,10 @@ describe('Metabase collection operations', () => {
 				await expect(route.invoke(context, route.input)).resolves.toBeNull();
 			}
 
-			expect(fetchMock).toHaveBeenCalledTimes(3);
+			expect(fetchMock).toHaveBeenCalledTimes(2);
 			expect(
 				fetchMock.mock.calls.map(([url]) => new URL(String(url)).pathname),
-			).toEqual([
-				'/api/embed-mcp/feedback',
-				'/api/metabot/feedback',
-				'/api/metabot/source-feedback',
-			]);
+			).toEqual(['/api/metabot/feedback', '/api/metabot/source-feedback']);
 		});
 	});
 });
