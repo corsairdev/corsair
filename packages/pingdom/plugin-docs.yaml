@@ -1,0 +1,130 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Pingdom"
+description: "Pingdom is a website uptime and performance monitoring service. This plugin manages uptime checks of every documented type, reads raw results, root cause analyses and summaries, runs one-off checks, schedules maintenance windows, and manages alerting teams and contacts."
+domain: pingdom.com
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with an API token generated inside My Pingdom; the plugin
+  sends it as an Authorization Bearer token. Every call goes against
+  https://api.pingdom.com/api/3.1. Answers are bare objects keyed by
+  resource ({checks: […], check: {…}, message: …}); errors carry
+  {error: {statuscode, statusdesc, errormessage}}. Timestamps are UNIX
+  seconds everywhere (from/to filters, lasttesttime, maintenance windows).
+
+  checks.create takes name, host and type plus type-specific settings in
+  typeSettings as flat body fields (url/encryption/port for http,
+  stringtoexpect for tcp, nameserver/expectedip for dns, …) — the docs list
+  them per type. resolution is one of 1, 5, 15, 30 or 60 minutes.
+  checks.updateMulti pauses or re-times the listed checks at once.
+  tools.runSingle performs a one-off test without creating a check.
+
+  Maintenance windows silence alerts for the uptime (uptimeIds) and
+  transaction (tmsIds) checks they cover; recurrenceType is none, day, week
+  or month with repeatEvery, and from/to must be in the future. Deleting checks,
+  teams, contacts or maintenance windows cannot be undone.
+
+  The transaction-check (/tms) group and traceroute are documented by
+  Pingdom but not part of this plugin. Every operation is described in the
+  official reference: https://docs.pingdom.com/api/
+examples:
+  read:
+    path: checks.list
+    title: List checks
+    args:
+      includeTags: true
+  write:
+    path: checks.create
+    title: Create an HTTP check
+    args:
+      name: api
+      host: example.com
+      type: http
+apiExamples:
+  checks.list:
+    call: '{ includeTags: true, limit: 20 }'
+  checks.create:
+    call: '{ name: "api", host: "example.com", type: "http", typeSettings: { url: "/health", encryption: true }, resolution: "5" }'
+  checks.get:
+    call: '{ checkId: 100 }'
+  checks.update:
+    call: '{ checkId: 100, name: "renamed" }'
+  checks.delete:
+    call: '{ checkId: 100 }'
+  checks.updateMulti:
+    call: '{ checkIds: [1, 2, 3], paused: true }'
+  checks.deleteMulti:
+    call: '{ checkIds: [1, 2, 3] }'
+  analysis.list:
+    call: '{ checkId: 100 }'
+  analysis.get:
+    call: '{ checkId: 100, analysisId: 123 }'
+  results.list:
+    call: '{ checkId: 100, from: 1700000000, status: "down", limit: 50 }'
+  summaries.average:
+    call: '{ checkId: 100, byCountry: true, includeUptime: true }'
+  summaries.hoursOfDay:
+    call: '{ checkId: 100 }'
+  summaries.outage:
+    call: '{ checkId: 100 }'
+  summaries.performance:
+    call: '{ checkId: 100, resolution: "week" }'
+  summaries.probes:
+    call: '{ checkId: 100 }'
+  tools.listActions:
+    call: '{ checkId: 100 }'
+  tools.getCredits:
+    call: '{}'
+  tools.listProbes:
+    call: '{}'
+  tools.getReference:
+    call: '{}'
+  tools.runSingle:
+    call: '{ host: "example.com", type: "http", typeSettings: { encryption: true, url: "/" } }'
+  maintenance.list:
+    call: '{}'
+  maintenance.create:
+    call: '{ description: "Deploy window", from: 2000000000, to: 2000003600, recurrenceType: "week", repeatEvery: 1, uptimeIds: [100] }'
+  maintenance.get:
+    call: '{ id: 777 }'
+  maintenance.update:
+    call: '{ id: 777, description: "Changed" }'
+  maintenance.delete:
+    call: '{ id: 777 }'
+  maintenance.deleteMulti:
+    call: '{ windowIds: [1, 2] }'
+  occurrences.list:
+    call: '{ maintenanceId: 777 }'
+  occurrences.get:
+    call: '{ id: 3 }'
+  occurrences.update:
+    call: '{ id: 3, from: 2000000000, to: 2000003600 }'
+  occurrences.delete:
+    call: '{ id: 3 }'
+  alerting.teams.list:
+    call: '{}'
+  alerting.teams.create:
+    call: '{ name: "API Team", memberIds: [12345, 54321] }'
+  alerting.teams.get:
+    call: '{ teamId: 63 }'
+  alerting.teams.update:
+    call: '{ teamId: 63, name: "Engineering", memberIds: [111250] }'
+  alerting.teams.delete:
+    call: '{ teamId: 63 }'
+  alerting.contacts.list:
+    call: '{}'
+  alerting.contacts.create:
+    call: '{ name: "John Doe", notificationTargets: [{ email: "john@example.com", severity: "HIGH" }, { email: "john@example.com", severity: "LOW" }] }'
+  alerting.contacts.get:
+    call: '{ contactId: 111250 }'
+  alerting.contacts.update:
+    call: '{ contactId: 111250, name: "John Doe", paused: true, notificationTargets: [{ email: "john@example.com", severity: "HIGH" }, { email: "john@example.com", severity: "LOW" }] }'
+  alerting.contacts.delete:
+    call: '{ contactId: 111250 }'
+apiNotes:
+  checks.create: 'type is one of http, httpcustom, tcp, ping, dns, udp, smtp, pop3, imap; typeSettings carries the flat type-specific fields from the docs (http: url, encryption, port, shouldcontain, shouldnotcontain, postdata, requestheaders, verify_certificate, ssl_down_days_before; tcp: port, encryption, stringtoexpect; dns: nameserver, expectedip).'
+  checks.updateMulti: 'Pauses, unpauses or re-times the checks listed in checkIds, in one call. Without checkIds Pingdom would change every check, so the plugin requires the list.'
+  results.list: 'status filters to up, down, unconfirmed or unknown; probes takes a comma-separated probe id list.'
+  maintenance.create: 'recurrenceType is none, day, week or month, with repeatEvery; from and to must be later than the request time; effectiveTo 0 means the recurrence never stops.'
+  tools.runSingle: 'Performs a single test without creating a check; the answer carries status, responsetime and the probe that ran it.'
+  alerting.contacts.create: 'notificationTargets each take email, or number with countryCode, plus severity HIGH or LOW; Pingdom wants at least one HIGH and one LOW target.'
