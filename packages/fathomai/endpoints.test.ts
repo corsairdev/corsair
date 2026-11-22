@@ -37,7 +37,7 @@ function entity(name: string) {
 	};
 }
 
-// Safe: the endpoints read only `key` and the `db` entities; the runtime builds the rest from a live database.
+// Safe (`as unknown as Ctx`): the endpoints read only `key` and the `db` entities; the runtime builds the rest from a live database.
 const ctx = {
 	key: 'fathom-test-key',
 	db: Object.fromEntries(
@@ -421,6 +421,7 @@ describe('Fathom AI endpoints', () => {
 		const transcriptError = await getTranscript(ctx, {
 			recording_id: 42,
 			destination_url: 'https://example.com/hook?token=abc',
+			// `unknown`: a rejection value is untyped until the assertion narrows it.
 		}).catch((e: unknown) => e);
 		expect(JSON.stringify(transcriptError)).not.toContain('token=abc');
 		expect((transcriptError as ApiError).url).toBe(
@@ -522,6 +523,7 @@ describe('Fathom AI through a Corsair client', () => {
 		try {
 			const error = await corsair.fathomai.api.teams
 				.list({})
+				// `unknown`: a rejection value is untyped until the assertion narrows it.
 				.catch((e: unknown) => e);
 
 			expect(error).toBeInstanceOf(ApiError);

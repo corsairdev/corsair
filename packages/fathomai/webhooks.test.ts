@@ -159,7 +159,7 @@ describe('meetings.contentReady handler', () => {
 	const upserts: Array<[string, unknown]> = [];
 
 	function ctxWithSecret(key: string) {
-		// Safe: the handler reads only `key` and `db.meetings`; the runtime builds the rest from a live database.
+		// Safe (`as unknown as Ctx`): the handler reads only `key` and `db.meetings`; the runtime builds the rest from a live database.
 		return {
 			key,
 			db: {
@@ -189,6 +189,7 @@ describe('meetings.contentReady handler', () => {
 
 		const result = await contentReady.handler(
 			ctx,
+			// `as unknown as Req`: a bare delivery object; the handler reads only headers, rawBody and payload.
 			request(DELIVERY) as unknown as Req,
 		);
 
@@ -209,6 +210,7 @@ describe('meetings.contentReady handler', () => {
 	it('answers 401 and stores nothing for a forged delivery', async () => {
 		const result = await contentReady.handler(
 			ctxWithSecret('whsec_c29tZS1vdGhlci1zZWNyZXQ='),
+			// `as unknown as Req`: a bare delivery object; the handler reads only headers, rawBody and payload.
 			request(DELIVERY) as unknown as Req,
 		);
 

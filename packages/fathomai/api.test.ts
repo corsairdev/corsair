@@ -25,7 +25,7 @@ type Ctx = Parameters<typeof listMeetings>[0];
 const stored: Array<[string, string]> = [];
 
 function ctxWithKey(key: string | undefined) {
-	// Safe: the endpoints read only `key` and the `db` entities; the runtime builds the rest from a live database.
+	// Safe (`as unknown as Ctx`): the endpoints read only `key` and the `db` entities; the runtime builds the rest from a live database.
 	return {
 		key,
 		db: Object.fromEntries(
@@ -80,6 +80,7 @@ suite('Fathom AI live API', () => {
 
 	it('rejects a bad key with 401', async () => {
 		const error = await listTeams(ctxWithKey('invalid-key'), {}).catch(
+			// `unknown`: a rejection value is untyped until the assertion narrows it.
 			(e: unknown) => e,
 		);
 
