@@ -385,6 +385,10 @@
   "linkedin": {
     "from": "https://svgl.app/library/linkedin.svg"
   },
+  "listennotes": {
+    "from": "https://media.brand.dev/9975d235-1065-420a-becc-233f47147318.svg",
+    "note": "found with the context.dev Brand API for listennotes.com"
+  },
   "logodev": {
     "from": "https://media.brand.dev/99d0f2c0-1997-40b1-a627-719822039b0c.svg",
     "note": "found with the context.dev Brand API for logo.dev"
@@ -461,6 +465,14 @@
   "outlook": {
     "from": "https://svgl.app/library/microsoft-outlook.svg"
   },
+  "pandadoc": {
+    "from": "https://media.brand.dev/b694e05f-1b73-4b48-941c-ab27e1167754.svg",
+    "note": "found with the context.dev Brand API for pandadoc.com"
+  },
+  "paradym": {
+    "from": "/tmp/claude-1000/-home-pranayasus-Corsair/51977f99-eac4-4df8-8d92-2a33fe9d2a3e/scratchpad/site/paradym.svg",
+    "note": "Paradym's own mark from paradym.id (inline header SVG) on its black rounded square, as in the site favicon"
+  },
   "parseur": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/parseur.svg"
   },
@@ -468,8 +480,24 @@
     "from": "https://media.brand.dev/22fb8796-812b-4fe3-a4af-76819a941314.svg",
     "note": "found with the context.dev Brand API for pdf-api.io"
   },
+  "perigon": {
+    "from": "https://media.brand.dev/482b0284-e657-4330-93eb-1316b790b37a.svg",
+    "note": "found with the context.dev Brand API for perigon.io"
+  },
   "perplexityai": {
     "from": "https://svgl.app/library/perplexity.svg"
+  },
+  "persona": {
+    "from": "https://media.brand.dev/c223c1f0-15a3-40f1-adec-a62ffbc08160.svg",
+    "note": "found with the context.dev Brand API for withpersona.com"
+  },
+  "pexels": {
+    "from": "https://media.brand.dev/5a615920-70be-43dd-a2fd-0027259ec0e9.svg",
+    "note": "found with the context.dev Brand API for pexels.com"
+  },
+  "piggy": {
+    "from": "https://media.brand.dev/fd4ab6d8-382e-4078-b4f1-6df781354680.svg",
+    "note": "found with the context.dev Brand API for leat.com"
   },
   "polygon": {
     "from": "https://media.brand.dev/e41a6d48-ea91-4124-9a31-b4840f398e69.svg",

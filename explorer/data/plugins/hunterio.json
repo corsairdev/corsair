@@ -6,7 +6,7 @@
   "authTypes": ["api_key"],
   "defaultAuthType": "api_key",
   "counts": {
-    "api": 160,
+    "api": 168,
     "webhooks": 0,
     "db": 0
   },
@@ -273,6 +273,47 @@
       }
     },
     {
+      "path": "hunterio.api.briefing.get",
+      "shortPath": "briefing.get",
+      "description": "Get what needs attention today: counts of new lead and Monitored Signals events, new opportunities this week, and the credit balance, each with its follow-up call",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "leads_since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "monitored_since",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ needs_attention: { items: { type: string, status: string, reason: string | null, count: number | null, count_exact: boolean | null, next_call: { endpoint: string, params: Record<string, any>, mcp_tool?: string | null, charges_credits: boolean } | null, next_since: string | null }[] }, new_this_week: { items: { type: string, status: string, reason: string | null, count: number | null, count_exact: boolean | null, next_call: { endpoint: string, params: Record<string, any>, mcp_tool?: string | null, charges_credits: boolean } | null, next_since: string | null }[] }, account: { status: string, plan_name: string | null, plan_level: number | null, reset_date: string | null, requests: { credits?: { used?: number, available?: number, remaining?: number, over_quota?: number }, searches?: { used?: number, available?: number, remaining?: number, over_quota?: number }, verifications?: { used?: number, available?: number, remaining?: number, over_quota?: number } } | null, next_call: { endpoint: string, params: Record<string, any>, mcp_tool?: string | null, charges_credits: boolean } | null } }"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ since: string, next_since: string }"
+          }
+        ]
+      }
+    },
+    {
       "path": "hunterio.api.companies.bulkCopy",
       "shortPath": "companies.bulkCopy",
       "description": "Copy companies to another company list",
@@ -483,7 +524,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, domain?: string | null, leads_count?: number, created_at?: string }"
+            "type": "{ id?: number, domain?: string | null, leads_count?: number | null, created_at?: string }"
           },
           {
             "key": "meta",
@@ -540,7 +581,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, domain?: string | null, leads_count?: number, created_at?: string }"
+            "type": "{ id?: number, domain?: string | null, leads_count?: number | null, created_at?: string }"
           },
           {
             "key": "meta",
@@ -731,7 +772,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ companies: { id?: number, domain?: string | null, leads_count?: number, created_at?: string }[] }"
+            "type": "{ companies: { id?: number, domain?: string | null, leads_count?: number | null, created_at?: string }[] }"
           },
           {
             "key": "meta",
@@ -1042,7 +1083,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, domain?: string | null, leads_count?: number, created_at?: string }"
+            "type": "{ id?: number, domain?: string | null, leads_count?: number | null, created_at?: string }"
           },
           {
             "key": "meta",
@@ -1196,7 +1237,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, name?: string, type?: string, companies_count?: number, company_list_folder_id?: number | null, created_at?: string, filters?: any, companies?: { id?: number, domain?: string | null, leads_count?: number, created_at?: string }[] }"
+            "type": "{ id?: number, name?: string, type?: string, companies_count?: number, company_list_folder_id?: number | null, created_at?: string, filters?: any, companies?: { id?: number, domain?: string | null, leads_count?: number | null, created_at?: string }[] }"
           },
           {
             "key": "meta",
@@ -1238,6 +1279,52 @@
             "key": "data",
             "optional": false,
             "type": "{ company_lists: { id?: number, name?: string, type?: string, companies_count?: number, company_list_folder_id?: number | null, created_at?: string, filters?: any }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total?: number, limit?: number, offset?: number, results?: number, params?: any }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hunterio.api.companyLists.listCompanies",
+      "shortPath": "companyLists.listCompanies",
+      "description": "List the companies in a static company list, most recently added first",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "company_list_id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, domain: string, created_at?: string, organization?: string | null }[]"
           },
           {
             "key": "meta",
@@ -1517,7 +1604,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ tags: { id?: number, name?: string, color?: string | null, created_at?: string }[] }"
+            "type": "{ company_tags: { id?: number, name?: string, color?: string | null, created_at?: string }[] }"
           },
           {
             "key": "meta",
@@ -2006,12 +2093,12 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ domain?: string, organization?: string, emails_count?: { personal?: number, generic?: number, total?: number }, already_saved?: boolean, city?: string | null, state?: string | null, country?: string | null, company_type?: string | null, headcount?: string | null, industry?: string | null, keywords?: string[], description?: string | null, year_founded?: number | null, socials?: { facebook?: string | null, instagram?: string | null, twitter?: string | null, youtube?: string | null }, technologies?: string[], technology_details?: { category?: string, category_label?: string, name?: string, slug?: string, website?: string | null }[] }[]"
+            "type": "{ domain?: string, organization?: string | null, emails_count?: { personal?: number | null, generic?: number | null, total?: number | null }, already_saved?: boolean, city?: string | null, state?: string | null, country?: string | null, company_type?: string | null, headcount?: string | null, industry?: string | null, keywords?: string[] | null, description?: string | null, year_founded?: number | null, socials?: { facebook?: string | null, instagram?: string | null, twitter?: string | null, youtube?: string | null }, technologies?: string[], technology_details?: { category?: string | null, category_label?: string | null, name?: string | null, slug?: string, website?: string | null }[] }[]"
           },
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: number, limit?: number, offset?: number, results?: number, params?: any, filters?: any, permalink?: string }"
+            "type": "{ total?: number, limit?: number, offset?: number, results?: number, params?: any, filters?: any, permalink?: string | null }"
           }
         ]
       }
@@ -2112,7 +2199,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: number, limit?: number, offset?: number, results?: number, params?: any, filters?: any, permalink?: string, total_emails?: { personal?: number, generic?: number, total?: number } }"
+            "type": "{ total?: number, limit?: number, offset?: number, results?: number, params?: any, filters?: any, permalink?: string | null, total_emails?: { personal?: number, generic?: number, total?: number } }"
           }
         ]
       }
@@ -2213,7 +2300,7 @@
           {
             "key": "meta",
             "optional": true,
-            "type": "{ total?: number, limit?: number, offset?: number, results?: number, params?: any, filters?: any, permalink?: string, total_emails?: { personal?: number, generic?: number, total?: number } }"
+            "type": "{ total?: number, limit?: number, offset?: number, results?: number, params?: any, filters?: any, permalink?: string | null, total_emails?: { personal?: number, generic?: number, total?: number } }"
           }
         ]
       }
@@ -2336,7 +2423,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, name?: string, filters?: Record<string, any>, created_at?: string, updated_at?: string }[]"
+            "type": "{ views: { id?: number, name?: string, filters?: Record<string, any>, created_at?: string, updated_at?: string }[] }"
           },
           {
             "key": "meta",
@@ -2540,9 +2627,226 @@
       }
     },
     {
+      "path": "hunterio.api.domainSearch.found",
+      "shortPath": "domainSearch.found",
+      "description": "Search the email addresses Hunter found on the web for a domain, without generated guesses. Charges 1 credit per 10 emails returned",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "personal | generic"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seniority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_titles",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "decision_maker",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "required_field",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "verification_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_type",
+            "optional": true,
+            "type": "found | generated"
+          },
+          {
+            "key": "saved_leads",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "aggregations",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "provenance",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ domain?: string | null, disposable?: boolean, webmail?: boolean, accept_all?: boolean, pattern?: string | null, organization?: string | null, linked_domains?: string[], emails?: { value?: string, type?: string, confidence?: number, first_name?: string | null, last_name?: string | null, position?: string | null, position_raw?: string | null, seniority?: string | null, department?: string | null, decision_maker?: boolean, linkedin?: string | null, twitter?: string | null, phone_number?: string | null, source_type?: string, verification?: { date?: string | null, status?: string | null } | null, sources?: { domain?: string, uri?: string, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean }[] }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total?: number, limit?: number, offset?: number, results?: number, params?: any, results_approximate?: boolean, aggregations?: any }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hunterio.api.domainSearch.foundPost",
+      "shortPath": "domainSearch.foundPost",
+      "description": "Search found email addresses for a domain with body filters, including location. Charges 1 credit per 10 emails returned",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "company",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": true,
+            "type": "personal | generic"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "department",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "seniority",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "job_titles",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "decision_maker",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "required_field",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "verification_status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "source_type",
+            "optional": true,
+            "type": "found | generated"
+          },
+          {
+            "key": "saved_leads",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "aggregations",
+            "optional": true,
+            "type": "boolean"
+          },
+          {
+            "key": "provenance",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "location",
+            "optional": true,
+            "type": "{ include?: { continent?: string, business_region?: string, country?: string, state?: string, city?: string }[], exclude?: { continent?: string, business_region?: string, country?: string, state?: string, city?: string }[] }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ domain?: string | null, disposable?: boolean, webmail?: boolean, accept_all?: boolean, pattern?: string | null, organization?: string | null, linked_domains?: string[], emails?: { value?: string, type?: string, confidence?: number, first_name?: string | null, last_name?: string | null, position?: string | null, position_raw?: string | null, seniority?: string | null, department?: string | null, decision_maker?: boolean, linkedin?: string | null, twitter?: string | null, phone_number?: string | null, source_type?: string, verification?: { date?: string | null, status?: string | null } | null, sources?: { domain?: string, uri?: string, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean }[] }[] }"
+          },
+          {
+            "key": "meta",
+            "optional": true,
+            "type": "{ total?: number, limit?: number, offset?: number, results?: number, params?: any, results_approximate?: boolean, aggregations?: any }"
+          }
+        ]
+      }
+    },
+    {
       "path": "hunterio.api.domainSearch.search",
       "shortPath": "domainSearch.search",
-      "description": "List the email addresses found for a domain",
+      "description": "List the email addresses found for a domain. Charges 1 credit per 10 emails returned",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -2630,7 +2934,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ domain?: string, disposable?: boolean, webmail?: boolean, accept_all?: boolean, pattern?: string | null, organization?: string | null, linked_domains?: string[], emails?: { value?: string, type?: string, confidence?: number, first_name?: string | null, last_name?: string | null, position?: string | null, position_raw?: string | null, seniority?: string | null, department?: string | null, decision_maker?: boolean, linkedin?: string | null, twitter?: string | null, phone_number?: string | null, source_type?: string, verification?: { date?: string | null, status?: string | null } | null, sources?: { domain?: string, uri?: string, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean }[] }[] }"
+            "type": "{ domain?: string | null, disposable?: boolean, webmail?: boolean, accept_all?: boolean, pattern?: string | null, organization?: string | null, linked_domains?: string[], emails?: { value?: string, type?: string, confidence?: number, first_name?: string | null, last_name?: string | null, position?: string | null, position_raw?: string | null, seniority?: string | null, department?: string | null, decision_maker?: boolean, linkedin?: string | null, twitter?: string | null, phone_number?: string | null, source_type?: string, verification?: { date?: string | null, status?: string | null } | null, sources?: { domain?: string, uri?: string, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean }[] }[] }"
           },
           {
             "key": "meta",
@@ -2643,7 +2947,7 @@
     {
       "path": "hunterio.api.domainSearch.searchPost",
       "shortPath": "domainSearch.searchPost",
-      "description": "List the email addresses found for a domain (POST form)",
+      "description": "List the email addresses found for a domain (POST form). Charges 1 credit per 10 emails returned",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -2736,7 +3040,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ domain?: string, disposable?: boolean, webmail?: boolean, accept_all?: boolean, pattern?: string | null, organization?: string | null, linked_domains?: string[], emails?: { value?: string, type?: string, confidence?: number, first_name?: string | null, last_name?: string | null, position?: string | null, position_raw?: string | null, seniority?: string | null, department?: string | null, decision_maker?: boolean, linkedin?: string | null, twitter?: string | null, phone_number?: string | null, source_type?: string, verification?: { date?: string | null, status?: string | null } | null, sources?: { domain?: string, uri?: string, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean }[] }[] }"
+            "type": "{ domain?: string | null, disposable?: boolean, webmail?: boolean, accept_all?: boolean, pattern?: string | null, organization?: string | null, linked_domains?: string[], emails?: { value?: string, type?: string, confidence?: number, first_name?: string | null, last_name?: string | null, position?: string | null, position_raw?: string | null, seniority?: string | null, department?: string | null, decision_maker?: boolean, linkedin?: string | null, twitter?: string | null, phone_number?: string | null, source_type?: string, verification?: { date?: string | null, status?: string | null } | null, sources?: { domain?: string, uri?: string, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean }[] }[] }"
           },
           {
             "key": "meta",
@@ -2843,7 +3147,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, sending_status?: string, daily_limit?: number, provider?: string, sender_name?: string | null, default_account?: boolean, signature?: string | null, profile_picture_url?: string | null, custom_tracking_domain?: string | null, sending_schedule?: { days?: number[], start_time?: string, end_time?: string, time_zone?: string }, warmup?: { enabled?: boolean, status?: string | null, end_date?: string | null } }"
+            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, sending_status?: string, daily_limit?: number, provider?: string, sender_name?: string | null, default_account?: boolean | null, signature?: string | null, profile_picture_url?: string | null, custom_tracking_domain?: string | null, sending_schedule?: { days?: number[] | null, start_time?: string | null, end_time?: string | null, time_zone?: string }, warmup?: { enabled?: boolean, status?: string | null, end_date?: string | null } }"
           },
           {
             "key": "meta",
@@ -2920,7 +3224,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, sending_status?: string, daily_limit?: number, provider?: string, sender_name?: string | null, default_account?: boolean, signature?: string | null, profile_picture_url?: string | null, custom_tracking_domain?: string | null, sending_schedule?: { days?: number[], start_time?: string, end_time?: string, time_zone?: string }, warmup?: { enabled?: boolean, status?: string | null, end_date?: string | null } }[]"
+            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, sending_status?: string, daily_limit?: number, provider?: string, sender_name?: string | null, default_account?: boolean | null, signature?: string | null, profile_picture_url?: string | null, custom_tracking_domain?: string | null, sending_schedule?: { days?: number[] | null, start_time?: string | null, end_time?: string | null, time_zone?: string }, warmup?: { enabled?: boolean, status?: string | null, end_date?: string | null } }[]"
           },
           {
             "key": "meta",
@@ -2986,7 +3290,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, sending_status?: string, daily_limit?: number, provider?: string, sender_name?: string | null, default_account?: boolean, signature?: string | null, profile_picture_url?: string | null, custom_tracking_domain?: string | null, sending_schedule?: { days?: number[], start_time?: string, end_time?: string, time_zone?: string }, warmup?: { enabled?: boolean, status?: string | null, end_date?: string | null } }"
+            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, sending_status?: string, daily_limit?: number, provider?: string, sender_name?: string | null, default_account?: boolean | null, signature?: string | null, profile_picture_url?: string | null, custom_tracking_domain?: string | null, sending_schedule?: { days?: number[] | null, start_time?: string | null, end_time?: string | null, time_zone?: string }, warmup?: { enabled?: boolean, status?: string | null, end_date?: string | null } }"
           },
           {
             "key": "meta",
@@ -3103,7 +3407,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, sending_status?: string, daily_limit?: number, provider?: string, sender_name?: string | null, default_account?: boolean, signature?: string | null, profile_picture_url?: string | null, custom_tracking_domain?: string | null, sending_schedule?: { days?: number[], start_time?: string, end_time?: string, time_zone?: string }, warmup?: { enabled?: boolean, status?: string | null, end_date?: string | null } }"
+            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, sending_status?: string, daily_limit?: number, provider?: string, sender_name?: string | null, default_account?: boolean | null, signature?: string | null, profile_picture_url?: string | null, custom_tracking_domain?: string | null, sending_schedule?: { days?: number[] | null, start_time?: string | null, end_time?: string | null, time_zone?: string }, warmup?: { enabled?: boolean, status?: string | null, end_date?: string | null } }"
           },
           {
             "key": "meta",
@@ -3239,7 +3543,7 @@
     {
       "path": "hunterio.api.emailFinder.find",
       "shortPath": "emailFinder.find",
-      "description": "Find the most likely email of a person",
+      "description": "Find the most likely email of a person. Charges 1 credit when an email is found",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -3292,7 +3596,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ email?: string | null, score?: number | null, domain?: string, company?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, linkedin_url?: string | null, twitter?: string | null, phone_number?: string | null, accept_all?: boolean, source_type?: string, sources?: { domain?: string, uri?: string, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean }[], verification?: { date?: string | null, status?: string | null, id?: number | null } | null }"
+            "type": "{ email?: string | null, score?: number | null, domain?: string | null, company?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, linkedin_url?: string | null, twitter?: string | null, phone_number?: string | null, accept_all?: boolean | null, source_type?: string | null, sources?: { domain?: string, uri?: string, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean }[], verification?: { date?: string | null, status?: string | null, id?: number | null } | null }"
           },
           {
             "key": "meta",
@@ -3305,7 +3609,7 @@
     {
       "path": "hunterio.api.emailFinder.findFound",
       "shortPath": "emailFinder.findFound",
-      "description": "Check whether an email was already found for a person",
+      "description": "Check whether an email was already found for a person. Charges 1 credit when an email is found",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -3358,7 +3662,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ email?: string | null, score?: number | null, domain?: string, company?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, linkedin_url?: string | null, twitter?: string | null, phone_number?: string | null, accept_all?: boolean, source_type?: string, sources?: { domain?: string, uri?: string, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean }[], verification?: { date?: string | null, status?: string | null, id?: number | null } | null }"
+            "type": "{ email?: string | null, score?: number | null, domain?: string | null, company?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, linkedin_url?: string | null, twitter?: string | null, phone_number?: string | null, accept_all?: boolean | null, source_type?: string | null, sources?: { domain?: string, uri?: string, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean }[], verification?: { date?: string | null, status?: string | null, id?: number | null } | null }"
           },
           {
             "key": "meta",
@@ -3371,7 +3675,7 @@
     {
       "path": "hunterio.api.emailFinder.findFoundPost",
       "shortPath": "emailFinder.findFoundPost",
-      "description": "Check whether an email was already found (POST form)",
+      "description": "Check whether an email was already found (POST form). Charges 1 credit when an email is found",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -3424,7 +3728,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ email?: string | null, score?: number | null, domain?: string, company?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, linkedin_url?: string | null, twitter?: string | null, phone_number?: string | null, accept_all?: boolean, source_type?: string, sources?: { domain?: string, uri?: string, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean }[], verification?: { date?: string | null, status?: string | null, id?: number | null } | null }"
+            "type": "{ email?: string | null, score?: number | null, domain?: string | null, company?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, linkedin_url?: string | null, twitter?: string | null, phone_number?: string | null, accept_all?: boolean | null, source_type?: string | null, sources?: { domain?: string, uri?: string, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean }[], verification?: { date?: string | null, status?: string | null, id?: number | null } | null }"
           },
           {
             "key": "meta",
@@ -3473,7 +3777,7 @@
     {
       "path": "hunterio.api.emailVerifier.verify",
       "shortPath": "emailVerifier.verify",
-      "description": "Verify the deliverability of an email address",
+      "description": "Verify the deliverability of an email address. Charges 0.5 credit per verification",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -3501,7 +3805,7 @@
           {
             "key": "data",
             "optional": true,
-            "type": "{ status?: string, result?: string, score?: number | null, email?: string, regexp?: boolean, gibberish?: boolean, disposable?: boolean, webmail?: boolean, mx_records?: boolean, smtp_server?: string | null, smtp_check?: boolean, accept_all?: boolean, block?: boolean, verification?: { date?: string | null, status?: string | null, id?: number | null } | null, sources?: { domain?: string, uri?: string, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean }[], _deprecation_notice?: string }"
+            "type": "{ status?: string, result?: string, score?: number | null, email?: string, regexp?: boolean, gibberish?: boolean, disposable?: boolean, webmail?: boolean, mx_records?: boolean, smtp_server?: boolean | null, smtp_check?: boolean, accept_all?: boolean, block?: boolean, verification?: { date?: string | null, status?: string | null, id?: number | null } | null, sources?: { domain?: string, uri?: string, extracted_on?: string | null, last_seen_on?: string | null, still_on_page?: boolean }[], _deprecation_notice?: string }"
           },
           {
             "key": "meta",
@@ -3514,7 +3818,7 @@
     {
       "path": "hunterio.api.enrichment.combined",
       "shortPath": "enrichment.combined",
-      "description": "Enrich a person and their company together",
+      "description": "Enrich a person and their company together. Charges 0.2 credit when data is found",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -3538,13 +3842,13 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ status?: string, data: { person?: { id?: string | null, name?: { fullName?: string | null, givenName?: string | null, familyName?: string | null } | null, email?: string | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: { city?: string | null, country?: string | null, countryCode?: string | null, lat?: number | null, lng?: number | null, state?: string | null, stateCode?: string | null } | null, bio?: string | null, site?: string | null, avatar?: string | null, employment?: { domain?: string | null, name?: string | null, role?: string | null, seniority?: string | null, subRole?: string | null, title?: string | null } | null, facebook?: { handle?: string | null } | null, linkedin?: { handle?: string | null } | null, googleplus?: { handle?: string | null } | null, twitter?: { handle?: string | null, avatar?: string | null, bio?: string | null, followers?: number | null, following?: number | null, location?: string | null, site?: string | null, statuses?: number | null, favorites?: number | null, id?: number | null } | null, github?: { handle?: string | null, avatar?: string | null, blog?: string | null, company?: string | null, followers?: number | null, following?: number | null, id?: number | null } | null, gravatar?: { handle?: string | null, avatar?: string | null, avatars?: any[], urls?: any[] } | null, fuzzy?: boolean, emailProvider?: boolean, phone?: string | null, indexedAt?: string | null, activeAt?: string | null, inactiveAt?: string | null }, company?: { id?: string | null, name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[], site?: { emailAddresses?: string[], phoneNumbers?: string[] } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, sic4Codes?: string[], naicsCode?: string | null, naics6Codes?: string[], naics6Codes2022?: string[], gicsCode?: string | null } | null, tags?: string[], description?: string | null, foundedYear?: number | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: Record<string, any> | null, logo?: string | null, facebook?: { handle?: string | null, likes?: number | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, crunchbase?: { handle?: string | null } | null, youtube?: { handle?: string | null } | null, instagram?: { handle?: string | null } | null, emailProvider?: boolean, type?: string | null, companyType?: string | null, ticker?: string | null, identifiers?: { usEIN?: string | null } | null, phone?: string | null, metrics?: { employees?: number | null, employeesCount?: number | null, alexaGlobalRank?: number | null, alexaUsRank?: number | null, annualRevenue?: number | null, estimatedAnnualRevenue?: string | null, marketCap?: string | null, raised?: number | null, fiscalYearEnd?: number | null, trafficRank?: string | null } | null, indexedAt?: string | null, tech?: string[], techCategories?: string[], fundingRounds?: { amount?: number | null, date?: string | null, investors?: string[], type?: string | null }[], parent?: { domain?: string | null } | null, ultimateParent?: { domain?: string | null } | null, alreadySaved?: boolean, emailsCount?: number } }, meta?: { total?: number, limit?: number, offset?: number, results?: number, params?: any } } | { person?: { id?: string | null, name?: { fullName?: string | null, givenName?: string | null, familyName?: string | null } | null, email?: string | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: { city?: string | null, country?: string | null, countryCode?: string | null, lat?: number | null, lng?: number | null, state?: string | null, stateCode?: string | null } | null, bio?: string | null, site?: string | null, avatar?: string | null, employment?: { domain?: string | null, name?: string | null, role?: string | null, seniority?: string | null, subRole?: string | null, title?: string | null } | null, facebook?: { handle?: string | null } | null, linkedin?: { handle?: string | null } | null, googleplus?: { handle?: string | null } | null, twitter?: { handle?: string | null, avatar?: string | null, bio?: string | null, followers?: number | null, following?: number | null, location?: string | null, site?: string | null, statuses?: number | null, favorites?: number | null, id?: number | null } | null, github?: { handle?: string | null, avatar?: string | null, blog?: string | null, company?: string | null, followers?: number | null, following?: number | null, id?: number | null } | null, gravatar?: { handle?: string | null, avatar?: string | null, avatars?: any[], urls?: any[] } | null, fuzzy?: boolean, emailProvider?: boolean, phone?: string | null, indexedAt?: string | null, activeAt?: string | null, inactiveAt?: string | null }, company?: { id?: string | null, name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[], site?: { emailAddresses?: string[], phoneNumbers?: string[] } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, sic4Codes?: string[], naicsCode?: string | null, naics6Codes?: string[], naics6Codes2022?: string[], gicsCode?: string | null } | null, tags?: string[], description?: string | null, foundedYear?: number | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: Record<string, any> | null, logo?: string | null, facebook?: { handle?: string | null, likes?: number | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, crunchbase?: { handle?: string | null } | null, youtube?: { handle?: string | null } | null, instagram?: { handle?: string | null } | null, emailProvider?: boolean, type?: string | null, companyType?: string | null, ticker?: string | null, identifiers?: { usEIN?: string | null } | null, phone?: string | null, metrics?: { employees?: number | null, employeesCount?: number | null, alexaGlobalRank?: number | null, alexaUsRank?: number | null, annualRevenue?: number | null, estimatedAnnualRevenue?: string | null, marketCap?: string | null, raised?: number | null, fiscalYearEnd?: number | null, trafficRank?: string | null } | null, indexedAt?: string | null, tech?: string[], techCategories?: string[], fundingRounds?: { amount?: number | null, date?: string | null, investors?: string[], type?: string | null }[], parent?: { domain?: string | null } | null, ultimateParent?: { domain?: string | null } | null, alreadySaved?: boolean, emailsCount?: number } }"
+        "type": "{ status?: string, data: { person?: { id?: string | null, name?: { fullName?: string | null, givenName?: string | null, familyName?: string | null } | null, email?: string | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: { city?: string | null, country?: string | null, countryCode?: string | null, lat?: number | null, lng?: number | null, state?: string | null, stateCode?: string | null } | null, bio?: string | null, site?: string | null, avatar?: string | null, employment?: { domain?: string | null, name?: string | null, role?: string | null, seniority?: string | null, subRole?: string | null, title?: string | null } | null, facebook?: { handle?: string | null } | null, linkedin?: { handle?: string | null } | null, googleplus?: { handle?: string | null } | null, twitter?: { handle?: string | null, avatar?: string | null, bio?: string | null, followers?: number | null, following?: number | null, location?: string | null, site?: string | null, statuses?: number | null, favorites?: number | null, id?: string | number | null } | null, github?: { handle?: string | null, avatar?: string | null, blog?: string | null, company?: string | null, followers?: number | null, following?: number | null, id?: string | number | null } | null, gravatar?: { handle?: string | null, avatar?: string | null, avatars?: any[], urls?: any[] } | null, fuzzy?: boolean, emailProvider?: string | null, phone?: string | null, indexedAt?: string | null, activeAt?: string | null, inactiveAt?: string | null }, company?: { id?: string | null, name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[], site?: { emailAddresses?: string[], phoneNumbers?: string[] } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, sic4Codes?: string[], naicsCode?: string | null, naics6Codes?: string[], naics6Codes2022?: string[], gicsCode?: string | null } | null, tags?: string[] | null, description?: string | null, foundedYear?: number | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: Record<string, any> | null, logo?: string | null, facebook?: { handle?: string | null, likes?: number | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, crunchbase?: { handle?: string | null } | null, youtube?: { handle?: string | null } | null, instagram?: { handle?: string | null } | null, emailProvider?: string | null, type?: string | null, companyType?: string | null, ticker?: string | null, identifiers?: { usEIN?: string | null } | null, phone?: string | null, metrics?: { employees?: string | null, employeesCount?: number | null, alexaGlobalRank?: number | null, alexaUsRank?: number | null, annualRevenue?: number | null, estimatedAnnualRevenue?: string | number | null, marketCap?: string | number | null, raised?: number | null, fiscalYearEnd?: string | number | null, trafficRank?: string | null } | null, indexedAt?: string | null, tech?: string[], techCategories?: string[], fundingRounds?: { amount?: string | null, date?: string | null, investors?: string[], type?: string | null }[], parent?: { domain?: string | null } | null, ultimateParent?: { domain?: string | null } | null, alreadySaved?: boolean, emailsCount?: number | { personal?: number | null, generic?: number | null, total?: number | null } | null } }, meta?: { total?: number, limit?: number, offset?: number, results?: number, params?: any } } | { person?: { id?: string | null, name?: { fullName?: string | null, givenName?: string | null, familyName?: string | null } | null, email?: string | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: { city?: string | null, country?: string | null, countryCode?: string | null, lat?: number | null, lng?: number | null, state?: string | null, stateCode?: string | null } | null, bio?: string | null, site?: string | null, avatar?: string | null, employment?: { domain?: string | null, name?: string | null, role?: string | null, seniority?: string | null, subRole?: string | null, title?: string | null } | null, facebook?: { handle?: string | null } | null, linkedin?: { handle?: string | null } | null, googleplus?: { handle?: string | null } | null, twitter?: { handle?: string | null, avatar?: string | null, bio?: string | null, followers?: number | null, following?: number | null, location?: string | null, site?: string | null, statuses?: number | null, favorites?: number | null, id?: string | number | null } | null, github?: { handle?: string | null, avatar?: string | null, blog?: string | null, company?: string | null, followers?: number | null, following?: number | null, id?: string | number | null } | null, gravatar?: { handle?: string | null, avatar?: string | null, avatars?: any[], urls?: any[] } | null, fuzzy?: boolean, emailProvider?: string | null, phone?: string | null, indexedAt?: string | null, activeAt?: string | null, inactiveAt?: string | null }, company?: { id?: string | null, name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[], site?: { emailAddresses?: string[], phoneNumbers?: string[] } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, sic4Codes?: string[], naicsCode?: string | null, naics6Codes?: string[], naics6Codes2022?: string[], gicsCode?: string | null } | null, tags?: string[] | null, description?: string | null, foundedYear?: number | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: Record<string, any> | null, logo?: string | null, facebook?: { handle?: string | null, likes?: number | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, crunchbase?: { handle?: string | null } | null, youtube?: { handle?: string | null } | null, instagram?: { handle?: string | null } | null, emailProvider?: string | null, type?: string | null, companyType?: string | null, ticker?: string | null, identifiers?: { usEIN?: string | null } | null, phone?: string | null, metrics?: { employees?: string | null, employeesCount?: number | null, alexaGlobalRank?: number | null, alexaUsRank?: number | null, annualRevenue?: number | null, estimatedAnnualRevenue?: string | number | null, marketCap?: string | number | null, raised?: number | null, fiscalYearEnd?: string | number | null, trafficRank?: string | null } | null, indexedAt?: string | null, tech?: string[], techCategories?: string[], fundingRounds?: { amount?: string | null, date?: string | null, investors?: string[], type?: string | null }[], parent?: { domain?: string | null } | null, ultimateParent?: { domain?: string | null } | null, alreadySaved?: boolean, emailsCount?: number | { personal?: number | null, generic?: number | null, total?: number | null } | null } }"
       }
     },
     {
       "path": "hunterio.api.enrichment.company",
       "shortPath": "enrichment.company",
-      "description": "Enrich a company profile from a domain or name",
+      "description": "Enrich a company profile from a domain or name. Charges 0.2 credit when data is found",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -3563,13 +3867,13 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ status?: string, data: { id?: string | null, name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[], site?: { emailAddresses?: string[], phoneNumbers?: string[] } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, sic4Codes?: string[], naicsCode?: string | null, naics6Codes?: string[], naics6Codes2022?: string[], gicsCode?: string | null } | null, tags?: string[], description?: string | null, foundedYear?: number | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: Record<string, any> | null, logo?: string | null, facebook?: { handle?: string | null, likes?: number | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, crunchbase?: { handle?: string | null } | null, youtube?: { handle?: string | null } | null, instagram?: { handle?: string | null } | null, emailProvider?: boolean, type?: string | null, companyType?: string | null, ticker?: string | null, identifiers?: { usEIN?: string | null } | null, phone?: string | null, metrics?: { employees?: number | null, employeesCount?: number | null, alexaGlobalRank?: number | null, alexaUsRank?: number | null, annualRevenue?: number | null, estimatedAnnualRevenue?: string | null, marketCap?: string | null, raised?: number | null, fiscalYearEnd?: number | null, trafficRank?: string | null } | null, indexedAt?: string | null, tech?: string[], techCategories?: string[], fundingRounds?: { amount?: number | null, date?: string | null, investors?: string[], type?: string | null }[], parent?: { domain?: string | null } | null, ultimateParent?: { domain?: string | null } | null, alreadySaved?: boolean, emailsCount?: number }, meta?: { total?: number, limit?: number, offset?: number, results?: number, params?: any } } | { id?: string | null, name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[], site?: { emailAddresses?: string[], phoneNumbers?: string[] } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, sic4Codes?: string[], naicsCode?: string | null, naics6Codes?: string[], naics6Codes2022?: string[], gicsCode?: string | null } | null, tags?: string[], description?: string | null, foundedYear?: number | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: Record<string, any> | null, logo?: string | null, facebook?: { handle?: string | null, likes?: number | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, crunchbase?: { handle?: string | null } | null, youtube?: { handle?: string | null } | null, instagram?: { handle?: string | null } | null, emailProvider?: boolean, type?: string | null, companyType?: string | null, ticker?: string | null, identifiers?: { usEIN?: string | null } | null, phone?: string | null, metrics?: { employees?: number | null, employeesCount?: number | null, alexaGlobalRank?: number | null, alexaUsRank?: number | null, annualRevenue?: number | null, estimatedAnnualRevenue?: string | null, marketCap?: string | null, raised?: number | null, fiscalYearEnd?: number | null, trafficRank?: string | null } | null, indexedAt?: string | null, tech?: string[], techCategories?: string[], fundingRounds?: { amount?: number | null, date?: string | null, investors?: string[], type?: string | null }[], parent?: { domain?: string | null } | null, ultimateParent?: { domain?: string | null } | null, alreadySaved?: boolean, emailsCount?: number }"
+        "type": "{ status?: string, data: { id?: string | null, name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[], site?: { emailAddresses?: string[], phoneNumbers?: string[] } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, sic4Codes?: string[], naicsCode?: string | null, naics6Codes?: string[], naics6Codes2022?: string[], gicsCode?: string | null } | null, tags?: string[] | null, description?: string | null, foundedYear?: number | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: Record<string, any> | null, logo?: string | null, facebook?: { handle?: string | null, likes?: number | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, crunchbase?: { handle?: string | null } | null, youtube?: { handle?: string | null } | null, instagram?: { handle?: string | null } | null, emailProvider?: string | null, type?: string | null, companyType?: string | null, ticker?: string | null, identifiers?: { usEIN?: string | null } | null, phone?: string | null, metrics?: { employees?: string | null, employeesCount?: number | null, alexaGlobalRank?: number | null, alexaUsRank?: number | null, annualRevenue?: number | null, estimatedAnnualRevenue?: string | number | null, marketCap?: string | number | null, raised?: number | null, fiscalYearEnd?: string | number | null, trafficRank?: string | null } | null, indexedAt?: string | null, tech?: string[], techCategories?: string[], fundingRounds?: { amount?: string | null, date?: string | null, investors?: string[], type?: string | null }[], parent?: { domain?: string | null } | null, ultimateParent?: { domain?: string | null } | null, alreadySaved?: boolean, emailsCount?: number | { personal?: number | null, generic?: number | null, total?: number | null } | null }, meta?: { total?: number, limit?: number, offset?: number, results?: number, params?: any } } | { id?: string | null, name?: string | null, legalName?: string | null, domain?: string | null, domainAliases?: string[], site?: { emailAddresses?: string[], phoneNumbers?: string[] } | null, category?: { sector?: string | null, industryGroup?: string | null, industry?: string | null, subIndustry?: string | null, sicCode?: string | null, sic4Codes?: string[], naicsCode?: string | null, naics6Codes?: string[], naics6Codes2022?: string[], gicsCode?: string | null } | null, tags?: string[] | null, description?: string | null, foundedYear?: number | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: Record<string, any> | null, logo?: string | null, facebook?: { handle?: string | null, likes?: number | null } | null, linkedin?: { handle?: string | null } | null, twitter?: { handle?: string | null } | null, crunchbase?: { handle?: string | null } | null, youtube?: { handle?: string | null } | null, instagram?: { handle?: string | null } | null, emailProvider?: string | null, type?: string | null, companyType?: string | null, ticker?: string | null, identifiers?: { usEIN?: string | null } | null, phone?: string | null, metrics?: { employees?: string | null, employeesCount?: number | null, alexaGlobalRank?: number | null, alexaUsRank?: number | null, annualRevenue?: number | null, estimatedAnnualRevenue?: string | number | null, marketCap?: string | number | null, raised?: number | null, fiscalYearEnd?: string | number | null, trafficRank?: string | null } | null, indexedAt?: string | null, tech?: string[], techCategories?: string[], fundingRounds?: { amount?: string | null, date?: string | null, investors?: string[], type?: string | null }[], parent?: { domain?: string | null } | null, ultimateParent?: { domain?: string | null } | null, alreadySaved?: boolean, emailsCount?: number | { personal?: number | null, generic?: number | null, total?: number | null } | null }"
       }
     },
     {
       "path": "hunterio.api.enrichment.person",
       "shortPath": "enrichment.person",
-      "description": "Enrich a person profile from an email or name",
+      "description": "Enrich a person profile from an email or name. Charges 0.2 credit when data is found",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -3593,7 +3897,7 @@
       },
       "output": {
         "kind": "inline",
-        "type": "{ status?: string, data: { id?: string | null, name?: { fullName?: string | null, givenName?: string | null, familyName?: string | null } | null, email?: string | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: { city?: string | null, country?: string | null, countryCode?: string | null, lat?: number | null, lng?: number | null, state?: string | null, stateCode?: string | null } | null, bio?: string | null, site?: string | null, avatar?: string | null, employment?: { domain?: string | null, name?: string | null, role?: string | null, seniority?: string | null, subRole?: string | null, title?: string | null } | null, facebook?: { handle?: string | null } | null, linkedin?: { handle?: string | null } | null, googleplus?: { handle?: string | null } | null, twitter?: { handle?: string | null, avatar?: string | null, bio?: string | null, followers?: number | null, following?: number | null, location?: string | null, site?: string | null, statuses?: number | null, favorites?: number | null, id?: number | null } | null, github?: { handle?: string | null, avatar?: string | null, blog?: string | null, company?: string | null, followers?: number | null, following?: number | null, id?: number | null } | null, gravatar?: { handle?: string | null, avatar?: string | null, avatars?: any[], urls?: any[] } | null, fuzzy?: boolean, emailProvider?: boolean, phone?: string | null, indexedAt?: string | null, activeAt?: string | null, inactiveAt?: string | null }, meta?: { total?: number, limit?: number, offset?: number, results?: number, params?: any } } | { id?: string | null, name?: { fullName?: string | null, givenName?: string | null, familyName?: string | null } | null, email?: string | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: { city?: string | null, country?: string | null, countryCode?: string | null, lat?: number | null, lng?: number | null, state?: string | null, stateCode?: string | null } | null, bio?: string | null, site?: string | null, avatar?: string | null, employment?: { domain?: string | null, name?: string | null, role?: string | null, seniority?: string | null, subRole?: string | null, title?: string | null } | null, facebook?: { handle?: string | null } | null, linkedin?: { handle?: string | null } | null, googleplus?: { handle?: string | null } | null, twitter?: { handle?: string | null, avatar?: string | null, bio?: string | null, followers?: number | null, following?: number | null, location?: string | null, site?: string | null, statuses?: number | null, favorites?: number | null, id?: number | null } | null, github?: { handle?: string | null, avatar?: string | null, blog?: string | null, company?: string | null, followers?: number | null, following?: number | null, id?: number | null } | null, gravatar?: { handle?: string | null, avatar?: string | null, avatars?: any[], urls?: any[] } | null, fuzzy?: boolean, emailProvider?: boolean, phone?: string | null, indexedAt?: string | null, activeAt?: string | null, inactiveAt?: string | null }"
+        "type": "{ status?: string, data: { id?: string | null, name?: { fullName?: string | null, givenName?: string | null, familyName?: string | null } | null, email?: string | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: { city?: string | null, country?: string | null, countryCode?: string | null, lat?: number | null, lng?: number | null, state?: string | null, stateCode?: string | null } | null, bio?: string | null, site?: string | null, avatar?: string | null, employment?: { domain?: string | null, name?: string | null, role?: string | null, seniority?: string | null, subRole?: string | null, title?: string | null } | null, facebook?: { handle?: string | null } | null, linkedin?: { handle?: string | null } | null, googleplus?: { handle?: string | null } | null, twitter?: { handle?: string | null, avatar?: string | null, bio?: string | null, followers?: number | null, following?: number | null, location?: string | null, site?: string | null, statuses?: number | null, favorites?: number | null, id?: string | number | null } | null, github?: { handle?: string | null, avatar?: string | null, blog?: string | null, company?: string | null, followers?: number | null, following?: number | null, id?: string | number | null } | null, gravatar?: { handle?: string | null, avatar?: string | null, avatars?: any[], urls?: any[] } | null, fuzzy?: boolean, emailProvider?: string | null, phone?: string | null, indexedAt?: string | null, activeAt?: string | null, inactiveAt?: string | null }, meta?: { total?: number, limit?: number, offset?: number, results?: number, params?: any } } | { id?: string | null, name?: { fullName?: string | null, givenName?: string | null, familyName?: string | null } | null, email?: string | null, location?: string | null, timeZone?: string | null, utcOffset?: number | null, geo?: { city?: string | null, country?: string | null, countryCode?: string | null, lat?: number | null, lng?: number | null, state?: string | null, stateCode?: string | null } | null, bio?: string | null, site?: string | null, avatar?: string | null, employment?: { domain?: string | null, name?: string | null, role?: string | null, seniority?: string | null, subRole?: string | null, title?: string | null } | null, facebook?: { handle?: string | null } | null, linkedin?: { handle?: string | null } | null, googleplus?: { handle?: string | null } | null, twitter?: { handle?: string | null, avatar?: string | null, bio?: string | null, followers?: number | null, following?: number | null, location?: string | null, site?: string | null, statuses?: number | null, favorites?: number | null, id?: string | number | null } | null, github?: { handle?: string | null, avatar?: string | null, blog?: string | null, company?: string | null, followers?: number | null, following?: number | null, id?: string | number | null } | null, gravatar?: { handle?: string | null, avatar?: string | null, avatars?: any[], urls?: any[] } | null, fuzzy?: boolean, emailProvider?: string | null, phone?: string | null, indexedAt?: string | null, activeAt?: string | null, inactiveAt?: string | null }"
       }
     },
     {
@@ -3837,7 +4141,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ index?: number, email?: string | null, status?: string, lead?: { id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null } | null, errors?: any[] }[]"
+            "type": "{ index?: number, email?: string | null, status?: string, lead?: { id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number | null, name?: string | null, leads_count?: number | null } | null, leads_lists?: { id?: number | null, name?: string | null, leads_count?: number | null }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null } | null, errors?: any[] }[]"
           },
           {
             "key": "meta",
@@ -3988,7 +4292,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }"
+            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number | null, name?: string | null, leads_count?: number | null } | null, leads_lists?: { id?: number | null, name?: string | null, leads_count?: number | null }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }"
           },
           {
             "key": "meta",
@@ -4045,7 +4349,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }"
+            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number | null, name?: string | null, leads_count?: number | null } | null, leads_lists?: { id?: number | null, name?: string | null, leads_count?: number | null }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }"
           },
           {
             "key": "meta",
@@ -4117,7 +4421,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }"
+            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number | null, name?: string | null, leads_count?: number | null } | null, leads_lists?: { id?: number | null, name?: string | null, leads_count?: number | null }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }"
           },
           {
             "key": "meta",
@@ -4364,7 +4668,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ leads: { id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }[] }"
+            "type": "{ leads: { id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number | null, name?: string | null, leads_count?: number | null } | null, leads_lists?: { id?: number | null, name?: string | null, leads_count?: number | null }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }[] }"
           },
           {
             "key": "meta",
@@ -4775,7 +5079,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }"
+            "type": "{ id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number | null, name?: string | null, leads_count?: number | null } | null, leads_lists?: { id?: number | null, name?: string | null, leads_count?: number | null }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }"
           },
           {
             "key": "meta",
@@ -5118,7 +5422,7 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ id?: number, name?: string, leads_count?: number, type?: string, created_at?: string, leads_list_folder_id?: number | null, leads?: { id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number, name?: string, leads_count?: number } | null, leads_lists?: { id?: number, name?: string, leads_count?: number }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }[] }"
+            "type": "{ id?: number, name?: string, leads_count?: number, type?: string, created_at?: string, leads_list_folder_id?: number | null, leads?: { id?: number, email?: string | null, first_name?: string | null, last_name?: string | null, position?: string | null, company?: string | null, company_industry?: string | null, company_size?: string | null, confidence_score?: number | null, website?: string | null, country_code?: string | null, source?: string | null, department?: string | null, linkedin_url?: string | null, phone_number?: string | null, twitter?: string | null, sync_status?: string | null, notes?: string | null, sending_status?: string | null, last_activity_at?: string | null, last_contacted_at?: string | null, verification?: { date?: string | null, status?: string | null } | null, leads_list?: { id?: number | null, name?: string | null, leads_count?: number | null } | null, leads_lists?: { id?: number | null, name?: string | null, leads_count?: number | null }[], custom_attributes?: Record<string, any>, created_at?: string | null, created_by?: number | null }[] }"
           },
           {
             "key": "meta",
@@ -5179,6 +5483,11 @@
         "fields": [
           {
             "key": "id",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "destination_leads_list_id",
             "optional": false,
             "type": "number | string"
           }
@@ -5536,8 +5845,8 @@
     {
       "path": "hunterio.api.messages.send",
       "shortPath": "messages.send",
-      "description": "Send a message from a connected email account",
-      "riskLevel": "write",
+      "description": "Send a message from a connected email account. Sends a real email [DESTRUCTIVE · SENDS EMAIL]",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [
@@ -5856,9 +6165,45 @@
       }
     },
     {
+      "path": "hunterio.api.monitoredSignals.list",
+      "shortPath": "monitoredSignals.list",
+      "description": "List the Monitored Signals of the team: funding signals, job openings signals and company follows",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, name: string, type: string, status: string, filters: Record<string, any>, event_types: string[], created_at: string }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ total: number, limit: number, offset: number }"
+          }
+        ]
+      }
+    },
+    {
       "path": "hunterio.api.multiDomainSearch.reveal",
       "shortPath": "multiDomainSearch.reveal",
-      "description": "Reveal the verified email addresses of a multi-domain search",
+      "description": "Reveal the verified email addresses of a multi-domain search. Charges 1 credit per email revealed for the first time this billing period",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -6017,12 +6362,89 @@
           {
             "key": "data",
             "optional": false,
-            "type": "{ name?: string | null, position?: string | null, department?: string | null, seniority?: string | null, type?: string, decision_maker?: boolean, domain?: string, company_name?: string | null, full_name_exists?: boolean, phone_number_exists?: boolean, linkedin_exists?: boolean, verification?: { date?: string | null, status?: string | null }, reveal_handle?: string, provenance?: string }[]"
+            "type": "{ name?: string | null, position?: string | null, department?: string | null, seniority?: string | null, type?: string, decision_maker?: boolean, domain?: string, company_name?: string | null, full_name_exists?: boolean, phone_number_exists?: boolean, linkedin_exists?: boolean, verification?: { date?: string | null, status?: string | null }, reveal_handle?: string, provenance?: string | null }[]"
           },
           {
             "key": "meta",
             "optional": true,
             "type": "{ total?: number, limit?: number, offset?: number, results?: number, params?: any, next_search_after?: string | null, per_domain?: { domain?: string, emails?: number }[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hunterio.api.opportunities.list",
+      "shortPath": "opportunities.list",
+      "description": "List the opportunities of this week: groups of people or companies similar to the leads and companies you saved",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: number, type: string, source: string, description: string, results_count: number, score: number, seen_at: string | null, created_at: string, next_call: { endpoint: string, params: Record<string, any>, mcp_tool?: string | null, charges_credits: boolean } }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ results: number, limit: number, offset: number }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hunterio.api.opportunities.results",
+      "shortPath": "opportunities.results",
+      "description": "List the masked people or the companies of one opportunity; reveal emails with multiDomainSearch.reveal",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "offset",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "({ name: string | null, position: string | null, department: string | null, seniority: string | null, type: string, provenance?: string | null, decision_maker: boolean | null, domain: string, company_name: string | null, full_name_exists: boolean, phone_number_exists: boolean, verification: { date: string | null, status: string | null }, reveal_handle: string } | { domain: string, company_name: string | null, emails_count: { personal: number, generic: number, total: number } })[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ type: string, results: number, limit: number, offset: number }"
           }
         ]
       }
@@ -6862,8 +7284,8 @@
     {
       "path": "hunterio.api.sequences.start",
       "shortPath": "sequences.start",
-      "description": "Start a sequence",
-      "riskLevel": "write",
+      "description": "Start a sequence. Starts sending emails to the recipients [DESTRUCTIVE · SENDS EMAIL]",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [
@@ -6898,8 +7320,8 @@
     {
       "path": "hunterio.api.sequences.test",
       "shortPath": "sequences.test",
-      "description": "Send test emails for every step of a sequence",
-      "riskLevel": "write",
+      "description": "Send test emails for every step of a sequence. Sends a real test email [DESTRUCTIVE · SENDS EMAIL]",
+      "riskLevel": "destructive",
       "input": {
         "kind": "object",
         "fields": [
@@ -7059,6 +7481,62 @@
             "key": "meta",
             "optional": true,
             "type": "{ total?: number, limit?: number, offset?: number, results?: number, params?: any }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "hunterio.api.signals.list",
+      "shortPath": "signals.list",
+      "description": "List signal events from the last 30 days (funding rounds, tech changes, new contacts, hires, job posts, contact moves) for your leads or your Monitored Signals",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "source",
+            "optional": false,
+            "type": "leads | monitored"
+          },
+          {
+            "key": "signal_id",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "since",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "types",
+            "optional": true,
+            "type": "(funding_round | technology_added | technology_removed | new_contact | new_executive | job_posted | hiring_volume | hiring_spike | company_growth | location_changed | position_changed | email_invalidated)[]"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "cursor",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, source: string, type: string, occurred_at: string, company: { domain: string, name: string | null }, details: Record<string, any>, signal_id: number | null, next_call: { endpoint: string, params: Record<string, any>, mcp_tool?: string | null, charges_credits: boolean } | null }[]"
+          },
+          {
+            "key": "meta",
+            "optional": false,
+            "type": "{ limit: number, next_cursor: string | null, next_since: string, window_start: string, types_skipped?: string[], signals_included?: number[], signals_skipped?: number[] }"
           }
         ]
       }

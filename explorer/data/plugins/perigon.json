@@ -1,0 +1,509 @@
+{
+  "id": "perigon",
+  "displayName": "Perigon",
+  "description": "Perigon is a news intelligence API over a large article index. This plugin searches articles (one result per published URL), lists story clusters, journalists and resolved people and company entities, and reads the account's usage and limits.",
+  "npmPackageName": "@corsair-dev/perigon",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 6,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "perigon.api.articles.list",
+      "shortPath": "articles.list",
+      "description": "Search news articles: one result per published URL, filterable by query, topic, category, source, country, language and dates",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Keyword or boolean query (AND, OR, NOT, quotes) across title, description and content"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Published after this time: ISO 8601 or yyyy-mm-dd"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "Published before this time: ISO 8601 or yyyy-mm-dd"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Topic, e.g. Markets, Cryptocurrency; several values are ORed"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Category, e.g. Tech, Business, Politics; several values are ORed"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Publisher domain, wildcards allowed (*.cnn.com); several values are ORed"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Country code, e.g. us; several values are ORed"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Query scoped to titles"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "ISO-639 language code, e.g. en; several values are ORed"
+          },
+          {
+            "key": "label",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Label, e.g. Opinion, Paid News; several values are ORed"
+          },
+          {
+            "key": "excludeLabel",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Label to leave out; several values are ORed"
+          },
+          {
+            "key": "showReprints",
+            "optional": true,
+            "type": "boolean",
+            "description": "Include syndicated reprints (Perigon default true)"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "relevance | date | reverseDate | addDate | reverseAddDate | pubDate | refreshDate",
+            "description": "Sort order"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 0"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (at most 100 on the free plan)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null",
+            "description": "HTTP status Perigon echoes, 200 on success"
+          },
+          {
+            "key": "numResults",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total matching records across all pages"
+          },
+          {
+            "key": "articles",
+            "optional": false,
+            "type": "{ articleId?: string | null, url?: string | null, title?: string | null, description?: string | null, content?: string | null, summary?: string | null, imageUrl?: string | null, pubDate?: string | null, addDate?: string | null, refreshDate?: string | null, authorsByline?: string | null, clusterId?: string | null, country?: string | null, language?: string | null, medium?: string | null, score?: number | null, reprint?: boolean | null, source?: { domain?: string | null, location?: any | null } | null, sentiment?: { positive?: number | null, negative?: number | null, neutral?: number | null } | null, keywords?: any[] | null, topics?: any[] | null, categories?: any[] | null, labels?: any[] | null, entities?: any[] | null, companies?: any[] | null, people?: any[] | null, locations?: any[] | null, places?: any[] | null, links?: string[] | null }[]",
+            "description": "Articles on this page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "perigon.api.companies.list",
+      "shortPath": "companies.list",
+      "description": "Search resolved company entities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Query across company names and descriptions"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Company name"
+          },
+          {
+            "key": "domain",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Company web domain; several values are ORed"
+          },
+          {
+            "key": "symbol",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Stock symbol; several values are ORed"
+          },
+          {
+            "key": "industry",
+            "optional": true,
+            "type": "string",
+            "description": "Industry"
+          },
+          {
+            "key": "sector",
+            "optional": true,
+            "type": "string",
+            "description": "Sector"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Country code; several values are ORed"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 0"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (at most 100 on the free plan)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null",
+            "description": "HTTP status Perigon echoes, 200 on success"
+          },
+          {
+            "key": "numResults",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total matching records across all pages"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, altNames?: string[] | null, domains?: string[] | null, description?: string | null, ceo?: string | null, industry?: string | null, sector?: string | null, country?: string | null, city?: string | null, state?: string | null, fullTimeEmployees?: number | null, yearFounded?: number | null, revenue?: string | number | null, symbols?: any[] | null, isin?: string | null, logo?: string | null, favicon?: string | null, updatedAt?: string | null }[]",
+            "description": "Companies on this page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "perigon.api.journalists.list",
+      "shortPath": "journalists.list",
+      "description": "Search the journalist directory by name or publisher",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Query across name, title and bio"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Journalist name"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Publisher domain they write for; several values are ORed"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Topic they cover; several values are ORed"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Country code they cover; several values are ORed"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "avgMonthlyPosts | linkedinConnections | linkedinFollowers",
+            "description": "Sort order"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 0"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (at most 100 on the free plan)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null",
+            "description": "HTTP status Perigon echoes, 200 on success"
+          },
+          {
+            "key": "numResults",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total matching records across all pages"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, fullName?: string | null, title?: string | null, headline?: string | null, description?: string | null, imageUrl?: string | null, updatedAt?: string | null, avgMonthlyPosts?: number | null, twitterHandle?: string | null, linkedinUrl?: string | null, websiteUrl?: string | null, topSources?: any[] | null, topTopics?: any[] | null, topCategories?: any[] | null, topCountries?: any[] | null, locations?: any[] | null }[]",
+            "description": "Journalists on this page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "perigon.api.limits.get",
+      "shortPath": "limits.get",
+      "description": "Read account usage and limits; free to poll and not rate-limited",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ organizationName?: string | null, requestsUsed?: number | null, requestLimit?: number | null, maxPageSize?: number | null, paginationLimit?: number | null, articleContentTruncation?: number | null, since?: string | null, lastMadeAt?: string | null, resetAt?: string | null }",
+            "description": "The plan limits and usage"
+          }
+        ]
+      }
+    },
+    {
+      "path": "perigon.api.people.list",
+      "shortPath": "people.list",
+      "description": "Search resolved person entities",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Person name"
+          },
+          {
+            "key": "wikidataId",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Wikidata id, e.g. Q312556; several values are ORed"
+          },
+          {
+            "key": "occupationLabel",
+            "optional": true,
+            "type": "string",
+            "description": "Occupation, e.g. politician"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 0"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (at most 100 on the free plan)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null",
+            "description": "HTTP status Perigon echoes, 200 on success"
+          },
+          {
+            "key": "numResults",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total matching records across all pages"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ wikidataId?: string | null, name?: string | null, description?: string | null, abstract?: string | null, aliases?: string[] | null, occupation?: any[] | null, position?: any[] | null, politicalParty?: any[] | null, gender?: any | null, dateOfBirth?: any | null, dateOfDeath?: any | null, image?: any | null, updatedAt?: string | null }[]",
+            "description": "People on this page"
+          }
+        ]
+      }
+    },
+    {
+      "path": "perigon.api.stories.list",
+      "shortPath": "stories.list",
+      "description": "List story clusters: one narrative across many articles",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "q",
+            "optional": true,
+            "type": "string",
+            "description": "Keyword or boolean query (AND, OR, NOT, quotes) across title, description and content"
+          },
+          {
+            "key": "from",
+            "optional": true,
+            "type": "string",
+            "description": "Published after this time: ISO 8601 or yyyy-mm-dd"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string",
+            "description": "Published before this time: ISO 8601 or yyyy-mm-dd"
+          },
+          {
+            "key": "topic",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Topic, e.g. Markets, Cryptocurrency; several values are ORed"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Category, e.g. Tech, Business, Politics; several values are ORed"
+          },
+          {
+            "key": "source",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Publisher domain, wildcards allowed (*.cnn.com); several values are ORed"
+          },
+          {
+            "key": "country",
+            "optional": true,
+            "type": "string | string[]",
+            "description": "Country code, e.g. us; several values are ORed"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Query scoped to story names"
+          },
+          {
+            "key": "minUniqueSources",
+            "optional": true,
+            "type": "number",
+            "description": "Only stories covered by at least this many publishers"
+          },
+          {
+            "key": "sortBy",
+            "optional": true,
+            "type": "createdAt | updatedAt | relevance | count | totalCount",
+            "description": "Sort order"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Page number, starting at 0"
+          },
+          {
+            "key": "size",
+            "optional": true,
+            "type": "number",
+            "description": "Results per page (at most 100 on the free plan)"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | null",
+            "description": "HTTP status Perigon echoes, 200 on success"
+          },
+          {
+            "key": "numResults",
+            "optional": true,
+            "type": "number | null",
+            "description": "Total matching records across all pages"
+          },
+          {
+            "key": "results",
+            "optional": false,
+            "type": "{ id?: string | null, name?: string | null, summary?: string | null, shortSummary?: string | null, keyPoints?: any[] | null, createdAt?: string | null, updatedAt?: string | null, initializedAt?: string | null, uniqueCount?: number | null, reprintCount?: number | null, totalCount?: number | null, uniqueSourcesCount?: number | null, sourceDiversity?: number | null, sentiment?: any | null, topTopics?: any[] | null, topCategories?: any[] | null, topCountries?: any[] | null, topPeople?: any[] | null, topCompanies?: any[] | null, topLocations?: any[] | null }[]",
+            "description": "Stories on this page"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

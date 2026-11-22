@@ -13,9 +13,14 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import {
+	createManagedPricingCredentialCache,
+	resolveManagedPricingApiKey,
+} from 'corsair/hub';
+import {
 	Account,
 	AccountStats,
 	ApiKeys,
+	Briefing,
 	Companies,
 	CompanyListFolders,
 	CompanyLists,
@@ -42,11 +47,14 @@ import {
 	Lookalikes,
 	Messages,
 	MessageTemplates,
+	MonitoredSignals,
 	MultiDomainSearch,
+	Opportunities,
 	SequenceFollowUps,
 	SequenceRecipients,
 	SequenceStats,
 	Sequences,
+	Signals,
 	Tags,
 	TeamMembers,
 	Usage,
@@ -64,7 +72,11 @@ import { errorHandlers } from './error-handlers';
 import { HunterioSchema } from './schema';
 
 export type HunterioPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	/**
+	 * `api_key`: the tenant's own Hunter key. `managed_pricing`: Corsair's
+	 * Hunter account, billed in Corsair credits through Hub.
+	 */
+	authType?: PickAuth<'api_key' | 'managed_pricing'>;
 	key?: string;
 	hooks?: InternalHunterioPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -154,6 +166,8 @@ const hunterioEndpointsNested = {
 	domainSearch: {
 		search: DomainSearch.search,
 		searchPost: DomainSearch.searchPost,
+		found: DomainSearch.found,
+		foundPost: DomainSearch.foundPost,
 	},
 	multiDomainSearch: {
 		search: MultiDomainSearch.search,
@@ -180,6 +194,19 @@ const hunterioEndpointsNested = {
 	},
 	lookalikes: {
 		list: Lookalikes.list,
+	},
+	briefing: {
+		get: Briefing.get,
+	},
+	signals: {
+		list: Signals.list,
+	},
+	monitoredSignals: {
+		list: MonitoredSignals.list,
+	},
+	opportunities: {
+		list: Opportunities.list,
+		results: Opportunities.results,
 	},
 	leads: {
 		list: Leads.list,
@@ -255,6 +282,7 @@ const hunterioEndpointsNested = {
 		update: CompanyLists.update,
 		replace: CompanyLists.replace,
 		delete: CompanyLists.delete,
+		listCompanies: CompanyLists.listCompanies,
 		addCompany: CompanyLists.addCompany,
 		removeCompany: CompanyLists.removeCompany,
 		favorite: CompanyLists.favorite,
@@ -452,6 +480,14 @@ export const hunterioEndpointSchemas = {
 		input: HunterioEndpointInputSchemas.domainSearchSearchPost,
 		output: HunterioEndpointOutputSchemas.domainSearchSearchPost,
 	},
+	'domainSearch.found': {
+		input: HunterioEndpointInputSchemas.domainSearchFound,
+		output: HunterioEndpointOutputSchemas.domainSearchFound,
+	},
+	'domainSearch.foundPost': {
+		input: HunterioEndpointInputSchemas.domainSearchFoundPost,
+		output: HunterioEndpointOutputSchemas.domainSearchFoundPost,
+	},
 	'multiDomainSearch.search': {
 		input: HunterioEndpointInputSchemas.multiDomainSearchSearch,
 		output: HunterioEndpointOutputSchemas.multiDomainSearchSearch,
@@ -499,6 +535,26 @@ export const hunterioEndpointSchemas = {
 	'lookalikes.list': {
 		input: HunterioEndpointInputSchemas.lookalikesList,
 		output: HunterioEndpointOutputSchemas.lookalikesList,
+	},
+	'briefing.get': {
+		input: HunterioEndpointInputSchemas.briefingGet,
+		output: HunterioEndpointOutputSchemas.briefingGet,
+	},
+	'signals.list': {
+		input: HunterioEndpointInputSchemas.signalsList,
+		output: HunterioEndpointOutputSchemas.signalsList,
+	},
+	'monitoredSignals.list': {
+		input: HunterioEndpointInputSchemas.monitoredSignalsList,
+		output: HunterioEndpointOutputSchemas.monitoredSignalsList,
+	},
+	'opportunities.list': {
+		input: HunterioEndpointInputSchemas.opportunitiesList,
+		output: HunterioEndpointOutputSchemas.opportunitiesList,
+	},
+	'opportunities.results': {
+		input: HunterioEndpointInputSchemas.opportunitiesResults,
+		output: HunterioEndpointOutputSchemas.opportunitiesResults,
 	},
 	'leads.list': {
 		input: HunterioEndpointInputSchemas.leadsList,
@@ -739,6 +795,10 @@ export const hunterioEndpointSchemas = {
 	'companyLists.addCompany': {
 		input: HunterioEndpointInputSchemas.companyListsAddCompany,
 		output: HunterioEndpointOutputSchemas.companyListsAddCompany,
+	},
+	'companyLists.listCompanies': {
+		input: HunterioEndpointInputSchemas.companyListsListCompanies,
+		output: HunterioEndpointOutputSchemas.companyListsListCompanies,
 	},
 	'companyLists.removeCompany': {
 		input: HunterioEndpointInputSchemas.companyListsRemoveCompany,
@@ -1096,11 +1156,23 @@ const hunterioEndpointMeta = {
 	},
 	'domainSearch.search': {
 		riskLevel: 'read',
-		description: 'List the email addresses found for a domain',
+		description:
+			'List the email addresses found for a domain. Charges 1 credit per 10 emails returned',
 	},
 	'domainSearch.searchPost': {
 		riskLevel: 'read',
-		description: 'List the email addresses found for a domain (POST form)',
+		description:
+			'List the email addresses found for a domain (POST form). Charges 1 credit per 10 emails returned',
+	},
+	'domainSearch.found': {
+		riskLevel: 'read',
+		description:
+			'Search the email addresses Hunter found on the web for a domain, without generated guesses. Charges 1 credit per 10 emails returned',
+	},
+	'domainSearch.foundPost': {
+		riskLevel: 'read',
+		description:
+			'Search found email addresses for a domain with body filters, including location. Charges 1 credit per 10 emails returned',
 	},
 	'multiDomainSearch.search': {
 		riskLevel: 'read',
@@ -1108,23 +1180,28 @@ const hunterioEndpointMeta = {
 	},
 	'multiDomainSearch.reveal': {
 		riskLevel: 'read',
-		description: 'Reveal the verified email addresses of a multi-domain search',
+		description:
+			'Reveal the verified email addresses of a multi-domain search. Charges 1 credit per email revealed for the first time this billing period',
 	},
 	'emailFinder.find': {
 		riskLevel: 'read',
-		description: 'Find the most likely email of a person',
+		description:
+			'Find the most likely email of a person. Charges 1 credit when an email is found',
 	},
 	'emailFinder.findFound': {
 		riskLevel: 'read',
-		description: 'Check whether an email was already found for a person',
+		description:
+			'Check whether an email was already found for a person. Charges 1 credit when an email is found',
 	},
 	'emailFinder.findFoundPost': {
 		riskLevel: 'read',
-		description: 'Check whether an email was already found (POST form)',
+		description:
+			'Check whether an email was already found (POST form). Charges 1 credit when an email is found',
 	},
 	'emailVerifier.verify': {
 		riskLevel: 'read',
-		description: 'Verify the deliverability of an email address',
+		description:
+			'Verify the deliverability of an email address. Charges 0.5 credit per verification',
 	},
 	'emailInsight.get': {
 		riskLevel: 'read',
@@ -1136,19 +1213,47 @@ const hunterioEndpointMeta = {
 	},
 	'enrichment.person': {
 		riskLevel: 'read',
-		description: 'Enrich a person profile from an email or name',
+		description:
+			'Enrich a person profile from an email or name. Charges 0.2 credit when data is found',
 	},
 	'enrichment.company': {
 		riskLevel: 'read',
-		description: 'Enrich a company profile from a domain or name',
+		description:
+			'Enrich a company profile from a domain or name. Charges 0.2 credit when data is found',
 	},
 	'enrichment.combined': {
 		riskLevel: 'read',
-		description: 'Enrich a person and their company together',
+		description:
+			'Enrich a person and their company together. Charges 0.2 credit when data is found',
 	},
 	'lookalikes.list': {
 		riskLevel: 'read',
 		description: 'Find companies similar to a seed company',
+	},
+	'briefing.get': {
+		riskLevel: 'read',
+		description:
+			'Get what needs attention today: counts of new lead and Monitored Signals events, new opportunities this week, and the credit balance, each with its follow-up call',
+	},
+	'signals.list': {
+		riskLevel: 'read',
+		description:
+			'List signal events from the last 30 days (funding rounds, tech changes, new contacts, hires, job posts, contact moves) for your leads or your Monitored Signals',
+	},
+	'monitoredSignals.list': {
+		riskLevel: 'read',
+		description:
+			'List the Monitored Signals of the team: funding signals, job openings signals and company follows',
+	},
+	'opportunities.list': {
+		riskLevel: 'read',
+		description:
+			'List the opportunities of this week: groups of people or companies similar to the leads and companies you saved',
+	},
+	'opportunities.results': {
+		riskLevel: 'read',
+		description:
+			'List the masked people or the companies of one opportunity; reveal emails with multiDomainSearch.reveal',
 	},
 	'leads.list': {
 		riskLevel: 'read',
@@ -1404,6 +1509,11 @@ const hunterioEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Add a company to a company list',
 	},
+	'companyLists.listCompanies': {
+		riskLevel: 'read',
+		description:
+			'List the companies in a static company list, most recently added first',
+	},
 	'companyLists.removeCompany': {
 		riskLevel: 'destructive',
 		description: 'Remove a company from a company list [DESTRUCTIVE]',
@@ -1495,8 +1605,9 @@ const hunterioEndpointMeta = {
 			'Delete a sequence draft permanently [DESTRUCTIVE · IRREVERSIBLE]',
 	},
 	'sequences.start': {
-		riskLevel: 'write',
-		description: 'Start a sequence',
+		riskLevel: 'destructive',
+		description:
+			'Start a sequence. Starts sending emails to the recipients [DESTRUCTIVE · SENDS EMAIL]',
 	},
 	'sequences.pause': {
 		riskLevel: 'write',
@@ -1511,8 +1622,9 @@ const hunterioEndpointMeta = {
 		description: 'Archive a sequence',
 	},
 	'sequences.test': {
-		riskLevel: 'write',
-		description: 'Send test emails for every step of a sequence',
+		riskLevel: 'destructive',
+		description:
+			'Send test emails for every step of a sequence. Sends a real test email [DESTRUCTIVE · SENDS EMAIL]',
 	},
 	'sequenceRecipients.list': {
 		riskLevel: 'read',
@@ -1562,8 +1674,9 @@ const hunterioEndpointMeta = {
 		description: 'List messages sent or received',
 	},
 	'messages.send': {
-		riskLevel: 'write',
-		description: 'Send a message from a connected email account',
+		riskLevel: 'destructive',
+		description:
+			'Send a message from a connected email account. Sends a real email [DESTRUCTIVE · SENDS EMAIL]',
 	},
 	'messageTemplates.list': {
 		riskLevel: 'read',
@@ -1660,6 +1773,10 @@ const hunterioEndpointMeta = {
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof hunterioEndpointsNested>;
 
+// Short-lived keys Hub mints for Corsair's own Hunter account, one per
+// metered operation, cached until they expire.
+const hunterioManagedPricingCache = createManagedPricingCredentialCache();
+
 export const hunterioAuthConfig = {
 	api_key: {},
 } as const satisfies PluginAuthConfig;
@@ -1685,6 +1802,14 @@ export function hunterio<const T extends HunterioPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	// managed_pricing runs on Corsair's key, which core gets from Hub without
+	// asking the keyBuilder, so an explicit key would be dropped silently and
+	// the call billed to Corsair credits. The two can't both apply.
+	if (options.authType === 'managed_pricing' && options.key) {
+		throw new Error(
+			"hunterio: `key` can't be used with authType 'managed_pricing', which runs on Corsair's Hunter key. Drop `key`, or use authType 'api_key' to call Hunter with your own key.",
+		);
+	}
 
 	return {
 		id: 'hunterio',
@@ -1713,6 +1838,14 @@ export function hunterio<const T extends HunterioPluginOptions>(
 		keyBuilder: async (ctx: HunterioKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'managed_pricing') {
+				return resolveManagedPricingApiKey(ctx, {
+					plugin: 'hunterio',
+					cache: hunterioManagedPricingCache,
+					operation: ctx.meteredOperationId,
+				});
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
