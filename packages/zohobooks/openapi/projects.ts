@@ -1623,7 +1623,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.projects.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'update_project_user',

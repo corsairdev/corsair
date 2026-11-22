@@ -4823,7 +4823,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'Mark as Inactive. Zoho Books API v3.',
 	},
 	'contacts.enableContactPortal': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Enable Portal Access. Zoho Books API v3.',
 	},
 	'contacts.enableContactPaymentReminder': {
@@ -4955,7 +4955,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'Get a contact person of a contact. Zoho Books API v3.',
 	},
 	'contacts.inviteContactPersonToPortal': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Invite a contact person to the portal. Zoho Books API v3.',
 	},
 	'contacts.resendContactPersonPortalInvite': {
@@ -5487,7 +5487,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'Delete a customer debit note. Zoho Books API v3.',
 	},
 	'customerPayments.createCustomerPayment': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a payment. Zoho Books API v3.',
 	},
 	'customerPayments.listCustomerPayments': {
@@ -5930,7 +5930,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'Email an invoice. Zoho Books API v3.',
 	},
 	'invoices.remindCustomerForInvoicePayment': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Remind Customer. Zoho Books API v3.',
 	},
 	'invoices.getPaymentReminderMailContentForInvoice': {
@@ -5938,7 +5938,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'Get payment reminder mail content. Zoho Books API v3.',
 	},
 	'invoices.bulkInvoiceReminder': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Bulk invoice reminder. Zoho Books API v3.',
 	},
 	'invoices.bulkExportInvoicesAsPdf': {
@@ -6751,7 +6751,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'List Users. Zoho Books API v3.',
 	},
 	'projects.inviteProjectUser': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Invite user. Zoho Books API v3.',
 	},
 	'projects.updateProjectUser': {
@@ -7317,7 +7317,7 @@ export const zohoBooksEndpointMeta = {
 			'Delete a retainer payment applied to an invoice. Zoho Books API v3.',
 	},
 	'retainerInvoices.createRetainerInvoiceAsyncOnlinePayment': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Record an asynchronous online payment for a retainer invoice. Zoho Books API v3.',
 	},
@@ -7693,7 +7693,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'Update partial unlock settings. Zoho Books API v3.',
 	},
 	'users.createUser': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a user. Zoho Books API v3.',
 	},
 	'users.listUsers': {
@@ -7717,7 +7717,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'Get current user. Zoho Books API v3.',
 	},
 	'users.inviteUser': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Invite a user. Zoho Books API v3.',
 	},
 	'users.markUserActive': {
@@ -7813,7 +7813,7 @@ export const zohoBooksEndpointMeta = {
 		description: 'Delete a comment. Zoho Books API v3.',
 	},
 	'vendorPayments.createVendorPayment': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Create a vendor payment. Zoho Books API v3.',
 	},
 	'vendorPayments.listVendorPayments': {

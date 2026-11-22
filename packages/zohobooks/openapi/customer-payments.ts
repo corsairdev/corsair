@@ -758,7 +758,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.customerpayments.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'list_customer_payments',

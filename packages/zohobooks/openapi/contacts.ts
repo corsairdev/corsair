@@ -3354,7 +3354,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.contacts.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'enable_contact_payment_reminder',
@@ -4851,7 +4851,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.contacts.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'resend_contact_person_portal_invite',

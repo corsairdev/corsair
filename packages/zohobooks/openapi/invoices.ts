@@ -4851,7 +4851,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.invoices.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'get_payment_reminder_mail_content_for_invoice',
@@ -4930,7 +4930,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.invoices.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'bulk_export_invoices_as_pdf',

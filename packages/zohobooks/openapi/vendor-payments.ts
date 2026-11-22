@@ -890,7 +890,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.vendorpayments.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'list_vendor_payments',

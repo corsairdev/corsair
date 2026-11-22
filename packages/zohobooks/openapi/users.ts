@@ -289,7 +289,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.settings.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'list_users',
@@ -536,7 +536,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.settings.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'mark_user_active',
