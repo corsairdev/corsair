@@ -7109,7 +7109,7 @@ export const zohoBooksEndpointMeta = {
 			'List invoices created from a recurring invoice. Zoho Books API v3.',
 	},
 	'recurringInvoices.enableRecurringInvoiceAutobill': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Enable auto-bill for a recurring invoice. Zoho Books API v3.',
 	},
 	'recurringInvoices.disableRecurringInvoiceAutobill': {

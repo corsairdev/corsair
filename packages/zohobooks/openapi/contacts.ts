@@ -5685,6 +5685,13 @@ export const operations = [
 					'ID of the organization. Note: This value is a set of numeric characters.',
 				schema: { type: 'string' },
 			},
+			{
+				name: 'attachment',
+				in: 'query',
+				required: false,
+				description: 'The file to attach, sent as a multipart part.',
+				schema: { type: 'string', format: 'binary' },
+			},
 		],
 		responses: [
 			{

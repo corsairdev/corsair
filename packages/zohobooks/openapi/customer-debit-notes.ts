@@ -524,6 +524,126 @@ export const operations = [
 					'Number of records to be fetched per page. Use this parameter to control the size of each page of results. Maximum value is 200. Useful for optimizing data transfer and improving application performance.',
 				schema: { type: 'integer', default: 10 },
 			},
+			{
+				name: 'invoice_number',
+				in: 'query',
+				required: false,
+				description:
+					'Search invoices by invoice number. Filters invoices based on their unique identifier. Supports <code>invoice_number_startswith</code> and <code>invoice_number_contains</code> variants. Maximum length is 100 characters. Useful for finding specific invoices or invoices with similar numbering patterns.',
+				schema: { type: 'string' },
+			},
+			{
+				name: 'reference_number',
+				in: 'query',
+				required: false,
+				description:
+					'Search invoices by reference number. Filters invoices based on external reference identifiers like purchase order numbers, contract numbers, or project codes. Useful for finding invoices associated with specific projects or business transactions.',
+				schema: { type: 'string' },
+			},
+			{
+				name: 'recurring_invoice_id',
+				in: 'query',
+				required: false,
+				description:
+					'ID of the recurring invoice from which the invoice is created. Note: This value is a set of numeric characters.',
+				schema: { type: 'string' },
+			},
+			{
+				name: 'date_start',
+				in: 'query',
+				required: false,
+				description:
+					'Filter invoices with an invoice date on or after the specified date. Useful for defining the start of a date range. Use yyyy-mm-dd format.',
+				schema: { type: 'string', format: 'date' },
+			},
+			{
+				name: 'date_end',
+				in: 'query',
+				required: false,
+				description:
+					'Filter invoices with an invoice date on or before the specified date. Useful for defining the end of a date range. Use yyyy-mm-dd format.',
+				schema: { type: 'string', format: 'date' },
+			},
+			{
+				name: 'date_before',
+				in: 'query',
+				required: false,
+				description:
+					'Filter invoices with an invoice date strictly before the specified date (exclusive). Use yyyy-mm-dd format.',
+				schema: { type: 'string', format: 'date' },
+			},
+			{
+				name: 'date_after',
+				in: 'query',
+				required: false,
+				description:
+					'Filter invoices with an invoice date strictly after the specified date (exclusive). Use yyyy-mm-dd format.',
+				schema: { type: 'string', format: 'date' },
+			},
+			{
+				name: 'due_date_start',
+				in: 'query',
+				required: false,
+				description:
+					'Filter invoices with due date on or after the specified date. Useful for defining the start of a date range. Use yyyy-mm-dd format.',
+				schema: { type: 'string', format: 'date' },
+			},
+			{
+				name: 'due_date_end',
+				in: 'query',
+				required: false,
+				description:
+					'Filter invoices with due date on or before the specified date. Useful for defining the end of a date range. Use yyyy-mm-dd format.',
+				schema: { type: 'string', format: 'date' },
+			},
+			{
+				name: 'due_date_before',
+				in: 'query',
+				required: false,
+				description:
+					'Filter invoices with due date strictly before the specified date (exclusive). Use yyyy-mm-dd format.',
+				schema: { type: 'string', format: 'date' },
+			},
+			{
+				name: 'due_date_after',
+				in: 'query',
+				required: false,
+				description:
+					'Filter invoices with due date strictly after the specified date (exclusive). Use yyyy-mm-dd format.',
+				schema: { type: 'string', format: 'date' },
+			},
+			{
+				name: 'created_date_start',
+				in: 'query',
+				required: false,
+				description:
+					'Filter invoices with invoice created date on or after the specified date. Useful for defining the start of a date range. Use yyyy-mm-dd format.',
+				schema: { type: 'string', format: 'date' },
+			},
+			{
+				name: 'created_date_end',
+				in: 'query',
+				required: false,
+				description:
+					'Filter invoices with invoice created date on or before the specified date. Useful for defining the end of a date range. Use yyyy-mm-dd format.',
+				schema: { type: 'string', format: 'date' },
+			},
+			{
+				name: 'zcrm_potential_id',
+				in: 'query',
+				required: false,
+				description:
+					'Search invoices by CRM potential ID. This parameter allows you to find invoices associated with a specific deal or opportunity in your Zoho CRM system. Use the potential ID from your CRM to link invoices to sales opportunities and track revenue from specific deals. Note: This value is a set of numeric characters.',
+				schema: { type: 'string' },
+			},
+			{
+				name: 'response_option',
+				in: 'query',
+				required: false,
+				description:
+					'To get desired response format. There are 5 formats of responses: 0 (Includes all invoices), 1 (Includes all invoices, the number of invoices, and the sum of their total and balance amounts), 2 (Includes only the number of invoices), 3 (Includes the number of invoices and the sum of their total and balance amounts), and 4 (Includes all invoices and the sum of their total and balance amounts).',
+				schema: { type: 'integer' },
+			},
 		],
 		responses: [
 			{

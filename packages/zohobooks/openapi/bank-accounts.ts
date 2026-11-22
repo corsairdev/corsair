@@ -1310,6 +1310,13 @@ export const operations = [
 				description: 'ID of the organization',
 				schema: { type: 'string' },
 			},
+			{
+				name: 'attachment',
+				in: 'query',
+				required: false,
+				description: 'The file to attach, sent as a multipart part.',
+				schema: { type: 'string', format: 'binary' },
+			},
 		],
 		responses: [
 			{

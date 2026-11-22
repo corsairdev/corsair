@@ -2090,6 +2090,21 @@ export const operations = [
 				description: 'Sort the child invoices by the specified column.',
 				schema: { type: 'string' },
 			},
+			{
+				name: 'page',
+				in: 'query',
+				required: false,
+				description: 'Page number to be fetched. Default value is 1.',
+				schema: { type: 'integer', default: 1 },
+			},
+			{
+				name: 'per_page',
+				in: 'query',
+				required: false,
+				description:
+					'Number of records to be fetched per page. Default value is 200.',
+				schema: { type: 'integer', default: 200 },
+			},
 		],
 		responses: [
 			{
@@ -2141,7 +2156,7 @@ export const operations = [
 			},
 		],
 		scopes: ['ZohoBooks.invoices.CREATE'],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 	},
 	{
 		id: 'disable_recurring_invoice_autobill',
