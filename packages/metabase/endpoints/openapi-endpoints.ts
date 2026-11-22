@@ -5,7 +5,7 @@ import {
 	MetabaseBinaryResponseSchema,
 } from '../client';
 import type { MetabaseContext } from '../index';
-import { buildMetabasePath, createMetabaseEndpoint } from './base';
+import { buildMetabasePath, createMetabaseEndpoint, lazySchema } from './base';
 import * as OpenApiSchemas from './openapi-schemas';
 import { validatePrefixItems } from './openapi-schemas';
 
@@ -38,23 +38,34 @@ export type MetabaseOpenApiTestCase = {
 	) => Promise<JsonValue>;
 };
 
-const openApiInput0 = z
-	.object({
-		query: z
-			.object({
-				'model-id': z
-					.union([OpenApiSchemas.MetabaseOpenApiInputSchema424, z.null()])
-					.optional(),
-				type: z
-					.union([OpenApiSchemas.MetabaseOpenApiInputSchema219, z.null()])
-					.optional(),
-				archived: z.boolean().optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput0 = z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema215);
+// Metabase's offset-paging middleware reads `limit` and `offset` on paged list routes, though the OpenAPI
+// document omits them. The operations whose response is the `{ data, limit, offset, total }` envelope accept both.
+const metabasePageQueryShape = {
+	limit: z.number().int().min(1).optional(),
+	offset: z.number().int().min(0).optional(),
+};
+
+const openApiInput0 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					'model-id': z
+						.union([OpenApiSchemas.MetabaseOpenApiInputSchema424(), z.null()])
+						.optional(),
+					type: z
+						.union([OpenApiSchemas.MetabaseOpenApiInputSchema219(), z.null()])
+						.optional(),
+					archived: z.boolean().optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput0 = lazySchema(() =>
+	z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema215()),
+);
 const openApiEndpoint0 = createMetabaseEndpoint(
 	'action.get',
 	openApiInput0,
@@ -62,10 +73,14 @@ const openApiEndpoint0 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/action', query: input.query }),
 );
 
-const openApiInput1 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema212.optional() })
-	.strict();
-const openApiOutput1 = OpenApiSchemas.MetabaseOpenApiOutputSchema215;
+const openApiInput1 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema212().optional() })
+		.strict(),
+);
+const openApiOutput1 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema215(),
+);
 const openApiEndpoint1 = createMetabaseEndpoint(
 	'action.post',
 	openApiInput1,
@@ -73,20 +88,22 @@ const openApiEndpoint1 = createMetabaseEndpoint(
 	(input) => ({ method: 'POST', path: '/api/action', body: input.body }),
 );
 
-const openApiInput2 = z
-	.object({
-		body: z
-			.object({
-				action: OpenApiSchemas.MetabaseOpenApiInputSchema211,
-				parameters: z
-					.union([OpenApiSchemas.MetabaseOpenApiInputSchema216, z.null()])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput2 = z.record(z.string(), z.json());
+const openApiInput2 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					action: OpenApiSchemas.MetabaseOpenApiInputSchema211(),
+					parameters: z
+						.union([OpenApiSchemas.MetabaseOpenApiInputSchema216(), z.null()])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput2 = lazySchema(() => z.record(z.string(), z.json()));
 const openApiEndpoint2 = createMetabaseEndpoint(
 	'action.postExecute',
 	openApiInput2,
@@ -98,8 +115,10 @@ const openApiEndpoint2 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput3 = z.object({}).strict();
-const openApiOutput3 = z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema215);
+const openApiInput3 = lazySchema(() => z.object({}).strict());
+const openApiOutput3 = lazySchema(() =>
+	z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema215()),
+);
 const openApiEndpoint3 = createMetabaseEndpoint(
 	'action.getPublic',
 	openApiInput3,
@@ -107,10 +126,16 @@ const openApiEndpoint3 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/action/public' }),
 );
 
-const openApiInput4 = z
-	.object({ path: z.object({ 'action-id': z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput4 = OpenApiSchemas.MetabaseOpenApiOutputSchema215;
+const openApiInput4 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ 'action-id': z.number().int().min(1) }).strict(),
+		})
+		.strict(),
+);
+const openApiOutput4 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema215(),
+);
 const openApiEndpoint4 = createMetabaseEndpoint(
 	'action.getByActionId',
 	openApiInput4,
@@ -121,16 +146,18 @@ const openApiEndpoint4 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput5 = z
-	.object({
-		path: z.object({ 'action-id': z.number().int().min(1) }).strict(),
-		body: z
-			.object({ parameters: OpenApiSchemas.MetabaseOpenApiInputSchema218 })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput5 = z.record(z.string(), z.json());
+const openApiInput5 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ 'action-id': z.number().int().min(1) }).strict(),
+			body: z
+				.object({ parameters: OpenApiSchemas.MetabaseOpenApiInputSchema218() })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput5 = lazySchema(() => z.record(z.string(), z.json()));
 const openApiEndpoint5 = createMetabaseEndpoint(
 	'action.postByActionIdExecuteValues',
 	openApiInput5,
@@ -145,10 +172,14 @@ const openApiEndpoint5 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput6 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema225.optional() })
-	.strict();
-const openApiOutput6 = OpenApiSchemas.MetabaseOpenApiOutputSchema226;
+const openApiInput6 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema225().optional() })
+		.strict(),
+);
+const openApiOutput6 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema226(),
+);
 const openApiEndpoint6 = createMetabaseEndpoint(
 	'agent.postV1Collection',
 	openApiInput6,
@@ -160,10 +191,14 @@ const openApiEndpoint6 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput7 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema222.optional() })
-	.strict();
-const openApiOutput7 = OpenApiSchemas.MetabaseOpenApiOutputSchema224;
+const openApiInput7 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema222().optional() })
+		.strict(),
+);
+const openApiOutput7 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema224(),
+);
 const openApiEndpoint7 = createMetabaseEndpoint(
 	'agent.postV1ConstructNativeQuery',
 	openApiInput7,
@@ -176,10 +211,14 @@ const openApiEndpoint7 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput8 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema227.optional() })
-	.strict();
-const openApiOutput8 = OpenApiSchemas.MetabaseOpenApiOutputSchema228;
+const openApiInput8 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema227().optional() })
+		.strict(),
+);
+const openApiOutput8 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema228(),
+);
 const openApiEndpoint8 = createMetabaseEndpoint(
 	'agent.postV1Dashboard',
 	openApiInput8,
@@ -191,13 +230,17 @@ const openApiEndpoint8 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput9 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: OpenApiSchemas.MetabaseOpenApiInputSchema245.optional(),
-	})
-	.strict();
-const openApiOutput9 = OpenApiSchemas.MetabaseOpenApiOutputSchema246;
+const openApiInput9 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: OpenApiSchemas.MetabaseOpenApiInputSchema245().optional(),
+		})
+		.strict(),
+);
+const openApiOutput9 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema246(),
+);
 const openApiEndpoint9 = createMetabaseEndpoint(
 	'agent.putV1DashboardById',
 	openApiInput9,
@@ -209,10 +252,14 @@ const openApiEndpoint9 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput10 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema235.optional() })
-	.strict();
-const openApiOutput10 = OpenApiSchemas.MetabaseOpenApiOutputSchema236;
+const openApiInput10 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema235().optional() })
+		.strict(),
+);
+const openApiOutput10 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema236(),
+);
 const openApiEndpoint10 = createMetabaseEndpoint(
 	'agent.postV1Execute',
 	openApiInput10,
@@ -224,10 +271,14 @@ const openApiEndpoint10 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput11 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema237.optional() })
-	.strict();
-const openApiOutput11 = OpenApiSchemas.MetabaseOpenApiOutputSchema236;
+const openApiInput11 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema237().optional() })
+		.strict(),
+);
+const openApiOutput11 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema236(),
+);
 const openApiEndpoint11 = createMetabaseEndpoint(
 	'agent.postV1ExecuteSql',
 	openApiInput11,
@@ -240,10 +291,14 @@ const openApiEndpoint11 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput12 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema229.optional() })
-	.strict();
-const openApiOutput12 = OpenApiSchemas.MetabaseOpenApiOutputSchema230;
+const openApiInput12 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema229().optional() })
+		.strict(),
+);
+const openApiOutput12 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema230(),
+);
 const openApiEndpoint12 = createMetabaseEndpoint(
 	'agent.postV1Metric',
 	openApiInput12,
@@ -255,13 +310,17 @@ const openApiEndpoint12 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput13 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: OpenApiSchemas.MetabaseOpenApiInputSchema247.optional(),
-	})
-	.strict();
-const openApiOutput13 = OpenApiSchemas.MetabaseOpenApiOutputSchema248;
+const openApiInput13 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: OpenApiSchemas.MetabaseOpenApiInputSchema247().optional(),
+		})
+		.strict(),
+);
+const openApiOutput13 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema248(),
+);
 const openApiEndpoint13 = createMetabaseEndpoint(
 	'agent.putV1MetricById',
 	openApiInput13,
@@ -273,8 +332,10 @@ const openApiEndpoint13 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput14 = z.object({}).strict();
-const openApiOutput14 = z.object({ message: z.string() });
+const openApiInput14 = lazySchema(() => z.object({}).strict());
+const openApiOutput14 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({ message: z.string().nullish() }),
+);
 const openApiEndpoint14 = createMetabaseEndpoint(
 	'agent.getV1Ping',
 	openApiInput14,
@@ -282,10 +343,14 @@ const openApiEndpoint14 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/agent/v1/ping' }),
 );
 
-const openApiInput15 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema231.optional() })
-	.strict();
-const openApiOutput15 = OpenApiSchemas.MetabaseOpenApiOutputSchema232;
+const openApiInput15 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema231().optional() })
+		.strict(),
+);
+const openApiOutput15 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema232(),
+);
 const openApiEndpoint15 = createMetabaseEndpoint(
 	'agent.postV1Question',
 	openApiInput15,
@@ -297,13 +362,17 @@ const openApiEndpoint15 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput16 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: OpenApiSchemas.MetabaseOpenApiInputSchema249.optional(),
-	})
-	.strict();
-const openApiOutput16 = OpenApiSchemas.MetabaseOpenApiOutputSchema250;
+const openApiInput16 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: OpenApiSchemas.MetabaseOpenApiInputSchema249().optional(),
+		})
+		.strict(),
+);
+const openApiOutput16 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema250(),
+);
 const openApiEndpoint16 = createMetabaseEndpoint(
 	'agent.putV1QuestionById',
 	openApiInput16,
@@ -315,13 +384,17 @@ const openApiEndpoint16 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput17 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z.object({}).strict().optional(),
-	})
-	.strict();
-const openApiOutput17 = OpenApiSchemas.MetabaseOpenApiOutputSchema236;
+const openApiInput17 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z.object({}).strict().optional(),
+		})
+		.strict(),
+);
+const openApiOutput17 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema236(),
+);
 const openApiEndpoint17 = createMetabaseEndpoint(
 	'agent.postV1QuestionByIdQuery',
 	openApiInput17,
@@ -334,10 +407,14 @@ const openApiEndpoint17 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput18 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema241.optional() })
-	.strict();
-const openApiOutput18 = OpenApiSchemas.MetabaseOpenApiOutputSchema242;
+const openApiInput18 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema241().optional() })
+		.strict(),
+);
+const openApiOutput18 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema242(),
+);
 const openApiEndpoint18 = createMetabaseEndpoint(
 	'agent.postV1ReadResource',
 	openApiInput18,
@@ -349,28 +426,32 @@ const openApiEndpoint18 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput19 = z
-	.object({
-		body: z
-			.object({
-				semantic_queries: z
-					.union([
-						z.union([z.array(z.string().min(1)), z.string().min(1)]),
-						z.null(),
-					])
-					.optional(),
-				term_queries: z
-					.union([
-						z.union([z.array(z.string().min(1)), z.string().min(1)]),
-						z.null(),
-					])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput19 = OpenApiSchemas.MetabaseOpenApiOutputSchema243;
+const openApiInput19 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					semantic_queries: z
+						.union([
+							z.union([z.array(z.string().min(1)), z.string().min(1)]),
+							z.null(),
+						])
+						.optional(),
+					term_queries: z
+						.union([
+							z.union([z.array(z.string().min(1)), z.string().min(1)]),
+							z.null(),
+						])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput19 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema243(),
+);
 const openApiEndpoint19 = createMetabaseEndpoint(
 	'agent.postV1Search',
 	openApiInput19,
@@ -382,10 +463,14 @@ const openApiEndpoint19 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput20 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema223.optional() })
-	.strict();
-const openApiOutput20 = OpenApiSchemas.MetabaseOpenApiOutputSchema224;
+const openApiInput20 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema223().optional() })
+		.strict(),
+);
+const openApiOutput20 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema224(),
+);
 const openApiEndpoint20 = createMetabaseEndpoint(
 	'agent.postV2ConstructQuery',
 	openApiInput20,
@@ -398,10 +483,14 @@ const openApiEndpoint20 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput21 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema238.optional() })
-	.strict();
-const openApiOutput21 = OpenApiSchemas.MetabaseOpenApiOutputSchema239;
+const openApiInput21 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema238().optional() })
+		.strict(),
+);
+const openApiOutput21 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema239(),
+);
 const openApiEndpoint21 = createMetabaseEndpoint(
 	'agent.postV2Query',
 	openApiInput21,
@@ -414,30 +503,35 @@ const openApiEndpoint21 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput22 = z
-	.object({
-		body: z
-			.object({
-				events: z
-					.array(
-						z
-							.object({
-								amount: z.union([z.number(), z.null()]).optional(),
-								labels: z
-									.union([z.record(z.string(), z.string().max(200)), z.null()])
-									.optional(),
-								metric: z.string(),
-								op: z.literal('inc'),
-							})
-							.strict(),
-					)
-					.max(1001),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput22 = z.null();
+const openApiInput22 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					events: z
+						.array(
+							z
+								.object({
+									amount: z.union([z.number(), z.null()]).optional(),
+									labels: z
+										.union([
+											z.record(z.string(), z.string().max(200)),
+											z.null(),
+										])
+										.optional(),
+									metric: z.string(),
+									op: z.literal('inc'),
+								})
+								.strict(),
+						)
+						.max(1001),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput22 = lazySchema(() => z.null());
 const openApiEndpoint22 = createMetabaseEndpoint(
 	'analytics.postInternal',
 	openApiInput22,
@@ -449,19 +543,23 @@ const openApiEndpoint22 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput23 = z
-	.object({
-		path: z
-			.object({ id: OpenApiSchemas.MetabaseOpenApiInputSchema253 })
-			.strict(),
-	})
-	.strict();
-const openApiOutput23 = z.object({
-	id: OpenApiSchemas.MetabaseOpenApiOutputSchema253,
-	masked_key: OpenApiSchemas.MetabaseOpenApiOutputSchema251,
-	prefix: OpenApiSchemas.MetabaseOpenApiOutputSchema254,
-	unmasked_key: OpenApiSchemas.MetabaseOpenApiOutputSchema252,
-});
+const openApiInput23 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({ id: OpenApiSchemas.MetabaseOpenApiInputSchema253() })
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput23 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		id: OpenApiSchemas.MetabaseOpenApiOutputSchema253().nullish(),
+		masked_key: OpenApiSchemas.MetabaseOpenApiOutputSchema251().nullish(),
+		prefix: OpenApiSchemas.MetabaseOpenApiOutputSchema254().nullish(),
+		unmasked_key: OpenApiSchemas.MetabaseOpenApiOutputSchema252().nullish(),
+	}),
+);
 const openApiEndpoint23 = createMetabaseEndpoint(
 	'apiKey.putByIdRegenerate',
 	openApiInput23,
@@ -472,38 +570,43 @@ const openApiEndpoint23 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput24 = z
-	.object({
-		query: z
-			.object({
-				model: z
-					.array(
-						z.union([
-							z.literal('root'),
-							z.literal('database'),
-							z.literal('dashboard'),
-							z.literal('question'),
-						]),
-					)
-					.optional(),
-				collection: z.union([z.number().int().min(1), z.null()]).optional(),
-				id: z.union([z.number().int().min(1), z.null()]).optional(),
-				sort_column: z
-					.union([
-						z.literal('name'),
-						z.literal('policy'),
-						z.literal('collection'),
-					])
-					.optional(),
-				sort_direction: z
-					.union([z.literal('asc'), z.literal('desc')])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput24 = OpenApiSchemas.MetabaseOpenApiOutputSchema262;
+const openApiInput24 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					...metabasePageQueryShape,
+					model: z
+						.array(
+							z.union([
+								z.literal('root'),
+								z.literal('database'),
+								z.literal('dashboard'),
+								z.literal('question'),
+							]),
+						)
+						.optional(),
+					collection: z.union([z.number().int().min(1), z.null()]).optional(),
+					id: z.union([z.number().int().min(1), z.null()]).optional(),
+					sort_column: z
+						.union([
+							z.literal('name'),
+							z.literal('policy'),
+							z.literal('collection'),
+						])
+						.optional(),
+					sort_direction: z
+						.union([z.literal('asc'), z.literal('desc')])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput24 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema262(),
+);
 const openApiEndpoint24 = createMetabaseEndpoint(
 	'cache.get',
 	openApiInput24,
@@ -511,24 +614,28 @@ const openApiEndpoint24 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/cache', query: input.query }),
 );
 
-const openApiInput25 = z
-	.object({
-		body: z
-			.object({
-				model: z.union([
-					z.literal('root'),
-					z.literal('database'),
-					z.literal('dashboard'),
-					z.literal('question'),
-				]),
-				model_id: z.number().int().min(0),
-				strategy: OpenApiSchemas.MetabaseOpenApiInputSchema265,
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput25 = OpenApiSchemas.MetabaseOpenApiOutputSchema263;
+const openApiInput25 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					model: z.union([
+						z.literal('root'),
+						z.literal('database'),
+						z.literal('dashboard'),
+						z.literal('question'),
+					]),
+					model_id: z.number().int().min(0),
+					strategy: OpenApiSchemas.MetabaseOpenApiInputSchema265(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput25 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema263(),
+);
 const openApiEndpoint25 = createMetabaseEndpoint(
 	'cache.put',
 	openApiInput25,
@@ -536,23 +643,25 @@ const openApiEndpoint25 = createMetabaseEndpoint(
 	(input) => ({ method: 'PUT', path: '/api/cache', body: input.body }),
 );
 
-const openApiInput26 = z
-	.object({
-		body: z
-			.object({
-				model: z.union([
-					z.literal('root'),
-					z.literal('database'),
-					z.literal('dashboard'),
-					z.literal('question'),
-				]),
-				model_id: z.array(z.number().int().min(0)),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput26 = z.null();
+const openApiInput26 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					model: z.union([
+						z.literal('root'),
+						z.literal('database'),
+						z.literal('dashboard'),
+						z.literal('question'),
+					]),
+					model_id: z.array(z.number().int().min(0)),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput26 = lazySchema(() => z.null());
 const openApiEndpoint26 = createMetabaseEndpoint(
 	'cache.delete',
 	openApiInput26,
@@ -560,26 +669,30 @@ const openApiEndpoint26 = createMetabaseEndpoint(
 	(input) => ({ method: 'DELETE', path: '/api/cache', body: input.body }),
 );
 
-const openApiInput27 = z
-	.object({
-		query: z
-			.object({
-				include: z.union([z.literal('overrides'), z.null()]).optional(),
-				database: z
-					.union([z.array(z.number().int().min(0)), z.null()])
-					.optional(),
-				dashboard: z
-					.union([z.array(z.number().int().min(0)), z.null()])
-					.optional(),
-				question: z
-					.union([z.array(z.number().int().min(0)), z.null()])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput27 = OpenApiSchemas.MetabaseOpenApiOutputSchema264;
+const openApiInput27 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					include: z.union([z.literal('overrides'), z.null()]).optional(),
+					database: z
+						.union([z.array(z.number().int().min(0)), z.null()])
+						.optional(),
+					dashboard: z
+						.union([z.array(z.number().int().min(0)), z.null()])
+						.optional(),
+					question: z
+						.union([z.array(z.number().int().min(0)), z.null()])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput27 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema264(),
+);
 const openApiEndpoint27 = createMetabaseEndpoint(
 	'cache.postInvalidate',
 	openApiInput27,
@@ -591,23 +704,25 @@ const openApiEndpoint27 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput28 = z
-	.object({
-		path: z
-			.object({
-				'dashboard-id': z.number().int().min(1),
-				'dashcard-id': z.number().int().min(1),
-			})
-			.strict(),
-		body: z
-			.object({
-				parameters: OpenApiSchemas.MetabaseOpenApiInputSchema218.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput28 = z.record(z.string(), z.json());
+const openApiInput28 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					'dashboard-id': z.number().int().min(1),
+					'dashcard-id': z.number().int().min(1),
+				})
+				.strict(),
+			body: z
+				.object({
+					parameters: OpenApiSchemas.MetabaseOpenApiInputSchema218().optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput28 = lazySchema(() => z.record(z.string(), z.json()));
 const openApiEndpoint28 = createMetabaseEndpoint(
 	'dashboard.postByDashboardIdDashcardByDashcardIdExecuteValues',
 	openApiInput28,
@@ -622,23 +737,25 @@ const openApiEndpoint28 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput29 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({
-				paper_size: z
-					.union([z.union([z.literal('a4'), z.literal('letter')]), z.null()])
-					.optional(),
-				parameters: z
-					.union([OpenApiSchemas.MetabaseOpenApiInputSchema651, z.null()])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput29 = MetabaseBinaryResponseSchema;
+const openApiInput29 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({
+					paper_size: z
+						.union([z.union([z.literal('a4'), z.literal('letter')]), z.null()])
+						.optional(),
+					parameters: z
+						.union([OpenApiSchemas.MetabaseOpenApiInputSchema651(), z.null()])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput29 = lazySchema(() => MetabaseBinaryResponseSchema);
 const openApiEndpoint29 = createMetabaseEndpoint(
 	'dashboard.postByIdPdf',
 	openApiInput29,
@@ -652,10 +769,12 @@ const openApiEndpoint29 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput30 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema290.optional() })
-	.strict();
-const openApiOutput30 = z.null();
+const openApiInput30 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema290().optional() })
+		.strict(),
+);
+const openApiOutput30 = lazySchema(() => z.null());
 const openApiEndpoint30 = createMetabaseEndpoint(
 	'dataStudio.postTableDiscardValues',
 	openApiInput30,
@@ -667,29 +786,32 @@ const openApiEndpoint30 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput31 = z
-	.object({
-		body: z
-			.object({
-				data_authority: OpenApiSchemas.MetabaseOpenApiInputSchema287.optional(),
-				data_layer: z
-					.union([OpenApiSchemas.MetabaseOpenApiInputSchema288, z.null()])
-					.optional(),
-				table_ids: z.array(z.number().int().min(1)).optional(),
-				owner_email: z.union([z.string(), z.null()]).optional(),
-				owner_user_id: z.union([z.number().int(), z.null()]).optional(),
-				data_source: z
-					.union([OpenApiSchemas.MetabaseOpenApiInputSchema289, z.null()])
-					.optional(),
-				schema_ids: z.array(z.string()).optional(),
-				entity_type: z.union([z.string(), z.null()]).optional(),
-				database_ids: z.array(z.number().int().min(1)).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput31 = z.object({}).strict();
+const openApiInput31 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					data_authority:
+						OpenApiSchemas.MetabaseOpenApiInputSchema287().optional(),
+					data_layer: z
+						.union([OpenApiSchemas.MetabaseOpenApiInputSchema288(), z.null()])
+						.optional(),
+					table_ids: z.array(z.number().int().min(1)).optional(),
+					owner_email: z.union([z.string(), z.null()]).optional(),
+					owner_user_id: z.union([z.number().int(), z.null()]).optional(),
+					data_source: z
+						.union([OpenApiSchemas.MetabaseOpenApiInputSchema289(), z.null()])
+						.optional(),
+					schema_ids: z.array(z.string()).optional(),
+					entity_type: z.union([z.string(), z.null()]).optional(),
+					database_ids: z.array(z.number().int().min(1)).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput31 = lazySchema(() => OpenApiSchemas.looseJsonObject({}));
 const openApiEndpoint31 = createMetabaseEndpoint(
 	'dataStudio.postTableEdit',
 	openApiInput31,
@@ -701,10 +823,12 @@ const openApiEndpoint31 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput32 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema290.optional() })
-	.strict();
-const openApiOutput32 = z.null();
+const openApiInput32 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema290().optional() })
+		.strict(),
+);
+const openApiOutput32 = lazySchema(() => z.null());
 const openApiEndpoint32 = createMetabaseEndpoint(
 	'dataStudio.postTableRescanValues',
 	openApiInput32,
@@ -716,10 +840,14 @@ const openApiEndpoint32 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput33 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema290.optional() })
-	.strict();
-const openApiOutput33 = OpenApiSchemas.MetabaseOpenApiOutputSchema286;
+const openApiInput33 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema290().optional() })
+		.strict(),
+);
+const openApiOutput33 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema286(),
+);
 const openApiEndpoint33 = createMetabaseEndpoint(
 	'dataStudio.postTableSelection',
 	openApiInput33,
@@ -731,10 +859,12 @@ const openApiEndpoint33 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput34 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema290.optional() })
-	.strict();
-const openApiOutput34 = z.null();
+const openApiInput34 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema290().optional() })
+		.strict(),
+);
+const openApiOutput34 = lazySchema(() => z.null());
 const openApiEndpoint34 = createMetabaseEndpoint(
 	'dataStudio.postTableSyncSchema',
 	openApiInput34,
@@ -746,22 +876,24 @@ const openApiEndpoint34 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput35 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		query: z
-			.object({
-				include_editable_data_model: z
-					.union([z.boolean(), z.null()])
-					.optional(),
-				include_hidden: z.union([z.boolean(), z.null()]).optional(),
-				'can-query': z.union([z.boolean(), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput35 = z.array(z.string());
+const openApiInput35 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			query: z
+				.object({
+					include_editable_data_model: z
+						.union([z.boolean(), z.null()])
+						.optional(),
+					include_hidden: z.union([z.boolean(), z.null()]).optional(),
+					'can-query': z.union([z.boolean(), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput35 = lazySchema(() => z.array(z.string()));
 const openApiEndpoint35 = createMetabaseEndpoint(
 	'database.getByIdSchemas',
 	openApiInput35,
@@ -773,12 +905,16 @@ const openApiEndpoint35 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput36 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput36 = z.object({
-	settings: OpenApiSchemas.MetabaseOpenApiOutputSchema711,
-});
+const openApiInput36 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput36 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		settings: OpenApiSchemas.MetabaseOpenApiOutputSchema711().nullish(),
+	}),
+);
 const openApiEndpoint36 = createMetabaseEndpoint(
 	'database.getByIdSettingsAvailable',
 	openApiInput36,
@@ -792,10 +928,14 @@ const openApiEndpoint36 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput37 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema336.optional() })
-	.strict();
-const openApiOutput37 = OpenApiSchemas.MetabaseOpenApiOutputSchema674;
+const openApiInput37 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema336().optional() })
+		.strict(),
+);
+const openApiOutput37 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema674(),
+);
 const openApiEndpoint37 = createMetabaseEndpoint(
 	'dataset.post',
 	openApiInput37,
@@ -808,10 +948,14 @@ const openApiEndpoint37 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput38 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema337.optional() })
-	.strict();
-const openApiOutput38 = OpenApiSchemas.MetabaseOpenApiOutputSchema674;
+const openApiInput38 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema337().optional() })
+		.strict(),
+);
+const openApiOutput38 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema674(),
+);
 const openApiEndpoint38 = createMetabaseEndpoint(
 	'dataset.postPivot',
 	openApiInput38,
@@ -824,24 +968,28 @@ const openApiEndpoint38 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput39 = z
-	.object({
-		path: z
-			.object({ 'export-format': OpenApiSchemas.MetabaseOpenApiInputSchema673 })
-			.strict(),
-		body: z
-			.object({
-				csv_include_bom: z.boolean().optional(),
-				format_rows: z.boolean().optional(),
-				pivot_results: z.boolean().optional(),
-				query: OpenApiSchemas.MetabaseOpenApiInputSchema336,
-				visualization_settings: z.record(z.string(), z.json()).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput39 = MetabaseBinaryResponseSchema;
+const openApiInput39 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					'export-format': OpenApiSchemas.MetabaseOpenApiInputSchema673(),
+				})
+				.strict(),
+			body: z
+				.object({
+					csv_include_bom: z.boolean().optional(),
+					format_rows: z.boolean().optional(),
+					pivot_results: z.boolean().optional(),
+					query: OpenApiSchemas.MetabaseOpenApiInputSchema336(),
+					visualization_settings: z.record(z.string(), z.json()).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput39 = lazySchema(() => MetabaseBinaryResponseSchema);
 const openApiEndpoint39 = createMetabaseEndpoint(
 	'dataset.postByExportFormat',
 	openApiInput39,
@@ -855,19 +1003,22 @@ const openApiEndpoint39 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput40 = z.object({}).strict();
-const openApiOutput40 = z.array(
-	z.object({
-		id: z.number().int().min(1),
-		name: z.string(),
-		public_uuid: z
-			.string()
-			.regex(
-				new RegExp(
-					'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
-				),
-			),
-	}),
+const openApiInput40 = lazySchema(() => z.object({}).strict());
+const openApiOutput40 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			id: z.number().int().nullish(),
+			name: z.string().nullish(),
+			public_uuid: z
+				.string()
+				.regex(
+					new RegExp(
+						'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+					),
+				)
+				.nullish(),
+		}),
+	),
 );
 const openApiEndpoint40 = createMetabaseEndpoint(
 	'document.getPublic',
@@ -876,20 +1027,25 @@ const openApiEndpoint40 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/document/public' }),
 );
 
-const openApiInput41 = z
-	.object({
-		path: z.object({ 'document-id': z.number().int().min(1) }).strict(),
-	})
-	.strict();
-const openApiOutput41 = z.object({
-	uuid: z
-		.string()
-		.regex(
-			new RegExp(
-				'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
-			),
-		),
-});
+const openApiInput41 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ 'document-id': z.number().int().min(1) }).strict(),
+		})
+		.strict(),
+);
+const openApiOutput41 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		uuid: z
+			.string()
+			.regex(
+				new RegExp(
+					'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+				),
+			)
+			.nullish(),
+	}),
+);
 const openApiEndpoint41 = createMetabaseEndpoint(
 	'document.postByDocumentIdPublicLink',
 	openApiInput41,
@@ -903,24 +1059,30 @@ const openApiEndpoint41 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput42 = z
-	.object({
-		path: z.object({ 'from-document-id': z.number().int().min(1) }).strict(),
-		body: z
-			.object({
-				collection_id: z.union([z.number().int().min(1), z.null()]).optional(),
-				collection_position: z
-					.union([z.number().int().min(1), z.null()])
-					.optional(),
-				name: z.union([z.string().min(1), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput42 = z.object({
-	id: OpenApiSchemas.MetabaseOpenApiOutputSchema291,
-});
+const openApiInput42 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ 'from-document-id': z.number().int().min(1) }).strict(),
+			body: z
+				.object({
+					collection_id: z
+						.union([z.number().int().min(1), z.null()])
+						.optional(),
+					collection_position: z
+						.union([z.number().int().min(1), z.null()])
+						.optional(),
+					name: z.union([z.string().min(1), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput42 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		id: OpenApiSchemas.MetabaseOpenApiOutputSchema291().nullish(),
+	}),
+);
 const openApiEndpoint42 = createMetabaseEndpoint(
 	'document.postByFromDocumentIdCopy',
 	openApiInput42,
@@ -935,31 +1097,34 @@ const openApiEndpoint42 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput43 = z.object({}).strict();
-const openApiOutput43 = z
-	.object({
-		advanced: z.boolean(),
-		permissions: z.array(
-			z
-				.object({
-					group_id: z.number().int().min(1),
-					mcp_enabled: z.boolean(),
-					tool_access: OpenApiSchemas.MetabaseOpenApiOutputSchema586,
-				})
-				.strict(),
-		),
-		tools: z.array(
-			z
-				.object({
-					default_access: z.union([z.literal('allowed'), z.literal('denied')]),
-					description: z.string(),
-					name: z.string(),
-					scope: z.string(),
-				})
-				.strict(),
-		),
-	})
-	.strict();
+const openApiInput43 = lazySchema(() => z.object({}).strict());
+const openApiOutput43 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		advanced: z.boolean().nullish(),
+		permissions: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					group_id: z.number().int().nullish(),
+					mcp_enabled: z.boolean().nullish(),
+					tool_access:
+						OpenApiSchemas.MetabaseOpenApiOutputSchema586().nullish(),
+				}),
+			)
+			.nullish(),
+		tools: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					default_access: z
+						.union([z.literal('allowed'), z.literal('denied')])
+						.nullish(),
+					description: z.string().nullish(),
+					name: z.string().nullish(),
+					scope: z.string().nullish(),
+				}),
+			)
+			.nullish(),
+	}),
+);
 const openApiEndpoint43 = createMetabaseEndpoint(
 	'ee.getAiControlsMcpPermissions',
 	openApiInput43,
@@ -967,48 +1132,53 @@ const openApiEndpoint43 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/ai-controls/mcp-permissions' }),
 );
 
-const openApiInput44 = z
-	.object({
-		body: z
-			.object({
-				permissions: z.array(
-					z
-						.object({
-							group_id: z.number().int().min(1),
-							mcp_enabled: z.boolean(),
-							tool_access: OpenApiSchemas.MetabaseOpenApiInputSchema586,
-						})
-						.strict(),
-				),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput44 = z
-	.object({
-		advanced: z.boolean(),
-		permissions: z.array(
-			z
+const openApiInput44 = lazySchema(() =>
+	z
+		.object({
+			body: z
 				.object({
-					group_id: z.number().int().min(1),
-					mcp_enabled: z.boolean(),
-					tool_access: OpenApiSchemas.MetabaseOpenApiOutputSchema586,
+					permissions: z.array(
+						z
+							.object({
+								group_id: z.number().int().min(1),
+								mcp_enabled: z.boolean(),
+								tool_access: OpenApiSchemas.MetabaseOpenApiInputSchema586(),
+							})
+							.strict(),
+					),
 				})
-				.strict(),
-		),
-		tools: z.array(
-			z
-				.object({
-					default_access: z.union([z.literal('allowed'), z.literal('denied')]),
-					description: z.string(),
-					name: z.string(),
-					scope: z.string(),
-				})
-				.strict(),
-		),
-	})
-	.strict();
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput44 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		advanced: z.boolean().nullish(),
+		permissions: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					group_id: z.number().int().nullish(),
+					mcp_enabled: z.boolean().nullish(),
+					tool_access:
+						OpenApiSchemas.MetabaseOpenApiOutputSchema586().nullish(),
+				}),
+			)
+			.nullish(),
+		tools: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					default_access: z
+						.union([z.literal('allowed'), z.literal('denied')])
+						.nullish(),
+					description: z.string().nullish(),
+					name: z.string().nullish(),
+					scope: z.string().nullish(),
+				}),
+			)
+			.nullish(),
+	}),
+);
 const openApiEndpoint44 = createMetabaseEndpoint(
 	'ee.putAiControlsMcpPermissions',
 	openApiInput44,
@@ -1020,31 +1190,34 @@ const openApiEndpoint44 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput45 = z.object({}).strict();
-const openApiOutput45 = z
-	.object({
-		advanced: z.boolean(),
-		permissions: z.array(
-			z
-				.object({
-					group_id: z.number().int().min(1),
-					mcp_enabled: z.boolean(),
-					tool_access: OpenApiSchemas.MetabaseOpenApiOutputSchema586,
-				})
-				.strict(),
-		),
-		tools: z.array(
-			z
-				.object({
-					default_access: z.union([z.literal('allowed'), z.literal('denied')]),
-					description: z.string(),
-					name: z.string(),
-					scope: z.string(),
-				})
-				.strict(),
-		),
-	})
-	.strict();
+const openApiInput45 = lazySchema(() => z.object({}).strict());
+const openApiOutput45 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		advanced: z.boolean().nullish(),
+		permissions: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					group_id: z.number().int().nullish(),
+					mcp_enabled: z.boolean().nullish(),
+					tool_access:
+						OpenApiSchemas.MetabaseOpenApiOutputSchema586().nullish(),
+				}),
+			)
+			.nullish(),
+		tools: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					default_access: z
+						.union([z.literal('allowed'), z.literal('denied')])
+						.nullish(),
+					description: z.string().nullish(),
+					name: z.string().nullish(),
+					scope: z.string().nullish(),
+				}),
+			)
+			.nullish(),
+	}),
+);
 const openApiEndpoint45 = createMetabaseEndpoint(
 	'ee.postAiControlsMcpPermissionsAdvanced',
 	openApiInput45,
@@ -1055,31 +1228,34 @@ const openApiEndpoint45 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput46 = z.object({}).strict();
-const openApiOutput46 = z
-	.object({
-		advanced: z.boolean(),
-		permissions: z.array(
-			z
-				.object({
-					group_id: z.number().int().min(1),
-					mcp_enabled: z.boolean(),
-					tool_access: OpenApiSchemas.MetabaseOpenApiOutputSchema586,
-				})
-				.strict(),
-		),
-		tools: z.array(
-			z
-				.object({
-					default_access: z.union([z.literal('allowed'), z.literal('denied')]),
-					description: z.string(),
-					name: z.string(),
-					scope: z.string(),
-				})
-				.strict(),
-		),
-	})
-	.strict();
+const openApiInput46 = lazySchema(() => z.object({}).strict());
+const openApiOutput46 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		advanced: z.boolean().nullish(),
+		permissions: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					group_id: z.number().int().nullish(),
+					mcp_enabled: z.boolean().nullish(),
+					tool_access:
+						OpenApiSchemas.MetabaseOpenApiOutputSchema586().nullish(),
+				}),
+			)
+			.nullish(),
+		tools: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					default_access: z
+						.union([z.literal('allowed'), z.literal('denied')])
+						.nullish(),
+					description: z.string().nullish(),
+					name: z.string().nullish(),
+					scope: z.string().nullish(),
+				}),
+			)
+			.nullish(),
+	}),
+);
 const openApiEndpoint46 = createMetabaseEndpoint(
 	'ee.deleteAiControlsMcpPermissionsAdvanced',
 	openApiInput46,
@@ -1090,22 +1266,28 @@ const openApiEndpoint46 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput47 = z.object({}).strict();
-const openApiOutput47 = z.object({
-	advanced: z.boolean(),
-	permissions: z.array(
-		z.object({
-			group_id: z.number().int().min(1),
-			perm_type: z.union([
-				z.literal('permission/metabot'),
-				z.literal('permission/metabot-nlq'),
-				z.literal('permission/metabot-other-tools'),
-				z.literal('permission/metabot-sql-generation'),
-			]),
-			perm_value: z.union([z.literal('yes'), z.literal('no')]),
-		}),
-	),
-});
+const openApiInput47 = lazySchema(() => z.object({}).strict());
+const openApiOutput47 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		advanced: z.boolean().nullish(),
+		permissions: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					group_id: z.number().int().nullish(),
+					perm_type: z
+						.union([
+							z.literal('permission/metabot'),
+							z.literal('permission/metabot-nlq'),
+							z.literal('permission/metabot-other-tools'),
+							z.literal('permission/metabot-sql-generation'),
+						])
+						.nullish(),
+					perm_value: z.union([z.literal('yes'), z.literal('no')]).nullish(),
+				}),
+			)
+			.nullish(),
+	}),
+);
 const openApiEndpoint47 = createMetabaseEndpoint(
 	'ee.getAiControlsPermissions',
 	openApiInput47,
@@ -1113,44 +1295,52 @@ const openApiEndpoint47 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/ai-controls/permissions' }),
 );
 
-const openApiInput48 = z
-	.object({
-		body: z
-			.object({
-				permissions: z.array(
-					z
-						.object({
-							group_id: z.number().int().min(1),
-							perm_type: z.union([
-								z.literal('permission/metabot-nlq'),
-								z.literal('permission/metabot-sql-generation'),
-								z.literal('permission/metabot-other-tools'),
-								z.literal('permission/metabot'),
-							]),
-							perm_value: z.union([z.literal('yes'), z.literal('no')]),
-						})
-						.strict(),
-				),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput48 = z.object({
-	advanced: z.boolean(),
-	permissions: z.array(
-		z.object({
-			group_id: z.number().int().min(1),
-			perm_type: z.union([
-				z.literal('permission/metabot'),
-				z.literal('permission/metabot-nlq'),
-				z.literal('permission/metabot-other-tools'),
-				z.literal('permission/metabot-sql-generation'),
-			]),
-			perm_value: z.union([z.literal('yes'), z.literal('no')]),
-		}),
-	),
-});
+const openApiInput48 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					permissions: z.array(
+						z
+							.object({
+								group_id: z.number().int().min(1),
+								perm_type: z.union([
+									z.literal('permission/metabot-nlq'),
+									z.literal('permission/metabot-sql-generation'),
+									z.literal('permission/metabot-other-tools'),
+									z.literal('permission/metabot'),
+								]),
+								perm_value: z.union([z.literal('yes'), z.literal('no')]),
+							})
+							.strict(),
+					),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput48 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		advanced: z.boolean().nullish(),
+		permissions: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					group_id: z.number().int().nullish(),
+					perm_type: z
+						.union([
+							z.literal('permission/metabot'),
+							z.literal('permission/metabot-nlq'),
+							z.literal('permission/metabot-other-tools'),
+							z.literal('permission/metabot-sql-generation'),
+						])
+						.nullish(),
+					perm_value: z.union([z.literal('yes'), z.literal('no')]).nullish(),
+				}),
+			)
+			.nullish(),
+	}),
+);
 const openApiEndpoint48 = createMetabaseEndpoint(
 	'ee.putAiControlsPermissions',
 	openApiInput48,
@@ -1162,22 +1352,28 @@ const openApiEndpoint48 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput49 = z.object({}).strict();
-const openApiOutput49 = z.object({
-	advanced: z.boolean(),
-	permissions: z.array(
-		z.object({
-			group_id: z.number().int().min(1),
-			perm_type: z.union([
-				z.literal('permission/metabot'),
-				z.literal('permission/metabot-nlq'),
-				z.literal('permission/metabot-other-tools'),
-				z.literal('permission/metabot-sql-generation'),
-			]),
-			perm_value: z.union([z.literal('yes'), z.literal('no')]),
-		}),
-	),
-});
+const openApiInput49 = lazySchema(() => z.object({}).strict());
+const openApiOutput49 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		advanced: z.boolean().nullish(),
+		permissions: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					group_id: z.number().int().nullish(),
+					perm_type: z
+						.union([
+							z.literal('permission/metabot'),
+							z.literal('permission/metabot-nlq'),
+							z.literal('permission/metabot-other-tools'),
+							z.literal('permission/metabot-sql-generation'),
+						])
+						.nullish(),
+					perm_value: z.union([z.literal('yes'), z.literal('no')]).nullish(),
+				}),
+			)
+			.nullish(),
+	}),
+);
 const openApiEndpoint49 = createMetabaseEndpoint(
 	'ee.postAiControlsPermissionsAdvanced',
 	openApiInput49,
@@ -1188,22 +1384,28 @@ const openApiEndpoint49 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput50 = z.object({}).strict();
-const openApiOutput50 = z.object({
-	advanced: z.boolean(),
-	permissions: z.array(
-		z.object({
-			group_id: z.number().int().min(1),
-			perm_type: z.union([
-				z.literal('permission/metabot'),
-				z.literal('permission/metabot-nlq'),
-				z.literal('permission/metabot-other-tools'),
-				z.literal('permission/metabot-sql-generation'),
-			]),
-			perm_value: z.union([z.literal('yes'), z.literal('no')]),
-		}),
-	),
-});
+const openApiInput50 = lazySchema(() => z.object({}).strict());
+const openApiOutput50 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		advanced: z.boolean().nullish(),
+		permissions: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					group_id: z.number().int().nullish(),
+					perm_type: z
+						.union([
+							z.literal('permission/metabot'),
+							z.literal('permission/metabot-nlq'),
+							z.literal('permission/metabot-other-tools'),
+							z.literal('permission/metabot-sql-generation'),
+						])
+						.nullish(),
+					perm_value: z.union([z.literal('yes'), z.literal('no')]).nullish(),
+				}),
+			)
+			.nullish(),
+	}),
+);
 const openApiEndpoint50 = createMetabaseEndpoint(
 	'ee.deleteAiControlsPermissionsAdvanced',
 	openApiInput50,
@@ -1214,12 +1416,14 @@ const openApiEndpoint50 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput51 = z.object({}).strict();
-const openApiOutput51 = z.array(
-	z.object({
-		group_id: z.number().int().min(1),
-		max_usage: z.number().int().min(0),
-	}),
+const openApiInput51 = lazySchema(() => z.object({}).strict());
+const openApiOutput51 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			group_id: z.number().int().nullish(),
+			max_usage: z.number().int().nullish(),
+		}),
+	),
 );
 const openApiEndpoint51 = createMetabaseEndpoint(
 	'ee.getAiControlsUsageGroup',
@@ -1228,13 +1432,19 @@ const openApiEndpoint51 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/ai-controls/usage/group' }),
 );
 
-const openApiInput52 = z
-	.object({ path: z.object({ 'group-id': z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput52 = z.object({
-	group_id: z.number().int().min(1),
-	max_usage: z.union([z.number().int().min(0), z.null()]),
-});
+const openApiInput52 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ 'group-id': z.number().int().min(1) }).strict(),
+		})
+		.strict(),
+);
+const openApiOutput52 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		group_id: z.number().int().nullish(),
+		max_usage: z.union([z.number().int(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint52 = createMetabaseEndpoint(
 	'ee.getAiControlsUsageGroupByGroupId',
 	openApiInput52,
@@ -1248,19 +1458,23 @@ const openApiEndpoint52 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput53 = z
-	.object({
-		path: z.object({ 'group-id': z.number().int().min(1) }).strict(),
-		body: z
-			.object({ max_usage: z.union([z.number().int().min(0), z.null()]) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput53 = z.object({
-	group_id: z.number().int().min(1),
-	max_usage: z.union([z.number().int().min(0), z.null()]),
-});
+const openApiInput53 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ 'group-id': z.number().int().min(1) }).strict(),
+			body: z
+				.object({ max_usage: z.union([z.number().int().min(0), z.null()]) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput53 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		group_id: z.number().int().nullish(),
+		max_usage: z.union([z.number().int(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint53 = createMetabaseEndpoint(
 	'ee.putAiControlsUsageGroupByGroupId',
 	openApiInput53,
@@ -1275,10 +1489,12 @@ const openApiEndpoint53 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput54 = z.object({}).strict();
-const openApiOutput54 = z
-	.object({ max_usage: z.union([z.number().int().min(0), z.null()]) })
-	.strict();
+const openApiInput54 = lazySchema(() => z.object({}).strict());
+const openApiOutput54 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		max_usage: z.union([z.number().int(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint54 = createMetabaseEndpoint(
 	'ee.getAiControlsUsageInstance',
 	openApiInput54,
@@ -1286,17 +1502,21 @@ const openApiEndpoint54 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/ai-controls/usage/instance' }),
 );
 
-const openApiInput55 = z
-	.object({
-		body: z
-			.object({ max_usage: z.union([z.number().int().min(0), z.null()]) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput55 = z
-	.object({ max_usage: z.union([z.number().int().min(0), z.null()]) })
-	.strict();
+const openApiInput55 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({ max_usage: z.union([z.number().int().min(0), z.null()]) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput55 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		max_usage: z.union([z.number().int(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint55 = createMetabaseEndpoint(
 	'ee.putAiControlsUsageInstance',
 	openApiInput55,
@@ -1308,12 +1528,14 @@ const openApiEndpoint55 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput56 = z.object({}).strict();
-const openApiOutput56 = z.array(
-	z.object({
-		max_usage: z.number().int().min(0),
-		tenant_id: z.number().int().min(1),
-	}),
+const openApiInput56 = lazySchema(() => z.object({}).strict());
+const openApiOutput56 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			max_usage: z.number().int().nullish(),
+			tenant_id: z.number().int().nullish(),
+		}),
+	),
 );
 const openApiEndpoint56 = createMetabaseEndpoint(
 	'ee.getAiControlsUsageTenant',
@@ -1322,13 +1544,19 @@ const openApiEndpoint56 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/ai-controls/usage/tenant' }),
 );
 
-const openApiInput57 = z
-	.object({ path: z.object({ 'tenant-id': z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput57 = z.object({
-	max_usage: z.union([z.number().int().min(0), z.null()]),
-	tenant_id: z.number().int().min(1),
-});
+const openApiInput57 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ 'tenant-id': z.number().int().min(1) }).strict(),
+		})
+		.strict(),
+);
+const openApiOutput57 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		max_usage: z.union([z.number().int(), z.null()]).nullish(),
+		tenant_id: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint57 = createMetabaseEndpoint(
 	'ee.getAiControlsUsageTenantByTenantId',
 	openApiInput57,
@@ -1342,19 +1570,23 @@ const openApiEndpoint57 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput58 = z
-	.object({
-		path: z.object({ 'tenant-id': z.number().int().min(1) }).strict(),
-		body: z
-			.object({ max_usage: z.union([z.number().int().min(0), z.null()]) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput58 = z.object({
-	max_usage: z.union([z.number().int().min(0), z.null()]),
-	tenant_id: z.number().int().min(1),
-});
+const openApiInput58 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ 'tenant-id': z.number().int().min(1) }).strict(),
+			body: z
+				.object({ max_usage: z.union([z.number().int().min(0), z.null()]) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput58 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		max_usage: z.union([z.number().int(), z.null()]).nullish(),
+		tenant_id: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint58 = createMetabaseEndpoint(
 	'ee.putAiControlsUsageTenantByTenantId',
 	openApiInput58,
@@ -1369,34 +1601,34 @@ const openApiEndpoint58 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput59 = z.object({}).strict();
-const openApiOutput59 = z.array(
-	z.union([
-		z.object({
-			enabled: z.boolean(),
-			id: z.number().int().min(1),
-			name: z.string().min(1),
-			slug: z.string().min(1),
-			updated_at: z.json(),
-			version: z.number().int().min(1),
-			created_at: z.json(),
-			bundle_hash: z.union([z.string(), z.null()]),
-			allowed_hosts: z.array(z.string()),
-			outdated: z.boolean(),
-			resource_collection_id: z.number().int().min(1),
-			description: z.union([z.string(), z.null()]),
-			bundle_path: z.string().min(1),
-		}),
-		z
-			.object({
-				enabled: z.boolean(),
-				id: z.number().int().min(1),
-				name: z.string().min(1),
-				outdated: z.boolean(),
-				slug: z.string().min(1),
-			})
-			.strict(),
-	]),
+const openApiInput59 = lazySchema(() => z.object({}).strict());
+const openApiOutput59 = lazySchema(() =>
+	z.array(
+		z.union([
+			OpenApiSchemas.looseJsonObject({
+				enabled: z.boolean().nullish(),
+				id: z.number().int().nullish(),
+				name: z.string().nullish(),
+				slug: z.string().nullish(),
+				updated_at: z.json().nullish(),
+				version: z.number().int().nullish(),
+				created_at: z.json().nullish(),
+				bundle_hash: z.union([z.string(), z.null()]).nullish(),
+				allowed_hosts: z.array(z.string()).nullish(),
+				outdated: z.boolean().nullish(),
+				resource_collection_id: z.number().int().nullish(),
+				description: z.union([z.string(), z.null()]).nullish(),
+				bundle_path: z.string().nullish(),
+			}),
+			OpenApiSchemas.looseJsonObject({
+				enabled: z.boolean().nullish(),
+				id: z.number().int().nullish(),
+				name: z.string().nullish(),
+				outdated: z.boolean().nullish(),
+				slug: z.string().nullish(),
+			}),
+		]),
+	),
 );
 const openApiEndpoint59 = createMetabaseEndpoint(
 	'ee.getApps',
@@ -1405,30 +1637,39 @@ const openApiEndpoint59 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/apps' }),
 );
 
-const openApiInput60 = z
-	.object({
-		body: z
-			.object({
-				actions: z.record(
-					z.string(),
-					z
-						.object({
-							entityId: z.string().regex(new RegExp('^[A-Za-z0-9_\\-]{21}$')),
-							kind: OpenApiSchemas.MetabaseOpenApiInputSchema214,
-							table: z
-								.object({ id: OpenApiSchemas.MetabaseOpenApiInputSchema437 })
-								.strict(),
-						})
-						.strict(),
-				),
-				collection: z.string().regex(new RegExp('^[A-Za-z0-9_\\-]{21}$')),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput60 = z.array(
-	z.object({ contents: z.string(), path: z.string().min(1) }).strict(),
+const openApiInput60 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					actions: z.record(
+						z.string(),
+						z
+							.object({
+								entityId: z.string().regex(new RegExp('^[A-Za-z0-9_\\-]{21}$')),
+								kind: OpenApiSchemas.MetabaseOpenApiInputSchema214(),
+								table: z
+									.object({
+										id: OpenApiSchemas.MetabaseOpenApiInputSchema437(),
+									})
+									.strict(),
+							})
+							.strict(),
+					),
+					collection: z.string().regex(new RegExp('^[A-Za-z0-9_\\-]{21}$')),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput60 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			contents: z.string().nullish(),
+			path: z.string().nullish(),
+		}),
+	),
 );
 const openApiEndpoint60 = createMetabaseEndpoint(
 	'ee.postAppsGenerateActions',
@@ -1441,27 +1682,34 @@ const openApiEndpoint60 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput61 = z
-	.object({
-		body: z
-			.object({
-				collection: z.string().regex(new RegExp('^[A-Za-z0-9_\\-]{21}$')),
-				queries: z.record(
-					z.string(),
-					z
-						.object({
-							entityId: z.string().regex(new RegExp('^[A-Za-z0-9_\\-]{21}$')),
-							query: OpenApiSchemas.MetabaseOpenApiInputSchema283,
-						})
-						.strict(),
-				),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput61 = z.array(
-	z.object({ contents: z.string(), path: z.string().min(1) }).strict(),
+const openApiInput61 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					collection: z.string().regex(new RegExp('^[A-Za-z0-9_\\-]{21}$')),
+					queries: z.record(
+						z.string(),
+						z
+							.object({
+								entityId: z.string().regex(new RegExp('^[A-Za-z0-9_\\-]{21}$')),
+								query: OpenApiSchemas.MetabaseOpenApiInputSchema283(),
+							})
+							.strict(),
+					),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput61 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			contents: z.string().nullish(),
+			path: z.string().nullish(),
+		}),
+	),
 );
 const openApiEndpoint61 = createMetabaseEndpoint(
 	'ee.postAppsGenerateQueries',
@@ -1474,9 +1722,14 @@ const openApiEndpoint61 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput62 = z.object({}).strict();
-const openApiOutput62 = z.array(
-	z.object({ contents: z.string(), path: z.string().min(1) }).strict(),
+const openApiInput62 = lazySchema(() => z.object({}).strict());
+const openApiOutput62 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			contents: z.string().nullish(),
+			path: z.string().nullish(),
+		}),
+	),
 );
 const openApiEndpoint62 = createMetabaseEndpoint(
 	'ee.getAppsGenerateSchema',
@@ -1485,11 +1738,13 @@ const openApiEndpoint62 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/apps/generate/schema' }),
 );
 
-const openApiInput63 = z.object({}).strict();
-const openApiOutput63 = z.object({
-	configured: z.boolean(),
-	url: z.union([z.string(), z.null()]),
-});
+const openApiInput63 = lazySchema(() => z.object({}).strict());
+const openApiOutput63 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		configured: z.boolean().nullish(),
+		url: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint63 = createMetabaseEndpoint(
 	'ee.getAppsRepoStatus',
 	openApiInput63,
@@ -1497,8 +1752,8 @@ const openApiEndpoint63 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/apps/repo-status' }),
 );
 
-const openApiInput64 = z.object({}).strict();
-const openApiOutput64 = MetabaseBinaryResponseSchema;
+const openApiInput64 = lazySchema(() => z.object({}).strict());
+const openApiOutput64 = lazySchema(() => MetabaseBinaryResponseSchema);
 const openApiEndpoint64 = createMetabaseEndpoint(
 	'ee.getAppsSandboxHost',
 	openApiInput64,
@@ -1510,27 +1765,31 @@ const openApiEndpoint64 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput65 = z
-	.object({
-		path: z.object({ slug: z.string().min(1) }).strict(),
-		body: z.object({ enabled: z.boolean() }).strict().optional(),
-	})
-	.strict();
-const openApiOutput65 = z.object({
-	enabled: z.boolean(),
-	id: z.number().int().min(1),
-	name: z.string().min(1),
-	slug: z.string().min(1),
-	updated_at: z.json(),
-	version: z.number().int().min(1),
-	created_at: z.json(),
-	bundle_hash: z.union([z.string(), z.null()]),
-	allowed_hosts: z.array(z.string()),
-	outdated: z.boolean(),
-	resource_collection_id: z.number().int().min(1),
-	description: z.union([z.string(), z.null()]),
-	bundle_path: z.string().min(1),
-});
+const openApiInput65 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ slug: z.string().min(1) }).strict(),
+			body: z.object({ enabled: z.boolean() }).strict().optional(),
+		})
+		.strict(),
+);
+const openApiOutput65 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		enabled: z.boolean().nullish(),
+		id: z.number().int().nullish(),
+		name: z.string().nullish(),
+		slug: z.string().nullish(),
+		updated_at: z.json().nullish(),
+		version: z.number().int().nullish(),
+		created_at: z.json().nullish(),
+		bundle_hash: z.union([z.string(), z.null()]).nullish(),
+		allowed_hosts: z.array(z.string()).nullish(),
+		outdated: z.boolean().nullish(),
+		resource_collection_id: z.number().int().nullish(),
+		description: z.union([z.string(), z.null()]).nullish(),
+		bundle_path: z.string().nullish(),
+	}),
+);
 const openApiEndpoint65 = createMetabaseEndpoint(
 	'ee.putAppsBySlug',
 	openApiInput65,
@@ -1542,35 +1801,35 @@ const openApiEndpoint65 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput66 = z
-	.object({ path: z.object({ slug: z.string().min(1) }).strict() })
-	.strict();
-const openApiOutput66 = z.union([
-	z.object({
-		enabled: z.boolean(),
-		id: z.number().int().min(1),
-		name: z.string().min(1),
-		slug: z.string().min(1),
-		updated_at: z.json(),
-		version: z.number().int().min(1),
-		created_at: z.json(),
-		bundle_hash: z.union([z.string(), z.null()]),
-		allowed_hosts: z.array(z.string()),
-		outdated: z.boolean(),
-		resource_collection_id: z.number().int().min(1),
-		description: z.union([z.string(), z.null()]),
-		bundle_path: z.string().min(1),
-	}),
-	z
-		.object({
-			enabled: z.boolean(),
-			id: z.number().int().min(1),
-			name: z.string().min(1),
-			outdated: z.boolean(),
-			slug: z.string().min(1),
-		})
-		.strict(),
-]);
+const openApiInput66 = lazySchema(() =>
+	z.object({ path: z.object({ slug: z.string().min(1) }).strict() }).strict(),
+);
+const openApiOutput66 = lazySchema(() =>
+	z.union([
+		OpenApiSchemas.looseJsonObject({
+			enabled: z.boolean().nullish(),
+			id: z.number().int().nullish(),
+			name: z.string().nullish(),
+			slug: z.string().nullish(),
+			updated_at: z.json().nullish(),
+			version: z.number().int().nullish(),
+			created_at: z.json().nullish(),
+			bundle_hash: z.union([z.string(), z.null()]).nullish(),
+			allowed_hosts: z.array(z.string()).nullish(),
+			outdated: z.boolean().nullish(),
+			resource_collection_id: z.number().int().nullish(),
+			description: z.union([z.string(), z.null()]).nullish(),
+			bundle_path: z.string().nullish(),
+		}),
+		OpenApiSchemas.looseJsonObject({
+			enabled: z.boolean().nullish(),
+			id: z.number().int().nullish(),
+			name: z.string().nullish(),
+			outdated: z.boolean().nullish(),
+			slug: z.string().nullish(),
+		}),
+	]),
+);
 const openApiEndpoint66 = createMetabaseEndpoint(
 	'ee.getAppsBySlug',
 	openApiInput66,
@@ -1581,10 +1840,10 @@ const openApiEndpoint66 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput67 = z
-	.object({ path: z.object({ slug: z.string().min(1) }).strict() })
-	.strict();
-const openApiOutput67 = MetabaseBinaryResponseSchema;
+const openApiInput67 = lazySchema(() =>
+	z.object({ path: z.object({ slug: z.string().min(1) }).strict() }).strict(),
+);
+const openApiOutput67 = lazySchema(() => MetabaseBinaryResponseSchema);
 const openApiEndpoint67 = createMetabaseEndpoint(
 	'ee.getAppsBySlugBundle',
 	openApiInput67,
@@ -1596,22 +1855,26 @@ const openApiEndpoint67 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput68 = z
-	.object({ path: z.object({ slug: z.string().min(1) }).strict() })
-	.strict();
-const openApiOutput68 = z.array(
-	z.object({
-		group_id: z.number().int().min(1),
-		missing_tables: z.array(
-			z.object({
-				database_id: z.number().int().min(1),
-				database_name: z.string(),
-				id: z.number().int().min(1),
-				name: z.string(),
-				schema: z.union([z.string(), z.null()]),
-			}),
-		),
-	}),
+const openApiInput68 = lazySchema(() =>
+	z.object({ path: z.object({ slug: z.string().min(1) }).strict() }).strict(),
+);
+const openApiOutput68 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			group_id: z.number().int().nullish(),
+			missing_tables: z
+				.array(
+					OpenApiSchemas.looseJsonObject({
+						database_id: z.number().int().nullish(),
+						database_name: z.string().nullish(),
+						id: z.number().int().nullish(),
+						name: z.string().nullish(),
+						schema: z.union([z.string(), z.null()]).nullish(),
+					}),
+				)
+				.nullish(),
+		}),
+	),
 );
 const openApiEndpoint68 = createMetabaseEndpoint(
 	'ee.getAppsBySlugGroupPermissionWarnings',
@@ -1626,15 +1889,17 @@ const openApiEndpoint68 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput69 = z
-	.object({ path: z.object({ slug: z.string().min(1) }).strict() })
-	.strict();
-const openApiOutput69 = z.array(
-	z.object({
-		id: z.number().int().min(1),
-		member_count: z.number().int().min(0),
-		name: z.string(),
-	}),
+const openApiInput69 = lazySchema(() =>
+	z.object({ path: z.object({ slug: z.string().min(1) }).strict() }).strict(),
+);
+const openApiOutput69 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			id: z.number().int().nullish(),
+			member_count: z.number().int().nullish(),
+			name: z.string().nullish(),
+		}),
+	),
 );
 const openApiEndpoint69 = createMetabaseEndpoint(
 	'ee.getAppsBySlugGroups',
@@ -1646,21 +1911,25 @@ const openApiEndpoint69 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput70 = z
-	.object({
-		path: z.object({ slug: z.string().min(1) }).strict(),
-		body: z
-			.object({ group_ids: z.array(z.number().int().min(1)).min(1).max(100) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput70 = z.array(
-	z.object({
-		id: z.number().int().min(1),
-		member_count: z.number().int().min(0),
-		name: z.string(),
-	}),
+const openApiInput70 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ slug: z.string().min(1) }).strict(),
+			body: z
+				.object({ group_ids: z.array(z.number().int().min(1)).min(1).max(100) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput70 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			id: z.number().int().nullish(),
+			member_count: z.number().int().nullish(),
+			name: z.string().nullish(),
+		}),
+	),
 );
 const openApiEndpoint70 = createMetabaseEndpoint(
 	'ee.postAppsBySlugGroups',
@@ -1673,14 +1942,19 @@ const openApiEndpoint70 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput71 = z
-	.object({
-		path: z
-			.object({ slug: z.string().min(1), 'group-id': z.number().int().min(1) })
-			.strict(),
-	})
-	.strict();
-const openApiOutput71 = z.null();
+const openApiInput71 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					slug: z.string().min(1),
+					'group-id': z.number().int().min(1),
+				})
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput71 = lazySchema(() => z.null());
 const openApiEndpoint71 = createMetabaseEndpoint(
 	'ee.deleteAppsBySlugGroupsByGroupId',
 	openApiInput71,
@@ -1694,8 +1968,8 @@ const openApiEndpoint71 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput72 = z.object({}).strict();
-const openApiOutput72 = MetabaseBinaryResponseSchema;
+const openApiInput72 = lazySchema(() => z.object({}).strict());
+const openApiOutput72 = lazySchema(() => MetabaseBinaryResponseSchema);
 const openApiEndpoint72 = createMetabaseEndpoint(
 	'ee.postAuditAppAnalyticsDevExport',
 	openApiInput72,
@@ -1708,28 +1982,35 @@ const openApiEndpoint72 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput73 = z
-	.object({
-		path: z
-			.object({
-				'product-type': z.union([
-					z.literal('metabase-ai'),
-					z.literal('metabase-ai-tiered'),
-					z.literal('metabase-ai-managed'),
-					z.literal('python-execution'),
-					z.literal('transforms'),
-					z.literal('transforms-basic'),
-					z.literal('transforms-advanced'),
-					z.literal('transforms-basic-metered'),
-					z.literal('transforms-advanced-metered'),
-					z.literal('dwh-rent'),
-					z.literal('etl-connections'),
-				]),
-			})
-			.strict(),
-	})
-	.strict();
-const openApiOutput73 = z.object({ body: z.json(), status: z.number().int() });
+const openApiInput73 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					'product-type': z.union([
+						z.literal('metabase-ai'),
+						z.literal('metabase-ai-tiered'),
+						z.literal('metabase-ai-managed'),
+						z.literal('python-execution'),
+						z.literal('transforms'),
+						z.literal('transforms-basic'),
+						z.literal('transforms-advanced'),
+						z.literal('transforms-basic-metered'),
+						z.literal('transforms-advanced-metered'),
+						z.literal('dwh-rent'),
+						z.literal('etl-connections'),
+					]),
+				})
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput73 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		body: z.json().nullish(),
+		status: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint73 = createMetabaseEndpoint(
 	'ee.deleteCloudAddOnsByProductType',
 	openApiInput73,
@@ -1740,38 +2021,28 @@ const openApiEndpoint73 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput74 = z
-	.object({
-		query: z
-			.object({
-				'include-personal-collections': z.boolean().optional(),
-				'sort-column': z
-					.union([
-						z.literal('detected-at'),
-						z.literal('entity-type'),
-						z.literal('name'),
-						z.literal('created-at'),
-						z.literal('created-by'),
-						z.literal('collection-name'),
-						z.literal('duplicate-count'),
-					])
-					.optional(),
-				'sort-direction': z
-					.union([z.literal('desc'), z.literal('asc')])
-					.optional(),
-				'entity-types': z
-					.union([
-						z.union([
-							z.literal('transform'),
-							z.literal('question'),
-							z.literal('dashboard'),
-							z.literal('card'),
-							z.literal('document'),
-							z.literal('collection'),
-							z.literal('metric'),
-							z.literal('model'),
-						]),
-						z.array(
+const openApiInput74 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					'include-personal-collections': z.boolean().optional(),
+					'sort-column': z
+						.union([
+							z.literal('detected-at'),
+							z.literal('entity-type'),
+							z.literal('name'),
+							z.literal('created-at'),
+							z.literal('created-by'),
+							z.literal('collection-name'),
+							z.literal('duplicate-count'),
+						])
+						.optional(),
+					'sort-direction': z
+						.union([z.literal('desc'), z.literal('asc')])
+						.optional(),
+					'entity-types': z
+						.union([
 							z.union([
 								z.literal('transform'),
 								z.literal('question'),
@@ -1782,92 +2053,118 @@ const openApiInput74 = z
 								z.literal('metric'),
 								z.literal('model'),
 							]),
-						),
-					])
-					.optional(),
-				'min-duplicate-count': z.number().int().min(1).optional(),
-				query: z.string().optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput74 = z.object({
-	data: z.array(
-		z.object({
-			entity_display_name: z.union([z.string(), z.null()]),
-			collection_name: z.union([z.string(), z.null()]),
-			detected_at: z.string().datetime({ offset: true }),
-			entity_id: z.number().int(),
-			id: z.number().int(),
-			duplicate_count: z.number().int(),
-			finding_type: z.string(),
-			card_type: z.union([z.string(), z.null()]).optional(),
-			can_write: z.boolean(),
-			details: z.object({
-				collection: z.union([
-					z
-						.object({
-							effective_ancestors: z.array(
-								z
-									.object({
-										id: z.union([z.number().int(), z.literal('root')]),
-										name: z.union([z.string(), z.string()]),
-									})
-									.strict(),
+							z.array(
+								z.union([
+									z.literal('transform'),
+									z.literal('question'),
+									z.literal('dashboard'),
+									z.literal('card'),
+									z.literal('document'),
+									z.literal('collection'),
+									z.literal('metric'),
+									z.literal('model'),
+								]),
 							),
-							id: z.union([z.number().int(), z.literal('root')]),
-							name: z.union([z.string(), z.string()]),
-							namespace: z.union([z.string(), z.null()]),
-						})
-						.strict(),
-					z.null(),
-				]),
-				creator: z.union([
-					z
-						.object({
-							id: z.number().int(),
-							name: z.union([z.string(), z.null()]),
-							type: z.literal('user'),
-						})
-						.strict(),
-					z.null(),
-				]),
-				description: z.union([z.string(), z.null()]),
-				duplicate_entities: z.array(
-					z.object({
-						card_type: z.union([z.string(), z.null()]).optional(),
-						display: z.union([z.string(), z.null()]).optional(),
-						entity_type: z.string(),
-						id: z.number().int(),
-						name: z.union([z.string(), z.null()]),
-						namespace: z.union([z.string(), z.null()]).optional(),
-						view_count: z.number().int().optional(),
-					}),
-				),
-				normalized_name: z.string(),
-				owner: z.union([
-					z.object({
-						email: z.union([z.string(), z.null()]).optional(),
-						id: z.union([z.number().int(), z.null()]).optional(),
-						name: z.union([z.string(), z.null()]).optional(),
-						type: z.string(),
-					}),
-					z.null(),
-				]),
-				view_count: z.number().int().optional(),
-			}),
-			created_at: z.union([z.string().datetime({ offset: true }), z.null()]),
-			display: z.union([z.string(), z.null()]).optional(),
-			entity_type: z.string(),
-			entity_kind: z.string(),
-		}),
-	),
-	last_scan_at: z.union([z.string().datetime({ offset: true }), z.null()]),
-	limit: z.union([z.number().int(), z.null()]),
-	offset: z.union([z.number().int(), z.null()]),
-	total: z.number().int(),
-});
+						])
+						.optional(),
+					'min-duplicate-count': z.number().int().min(1).optional(),
+					query: z.string().optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput74 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					entity_display_name: z.union([z.string(), z.null()]).nullish(),
+					collection_name: z.union([z.string(), z.null()]).nullish(),
+					detected_at: z.string().datetime({ offset: true }).nullish(),
+					entity_id: z.number().int().nullish(),
+					id: z.number().int().nullish(),
+					duplicate_count: z.number().int().nullish(),
+					finding_type: z.string().nullish(),
+					card_type: z.union([z.string(), z.null()]).nullish(),
+					can_write: z.boolean().nullish(),
+					details: OpenApiSchemas.looseJsonObject({
+						collection: z
+							.union([
+								OpenApiSchemas.looseJsonObject({
+									effective_ancestors: z
+										.array(
+											OpenApiSchemas.looseJsonObject({
+												id: z
+													.union([z.number().int(), z.literal('root')])
+													.nullish(),
+												name: z.union([z.string(), z.string()]).nullish(),
+											}),
+										)
+										.nullish(),
+									id: z.union([z.number().int(), z.literal('root')]).nullish(),
+									name: z.union([z.string(), z.string()]).nullish(),
+									namespace: z.union([z.string(), z.null()]).nullish(),
+								}),
+								z.null(),
+							])
+							.nullish(),
+						creator: z
+							.union([
+								OpenApiSchemas.looseJsonObject({
+									id: z.number().int().nullish(),
+									name: z.union([z.string(), z.null()]).nullish(),
+									type: z.literal('user').nullish(),
+								}),
+								z.null(),
+							])
+							.nullish(),
+						description: z.union([z.string(), z.null()]).nullish(),
+						duplicate_entities: z
+							.array(
+								OpenApiSchemas.looseJsonObject({
+									card_type: z.union([z.string(), z.null()]).nullish(),
+									display: z.union([z.string(), z.null()]).nullish(),
+									entity_type: z.string().nullish(),
+									id: z.number().int().nullish(),
+									name: z.union([z.string(), z.null()]).nullish(),
+									namespace: z.union([z.string(), z.null()]).nullish(),
+									view_count: z.number().int().nullish(),
+								}),
+							)
+							.nullish(),
+						normalized_name: z.string().nullish(),
+						owner: z
+							.union([
+								OpenApiSchemas.looseJsonObject({
+									email: z.union([z.string(), z.null()]).nullish(),
+									id: z.union([z.number().int(), z.null()]).nullish(),
+									name: z.union([z.string(), z.null()]).nullish(),
+									type: z.string().nullish(),
+								}),
+								z.null(),
+							])
+							.nullish(),
+						view_count: z.number().int().nullish(),
+					}).nullish(),
+					created_at: z
+						.union([z.string().datetime({ offset: true }), z.null()])
+						.nullish(),
+					display: z.union([z.string(), z.null()]).nullish(),
+					entity_type: z.string().nullish(),
+					entity_kind: z.string().nullish(),
+				}),
+			)
+			.nullish(),
+		last_scan_at: z
+			.union([z.string().datetime({ offset: true }), z.null()])
+			.nullish(),
+		limit: z.union([z.number().int(), z.null()]).nullish(),
+		offset: z.union([z.number().int(), z.null()]).nullish(),
+		total: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint74 = createMetabaseEndpoint(
 	'ee.getContentDiagnosticsDuplicated',
 	openApiInput74,
@@ -1879,39 +2176,29 @@ const openApiEndpoint74 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput75 = z
-	.object({
-		query: z
-			.object({
-				'include-personal-collections': z.boolean().optional(),
-				'sort-column': z
-					.union([
-						z.literal('detected-at'),
-						z.literal('entity-type'),
-						z.literal('name'),
-						z.literal('created-at'),
-						z.literal('created-by'),
-						z.literal('collection-name'),
-						z.literal('content-count'),
-						z.literal('finding-type'),
-					])
-					.optional(),
-				'sort-direction': z
-					.union([z.literal('desc'), z.literal('asc')])
-					.optional(),
-				'entity-types': z
-					.union([
-						z.union([
-							z.literal('transform'),
-							z.literal('question'),
-							z.literal('dashboard'),
-							z.literal('card'),
-							z.literal('document'),
-							z.literal('collection'),
-							z.literal('metric'),
-							z.literal('model'),
-						]),
-						z.array(
+const openApiInput75 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					'include-personal-collections': z.boolean().optional(),
+					'sort-column': z
+						.union([
+							z.literal('detected-at'),
+							z.literal('entity-type'),
+							z.literal('name'),
+							z.literal('created-at'),
+							z.literal('created-by'),
+							z.literal('collection-name'),
+							z.literal('content-count'),
+							z.literal('finding-type'),
+						])
+						.optional(),
+					'sort-direction': z
+						.union([z.literal('desc'), z.literal('asc')])
+						.optional(),
+					'entity-types': z
+						.union([
 							z.union([
 								z.literal('transform'),
 								z.literal('question'),
@@ -1922,98 +2209,122 @@ const openApiInput75 = z
 								z.literal('metric'),
 								z.literal('model'),
 							]),
-						),
-					])
-					.optional(),
-				'finding-types': z
-					.union([
-						z.union([
-							z.literal('crowded'),
-							z.literal('empty'),
-							z.literal('sparse'),
-						]),
-						z.array(
+							z.array(
+								z.union([
+									z.literal('transform'),
+									z.literal('question'),
+									z.literal('dashboard'),
+									z.literal('card'),
+									z.literal('document'),
+									z.literal('collection'),
+									z.literal('metric'),
+									z.literal('model'),
+								]),
+							),
+						])
+						.optional(),
+					'finding-types': z
+						.union([
 							z.union([
 								z.literal('crowded'),
 								z.literal('empty'),
 								z.literal('sparse'),
 							]),
-						),
-					])
-					.optional(),
-				query: z.string().optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput75 = z.object({
-	data: z.array(
-		z.object({
-			entity_display_name: z.union([z.string(), z.null()]),
-			collection_name: z.union([z.string(), z.null()]),
-			detected_at: z.string().datetime({ offset: true }),
-			entity_id: z.number().int(),
-			id: z.number().int(),
-			finding_type: z.string(),
-			card_type: z.union([z.string(), z.null()]).optional(),
-			can_write: z.boolean(),
-			details: z.object({
-				as_of: z.string().optional(),
-				collection: z.union([
-					z
-						.object({
-							effective_ancestors: z.array(
-								z
-									.object({
-										id: z.union([z.number().int(), z.literal('root')]),
-										name: z.union([z.string(), z.string()]),
-									})
-									.strict(),
+							z.array(
+								z.union([
+									z.literal('crowded'),
+									z.literal('empty'),
+									z.literal('sparse'),
+								]),
 							),
-							id: z.union([z.number().int(), z.literal('root')]),
-							name: z.union([z.string(), z.string()]),
-							namespace: z.union([z.string(), z.null()]),
-						})
-						.strict(),
-					z.null(),
-				]),
-				creator: z.union([
-					z
-						.object({
-							id: z.number().int(),
-							name: z.union([z.string(), z.null()]),
-							type: z.literal('user'),
-						})
-						.strict(),
-					z.null(),
-				]),
-				description: z.union([z.string(), z.null()]),
-				owner: z.union([
-					z.object({
-						email: z.union([z.string(), z.null()]).optional(),
-						id: z.union([z.number().int(), z.null()]).optional(),
-						name: z.union([z.string(), z.null()]).optional(),
-						type: z.string(),
-					}),
-					z.null(),
-				]),
-				threshold: z.number().int(),
-				unit: z.string(),
-				view_count: z.number().int().optional(),
-			}),
-			created_at: z.union([z.string().datetime({ offset: true }), z.null()]),
-			display: z.union([z.string(), z.null()]).optional(),
-			entity_type: z.string(),
-			entity_kind: z.string(),
-			content_count: z.number().int(),
-		}),
-	),
-	last_scan_at: z.union([z.string().datetime({ offset: true }), z.null()]),
-	limit: z.union([z.number().int(), z.null()]),
-	offset: z.union([z.number().int(), z.null()]),
-	total: z.number().int(),
-});
+						])
+						.optional(),
+					query: z.string().optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput75 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					entity_display_name: z.union([z.string(), z.null()]).nullish(),
+					collection_name: z.union([z.string(), z.null()]).nullish(),
+					detected_at: z.string().datetime({ offset: true }).nullish(),
+					entity_id: z.number().int().nullish(),
+					id: z.number().int().nullish(),
+					finding_type: z.string().nullish(),
+					card_type: z.union([z.string(), z.null()]).nullish(),
+					can_write: z.boolean().nullish(),
+					details: OpenApiSchemas.looseJsonObject({
+						as_of: z.string().nullish(),
+						collection: z
+							.union([
+								OpenApiSchemas.looseJsonObject({
+									effective_ancestors: z
+										.array(
+											OpenApiSchemas.looseJsonObject({
+												id: z
+													.union([z.number().int(), z.literal('root')])
+													.nullish(),
+												name: z.union([z.string(), z.string()]).nullish(),
+											}),
+										)
+										.nullish(),
+									id: z.union([z.number().int(), z.literal('root')]).nullish(),
+									name: z.union([z.string(), z.string()]).nullish(),
+									namespace: z.union([z.string(), z.null()]).nullish(),
+								}),
+								z.null(),
+							])
+							.nullish(),
+						creator: z
+							.union([
+								OpenApiSchemas.looseJsonObject({
+									id: z.number().int().nullish(),
+									name: z.union([z.string(), z.null()]).nullish(),
+									type: z.literal('user').nullish(),
+								}),
+								z.null(),
+							])
+							.nullish(),
+						description: z.union([z.string(), z.null()]).nullish(),
+						owner: z
+							.union([
+								OpenApiSchemas.looseJsonObject({
+									email: z.union([z.string(), z.null()]).nullish(),
+									id: z.union([z.number().int(), z.null()]).nullish(),
+									name: z.union([z.string(), z.null()]).nullish(),
+									type: z.string().nullish(),
+								}),
+								z.null(),
+							])
+							.nullish(),
+						threshold: z.number().int().nullish(),
+						unit: z.string().nullish(),
+						view_count: z.number().int().nullish(),
+					}).nullish(),
+					created_at: z
+						.union([z.string().datetime({ offset: true }), z.null()])
+						.nullish(),
+					display: z.union([z.string(), z.null()]).nullish(),
+					entity_type: z.string().nullish(),
+					entity_kind: z.string().nullish(),
+					content_count: z.number().int().nullish(),
+				}),
+			)
+			.nullish(),
+		last_scan_at: z
+			.union([z.string().datetime({ offset: true }), z.null()])
+			.nullish(),
+		limit: z.union([z.number().int(), z.null()]).nullish(),
+		offset: z.union([z.number().int(), z.null()]).nullish(),
+		total: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint75 = createMetabaseEndpoint(
 	'ee.getContentDiagnosticsImbalanced',
 	openApiInput75,
@@ -2025,20 +2336,22 @@ const openApiEndpoint75 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput76 = z
-	.object({
-		body: z
-			.object({ ids: z.array(z.number().int().min(1)).min(1).max(500) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput76 = z
-	.object({
-		invalidated: z.array(z.number().int()),
-		skipped: z.array(z.number().int()),
-	})
-	.strict();
+const openApiInput76 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({ ids: z.array(z.number().int().min(1)).min(1).max(500) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput76 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		invalidated: z.array(z.number().int()).nullish(),
+		skipped: z.array(z.number().int()).nullish(),
+	}),
+);
 const openApiEndpoint76 = createMetabaseEndpoint(
 	'ee.postContentDiagnosticsInvalidate',
 	openApiInput76,
@@ -2050,37 +2363,28 @@ const openApiEndpoint76 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput77 = z
-	.object({
-		query: z
-			.object({
-				'include-personal-collections': z.boolean().optional(),
-				'sort-column': z
-					.union([
-						z.literal('detected-at'),
-						z.literal('entity-type'),
-						z.literal('name'),
-						z.literal('created-at'),
-						z.literal('created-by'),
-						z.literal('collection-name'),
-						z.literal('duration-ms'),
-					])
-					.optional(),
-				'sort-direction': z
-					.union([z.literal('desc'), z.literal('asc')])
-					.optional(),
-				'entity-types': z
-					.union([
-						z.union([
-							z.literal('transform'),
-							z.literal('question'),
-							z.literal('dashboard'),
-							z.literal('card'),
-							z.literal('document'),
-							z.literal('metric'),
-							z.literal('model'),
-						]),
-						z.array(
+const openApiInput77 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					'include-personal-collections': z.boolean().optional(),
+					'sort-column': z
+						.union([
+							z.literal('detected-at'),
+							z.literal('entity-type'),
+							z.literal('name'),
+							z.literal('created-at'),
+							z.literal('created-by'),
+							z.literal('collection-name'),
+							z.literal('duration-ms'),
+						])
+						.optional(),
+					'sort-direction': z
+						.union([z.literal('desc'), z.literal('asc')])
+						.optional(),
+					'entity-types': z
+						.union([
 							z.union([
 								z.literal('transform'),
 								z.literal('question'),
@@ -2090,92 +2394,115 @@ const openApiInput77 = z
 								z.literal('metric'),
 								z.literal('model'),
 							]),
-						),
-					])
-					.optional(),
-				'min-duration-ms': z.number().int().min(1).optional(),
-				query: z.string().optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput77 = z.object({
-	data: z.array(
-		z.object({
-			entity_display_name: z.union([z.string(), z.null()]),
-			collection_name: z.union([z.string(), z.null()]),
-			detected_at: z.string().datetime({ offset: true }),
-			entity_id: z.number().int(),
-			id: z.number().int(),
-			finding_type: z.string(),
-			card_type: z.union([z.string(), z.null()]).optional(),
-			can_write: z.boolean(),
-			duration_ms: z.number().int(),
-			details: z.object({
-				collection: z.union([
-					z
-						.object({
-							effective_ancestors: z.array(
-								z
-									.object({
-										id: z.union([z.number().int(), z.literal('root')]),
-										name: z.union([z.string(), z.string()]),
-									})
-									.strict(),
+							z.array(
+								z.union([
+									z.literal('transform'),
+									z.literal('question'),
+									z.literal('dashboard'),
+									z.literal('card'),
+									z.literal('document'),
+									z.literal('metric'),
+									z.literal('model'),
+								]),
 							),
-							id: z.union([z.number().int(), z.literal('root')]),
-							name: z.union([z.string(), z.string()]),
-							namespace: z.union([z.string(), z.null()]),
-						})
-						.strict(),
-					z.null(),
-				]),
-				creator: z.union([
-					z
-						.object({
-							id: z.number().int(),
-							name: z.union([z.string(), z.null()]),
-							type: z.literal('user'),
-						})
-						.strict(),
-					z.null(),
-				]),
-				description: z.union([z.string(), z.null()]),
-				owner: z.union([
-					z.object({
-						email: z.union([z.string(), z.null()]).optional(),
-						id: z.union([z.number().int(), z.null()]).optional(),
-						name: z.union([z.string(), z.null()]).optional(),
-						type: z.string(),
-					}),
-					z.null(),
-				]),
-				slow_entities: z
-					.array(
-						z.object({
-							card_type: z.union([z.string(), z.null()]).optional(),
-							entity_type: z.string(),
-							id: z.number().int(),
-							name: z.union([z.string(), z.null()]),
-							view_count: z.number().int(),
-						}),
-					)
-					.optional(),
-				threshold_ms: z.number().int().optional(),
-				view_count: z.number().int().optional(),
-			}),
-			created_at: z.union([z.string().datetime({ offset: true }), z.null()]),
-			display: z.union([z.string(), z.null()]).optional(),
-			entity_type: z.string(),
-			entity_kind: z.string(),
-		}),
-	),
-	last_scan_at: z.union([z.string().datetime({ offset: true }), z.null()]),
-	limit: z.union([z.number().int(), z.null()]),
-	offset: z.union([z.number().int(), z.null()]),
-	total: z.number().int(),
-});
+						])
+						.optional(),
+					'min-duration-ms': z.number().int().min(1).optional(),
+					query: z.string().optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput77 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					entity_display_name: z.union([z.string(), z.null()]).nullish(),
+					collection_name: z.union([z.string(), z.null()]).nullish(),
+					detected_at: z.string().datetime({ offset: true }).nullish(),
+					entity_id: z.number().int().nullish(),
+					id: z.number().int().nullish(),
+					finding_type: z.string().nullish(),
+					card_type: z.union([z.string(), z.null()]).nullish(),
+					can_write: z.boolean().nullish(),
+					duration_ms: z.number().int().nullish(),
+					details: OpenApiSchemas.looseJsonObject({
+						collection: z
+							.union([
+								OpenApiSchemas.looseJsonObject({
+									effective_ancestors: z
+										.array(
+											OpenApiSchemas.looseJsonObject({
+												id: z
+													.union([z.number().int(), z.literal('root')])
+													.nullish(),
+												name: z.union([z.string(), z.string()]).nullish(),
+											}),
+										)
+										.nullish(),
+									id: z.union([z.number().int(), z.literal('root')]).nullish(),
+									name: z.union([z.string(), z.string()]).nullish(),
+									namespace: z.union([z.string(), z.null()]).nullish(),
+								}),
+								z.null(),
+							])
+							.nullish(),
+						creator: z
+							.union([
+								OpenApiSchemas.looseJsonObject({
+									id: z.number().int().nullish(),
+									name: z.union([z.string(), z.null()]).nullish(),
+									type: z.literal('user').nullish(),
+								}),
+								z.null(),
+							])
+							.nullish(),
+						description: z.union([z.string(), z.null()]).nullish(),
+						owner: z
+							.union([
+								OpenApiSchemas.looseJsonObject({
+									email: z.union([z.string(), z.null()]).nullish(),
+									id: z.union([z.number().int(), z.null()]).nullish(),
+									name: z.union([z.string(), z.null()]).nullish(),
+									type: z.string().nullish(),
+								}),
+								z.null(),
+							])
+							.nullish(),
+						slow_entities: z
+							.array(
+								OpenApiSchemas.looseJsonObject({
+									card_type: z.union([z.string(), z.null()]).nullish(),
+									entity_type: z.string().nullish(),
+									id: z.number().int().nullish(),
+									name: z.union([z.string(), z.null()]).nullish(),
+									view_count: z.number().int().nullish(),
+								}),
+							)
+							.nullish(),
+						threshold_ms: z.number().int().nullish(),
+						view_count: z.number().int().nullish(),
+					}).nullish(),
+					created_at: z
+						.union([z.string().datetime({ offset: true }), z.null()])
+						.nullish(),
+					display: z.union([z.string(), z.null()]).nullish(),
+					entity_type: z.string().nullish(),
+					entity_kind: z.string().nullish(),
+				}),
+			)
+			.nullish(),
+		last_scan_at: z
+			.union([z.string().datetime({ offset: true }), z.null()])
+			.nullish(),
+		limit: z.union([z.number().int(), z.null()]).nullish(),
+		offset: z.union([z.number().int(), z.null()]).nullish(),
+		total: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint77 = createMetabaseEndpoint(
 	'ee.getContentDiagnosticsSlow',
 	openApiInput77,
@@ -2187,37 +2514,28 @@ const openApiEndpoint77 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput78 = z
-	.object({
-		query: z
-			.object({
-				'include-personal-collections': z.boolean().optional(),
-				'sort-column': z
-					.union([
-						z.literal('detected-at'),
-						z.literal('entity-type'),
-						z.literal('name'),
-						z.literal('created-at'),
-						z.literal('created-by'),
-						z.literal('collection-name'),
-						z.literal('last-active-at'),
-					])
-					.optional(),
-				'sort-direction': z
-					.union([z.literal('desc'), z.literal('asc')])
-					.optional(),
-				'entity-types': z
-					.union([
-						z.union([
-							z.literal('transform'),
-							z.literal('question'),
-							z.literal('dashboard'),
-							z.literal('card'),
-							z.literal('document'),
-							z.literal('metric'),
-							z.literal('model'),
-						]),
-						z.array(
+const openApiInput78 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					'include-personal-collections': z.boolean().optional(),
+					'sort-column': z
+						.union([
+							z.literal('detected-at'),
+							z.literal('entity-type'),
+							z.literal('name'),
+							z.literal('created-at'),
+							z.literal('created-by'),
+							z.literal('collection-name'),
+							z.literal('last-active-at'),
+						])
+						.optional(),
+					'sort-direction': z
+						.union([z.literal('desc'), z.literal('asc')])
+						.optional(),
+					'entity-types': z
+						.union([
 							z.union([
 								z.literal('transform'),
 								z.literal('question'),
@@ -2227,84 +2545,106 @@ const openApiInput78 = z
 								z.literal('metric'),
 								z.literal('model'),
 							]),
-						),
-					])
-					.optional(),
-				'threshold-days': z.number().int().min(1).optional(),
-				query: z.string().optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput78 = z.object({
-	data: z.array(
-		z.object({
-			entity_display_name: z.union([z.string(), z.null()]),
-			collection_name: z.union([z.string(), z.null()]),
-			detected_at: z.string().datetime({ offset: true }),
-			entity_id: z.number().int(),
-			last_active_at: z.union([
-				z.string().datetime({ offset: true }),
-				z.null(),
-			]),
-			id: z.number().int(),
-			finding_type: z.string(),
-			card_type: z.union([z.string(), z.null()]).optional(),
-			can_write: z.boolean(),
-			details: z.object({
-				collection: z.union([
-					z
-						.object({
-							effective_ancestors: z.array(
-								z
-									.object({
-										id: z.union([z.number().int(), z.literal('root')]),
-										name: z.union([z.string(), z.string()]),
-									})
-									.strict(),
+							z.array(
+								z.union([
+									z.literal('transform'),
+									z.literal('question'),
+									z.literal('dashboard'),
+									z.literal('card'),
+									z.literal('document'),
+									z.literal('metric'),
+									z.literal('model'),
+								]),
 							),
-							id: z.union([z.number().int(), z.literal('root')]),
-							name: z.union([z.string(), z.string()]),
-							namespace: z.union([z.string(), z.null()]),
-						})
-						.strict(),
-					z.null(),
-				]),
-				creator: z.union([
-					z
-						.object({
-							id: z.number().int(),
-							name: z.union([z.string(), z.null()]),
-							type: z.literal('user'),
-						})
-						.strict(),
-					z.null(),
-				]),
-				description: z.union([z.string(), z.null()]),
-				owner: z.union([
-					z.object({
-						email: z.union([z.string(), z.null()]).optional(),
-						id: z.union([z.number().int(), z.null()]).optional(),
-						name: z.union([z.string(), z.null()]).optional(),
-						type: z.string(),
-					}),
-					z.null(),
-				]),
-				threshold_days: z.number().int().optional(),
-				view_count: z.number().int().optional(),
-			}),
-			created_at: z.union([z.string().datetime({ offset: true }), z.null()]),
-			display: z.union([z.string(), z.null()]).optional(),
-			entity_type: z.string(),
-			entity_kind: z.string(),
-		}),
-	),
-	last_scan_at: z.union([z.string().datetime({ offset: true }), z.null()]),
-	limit: z.union([z.number().int(), z.null()]),
-	offset: z.union([z.number().int(), z.null()]),
-	total: z.number().int(),
-});
+						])
+						.optional(),
+					'threshold-days': z.number().int().min(1).optional(),
+					query: z.string().optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput78 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					entity_display_name: z.union([z.string(), z.null()]).nullish(),
+					collection_name: z.union([z.string(), z.null()]).nullish(),
+					detected_at: z.string().datetime({ offset: true }).nullish(),
+					entity_id: z.number().int().nullish(),
+					last_active_at: z
+						.union([z.string().datetime({ offset: true }), z.null()])
+						.nullish(),
+					id: z.number().int().nullish(),
+					finding_type: z.string().nullish(),
+					card_type: z.union([z.string(), z.null()]).nullish(),
+					can_write: z.boolean().nullish(),
+					details: OpenApiSchemas.looseJsonObject({
+						collection: z
+							.union([
+								OpenApiSchemas.looseJsonObject({
+									effective_ancestors: z
+										.array(
+											OpenApiSchemas.looseJsonObject({
+												id: z
+													.union([z.number().int(), z.literal('root')])
+													.nullish(),
+												name: z.union([z.string(), z.string()]).nullish(),
+											}),
+										)
+										.nullish(),
+									id: z.union([z.number().int(), z.literal('root')]).nullish(),
+									name: z.union([z.string(), z.string()]).nullish(),
+									namespace: z.union([z.string(), z.null()]).nullish(),
+								}),
+								z.null(),
+							])
+							.nullish(),
+						creator: z
+							.union([
+								OpenApiSchemas.looseJsonObject({
+									id: z.number().int().nullish(),
+									name: z.union([z.string(), z.null()]).nullish(),
+									type: z.literal('user').nullish(),
+								}),
+								z.null(),
+							])
+							.nullish(),
+						description: z.union([z.string(), z.null()]).nullish(),
+						owner: z
+							.union([
+								OpenApiSchemas.looseJsonObject({
+									email: z.union([z.string(), z.null()]).nullish(),
+									id: z.union([z.number().int(), z.null()]).nullish(),
+									name: z.union([z.string(), z.null()]).nullish(),
+									type: z.string().nullish(),
+								}),
+								z.null(),
+							])
+							.nullish(),
+						threshold_days: z.number().int().nullish(),
+						view_count: z.number().int().nullish(),
+					}).nullish(),
+					created_at: z
+						.union([z.string().datetime({ offset: true }), z.null()])
+						.nullish(),
+					display: z.union([z.string(), z.null()]).nullish(),
+					entity_type: z.string().nullish(),
+					entity_kind: z.string().nullish(),
+				}),
+			)
+			.nullish(),
+		last_scan_at: z
+			.union([z.string().datetime({ offset: true }), z.null()])
+			.nullish(),
+		limit: z.union([z.number().int(), z.null()]).nullish(),
+		offset: z.union([z.number().int(), z.null()]).nullish(),
+		total: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint78 = createMetabaseEndpoint(
 	'ee.getContentDiagnosticsStale',
 	openApiInput78,
@@ -2316,18 +2656,22 @@ const openApiEndpoint78 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput79 = z
-	.object({ query: z.object({ locale: z.string() }).strict() })
-	.strict();
-const openApiOutput79 = z.object({
-	data: z.array(
-		z.object({
-			locale: z.string().min(1),
-			msgid: z.string().min(1),
-			msgstr: z.string(),
-		}),
-	),
-});
+const openApiInput79 = lazySchema(() =>
+	z.object({ query: z.object({ locale: z.string() }).strict() }).strict(),
+);
+const openApiOutput79 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					locale: z.string().nullish(),
+					msgid: z.string().nullish(),
+					msgstr: z.string().nullish(),
+				}),
+			)
+			.nullish(),
+	}),
+);
 const openApiEndpoint79 = createMetabaseEndpoint(
 	'ee.getContentTranslationDictionary',
 	openApiInput79,
@@ -2339,39 +2683,45 @@ const openApiEndpoint79 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput80 = z
-	.object({
-		body: z
-			.object({
-				file: z
-					.object({
-						filename: z.string(),
-						size: z.number().int().min(0),
-						tempfile: z.instanceof(Blob),
-					})
-					.strict(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput80 = z.object({
-	enabled: z.boolean(),
-	id: z.number().int().min(1),
-	updated_at: z.json(),
-	status: z.union([z.literal('active'), z.literal('error')]),
-	error_message: z.union([z.string(), z.null()]).optional(),
-	identifier: z.string().min(1),
-	display_name: z.string().min(1),
-	dev_only: z.boolean(),
-	created_at: z.json(),
-	bundle_hash: z.union([z.string(), z.null()]).optional(),
-	manifest: z.json().optional(),
-	warnings: z.array(z.object({ type: z.string() })),
-	dev_bundle_url: z.union([z.string(), z.null()]).optional(),
-	metabase_version: z.union([z.string(), z.null()]).optional(),
-	icon: z.union([z.string(), z.null()]).optional(),
-});
+const openApiInput80 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					file: z
+						.object({
+							filename: z.string(),
+							size: z.number().int().min(0),
+							tempfile: z.instanceof(Blob),
+						})
+						.strict(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput80 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		enabled: z.boolean().nullish(),
+		id: z.number().int().nullish(),
+		updated_at: z.json().nullish(),
+		status: z.union([z.literal('active'), z.literal('error')]).nullish(),
+		error_message: z.union([z.string(), z.null()]).nullish(),
+		identifier: z.string().nullish(),
+		display_name: z.string().nullish(),
+		dev_only: z.boolean().nullish(),
+		created_at: z.json().nullish(),
+		bundle_hash: z.union([z.string(), z.null()]).nullish(),
+		manifest: z.json().nullish(),
+		warnings: z
+			.array(OpenApiSchemas.looseJsonObject({ type: z.string().nullish() }))
+			.nullish(),
+		dev_bundle_url: z.union([z.string(), z.null()]).nullish(),
+		metabase_version: z.union([z.string(), z.null()]).nullish(),
+		icon: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint80 = createMetabaseEndpoint(
 	'ee.postCustomVizPlugin',
 	openApiInput80,
@@ -2386,25 +2736,29 @@ const openApiEndpoint80 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput81 = z.object({}).strict();
-const openApiOutput81 = z.array(
-	z.object({
-		enabled: z.boolean(),
-		id: z.number().int().min(1),
-		updated_at: z.json(),
-		status: z.union([z.literal('active'), z.literal('error')]),
-		error_message: z.union([z.string(), z.null()]).optional(),
-		identifier: z.string().min(1),
-		display_name: z.string().min(1),
-		dev_only: z.boolean(),
-		created_at: z.json(),
-		bundle_hash: z.union([z.string(), z.null()]).optional(),
-		manifest: z.json().optional(),
-		warnings: z.array(z.object({ type: z.string() })),
-		dev_bundle_url: z.union([z.string(), z.null()]).optional(),
-		metabase_version: z.union([z.string(), z.null()]).optional(),
-		icon: z.union([z.string(), z.null()]).optional(),
-	}),
+const openApiInput81 = lazySchema(() => z.object({}).strict());
+const openApiOutput81 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			enabled: z.boolean().nullish(),
+			id: z.number().int().nullish(),
+			updated_at: z.json().nullish(),
+			status: z.union([z.literal('active'), z.literal('error')]).nullish(),
+			error_message: z.union([z.string(), z.null()]).nullish(),
+			identifier: z.string().nullish(),
+			display_name: z.string().nullish(),
+			dev_only: z.boolean().nullish(),
+			created_at: z.json().nullish(),
+			bundle_hash: z.union([z.string(), z.null()]).nullish(),
+			manifest: z.json().nullish(),
+			warnings: z
+				.array(OpenApiSchemas.looseJsonObject({ type: z.string().nullish() }))
+				.nullish(),
+			dev_bundle_url: z.union([z.string(), z.null()]).nullish(),
+			metabase_version: z.union([z.string(), z.null()]).nullish(),
+			icon: z.union([z.string(), z.null()]).nullish(),
+		}),
+	),
 );
 const openApiEndpoint81 = createMetabaseEndpoint(
 	'ee.getCustomVizPlugin',
@@ -2413,34 +2767,40 @@ const openApiEndpoint81 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/custom-viz-plugin' }),
 );
 
-const openApiInput82 = z
-	.object({
-		body: z
-			.object({
-				dev_bundle_url: z.string().min(1),
-				identifier: z.union([z.string().min(1), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput82 = z.object({
-	enabled: z.boolean(),
-	id: z.number().int().min(1),
-	updated_at: z.json(),
-	status: z.union([z.literal('active'), z.literal('error')]),
-	error_message: z.union([z.string(), z.null()]).optional(),
-	identifier: z.string().min(1),
-	display_name: z.string().min(1),
-	dev_only: z.boolean(),
-	created_at: z.json(),
-	bundle_hash: z.union([z.string(), z.null()]).optional(),
-	manifest: z.json().optional(),
-	warnings: z.array(z.object({ type: z.string() })),
-	dev_bundle_url: z.union([z.string(), z.null()]).optional(),
-	metabase_version: z.union([z.string(), z.null()]).optional(),
-	icon: z.union([z.string(), z.null()]).optional(),
-});
+const openApiInput82 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					dev_bundle_url: z.string().min(1),
+					identifier: z.union([z.string().min(1), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput82 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		enabled: z.boolean().nullish(),
+		id: z.number().int().nullish(),
+		updated_at: z.json().nullish(),
+		status: z.union([z.literal('active'), z.literal('error')]).nullish(),
+		error_message: z.union([z.string(), z.null()]).nullish(),
+		identifier: z.string().nullish(),
+		display_name: z.string().nullish(),
+		dev_only: z.boolean().nullish(),
+		created_at: z.json().nullish(),
+		bundle_hash: z.union([z.string(), z.null()]).nullish(),
+		manifest: z.json().nullish(),
+		warnings: z
+			.array(OpenApiSchemas.looseJsonObject({ type: z.string().nullish() }))
+			.nullish(),
+		dev_bundle_url: z.union([z.string(), z.null()]).nullish(),
+		metabase_version: z.union([z.string(), z.null()]).nullish(),
+		icon: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint82 = createMetabaseEndpoint(
 	'ee.postCustomVizPluginDev',
 	openApiInput82,
@@ -2452,19 +2812,23 @@ const openApiEndpoint82 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput83 = z.object({}).strict();
-const openApiOutput83 = z.array(
-	z.object({
-		bundle_url: z.string().min(1),
-		id: z.number().int().min(1),
-		identifier: z.string().min(1),
-		display_name: z.string().min(1),
-		bundle_hash: z.union([z.string(), z.null()]).optional(),
-		manifest: z.json().optional(),
-		warnings: z.array(z.object({ type: z.string() })),
-		dev_bundle_url: z.union([z.string(), z.null()]).optional(),
-		icon: z.union([z.string(), z.null()]).optional(),
-	}),
+const openApiInput83 = lazySchema(() => z.object({}).strict());
+const openApiOutput83 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			bundle_url: z.string().nullish(),
+			id: z.number().int().nullish(),
+			identifier: z.string().nullish(),
+			display_name: z.string().nullish(),
+			bundle_hash: z.union([z.string(), z.null()]).nullish(),
+			manifest: z.json().nullish(),
+			warnings: z
+				.array(OpenApiSchemas.looseJsonObject({ type: z.string().nullish() }))
+				.nullish(),
+			dev_bundle_url: z.union([z.string(), z.null()]).nullish(),
+			icon: z.union([z.string(), z.null()]).nullish(),
+		}),
+	),
 );
 const openApiEndpoint83 = createMetabaseEndpoint(
 	'ee.getCustomVizPluginList',
@@ -2473,8 +2837,8 @@ const openApiEndpoint83 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/custom-viz-plugin/list' }),
 );
 
-const openApiInput84 = z.object({}).strict();
-const openApiOutput84 = MetabaseBinaryResponseSchema;
+const openApiInput84 = lazySchema(() => z.object({}).strict());
+const openApiOutput84 = lazySchema(() => MetabaseBinaryResponseSchema);
 const openApiEndpoint84 = createMetabaseEndpoint(
 	'ee.getCustomVizPluginSandboxHost',
 	openApiInput84,
@@ -2486,10 +2850,12 @@ const openApiEndpoint84 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput85 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput85 = z.null();
+const openApiInput85 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput85 = lazySchema(() => z.null());
 const openApiEndpoint85 = createMetabaseEndpoint(
 	'ee.deleteCustomVizPluginById',
 	openApiInput85,
@@ -2500,32 +2866,38 @@ const openApiEndpoint85 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput86 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({ enabled: z.union([z.boolean(), z.null()]).optional() })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput86 = z.object({
-	enabled: z.boolean(),
-	id: z.number().int().min(1),
-	updated_at: z.json(),
-	status: z.union([z.literal('active'), z.literal('error')]),
-	error_message: z.union([z.string(), z.null()]).optional(),
-	identifier: z.string().min(1),
-	display_name: z.string().min(1),
-	dev_only: z.boolean(),
-	created_at: z.json(),
-	bundle_hash: z.union([z.string(), z.null()]).optional(),
-	manifest: z.json().optional(),
-	warnings: z.array(z.object({ type: z.string() })),
-	dev_bundle_url: z.union([z.string(), z.null()]).optional(),
-	metabase_version: z.union([z.string(), z.null()]).optional(),
-	icon: z.union([z.string(), z.null()]).optional(),
-});
+const openApiInput86 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({ enabled: z.union([z.boolean(), z.null()]).optional() })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput86 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		enabled: z.boolean().nullish(),
+		id: z.number().int().nullish(),
+		updated_at: z.json().nullish(),
+		status: z.union([z.literal('active'), z.literal('error')]).nullish(),
+		error_message: z.union([z.string(), z.null()]).nullish(),
+		identifier: z.string().nullish(),
+		display_name: z.string().nullish(),
+		dev_only: z.boolean().nullish(),
+		created_at: z.json().nullish(),
+		bundle_hash: z.union([z.string(), z.null()]).nullish(),
+		manifest: z.json().nullish(),
+		warnings: z
+			.array(OpenApiSchemas.looseJsonObject({ type: z.string().nullish() }))
+			.nullish(),
+		dev_bundle_url: z.union([z.string(), z.null()]).nullish(),
+		metabase_version: z.union([z.string(), z.null()]).nullish(),
+		icon: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint86 = createMetabaseEndpoint(
 	'ee.putCustomVizPluginById',
 	openApiInput86,
@@ -2537,13 +2909,15 @@ const openApiEndpoint86 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput87 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		query: z.object({ path: z.string().min(1) }).strict(),
-	})
-	.strict();
-const openApiOutput87 = MetabaseBinaryResponseSchema;
+const openApiInput87 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			query: z.object({ path: z.string().min(1) }).strict(),
+		})
+		.strict(),
+);
+const openApiOutput87 = lazySchema(() => MetabaseBinaryResponseSchema);
 const openApiEndpoint87 = createMetabaseEndpoint(
 	'ee.getCustomVizPluginByIdAsset',
 	openApiInput87,
@@ -2556,40 +2930,46 @@ const openApiEndpoint87 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput88 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({
-				file: z
-					.object({
-						filename: z.string(),
-						size: z.number().int().min(0),
-						tempfile: z.instanceof(Blob),
-					})
-					.strict(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput88 = z.object({
-	enabled: z.boolean(),
-	id: z.number().int().min(1),
-	updated_at: z.json(),
-	status: z.union([z.literal('active'), z.literal('error')]),
-	error_message: z.union([z.string(), z.null()]).optional(),
-	identifier: z.string().min(1),
-	display_name: z.string().min(1),
-	dev_only: z.boolean(),
-	created_at: z.json(),
-	bundle_hash: z.union([z.string(), z.null()]).optional(),
-	manifest: z.json().optional(),
-	warnings: z.array(z.object({ type: z.string() })),
-	dev_bundle_url: z.union([z.string(), z.null()]).optional(),
-	metabase_version: z.union([z.string(), z.null()]).optional(),
-	icon: z.union([z.string(), z.null()]).optional(),
-});
+const openApiInput88 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({
+					file: z
+						.object({
+							filename: z.string(),
+							size: z.number().int().min(0),
+							tempfile: z.instanceof(Blob),
+						})
+						.strict(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput88 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		enabled: z.boolean().nullish(),
+		id: z.number().int().nullish(),
+		updated_at: z.json().nullish(),
+		status: z.union([z.literal('active'), z.literal('error')]).nullish(),
+		error_message: z.union([z.string(), z.null()]).nullish(),
+		identifier: z.string().nullish(),
+		display_name: z.string().nullish(),
+		dev_only: z.boolean().nullish(),
+		created_at: z.json().nullish(),
+		bundle_hash: z.union([z.string(), z.null()]).nullish(),
+		manifest: z.json().nullish(),
+		warnings: z
+			.array(OpenApiSchemas.looseJsonObject({ type: z.string().nullish() }))
+			.nullish(),
+		dev_bundle_url: z.union([z.string(), z.null()]).nullish(),
+		metabase_version: z.union([z.string(), z.null()]).nullish(),
+		icon: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint88 = createMetabaseEndpoint(
 	'ee.putCustomVizPluginByIdBundle',
 	openApiInput88,
@@ -2607,10 +2987,12 @@ const openApiEndpoint88 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput89 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput89 = MetabaseBinaryResponseSchema;
+const openApiInput89 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput89 = lazySchema(() => MetabaseBinaryResponseSchema);
 const openApiEndpoint89 = createMetabaseEndpoint(
 	'ee.getCustomVizPluginByIdBundle',
 	openApiInput89,
@@ -2625,18 +3007,22 @@ const openApiEndpoint89 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput90 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({ dev_bundle_url: z.union([z.string(), z.null()]) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput90 = z
-	.object({ dev_bundle_url: z.union([z.string(), z.null()]) })
-	.strict();
+const openApiInput90 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({ dev_bundle_url: z.union([z.string(), z.null()]) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput90 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		dev_bundle_url: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint90 = createMetabaseEndpoint(
 	'ee.putCustomVizPluginByIdDevUrl',
 	openApiInput90,
@@ -2651,26 +3037,32 @@ const openApiEndpoint90 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput91 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput91 = z.object({
-	enabled: z.boolean(),
-	id: z.number().int().min(1),
-	updated_at: z.json(),
-	status: z.union([z.literal('active'), z.literal('error')]),
-	error_message: z.union([z.string(), z.null()]).optional(),
-	identifier: z.string().min(1),
-	display_name: z.string().min(1),
-	dev_only: z.boolean(),
-	created_at: z.json(),
-	bundle_hash: z.union([z.string(), z.null()]).optional(),
-	manifest: z.json().optional(),
-	warnings: z.array(z.object({ type: z.string() })),
-	dev_bundle_url: z.union([z.string(), z.null()]).optional(),
-	metabase_version: z.union([z.string(), z.null()]).optional(),
-	icon: z.union([z.string(), z.null()]).optional(),
-});
+const openApiInput91 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput91 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		enabled: z.boolean().nullish(),
+		id: z.number().int().nullish(),
+		updated_at: z.json().nullish(),
+		status: z.union([z.literal('active'), z.literal('error')]).nullish(),
+		error_message: z.union([z.string(), z.null()]).nullish(),
+		identifier: z.string().nullish(),
+		display_name: z.string().nullish(),
+		dev_only: z.boolean().nullish(),
+		created_at: z.json().nullish(),
+		bundle_hash: z.union([z.string(), z.null()]).nullish(),
+		manifest: z.json().nullish(),
+		warnings: z
+			.array(OpenApiSchemas.looseJsonObject({ type: z.string().nullish() }))
+			.nullish(),
+		dev_bundle_url: z.union([z.string(), z.null()]).nullish(),
+		metabase_version: z.union([z.string(), z.null()]).nullish(),
+		icon: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint91 = createMetabaseEndpoint(
 	'ee.postCustomVizPluginByIdRefresh',
 	openApiInput91,
@@ -2684,34 +3076,41 @@ const openApiEndpoint91 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput92 = z
-	.object({
-		query: z
-			.object({ 'force-recalculation': z.boolean().optional() })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput92 = z.object({
-	library: OpenApiSchemas.MetabaseOpenApiOutputSchema110,
-	meta: z.object({
-		calculated_at: z
-			.json()
-			.refine((value) => !z.null().safeParse(value).success)
-			.optional(),
-		embedding_model: z
-			.union([
-				z.object({ model_name: z.string(), provider: z.string() }),
-				z.null(),
-			])
-			.optional(),
-		format_version: z.number().int().min(1),
-		formula_version: z.number().int().min(1),
-		synonym_threshold: z.number(),
+const openApiInput92 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({ 'force-recalculation': z.boolean().optional() })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput92 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		library: OpenApiSchemas.MetabaseOpenApiOutputSchema110().nullish(),
+		meta: OpenApiSchemas.looseJsonObject({
+			calculated_at: z
+				.json()
+				.refine((value) => !z.null().safeParse(value).success)
+				.nullish(),
+			embedding_model: z
+				.union([
+					OpenApiSchemas.looseJsonObject({
+						model_name: z.string().nullish(),
+						provider: z.string().nullish(),
+					}),
+					z.null(),
+				])
+				.nullish(),
+			format_version: z.number().int().nullish(),
+			formula_version: z.number().int().nullish(),
+			synonym_threshold: z.number().nullish(),
+		}).nullish(),
+		metabot: OpenApiSchemas.MetabaseOpenApiOutputSchema110().nullish(),
+		universe: OpenApiSchemas.MetabaseOpenApiOutputSchema110().nullish(),
 	}),
-	metabot: OpenApiSchemas.MetabaseOpenApiOutputSchema110,
-	universe: OpenApiSchemas.MetabaseOpenApiOutputSchema110,
-});
+);
 const openApiEndpoint92 = createMetabaseEndpoint(
 	'ee.getDataComplexityScoreComplexity',
 	openApiInput92,
@@ -2723,10 +3122,14 @@ const openApiEndpoint92 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput93 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema111.optional() })
-	.strict();
-const openApiOutput93 = OpenApiSchemas.MetabaseOpenApiOutputSchema112;
+const openApiInput93 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema111().optional() })
+		.strict(),
+);
+const openApiOutput93 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema112(),
+);
 const openApiEndpoint93 = createMetabaseEndpoint(
 	'ee.postDataStudioTablePublishTables',
 	openApiInput93,
@@ -2738,10 +3141,12 @@ const openApiEndpoint93 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput94 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema113.optional() })
-	.strict();
-const openApiOutput94 = z.null();
+const openApiInput94 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema113().optional() })
+		.strict(),
+);
+const openApiOutput94 = lazySchema(() => z.null());
 const openApiEndpoint94 = createMetabaseEndpoint(
 	'ee.postDataStudioTableUnpublishTables',
 	openApiInput94,
@@ -2753,23 +3158,28 @@ const openApiEndpoint94 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput95 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput95 = z.union([
+const openApiInput95 = lazySchema(() =>
 	z
-		.object({
-			published_at: z.string().datetime({ offset: true }),
-			published_by: z.union([
-				z
-					.object({ common_name: z.string(), id: z.number().int().min(1) })
-					.strict(),
-				z.null(),
-			]),
-		})
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
 		.strict(),
-	z.null(),
-]);
+);
+const openApiOutput95 = lazySchema(() =>
+	z.union([
+		OpenApiSchemas.looseJsonObject({
+			published_at: z.string().datetime({ offset: true }).nullish(),
+			published_by: z
+				.union([
+					OpenApiSchemas.looseJsonObject({
+						common_name: z.string().nullish(),
+						id: z.number().int().nullish(),
+					}),
+					z.null(),
+				])
+				.nullish(),
+		}),
+		z.null(),
+	]),
+);
 const openApiEndpoint95 = createMetabaseEndpoint(
 	'ee.getDataStudioTableByIdPublishingInfo',
 	openApiInput95,
@@ -2783,8 +3193,10 @@ const openApiEndpoint95 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput96 = z.object({}).strict();
-const openApiOutput96 = z.object({ complete: z.boolean() });
+const openApiInput96 = lazySchema(() => z.object({}).strict());
+const openApiOutput96 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({ complete: z.boolean().nullish() }),
+);
 const openApiEndpoint96 = createMetabaseEndpoint(
 	'ee.getDependenciesBackfillStatus',
 	openApiInput96,
@@ -2792,18 +3204,22 @@ const openApiEndpoint96 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/dependencies/backfill-status' }),
 );
 
-const openApiInput97 = z
-	.object({
-		query: z
-			.object({
-				id: z.number().int().min(1).optional(),
-				type: OpenApiSchemas.MetabaseOpenApiInputSchema131.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput97 = OpenApiSchemas.MetabaseOpenApiOutputSchema122;
+const openApiInput97 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					id: z.number().int().min(1).optional(),
+					type: OpenApiSchemas.MetabaseOpenApiInputSchema131().optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput97 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema122(),
+);
 const openApiEndpoint97 = createMetabaseEndpoint(
 	'ee.getDependenciesGraph',
 	openApiInput97,
@@ -2815,56 +3231,60 @@ const openApiEndpoint97 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput98 = z
-	.object({
-		query: z
-			.object({
-				types: z
-					.union([
-						OpenApiSchemas.MetabaseOpenApiInputSchema131,
-						z.array(OpenApiSchemas.MetabaseOpenApiInputSchema131),
-					])
-					.optional(),
-				'card-types': z
-					.union([
-						z.union([
-							z.literal('question'),
-							z.literal('metric'),
-							z.literal('model'),
-						]),
-						z.array(
+const openApiInput98 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					types: z
+						.union([
+							OpenApiSchemas.MetabaseOpenApiInputSchema131(),
+							z.array(OpenApiSchemas.MetabaseOpenApiInputSchema131()),
+						])
+						.optional(),
+					'card-types': z
+						.union([
 							z.union([
 								z.literal('question'),
 								z.literal('metric'),
 								z.literal('model'),
 							]),
-						),
-					])
-					.optional(),
-				query: z.string().optional(),
-				'include-personal-collections': z.boolean().optional(),
-				'sort-column': z
-					.union([
-						z.literal('dependents-with-errors'),
-						z.literal('dependents-errors'),
-						z.literal('name'),
-						z.literal('location'),
-					])
-					.optional(),
-				'sort-direction': z
-					.union([z.literal('desc'), z.literal('asc')])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput98 = z.object({
-	data: z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema121),
-	limit: z.number().int().min(1),
-	offset: z.number().int().min(0),
-	total: z.number().int().min(0),
-});
+							z.array(
+								z.union([
+									z.literal('question'),
+									z.literal('metric'),
+									z.literal('model'),
+								]),
+							),
+						])
+						.optional(),
+					query: z.string().optional(),
+					'include-personal-collections': z.boolean().optional(),
+					'sort-column': z
+						.union([
+							z.literal('dependents-with-errors'),
+							z.literal('dependents-errors'),
+							z.literal('name'),
+							z.literal('location'),
+						])
+						.optional(),
+					'sort-direction': z
+						.union([z.literal('desc'), z.literal('asc')])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput98 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema121()).nullish(),
+		limit: z.number().int().nullish(),
+		offset: z.number().int().nullish(),
+		total: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint98 = createMetabaseEndpoint(
 	'ee.getDependenciesGraphBreaking',
 	openApiInput98,
@@ -2876,50 +3296,54 @@ const openApiEndpoint98 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput99 = z
-	.object({
-		query: z
-			.object({
-				id: z.number().int().min(1),
-				type: OpenApiSchemas.MetabaseOpenApiInputSchema131,
-				'dependent-types': z
-					.union([
-						OpenApiSchemas.MetabaseOpenApiInputSchema131,
-						z.array(OpenApiSchemas.MetabaseOpenApiInputSchema131),
-					])
-					.optional(),
-				'dependent-card-types': z
-					.union([
-						z.union([
-							z.literal('question'),
-							z.literal('metric'),
-							z.literal('model'),
-						]),
-						z.array(
+const openApiInput99 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					id: z.number().int().min(1),
+					type: OpenApiSchemas.MetabaseOpenApiInputSchema131(),
+					'dependent-types': z
+						.union([
+							OpenApiSchemas.MetabaseOpenApiInputSchema131(),
+							z.array(OpenApiSchemas.MetabaseOpenApiInputSchema131()),
+						])
+						.optional(),
+					'dependent-card-types': z
+						.union([
 							z.union([
 								z.literal('question'),
 								z.literal('metric'),
 								z.literal('model'),
 							]),
-						),
-					])
-					.optional(),
-				'include-personal-collections': z.boolean().optional(),
-				'sort-column': z
-					.union([
-						z.literal('name'),
-						z.literal('view-count'),
-						z.literal('location'),
-					])
-					.optional(),
-				'sort-direction': z
-					.union([z.literal('desc'), z.literal('asc')])
-					.optional(),
-			})
-			.strict(),
-	})
-	.strict();
-const openApiOutput99 = z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema115);
+							z.array(
+								z.union([
+									z.literal('question'),
+									z.literal('metric'),
+									z.literal('model'),
+								]),
+							),
+						])
+						.optional(),
+					'include-personal-collections': z.boolean().optional(),
+					'sort-column': z
+						.union([
+							z.literal('name'),
+							z.literal('view-count'),
+							z.literal('location'),
+						])
+						.optional(),
+					'sort-direction': z
+						.union([z.literal('desc'), z.literal('asc')])
+						.optional(),
+				})
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput99 = lazySchema(() =>
+	z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema115()),
+);
 const openApiEndpoint99 = createMetabaseEndpoint(
 	'ee.getDependenciesGraphBroken',
 	openApiInput99,
@@ -2931,52 +3355,56 @@ const openApiEndpoint99 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput100 = z
-	.object({
-		query: z
-			.object({
-				query: z.string().optional(),
-				id: z.number().int().min(1),
-				'sort-direction': z
-					.union([z.literal('desc'), z.literal('asc')])
-					.optional(),
-				broken: z.boolean().optional(),
-				type: OpenApiSchemas.MetabaseOpenApiInputSchema131,
-				'include-personal-collections': z.boolean().optional(),
-				'dependent-types': z
-					.union([
-						OpenApiSchemas.MetabaseOpenApiInputSchema131,
-						z.array(OpenApiSchemas.MetabaseOpenApiInputSchema131),
-					])
-					.optional(),
-				'dependent-card-types': z
-					.union([
-						z.union([
-							z.literal('question'),
-							z.literal('metric'),
-							z.literal('model'),
-						]),
-						z.array(
+const openApiInput100 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					query: z.string().optional(),
+					id: z.number().int().min(1),
+					'sort-direction': z
+						.union([z.literal('desc'), z.literal('asc')])
+						.optional(),
+					broken: z.boolean().optional(),
+					type: OpenApiSchemas.MetabaseOpenApiInputSchema131(),
+					'include-personal-collections': z.boolean().optional(),
+					'dependent-types': z
+						.union([
+							OpenApiSchemas.MetabaseOpenApiInputSchema131(),
+							z.array(OpenApiSchemas.MetabaseOpenApiInputSchema131()),
+						])
+						.optional(),
+					'dependent-card-types': z
+						.union([
 							z.union([
 								z.literal('question'),
 								z.literal('metric'),
 								z.literal('model'),
 							]),
-						),
-					])
-					.optional(),
-				'sort-column': z
-					.union([
-						z.literal('name'),
-						z.literal('view-count'),
-						z.literal('location'),
-					])
-					.optional(),
-			})
-			.strict(),
-	})
-	.strict();
-const openApiOutput100 = z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema121);
+							z.array(
+								z.union([
+									z.literal('question'),
+									z.literal('metric'),
+									z.literal('model'),
+								]),
+							),
+						])
+						.optional(),
+					'sort-column': z
+						.union([
+							z.literal('name'),
+							z.literal('view-count'),
+							z.literal('location'),
+						])
+						.optional(),
+				})
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput100 = lazySchema(() =>
+	z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema121()),
+);
 const openApiEndpoint100 = createMetabaseEndpoint(
 	'ee.getDependenciesGraphDependents',
 	openApiInput100,
@@ -2988,56 +3416,60 @@ const openApiEndpoint100 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput101 = z
-	.object({
-		query: z
-			.object({
-				types: z
-					.union([
-						OpenApiSchemas.MetabaseOpenApiInputSchema131,
-						z.array(OpenApiSchemas.MetabaseOpenApiInputSchema131),
-					])
-					.optional(),
-				'card-types': z
-					.union([
-						z.union([
-							z.literal('question'),
-							z.literal('metric'),
-							z.literal('model'),
-						]),
-						z.array(
+const openApiInput101 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					types: z
+						.union([
+							OpenApiSchemas.MetabaseOpenApiInputSchema131(),
+							z.array(OpenApiSchemas.MetabaseOpenApiInputSchema131()),
+						])
+						.optional(),
+					'card-types': z
+						.union([
 							z.union([
 								z.literal('question'),
 								z.literal('metric'),
 								z.literal('model'),
 							]),
-						),
-					])
-					.optional(),
-				query: z.string().optional(),
-				'include-personal-collections': z.boolean().optional(),
-				'sort-column': z
-					.union([
-						z.literal('dependents-with-errors'),
-						z.literal('dependents-errors'),
-						z.literal('name'),
-						z.literal('location'),
-					])
-					.optional(),
-				'sort-direction': z
-					.union([z.literal('desc'), z.literal('asc')])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput101 = z.object({
-	data: z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema121),
-	limit: z.number().int().min(1),
-	offset: z.number().int().min(0),
-	total: z.number().int().min(0),
-});
+							z.array(
+								z.union([
+									z.literal('question'),
+									z.literal('metric'),
+									z.literal('model'),
+								]),
+							),
+						])
+						.optional(),
+					query: z.string().optional(),
+					'include-personal-collections': z.boolean().optional(),
+					'sort-column': z
+						.union([
+							z.literal('dependents-with-errors'),
+							z.literal('dependents-errors'),
+							z.literal('name'),
+							z.literal('location'),
+						])
+						.optional(),
+					'sort-direction': z
+						.union([z.literal('desc'), z.literal('asc')])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput101 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema121()).nullish(),
+		limit: z.number().int().nullish(),
+		offset: z.number().int().nullish(),
+		total: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint101 = createMetabaseEndpoint(
 	'ee.getDependenciesGraphUnreferenced',
 	openApiInput101,
@@ -3049,8 +3481,10 @@ const openApiEndpoint101 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput102 = z.object({}).strict();
-const openApiOutput102 = OpenApiSchemas.MetabaseOpenApiOutputSchema138;
+const openApiInput102 = lazySchema(() => z.object({}).strict());
+const openApiOutput102 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema138(),
+);
 const openApiEndpoint102 = createMetabaseEndpoint(
 	'ee.getErd',
 	openApiInput102,
@@ -3058,15 +3492,19 @@ const openApiEndpoint102 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/erd' }),
 );
 
-const openApiInput103 = z
-	.object({
-		body: z
-			.object({ url: z.string().min(1) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput103 = OpenApiSchemas.MetabaseOpenApiOutputSchema0;
+const openApiInput103 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({ url: z.string().min(1) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput103 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema0(),
+);
 const openApiEndpoint103 = createMetabaseEndpoint(
 	'ee.postGsheetsConnection',
 	openApiInput103,
@@ -3078,8 +3516,10 @@ const openApiEndpoint103 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput104 = z.object({}).strict();
-const openApiOutput104 = OpenApiSchemas.MetabaseOpenApiOutputSchema0;
+const openApiInput104 = lazySchema(() => z.object({}).strict());
+const openApiOutput104 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema0(),
+);
 const openApiEndpoint104 = createMetabaseEndpoint(
 	'ee.getGsheetsConnection',
 	openApiInput104,
@@ -3087,8 +3527,12 @@ const openApiEndpoint104 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/gsheets/connection' }),
 );
 
-const openApiInput105 = z.object({}).strict();
-const openApiOutput105 = z.object({ email: z.union([z.string(), z.null()]) });
+const openApiInput105 = lazySchema(() => z.object({}).strict());
+const openApiOutput105 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		email: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint105 = createMetabaseEndpoint(
 	'ee.getGsheetsServiceAccount',
 	openApiInput105,
@@ -3096,11 +3540,13 @@ const openApiEndpoint105 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/gsheets/service-account' }),
 );
 
-const openApiInput106 = z.object({}).strict();
-const openApiOutput106 = z.union([
-	OpenApiSchemas.MetabaseOpenApiOutputSchema278,
-	z.object({ data: z.null() }),
-]);
+const openApiInput106 = lazySchema(() => z.object({}).strict());
+const openApiOutput106 = lazySchema(() =>
+	z.union([
+		OpenApiSchemas.MetabaseOpenApiOutputSchema278(),
+		OpenApiSchemas.looseJsonObject({ data: z.null().nullish() }),
+	]),
+);
 const openApiEndpoint106 = createMetabaseEndpoint(
 	'ee.getLibrary',
 	openApiInput106,
@@ -3108,91 +3554,101 @@ const openApiEndpoint106 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/library' }),
 );
 
-const openApiInput107 = z
-	.object({
-		query: z
-			.object({
-				sort_by: z
-					.union([
-						z.union([
-							z.literal('created_at'),
-							z.literal('title'),
-							z.literal('message_count'),
-							z.literal('total_tokens'),
-							z.literal('cache_read_tokens'),
-							z.literal('user'),
-							z.literal('profile_id'),
-							z.literal('ip_address'),
-						]),
-						z.null(),
-					])
-					.optional(),
-				sort_dir: z
-					.union([z.union([z.literal('asc'), z.literal('desc')]), z.null()])
-					.optional(),
-				user_id: z.union([z.number().int().min(1), z.null()]).optional(),
-				group_id: z.union([z.number().int().min(1), z.null()]).optional(),
-				tenant_id: z.union([z.number().int().min(1), z.null()]).optional(),
-				date: z.union([z.string(), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput107 = z.object({
-	data: z.array(
-		z.object({
-			sanitized_user_agent: z.union([z.string(), z.null()]),
-			embedding_path: z.union([z.string(), z.null()]),
-			cache_read_tokens: z.number().int().min(0),
-			user: z.union([
-				z.object({
-					email: z.string(),
-					first_name: z.union([z.string(), z.null()]),
-					id: z.number().int().min(1),
-					last_name: z.union([z.string(), z.null()]),
+const openApiInput107 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					sort_by: z
+						.union([
+							z.union([
+								z.literal('created_at'),
+								z.literal('title'),
+								z.literal('message_count'),
+								z.literal('total_tokens'),
+								z.literal('cache_read_tokens'),
+								z.literal('user'),
+								z.literal('profile_id'),
+								z.literal('ip_address'),
+							]),
+							z.null(),
+						])
+						.optional(),
+					sort_dir: z
+						.union([z.union([z.literal('asc'), z.literal('desc')]), z.null()])
+						.optional(),
+					user_id: z.union([z.number().int().min(1), z.null()]).optional(),
+					group_id: z.union([z.number().int().min(1), z.null()]).optional(),
+					tenant_id: z.union([z.number().int().min(1), z.null()]).optional(),
+					date: z.union([z.string(), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput107 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					sanitized_user_agent: z.union([z.string(), z.null()]).nullish(),
+					embedding_path: z.union([z.string(), z.null()]).nullish(),
+					cache_read_tokens: z.number().int().nullish(),
+					user: z
+						.union([
+							OpenApiSchemas.looseJsonObject({
+								email: z.string().nullish(),
+								first_name: z.union([z.string(), z.null()]).nullish(),
+								id: z.number().int().nullish(),
+								last_name: z.union([z.string(), z.null()]).nullish(),
+							}),
+							z.null(),
+						])
+						.nullish(),
+					embedding_hostname: z.union([z.string(), z.null()]).nullish(),
+					message_count: z.number().int().nullish(),
+					user_message_count: z.number().int().nullish(),
+					profile_id: z.union([z.string(), z.null()]).nullish(),
+					title: z.union([z.string(), z.null()]).nullish(),
+					conversation_id: z
+						.string()
+						.regex(
+							new RegExp(
+								'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+							),
+						)
+						.nullish(),
+					last_message_at: z
+						.union([z.string().datetime({ offset: true }), z.null()])
+						.nullish(),
+					created_at: z.string().datetime({ offset: true }).nullish(),
+					ip_address: z.union([z.string(), z.null()]).nullish(),
+					search_count: z.number().int().nullish(),
+					assistant_message_count: z.number().int().nullish(),
+					total_tokens: z.number().int().nullish(),
+					query_count: z.number().int().nullish(),
+					user_agent: z.union([z.string(), z.null()]).nullish(),
+					forked_from_conversation_id: z
+						.union([
+							z
+								.string()
+								.regex(
+									new RegExp(
+										'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+									),
+								),
+							z.null(),
+						])
+						.nullish(),
 				}),
-				z.null(),
-			]),
-			embedding_hostname: z.union([z.string(), z.null()]),
-			message_count: z.number().int().min(0),
-			user_message_count: z.number().int().min(0),
-			profile_id: z.union([z.string(), z.null()]),
-			title: z.union([z.string(), z.null()]),
-			conversation_id: z
-				.string()
-				.regex(
-					new RegExp(
-						'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
-					),
-				),
-			last_message_at: z.union([
-				z.string().datetime({ offset: true }),
-				z.null(),
-			]),
-			created_at: z.string().datetime({ offset: true }),
-			ip_address: z.union([z.string(), z.null()]),
-			search_count: z.number().int().min(0),
-			assistant_message_count: z.number().int().min(0),
-			total_tokens: z.number().int().min(0),
-			query_count: z.number().int().min(0),
-			user_agent: z.union([z.string(), z.null()]),
-			forked_from_conversation_id: z.union([
-				z
-					.string()
-					.regex(
-						new RegExp(
-							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
-						),
-					),
-				z.null(),
-			]),
-		}),
-	),
-	limit: z.number().int().min(0),
-	offset: z.number().int().min(0),
-	total: z.number().int().min(0),
-});
+			)
+			.nullish(),
+		limit: z.number().int().nullish(),
+		offset: z.number().int().nullish(),
+		total: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint107 = createMetabaseEndpoint(
 	'ee.getMetabotAnalyticsConversations',
 	openApiInput107,
@@ -3204,117 +3660,138 @@ const openApiEndpoint107 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput108 = z
-	.object({
-		path: z
-			.object({
-				id: z
+const openApiInput108 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					id: z
+						.string()
+						.regex(
+							new RegExp(
+								'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+							),
+						),
+				})
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput108 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		queries: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					tables: z.array(z.string()).nullish(),
+					mbql: z.union([z.record(z.string(), z.json()), z.null()]).nullish(),
+					database_id: z.union([z.number().int(), z.null()]).nullish(),
+					query_id: z.union([z.string(), z.null()]).nullish(),
+					query_type: z
+						.union([z.literal('sql'), z.literal('notebook')])
+						.nullish(),
+					display: z.union([z.string(), z.null()]).nullish(),
+					tool: z
+						.union([
+							z.literal('construct_notebook_query'),
+							z.literal('create_sql_query'),
+							z.literal('edit_sql_query'),
+							z.literal('replace_sql_query'),
+						])
+						.nullish(),
+					call_id: z.union([z.string(), z.null()]).nullish(),
+					sql: z.union([z.string(), z.null()]).nullish(),
+					message_id: z.number().int().nullish(),
+				}),
+			)
+			.nullish(),
+		sanitized_user_agent: z.union([z.string(), z.null()]).nullish(),
+		embedding_path: z.union([z.string(), z.null()]).nullish(),
+		slack_permalink: z.union([z.string(), z.null()]).nullish(),
+		fork_boundary_message_id: z.union([z.string(), z.null()]).nullish(),
+		user: z
+			.union([
+				OpenApiSchemas.looseJsonObject({
+					email: z.string().nullish(),
+					first_name: z.union([z.string(), z.null()]).nullish(),
+					id: z.number().int().nullish(),
+					last_name: z.union([z.string(), z.null()]).nullish(),
+				}),
+				z.null(),
+			])
+			.nullish(),
+		embedding_hostname: z.union([z.string(), z.null()]).nullish(),
+		feedback: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					user_id: z.number().int().nullish(),
+					positive: z.boolean().nullish(),
+					external_id: z.union([z.string(), z.null()]).nullish(),
+					user: z
+						.union([
+							OpenApiSchemas.looseJsonObject({
+								email: z.string().nullish(),
+								first_name: z.union([z.string(), z.null()]).nullish(),
+								id: z.number().int().nullish(),
+								last_name: z.union([z.string(), z.null()]).nullish(),
+							}),
+							z.null(),
+						])
+						.nullish(),
+					id: z.number().int().nullish(),
+					updated_at: z.string().datetime({ offset: true }).nullish(),
+					issue_type: z.union([z.string(), z.null()]).nullish(),
+					created_at: z.string().datetime({ offset: true }).nullish(),
+					freeform_feedback: z.union([z.string(), z.null()]).nullish(),
+					message_id: z.number().int().nullish(),
+				}),
+			)
+			.nullish(),
+		message_count: z.number().int().nullish(),
+		profile_id: z.union([z.string(), z.null()]).nullish(),
+		title: z.union([z.string(), z.null()]).nullish(),
+		conversation_id: z
+			.string()
+			.regex(
+				new RegExp(
+					'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+				),
+			)
+			.nullish(),
+		created_at: z.string().datetime({ offset: true }).nullish(),
+		messages: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					contextTokens: z.number().int().nullish(),
+					externalId: z.string().nullish(),
+					id: z.string().nullish(),
+					parent_message_id: z.union([z.string(), z.null()]).nullish(),
+					parts: z
+						.array(OpenApiSchemas.MetabaseOpenApiOutputSchema598())
+						.nullish(),
+					role: z.union([z.literal('user'), z.literal('agent')]).nullish(),
+					status: OpenApiSchemas.MetabaseOpenApiOutputSchema599().nullish(),
+				}),
+			)
+			.nullish(),
+		ip_address: z.union([z.string(), z.null()]).nullish(),
+		search_count: z.number().int().nullish(),
+		total_tokens: z.number().int().nullish(),
+		query_count: z.number().int().nullish(),
+		user_agent: z.union([z.string(), z.null()]).nullish(),
+		forked_from_conversation_id: z
+			.union([
+				z
 					.string()
 					.regex(
 						new RegExp(
 							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
 						),
 					),
-			})
-			.strict(),
-	})
-	.strict();
-const openApiOutput108 = z.object({
-	queries: z.array(
-		z.object({
-			tables: z.array(z.string()),
-			mbql: z.union([z.record(z.string(), z.json()), z.null()]),
-			database_id: z.union([z.number().int().min(1), z.null()]),
-			query_id: z.union([z.string(), z.null()]),
-			query_type: z.union([z.literal('sql'), z.literal('notebook')]),
-			display: z.union([z.string(), z.null()]),
-			tool: z.union([
-				z.literal('construct_notebook_query'),
-				z.literal('create_sql_query'),
-				z.literal('edit_sql_query'),
-				z.literal('replace_sql_query'),
-			]),
-			call_id: z.union([z.string(), z.null()]),
-			sql: z.union([z.string(), z.null()]),
-			message_id: z.number().int().min(1),
-		}),
-	),
-	sanitized_user_agent: z.union([z.string(), z.null()]),
-	embedding_path: z.union([z.string(), z.null()]),
-	slack_permalink: z.union([z.string(), z.null()]),
-	fork_boundary_message_id: z.union([z.string(), z.null()]),
-	user: z.union([
-		z.object({
-			email: z.string(),
-			first_name: z.union([z.string(), z.null()]),
-			id: z.number().int().min(1),
-			last_name: z.union([z.string(), z.null()]),
-		}),
-		z.null(),
-	]),
-	embedding_hostname: z.union([z.string(), z.null()]),
-	feedback: z.array(
-		z.object({
-			user_id: z.number().int().min(1),
-			positive: z.boolean(),
-			external_id: z.union([z.string(), z.null()]),
-			user: z
-				.union([
-					z.object({
-						email: z.string(),
-						first_name: z.union([z.string(), z.null()]),
-						id: z.number().int().min(1),
-						last_name: z.union([z.string(), z.null()]),
-					}),
-					z.null(),
-				])
-				.optional(),
-			id: z.number().int().min(1),
-			updated_at: z.string().datetime({ offset: true }),
-			issue_type: z.union([z.string(), z.null()]),
-			created_at: z.string().datetime({ offset: true }),
-			freeform_feedback: z.union([z.string(), z.null()]),
-			message_id: z.number().int().min(1),
-		}),
-	),
-	message_count: z.number().int().min(0),
-	profile_id: z.union([z.string(), z.null()]),
-	title: z.union([z.string(), z.null()]),
-	conversation_id: z
-		.string()
-		.regex(
-			new RegExp(
-				'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
-			),
-		),
-	created_at: z.string().datetime({ offset: true }),
-	messages: z.array(
-		z.object({
-			contextTokens: z.number().int().optional(),
-			externalId: z.string().optional(),
-			id: z.string(),
-			parent_message_id: z.union([z.string(), z.null()]),
-			parts: z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema598),
-			role: z.union([z.literal('user'), z.literal('agent')]),
-			status: OpenApiSchemas.MetabaseOpenApiOutputSchema599,
-		}),
-	),
-	ip_address: z.union([z.string(), z.null()]),
-	search_count: z.number().int().min(0),
-	total_tokens: z.number().int().min(0),
-	query_count: z.number().int().min(0),
-	user_agent: z.union([z.string(), z.null()]),
-	forked_from_conversation_id: z.union([
-		z
-			.string()
-			.regex(
-				new RegExp(
-					'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
-				),
-			),
-		z.null(),
-	]),
-});
+				z.null(),
+			])
+			.nullish(),
+	}),
+);
 const openApiEndpoint108 = createMetabaseEndpoint(
 	'ee.getMetabotAnalyticsConversationsById',
 	openApiInput108,
@@ -3328,12 +3805,14 @@ const openApiEndpoint108 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput109 = z.object({}).strict();
-const openApiOutput109 = z.object({
-	is_locked: z.union([z.boolean(), z.null()]),
-	tokens: z.union([z.number().int(), z.null()]),
-	updated_at: z.union([z.string(), z.null()]),
-});
+const openApiInput109 = lazySchema(() => z.object({}).strict());
+const openApiOutput109 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		is_locked: z.union([z.boolean(), z.null()]).nullish(),
+		tokens: z.union([z.number().int(), z.null()]).nullish(),
+		updated_at: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint109 = createMetabaseEndpoint(
 	'ee.getMetabotUsage',
 	openApiInput109,
@@ -3341,39 +3820,40 @@ const openApiEndpoint109 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/metabot/usage' }),
 );
 
-const openApiInput110 = z
-	.object({
-		query: z
-			.object({ query: z.union([z.string(), z.null()]).optional() })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput110 = z
-	.object({
-		data: z.array(
-			z
-				.object({
-					sso_source: z.union([z.string(), z.null()]),
-					is_active: z.boolean(),
-					id: z.number().int().min(1),
-					email: z.string().min(1),
-					is_superuser: z.boolean(),
-					last_name: z.union([z.string(), z.null()]),
-					first_name: z.union([z.string(), z.null()]),
-					enrolled_at: z.union([
-						z.string().datetime({ offset: true }),
-						z.null(),
-					]),
-					common_name: z.string(),
-				})
-				.strict(),
-		),
-		limit: z.union([z.number().int(), z.null()]),
-		offset: z.union([z.number().int(), z.null()]),
-		total: z.number().int(),
-	})
-	.strict();
+const openApiInput110 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({ query: z.union([z.string(), z.null()]).optional() })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput110 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					sso_source: z.union([z.string(), z.null()]).nullish(),
+					is_active: z.boolean().nullish(),
+					id: z.number().int().nullish(),
+					email: z.string().nullish(),
+					is_superuser: z.boolean().nullish(),
+					last_name: z.union([z.string(), z.null()]).nullish(),
+					first_name: z.union([z.string(), z.null()]).nullish(),
+					enrolled_at: z
+						.union([z.string().datetime({ offset: true }), z.null()])
+						.nullish(),
+					common_name: z.string().nullish(),
+				}),
+			)
+			.nullish(),
+		limit: z.union([z.number().int(), z.null()]).nullish(),
+		offset: z.union([z.number().int(), z.null()]).nullish(),
+		total: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint110 = createMetabaseEndpoint(
 	'ee.getMfaAdminEnrolledUsers',
 	openApiInput110,
@@ -3385,12 +3865,14 @@ const openApiEndpoint110 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput111 = z.object({}).strict();
-const openApiOutput111 = z.object({
-	encryption_key_set: z.boolean(),
-	enrolled_count: z.number().int(),
-	unenrolled_count: z.number().int(),
-});
+const openApiInput111 = lazySchema(() => z.object({}).strict());
+const openApiOutput111 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		encryption_key_set: z.boolean().nullish(),
+		enrolled_count: z.number().int().nullish(),
+		unenrolled_count: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint111 = createMetabaseEndpoint(
 	'ee.getMfaAdminOverview',
 	openApiInput111,
@@ -3398,35 +3880,37 @@ const openApiEndpoint111 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/mfa/admin/overview' }),
 );
 
-const openApiInput112 = z
-	.object({
-		query: z
-			.object({ query: z.union([z.string(), z.null()]).optional() })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput112 = z
-	.object({
-		data: z.array(
-			z
-				.object({
-					common_name: z.string(),
-					email: z.string().min(1),
-					first_name: z.union([z.string(), z.null()]),
-					id: z.number().int().min(1),
-					is_active: z.boolean(),
-					is_superuser: z.boolean(),
-					last_name: z.union([z.string(), z.null()]),
-					sso_source: z.union([z.string(), z.null()]),
-				})
-				.strict(),
-		),
-		limit: z.union([z.number().int(), z.null()]),
-		offset: z.union([z.number().int(), z.null()]),
-		total: z.number().int(),
-	})
-	.strict();
+const openApiInput112 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({ query: z.union([z.string(), z.null()]).optional() })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput112 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					common_name: z.string().nullish(),
+					email: z.string().nullish(),
+					first_name: z.union([z.string(), z.null()]).nullish(),
+					id: z.number().int().nullish(),
+					is_active: z.boolean().nullish(),
+					is_superuser: z.boolean().nullish(),
+					last_name: z.union([z.string(), z.null()]).nullish(),
+					sso_source: z.union([z.string(), z.null()]).nullish(),
+				}),
+			)
+			.nullish(),
+		limit: z.union([z.number().int(), z.null()]).nullish(),
+		offset: z.union([z.number().int(), z.null()]).nullish(),
+		total: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint112 = createMetabaseEndpoint(
 	'ee.getMfaAdminUnenrolledUsers',
 	openApiInput112,
@@ -3438,18 +3922,22 @@ const openApiEndpoint112 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput113 = z
-	.object({
-		body: z
-			.object({ password: z.string().min(1) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput113 = z.object({
-	otpauth_uri: z.string().min(1),
-	secret: z.string().min(1),
-});
+const openApiInput113 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({ password: z.string().min(1) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput113 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		otpauth_uri: z.string().nullish(),
+		secret: z.string().nullish(),
+	}),
+);
 const openApiEndpoint113 = createMetabaseEndpoint(
 	'ee.postMfaEnroll',
 	openApiInput113,
@@ -3457,17 +3945,21 @@ const openApiEndpoint113 = createMetabaseEndpoint(
 	(input) => ({ method: 'POST', path: '/api/ee/mfa/enroll', body: input.body }),
 );
 
-const openApiInput114 = z
-	.object({
-		body: z
-			.object({ code: z.string().min(1) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput114 = z.object({
-	recovery_codes: z.array(z.string().min(1)),
-});
+const openApiInput114 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({ code: z.string().min(1) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput114 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		recovery_codes: z.array(z.string()).nullish(),
+	}),
+);
 const openApiEndpoint114 = createMetabaseEndpoint(
 	'ee.postMfaEnrollConfirm',
 	openApiInput114,
@@ -3479,17 +3971,21 @@ const openApiEndpoint114 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput115 = z
-	.object({
-		body: z
-			.object({ code: z.string().min(1) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput115 = z.object({
-	recovery_codes: z.array(z.string().min(1)),
-});
+const openApiInput115 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({ code: z.string().min(1) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput115 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		recovery_codes: z.array(z.string()).nullish(),
+	}),
+);
 const openApiEndpoint115 = createMetabaseEndpoint(
 	'ee.postMfaRecoveryCodes',
 	openApiInput115,
@@ -3501,14 +3997,16 @@ const openApiEndpoint115 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput116 = z.object({}).strict();
-const openApiOutput116 = z.object({
-	enrolled: z.boolean(),
-	method: z.union([z.string(), z.null()]),
-	mfa_enabled: z.boolean(),
-	pending: z.boolean(),
-	recovery_codes_remaining: z.number().int(),
-});
+const openApiInput116 = lazySchema(() => z.object({}).strict());
+const openApiOutput116 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		enrolled: z.boolean().nullish(),
+		method: z.union([z.string(), z.null()]).nullish(),
+		mfa_enabled: z.boolean().nullish(),
+		pending: z.boolean().nullish(),
+		recovery_codes_remaining: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint116 = createMetabaseEndpoint(
 	'ee.getMfaStatus',
 	openApiInput116,
@@ -3516,22 +4014,26 @@ const openApiEndpoint116 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/mfa/status' }),
 );
 
-const openApiInput117 = z
-	.object({
-		query: z
-			.object({
-				user_id: z.number().int().min(1),
-				model_id: z.number().int().min(1),
-				action_type: z.union([
-					z.literal('card/read'),
-					z.literal('card/query'),
-					z.literal('card/download-data'),
-				]),
-			})
-			.strict(),
-	})
-	.strict();
-const openApiOutput117 = OpenApiSchemas.MetabaseOpenApiOutputSchema139;
+const openApiInput117 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					user_id: z.number().int().min(1),
+					model_id: z.number().int().min(1),
+					action_type: z.union([
+						z.literal('card/read'),
+						z.literal('card/query'),
+						z.literal('card/download-data'),
+					]),
+				})
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput117 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema139(),
+);
 const openApiEndpoint117 = createMetabaseEndpoint(
 	'ee.getPermissionDebug',
 	openApiInput117,
@@ -3544,8 +4046,10 @@ const openApiEndpoint117 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput118 = z.object({}).strict();
-const openApiOutput118 = z.object({ items: z.array(z.string()) });
+const openApiInput118 = lazySchema(() => z.object({}).strict());
+const openApiOutput118 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({ items: z.array(z.string()).nullish() }),
+);
 const openApiEndpoint118 = createMetabaseEndpoint(
 	'ee.getRemoteSyncBranches',
 	openApiInput118,
@@ -3553,15 +4057,22 @@ const openApiEndpoint118 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/remote-sync/branches' }),
 );
 
-const openApiInput119 = z
-	.object({
-		body: z
-			.object({ name: z.string().min(1) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput119 = z.object({ message: z.string(), status: z.string() });
+const openApiInput119 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({ name: z.string().min(1) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput119 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		message: z.string().nullish(),
+		status: z.string().nullish(),
+	}),
+);
 const openApiEndpoint119 = createMetabaseEndpoint(
 	'ee.postRemoteSyncCreateBranch',
 	openApiInput119,
@@ -3573,44 +4084,50 @@ const openApiEndpoint119 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput120 = z.object({}).strict();
-const openApiOutput120 = z.union([
-	z.object({
-		progress: z.union([z.number().min(0).max(1), z.null()]),
-		conflicts: z.union([z.array(z.string()), z.null()]).optional(),
-		last_progress_report_at: z.json().optional(),
-		id: z.number().int().min(1),
-		last_heartbeat_at: z.json().optional(),
-		started_at: z.json(),
-		ended_at: z.json().optional(),
-		initiated_by: z.union([z.number().int().min(1), z.null()]).optional(),
-		cancelled: z.union([z.boolean(), z.null()]).optional(),
-		status: z.union([
-			z.literal('running'),
-			z.literal('successful'),
-			z.literal('errored'),
-			z.literal('cancelled'),
-			z.literal('timed-out'),
-			z.literal('conflict'),
-		]),
-		error_message: z.union([z.string(), z.null()]).optional(),
-		sync_task_type: z.union([z.literal('import'), z.literal('export')]),
-		version: z.union([z.string(), z.null()]).optional(),
-		initiated_by_user: z
-			.union([
-				z.object({
-					email: z.string(),
-					first_name: z.union([z.string(), z.null()]),
-					id: z.number().int().min(1),
-					last_name: z.union([z.string(), z.null()]),
-				}),
-				z.null(),
-			])
-			.optional(),
-		outcome: z.union([z.record(z.string(), z.json()), z.null()]).optional(),
-	}),
-	z.null(),
-]);
+const openApiInput120 = lazySchema(() => z.object({}).strict());
+const openApiOutput120 = lazySchema(() =>
+	z.union([
+		OpenApiSchemas.looseJsonObject({
+			progress: z.union([z.number(), z.null()]).nullish(),
+			conflicts: z.union([z.array(z.string()), z.null()]).nullish(),
+			last_progress_report_at: z.json().nullish(),
+			id: z.number().int().nullish(),
+			last_heartbeat_at: z.json().nullish(),
+			started_at: z.json().nullish(),
+			ended_at: z.json().nullish(),
+			initiated_by: z.union([z.number().int(), z.null()]).nullish(),
+			cancelled: z.union([z.boolean(), z.null()]).nullish(),
+			status: z
+				.union([
+					z.literal('running'),
+					z.literal('successful'),
+					z.literal('errored'),
+					z.literal('cancelled'),
+					z.literal('timed-out'),
+					z.literal('conflict'),
+				])
+				.nullish(),
+			error_message: z.union([z.string(), z.null()]).nullish(),
+			sync_task_type: z
+				.union([z.literal('import'), z.literal('export')])
+				.nullish(),
+			version: z.union([z.string(), z.null()]).nullish(),
+			initiated_by_user: z
+				.union([
+					OpenApiSchemas.looseJsonObject({
+						email: z.string().nullish(),
+						first_name: z.union([z.string(), z.null()]).nullish(),
+						id: z.number().int().nullish(),
+						last_name: z.union([z.string(), z.null()]).nullish(),
+					}),
+					z.null(),
+				])
+				.nullish(),
+			outcome: z.union([z.record(z.string(), z.json()), z.null()]).nullish(),
+		}),
+		z.null(),
+	]),
+);
 const openApiEndpoint120 = createMetabaseEndpoint(
 	'ee.getRemoteSyncCurrentTask',
 	openApiInput120,
@@ -3618,41 +4135,47 @@ const openApiEndpoint120 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/remote-sync/current-task' }),
 );
 
-const openApiInput121 = z.object({}).strict();
-const openApiOutput121 = z.object({
-	progress: z.union([z.number().min(0).max(1), z.null()]),
-	conflicts: z.union([z.array(z.string()), z.null()]).optional(),
-	last_progress_report_at: z.json().optional(),
-	id: z.number().int().min(1),
-	last_heartbeat_at: z.json().optional(),
-	started_at: z.json(),
-	ended_at: z.json().optional(),
-	initiated_by: z.union([z.number().int().min(1), z.null()]).optional(),
-	cancelled: z.union([z.boolean(), z.null()]).optional(),
-	status: z.union([
-		z.literal('running'),
-		z.literal('successful'),
-		z.literal('errored'),
-		z.literal('cancelled'),
-		z.literal('timed-out'),
-		z.literal('conflict'),
-	]),
-	error_message: z.union([z.string(), z.null()]).optional(),
-	sync_task_type: z.union([z.literal('import'), z.literal('export')]),
-	version: z.union([z.string(), z.null()]).optional(),
-	initiated_by_user: z
-		.union([
-			z.object({
-				email: z.string(),
-				first_name: z.union([z.string(), z.null()]),
-				id: z.number().int().min(1),
-				last_name: z.union([z.string(), z.null()]),
-			}),
-			z.null(),
-		])
-		.optional(),
-	outcome: z.union([z.record(z.string(), z.json()), z.null()]).optional(),
-});
+const openApiInput121 = lazySchema(() => z.object({}).strict());
+const openApiOutput121 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		progress: z.union([z.number(), z.null()]).nullish(),
+		conflicts: z.union([z.array(z.string()), z.null()]).nullish(),
+		last_progress_report_at: z.json().nullish(),
+		id: z.number().int().nullish(),
+		last_heartbeat_at: z.json().nullish(),
+		started_at: z.json().nullish(),
+		ended_at: z.json().nullish(),
+		initiated_by: z.union([z.number().int(), z.null()]).nullish(),
+		cancelled: z.union([z.boolean(), z.null()]).nullish(),
+		status: z
+			.union([
+				z.literal('running'),
+				z.literal('successful'),
+				z.literal('errored'),
+				z.literal('cancelled'),
+				z.literal('timed-out'),
+				z.literal('conflict'),
+			])
+			.nullish(),
+		error_message: z.union([z.string(), z.null()]).nullish(),
+		sync_task_type: z
+			.union([z.literal('import'), z.literal('export')])
+			.nullish(),
+		version: z.union([z.string(), z.null()]).nullish(),
+		initiated_by_user: z
+			.union([
+				OpenApiSchemas.looseJsonObject({
+					email: z.string().nullish(),
+					first_name: z.union([z.string(), z.null()]).nullish(),
+					id: z.number().int().nullish(),
+					last_name: z.union([z.string(), z.null()]).nullish(),
+				}),
+				z.null(),
+			])
+			.nullish(),
+		outcome: z.union([z.record(z.string(), z.json()), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint121 = createMetabaseEndpoint(
 	'ee.postRemoteSyncCurrentTaskCancel',
 	openApiInput121,
@@ -3663,27 +4186,31 @@ const openApiEndpoint121 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput122 = z.object({}).strict();
-const openApiOutput122 = z.object({
-	dirty: z.array(
-		z.object({
-			table_name: z.union([z.string(), z.null()]).optional(),
-			model: z.string(),
-			authority_level: z.union([z.string(), z.null()]).optional(),
-			id: z.number().int(),
-			card_id: z.union([z.number().int().min(1), z.null()]).optional(),
-			name: z.union([z.string(), z.null()]),
-			updated_at: z.json().optional(),
-			table_id: z.union([z.number().int().min(1), z.null()]).optional(),
-			query_type: z.union([z.string(), z.null()]).optional(),
-			collection_id: z.union([z.number().int().min(1), z.null()]).optional(),
-			created_at: z.json().optional(),
-			display: z.union([z.string(), z.null()]).optional(),
-			sync_status: z.string(),
-			description: z.union([z.string(), z.null()]).optional(),
-		}),
-	),
-});
+const openApiInput122 = lazySchema(() => z.object({}).strict());
+const openApiOutput122 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		dirty: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					table_name: z.union([z.string(), z.null()]).nullish(),
+					model: z.string().nullish(),
+					authority_level: z.union([z.string(), z.null()]).nullish(),
+					id: z.number().int().nullish(),
+					card_id: z.union([z.number().int(), z.null()]).nullish(),
+					name: z.union([z.string(), z.null()]).nullish(),
+					updated_at: z.json().nullish(),
+					table_id: z.union([z.number().int(), z.null()]).nullish(),
+					query_type: z.union([z.string(), z.null()]).nullish(),
+					collection_id: z.union([z.number().int(), z.null()]).nullish(),
+					created_at: z.json().nullish(),
+					display: z.union([z.string(), z.null()]).nullish(),
+					sync_status: z.string().nullish(),
+					description: z.union([z.string(), z.null()]).nullish(),
+				}),
+			)
+			.nullish(),
+	}),
+);
 const openApiEndpoint122 = createMetabaseEndpoint(
 	'ee.getRemoteSyncDirty',
 	openApiInput122,
@@ -3691,23 +4218,27 @@ const openApiEndpoint122 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/remote-sync/dirty' }),
 );
 
-const openApiInput123 = z
-	.object({
-		body: z
-			.object({
-				branch: z.string().min(1),
-				force: z.boolean().optional(),
-				merge: z.boolean().optional(),
-				message: z.string().min(1).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput123 = z.object({
-	message: z.string(),
-	task_id: z.number().int().min(1),
-});
+const openApiInput123 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					branch: z.string().min(1),
+					force: z.boolean().optional(),
+					merge: z.boolean().optional(),
+					message: z.string().min(1).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput123 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		message: z.string().nullish(),
+		task_id: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint123 = createMetabaseEndpoint(
 	'ee.postRemoteSyncExport',
 	openApiInput123,
@@ -3719,24 +4250,28 @@ const openApiEndpoint123 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput124 = z
-	.object({ query: z.object({ branch: z.string().min(1) }).strict() })
-	.strict();
-const openApiOutput124 = z.object({
-	clean: z.boolean(),
-	conflicts: z.array(z.string()),
-	force_push_casualties: z.object({
-		deleted: z.array(z.string()),
-		overwritten: z.array(z.string()),
+const openApiInput124 = lazySchema(() =>
+	z
+		.object({ query: z.object({ branch: z.string().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput124 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		clean: z.boolean().nullish(),
+		conflicts: z.array(z.string()).nullish(),
+		force_push_casualties: OpenApiSchemas.looseJsonObject({
+			deleted: z.array(z.string()).nullish(),
+			overwritten: z.array(z.string()).nullish(),
+		}).nullish(),
+		has_changes: z.boolean().nullish(),
+		reason: z.union([z.string(), z.null()]).nullish(),
+		summary: OpenApiSchemas.looseJsonObject({
+			added: z.number().int().nullish(),
+			removed: z.number().int().nullish(),
+			updated: z.number().int().nullish(),
+		}).nullish(),
 	}),
-	has_changes: z.boolean(),
-	reason: z.union([z.string(), z.null()]),
-	summary: z.object({
-		added: z.number().int(),
-		removed: z.number().int(),
-		updated: z.number().int(),
-	}),
-});
+);
 const openApiEndpoint124 = createMetabaseEndpoint(
 	'ee.getRemoteSyncExportPreflight',
 	openApiInput124,
@@ -3748,21 +4283,25 @@ const openApiEndpoint124 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput125 = z
-	.object({
-		query: z
-			.object({ 'force-refresh': z.boolean().optional() })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput125 = z.object({
-	branch_missing: z.boolean().optional(),
-	cached: z.boolean(),
-	has_changes: z.boolean(),
-	local_version: z.union([z.string(), z.null()]),
-	remote_version: z.union([z.string(), z.null()]),
-});
+const openApiInput125 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({ 'force-refresh': z.boolean().optional() })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput125 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		branch_missing: z.boolean().nullish(),
+		cached: z.boolean().nullish(),
+		has_changes: z.boolean().nullish(),
+		local_version: z.union([z.string(), z.null()]).nullish(),
+		remote_version: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint125 = createMetabaseEndpoint(
 	'ee.getRemoteSyncHasRemoteChanges',
 	openApiInput125,
@@ -3774,24 +4313,28 @@ const openApiEndpoint125 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput126 = z
-	.object({
-		body: z
-			.object({
-				branch: z.string().min(1).optional(),
-				expected_branch: z.string().min(1).optional(),
-				force: z.boolean().optional(),
-				merge: z.boolean().optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput126 = z.object({
-	message: z.union([z.string(), z.null()]).optional(),
-	status: z.literal('success'),
-	task_id: z.union([z.number().int().min(1), z.null()]),
-});
+const openApiInput126 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					branch: z.string().min(1).optional(),
+					expected_branch: z.string().min(1).optional(),
+					force: z.boolean().optional(),
+					merge: z.boolean().optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput126 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		message: z.union([z.string(), z.null()]).nullish(),
+		status: z.literal('success').nullish(),
+		task_id: z.union([z.number().int(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint126 = createMetabaseEndpoint(
 	'ee.postRemoteSyncImport',
 	openApiInput126,
@@ -3803,8 +4346,10 @@ const openApiEndpoint126 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput127 = z.object({}).strict();
-const openApiOutput127 = z.object({ is_dirty: z.boolean() });
+const openApiInput127 = lazySchema(() => z.object({}).strict());
+const openApiOutput127 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({ is_dirty: z.boolean().nullish() }),
+);
 const openApiEndpoint127 = createMetabaseEndpoint(
 	'ee.getRemoteSyncIsDirty',
 	openApiInput127,
@@ -3812,33 +4357,39 @@ const openApiEndpoint127 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/remote-sync/is-dirty' }),
 );
 
-const openApiInput128 = z
-	.object({
-		body: z
-			.object({
-				collections: z
-					.union([z.record(z.string(), z.boolean()), z.null()])
-					.optional(),
-				'remote-sync-auto-import': z.union([z.boolean(), z.null()]).optional(),
-				'remote-sync-branch': z.union([z.string(), z.null()]).optional(),
-				'remote-sync-token': z.union([z.string(), z.null()]).optional(),
-				'remote-sync-transforms': z.union([z.boolean(), z.null()]).optional(),
-				'remote-sync-type': z
-					.union([
-						z.union([z.literal('read-only'), z.literal('read-write')]),
-						z.null(),
-					])
-					.optional(),
-				'remote-sync-url': z.union([z.string(), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput128 = z.object({
-	success: z.boolean(),
-	task_id: z.number().int().min(1).optional(),
-});
+const openApiInput128 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					collections: z
+						.union([z.record(z.string(), z.boolean()), z.null()])
+						.optional(),
+					'remote-sync-auto-import': z
+						.union([z.boolean(), z.null()])
+						.optional(),
+					'remote-sync-branch': z.union([z.string(), z.null()]).optional(),
+					'remote-sync-token': z.union([z.string(), z.null()]).optional(),
+					'remote-sync-transforms': z.union([z.boolean(), z.null()]).optional(),
+					'remote-sync-type': z
+						.union([
+							z.union([z.literal('read-only'), z.literal('read-write')]),
+							z.null(),
+						])
+						.optional(),
+					'remote-sync-url': z.union([z.string(), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput128 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		success: z.boolean().nullish(),
+		task_id: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint128 = createMetabaseEndpoint(
 	'ee.putRemoteSyncSettings',
 	openApiInput128,
@@ -3850,19 +4401,23 @@ const openApiEndpoint128 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput129 = z
-	.object({
-		body: z
-			.object({ message: z.string().min(1), new_branch: z.string().min(1) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput129 = z.object({
-	message: z.string(),
-	status: z.string(),
-	task_id: z.number().int().min(1),
-});
+const openApiInput129 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({ message: z.string().min(1), new_branch: z.string().min(1) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput129 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		message: z.string().nullish(),
+		status: z.string().nullish(),
+		task_id: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint129 = createMetabaseEndpoint(
 	'ee.postRemoteSyncStash',
 	openApiInput129,
@@ -3874,18 +4429,22 @@ const openApiEndpoint129 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput130 = z
-	.object({
-		body: z
-			.object({
-				'remote-sync-token': z.union([z.string(), z.null()]).optional(),
-				'remote-sync-url': z.union([z.string(), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput130 = z.object({ status: z.literal('success') });
+const openApiInput130 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					'remote-sync-token': z.union([z.string(), z.null()]).optional(),
+					'remote-sync-url': z.union([z.string(), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput130 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({ status: z.literal('success').nullish() }),
+);
 const openApiEndpoint130 = createMetabaseEndpoint(
 	'ee.postRemoteSyncTestConnection',
 	openApiInput130,
@@ -3897,20 +4456,24 @@ const openApiEndpoint130 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput131 = z
-	.object({
-		body: z
-			.object({
-				source_entity_id: OpenApiSchemas.MetabaseOpenApiInputSchema147,
-				source_entity_type: OpenApiSchemas.MetabaseOpenApiInputSchema148,
-				target_entity_id: OpenApiSchemas.MetabaseOpenApiInputSchema147,
-				target_entity_type: OpenApiSchemas.MetabaseOpenApiInputSchema148,
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput131 = OpenApiSchemas.MetabaseOpenApiOutputSchema140;
+const openApiInput131 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					source_entity_id: OpenApiSchemas.MetabaseOpenApiInputSchema147(),
+					source_entity_type: OpenApiSchemas.MetabaseOpenApiInputSchema148(),
+					target_entity_id: OpenApiSchemas.MetabaseOpenApiInputSchema147(),
+					target_entity_type: OpenApiSchemas.MetabaseOpenApiInputSchema148(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput131 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema140(),
+);
 const openApiEndpoint131 = createMetabaseEndpoint(
 	'ee.postReplacementCheckReplaceSource',
 	openApiInput131,
@@ -3922,30 +4485,31 @@ const openApiEndpoint131 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput132 = z
-	.object({
-		body: z
-			.object({
-				card_id: OpenApiSchemas.MetabaseOpenApiInputSchema147,
-				target_collection_id: z
-					.union([OpenApiSchemas.MetabaseOpenApiInputSchema147, z.null()])
-					.optional(),
-				transform_name: z.string(),
-				transform_tag_ids: z
-					.union([z.array(z.number().int().min(1)), z.null()])
-					.optional(),
-				transform_target: OpenApiSchemas.MetabaseOpenApiInputSchema706,
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput132 = z.object({
-	body: z
-		.object({ run_id: OpenApiSchemas.MetabaseOpenApiOutputSchema145 })
+const openApiInput132 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					card_id: OpenApiSchemas.MetabaseOpenApiInputSchema147(),
+					target_collection_id: z
+						.union([OpenApiSchemas.MetabaseOpenApiInputSchema147(), z.null()])
+						.optional(),
+					transform_name: z.string(),
+					transform_tag_ids: z
+						.union([z.array(z.number().int().min(1)), z.null()])
+						.optional(),
+					transform_target: OpenApiSchemas.MetabaseOpenApiInputSchema706(),
+				})
+				.strict()
+				.optional(),
+		})
 		.strict(),
-	status: z.literal(202),
-});
+);
+const openApiOutput132 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		run_id: OpenApiSchemas.MetabaseOpenApiOutputSchema145().nullish(),
+	}),
+);
 const openApiEndpoint132 = createMetabaseEndpoint(
 	'ee.postReplacementReplaceModelWithTransform',
 	openApiInput132,
@@ -3957,25 +4521,26 @@ const openApiEndpoint132 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput133 = z
-	.object({
-		body: z
-			.object({
-				source_entity_id: OpenApiSchemas.MetabaseOpenApiInputSchema147,
-				source_entity_type: OpenApiSchemas.MetabaseOpenApiInputSchema148,
-				target_entity_id: OpenApiSchemas.MetabaseOpenApiInputSchema147,
-				target_entity_type: OpenApiSchemas.MetabaseOpenApiInputSchema148,
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput133 = z.object({
-	body: z
-		.object({ run_id: OpenApiSchemas.MetabaseOpenApiOutputSchema145 })
+const openApiInput133 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					source_entity_id: OpenApiSchemas.MetabaseOpenApiInputSchema147(),
+					source_entity_type: OpenApiSchemas.MetabaseOpenApiInputSchema148(),
+					target_entity_id: OpenApiSchemas.MetabaseOpenApiInputSchema147(),
+					target_entity_type: OpenApiSchemas.MetabaseOpenApiInputSchema148(),
+				})
+				.strict()
+				.optional(),
+		})
 		.strict(),
-	status: z.literal(202),
-});
+);
+const openApiOutput133 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		run_id: OpenApiSchemas.MetabaseOpenApiOutputSchema145().nullish(),
+	}),
+);
 const openApiEndpoint133 = createMetabaseEndpoint(
 	'ee.postReplacementReplaceSource',
 	openApiInput133,
@@ -3987,15 +4552,19 @@ const openApiEndpoint133 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput134 = z
-	.object({
-		query: z
-			.object({ 'is-active': z.union([z.boolean(), z.null()]).optional() })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput134 = z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema144);
+const openApiInput134 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({ 'is-active': z.union([z.boolean(), z.null()]).optional() })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput134 = lazySchema(() =>
+	z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema144()),
+);
 const openApiEndpoint134 = createMetabaseEndpoint(
 	'ee.getReplacementRuns',
 	openApiInput134,
@@ -4007,14 +4576,18 @@ const openApiEndpoint134 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput135 = z
-	.object({
-		path: z
-			.object({ id: OpenApiSchemas.MetabaseOpenApiInputSchema145 })
-			.strict(),
-	})
-	.strict();
-const openApiOutput135 = OpenApiSchemas.MetabaseOpenApiOutputSchema144;
+const openApiInput135 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({ id: OpenApiSchemas.MetabaseOpenApiInputSchema145() })
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput135 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema144(),
+);
 const openApiEndpoint135 = createMetabaseEndpoint(
 	'ee.getReplacementRunsById',
 	openApiInput135,
@@ -4025,14 +4598,18 @@ const openApiEndpoint135 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput136 = z
-	.object({
-		path: z
-			.object({ id: OpenApiSchemas.MetabaseOpenApiInputSchema145 })
-			.strict(),
-	})
-	.strict();
-const openApiOutput136 = z.object({ success: z.boolean() });
+const openApiInput136 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({ id: OpenApiSchemas.MetabaseOpenApiInputSchema145() })
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput136 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({ success: z.boolean().nullish() }),
+);
 const openApiEndpoint136 = createMetabaseEndpoint(
 	'ee.postReplacementRunsByIdCancel',
 	openApiInput136,
@@ -4043,40 +4620,50 @@ const openApiEndpoint136 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput137 = z.object({}).strict();
-const openApiOutput137 = z.object({
-	advisories: z.array(
-		z.object({
-			download_jar_urls: OpenApiSchemas.MetabaseOpenApiOutputSchema678,
-			published_at: z.string().datetime({ offset: true }),
-			advisory_url: z.union([z.string().min(1), z.null()]),
-			last_evaluated_at: z.union([
-				z.string().datetime({ offset: true }),
-				z.null(),
-			]),
-			match_status: OpenApiSchemas.MetabaseOpenApiOutputSchema679,
-			acknowledged_by: z.union([
-				z.object({
-					common_name: z.string().min(1),
-					email: z.string(),
-					id: z.number().int().min(1),
+const openApiInput137 = lazySchema(() => z.object({}).strict());
+const openApiOutput137 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		advisories: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					download_jar_urls:
+						OpenApiSchemas.MetabaseOpenApiOutputSchema678().nullish(),
+					published_at: z.string().datetime({ offset: true }).nullish(),
+					advisory_url: z.union([z.string(), z.null()]).nullish(),
+					last_evaluated_at: z
+						.union([z.string().datetime({ offset: true }), z.null()])
+						.nullish(),
+					match_status:
+						OpenApiSchemas.MetabaseOpenApiOutputSchema679().nullish(),
+					acknowledged_by: z
+						.union([
+							OpenApiSchemas.looseJsonObject({
+								common_name: z.string().nullish(),
+								email: z.string().nullish(),
+								id: z.number().int().nullish(),
+							}),
+							z.null(),
+						])
+						.nullish(),
+					title: z.string().nullish(),
+					affected_versions:
+						OpenApiSchemas.MetabaseOpenApiOutputSchema676().nullish(),
+					remediation: z.string().nullish(),
+					advisory_id:
+						OpenApiSchemas.MetabaseOpenApiOutputSchema675().nullish(),
+					severity: OpenApiSchemas.MetabaseOpenApiOutputSchema681().nullish(),
+					description: z.string().nullish(),
+					acknowledged_at: z
+						.union([z.string().datetime({ offset: true }), z.null()])
+						.nullish(),
 				}),
-				z.null(),
-			]),
-			title: z.string().min(1),
-			affected_versions: OpenApiSchemas.MetabaseOpenApiOutputSchema676,
-			remediation: z.string().min(1),
-			advisory_id: OpenApiSchemas.MetabaseOpenApiOutputSchema675,
-			severity: OpenApiSchemas.MetabaseOpenApiOutputSchema681,
-			description: z.string().min(1),
-			acknowledged_at: z.union([
-				z.string().datetime({ offset: true }),
-				z.null(),
-			]),
-		}),
-	),
-	last_checked_at: z.union([z.string().datetime({ offset: true }), z.null()]),
-});
+			)
+			.nullish(),
+		last_checked_at: z
+			.union([z.string().datetime({ offset: true }), z.null()])
+			.nullish(),
+	}),
+);
 const openApiEndpoint137 = createMetabaseEndpoint(
 	'ee.getSecurityCenter',
 	openApiInput137,
@@ -4084,28 +4671,36 @@ const openApiEndpoint137 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/security-center' }),
 );
 
-const openApiInput138 = z
-	.object({
-		body: z
-			.object({ advisory_ids: z.array(z.string().min(1)) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput138 = z.array(
-	z.object({
-		acknowledged_at: z.union([z.string().datetime({ offset: true }), z.null()]),
-		acknowledged_by: z.union([
-			z.object({
-				common_name: z.string().min(1),
-				email: z.string(),
-				id: z.number().int().min(1),
-			}),
-			z.null(),
-		]),
-		advisory_id: OpenApiSchemas.MetabaseOpenApiOutputSchema675,
-		match_status: OpenApiSchemas.MetabaseOpenApiOutputSchema679,
-	}),
+const openApiInput138 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({ advisory_ids: z.array(z.string().min(1)) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput138 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			acknowledged_at: z
+				.union([z.string().datetime({ offset: true }), z.null()])
+				.nullish(),
+			acknowledged_by: z
+				.union([
+					OpenApiSchemas.looseJsonObject({
+						common_name: z.string().nullish(),
+						email: z.string().nullish(),
+						id: z.number().int().nullish(),
+					}),
+					z.null(),
+				])
+				.nullish(),
+			advisory_id: OpenApiSchemas.MetabaseOpenApiOutputSchema675().nullish(),
+			match_status: OpenApiSchemas.MetabaseOpenApiOutputSchema679().nullish(),
+		}),
+	),
 );
 const openApiEndpoint138 = createMetabaseEndpoint(
 	'ee.postSecurityCenterAcknowledge',
@@ -4118,8 +4713,10 @@ const openApiEndpoint138 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput139 = z.object({}).strict();
-const openApiOutput139 = z.object({ status: z.string().min(1) });
+const openApiInput139 = lazySchema(() => z.object({}).strict());
+const openApiOutput139 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({ status: z.string().nullish() }),
+);
 const openApiEndpoint139 = createMetabaseEndpoint(
 	'ee.postSecurityCenterSync',
 	openApiInput139,
@@ -4127,23 +4724,27 @@ const openApiEndpoint139 = createMetabaseEndpoint(
 	(input) => ({ method: 'POST', path: '/api/ee/security-center/sync' }),
 );
 
-const openApiInput140 = z
-	.object({
-		body: z
-			.object({
-				email_recipients: z
-					.union([
-						z.array(OpenApiSchemas.MetabaseOpenApiInputSchema647),
-						z.null(),
-					])
-					.optional(),
-				slack_channel: z.union([z.string(), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput140 = z.object({ success: z.boolean() });
+const openApiInput140 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					email_recipients: z
+						.union([
+							z.array(OpenApiSchemas.MetabaseOpenApiInputSchema647()),
+							z.null(),
+						])
+						.optional(),
+					slack_channel: z.union([z.string(), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput140 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({ success: z.boolean().nullish() }),
+);
 const openApiEndpoint140 = createMetabaseEndpoint(
 	'ee.postSecurityCenterTestNotification',
 	openApiInput140,
@@ -4155,22 +4756,30 @@ const openApiEndpoint140 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput141 = z
-	.object({ path: z.object({ 'advisory-id': z.string().min(1) }).strict() })
-	.strict();
-const openApiOutput141 = z.object({
-	acknowledged_at: z.union([z.string().datetime({ offset: true }), z.null()]),
-	acknowledged_by: z.union([
-		z.object({
-			common_name: z.string().min(1),
-			email: z.string(),
-			id: z.number().int().min(1),
-		}),
-		z.null(),
-	]),
-	advisory_id: OpenApiSchemas.MetabaseOpenApiOutputSchema675,
-	match_status: OpenApiSchemas.MetabaseOpenApiOutputSchema679,
-});
+const openApiInput141 = lazySchema(() =>
+	z
+		.object({ path: z.object({ 'advisory-id': z.string().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput141 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		acknowledged_at: z
+			.union([z.string().datetime({ offset: true }), z.null()])
+			.nullish(),
+		acknowledged_by: z
+			.union([
+				OpenApiSchemas.looseJsonObject({
+					common_name: z.string().nullish(),
+					email: z.string().nullish(),
+					id: z.number().int().nullish(),
+				}),
+				z.null(),
+			])
+			.nullish(),
+		advisory_id: OpenApiSchemas.MetabaseOpenApiOutputSchema675().nullish(),
+		match_status: OpenApiSchemas.MetabaseOpenApiOutputSchema679().nullish(),
+	}),
+);
 const openApiEndpoint141 = createMetabaseEndpoint(
 	'ee.postSecurityCenterByAdvisoryIdAcknowledge',
 	openApiInput141,
@@ -4184,17 +4793,21 @@ const openApiEndpoint141 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput142 = z
-	.object({
-		query: z
-			.object({
-				status: z.union([z.literal('ended'), z.literal('all')]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput142 = OpenApiSchemas.MetabaseOpenApiOutputSchema153;
+const openApiInput142 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					status: z.union([z.literal('ended'), z.literal('all')]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput142 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema153(),
+);
 const openApiEndpoint142 = createMetabaseEndpoint(
 	'ee.getSessionManagement',
 	openApiInput142,
@@ -4206,14 +4819,18 @@ const openApiEndpoint142 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput143 = z
-	.object({
-		body: z
-			.union([OpenApiSchemas.MetabaseOpenApiInputSchema150, z.null()])
-			.optional(),
-	})
-	.strict();
-const openApiOutput143 = OpenApiSchemas.MetabaseOpenApiOutputSchema151;
+const openApiInput143 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.union([OpenApiSchemas.MetabaseOpenApiInputSchema150(), z.null()])
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput143 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema151(),
+);
 const openApiEndpoint143 = createMetabaseEndpoint(
 	'ee.postSessionManagementRevoke',
 	openApiInput143,
@@ -4225,10 +4842,14 @@ const openApiEndpoint143 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput144 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema155.optional() })
-	.strict();
-const openApiOutput144 = OpenApiSchemas.MetabaseOpenApiOutputSchema157;
+const openApiInput144 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema155().optional() })
+		.strict(),
+);
+const openApiOutput144 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema157(),
+);
 const openApiEndpoint144 = createMetabaseEndpoint(
 	'ee.postSupportAccessGrant',
 	openApiInput144,
@@ -4240,19 +4861,23 @@ const openApiEndpoint144 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput145 = z
-	.object({
-		query: z
-			.object({
-				'ticket-number': z.union([z.string(), z.null()]).optional(),
-				'user-id': z.union([z.number().int().min(1), z.null()]).optional(),
-				'include-revoked': z.union([z.boolean(), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput145 = OpenApiSchemas.MetabaseOpenApiOutputSchema158;
+const openApiInput145 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					'ticket-number': z.union([z.string(), z.null()]).optional(),
+					'user-id': z.union([z.number().int().min(1), z.null()]).optional(),
+					'include-revoked': z.union([z.boolean(), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput145 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema158(),
+);
 const openApiEndpoint145 = createMetabaseEndpoint(
 	'ee.getSupportAccessGrant',
 	openApiInput145,
@@ -4264,8 +4889,10 @@ const openApiEndpoint145 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput146 = z.object({}).strict();
-const openApiOutput146 = OpenApiSchemas.MetabaseOpenApiOutputSchema156;
+const openApiInput146 = lazySchema(() => z.object({}).strict());
+const openApiOutput146 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema156(),
+);
 const openApiEndpoint146 = createMetabaseEndpoint(
 	'ee.getSupportAccessGrantCurrent',
 	openApiInput146,
@@ -4273,10 +4900,14 @@ const openApiEndpoint146 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/support-access-grant/current' }),
 );
 
-const openApiInput147 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput147 = OpenApiSchemas.MetabaseOpenApiOutputSchema157;
+const openApiInput147 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput147 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema157(),
+);
 const openApiEndpoint147 = createMetabaseEndpoint(
 	'ee.putSupportAccessGrantByIdRevoke',
 	openApiInput147,
@@ -4290,36 +4921,39 @@ const openApiEndpoint147 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput148 = z
-	.object({
-		body: z
-			.object({
-				attributes: z
-					.union([
-						z.record(z.string(), OpenApiSchemas.MetabaseOpenApiInputSchema513),
-						z.null(),
-					])
-					.optional(),
-				name: z.string().min(1),
-				slug: z.string().regex(new RegExp('^[-_a-z0-9]{1,255}$')),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput148 = z
-	.object({
-		attributes: z
-			.union([z.record(z.string(), z.string()), z.null()])
-			.optional(),
-		id: z.number().int().min(1),
-		is_active: z.boolean(),
-		member_count: z.number().int().optional(),
-		name: z.string().min(1),
-		slug: z.string().regex(new RegExp('^[-_a-z0-9]{1,255}$')),
-		tenant_collection_id: z.number().int().min(1),
-	})
-	.strict();
+const openApiInput148 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					attributes: z
+						.union([
+							z.record(
+								z.string(),
+								OpenApiSchemas.MetabaseOpenApiInputSchema513(),
+							),
+							z.null(),
+						])
+						.optional(),
+					name: z.string().min(1),
+					slug: z.string().regex(new RegExp('^[-_a-z0-9]{1,255}$')),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput148 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		attributes: z.union([z.record(z.string(), z.string()), z.null()]).nullish(),
+		id: z.number().int().nullish(),
+		is_active: z.boolean().nullish(),
+		member_count: z.number().int().nullish(),
+		name: z.string().nullish(),
+		slug: z.string().regex(new RegExp('^[-_a-z0-9]{1,255}$')).nullish(),
+		tenant_collection_id: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint148 = createMetabaseEndpoint(
 	'ee.postTenant',
 	openApiInput148,
@@ -4327,41 +4961,43 @@ const openApiEndpoint148 = createMetabaseEndpoint(
 	(input) => ({ method: 'POST', path: '/api/ee/tenant', body: input.body }),
 );
 
-const openApiInput149 = z
-	.object({
-		query: z
-			.object({
-				status: z
-					.union([
-						z.literal('all'),
-						z.literal('deactivated'),
-						z.literal('active'),
-					])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput149 = z
-	.object({
-		data: z.array(
-			z
+const openApiInput149 = lazySchema(() =>
+	z
+		.object({
+			query: z
 				.object({
+					status: z
+						.union([
+							z.literal('all'),
+							z.literal('deactivated'),
+							z.literal('active'),
+						])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput149 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
 					attributes: z
 						.union([z.record(z.string(), z.string()), z.null()])
-						.optional(),
-					id: z.number().int().min(1),
-					is_active: z.boolean(),
-					member_count: z.number().int().optional(),
-					name: z.string().min(1),
-					slug: z.string().regex(new RegExp('^[-_a-z0-9]{1,255}$')),
-					tenant_collection_id: z.number().int().min(1),
-				})
-				.strict(),
-		),
-	})
-	.strict();
+						.nullish(),
+					id: z.number().int().nullish(),
+					is_active: z.boolean().nullish(),
+					member_count: z.number().int().nullish(),
+					name: z.string().nullish(),
+					slug: z.string().regex(new RegExp('^[-_a-z0-9]{1,255}$')).nullish(),
+					tenant_collection_id: z.number().int().nullish(),
+				}),
+			)
+			.nullish(),
+	}),
+);
 const openApiEndpoint149 = createMetabaseEndpoint(
 	'ee.getTenant',
 	openApiInput149,
@@ -4369,37 +5005,40 @@ const openApiEndpoint149 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/ee/tenant', query: input.query }),
 );
 
-const openApiInput150 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({
-				attributes: z
-					.union([
-						z.record(z.string(), OpenApiSchemas.MetabaseOpenApiInputSchema513),
-						z.null(),
-					])
-					.optional(),
-				is_active: z.union([z.boolean(), z.null()]).optional(),
-				name: z.union([z.string().min(1), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput150 = z
-	.object({
-		attributes: z
-			.union([z.record(z.string(), z.string()), z.null()])
-			.optional(),
-		id: z.number().int().min(1),
-		is_active: z.boolean(),
-		member_count: z.number().int().optional(),
-		name: z.string().min(1),
-		slug: z.string().regex(new RegExp('^[-_a-z0-9]{1,255}$')),
-		tenant_collection_id: z.number().int().min(1),
-	})
-	.strict();
+const openApiInput150 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({
+					attributes: z
+						.union([
+							z.record(
+								z.string(),
+								OpenApiSchemas.MetabaseOpenApiInputSchema513(),
+							),
+							z.null(),
+						])
+						.optional(),
+					is_active: z.union([z.boolean(), z.null()]).optional(),
+					name: z.union([z.string().min(1), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput150 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		attributes: z.union([z.record(z.string(), z.string()), z.null()]).nullish(),
+		id: z.number().int().nullish(),
+		is_active: z.boolean().nullish(),
+		member_count: z.number().int().nullish(),
+		name: z.string().nullish(),
+		slug: z.string().regex(new RegExp('^[-_a-z0-9]{1,255}$')).nullish(),
+		tenant_collection_id: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint150 = createMetabaseEndpoint(
 	'ee.putTenantById',
 	openApiInput150,
@@ -4411,22 +5050,22 @@ const openApiEndpoint150 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput151 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput151 = z
-	.object({
-		attributes: z
-			.union([z.record(z.string(), z.string()), z.null()])
-			.optional(),
-		id: z.number().int().min(1),
-		is_active: z.boolean(),
-		member_count: z.number().int().optional(),
-		name: z.string().min(1),
-		slug: z.string().regex(new RegExp('^[-_a-z0-9]{1,255}$')),
-		tenant_collection_id: z.number().int().min(1),
-	})
-	.strict();
+const openApiInput151 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput151 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		attributes: z.union([z.record(z.string(), z.string()), z.null()]).nullish(),
+		id: z.number().int().nullish(),
+		is_active: z.boolean().nullish(),
+		member_count: z.number().int().nullish(),
+		name: z.string().nullish(),
+		slug: z.string().regex(new RegExp('^[-_a-z0-9]{1,255}$')).nullish(),
+		tenant_collection_id: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint151 = createMetabaseEndpoint(
 	'ee.getTenantById',
 	openApiInput151,
@@ -4437,17 +5076,23 @@ const openApiEndpoint151 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput152 = z
-	.object({
-		query: z
-			.object({
-				'transform-id': z.union([z.number().int().min(1), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput152 = z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema168);
+const openApiInput152 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					'transform-id': z
+						.union([z.number().int().min(1), z.null()])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput152 = lazySchema(() =>
+	z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema168()),
+);
 const openApiEndpoint152 = createMetabaseEndpoint(
 	'ee.getTransformTest',
 	openApiInput152,
@@ -4459,10 +5104,14 @@ const openApiEndpoint152 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput153 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema167.optional() })
-	.strict();
-const openApiOutput153 = OpenApiSchemas.MetabaseOpenApiOutputSchema182;
+const openApiInput153 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema167().optional() })
+		.strict(),
+);
+const openApiOutput153 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema182(),
+);
 const openApiEndpoint153 = createMetabaseEndpoint(
 	'ee.postTransformTest',
 	openApiInput153,
@@ -4474,10 +5123,14 @@ const openApiEndpoint153 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput154 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput154 = OpenApiSchemas.MetabaseOpenApiOutputSchema168;
+const openApiInput154 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput154 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema168(),
+);
 const openApiEndpoint154 = createMetabaseEndpoint(
 	'ee.getTransformTestById',
 	openApiInput154,
@@ -4488,13 +5141,17 @@ const openApiEndpoint154 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput155 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: OpenApiSchemas.MetabaseOpenApiInputSchema169.optional(),
-	})
-	.strict();
-const openApiOutput155 = OpenApiSchemas.MetabaseOpenApiOutputSchema182;
+const openApiInput155 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: OpenApiSchemas.MetabaseOpenApiInputSchema169().optional(),
+		})
+		.strict(),
+);
+const openApiOutput155 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema182(),
+);
 const openApiEndpoint155 = createMetabaseEndpoint(
 	'ee.putTransformTestById',
 	openApiInput155,
@@ -4506,10 +5163,12 @@ const openApiEndpoint155 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput156 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput156 = z.null();
+const openApiInput156 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput156 = lazySchema(() => z.null());
 const openApiEndpoint156 = createMetabaseEndpoint(
 	'ee.deleteTransformTestById',
 	openApiInput156,
@@ -4520,25 +5179,29 @@ const openApiEndpoint156 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput157 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		query: z
-			.object({
-				statuses: z
-					.union([
-						z.array(OpenApiSchemas.MetabaseOpenApiInputSchema179),
-						z.null(),
-					])
-					.optional(),
-				'start-time': z.union([z.string().min(1), z.null()]).optional(),
-				'end-time': z.union([z.string().min(1), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput157 = OpenApiSchemas.MetabaseOpenApiOutputSchema166;
+const openApiInput157 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			query: z
+				.object({
+					statuses: z
+						.union([
+							z.array(OpenApiSchemas.MetabaseOpenApiInputSchema179()),
+							z.null(),
+						])
+						.optional(),
+					'start-time': z.union([z.string().min(1), z.null()]).optional(),
+					'end-time': z.union([z.string().min(1), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput157 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema166(),
+);
 const openApiEndpoint157 = createMetabaseEndpoint(
 	'ee.getTransformTestByIdRun',
 	openApiInput157,
@@ -4550,10 +5213,14 @@ const openApiEndpoint157 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput158 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput158 = OpenApiSchemas.MetabaseOpenApiOutputSchema178;
+const openApiInput158 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput158 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema178(),
+);
 const openApiEndpoint158 = createMetabaseEndpoint(
 	'ee.postTransformTestByIdRun',
 	openApiInput158,
@@ -4564,41 +5231,47 @@ const openApiEndpoint158 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput159 = z
-	.object({
-		body: z
-			.object({
-				code: z.string(),
-				output_row_limit: z
-					.intersection(
-						z.intersection(z.number().int(), z.number().gt(1)),
-						z.number().max(100),
-					)
-					.optional(),
-				per_input_row_limit: z
-					.intersection(
-						z.intersection(z.number().int(), z.number().gt(1)),
-						z.number().max(100),
-					)
-					.optional(),
-				source_tables: z
-					.array(OpenApiSchemas.MetabaseOpenApiInputSchema692)
-					.min(1),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput159 = z.object({
-	error: z.object({ message: z.string() }).optional(),
-	logs: z.string(),
-	output: z
+const openApiInput159 = lazySchema(() =>
+	z
 		.object({
-			cols: z.array(z.object({ name: z.string() })),
-			rows: z.array(z.json()),
+			body: z
+				.object({
+					code: z.string(),
+					output_row_limit: z
+						.intersection(
+							z.intersection(z.number().int(), z.number().gt(1)),
+							z.number().max(100),
+						)
+						.optional(),
+					per_input_row_limit: z
+						.intersection(
+							z.intersection(z.number().int(), z.number().gt(1)),
+							z.number().max(100),
+						)
+						.optional(),
+					source_tables: z
+						.array(OpenApiSchemas.MetabaseOpenApiInputSchema692())
+						.min(1),
+				})
+				.strict()
+				.optional(),
 		})
-		.optional(),
-});
+		.strict(),
+);
+const openApiOutput159 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		error: OpenApiSchemas.looseJsonObject({
+			message: z.string().nullish(),
+		}).nullish(),
+		logs: z.string().nullish(),
+		output: OpenApiSchemas.looseJsonObject({
+			cols: z
+				.array(OpenApiSchemas.looseJsonObject({ name: z.string().nullish() }))
+				.nullish(),
+			rows: z.array(z.json()).nullish(),
+		}).nullish(),
+	}),
+);
 const openApiEndpoint159 = createMetabaseEndpoint(
 	'ee.postTransformsPythonTestRun',
 	openApiInput159,
@@ -4610,10 +5283,14 @@ const openApiEndpoint159 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput160 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput160 = OpenApiSchemas.MetabaseOpenApiOutputSchema192;
+const openApiInput160 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput160 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema192(),
+);
 const openApiEndpoint160 = createMetabaseEndpoint(
 	'ee.getTransformsByIdInspect',
 	openApiInput160,
@@ -4624,14 +5301,18 @@ const openApiEndpoint160 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput161 = z
-	.object({
-		path: z
-			.object({ id: z.number().int().min(1), 'lens-id': z.string().min(1) })
-			.strict(),
-	})
-	.strict();
-const openApiOutput161 = OpenApiSchemas.MetabaseOpenApiOutputSchema201;
+const openApiInput161 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({ id: z.number().int().min(1), 'lens-id': z.string().min(1) })
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput161 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema201(),
+);
 const openApiEndpoint161 = createMetabaseEndpoint(
 	'ee.getTransformsByIdInspectByLensId',
 	openApiInput161,
@@ -4645,23 +5326,27 @@ const openApiEndpoint161 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput162 = z
-	.object({
-		path: z
-			.object({ id: z.number().int().min(1), 'lens-id': z.string().min(1) })
-			.strict(),
-		body: z
-			.object({
-				lens_params: z
-					.union([OpenApiSchemas.MetabaseOpenApiInputSchema185, z.null()])
-					.optional(),
-				query: OpenApiSchemas.MetabaseOpenApiInputSchema337,
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput162 = OpenApiSchemas.MetabaseOpenApiOutputSchema674;
+const openApiInput162 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({ id: z.number().int().min(1), 'lens-id': z.string().min(1) })
+				.strict(),
+			body: z
+				.object({
+					lens_params: z
+						.union([OpenApiSchemas.MetabaseOpenApiInputSchema185(), z.null()])
+						.optional(),
+					query: OpenApiSchemas.MetabaseOpenApiInputSchema337(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput162 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema674(),
+);
 const openApiEndpoint162 = createMetabaseEndpoint(
 	'ee.postTransformsByIdInspectByLensIdQuery',
 	openApiInput162,
@@ -4677,88 +5362,10 @@ const openApiEndpoint162 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput163 = z.object({}).strict();
-const openApiOutput163 = z
-	.object({
-		settings: z.record(z.string(), z.json()),
-		user: OpenApiSchemas.MetabaseOpenApiOutputSchema585,
-	})
-	.strict();
-const openApiEndpoint163 = createMetabaseEndpoint(
-	'embedMcp.getBootstrap',
-	openApiInput163,
-	openApiOutput163,
-	(input) => ({ method: 'GET', path: '/api/embed-mcp/bootstrap' }),
+const openApiInput166 = lazySchema(() => z.object({}).strict());
+const openApiOutput166 = lazySchema(() =>
+	z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema295()),
 );
-
-const openApiInput164 = z
-	.object({
-		body: z
-			.object({
-				conversation_data: z
-					.object({
-						prompt: z.union([z.string().max(10000), z.null()]).optional(),
-						query: z.union([z.string().max(10000), z.null()]).optional(),
-						source: z.literal('mcp'),
-					})
-					.strict(),
-				feedback: z
-					.object({
-						freeform_feedback: z
-							.union([z.string().max(10000), z.null()])
-							.optional(),
-						issue_type: z.union([z.string().max(64), z.null()]).optional(),
-						positive: z.boolean(),
-					})
-					.strict(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput164 = z.null();
-const openApiEndpoint164 = createMetabaseEndpoint(
-	'embedMcp.postFeedback',
-	openApiInput164,
-	openApiOutput164,
-	(input) => ({
-		method: 'POST',
-		path: '/api/embed-mcp/feedback',
-		body: input.body,
-	}),
-);
-
-const openApiInput165 = z
-	.object({
-		path: z
-			.object({
-				handle: z
-					.string()
-					.regex(
-						new RegExp(
-							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
-						),
-					),
-			})
-			.strict(),
-	})
-	.strict();
-const openApiOutput165 = z.object({
-	prompt: z.union([z.string(), z.null()]),
-	query: z.string().min(1),
-});
-const openApiEndpoint165 = createMetabaseEndpoint(
-	'embedMcp.getQueriesByHandle',
-	openApiInput165,
-	openApiOutput165,
-	(input) => ({
-		method: 'GET',
-		path: buildMetabasePath('/api/embed-mcp/queries/{handle}', input.path),
-	}),
-);
-
-const openApiInput166 = z.object({}).strict();
-const openApiOutput166 = z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema295);
 const openApiEndpoint166 = createMetabaseEndpoint(
 	'embedTheme.get',
 	openApiInput166,
@@ -4766,18 +5373,22 @@ const openApiEndpoint166 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/embed-theme' }),
 );
 
-const openApiInput167 = z
-	.object({
-		body: z
-			.object({
-				name: z.string().min(1),
-				settings: z.record(z.string(), z.json()),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput167 = OpenApiSchemas.MetabaseOpenApiOutputSchema295;
+const openApiInput167 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					name: z.string().min(1),
+					settings: z.record(z.string(), z.json()),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput167 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema295(),
+);
 const openApiEndpoint167 = createMetabaseEndpoint(
 	'embedTheme.post',
 	openApiInput167,
@@ -4785,24 +5396,26 @@ const openApiEndpoint167 = createMetabaseEndpoint(
 	(input) => ({ method: 'POST', path: '/api/embed-theme', body: input.body }),
 );
 
-const openApiInput168 = z
-	.object({
-		body: z
-			.object({
-				themes: z.array(
-					z
-						.object({
-							name: z.string().min(1),
-							settings: z.record(z.string(), z.json()),
-						})
-						.strict(),
-				),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput168 = z.null();
+const openApiInput168 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					themes: z.array(
+						z
+							.object({
+								name: z.string().min(1),
+								settings: z.record(z.string(), z.json()),
+							})
+							.strict(),
+					),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput168 = lazySchema(() => z.null());
 const openApiEndpoint168 = createMetabaseEndpoint(
 	'embedTheme.postSeedDefaults',
 	openApiInput168,
@@ -4814,10 +5427,14 @@ const openApiEndpoint168 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput169 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput169 = OpenApiSchemas.MetabaseOpenApiOutputSchema295;
+const openApiInput169 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput169 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema295(),
+);
 const openApiEndpoint169 = createMetabaseEndpoint(
 	'embedTheme.getById',
 	openApiInput169,
@@ -4828,21 +5445,25 @@ const openApiEndpoint169 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput170 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({
-				name: z.union([z.string().min(1), z.null()]).optional(),
-				settings: z
-					.union([z.record(z.string(), z.json()), z.null()])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput170 = OpenApiSchemas.MetabaseOpenApiOutputSchema295;
+const openApiInput170 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({
+					name: z.union([z.string().min(1), z.null()]).optional(),
+					settings: z
+						.union([z.record(z.string(), z.json()), z.null()])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput170 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema295(),
+);
 const openApiEndpoint170 = createMetabaseEndpoint(
 	'embedTheme.putById',
 	openApiInput170,
@@ -4854,10 +5475,12 @@ const openApiEndpoint170 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput171 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput171 = z.null();
+const openApiInput171 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput171 = lazySchema(() => z.null());
 const openApiEndpoint171 = createMetabaseEndpoint(
 	'embedTheme.deleteById',
 	openApiInput171,
@@ -4868,10 +5491,14 @@ const openApiEndpoint171 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput172 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput172 = OpenApiSchemas.MetabaseOpenApiOutputSchema295;
+const openApiInput172 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput172 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema295(),
+);
 const openApiEndpoint172 = createMetabaseEndpoint(
 	'embedTheme.postByIdCopy',
 	openApiInput172,
@@ -4882,38 +5509,38 @@ const openApiEndpoint172 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput173 = z.object({}).strict();
-const openApiOutput173 = z
-	.object({
-		checklist: z
-			.object({
-				'enable-tenants': z.boolean(),
-				'create-models': z.boolean(),
-				'sso-configured': z.boolean(),
-				'configure-row-column-security': z.boolean(),
-				'create-custom-theme': z.boolean(),
-				'create-test-embed': z.boolean(),
-				'data-permissions-and-enable-tenants': z.boolean(),
-				'embed-production': z.boolean(),
-				'create-dashboard': z.boolean(),
-				'move-dashboard-to-shared': z.boolean(),
-				'configure-ai': z.boolean(),
-				'setup-data-segregation-strategy': z.boolean(),
-				'create-tenants': z.boolean(),
-				'add-data': z.boolean(),
-				'sso-auth-manual-tested': z.boolean(),
-			})
-			.strict(),
-		'data-isolation-strategy': z.union([
-			z.union([
-				z.literal('row-column-level-security'),
-				z.literal('connection-impersonation'),
-				z.literal('database-routing'),
-			]),
-			z.null(),
-		]),
-	})
-	.strict();
+const openApiInput173 = lazySchema(() => z.object({}).strict());
+const openApiOutput173 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		checklist: OpenApiSchemas.looseJsonObject({
+			'enable-tenants': z.boolean().nullish(),
+			'create-models': z.boolean().nullish(),
+			'sso-configured': z.boolean().nullish(),
+			'configure-row-column-security': z.boolean().nullish(),
+			'create-custom-theme': z.boolean().nullish(),
+			'create-test-embed': z.boolean().nullish(),
+			'data-permissions-and-enable-tenants': z.boolean().nullish(),
+			'embed-production': z.boolean().nullish(),
+			'create-dashboard': z.boolean().nullish(),
+			'move-dashboard-to-shared': z.boolean().nullish(),
+			'configure-ai': z.boolean().nullish(),
+			'setup-data-segregation-strategy': z.boolean().nullish(),
+			'create-tenants': z.boolean().nullish(),
+			'add-data': z.boolean().nullish(),
+			'sso-auth-manual-tested': z.boolean().nullish(),
+		}).nullish(),
+		'data-isolation-strategy': z
+			.union([
+				z.union([
+					z.literal('row-column-level-security'),
+					z.literal('connection-impersonation'),
+					z.literal('database-routing'),
+				]),
+				z.null(),
+			])
+			.nullish(),
+	}),
+);
 const openApiEndpoint173 = createMetabaseEndpoint(
 	'embeddingHub.getChecklist',
 	openApiInput173,
@@ -4921,8 +5548,10 @@ const openApiEndpoint173 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/embedding-hub/checklist' }),
 );
 
-const openApiInput174 = z.object({}).strict();
-const openApiOutput174 = z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema296);
+const openApiInput174 = lazySchema(() => z.object({}).strict());
+const openApiOutput174 = lazySchema(() =>
+	z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema296()),
+);
 const openApiEndpoint174 = createMetabaseEndpoint(
 	'embeddingSdk.getReact18Hosts',
 	openApiInput174,
@@ -4930,12 +5559,14 @@ const openApiEndpoint174 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/embedding-sdk/react-18-hosts' }),
 );
 
-const openApiInput175 = z
-	.object({
-		path: z.object({ 'session-id': z.string().min(1).max(200) }).strict(),
-	})
-	.strict();
-const openApiOutput175 = MetabaseBinaryResponseSchema;
+const openApiInput175 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ 'session-id': z.string().min(1).max(200) }).strict(),
+		})
+		.strict(),
+);
+const openApiOutput175 = lazySchema(() => MetabaseBinaryResponseSchema);
 const openApiEndpoint175 = createMetabaseEndpoint(
 	'evalTrace.getBySessionId',
 	openApiInput175,
@@ -4947,81 +5578,87 @@ const openApiEndpoint175 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput176 = z
-	.object({
-		body: z
-			.object({
-				blocks: z
-					.union([
-						z.array(
-							z
-								.object({
-									dimensions: z
-										.union([
-											z.array(
-												z
-													.object({
-														'dimension-id': z
-															.string()
-															.regex(
-																new RegExp(
-																	'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+const openApiInput176 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					blocks: z
+						.union([
+							z.array(
+								z
+									.object({
+										dimensions: z
+											.union([
+												z.array(
+													z
+														.object({
+															'dimension-id': z
+																.string()
+																.regex(
+																	new RegExp(
+																		'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+																	),
 																),
-															),
-														'display-name': z
-															.union([z.string(), z.null()])
-															.optional(),
-														'effective-type': z
-															.union([z.string(), z.null()])
-															.optional(),
-														'semantic-type': z
-															.union([z.string(), z.null()])
-															.optional(),
-													})
-													.strict(),
-											),
-											z.null(),
-										])
-										.optional(),
-									metrics: z
-										.union([
-											z.array(
-												z
-													.object({
-														card_id: z.number().int().min(1),
-														dimension_mappings: z
-															.union([
-																z.array(
-																	OpenApiSchemas.MetabaseOpenApiInputSchema616,
-																),
-																z.null(),
-															])
-															.optional(),
-													})
-													.strict(),
-											),
-											z.null(),
-										])
-										.optional(),
-								})
-								.strict(),
-						),
-						z.null(),
-					])
-					.optional(),
-				collection_id: z.union([z.number().int().min(1), z.null()]).optional(),
-				description: z.union([z.string(), z.null()]).optional(),
-				name: z.string().min(1).max(254),
-				prompt: z.union([z.string(), z.null()]).optional(),
-				timeline_ids: z
-					.union([z.array(z.number().int().min(1)), z.null()])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput176 = OpenApiSchemas.MetabaseOpenApiOutputSchema307;
+															'display-name': z
+																.union([z.string(), z.null()])
+																.optional(),
+															'effective-type': z
+																.union([z.string(), z.null()])
+																.optional(),
+															'semantic-type': z
+																.union([z.string(), z.null()])
+																.optional(),
+														})
+														.strict(),
+												),
+												z.null(),
+											])
+											.optional(),
+										metrics: z
+											.union([
+												z.array(
+													z
+														.object({
+															card_id: z.number().int().min(1),
+															dimension_mappings: z
+																.union([
+																	z.array(
+																		OpenApiSchemas.MetabaseOpenApiInputSchema616(),
+																	),
+																	z.null(),
+																])
+																.optional(),
+														})
+														.strict(),
+												),
+												z.null(),
+											])
+											.optional(),
+									})
+									.strict(),
+							),
+							z.null(),
+						])
+						.optional(),
+					collection_id: z
+						.union([z.number().int().min(1), z.null()])
+						.optional(),
+					description: z.union([z.string(), z.null()]).optional(),
+					name: z.string().min(1).max(254),
+					prompt: z.union([z.string(), z.null()]).optional(),
+					timeline_ids: z
+						.union([z.array(z.number().int().min(1)), z.null()])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput176 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema307(),
+);
 const openApiEndpoint176 = createMetabaseEndpoint(
 	'exploration.post',
 	openApiInput176,
@@ -5029,8 +5666,10 @@ const openApiEndpoint176 = createMetabaseEndpoint(
 	(input) => ({ method: 'POST', path: '/api/exploration', body: input.body }),
 );
 
-const openApiInput177 = z.object({}).strict();
-const openApiOutput177 = OpenApiSchemas.MetabaseOpenApiOutputSchema298;
+const openApiInput177 = lazySchema(() => z.object({}).strict());
+const openApiOutput177 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema298(),
+);
 const openApiEndpoint177 = createMetabaseEndpoint(
 	'exploration.getDimensions',
 	openApiInput177,
@@ -5038,22 +5677,34 @@ const openApiEndpoint177 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/exploration/dimensions' }),
 );
 
-const openApiInput178 = z.object({}).strict();
-const openApiOutput178 = OpenApiSchemas.MetabaseOpenApiOutputSchema309;
+const openApiInput178 = lazySchema(() =>
+	z
+		.object({ query: z.object(metabasePageQueryShape).strict().optional() })
+		.strict(),
+);
+const openApiOutput178 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema309(),
+);
 const openApiEndpoint178 = createMetabaseEndpoint(
 	'exploration.getMine',
 	openApiInput178,
 	openApiOutput178,
-	(input) => ({ method: 'GET', path: '/api/exploration/mine' }),
+	(input) => ({
+		method: 'GET',
+		path: '/api/exploration/mine',
+		query: input.query,
+	}),
 );
 
-const openApiInput179 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z.object({ starred: z.boolean() }).strict().optional(),
-	})
-	.strict();
-const openApiOutput179 = z.null();
+const openApiInput179 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z.object({ starred: z.boolean() }).strict().optional(),
+		})
+		.strict(),
+);
+const openApiOutput179 = lazySchema(() => z.null());
 const openApiEndpoint179 = createMetabaseEndpoint(
 	'exploration.putPageByIdStarred',
 	openApiInput179,
@@ -5065,18 +5716,20 @@ const openApiEndpoint179 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput180 = z
-	.object({
-		body: z
-			.object({
-				hidden: z.boolean(),
-				page_ids: z.array(z.number().int().min(1)),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput180 = z.null();
+const openApiInput180 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					hidden: z.boolean(),
+					page_ids: z.array(z.number().int().min(1)),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput180 = lazySchema(() => z.null());
 const openApiEndpoint180 = createMetabaseEndpoint(
 	'exploration.putPagesHidden',
 	openApiInput180,
@@ -5088,28 +5741,32 @@ const openApiEndpoint180 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput181 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		query: z
-			.object({
-				format: z
-					.union([
-						z.literal('api'),
-						z.literal('csv'),
-						z.literal('json'),
-						z.literal('xlsx'),
-					])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput181 = z.union([
-	OpenApiSchemas.MetabaseOpenApiOutputSchema304,
-	MetabaseBinaryResponseSchema,
-]);
+const openApiInput181 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			query: z
+				.object({
+					format: z
+						.union([
+							z.literal('api'),
+							z.literal('csv'),
+							z.literal('json'),
+							z.literal('xlsx'),
+						])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput181 = lazySchema(() =>
+	z.union([
+		OpenApiSchemas.MetabaseOpenApiOutputSchema304(),
+		MetabaseBinaryResponseSchema,
+	]),
+);
 const openApiEndpoint181 = createMetabaseEndpoint(
 	'exploration.getQueryById',
 	openApiInput181,
@@ -5125,10 +5782,16 @@ const openApiEndpoint181 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput182 = z
-	.object({ path: z.object({ 'thread-id': z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput182 = OpenApiSchemas.MetabaseOpenApiOutputSchema297;
+const openApiInput182 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ 'thread-id': z.number().int().min(1) }).strict(),
+		})
+		.strict(),
+);
+const openApiOutput182 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema297(),
+);
 const openApiEndpoint182 = createMetabaseEndpoint(
 	'exploration.postThreadByThreadIdCancel',
 	openApiInput182,
@@ -5142,10 +5805,16 @@ const openApiEndpoint182 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput183 = z
-	.object({ path: z.object({ 'thread-id': z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput183 = OpenApiSchemas.MetabaseOpenApiOutputSchema307;
+const openApiInput183 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ 'thread-id': z.number().int().min(1) }).strict(),
+		})
+		.strict(),
+);
+const openApiOutput183 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema307(),
+);
 const openApiEndpoint183 = createMetabaseEndpoint(
 	'exploration.postThreadByThreadIdRestart',
 	openApiInput183,
@@ -5159,10 +5828,14 @@ const openApiEndpoint183 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput184 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput184 = OpenApiSchemas.MetabaseOpenApiOutputSchema307;
+const openApiInput184 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput184 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema307(),
+);
 const openApiEndpoint184 = createMetabaseEndpoint(
 	'exploration.getById',
 	openApiInput184,
@@ -5173,24 +5846,30 @@ const openApiEndpoint184 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput185 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({
-				archived: z.boolean().optional(),
-				collection_id: z.union([z.number().int().min(1), z.null()]).optional(),
-				collection_position: z
-					.union([z.number().int().min(1), z.null()])
-					.optional(),
-				description: z.union([z.string(), z.null()]).optional(),
-				name: z.string().min(1).max(254).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput185 = OpenApiSchemas.MetabaseOpenApiOutputSchema307;
+const openApiInput185 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({
+					archived: z.boolean().optional(),
+					collection_id: z
+						.union([z.number().int().min(1), z.null()])
+						.optional(),
+					collection_position: z
+						.union([z.number().int().min(1), z.null()])
+						.optional(),
+					description: z.union([z.string(), z.null()]).optional(),
+					name: z.string().min(1).max(254).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput185 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema307(),
+);
 const openApiEndpoint185 = createMetabaseEndpoint(
 	'exploration.putById',
 	openApiInput185,
@@ -5202,10 +5881,12 @@ const openApiEndpoint185 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput186 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput186 = z.null();
+const openApiInput186 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput186 = lazySchema(() => z.null());
 const openApiEndpoint186 = createMetabaseEndpoint(
 	'exploration.deleteById',
 	openApiInput186,
@@ -5216,71 +5897,83 @@ const openApiEndpoint186 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput187 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({
-				explore_filters: z
-					.array(
-						z.union([
-							z
-								.object({
-									dimension_name: z.union([z.string(), z.null()]).optional(),
-									display_value: z.string().min(1),
-									field_ref: OpenApiSchemas.MetabaseOpenApiInputSchema511,
-									operator: z.literal('='),
-									value: z.union([
-										z.union([z.string(), z.number(), z.boolean()]),
-										z.null(),
-									]),
-								})
-								.strict(),
-							z
-								.object({
-									dimension_name: z.union([z.string(), z.null()]).optional(),
-									display_value: z.string().min(1),
-									field_ref: OpenApiSchemas.MetabaseOpenApiInputSchema511,
-									operator: z.literal('between'),
-									values: z
-										.array(z.json())
-										.superRefine((values, ctx) =>
-											validatePrefixItems(
-												values,
-												[
-													(value) =>
-														z
-															.union([
-																z.union([z.string(), z.number(), z.boolean()]),
-																z.null(),
-															])
-															.safeParse(value).success,
-													(value) =>
-														z
-															.union([
-																z.union([z.string(), z.number(), z.boolean()]),
-																z.null(),
-															])
-															.safeParse(value).success,
-												],
-												(value) => z.json().safeParse(value).success,
-												2,
-												2,
-												ctx,
+const openApiInput187 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({
+					explore_filters: z
+						.array(
+							z.union([
+								z
+									.object({
+										dimension_name: z.union([z.string(), z.null()]).optional(),
+										display_value: z.string().min(1),
+										field_ref: OpenApiSchemas.MetabaseOpenApiInputSchema511(),
+										operator: z.literal('='),
+										value: z.union([
+											z.union([z.string(), z.number(), z.boolean()]),
+											z.null(),
+										]),
+									})
+									.strict(),
+								z
+									.object({
+										dimension_name: z.union([z.string(), z.null()]).optional(),
+										display_value: z.string().min(1),
+										field_ref: OpenApiSchemas.MetabaseOpenApiInputSchema511(),
+										operator: z.literal('between'),
+										values: z
+											.array(z.json())
+											.superRefine((values, ctx) =>
+												validatePrefixItems(
+													values,
+													[
+														(value) =>
+															z
+																.union([
+																	z.union([
+																		z.string(),
+																		z.number(),
+																		z.boolean(),
+																	]),
+																	z.null(),
+																])
+																.safeParse(value).success,
+														(value) =>
+															z
+																.union([
+																	z.union([
+																		z.string(),
+																		z.number(),
+																		z.boolean(),
+																	]),
+																	z.null(),
+																])
+																.safeParse(value).success,
+													],
+													(value) => z.json().safeParse(value).success,
+													2,
+													2,
+													ctx,
+												),
 											),
-										),
-								})
-								.strict(),
-						]),
-					)
-					.min(1),
-				page_id: z.number().int().min(1),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput187 = OpenApiSchemas.MetabaseOpenApiOutputSchema307;
+									})
+									.strict(),
+							]),
+						)
+						.min(1),
+					page_id: z.number().int().min(1),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput187 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema307(),
+);
 const openApiEndpoint187 = createMetabaseEndpoint(
 	'exploration.postByIdExploreFurther',
 	openApiInput187,
@@ -5295,20 +5988,24 @@ const openApiEndpoint187 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput188 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({
-				display: z.string(),
-				exploration_query_ids: z.array(z.number().int().min(1)).min(1),
-				visualization_settings: z.record(z.string(), z.json()),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput188 = OpenApiSchemas.MetabaseOpenApiOutputSchema301;
+const openApiInput188 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({
+					display: z.string(),
+					exploration_query_ids: z.array(z.number().int().min(1)).min(1),
+					visualization_settings: z.record(z.string(), z.json()),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput188 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema301(),
+);
 const openApiEndpoint188 = createMetabaseEndpoint(
 	'exploration.postByIdSummaryAppend',
 	openApiInput188,
@@ -5320,17 +6017,21 @@ const openApiEndpoint188 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput189 = z
-	.object({
-		body: z
-			.object({ field_ids: z.array(z.number().int().min(1)) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput189 = z.object({
-	table_ids: z.array(z.number().int().min(1)),
-});
+const openApiInput189 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({ field_ids: z.array(z.number().int().min(1)) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput189 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		table_ids: z.array(z.number().int()).nullish(),
+	}),
+);
 const openApiEndpoint189 = createMetabaseEndpoint(
 	'field.postTableIds',
 	openApiInput189,
@@ -5342,15 +6043,19 @@ const openApiEndpoint189 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput190 = z
-	.object({
-		query: z
-			.object({ limit: z.number().int().min(1).optional() })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput190 = z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema310);
+const openApiInput190 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({ limit: z.number().int().min(1).optional() })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput190 = lazySchema(() =>
+	z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema310()),
+);
 const openApiEndpoint190 = createMetabaseEndpoint(
 	'healthInspector.get',
 	openApiInput190,
@@ -5362,53 +6067,57 @@ const openApiEndpoint190 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput191 = z
-	.object({
-		query: z.object({ 'transform-id': z.number().int().min(1) }).strict(),
-	})
-	.strict();
-const openApiOutput191 = z.object({
-	data: z.array(
-		z
-			.object({
-				is_valid: z.boolean(),
-				key_columns: z.array(z.string()),
-				access_method: z.union([z.string(), z.null()]),
-				metabase_managed: z.boolean(),
-				name: z.union([z.string(), z.null()]),
-				is_unique: z.boolean(),
-				present_in_warehouse: z.boolean(),
-				is_primary: z.boolean(),
-				request: z
-					.object({
-						index_name: z.string().min(1),
-						structured: OpenApiSchemas.MetabaseOpenApiOutputSchema317,
-						transform_id: z.number().int().min(1),
-						id: z.number().int().min(1),
-						created_by: z.union([z.number().int().min(1), z.null()]),
-						updated_at: z.json(),
-						status: z.union([
-							z.literal('create-pending'),
-							z.literal('update-pending'),
-							z.literal('delete-pending'),
-							z.literal('running'),
-							z.literal('succeeded'),
-							z.literal('failed'),
-						]),
-						error_message: z.union([z.string(), z.null()]),
-						created_at: z.json(),
-						last_executed_at: z.json(),
-					})
-					.strict()
-					.optional(),
-				kind: z.string(),
-				partial_predicate: z.union([z.string(), z.null()]),
-				include_columns: z.array(z.union([z.string(), z.null()])),
-			})
-			.strict(),
-	),
-	warehouse_error: z.union([z.string(), z.null()]).optional(),
-});
+const openApiInput191 = lazySchema(() =>
+	z
+		.object({
+			query: z.object({ 'transform-id': z.number().int().min(1) }).strict(),
+		})
+		.strict(),
+);
+const openApiOutput191 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					is_valid: z.boolean().nullish(),
+					key_columns: z.array(z.string()).nullish(),
+					access_method: z.union([z.string(), z.null()]).nullish(),
+					metabase_managed: z.boolean().nullish(),
+					name: z.union([z.string(), z.null()]).nullish(),
+					is_unique: z.boolean().nullish(),
+					present_in_warehouse: z.boolean().nullish(),
+					is_primary: z.boolean().nullish(),
+					request: OpenApiSchemas.looseJsonObject({
+						index_name: z.string().nullish(),
+						structured:
+							OpenApiSchemas.MetabaseOpenApiOutputSchema317().nullish(),
+						transform_id: z.number().int().nullish(),
+						id: z.number().int().nullish(),
+						created_by: z.union([z.number().int(), z.null()]).nullish(),
+						updated_at: z.json().nullish(),
+						status: z
+							.union([
+								z.literal('create-pending'),
+								z.literal('update-pending'),
+								z.literal('delete-pending'),
+								z.literal('running'),
+								z.literal('succeeded'),
+								z.literal('failed'),
+							])
+							.nullish(),
+						error_message: z.union([z.string(), z.null()]).nullish(),
+						created_at: z.json().nullish(),
+						last_executed_at: z.json().nullish(),
+					}).nullish(),
+					kind: z.string().nullish(),
+					partial_predicate: z.union([z.string(), z.null()]).nullish(),
+					include_columns: z.array(z.union([z.string(), z.null()])).nullish(),
+				}),
+			)
+			.nullish(),
+		warehouse_error: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint191 = createMetabaseEndpoint(
 	'index.get',
 	openApiInput191,
@@ -5416,38 +6125,42 @@ const openApiEndpoint191 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/index', query: input.query }),
 );
 
-const openApiInput192 = z
-	.object({
-		body: z
-			.object({
-				structured: OpenApiSchemas.MetabaseOpenApiInputSchema317,
-				transform_id: z.number().int().min(1),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput192 = z
-	.object({
-		index_name: z.string().min(1),
-		structured: OpenApiSchemas.MetabaseOpenApiOutputSchema317,
-		transform_id: z.number().int().min(1),
-		id: z.number().int().min(1),
-		created_by: z.union([z.number().int().min(1), z.null()]),
-		updated_at: z.json(),
-		status: z.union([
-			z.literal('create-pending'),
-			z.literal('update-pending'),
-			z.literal('delete-pending'),
-			z.literal('running'),
-			z.literal('succeeded'),
-			z.literal('failed'),
-		]),
-		error_message: z.union([z.string(), z.null()]),
-		created_at: z.json(),
-		last_executed_at: z.json(),
-	})
-	.strict();
+const openApiInput192 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					structured: OpenApiSchemas.MetabaseOpenApiInputSchema317(),
+					transform_id: z.number().int().min(1),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput192 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		index_name: z.string().nullish(),
+		structured: OpenApiSchemas.MetabaseOpenApiOutputSchema317().nullish(),
+		transform_id: z.number().int().nullish(),
+		id: z.number().int().nullish(),
+		created_by: z.union([z.number().int(), z.null()]).nullish(),
+		updated_at: z.json().nullish(),
+		status: z
+			.union([
+				z.literal('create-pending'),
+				z.literal('update-pending'),
+				z.literal('delete-pending'),
+				z.literal('running'),
+				z.literal('succeeded'),
+				z.literal('failed'),
+			])
+			.nullish(),
+		error_message: z.union([z.string(), z.null()]).nullish(),
+		created_at: z.json().nullish(),
+		last_executed_at: z.json().nullish(),
+	}),
+);
 const openApiEndpoint192 = createMetabaseEndpoint(
 	'index.postRequest',
 	openApiInput192,
@@ -5455,30 +6168,34 @@ const openApiEndpoint192 = createMetabaseEndpoint(
 	(input) => ({ method: 'POST', path: '/api/index/request', body: input.body }),
 );
 
-const openApiInput193 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput193 = z
-	.object({
-		index_name: z.string().min(1),
-		structured: OpenApiSchemas.MetabaseOpenApiOutputSchema317,
-		transform_id: z.number().int().min(1),
-		id: z.number().int().min(1),
-		created_by: z.union([z.number().int().min(1), z.null()]),
-		updated_at: z.json(),
-		status: z.union([
-			z.literal('create-pending'),
-			z.literal('update-pending'),
-			z.literal('delete-pending'),
-			z.literal('running'),
-			z.literal('succeeded'),
-			z.literal('failed'),
-		]),
-		error_message: z.union([z.string(), z.null()]),
-		created_at: z.json(),
-		last_executed_at: z.json(),
-	})
-	.strict();
+const openApiInput193 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput193 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		index_name: z.string().nullish(),
+		structured: OpenApiSchemas.MetabaseOpenApiOutputSchema317().nullish(),
+		transform_id: z.number().int().nullish(),
+		id: z.number().int().nullish(),
+		created_by: z.union([z.number().int(), z.null()]).nullish(),
+		updated_at: z.json().nullish(),
+		status: z
+			.union([
+				z.literal('create-pending'),
+				z.literal('update-pending'),
+				z.literal('delete-pending'),
+				z.literal('running'),
+				z.literal('succeeded'),
+				z.literal('failed'),
+			])
+			.nullish(),
+		error_message: z.union([z.string(), z.null()]).nullish(),
+		created_at: z.json().nullish(),
+		last_executed_at: z.json().nullish(),
+	}),
+);
 const openApiEndpoint193 = createMetabaseEndpoint(
 	'index.getRequestById',
 	openApiInput193,
@@ -5489,36 +6206,40 @@ const openApiEndpoint193 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput194 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({ structured: OpenApiSchemas.MetabaseOpenApiInputSchema317 })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput194 = z
-	.object({
-		index_name: z.string().min(1),
-		structured: OpenApiSchemas.MetabaseOpenApiOutputSchema317,
-		transform_id: z.number().int().min(1),
-		id: z.number().int().min(1),
-		created_by: z.union([z.number().int().min(1), z.null()]),
-		updated_at: z.json(),
-		status: z.union([
-			z.literal('create-pending'),
-			z.literal('update-pending'),
-			z.literal('delete-pending'),
-			z.literal('running'),
-			z.literal('succeeded'),
-			z.literal('failed'),
-		]),
-		error_message: z.union([z.string(), z.null()]),
-		created_at: z.json(),
-		last_executed_at: z.json(),
-	})
-	.strict();
+const openApiInput194 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({ structured: OpenApiSchemas.MetabaseOpenApiInputSchema317() })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput194 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		index_name: z.string().nullish(),
+		structured: OpenApiSchemas.MetabaseOpenApiOutputSchema317().nullish(),
+		transform_id: z.number().int().nullish(),
+		id: z.number().int().nullish(),
+		created_by: z.union([z.number().int(), z.null()]).nullish(),
+		updated_at: z.json().nullish(),
+		status: z
+			.union([
+				z.literal('create-pending'),
+				z.literal('update-pending'),
+				z.literal('delete-pending'),
+				z.literal('running'),
+				z.literal('succeeded'),
+				z.literal('failed'),
+			])
+			.nullish(),
+		error_message: z.union([z.string(), z.null()]).nullish(),
+		created_at: z.json().nullish(),
+		last_executed_at: z.json().nullish(),
+	}),
+);
 const openApiEndpoint194 = createMetabaseEndpoint(
 	'index.putRequestById',
 	openApiInput194,
@@ -5530,52 +6251,61 @@ const openApiEndpoint194 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput195 = z
-	.object({
-		body: z
-			.object({
-				database_id: z.number().int().min(1),
-				sql: z.string(),
-				template_tags: z
-					.record(
-						z.string(),
-						z
-							.object({
-								'card-id': z.number().int().min(1).optional(),
-								type: z.string(),
-							})
-							.strict(),
-					)
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput195 = z.object({
-	card_ids: z.array(z.number().int().min(1)),
-	tables: z.array(
-		z.object({
-			columns: z.array(
-				z.object({
-					database_type: z.union([z.string(), z.null()]).optional(),
-					description: z.union([z.string(), z.null()]).optional(),
-					fk_target: z
-						.object({ field_name: z.string(), table_name: z.string() })
+const openApiInput195 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					database_id: z.number().int().min(1),
+					sql: z.string(),
+					template_tags: z
+						.record(
+							z.string(),
+							z
+								.object({
+									'card-id': z.number().int().min(1).optional(),
+									type: z.string(),
+								})
+								.strict(),
+						)
 						.optional(),
-					id: z.number().int().min(1),
-					name: z.string(),
-					semantic_type: z.union([z.string(), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput195 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		card_ids: z.array(z.number().int()).nullish(),
+		tables: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					columns: z
+						.array(
+							OpenApiSchemas.looseJsonObject({
+								database_type: z.union([z.string(), z.null()]).nullish(),
+								description: z.union([z.string(), z.null()]).nullish(),
+								fk_target: OpenApiSchemas.looseJsonObject({
+									field_name: z.string().nullish(),
+									table_name: z.string().nullish(),
+								}).nullish(),
+								id: z.number().int().nullish(),
+								name: z.string().nullish(),
+								semantic_type: z.union([z.string(), z.null()]).nullish(),
+							}),
+						)
+						.nullish(),
+					description: z.union([z.string(), z.null()]).nullish(),
+					display_name: z.union([z.string(), z.null()]).nullish(),
+					id: z.number().int().nullish(),
+					name: z.string().nullish(),
+					schema: z.union([z.string(), z.null()]).nullish(),
 				}),
-			),
-			description: z.union([z.string(), z.null()]).optional(),
-			display_name: z.union([z.string(), z.null()]).optional(),
-			id: z.number().int().min(1),
-			name: z.string(),
-			schema: z.union([z.string(), z.null()]).optional(),
-		}),
-	),
-});
+			)
+			.nullish(),
+	}),
+);
 const openApiEndpoint195 = createMetabaseEndpoint(
 	'llm.postExtractSources',
 	openApiInput195,
@@ -5587,15 +6317,24 @@ const openApiEndpoint195 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput196 = z.object({}).strict();
-const openApiOutput196 = z.array(
-	z.object({
-		error: z.union([z.string(), z.null()]).optional(),
-		key: z.string(),
-		models: z.array(z.object({ display_name: z.string(), id: z.string() })),
-		name: z.string(),
-		type: z.string(),
-	}),
+const openApiInput196 = lazySchema(() => z.object({}).strict());
+const openApiOutput196 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			error: z.union([z.string(), z.null()]).nullish(),
+			key: z.string().nullish(),
+			models: z
+				.array(
+					OpenApiSchemas.looseJsonObject({
+						display_name: z.string().nullish(),
+						id: z.string().nullish(),
+					}),
+				)
+				.nullish(),
+			name: z.string().nullish(),
+			type: z.string().nullish(),
+		}),
+	),
 );
 const openApiEndpoint196 = createMetabaseEndpoint(
 	'llm.getModels',
@@ -5604,49 +6343,73 @@ const openApiEndpoint196 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/llm/models' }),
 );
 
-const openApiInput197 = z.object({}).strict();
-const openApiOutput197 = z.array(
-	z.object({
-		managed: z.boolean(),
-		singleton: z.boolean(),
-		default_model: z.union([z.string(), z.null()]),
-		label: z.string(),
-		model_fields: z.array(z.string()),
-		type: z.string(),
-		fields: z.array(
-			z.object({
-				prefix: z.union([z.string(), z.null()]).optional(),
-				placeholder: z.union([z.string(), z.null()]).optional(),
-				label: z.string(),
-				show_when: z
-					.union([z.object({ field: z.string(), value: z.string() }), z.null()])
-					.optional(),
-				key: z.string(),
-				advanced: z.boolean(),
-				docs_url: z.union([z.string(), z.null()]).optional(),
-				required: z.boolean(),
-				type: z.union([
-					z.literal('text'),
-					z.literal('password'),
-					z.literal('select'),
-					z.literal('segmented'),
-					z.literal('file'),
-				]),
-				help: z.union([z.string(), z.null()]).optional(),
-				options: z
-					.union([
-						z.array(z.object({ label: z.string(), value: z.string() })),
-						z.null(),
-					])
-					.optional(),
-				default: z.union([z.string(), z.null()]).optional(),
-			}),
-		),
-		models: z.array(z.object({ display_name: z.string(), id: z.string() })),
-		requires: z.record(z.string(), z.array(z.string())),
-		available: z.boolean(),
-		required_any: z.array(z.array(z.string())),
-	}),
+const openApiInput197 = lazySchema(() => z.object({}).strict());
+const openApiOutput197 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			managed: z.boolean().nullish(),
+			singleton: z.boolean().nullish(),
+			default_model: z.union([z.string(), z.null()]).nullish(),
+			label: z.string().nullish(),
+			model_fields: z.array(z.string()).nullish(),
+			type: z.string().nullish(),
+			fields: z
+				.array(
+					OpenApiSchemas.looseJsonObject({
+						prefix: z.union([z.string(), z.null()]).nullish(),
+						placeholder: z.union([z.string(), z.null()]).nullish(),
+						label: z.string().nullish(),
+						show_when: z
+							.union([
+								OpenApiSchemas.looseJsonObject({
+									field: z.string().nullish(),
+									value: z.string().nullish(),
+								}),
+								z.null(),
+							])
+							.nullish(),
+						key: z.string().nullish(),
+						advanced: z.boolean().nullish(),
+						docs_url: z.union([z.string(), z.null()]).nullish(),
+						required: z.boolean().nullish(),
+						type: z
+							.union([
+								z.literal('text'),
+								z.literal('password'),
+								z.literal('select'),
+								z.literal('segmented'),
+								z.literal('file'),
+							])
+							.nullish(),
+						help: z.union([z.string(), z.null()]).nullish(),
+						options: z
+							.union([
+								z.array(
+									OpenApiSchemas.looseJsonObject({
+										label: z.string().nullish(),
+										value: z.string().nullish(),
+									}),
+								),
+								z.null(),
+							])
+							.nullish(),
+						default: z.union([z.string(), z.null()]).nullish(),
+					}),
+				)
+				.nullish(),
+			models: z
+				.array(
+					OpenApiSchemas.looseJsonObject({
+						display_name: z.string().nullish(),
+						id: z.string().nullish(),
+					}),
+				)
+				.nullish(),
+			requires: z.record(z.string(), z.array(z.string())).nullish(),
+			available: z.boolean().nullish(),
+			required_any: z.array(z.array(z.string())).nullish(),
+		}),
+	),
 );
 const openApiEndpoint197 = createMetabaseEndpoint(
 	'llm.getProviderTypes',
@@ -5655,18 +6418,20 @@ const openApiEndpoint197 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/llm/provider-types' }),
 );
 
-const openApiInput198 = z.object({}).strict();
-const openApiOutput198 = z.array(
-	z.object({
-		config: z.record(z.string(), z.union([z.string(), z.null()])),
-		env_fields: z.array(z.string()),
-		env_vars: z.array(z.string()),
-		key: z.string(),
-		name: z.string(),
-		source: z.union([z.literal('db'), z.literal('env')]),
-		type: z.string(),
-		usable: z.boolean(),
-	}),
+const openApiInput198 = lazySchema(() => z.object({}).strict());
+const openApiOutput198 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			config: z.record(z.string(), z.union([z.string(), z.null()])).nullish(),
+			env_fields: z.array(z.string()).nullish(),
+			env_vars: z.array(z.string()).nullish(),
+			key: z.string().nullish(),
+			name: z.string().nullish(),
+			source: z.union([z.literal('db'), z.literal('env')]).nullish(),
+			type: z.string().nullish(),
+			usable: z.boolean().nullish(),
+		}),
+	),
 );
 const openApiEndpoint198 = createMetabaseEndpoint(
 	'llm.getProviders',
@@ -5675,35 +6440,39 @@ const openApiEndpoint198 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/llm/providers' }),
 );
 
-const openApiInput199 = z
-	.object({
-		body: z
-			.object({
-				config: z
-					.union([
-						z.record(z.string(), z.union([z.string(), z.null()])),
-						z.null(),
-					])
-					.optional(),
-				key: z.union([z.string(), z.null()]).optional(),
-				model: z.union([z.string(), z.null()]).optional(),
-				name: z.union([z.string(), z.null()]).optional(),
-				type: z.string(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput199 = z.object({
-	config: z.record(z.string(), z.union([z.string(), z.null()])),
-	env_fields: z.array(z.string()),
-	env_vars: z.array(z.string()),
-	key: z.string(),
-	name: z.string(),
-	source: z.union([z.literal('db'), z.literal('env')]),
-	type: z.string(),
-	usable: z.boolean(),
-});
+const openApiInput199 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					config: z
+						.union([
+							z.record(z.string(), z.union([z.string(), z.null()])),
+							z.null(),
+						])
+						.optional(),
+					key: z.union([z.string(), z.null()]).optional(),
+					model: z.union([z.string(), z.null()]).optional(),
+					name: z.union([z.string(), z.null()]).optional(),
+					type: z.string(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput199 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		config: z.record(z.string(), z.union([z.string(), z.null()])).nullish(),
+		env_fields: z.array(z.string()).nullish(),
+		env_vars: z.array(z.string()).nullish(),
+		key: z.string().nullish(),
+		name: z.string().nullish(),
+		source: z.union([z.literal('db'), z.literal('env')]).nullish(),
+		type: z.string().nullish(),
+		usable: z.boolean().nullish(),
+	}),
+);
 const openApiEndpoint199 = createMetabaseEndpoint(
 	'llm.postProviders',
 	openApiInput199,
@@ -5711,34 +6480,38 @@ const openApiEndpoint199 = createMetabaseEndpoint(
 	(input) => ({ method: 'POST', path: '/api/llm/providers', body: input.body }),
 );
 
-const openApiInput200 = z
-	.object({
-		path: z.object({ key: z.string() }).strict(),
-		body: z
-			.object({
-				config: z
-					.union([
-						z.record(z.string(), z.union([z.string(), z.null()])),
-						z.null(),
-					])
-					.optional(),
-				model: z.union([z.string(), z.null()]).optional(),
-				name: z.union([z.string(), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput200 = z.object({
-	config: z.record(z.string(), z.union([z.string(), z.null()])),
-	env_fields: z.array(z.string()),
-	env_vars: z.array(z.string()),
-	key: z.string(),
-	name: z.string(),
-	source: z.union([z.literal('db'), z.literal('env')]),
-	type: z.string(),
-	usable: z.boolean(),
-});
+const openApiInput200 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ key: z.string() }).strict(),
+			body: z
+				.object({
+					config: z
+						.union([
+							z.record(z.string(), z.union([z.string(), z.null()])),
+							z.null(),
+						])
+						.optional(),
+					model: z.union([z.string(), z.null()]).optional(),
+					name: z.union([z.string(), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput200 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		config: z.record(z.string(), z.union([z.string(), z.null()])).nullish(),
+		env_fields: z.array(z.string()).nullish(),
+		env_vars: z.array(z.string()).nullish(),
+		key: z.string().nullish(),
+		name: z.string().nullish(),
+		source: z.union([z.literal('db'), z.literal('env')]).nullish(),
+		type: z.string().nullish(),
+		usable: z.boolean().nullish(),
+	}),
+);
 const openApiEndpoint200 = createMetabaseEndpoint(
 	'llm.putProvidersByKey',
 	openApiInput200,
@@ -5750,10 +6523,10 @@ const openApiEndpoint200 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput201 = z
-	.object({ path: z.object({ key: z.string() }).strict() })
-	.strict();
-const openApiOutput201 = z.null();
+const openApiInput201 = lazySchema(() =>
+	z.object({ path: z.object({ key: z.string() }).strict() }).strict(),
+);
+const openApiOutput201 = lazySchema(() => z.null());
 const openApiEndpoint201 = createMetabaseEndpoint(
 	'llm.deleteProvidersByKey',
 	openApiInput201,
@@ -5764,18 +6537,22 @@ const openApiEndpoint201 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput202 = z.object({}).strict();
-const openApiOutput202 = z.array(
-	z.object({
-		display_name: z.string(),
-		id: z.string(),
-		loggers: z.array(
-			z.object({
-				level: OpenApiSchemas.MetabaseOpenApiOutputSchema584,
-				name: z.string(),
-			}),
-		),
-	}),
+const openApiInput202 = lazySchema(() => z.object({}).strict());
+const openApiOutput202 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			display_name: z.string().nullish(),
+			id: z.string().nullish(),
+			loggers: z
+				.array(
+					OpenApiSchemas.looseJsonObject({
+						level: OpenApiSchemas.MetabaseOpenApiOutputSchema584().nullish(),
+						name: z.string().nullish(),
+					}),
+				)
+				.nullish(),
+		}),
+	),
 );
 const openApiEndpoint202 = createMetabaseEndpoint(
 	'logger.getPresets',
@@ -5784,19 +6561,23 @@ const openApiEndpoint202 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/logger/presets' }),
 );
 
-const openApiInput203 = z
-	.object({
-		body: z
-			.object({
-				definition: OpenApiSchemas.MetabaseOpenApiInputSchema589,
-				description: z.union([z.string(), z.null()]).optional(),
-				name: z.string().min(1),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput203 = OpenApiSchemas.MetabaseOpenApiOutputSchema587;
+const openApiInput203 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					definition: OpenApiSchemas.MetabaseOpenApiInputSchema589(),
+					description: z.union([z.string(), z.null()]).optional(),
+					name: z.string().min(1),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput203 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema587(),
+);
 const openApiEndpoint203 = createMetabaseEndpoint(
 	'measure.post',
 	openApiInput203,
@@ -5804,8 +6585,10 @@ const openApiEndpoint203 = createMetabaseEndpoint(
 	(input) => ({ method: 'POST', path: '/api/measure', body: input.body }),
 );
 
-const openApiInput204 = z.object({}).strict();
-const openApiOutput204 = z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema587);
+const openApiInput204 = lazySchema(() => z.object({}).strict());
+const openApiOutput204 = lazySchema(() =>
+	z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema587()),
+);
 const openApiEndpoint204 = createMetabaseEndpoint(
 	'measure.get',
 	openApiInput204,
@@ -5813,18 +6596,22 @@ const openApiEndpoint204 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/measure' }),
 );
 
-const openApiInput205 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		query: z
-			.object({
-				'include-orphaned': z.union([z.boolean(), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput205 = OpenApiSchemas.MetabaseOpenApiOutputSchema587;
+const openApiInput205 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			query: z
+				.object({
+					'include-orphaned': z.union([z.boolean(), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput205 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema587(),
+);
 const openApiEndpoint205 = createMetabaseEndpoint(
 	'measure.getById',
 	openApiInput205,
@@ -5836,24 +6623,28 @@ const openApiEndpoint205 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput206 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({
-				archived: z.union([z.boolean(), z.null()]).optional(),
-				definition: z
-					.union([OpenApiSchemas.MetabaseOpenApiInputSchema589, z.null()])
-					.optional(),
-				description: z.union([z.string(), z.null()]).optional(),
-				name: z.union([z.string().min(1), z.null()]).optional(),
-				revision_message: z.string().min(1),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput206 = OpenApiSchemas.MetabaseOpenApiOutputSchema587;
+const openApiInput206 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({
+					archived: z.union([z.boolean(), z.null()]).optional(),
+					definition: z
+						.union([OpenApiSchemas.MetabaseOpenApiInputSchema589(), z.null()])
+						.optional(),
+					description: z.union([z.string(), z.null()]).optional(),
+					name: z.union([z.string().min(1), z.null()]).optional(),
+					revision_message: z.string().min(1),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput206 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema587(),
+);
 const openApiEndpoint206 = createMetabaseEndpoint(
 	'measure.putById',
 	openApiInput206,
@@ -5865,24 +6656,28 @@ const openApiEndpoint206 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput207 = z
-	.object({
-		path: z
-			.object({
-				id: z.number().int().min(1),
-				'dimension-key': z
-					.string()
-					.regex(
-						new RegExp(
-							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+const openApiInput207 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					id: z.number().int().min(1),
+					'dimension-key': z
+						.string()
+						.regex(
+							new RegExp(
+								'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+							),
 						),
-					),
-			})
-			.strict(),
-		query: z.object({ value: z.string() }).strict(),
-	})
-	.strict();
-const openApiOutput207 = OpenApiSchemas.MetabaseOpenApiOutputSchema588;
+				})
+				.strict(),
+			query: z.object({ value: z.string() }).strict(),
+		})
+		.strict(),
+);
+const openApiOutput207 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema588(),
+);
 const openApiEndpoint207 = createMetabaseEndpoint(
 	'measure.getByIdDimensionByDimensionKeyRemapping',
 	openApiInput207,
@@ -5897,24 +6692,26 @@ const openApiEndpoint207 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput208 = z
-	.object({
-		path: z
-			.object({
-				id: z.number().int().min(1),
-				'dimension-key': z
-					.string()
-					.regex(
-						new RegExp(
-							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+const openApiInput208 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					id: z.number().int().min(1),
+					'dimension-key': z
+						.string()
+						.regex(
+							new RegExp(
+								'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+							),
 						),
-					),
-			})
-			.strict(),
-		query: z.object({ query: z.string().min(1) }).strict(),
-	})
-	.strict();
-const openApiOutput208 = z.array(z.array(z.string()));
+				})
+				.strict(),
+			query: z.object({ query: z.string().min(1) }).strict(),
+		})
+		.strict(),
+);
+const openApiOutput208 = lazySchema(() => z.array(z.array(z.string())));
 const openApiEndpoint208 = createMetabaseEndpoint(
 	'measure.getByIdDimensionByDimensionKeySearch',
 	openApiInput208,
@@ -5929,84 +6726,90 @@ const openApiEndpoint208 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput209 = z
-	.object({
-		path: z
-			.object({
-				id: z.number().int().min(1),
-				'dimension-key': z
-					.string()
-					.regex(
-						new RegExp(
-							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+const openApiInput209 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					id: z.number().int().min(1),
+					'dimension-key': z
+						.string()
+						.regex(
+							new RegExp(
+								'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+							),
 						),
-					),
-			})
-			.strict(),
-	})
-	.strict();
-const openApiOutput209 = z.object({
-	has_more_values: z.boolean(),
-	values: z.array(
-		z.union([
-			z
-				.array(z.json())
-				.superRefine((values, ctx) =>
-					validatePrefixItems(
-						values,
-						[
-							(value) =>
-								z
-									.union([
-										z.union([
-											z.string(),
-											z.number(),
-											z.boolean(),
-											z.string().uuid(),
-											z.string(),
-											z.string().datetime({ offset: true }),
-										]),
-										z.null(),
-									])
-									.safeParse(value).success,
-							(value) => z.string().safeParse(value).success,
-						],
-						(value) => z.json().safeParse(value).success,
-						2,
-						2,
-						ctx,
-					),
-				),
-			z
-				.array(z.json())
-				.superRefine((values, ctx) =>
-					validatePrefixItems(
-						values,
-						[
-							(value) =>
-								z
-									.union([
-										z.union([
-											z.string(),
-											z.number(),
-											z.boolean(),
-											z.string().uuid(),
-											z.string(),
-											z.string().datetime({ offset: true }),
-										]),
-										z.null(),
-									])
-									.safeParse(value).success,
-						],
-						(value) => z.json().safeParse(value).success,
-						1,
-						1,
-						ctx,
-					),
-				),
-		]),
-	),
-});
+				})
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput209 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		has_more_values: z.boolean().nullish(),
+		values: z
+			.array(
+				z.union([
+					z
+						.array(z.json())
+						.superRefine((values, ctx) =>
+							validatePrefixItems(
+								values,
+								[
+									(value) =>
+										z
+											.union([
+												z.union([
+													z.string(),
+													z.number(),
+													z.boolean(),
+													z.string().uuid(),
+													z.string(),
+													z.string().datetime({ offset: true }),
+												]),
+												z.null(),
+											])
+											.safeParse(value).success,
+									(value) => z.string().safeParse(value).success,
+								],
+								(value) => z.json().safeParse(value).success,
+								2,
+								2,
+								ctx,
+							),
+						),
+					z
+						.array(z.json())
+						.superRefine((values, ctx) =>
+							validatePrefixItems(
+								values,
+								[
+									(value) =>
+										z
+											.union([
+												z.union([
+													z.string(),
+													z.number(),
+													z.boolean(),
+													z.string().uuid(),
+													z.string(),
+													z.string().datetime({ offset: true }),
+												]),
+												z.null(),
+											])
+											.safeParse(value).success,
+								],
+								(value) => z.json().safeParse(value).success,
+								1,
+								1,
+								ctx,
+							),
+						),
+				]),
+			)
+			.nullish(),
+	}),
+);
 const openApiEndpoint209 = createMetabaseEndpoint(
 	'measure.getByIdDimensionByDimensionKeyValues',
 	openApiInput209,
@@ -6020,19 +6823,110 @@ const openApiEndpoint209 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput210 = z.object({}).strict();
-const openApiOutput210 = z.object({
-	data: z.array(
-		z.object({
-			conversation_id: z
-				.string()
-				.regex(
-					new RegExp(
-						'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
-					),
+const openApiInput210 = lazySchema(() =>
+	z
+		.object({ query: z.object(metabasePageQueryShape).strict().optional() })
+		.strict(),
+);
+const openApiOutput210 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					conversation_id: z
+						.string()
+						.regex(
+							new RegExp(
+								'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+							),
+						)
+						.nullish(),
+					created_at: z.string().datetime({ offset: true }).nullish(),
+					forked_from_conversation_id: z
+						.union([
+							z
+								.string()
+								.regex(
+									new RegExp(
+										'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+									),
+								),
+							z.null(),
+						])
+						.nullish(),
+					last_message_at: z
+						.union([z.string().datetime({ offset: true }), z.null()])
+						.nullish(),
+					message_count: z.number().int().nullish(),
+					profile_id: z.union([z.string(), z.null()]).nullish(),
+					title: z.union([z.string(), z.null()]).nullish(),
+					user_id: z.union([z.number().int(), z.null()]).nullish(),
+				}),
+			)
+			.nullish(),
+		limit: z.number().int().nullish(),
+		offset: z.number().int().nullish(),
+		total: z.number().int().nullish(),
+	}),
+);
+const openApiEndpoint210 = createMetabaseEndpoint(
+	'metabot.getConversations',
+	openApiInput210,
+	openApiOutput210,
+	(input) => ({
+		method: 'GET',
+		path: '/api/metabot/conversations',
+		query: input.query,
+	}),
+);
+
+const openApiInput211 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					id: z
+						.string()
+						.regex(
+							new RegExp(
+								'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+							),
+						),
+				})
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput211 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		user_id: z.union([z.number().int(), z.null()]).nullish(),
+		context_window_tokens: z.number().int().nullish(),
+		title: z.union([z.string(), z.null()]).nullish(),
+		conversation_id: z
+			.string()
+			.regex(
+				new RegExp(
+					'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
 				),
-			created_at: z.string().datetime({ offset: true }),
-			forked_from_conversation_id: z.union([
+			)
+			.nullish(),
+		state: z
+			.union([OpenApiSchemas.MetabaseOpenApiOutputSchema604(), z.null()])
+			.nullish(),
+		created_at: z.string().datetime({ offset: true }).nullish(),
+		messages: z
+			.array(OpenApiSchemas.MetabaseOpenApiOutputSchema597())
+			.nullish(),
+		saved_entities: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					card_id: z.number().int().nullish(),
+					chart_id: z.union([z.string(), z.null()]).nullish(),
+				}),
+			)
+			.nullish(),
+		forked_from_conversation_id: z
+			.union([
 				z
 					.string()
 					.regex(
@@ -6041,76 +6935,10 @@ const openApiOutput210 = z.object({
 						),
 					),
 				z.null(),
-			]),
-			last_message_at: z.union([
-				z.string().datetime({ offset: true }),
-				z.null(),
-			]),
-			message_count: z.number().int().min(0),
-			profile_id: z.union([z.string(), z.null()]),
-			title: z.union([z.string(), z.null()]),
-			user_id: z.union([z.number().int().min(1), z.null()]),
-		}),
-	),
-	limit: z.number().int().min(0),
-	offset: z.number().int().min(0),
-	total: z.number().int().min(0),
-});
-const openApiEndpoint210 = createMetabaseEndpoint(
-	'metabot.getConversations',
-	openApiInput210,
-	openApiOutput210,
-	(input) => ({ method: 'GET', path: '/api/metabot/conversations' }),
+			])
+			.nullish(),
+	}),
 );
-
-const openApiInput211 = z
-	.object({
-		path: z
-			.object({
-				id: z
-					.string()
-					.regex(
-						new RegExp(
-							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
-						),
-					),
-			})
-			.strict(),
-	})
-	.strict();
-const openApiOutput211 = z.object({
-	user_id: z.union([z.number().int().min(1), z.null()]),
-	context_window_tokens: z.number().int().optional(),
-	title: z.union([z.string(), z.null()]),
-	conversation_id: z
-		.string()
-		.regex(
-			new RegExp(
-				'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
-			),
-		),
-	state: z
-		.union([OpenApiSchemas.MetabaseOpenApiOutputSchema604, z.null()])
-		.optional(),
-	created_at: z.string().datetime({ offset: true }),
-	messages: z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema597),
-	saved_entities: z.array(
-		z.object({
-			card_id: z.number().int().min(1),
-			chart_id: z.union([z.string(), z.null()]),
-		}),
-	),
-	forked_from_conversation_id: z.union([
-		z
-			.string()
-			.regex(
-				new RegExp(
-					'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
-				),
-			),
-		z.null(),
-	]),
-});
 const openApiEndpoint211 = createMetabaseEndpoint(
 	'metabot.getConversationsById',
 	openApiInput211,
@@ -6121,66 +6949,77 @@ const openApiEndpoint211 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput212 = z
-	.object({
-		path: z
-			.object({
-				id: z
-					.string()
-					.regex(
-						new RegExp(
-							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+const openApiInput212 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					id: z
+						.string()
+						.regex(
+							new RegExp(
+								'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+							),
 						),
-					),
-			})
-			.strict(),
-		body: z
-			.object({
-				message_id: z
-					.string()
-					.regex(
-						new RegExp(
-							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+				})
+				.strict(),
+			body: z
+				.object({
+					message_id: z
+						.string()
+						.regex(
+							new RegExp(
+								'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+							),
 						),
-					),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput212 = z.object({
-	user_id: z.union([z.number().int().min(1), z.null()]),
-	context_window_tokens: z.number().int().optional(),
-	title: z.union([z.string(), z.null()]),
-	conversation_id: z
-		.string()
-		.regex(
-			new RegExp(
-				'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
-			),
-		),
-	state: z
-		.union([OpenApiSchemas.MetabaseOpenApiOutputSchema604, z.null()])
-		.optional(),
-	created_at: z.string().datetime({ offset: true }),
-	messages: z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema597),
-	saved_entities: z.array(
-		z.object({
-			card_id: z.number().int().min(1),
-			chart_id: z.union([z.string(), z.null()]),
-		}),
-	),
-	forked_from_conversation_id: z.union([
-		z
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput212 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		user_id: z.union([z.number().int(), z.null()]).nullish(),
+		context_window_tokens: z.number().int().nullish(),
+		title: z.union([z.string(), z.null()]).nullish(),
+		conversation_id: z
 			.string()
 			.regex(
 				new RegExp(
 					'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
 				),
-			),
-		z.null(),
-	]),
-});
+			)
+			.nullish(),
+		state: z
+			.union([OpenApiSchemas.MetabaseOpenApiOutputSchema604(), z.null()])
+			.nullish(),
+		created_at: z.string().datetime({ offset: true }).nullish(),
+		messages: z
+			.array(OpenApiSchemas.MetabaseOpenApiOutputSchema597())
+			.nullish(),
+		saved_entities: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					card_id: z.number().int().nullish(),
+					chart_id: z.union([z.string(), z.null()]).nullish(),
+				}),
+			)
+			.nullish(),
+		forked_from_conversation_id: z
+			.union([
+				z
+					.string()
+					.regex(
+						new RegExp(
+							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+						),
+					),
+				z.null(),
+			])
+			.nullish(),
+	}),
+);
 const openApiEndpoint212 = createMetabaseEndpoint(
 	'metabot.postConversationsByIdFork',
 	openApiInput212,
@@ -6192,68 +7031,73 @@ const openApiEndpoint212 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput213 = z
-	.object({
-		path: z
-			.object({
-				id: z
-					.string()
-					.regex(
-						new RegExp(
-							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+const openApiInput213 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					id: z
+						.string()
+						.regex(
+							new RegExp(
+								'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+							),
 						),
-					),
-			})
-			.strict(),
-		body: z
-			.object({
-				card: z
-					.object({
-						collection_id: z
-							.union([z.number().int().min(1), z.null()])
-							.optional(),
-						dashboard_id: z
-							.union([z.number().int().min(1), z.null()])
-							.optional(),
-						dashboard_tab_id: z
-							.union([z.number().int().min(1), z.null()])
-							.optional(),
-						dataset_query: OpenApiSchemas.MetabaseOpenApiInputSchema337,
-						description: z.union([z.string(), z.null()]).optional(),
-						display: z.string().min(1),
-						name: z.string().min(1),
-						visualization_settings: z
-							.union([z.record(z.string(), z.json()), z.null()])
-							.optional(),
-					})
-					.strict(),
-				chart_id: z.intersection(z.string().min(1), z.string().max(36)),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput213 = z.object({
-	visualization_settings: z
-		.union([z.record(z.string(), z.json()), z.null()])
-		.optional(),
-	dashboard_tab_id: z.union([z.number().int().min(1), z.null()]).optional(),
-	dataset_query: OpenApiSchemas.MetabaseOpenApiOutputSchema337,
-	metabot_chart_id: z.string().min(1),
-	id: z.number().int().min(1),
-	name: z.string().min(1),
-	collection_id: z.union([z.number().int().min(1), z.null()]).optional(),
-	display: z.string(),
-	description: z.union([z.string(), z.null()]).optional(),
-	metabot_conversation_id: z
-		.string()
-		.regex(
-			new RegExp(
-				'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
-			),
-		),
-	dashboard_id: z.union([z.number().int().min(1), z.null()]).optional(),
-});
+				})
+				.strict(),
+			body: z
+				.object({
+					card: z
+						.object({
+							collection_id: z
+								.union([z.number().int().min(1), z.null()])
+								.optional(),
+							dashboard_id: z
+								.union([z.number().int().min(1), z.null()])
+								.optional(),
+							dashboard_tab_id: z
+								.union([z.number().int().min(1), z.null()])
+								.optional(),
+							dataset_query: OpenApiSchemas.MetabaseOpenApiInputSchema337(),
+							description: z.union([z.string(), z.null()]).optional(),
+							display: z.string().min(1),
+							name: z.string().min(1),
+							visualization_settings: z
+								.union([z.record(z.string(), z.json()), z.null()])
+								.optional(),
+						})
+						.strict(),
+					chart_id: z.intersection(z.string().min(1), z.string().max(36)),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput213 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		visualization_settings: z
+			.union([z.record(z.string(), z.json()), z.null()])
+			.nullish(),
+		dashboard_tab_id: z.union([z.number().int(), z.null()]).nullish(),
+		dataset_query: OpenApiSchemas.MetabaseOpenApiOutputSchema337().nullish(),
+		metabot_chart_id: z.string().nullish(),
+		id: z.number().int().nullish(),
+		name: z.string().nullish(),
+		collection_id: z.union([z.number().int(), z.null()]).nullish(),
+		display: z.string().nullish(),
+		description: z.union([z.string(), z.null()]).nullish(),
+		metabot_conversation_id: z
+			.string()
+			.regex(
+				new RegExp(
+					'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+				),
+			)
+			.nullish(),
+		dashboard_id: z.union([z.number().int(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint213 = createMetabaseEndpoint(
 	'metabot.postConversationsByIdSavedEntity',
 	openApiInput213,
@@ -6268,29 +7112,31 @@ const openApiEndpoint213 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput214 = z
-	.object({
-		path: z
-			.object({
-				id: z
-					.string()
-					.regex(
-						new RegExp(
-							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+const openApiInput214 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					id: z
+						.string()
+						.regex(
+							new RegExp(
+								'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+							),
 						),
-					),
-			})
-			.strict(),
-	})
-	.strict();
-const openApiOutput214 = z.object({
-	status: z.union([
-		z.literal('ready'),
-		z.literal('pending'),
-		z.literal('missing'),
-	]),
-	title: z.union([z.string(), z.null()]),
-});
+				})
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput214 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		status: z
+			.union([z.literal('ready'), z.literal('pending'), z.literal('missing')])
+			.nullish(),
+		title: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint214 = createMetabaseEndpoint(
 	'metabot.getConversationsByIdTitle',
 	openApiInput214,
@@ -6304,34 +7150,40 @@ const openApiEndpoint214 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput215 = z
-	.object({
-		body: z
-			.object({
-				instructions: z.string().min(1),
-				references: z.record(z.string(), z.json()).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput215 = z.object({
-	description: z.union([z.string().min(1), z.null()]),
-	draft_card: z.union([
-		z.object({
-			database_id: z.number().int().min(1),
-			dataset_query: OpenApiSchemas.MetabaseOpenApiOutputSchema337,
-			name: z.string().min(1),
-			parameters: z.union([
-				OpenApiSchemas.MetabaseOpenApiOutputSchema658,
+const openApiInput215 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					instructions: z.string().min(1),
+					references: z.record(z.string(), z.json()).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput215 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		description: z.union([z.string(), z.null()]).nullish(),
+		draft_card: z
+			.union([
+				OpenApiSchemas.looseJsonObject({
+					database_id: z.number().int().nullish(),
+					dataset_query:
+						OpenApiSchemas.MetabaseOpenApiOutputSchema337().nullish(),
+					name: z.string().nullish(),
+					parameters: z
+						.union([OpenApiSchemas.MetabaseOpenApiOutputSchema658(), z.null()])
+						.nullish(),
+					visualization_settings: z.record(z.string(), z.json()).nullish(),
+				}),
 				z.null(),
-			]),
-			visualization_settings: z.record(z.string(), z.json()),
-		}),
-		z.null(),
-	]),
-	error: z.union([z.string().min(1), z.null()]),
-});
+			])
+			.nullish(),
+		error: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint215 = createMetabaseEndpoint(
 	'metabot.postDocumentGenerateContent',
 	openApiInput215,
@@ -6343,21 +7195,23 @@ const openApiEndpoint215 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput216 = z
-	.object({
-		body: z
-			.object({
-				freeform_feedback: z.union([z.string(), z.null()]).optional(),
-				issue_type: z.union([z.string(), z.null()]).optional(),
-				message_id: z.string().min(1),
-				metabot_id: z.number().int().min(1),
-				positive: z.boolean(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput216 = z.null();
+const openApiInput216 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					freeform_feedback: z.union([z.string(), z.null()]).optional(),
+					issue_type: z.union([z.string(), z.null()]).optional(),
+					message_id: z.string().min(1),
+					metabot_id: z.number().int().min(1),
+					positive: z.boolean(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput216 = lazySchema(() => z.null());
 const openApiEndpoint216 = createMetabaseEndpoint(
 	'metabot.postFeedback',
 	openApiInput216,
@@ -6369,19 +7223,25 @@ const openApiEndpoint216 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput217 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput217 = z.union([
+const openApiInput217 = lazySchema(() =>
 	z
-		.object({
-			prompt_count: z.number().int().min(1),
-			status: z.literal('generated'),
-		})
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
 		.strict(),
-	z.object({ status: z.literal('no-library-content') }).strict(),
-	z.object({ status: z.literal('ai-produced-no-prompts') }).strict(),
-]);
+);
+const openApiOutput217 = lazySchema(() =>
+	z.union([
+		OpenApiSchemas.looseJsonObject({
+			prompt_count: z.number().int().nullish(),
+			status: z.literal('generated').nullish(),
+		}),
+		OpenApiSchemas.looseJsonObject({
+			status: z.literal('no-library-content').nullish(),
+		}),
+		OpenApiSchemas.looseJsonObject({
+			status: z.literal('ai-produced-no-prompts').nullish(),
+		}),
+	]),
+);
 const openApiEndpoint217 = createMetabaseEndpoint(
 	'metabot.postMetabotByIdPromptSuggestionsRegenerate',
 	openApiInput217,
@@ -6395,15 +7255,21 @@ const openApiEndpoint217 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput218 = z.object({}).strict();
-const openApiOutput218 = z.object({
-	permissions: z.object({
-		metabot: z.union([z.literal('yes'), z.literal('no')]),
-		'metabot-nlq': z.union([z.literal('yes'), z.literal('no')]),
-		'metabot-other-tools': z.union([z.literal('yes'), z.literal('no')]),
-		'metabot-sql-generation': z.union([z.literal('yes'), z.literal('no')]),
+const openApiInput218 = lazySchema(() => z.object({}).strict());
+const openApiOutput218 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		permissions: OpenApiSchemas.looseJsonObject({
+			metabot: z.union([z.literal('yes'), z.literal('no')]).nullish(),
+			'metabot-nlq': z.union([z.literal('yes'), z.literal('no')]).nullish(),
+			'metabot-other-tools': z
+				.union([z.literal('yes'), z.literal('no')])
+				.nullish(),
+			'metabot-sql-generation': z
+				.union([z.literal('yes'), z.literal('no')])
+				.nullish(),
+		}).nullish(),
 	}),
-});
+);
 const openApiEndpoint218 = createMetabaseEndpoint(
 	'metabot.getPermissionsUserPermissions',
 	openApiInput218,
@@ -6414,19 +7280,26 @@ const openApiEndpoint218 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput219 = z
-	.object({
-		body: z
-			.object({
-				'metabot-slack-signing-secret': z.union([z.string().min(1), z.null()]),
-				'slack-connect-client-id': z.union([z.string().min(1), z.null()]),
-				'slack-connect-client-secret': z.union([z.string().min(1), z.null()]),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput219 = z.object({ ok: z.boolean() });
+const openApiInput219 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					'metabot-slack-signing-secret': z.union([
+						z.string().min(1),
+						z.null(),
+					]),
+					'slack-connect-client-id': z.union([z.string().min(1), z.null()]),
+					'slack-connect-client-secret': z.union([z.string().min(1), z.null()]),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput219 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({ ok: z.boolean().nullish() }),
+);
 const openApiEndpoint219 = createMetabaseEndpoint(
 	'metabot.putSlackSettings',
 	openApiInput219,
@@ -6438,25 +7311,27 @@ const openApiEndpoint219 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput220 = z
-	.object({
-		body: z
-			.object({
-				message_id: z.string().min(1),
-				metabot_id: z.number().int().min(1),
-				positive: z.boolean(),
-				source_id: z.number().int().min(1),
-				source_type: z.union([
-					z.literal('table'),
-					z.literal('card'),
-					z.literal('model'),
-				]),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput220 = z.null();
+const openApiInput220 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					message_id: z.string().min(1),
+					metabot_id: z.number().int().min(1),
+					positive: z.boolean(),
+					source_id: z.number().int().min(1),
+					source_type: z.union([
+						z.literal('table'),
+						z.literal('card'),
+						z.literal('model'),
+					]),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput220 = lazySchema(() => z.null());
 const openApiEndpoint220 = createMetabaseEndpoint(
 	'metabot.postSourceFeedback',
 	openApiInput220,
@@ -6468,24 +7343,34 @@ const openApiEndpoint220 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput221 = z.object({}).strict();
-const openApiOutput221 = z.object({
-	data: z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema612),
-	limit: z.number().int().min(1),
-	offset: z.number().int().min(0),
-	total: z.number().int().min(0),
-});
+const openApiInput221 = lazySchema(() =>
+	z
+		.object({ query: z.object(metabasePageQueryShape).strict().optional() })
+		.strict(),
+);
+const openApiOutput221 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema612()).nullish(),
+		limit: z.number().int().nullish(),
+		offset: z.number().int().nullish(),
+		total: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint221 = createMetabaseEndpoint(
 	'metric.get',
 	openApiInput221,
 	openApiOutput221,
-	(input) => ({ method: 'GET', path: '/api/metric' }),
+	(input) => ({ method: 'GET', path: '/api/metric', query: input.query }),
 );
 
-const openApiInput222 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema609.optional() })
-	.strict();
-const openApiOutput222 = OpenApiSchemas.MetabaseOpenApiOutputSchema608;
+const openApiInput222 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema609().optional() })
+		.strict(),
+);
+const openApiOutput222 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema608(),
+);
 const openApiEndpoint222 = createMetabaseEndpoint(
 	'metric.postBreakoutValues',
 	openApiInput222,
@@ -6498,10 +7383,14 @@ const openApiEndpoint222 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput223 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema609.optional() })
-	.strict();
-const openApiOutput223 = OpenApiSchemas.MetabaseOpenApiOutputSchema610;
+const openApiInput223 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema609().optional() })
+		.strict(),
+);
+const openApiOutput223 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema610(),
+);
 const openApiEndpoint223 = createMetabaseEndpoint(
 	'metric.postDataset',
 	openApiInput223,
@@ -6514,18 +7403,22 @@ const openApiEndpoint223 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput224 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		query: z
-			.object({
-				'include-orphaned': z.union([z.boolean(), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput224 = OpenApiSchemas.MetabaseOpenApiOutputSchema613;
+const openApiInput224 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			query: z
+				.object({
+					'include-orphaned': z.union([z.boolean(), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput224 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema613(),
+);
 const openApiEndpoint224 = createMetabaseEndpoint(
 	'metric.getById',
 	openApiInput224,
@@ -6537,23 +7430,27 @@ const openApiEndpoint224 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput225 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		query: z
-			.object({
-				query: z.union([z.string(), z.null()]).optional(),
-				'with-addable': z.union([z.boolean(), z.null()]).optional(),
-				'include-orphaned': z.union([z.boolean(), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput225 = z.object({
-	addable: z.array(z.record(z.string(), z.json())),
-	added: z.array(z.record(z.string(), z.json())),
-});
+const openApiInput225 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			query: z
+				.object({
+					query: z.union([z.string(), z.null()]).optional(),
+					'with-addable': z.union([z.boolean(), z.null()]).optional(),
+					'include-orphaned': z.union([z.boolean(), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput225 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		addable: z.array(z.record(z.string(), z.json())).nullish(),
+		added: z.array(z.record(z.string(), z.json())).nullish(),
+	}),
+);
 const openApiEndpoint225 = createMetabaseEndpoint(
 	'metric.getByIdDimension',
 	openApiInput225,
@@ -6565,51 +7462,55 @@ const openApiEndpoint225 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput226 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({
-				dimensions: z.array(
-					z
-						.object({
-							description: z.union([z.string(), z.null()]).optional(),
-							display_name: z.string().min(1).optional(),
-							id: z.string().min(1),
-							mapping_target: z
-								.array(z.json())
-								.superRefine((values, ctx) =>
-									validatePrefixItems(
-										values,
-										[
-											(value) => z.literal('field').safeParse(value).success,
-											(value) =>
-												OpenApiSchemas.MetabaseOpenApiInputSchema539.safeParse(
-													value,
-												).success,
-											(value) =>
-												z
-													.union([
-														OpenApiSchemas.MetabaseOpenApiInputSchema387,
-														OpenApiSchemas.MetabaseOpenApiInputSchema430,
-													])
-													.safeParse(value).success,
-										],
-										(value) => z.json().safeParse(value).success,
-										3,
-										3,
-										ctx,
+const openApiInput226 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({
+					dimensions: z.array(
+						z
+							.object({
+								description: z.union([z.string(), z.null()]).optional(),
+								display_name: z.string().min(1).optional(),
+								id: z.string().min(1),
+								mapping_target: z
+									.array(z.json())
+									.superRefine((values, ctx) =>
+										validatePrefixItems(
+											values,
+											[
+												(value) => z.literal('field').safeParse(value).success,
+												(value) =>
+													OpenApiSchemas.MetabaseOpenApiInputSchema539().safeParse(
+														value,
+													).success,
+												(value) =>
+													z
+														.union([
+															OpenApiSchemas.MetabaseOpenApiInputSchema387(),
+															OpenApiSchemas.MetabaseOpenApiInputSchema430(),
+														])
+														.safeParse(value).success,
+											],
+											(value) => z.json().safeParse(value).success,
+											3,
+											3,
+											ctx,
+										),
 									),
-								),
-						})
-						.strict(),
-				),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput226 = z.array(z.record(z.string(), z.json()));
+							})
+							.strict(),
+					),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput226 = lazySchema(() =>
+	z.array(z.record(z.string(), z.json())),
+);
 const openApiEndpoint226 = createMetabaseEndpoint(
 	'metric.postByIdDimensionAdd',
 	openApiInput226,
@@ -6621,16 +7522,20 @@ const openApiEndpoint226 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput227 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({ dimension_ids: z.array(z.string().min(1)) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput227 = z.array(z.record(z.string(), z.json()));
+const openApiInput227 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({ dimension_ids: z.array(z.string().min(1)) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput227 = lazySchema(() =>
+	z.array(z.record(z.string(), z.json())),
+);
 const openApiEndpoint227 = createMetabaseEndpoint(
 	'metric.postByIdDimensionRemove',
 	openApiInput227,
@@ -6642,16 +7547,20 @@ const openApiEndpoint227 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput228 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({ dimension_ids: z.array(z.string().min(1)) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput228 = z.array(z.record(z.string(), z.json()));
+const openApiInput228 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({ dimension_ids: z.array(z.string().min(1)) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput228 = lazySchema(() =>
+	z.array(z.record(z.string(), z.json())),
+);
 const openApiEndpoint228 = createMetabaseEndpoint(
 	'metric.postByIdDimensionReorder',
 	openApiInput228,
@@ -6663,16 +7572,20 @@ const openApiEndpoint228 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput229 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({ dimension_id: z.union([z.string().min(1), z.null()]) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput229 = z.array(z.record(z.string(), z.json()));
+const openApiInput229 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({ dimension_id: z.union([z.string().min(1), z.null()]) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput229 = lazySchema(() =>
+	z.array(z.record(z.string(), z.json())),
+);
 const openApiEndpoint229 = createMetabaseEndpoint(
 	'metric.postByIdDimensionSetDefault',
 	openApiInput229,
@@ -6687,37 +7600,39 @@ const openApiEndpoint229 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput230 = z
-	.object({
-		path: z
-			.object({
-				id: z.number().int().min(1),
-				'dimension-key': z
-					.string()
-					.regex(
-						new RegExp(
-							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+const openApiInput230 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					id: z.number().int().min(1),
+					'dimension-key': z
+						.string()
+						.regex(
+							new RegExp(
+								'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+							),
 						),
-					),
-			})
-			.strict(),
-		body: z
-			.object({
-				default_temporal_unit: z.string().min(1).optional(),
-				description: z.union([z.string(), z.null()]).optional(),
-				display_name: z.string().min(1).optional(),
-				source: z
-					.union([
-						z.object({ 'field-id': z.number().int().min(1) }).strict(),
-						z.null(),
-					])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput230 = z.record(z.string(), z.json());
+				})
+				.strict(),
+			body: z
+				.object({
+					default_temporal_unit: z.string().min(1).optional(),
+					description: z.union([z.string(), z.null()]).optional(),
+					display_name: z.string().min(1).optional(),
+					source: z
+						.union([
+							z.object({ 'field-id': z.number().int().min(1) }).strict(),
+							z.null(),
+						])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput230 = lazySchema(() => z.record(z.string(), z.json()));
 const openApiEndpoint230 = createMetabaseEndpoint(
 	'metric.postByIdDimensionByDimensionKey',
 	openApiInput230,
@@ -6732,24 +7647,28 @@ const openApiEndpoint230 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput231 = z
-	.object({
-		path: z
-			.object({
-				id: z.number().int().min(1),
-				'dimension-key': z
-					.string()
-					.regex(
-						new RegExp(
-							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+const openApiInput231 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					id: z.number().int().min(1),
+					'dimension-key': z
+						.string()
+						.regex(
+							new RegExp(
+								'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+							),
 						),
-					),
-			})
-			.strict(),
-		query: z.object({ value: z.string() }).strict(),
-	})
-	.strict();
-const openApiOutput231 = OpenApiSchemas.MetabaseOpenApiOutputSchema614;
+				})
+				.strict(),
+			query: z.object({ value: z.string() }).strict(),
+		})
+		.strict(),
+);
+const openApiOutput231 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema614(),
+);
 const openApiEndpoint231 = createMetabaseEndpoint(
 	'metric.getByIdDimensionByDimensionKeyRemapping',
 	openApiInput231,
@@ -6764,24 +7683,26 @@ const openApiEndpoint231 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput232 = z
-	.object({
-		path: z
-			.object({
-				id: z.number().int().min(1),
-				'dimension-key': z
-					.string()
-					.regex(
-						new RegExp(
-							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+const openApiInput232 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					id: z.number().int().min(1),
+					'dimension-key': z
+						.string()
+						.regex(
+							new RegExp(
+								'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+							),
 						),
-					),
-			})
-			.strict(),
-		query: z.object({ query: z.string().min(1) }).strict(),
-	})
-	.strict();
-const openApiOutput232 = z.array(z.array(z.string()));
+				})
+				.strict(),
+			query: z.object({ query: z.string().min(1) }).strict(),
+		})
+		.strict(),
+);
+const openApiOutput232 = lazySchema(() => z.array(z.array(z.string())));
 const openApiEndpoint232 = createMetabaseEndpoint(
 	'metric.getByIdDimensionByDimensionKeySearch',
 	openApiInput232,
@@ -6796,84 +7717,90 @@ const openApiEndpoint232 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput233 = z
-	.object({
-		path: z
-			.object({
-				id: z.number().int().min(1),
-				'dimension-key': z
-					.string()
-					.regex(
-						new RegExp(
-							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+const openApiInput233 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					id: z.number().int().min(1),
+					'dimension-key': z
+						.string()
+						.regex(
+							new RegExp(
+								'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+							),
 						),
-					),
-			})
-			.strict(),
-	})
-	.strict();
-const openApiOutput233 = z.object({
-	has_more_values: z.boolean(),
-	values: z.array(
-		z.union([
-			z
-				.array(z.json())
-				.superRefine((values, ctx) =>
-					validatePrefixItems(
-						values,
-						[
-							(value) =>
-								z
-									.union([
-										z.union([
-											z.string(),
-											z.number(),
-											z.boolean(),
-											z.string().uuid(),
-											z.string(),
-											z.string().datetime({ offset: true }),
-										]),
-										z.null(),
-									])
-									.safeParse(value).success,
-							(value) => z.string().safeParse(value).success,
-						],
-						(value) => z.json().safeParse(value).success,
-						2,
-						2,
-						ctx,
-					),
-				),
-			z
-				.array(z.json())
-				.superRefine((values, ctx) =>
-					validatePrefixItems(
-						values,
-						[
-							(value) =>
-								z
-									.union([
-										z.union([
-											z.string(),
-											z.number(),
-											z.boolean(),
-											z.string().uuid(),
-											z.string(),
-											z.string().datetime({ offset: true }),
-										]),
-										z.null(),
-									])
-									.safeParse(value).success,
-						],
-						(value) => z.json().safeParse(value).success,
-						1,
-						1,
-						ctx,
-					),
-				),
-		]),
-	),
-});
+				})
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput233 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		has_more_values: z.boolean().nullish(),
+		values: z
+			.array(
+				z.union([
+					z
+						.array(z.json())
+						.superRefine((values, ctx) =>
+							validatePrefixItems(
+								values,
+								[
+									(value) =>
+										z
+											.union([
+												z.union([
+													z.string(),
+													z.number(),
+													z.boolean(),
+													z.string().uuid(),
+													z.string(),
+													z.string().datetime({ offset: true }),
+												]),
+												z.null(),
+											])
+											.safeParse(value).success,
+									(value) => z.string().safeParse(value).success,
+								],
+								(value) => z.json().safeParse(value).success,
+								2,
+								2,
+								ctx,
+							),
+						),
+					z
+						.array(z.json())
+						.superRefine((values, ctx) =>
+							validatePrefixItems(
+								values,
+								[
+									(value) =>
+										z
+											.union([
+												z.union([
+													z.string(),
+													z.number(),
+													z.boolean(),
+													z.string().uuid(),
+													z.string(),
+													z.string().datetime({ offset: true }),
+												]),
+												z.null(),
+											])
+											.safeParse(value).success,
+								],
+								(value) => z.json().safeParse(value).success,
+								1,
+								1,
+								ctx,
+							),
+						),
+				]),
+			)
+			.nullish(),
+	}),
+);
 const openApiEndpoint233 = createMetabaseEndpoint(
 	'metric.getByIdDimensionByDimensionKeyValues',
 	openApiInput233,
@@ -6887,10 +7814,14 @@ const openApiEndpoint233 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput234 = z
-	.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema631.optional() })
-	.strict();
-const openApiOutput234 = OpenApiSchemas.MetabaseOpenApiOutputSchema645;
+const openApiInput234 = lazySchema(() =>
+	z
+		.object({ body: OpenApiSchemas.MetabaseOpenApiInputSchema631().optional() })
+		.strict(),
+);
+const openApiOutput234 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema645(),
+);
 const openApiEndpoint234 = createMetabaseEndpoint(
 	'notification.post',
 	openApiInput234,
@@ -6898,35 +7829,42 @@ const openApiEndpoint234 = createMetabaseEndpoint(
 	(input) => ({ method: 'POST', path: '/api/notification', body: input.body }),
 );
 
-const openApiInput235 = z
-	.object({
-		query: z
-			.object({
-				recipient_email: z.string().min(1).optional(),
-				query: z.string().min(1).optional(),
-				creatorless: z.union([z.boolean(), z.null()]).optional(),
-				last_check_status:
-					OpenApiSchemas.MetabaseOpenApiInputSchema626.optional(),
-				creator_active: z.union([z.boolean(), z.null()]).optional(),
-				card_id: z.number().int().min(1).optional(),
-				last_send_status:
-					OpenApiSchemas.MetabaseOpenApiInputSchema626.optional(),
-				channel: z
-					.union([
-						z.union([z.string().min(1), z.array(z.string().min(1))]),
-						z.null(),
-					])
-					.optional(),
-				active: z.union([z.boolean(), z.null()]).optional(),
-				sort_column: OpenApiSchemas.MetabaseOpenApiInputSchema628.optional(),
-				creator_id: z.number().int().min(1).optional(),
-				sort_direction: OpenApiSchemas.MetabaseOpenApiInputSchema629.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput235 = OpenApiSchemas.MetabaseOpenApiOutputSchema624;
+const openApiInput235 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					...metabasePageQueryShape,
+					recipient_email: z.string().min(1).optional(),
+					query: z.string().min(1).optional(),
+					creatorless: z.union([z.boolean(), z.null()]).optional(),
+					last_check_status:
+						OpenApiSchemas.MetabaseOpenApiInputSchema626().optional(),
+					creator_active: z.union([z.boolean(), z.null()]).optional(),
+					card_id: z.number().int().min(1).optional(),
+					last_send_status:
+						OpenApiSchemas.MetabaseOpenApiInputSchema626().optional(),
+					channel: z
+						.union([
+							z.union([z.string().min(1), z.array(z.string().min(1))]),
+							z.null(),
+						])
+						.optional(),
+					active: z.union([z.boolean(), z.null()]).optional(),
+					sort_column:
+						OpenApiSchemas.MetabaseOpenApiInputSchema628().optional(),
+					creator_id: z.number().int().min(1).optional(),
+					sort_direction:
+						OpenApiSchemas.MetabaseOpenApiInputSchema629().optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput235 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema624(),
+);
 const openApiEndpoint235 = createMetabaseEndpoint(
 	'notification.getAdmin',
 	openApiInput235,
@@ -6938,19 +7876,23 @@ const openApiEndpoint235 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput236 = z
-	.object({
-		body: z
-			.object({
-				action: z.union([z.literal('archive'), z.literal('change-creator')]),
-				creator_id: z.number().int().min(1).optional(),
-				notification_ids: z.array(z.number().int().min(1)).min(1),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput236 = OpenApiSchemas.MetabaseOpenApiOutputSchema621;
+const openApiInput236 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					action: z.union([z.literal('archive'), z.literal('change-creator')]),
+					creator_id: z.number().int().min(1).optional(),
+					notification_ids: z.array(z.number().int().min(1)).min(1),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput236 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema621(),
+);
 const openApiEndpoint236 = createMetabaseEndpoint(
 	'notification.postAdminBulk',
 	openApiInput236,
@@ -6962,10 +7904,14 @@ const openApiEndpoint236 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput237 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput237 = OpenApiSchemas.MetabaseOpenApiOutputSchema623;
+const openApiInput237 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput237 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema623(),
+);
 const openApiEndpoint237 = createMetabaseEndpoint(
 	'notification.getAdminById',
 	openApiInput237,
@@ -6976,32 +7922,37 @@ const openApiEndpoint237 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput238 = z
-	.object({
-		query: z
-			.object({
-				'client-id': z.union([z.string().min(1), z.null()]).optional(),
-				'event-type': z
-					.union([
-						z.union([
-							z.literal('registered'),
-							z.literal('approved'),
-							z.literal('denied'),
-						]),
-						z.null(),
-					])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput238 = z.object({
-	data: z.array(z.record(z.string(), z.json())),
-	limit: z.number().int().min(1),
-	offset: z.number().int().min(0),
-	total: z.number().int().min(0),
-});
+const openApiInput238 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					...metabasePageQueryShape,
+					'client-id': z.union([z.string().min(1), z.null()]).optional(),
+					'event-type': z
+						.union([
+							z.union([
+								z.literal('registered'),
+								z.literal('approved'),
+								z.literal('denied'),
+							]),
+							z.null(),
+						])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput238 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z.array(z.record(z.string(), z.json())).nullish(),
+		limit: z.number().int().nullish(),
+		offset: z.number().int().nullish(),
+		total: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint238 = createMetabaseEndpoint(
 	'oauth.getAuthorizations',
 	openApiInput238,
@@ -7013,38 +7964,52 @@ const openApiEndpoint238 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput239 = z.object({}).strict();
-const openApiOutput239 = z.object({
-	data: z.array(
-		z.object({
-			ai_context: OpenApiSchemas.MetabaseOpenApiOutputSchema650,
-			entity_local_id: z.number().int(),
-			entity_type: z.string(),
-		}),
-	),
-	limit: z.number().int(),
-	offset: z.number().int(),
-	total: z.number().int(),
-});
+const openApiInput239 = lazySchema(() =>
+	z
+		.object({ query: z.object(metabasePageQueryShape).strict().optional() })
+		.strict(),
+);
+const openApiOutput239 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					ai_context: OpenApiSchemas.MetabaseOpenApiOutputSchema650().nullish(),
+					entity_local_id: z.number().int().nullish(),
+					entity_type: z.string().nullish(),
+				}),
+			)
+			.nullish(),
+		limit: z.number().int().nullish(),
+		offset: z.number().int().nullish(),
+		total: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint239 = createMetabaseEndpoint(
 	'osi.getAiContext',
 	openApiInput239,
 	openApiOutput239,
-	(input) => ({ method: 'GET', path: '/api/osi/ai-context' }),
+	(input) => ({
+		method: 'GET',
+		path: '/api/osi/ai-context',
+		query: input.query,
+	}),
 );
 
-const openApiInput240 = z.object({}).strict();
-const openApiOutput240 = z.object({
-	execution: z.object({
-		ran_ms: z.number().int(),
-		waited_ms: z.number().int(),
+const openApiInput240 = lazySchema(() => z.object({}).strict());
+const openApiOutput240 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		execution: OpenApiSchemas.looseJsonObject({
+			ran_ms: z.number().int().nullish(),
+			waited_ms: z.number().int().nullish(),
+		}).nullish(),
+		index: OpenApiSchemas.looseJsonObject({
+			deleted: z.number().int().nullish(),
+			inserted: z.number().int().nullish(),
+			unchanged: z.number().int().nullish(),
+		}).nullish(),
 	}),
-	index: z.object({
-		deleted: z.number().int(),
-		inserted: z.number().int(),
-		unchanged: z.number().int(),
-	}),
-});
+);
 const openApiEndpoint240 = createMetabaseEndpoint(
 	'osi.postAiContextReconcile',
 	openApiInput240,
@@ -7052,21 +8017,25 @@ const openApiEndpoint240 = createMetabaseEndpoint(
 	(input) => ({ method: 'POST', path: '/api/osi/ai-context/reconcile' }),
 );
 
-const openApiInput241 = z
-	.object({
-		path: z
-			.object({
-				'entity-type': z.string().min(1),
-				'entity-local-id': z.number().int().min(1),
-			})
-			.strict(),
-	})
-	.strict();
-const openApiOutput241 = z.object({
-	ai_context: OpenApiSchemas.MetabaseOpenApiOutputSchema650,
-	entity_local_id: z.number().int(),
-	entity_type: z.string(),
-});
+const openApiInput241 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					'entity-type': z.string().min(1),
+					'entity-local-id': z.number().int().min(1),
+				})
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput241 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		ai_context: OpenApiSchemas.MetabaseOpenApiOutputSchema650().nullish(),
+		entity_local_id: z.number().int().nullish(),
+		entity_type: z.string().nullish(),
+	}),
+);
 const openApiEndpoint241 = createMetabaseEndpoint(
 	'osi.getAiContextByEntityTypeByEntityLocalId',
 	openApiInput241,
@@ -7080,25 +8049,29 @@ const openApiEndpoint241 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput242 = z
-	.object({
-		path: z
-			.object({
-				'entity-type': z.string().min(1),
-				'entity-local-id': z.number().int().min(1),
-			})
-			.strict(),
-		body: z
-			.object({ ai_context: OpenApiSchemas.MetabaseOpenApiInputSchema650 })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput242 = z.object({
-	ai_context: OpenApiSchemas.MetabaseOpenApiOutputSchema650,
-	entity_local_id: z.number().int(),
-	entity_type: z.string(),
-});
+const openApiInput242 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					'entity-type': z.string().min(1),
+					'entity-local-id': z.number().int().min(1),
+				})
+				.strict(),
+			body: z
+				.object({ ai_context: OpenApiSchemas.MetabaseOpenApiInputSchema650() })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput242 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		ai_context: OpenApiSchemas.MetabaseOpenApiOutputSchema650().nullish(),
+		entity_local_id: z.number().int().nullish(),
+		entity_type: z.string().nullish(),
+	}),
+);
 const openApiEndpoint242 = createMetabaseEndpoint(
 	'osi.putAiContextByEntityTypeByEntityLocalId',
 	openApiInput242,
@@ -7113,17 +8086,19 @@ const openApiEndpoint242 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput243 = z
-	.object({
-		query: z
-			.object({
-				type: z.union([z.literal('dashboard'), z.literal('question')]),
-				id: z.number().int().min(1),
-			})
-			.strict(),
-	})
-	.strict();
-const openApiOutput243 = z.array(z.number().int().min(1));
+const openApiInput243 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					type: z.union([z.literal('dashboard'), z.literal('question')]),
+					id: z.number().int().min(1),
+				})
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput243 = lazySchema(() => z.array(z.number().int()));
 const openApiEndpoint243 = createMetabaseEndpoint(
 	'permissions.getInviteGroupIds',
 	openApiInput243,
@@ -7135,73 +8110,79 @@ const openApiEndpoint243 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput244 = z
-	.object({
-		path: z.object({ token: z.string(), 'param-key': z.string() }).strict(),
-	})
-	.strict();
-const openApiOutput244 = z.object({
-	has_more_values: z.boolean(),
-	values: z.array(
-		z.union([
-			z
-				.array(z.json())
-				.superRefine((values, ctx) =>
-					validatePrefixItems(
-						values,
-						[
-							(value) =>
-								z
-									.union([
-										z.union([
-											z.string(),
-											z.number(),
-											z.boolean(),
-											z.string().uuid(),
-											z.string(),
-											z.string().datetime({ offset: true }),
-										]),
-										z.null(),
-									])
-									.safeParse(value).success,
-							(value) => z.string().safeParse(value).success,
-						],
-						(value) => z.json().safeParse(value).success,
-						2,
-						2,
-						ctx,
-					),
-				),
-			z
-				.array(z.json())
-				.superRefine((values, ctx) =>
-					validatePrefixItems(
-						values,
-						[
-							(value) =>
-								z
-									.union([
-										z.union([
-											z.string(),
-											z.number(),
-											z.boolean(),
-											z.string().uuid(),
-											z.string(),
-											z.string().datetime({ offset: true }),
-										]),
-										z.null(),
-									])
-									.safeParse(value).success,
-						],
-						(value) => z.json().safeParse(value).success,
-						1,
-						1,
-						ctx,
-					),
-				),
-		]),
-	),
-});
+const openApiInput244 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ token: z.string(), 'param-key': z.string() }).strict(),
+		})
+		.strict(),
+);
+const openApiOutput244 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		has_more_values: z.boolean().nullish(),
+		values: z
+			.array(
+				z.union([
+					z
+						.array(z.json())
+						.superRefine((values, ctx) =>
+							validatePrefixItems(
+								values,
+								[
+									(value) =>
+										z
+											.union([
+												z.union([
+													z.string(),
+													z.number(),
+													z.boolean(),
+													z.string().uuid(),
+													z.string(),
+													z.string().datetime({ offset: true }),
+												]),
+												z.null(),
+											])
+											.safeParse(value).success,
+									(value) => z.string().safeParse(value).success,
+								],
+								(value) => z.json().safeParse(value).success,
+								2,
+								2,
+								ctx,
+							),
+						),
+					z
+						.array(z.json())
+						.superRefine((values, ctx) =>
+							validatePrefixItems(
+								values,
+								[
+									(value) =>
+										z
+											.union([
+												z.union([
+													z.string(),
+													z.number(),
+													z.boolean(),
+													z.string().uuid(),
+													z.string(),
+													z.string().datetime({ offset: true }),
+												]),
+												z.null(),
+											])
+											.safeParse(value).success,
+								],
+								(value) => z.json().safeParse(value).success,
+								1,
+								1,
+								ctx,
+							),
+						),
+				]),
+			)
+			.nullish(),
+	}),
+);
 const openApiEndpoint244 = createMetabaseEndpoint(
 	'previewEmbed.getCardByTokenParamsByParamKeyValues',
 	openApiInput244,
@@ -7215,27 +8196,29 @@ const openApiEndpoint244 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput245 = z
-	.object({
-		path: z
-			.object({
-				uuid: z
-					.string()
-					.regex(
-						new RegExp(
-							'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+const openApiInput245 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					uuid: z
+						.string()
+						.regex(
+							new RegExp(
+								'[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}',
+							),
 						),
-					),
-				'dashcard-id': z.number().int().min(1),
-			})
-			.strict(),
-		body: z
-			.object({ parameters: OpenApiSchemas.MetabaseOpenApiInputSchema218 })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput245 = z.record(z.string(), z.json());
+					'dashcard-id': z.number().int().min(1),
+				})
+				.strict(),
+			body: z
+				.object({ parameters: OpenApiSchemas.MetabaseOpenApiInputSchema218() })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput245 = lazySchema(() => z.record(z.string(), z.json()));
 const openApiEndpoint245 = createMetabaseEndpoint(
 	'public.postDashboardByUuidDashcardByDashcardIdExecuteValues',
 	openApiInput245,
@@ -7250,13 +8233,15 @@ const openApiEndpoint245 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput246 = z
-	.object({
-		path: z.object({ key: z.string().min(1) }).strict(),
-		query: z.object({ v: z.string().optional() }).strict().optional(),
-	})
-	.strict();
-const openApiOutput246 = MetabaseBinaryResponseSchema;
+const openApiInput246 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ key: z.string().min(1) }).strict(),
+			query: z.object({ v: z.string().optional() }).strict().optional(),
+		})
+		.strict(),
+);
+const openApiOutput246 = lazySchema(() => MetabaseBinaryResponseSchema);
 const openApiEndpoint246 = createMetabaseEndpoint(
 	'session.getIllustrationByKey',
 	openApiInput246,
@@ -7269,43 +8254,26 @@ const openApiEndpoint246 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput247 = z
-	.object({
-		body: z
-			.object({
-				code: z.string().min(1),
-				enrollment_token: z.string().min(1),
-				remember: z.boolean().optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput247 = z
-	.object({
-		body: z
-			.object({
-				id: z.string().min(1),
-				recovery_codes: z.array(z.string().min(1)),
-			})
-			.strict(),
-		cookies: z.record(
-			z.string(),
-			z
+const openApiInput247 = lazySchema(() =>
+	z
+		.object({
+			body: z
 				.object({
-					'http-only': z.boolean().optional(),
-					'max-age': z.number().int(),
-					path: z.string().min(1),
-					'same-site': z
-						.union([z.literal('strict'), z.literal('lax'), z.literal('none')])
-						.optional(),
-					value: z.string().min(1),
+					code: z.string().min(1),
+					enrollment_token: z.string().min(1),
+					remember: z.boolean().optional(),
 				})
-				.strict(),
-		),
-		status: z.literal(200),
-	})
-	.strict();
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput247 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		id: z.string().nullish(),
+		recovery_codes: z.array(z.string()).nullish(),
+	}),
+);
 const openApiEndpoint247 = createMetabaseEndpoint(
 	'session.postMfaEnroll',
 	openApiInput247,
@@ -7317,15 +8285,19 @@ const openApiEndpoint247 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput248 = z
-	.object({
-		body: z
-			.object({ challenge_token: z.string().min(1) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput248 = z.object({ success: z.literal(true) });
+const openApiInput248 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({ challenge_token: z.string().min(1) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput248 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({ success: z.literal(true).nullish() }),
+);
 const openApiEndpoint248 = createMetabaseEndpoint(
 	'session.postMfaSendEmailOtp',
 	openApiInput248,
@@ -7337,24 +8309,24 @@ const openApiEndpoint248 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput249 = z.object({}).strict();
-const openApiOutput249 = z
-	.object({
-		app_id: z.union([z.string().min(1), z.null()]),
-		scopes: z.union([
-			z
-				.object({
-					actual: z.array(z.string()),
-					extra: z.array(z.string()),
-					missing: z.array(z.string()),
-					required: z.array(z.string()),
-				})
-				.strict(),
-			z.null(),
-		]),
-		team_id: z.union([z.string().min(1), z.null()]),
-	})
-	.strict();
+const openApiInput249 = lazySchema(() => z.object({}).strict());
+const openApiOutput249 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		app_id: z.union([z.string(), z.null()]).nullish(),
+		scopes: z
+			.union([
+				OpenApiSchemas.looseJsonObject({
+					actual: z.array(z.string()).nullish(),
+					extra: z.array(z.string()).nullish(),
+					missing: z.array(z.string()).nullish(),
+					required: z.array(z.string()).nullish(),
+				}),
+				z.null(),
+			])
+			.nullish(),
+		team_id: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint249 = createMetabaseEndpoint(
 	'slack.getAppInfo',
 	openApiInput249,
@@ -7362,57 +8334,59 @@ const openApiEndpoint249 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/slack/app-info' }),
 );
 
-const openApiInput250 = z.object({}).strict();
-const openApiOutput250 = z.object({
-	display_information: z.object({
-		background_color: z.string(),
-		description: z.string(),
-		name: z.string(),
+const openApiInput250 = lazySchema(() => z.object({}).strict());
+const openApiOutput250 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		display_information: OpenApiSchemas.looseJsonObject({
+			background_color: z.string().nullish(),
+			description: z.string().nullish(),
+			name: z.string().nullish(),
+		}).nullish(),
+		features: OpenApiSchemas.looseJsonObject({
+			app_home: OpenApiSchemas.looseJsonObject({
+				home_tab_enabled: z.boolean().nullish(),
+				messages_tab_enabled: z.boolean().nullish(),
+				messages_tab_read_only_enabled: z.boolean().nullish(),
+			}).nullish(),
+			assistant_view: OpenApiSchemas.looseJsonObject({
+				assistant_description: z.string().nullish(),
+			}).nullish(),
+			bot_user: OpenApiSchemas.looseJsonObject({
+				always_online: z.boolean().nullish(),
+				display_name: z.string().nullish(),
+			}).nullish(),
+			slash_commands: z
+				.array(
+					OpenApiSchemas.looseJsonObject({
+						command: z.string().nullish(),
+						description: z.string().nullish(),
+						should_escape: z.boolean().nullish(),
+						url: z.string().nullish(),
+					}),
+				)
+				.nullish(),
+		}).nullish(),
+		oauth_config: OpenApiSchemas.looseJsonObject({
+			redirect_urls: z.array(z.string()).nullish(),
+			scopes: OpenApiSchemas.looseJsonObject({
+				bot: z.array(z.string()).nullish(),
+			}).nullish(),
+		}).nullish(),
+		settings: OpenApiSchemas.looseJsonObject({
+			event_subscriptions: OpenApiSchemas.looseJsonObject({
+				bot_events: z.array(z.string()).nullish(),
+				request_url: z.string().nullish(),
+			}).nullish(),
+			interactivity: OpenApiSchemas.looseJsonObject({
+				is_enabled: z.boolean().nullish(),
+				request_url: z.string().nullish(),
+			}).nullish(),
+			org_deploy_enabled: z.boolean().nullish(),
+			socket_mode_enabled: z.boolean().nullish(),
+			token_rotation_enabled: z.boolean().nullish(),
+		}).nullish(),
 	}),
-	features: z.object({
-		app_home: z
-			.object({
-				home_tab_enabled: z.boolean(),
-				messages_tab_enabled: z.boolean(),
-				messages_tab_read_only_enabled: z.boolean(),
-			})
-			.optional(),
-		assistant_view: z.object({ assistant_description: z.string() }).optional(),
-		bot_user: z.object({
-			always_online: z.boolean().optional(),
-			display_name: z.string(),
-		}),
-		slash_commands: z
-			.array(
-				z.object({
-					command: z.string(),
-					description: z.string(),
-					should_escape: z.boolean(),
-					url: z.string(),
-				}),
-			)
-			.optional(),
-	}),
-	oauth_config: z.object({
-		redirect_urls: z.array(z.string()).optional(),
-		scopes: z.object({ bot: z.array(z.string()) }),
-	}),
-	settings: z
-		.object({
-			event_subscriptions: z.object({
-				bot_events: z.array(z.string()),
-				request_url: z.string(),
-			}),
-			interactivity: z.object({
-				is_enabled: z.boolean(),
-				request_url: z.string(),
-			}),
-			org_deploy_enabled: z.boolean(),
-			socket_mode_enabled: z.boolean(),
-			token_rotation_enabled: z.boolean(),
-		})
-		.optional(),
-});
+);
 const openApiEndpoint250 = createMetabaseEndpoint(
 	'slack.getManifest',
 	openApiInput250,
@@ -7420,18 +8394,22 @@ const openApiEndpoint250 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/slack/manifest' }),
 );
 
-const openApiInput251 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.union([
-				z.array(z.number().int().min(1)),
-				z.object({ field_order: z.array(z.number().int().min(1)) }).strict(),
-			])
-			.optional(),
-	})
-	.strict();
-const openApiOutput251 = z.object({ success: z.literal(true) });
+const openApiInput251 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.union([
+					z.array(z.number().int().min(1)),
+					z.object({ field_order: z.array(z.number().int().min(1)) }).strict(),
+				])
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput251 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({ success: z.literal(true).nullish() }),
+);
 const openApiEndpoint251 = createMetabaseEndpoint(
 	'table.putByIdFieldsOrder',
 	openApiInput251,
@@ -7443,31 +8421,41 @@ const openApiEndpoint251 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput252 = z.object({}).strict();
-const openApiOutput252 = OpenApiSchemas.MetabaseOpenApiOutputSchema688;
+const openApiInput252 = lazySchema(() =>
+	z
+		.object({ query: z.object(metabasePageQueryShape).strict().optional() })
+		.strict(),
+);
+const openApiOutput252 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema688(),
+);
 const openApiEndpoint252 = createMetabaseEndpoint(
 	'task.getRuns',
 	openApiInput252,
 	openApiOutput252,
-	(input) => ({ method: 'GET', path: '/api/task/runs' }),
+	(input) => ({ method: 'GET', path: '/api/task/runs', query: input.query }),
 );
 
-const openApiInput253 = z
-	.object({
-		query: z
-			.object({
-				'run-type': z.union([
-					z.literal('alert'),
-					z.literal('sync'),
-					z.literal('fingerprint'),
-					z.literal('subscription'),
-				]),
-				'started-at': z.string().min(1),
-			})
-			.strict(),
-	})
-	.strict();
-const openApiOutput253 = z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema685);
+const openApiInput253 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					'run-type': z.union([
+						z.literal('alert'),
+						z.literal('sync'),
+						z.literal('fingerprint'),
+						z.literal('subscription'),
+					]),
+					'started-at': z.string().min(1),
+				})
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput253 = lazySchema(() =>
+	z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema685()),
+);
 const openApiEndpoint253 = createMetabaseEndpoint(
 	'task.getRunsEntities',
 	openApiInput253,
@@ -7479,10 +8467,14 @@ const openApiEndpoint253 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput254 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput254 = OpenApiSchemas.MetabaseOpenApiOutputSchema689;
+const openApiInput254 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput254 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema689(),
+);
 const openApiEndpoint254 = createMetabaseEndpoint(
 	'task.getRunsById',
 	openApiInput254,
@@ -7493,38 +8485,44 @@ const openApiEndpoint254 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput255 = z
-	.object({
-		body: z
-			.object({
-				archived: z.union([z.boolean(), z.null()]).optional(),
-				collection_id: z.union([z.number().int().min(1), z.null()]).optional(),
-				default: z.union([z.boolean(), z.null()]).optional(),
-				description: z.union([z.string(), z.null()]).optional(),
-				icon: z
-					.union([
-						z.union([
-							z.literal('star'),
-							z.literal('cake'),
-							z.literal('mail'),
-							z.literal('mail_at'),
-							z.literal('warning'),
-							z.literal('bell'),
-							z.literal('cloud'),
-							z.literal('info'),
-							z.literal('note'),
-							z.literal('event'),
-						]),
-						z.null(),
-					])
-					.optional(),
-				name: z.string().min(1),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput255 = OpenApiSchemas.MetabaseOpenApiOutputSchema691;
+const openApiInput255 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					archived: z.union([z.boolean(), z.null()]).optional(),
+					collection_id: z
+						.union([z.number().int().min(1), z.null()])
+						.optional(),
+					default: z.union([z.boolean(), z.null()]).optional(),
+					description: z.union([z.string(), z.null()]).optional(),
+					icon: z
+						.union([
+							z.union([
+								z.literal('star'),
+								z.literal('cake'),
+								z.literal('mail'),
+								z.literal('mail_at'),
+								z.literal('warning'),
+								z.literal('bell'),
+								z.literal('cloud'),
+								z.literal('info'),
+								z.literal('note'),
+								z.literal('event'),
+							]),
+							z.null(),
+						])
+						.optional(),
+					name: z.string().min(1),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput255 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema691(),
+);
 const openApiEndpoint255 = createMetabaseEndpoint(
 	'timeline.post',
 	openApiInput255,
@@ -7532,18 +8530,22 @@ const openApiEndpoint255 = createMetabaseEndpoint(
 	(input) => ({ method: 'POST', path: '/api/timeline', body: input.body }),
 );
 
-const openApiInput256 = z
-	.object({
-		query: z
-			.object({
-				include: OpenApiSchemas.MetabaseOpenApiInputSchema690.optional(),
-				archived: z.boolean().optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput256 = z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema691);
+const openApiInput256 = lazySchema(() =>
+	z
+		.object({
+			query: z
+				.object({
+					include: OpenApiSchemas.MetabaseOpenApiInputSchema690().optional(),
+					archived: z.boolean().optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput256 = lazySchema(() =>
+	z.array(OpenApiSchemas.MetabaseOpenApiOutputSchema691()),
+);
 const openApiEndpoint256 = createMetabaseEndpoint(
 	'timeline.get',
 	openApiInput256,
@@ -7551,21 +8553,25 @@ const openApiEndpoint256 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/timeline', query: input.query }),
 );
 
-const openApiInput257 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		query: z
-			.object({
-				include: OpenApiSchemas.MetabaseOpenApiInputSchema690.optional(),
-				archived: z.boolean().optional(),
-				start: z.string().optional(),
-				end: z.string().optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput257 = OpenApiSchemas.MetabaseOpenApiOutputSchema691;
+const openApiInput257 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			query: z
+				.object({
+					include: OpenApiSchemas.MetabaseOpenApiInputSchema690().optional(),
+					archived: z.boolean().optional(),
+					start: z.string().optional(),
+					end: z.string().optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput257 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema691(),
+);
 const openApiEndpoint257 = createMetabaseEndpoint(
 	'timeline.getById',
 	openApiInput257,
@@ -7577,140 +8583,134 @@ const openApiEndpoint257 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput258 = z
-	.object({
-		query: z
-			.object({
-				'last-run-start-time': z
-					.union([z.string().min(1), z.null()])
-					.optional(),
-				'last-run-statuses': z
-					.union([
-						z.array(
-							z.union([
-								z.literal('started'),
-								z.literal('succeeded'),
-								z.literal('failed'),
-								z.literal('timeout'),
-							]),
-						),
-						z.null(),
-					])
-					.optional(),
-				'tag-ids': z
-					.union([z.array(z.number().int().min(0)), z.null()])
-					.optional(),
-				'database-id': z.union([z.number().int().min(1), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput258 = z.array(
+const openApiInput258 = lazySchema(() =>
 	z
 		.object({
-			table: z.union([z.record(z.string(), z.json()), z.null()]).optional(),
+			query: z
+				.object({
+					'last-run-start-time': z
+						.union([z.string().min(1), z.null()])
+						.optional(),
+					'last-run-statuses': z
+						.union([
+							z.array(
+								z.union([
+									z.literal('started'),
+									z.literal('succeeded'),
+									z.literal('failed'),
+									z.literal('timeout'),
+								]),
+							),
+							z.null(),
+						])
+						.optional(),
+					'tag-ids': z
+						.union([z.array(z.number().int().min(0)), z.null()])
+						.optional(),
+					'database-id': z
+						.union([z.number().int().min(1), z.null()])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput258 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			table: z.union([z.record(z.string(), z.json()), z.null()]).nullish(),
 			owner: z
 				.union([
-					z
-						.object({
-							common_name: z.union([z.string(), z.null()]).optional(),
-							email: z.string(),
-							first_name: z.union([z.string(), z.null()]).optional(),
-							id: z.number().int().min(1).optional(),
-							last_name: z.union([z.string(), z.null()]).optional(),
-						})
-						.strict(),
+					OpenApiSchemas.looseJsonObject({
+						common_name: z.union([z.string(), z.null()]).nullish(),
+						email: z.string().nullish(),
+						first_name: z.union([z.string(), z.null()]).nullish(),
+						id: z.number().int().nullish(),
+						last_name: z.union([z.string(), z.null()]).nullish(),
+					}),
 					z.null(),
 				])
-				.optional(),
-			can_read: z.boolean().optional(),
-			source_type: z.string(),
-			entity_id: z.union([z.string(), z.null()]),
+				.nullish(),
+			can_read: z.boolean().nullish(),
+			source_type: z.string().nullish(),
+			entity_id: z.union([z.string(), z.null()]).nullish(),
 			last_run: z
 				.union([
-					z
-						.object({
-							message: z.union([z.string(), z.null()]),
-							user_id: z.union([z.number().int().min(1), z.null()]),
-							checkpoint_hi_value: z.union([z.string(), z.null()]).optional(),
-							is_active: z.union([z.boolean(), z.null()]),
-							transform_id: z.number().int().min(1),
-							id: z.number().int().min(1),
-							run_method: z.string(),
-							checkpoint_lo_value: z.union([z.string(), z.null()]).optional(),
-							status: z.union([
+					OpenApiSchemas.looseJsonObject({
+						message: z.union([z.string(), z.null()]).nullish(),
+						user_id: z.union([z.number().int(), z.null()]).nullish(),
+						checkpoint_hi_value: z.union([z.string(), z.null()]).nullish(),
+						is_active: z.union([z.boolean(), z.null()]).nullish(),
+						transform_id: z.number().int().nullish(),
+						id: z.number().int().nullish(),
+						run_method: z.string().nullish(),
+						checkpoint_lo_value: z.union([z.string(), z.null()]).nullish(),
+						status: z
+							.union([
 								z.literal('started'),
 								z.literal('succeeded'),
 								z.literal('failed'),
 								z.literal('timeout'),
 								z.literal('canceled'),
 								z.literal('canceling'),
-							]),
-							transform_entity_id: z.union([z.string(), z.null()]).optional(),
-							checkpoint_filter_field_id: z
-								.union([z.number().int().min(1), z.null()])
-								.optional(),
-							end_time: z.json().optional(),
-							metered_as: z.union([z.string(), z.null()]).optional(),
-							dag_run_id: z
-								.union([z.number().int().min(1), z.null()])
-								.optional(),
-							transform_name: z.union([z.string(), z.null()]).optional(),
-							start_time: z.json(),
-							job_run_id: z
-								.union([z.number().int().min(1), z.null()])
-								.optional(),
-						})
-						.strict(),
+							])
+							.nullish(),
+						transform_entity_id: z.union([z.string(), z.null()]).nullish(),
+						checkpoint_filter_field_id: z
+							.union([z.number().int(), z.null()])
+							.nullish(),
+						end_time: z.json().nullish(),
+						metered_as: z.union([z.string(), z.null()]).nullish(),
+						dag_run_id: z.union([z.number().int(), z.null()]).nullish(),
+						transform_name: z.union([z.string(), z.null()]).nullish(),
+						start_time: z.json().nullish(),
+						job_run_id: z.union([z.number().int(), z.null()]).nullish(),
+					}),
 					z.null(),
 				])
-				.optional(),
-			source_database_id: z
-				.union([z.number().int().min(1), z.null()])
-				.optional(),
-			id: z.number().int().min(1),
-			owner_email: z.union([z.string(), z.null()]).optional(),
-			target_db_id: z.union([z.number().int().min(1), z.null()]).optional(),
-			creator: z
-				.object({
-					is_qbnewb: z.boolean().optional(),
-					last_login: z.json().optional(),
-					id: z.number().int().min(1),
-					email: z.string(),
-					is_data_analyst: z.boolean().optional(),
-					is_superuser: z.boolean().optional(),
-					tenant_id: z.json().optional(),
-					last_name: z.union([z.string(), z.null()]),
-					first_name: z.union([z.string(), z.null()]),
-					date_joined: z.json().optional(),
-					common_name: z.union([z.string(), z.null()]).optional(),
-				})
-				.strict(),
-			owner_user_id: z.union([z.number().int().min(1), z.null()]).optional(),
-			name: z.string(),
-			updated_at: z.json(),
-			source_readable: z.union([z.boolean(), z.null()]).optional(),
-			tag_ids: z.array(z.number().int().min(1)).optional(),
+				.nullish(),
+			source_database_id: z.union([z.number().int(), z.null()]).nullish(),
+			id: z.number().int().nullish(),
+			owner_email: z.union([z.string(), z.null()]).nullish(),
+			target_db_id: z.union([z.number().int(), z.null()]).nullish(),
+			creator: OpenApiSchemas.looseJsonObject({
+				is_qbnewb: z.boolean().nullish(),
+				last_login: z.json().nullish(),
+				id: z.number().int().nullish(),
+				email: z.string().nullish(),
+				is_data_analyst: z.boolean().nullish(),
+				is_superuser: z.boolean().nullish(),
+				tenant_id: z.json().nullish(),
+				last_name: z.union([z.string(), z.null()]).nullish(),
+				first_name: z.union([z.string(), z.null()]).nullish(),
+				date_joined: z.json().nullish(),
+				common_name: z.union([z.string(), z.null()]).nullish(),
+			}).nullish(),
+			owner_user_id: z.union([z.number().int(), z.null()]).nullish(),
+			name: z.string().nullish(),
+			updated_at: z.json().nullish(),
+			source_readable: z.union([z.boolean(), z.null()]).nullish(),
+			tag_ids: z.array(z.number().int()).nullish(),
 			table_dependencies: z
 				.union([z.array(z.record(z.string(), z.json())), z.null()])
-				.optional(),
-			can_write: z.boolean().optional(),
-			collection_id: z.union([z.number().int().min(1), z.null()]),
-			can_execute: z.boolean().optional(),
-			source: z.json(),
+				.nullish(),
+			can_write: z.boolean().nullish(),
+			collection_id: z.union([z.number().int(), z.null()]).nullish(),
+			can_execute: z.boolean().nullish(),
+			source: z.json().nullish(),
 			requestable_indexes: z
-				.union([OpenApiSchemas.MetabaseOpenApiOutputSchema294, z.null()])
-				.optional(),
-			last_checkpoint_value: z.union([z.string(), z.null()]).optional(),
-			target: z.json(),
-			created_at: z.json(),
-			creator_id: z.number().int().min(1),
-			run_trigger: z.union([z.string(), z.null()]).optional(),
-			target_table_id: z.union([z.number().int().min(1), z.null()]).optional(),
-			description: z.union([z.string(), z.null()]),
-		})
-		.strict(),
+				.union([OpenApiSchemas.MetabaseOpenApiOutputSchema294(), z.null()])
+				.nullish(),
+			last_checkpoint_value: z.union([z.string(), z.null()]).nullish(),
+			target: z.json().nullish(),
+			created_at: z.json().nullish(),
+			creator_id: z.number().int().nullish(),
+			run_trigger: z.union([z.string(), z.null()]).nullish(),
+			target_table_id: z.union([z.number().int(), z.null()]).nullish(),
+			description: z.union([z.string(), z.null()]).nullish(),
+		}),
+	),
 );
 const openApiEndpoint258 = createMetabaseEndpoint(
 	'transform.get',
@@ -7719,122 +8719,125 @@ const openApiEndpoint258 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/transform', query: input.query }),
 );
 
-const openApiInput259 = z
-	.object({
-		body: z
-			.object({
-				owner_email: z.union([z.string(), z.null()]).optional(),
-				owner_user_id: z.union([z.number().int().min(1), z.null()]).optional(),
-				name: z.string(),
-				tag_ids: z.array(z.number().int().min(1)).optional(),
-				collection_id: z.union([z.number().int().min(1), z.null()]).optional(),
-				source: OpenApiSchemas.MetabaseOpenApiInputSchema705,
-				target: OpenApiSchemas.MetabaseOpenApiInputSchema706,
-				run_trigger: OpenApiSchemas.MetabaseOpenApiInputSchema700.optional(),
-				description: z.union([z.string(), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput259 = z
-	.object({
-		table: z.union([z.record(z.string(), z.json()), z.null()]).optional(),
+const openApiInput259 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					owner_email: z.union([z.string(), z.null()]).optional(),
+					owner_user_id: z
+						.union([z.number().int().min(1), z.null()])
+						.optional(),
+					name: z.string(),
+					tag_ids: z.array(z.number().int().min(1)).optional(),
+					collection_id: z
+						.union([z.number().int().min(1), z.null()])
+						.optional(),
+					source: OpenApiSchemas.MetabaseOpenApiInputSchema705(),
+					target: OpenApiSchemas.MetabaseOpenApiInputSchema706(),
+					run_trigger:
+						OpenApiSchemas.MetabaseOpenApiInputSchema700().optional(),
+					description: z.union([z.string(), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput259 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		table: z.union([z.record(z.string(), z.json()), z.null()]).nullish(),
 		owner: z
 			.union([
-				z
-					.object({
-						common_name: z.union([z.string(), z.null()]).optional(),
-						email: z.string(),
-						first_name: z.union([z.string(), z.null()]).optional(),
-						id: z.number().int().min(1).optional(),
-						last_name: z.union([z.string(), z.null()]).optional(),
-					})
-					.strict(),
+				OpenApiSchemas.looseJsonObject({
+					common_name: z.union([z.string(), z.null()]).nullish(),
+					email: z.string().nullish(),
+					first_name: z.union([z.string(), z.null()]).nullish(),
+					id: z.number().int().nullish(),
+					last_name: z.union([z.string(), z.null()]).nullish(),
+				}),
 				z.null(),
 			])
-			.optional(),
-		can_read: z.boolean().optional(),
-		source_type: z.string(),
-		entity_id: z.union([z.string(), z.null()]),
+			.nullish(),
+		can_read: z.boolean().nullish(),
+		source_type: z.string().nullish(),
+		entity_id: z.union([z.string(), z.null()]).nullish(),
 		last_run: z
 			.union([
-				z
-					.object({
-						message: z.union([z.string(), z.null()]),
-						user_id: z.union([z.number().int().min(1), z.null()]),
-						checkpoint_hi_value: z.union([z.string(), z.null()]).optional(),
-						is_active: z.union([z.boolean(), z.null()]),
-						transform_id: z.number().int().min(1),
-						id: z.number().int().min(1),
-						run_method: z.string(),
-						checkpoint_lo_value: z.union([z.string(), z.null()]).optional(),
-						status: z.union([
+				OpenApiSchemas.looseJsonObject({
+					message: z.union([z.string(), z.null()]).nullish(),
+					user_id: z.union([z.number().int(), z.null()]).nullish(),
+					checkpoint_hi_value: z.union([z.string(), z.null()]).nullish(),
+					is_active: z.union([z.boolean(), z.null()]).nullish(),
+					transform_id: z.number().int().nullish(),
+					id: z.number().int().nullish(),
+					run_method: z.string().nullish(),
+					checkpoint_lo_value: z.union([z.string(), z.null()]).nullish(),
+					status: z
+						.union([
 							z.literal('started'),
 							z.literal('succeeded'),
 							z.literal('failed'),
 							z.literal('timeout'),
 							z.literal('canceled'),
 							z.literal('canceling'),
-						]),
-						transform_entity_id: z.union([z.string(), z.null()]).optional(),
-						checkpoint_filter_field_id: z
-							.union([z.number().int().min(1), z.null()])
-							.optional(),
-						end_time: z.json().optional(),
-						metered_as: z.union([z.string(), z.null()]).optional(),
-						dag_run_id: z.union([z.number().int().min(1), z.null()]).optional(),
-						transform_name: z.union([z.string(), z.null()]).optional(),
-						start_time: z.json(),
-						job_run_id: z.union([z.number().int().min(1), z.null()]).optional(),
-					})
-					.strict(),
+						])
+						.nullish(),
+					transform_entity_id: z.union([z.string(), z.null()]).nullish(),
+					checkpoint_filter_field_id: z
+						.union([z.number().int(), z.null()])
+						.nullish(),
+					end_time: z.json().nullish(),
+					metered_as: z.union([z.string(), z.null()]).nullish(),
+					dag_run_id: z.union([z.number().int(), z.null()]).nullish(),
+					transform_name: z.union([z.string(), z.null()]).nullish(),
+					start_time: z.json().nullish(),
+					job_run_id: z.union([z.number().int(), z.null()]).nullish(),
+				}),
 				z.null(),
 			])
-			.optional(),
-		source_database_id: z.union([z.number().int().min(1), z.null()]).optional(),
-		id: z.number().int().min(1),
-		owner_email: z.union([z.string(), z.null()]).optional(),
-		target_db_id: z.union([z.number().int().min(1), z.null()]).optional(),
-		creator: z
-			.object({
-				is_qbnewb: z.boolean().optional(),
-				last_login: z.json().optional(),
-				id: z.number().int().min(1),
-				email: z.string(),
-				is_data_analyst: z.boolean().optional(),
-				is_superuser: z.boolean().optional(),
-				tenant_id: z.json().optional(),
-				last_name: z.union([z.string(), z.null()]),
-				first_name: z.union([z.string(), z.null()]),
-				date_joined: z.json().optional(),
-				common_name: z.union([z.string(), z.null()]).optional(),
-			})
-			.strict(),
-		owner_user_id: z.union([z.number().int().min(1), z.null()]).optional(),
-		name: z.string(),
-		updated_at: z.json(),
-		source_readable: z.union([z.boolean(), z.null()]).optional(),
-		tag_ids: z.array(z.number().int().min(1)).optional(),
+			.nullish(),
+		source_database_id: z.union([z.number().int(), z.null()]).nullish(),
+		id: z.number().int().nullish(),
+		owner_email: z.union([z.string(), z.null()]).nullish(),
+		target_db_id: z.union([z.number().int(), z.null()]).nullish(),
+		creator: OpenApiSchemas.looseJsonObject({
+			is_qbnewb: z.boolean().nullish(),
+			last_login: z.json().nullish(),
+			id: z.number().int().nullish(),
+			email: z.string().nullish(),
+			is_data_analyst: z.boolean().nullish(),
+			is_superuser: z.boolean().nullish(),
+			tenant_id: z.json().nullish(),
+			last_name: z.union([z.string(), z.null()]).nullish(),
+			first_name: z.union([z.string(), z.null()]).nullish(),
+			date_joined: z.json().nullish(),
+			common_name: z.union([z.string(), z.null()]).nullish(),
+		}).nullish(),
+		owner_user_id: z.union([z.number().int(), z.null()]).nullish(),
+		name: z.string().nullish(),
+		updated_at: z.json().nullish(),
+		source_readable: z.union([z.boolean(), z.null()]).nullish(),
+		tag_ids: z.array(z.number().int()).nullish(),
 		table_dependencies: z
 			.union([z.array(z.record(z.string(), z.json())), z.null()])
-			.optional(),
-		can_write: z.boolean().optional(),
-		collection_id: z.union([z.number().int().min(1), z.null()]),
-		can_execute: z.boolean().optional(),
-		source: z.json(),
+			.nullish(),
+		can_write: z.boolean().nullish(),
+		collection_id: z.union([z.number().int(), z.null()]).nullish(),
+		can_execute: z.boolean().nullish(),
+		source: z.json().nullish(),
 		requestable_indexes: z
-			.union([OpenApiSchemas.MetabaseOpenApiOutputSchema294, z.null()])
-			.optional(),
-		last_checkpoint_value: z.union([z.string(), z.null()]).optional(),
-		target: z.json(),
-		created_at: z.json(),
-		creator_id: z.number().int().min(1),
-		run_trigger: z.union([z.string(), z.null()]).optional(),
-		target_table_id: z.union([z.number().int().min(1), z.null()]).optional(),
-		description: z.union([z.string(), z.null()]),
-	})
-	.strict();
+			.union([OpenApiSchemas.MetabaseOpenApiOutputSchema294(), z.null()])
+			.nullish(),
+		last_checkpoint_value: z.union([z.string(), z.null()]).nullish(),
+		target: z.json().nullish(),
+		created_at: z.json().nullish(),
+		creator_id: z.number().int().nullish(),
+		run_trigger: z.union([z.string(), z.null()]).nullish(),
+		target_table_id: z.union([z.number().int(), z.null()]).nullish(),
+		description: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint259 = createMetabaseEndpoint(
 	'transform.post',
 	openApiInput259,
@@ -7842,10 +8845,12 @@ const openApiEndpoint259 = createMetabaseEndpoint(
 	(input) => ({ method: 'POST', path: '/api/transform', body: input.body }),
 );
 
-const openApiInput260 = z
-	.object({ path: z.object({ 'run-id': z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput260 = z.null();
+const openApiInput260 = lazySchema(() =>
+	z
+		.object({ path: z.object({ 'run-id': z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput260 = lazySchema(() => z.null());
 const openApiEndpoint260 = createMetabaseEndpoint(
 	'transformDagRun.postByRunIdCancel',
 	openApiInput260,
@@ -7859,41 +8864,45 @@ const openApiEndpoint260 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput261 = z
-	.object({ path: z.object({ 'run-id': z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput261 = z.array(
+const openApiInput261 = lazySchema(() =>
 	z
-		.object({
-			message: z.union([z.string(), z.null()]),
-			user_id: z.union([z.number().int().min(1), z.null()]),
-			checkpoint_hi_value: z.union([z.string(), z.null()]).optional(),
-			is_active: z.union([z.boolean(), z.null()]),
-			transform_id: z.union([z.number().int().min(1), z.null()]),
-			id: z.number().int().min(1),
-			transform: z.union([z.record(z.string(), z.json()), z.null()]).optional(),
-			run_method: z.string(),
-			checkpoint_lo_value: z.union([z.string(), z.null()]).optional(),
-			status: z.union([
-				z.literal('started'),
-				z.literal('succeeded'),
-				z.literal('failed'),
-				z.literal('timeout'),
-				z.literal('canceled'),
-				z.literal('canceling'),
-			]),
-			transform_entity_id: z.union([z.string(), z.null()]).optional(),
-			checkpoint_filter_field_id: z
-				.union([z.number().int().min(1), z.null()])
-				.optional(),
-			end_time: z.json().optional(),
-			metered_as: z.union([z.string(), z.null()]).optional(),
-			dag_run_id: z.union([z.number().int().min(1), z.null()]),
-			transform_name: z.union([z.string(), z.null()]).optional(),
-			start_time: z.json(),
-			job_run_id: z.union([z.number().int().min(1), z.null()]),
-		})
+		.object({ path: z.object({ 'run-id': z.number().int().min(1) }).strict() })
 		.strict(),
+);
+const openApiOutput261 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			message: z.union([z.string(), z.null()]).nullish(),
+			user_id: z.union([z.number().int(), z.null()]).nullish(),
+			checkpoint_hi_value: z.union([z.string(), z.null()]).nullish(),
+			is_active: z.union([z.boolean(), z.null()]).nullish(),
+			transform_id: z.union([z.number().int(), z.null()]).nullish(),
+			id: z.number().int().nullish(),
+			transform: z.union([z.record(z.string(), z.json()), z.null()]).nullish(),
+			run_method: z.string().nullish(),
+			checkpoint_lo_value: z.union([z.string(), z.null()]).nullish(),
+			status: z
+				.union([
+					z.literal('started'),
+					z.literal('succeeded'),
+					z.literal('failed'),
+					z.literal('timeout'),
+					z.literal('canceled'),
+					z.literal('canceling'),
+				])
+				.nullish(),
+			transform_entity_id: z.union([z.string(), z.null()]).nullish(),
+			checkpoint_filter_field_id: z
+				.union([z.number().int(), z.null()])
+				.nullish(),
+			end_time: z.json().nullish(),
+			metered_as: z.union([z.string(), z.null()]).nullish(),
+			dag_run_id: z.union([z.number().int(), z.null()]).nullish(),
+			transform_name: z.union([z.string(), z.null()]).nullish(),
+			start_time: z.json().nullish(),
+			job_run_id: z.union([z.number().int(), z.null()]).nullish(),
+		}),
+	),
 );
 const openApiEndpoint261 = createMetabaseEndpoint(
 	'transformDagRun.getByRunIdTransformRuns',
@@ -7908,70 +8917,76 @@ const openApiEndpoint261 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput262 = z
-	.object({
-		body: z
-			.object({
-				description: z.union([z.string().min(1), z.null()]).optional(),
-				name: z.string().min(1),
-				schedule: z.string().min(1),
-				tag_ids: z.array(z.number().int().min(1)).optional(),
-				ui_display_type: z
-					.union([z.literal('cron/raw'), z.literal('cron/builder')])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput262 = z
-	.object({
-		built_in_type: z.union([z.string(), z.null()]).optional(),
-		entity_id: z.union([z.string(), z.null()]),
+const openApiInput262 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({
+					description: z.union([z.string().min(1), z.null()]).optional(),
+					name: z.string().min(1),
+					schedule: z.string().min(1),
+					tag_ids: z.array(z.number().int().min(1)).optional(),
+					ui_display_type: z
+						.union([z.literal('cron/raw'), z.literal('cron/builder')])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput262 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		built_in_type: z.union([z.string(), z.null()]).nullish(),
+		entity_id: z.union([z.string(), z.null()]).nullish(),
 		last_run: z
 			.union([
-				z
-					.object({
-						message: z.union([z.string(), z.null()]),
-						is_active: z.union([z.boolean(), z.null()]),
-						id: z.number().int().min(1),
-						run_method: z.string(),
-						updated_at: z.json(),
-						status: z.union([
+				OpenApiSchemas.looseJsonObject({
+					message: z.union([z.string(), z.null()]).nullish(),
+					is_active: z.union([z.boolean(), z.null()]).nullish(),
+					id: z.number().int().nullish(),
+					run_method: z.string().nullish(),
+					updated_at: z.json().nullish(),
+					status: z
+						.union([
 							z.literal('started'),
 							z.literal('succeeded'),
 							z.literal('failed'),
 							z.literal('timeout'),
 							z.literal('canceled'),
-						]),
-						job_id: z.number().int().min(1),
-						end_time: z.json().optional(),
-						job_entity_id: z.union([z.string(), z.null()]).optional(),
-						created_at: z.json(),
-						job_name: z.union([z.string(), z.null()]).optional(),
-						start_time: z.json(),
-					})
-					.strict(),
+						])
+						.nullish(),
+					job_id: z.number().int().nullish(),
+					end_time: z.json().nullish(),
+					job_entity_id: z.union([z.string(), z.null()]).nullish(),
+					created_at: z.json().nullish(),
+					job_name: z.union([z.string(), z.null()]).nullish(),
+					start_time: z.json().nullish(),
+				}),
 				z.null(),
 			])
-			.optional(),
-		ui_display_type: z.union([
-			z.literal('cron/raw'),
-			z.literal('cron/builder'),
-		]),
+			.nullish(),
+		ui_display_type: z
+			.union([z.literal('cron/raw'), z.literal('cron/builder')])
+			.nullish(),
 		next_run: z
-			.union([z.object({ start_time: z.json() }).strict(), z.null()])
-			.optional(),
-		id: z.number().int().min(1),
-		name: z.union([z.string(), z.string()]),
-		schedule: z.string(),
-		updated_at: z.json(),
-		tag_ids: z.array(z.number().int().min(1)).optional(),
-		created_at: z.json(),
-		active: z.boolean(),
-		description: z.union([z.union([z.string(), z.string()]), z.null()]),
-	})
-	.strict();
+			.union([
+				OpenApiSchemas.looseJsonObject({ start_time: z.json().nullish() }),
+				z.null(),
+			])
+			.nullish(),
+		id: z.number().int().nullish(),
+		name: z.union([z.string(), z.string()]).nullish(),
+		schedule: z.string().nullish(),
+		updated_at: z.json().nullish(),
+		tag_ids: z.array(z.number().int()).nullish(),
+		created_at: z.json().nullish(),
+		active: z.boolean().nullish(),
+		description: z
+			.union([z.union([z.string(), z.string()]), z.null()])
+			.nullish(),
+	}),
+);
 const openApiEndpoint262 = createMetabaseEndpoint(
 	'transformJob.post',
 	openApiInput262,
@@ -7979,86 +8994,92 @@ const openApiEndpoint262 = createMetabaseEndpoint(
 	(input) => ({ method: 'POST', path: '/api/transform-job', body: input.body }),
 );
 
-const openApiInput263 = z
-	.object({
-		query: z
-			.object({
-				'last-run-start-time': z
-					.union([z.string().min(1), z.null()])
-					.optional(),
-				'next-run-start-time': z
-					.union([z.string().min(1), z.null()])
-					.optional(),
-				'last-run-statuses': z
-					.union([
-						z.array(
-							z.union([
-								z.literal('started'),
-								z.literal('succeeded'),
-								z.literal('failed'),
-								z.literal('timeout'),
-							]),
-						),
-						z.null(),
-					])
-					.optional(),
-				'tag-ids': z
-					.union([z.array(z.number().int().min(0)), z.null()])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput263 = z.array(
+const openApiInput263 = lazySchema(() =>
 	z
 		.object({
-			built_in_type: z.union([z.string(), z.null()]).optional(),
-			entity_id: z.union([z.string(), z.null()]),
+			query: z
+				.object({
+					'last-run-start-time': z
+						.union([z.string().min(1), z.null()])
+						.optional(),
+					'next-run-start-time': z
+						.union([z.string().min(1), z.null()])
+						.optional(),
+					'last-run-statuses': z
+						.union([
+							z.array(
+								z.union([
+									z.literal('started'),
+									z.literal('succeeded'),
+									z.literal('failed'),
+									z.literal('timeout'),
+								]),
+							),
+							z.null(),
+						])
+						.optional(),
+					'tag-ids': z
+						.union([z.array(z.number().int().min(0)), z.null()])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput263 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			built_in_type: z.union([z.string(), z.null()]).nullish(),
+			entity_id: z.union([z.string(), z.null()]).nullish(),
 			last_run: z
 				.union([
-					z
-						.object({
-							message: z.union([z.string(), z.null()]),
-							is_active: z.union([z.boolean(), z.null()]),
-							id: z.number().int().min(1),
-							run_method: z.string(),
-							updated_at: z.json(),
-							status: z.union([
+					OpenApiSchemas.looseJsonObject({
+						message: z.union([z.string(), z.null()]).nullish(),
+						is_active: z.union([z.boolean(), z.null()]).nullish(),
+						id: z.number().int().nullish(),
+						run_method: z.string().nullish(),
+						updated_at: z.json().nullish(),
+						status: z
+							.union([
 								z.literal('started'),
 								z.literal('succeeded'),
 								z.literal('failed'),
 								z.literal('timeout'),
 								z.literal('canceled'),
-							]),
-							job_id: z.number().int().min(1),
-							end_time: z.json().optional(),
-							job_entity_id: z.union([z.string(), z.null()]).optional(),
-							created_at: z.json(),
-							job_name: z.union([z.string(), z.null()]).optional(),
-							start_time: z.json(),
-						})
-						.strict(),
+							])
+							.nullish(),
+						job_id: z.number().int().nullish(),
+						end_time: z.json().nullish(),
+						job_entity_id: z.union([z.string(), z.null()]).nullish(),
+						created_at: z.json().nullish(),
+						job_name: z.union([z.string(), z.null()]).nullish(),
+						start_time: z.json().nullish(),
+					}),
 					z.null(),
 				])
-				.optional(),
-			ui_display_type: z.union([
-				z.literal('cron/raw'),
-				z.literal('cron/builder'),
-			]),
+				.nullish(),
+			ui_display_type: z
+				.union([z.literal('cron/raw'), z.literal('cron/builder')])
+				.nullish(),
 			next_run: z
-				.union([z.object({ start_time: z.json() }).strict(), z.null()])
-				.optional(),
-			id: z.number().int().min(1),
-			name: z.union([z.string(), z.string()]),
-			schedule: z.string(),
-			updated_at: z.json(),
-			tag_ids: z.array(z.number().int().min(1)).optional(),
-			created_at: z.json(),
-			active: z.boolean(),
-			description: z.union([z.union([z.string(), z.string()]), z.null()]),
-		})
-		.strict(),
+				.union([
+					OpenApiSchemas.looseJsonObject({ start_time: z.json().nullish() }),
+					z.null(),
+				])
+				.nullish(),
+			id: z.number().int().nullish(),
+			name: z.union([z.string(), z.string()]).nullish(),
+			schedule: z.string().nullish(),
+			updated_at: z.json().nullish(),
+			tag_ids: z.array(z.number().int()).nullish(),
+			created_at: z.json().nullish(),
+			active: z.boolean().nullish(),
+			description: z
+				.union([z.union([z.string(), z.string()]), z.null()])
+				.nullish(),
+		}),
+	),
 );
 const openApiEndpoint263 = createMetabaseEndpoint(
 	'transformJob.get',
@@ -8071,12 +9092,17 @@ const openApiEndpoint263 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput264 = z
-	.object({ body: z.object({ active: z.boolean() }).strict().optional() })
-	.strict();
-const openApiOutput264 = z
-	.object({ failed: z.number().int(), updated: z.number().int() })
-	.strict();
+const openApiInput264 = lazySchema(() =>
+	z
+		.object({ body: z.object({ active: z.boolean() }).strict().optional() })
+		.strict(),
+);
+const openApiOutput264 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		failed: z.number().int().nullish(),
+		updated: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint264 = createMetabaseEndpoint(
 	'transformJob.putActive',
 	openApiInput264,
@@ -8088,72 +9114,78 @@ const openApiEndpoint264 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput265 = z
-	.object({
-		path: z.object({ 'job-id': z.number().int().min(1) }).strict(),
-		body: z
-			.object({
-				active: z.boolean().optional(),
-				description: z.union([z.string().min(1), z.null()]).optional(),
-				name: z.string().min(1).optional(),
-				schedule: z.string().min(1).optional(),
-				tag_ids: z.array(z.number().int().min(1)).optional(),
-				ui_display_type: z
-					.union([z.literal('cron/raw'), z.literal('cron/builder')])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput265 = z
-	.object({
-		built_in_type: z.union([z.string(), z.null()]).optional(),
-		entity_id: z.union([z.string(), z.null()]),
+const openApiInput265 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ 'job-id': z.number().int().min(1) }).strict(),
+			body: z
+				.object({
+					active: z.boolean().optional(),
+					description: z.union([z.string().min(1), z.null()]).optional(),
+					name: z.string().min(1).optional(),
+					schedule: z.string().min(1).optional(),
+					tag_ids: z.array(z.number().int().min(1)).optional(),
+					ui_display_type: z
+						.union([z.literal('cron/raw'), z.literal('cron/builder')])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput265 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		built_in_type: z.union([z.string(), z.null()]).nullish(),
+		entity_id: z.union([z.string(), z.null()]).nullish(),
 		last_run: z
 			.union([
-				z
-					.object({
-						message: z.union([z.string(), z.null()]),
-						is_active: z.union([z.boolean(), z.null()]),
-						id: z.number().int().min(1),
-						run_method: z.string(),
-						updated_at: z.json(),
-						status: z.union([
+				OpenApiSchemas.looseJsonObject({
+					message: z.union([z.string(), z.null()]).nullish(),
+					is_active: z.union([z.boolean(), z.null()]).nullish(),
+					id: z.number().int().nullish(),
+					run_method: z.string().nullish(),
+					updated_at: z.json().nullish(),
+					status: z
+						.union([
 							z.literal('started'),
 							z.literal('succeeded'),
 							z.literal('failed'),
 							z.literal('timeout'),
 							z.literal('canceled'),
-						]),
-						job_id: z.number().int().min(1),
-						end_time: z.json().optional(),
-						job_entity_id: z.union([z.string(), z.null()]).optional(),
-						created_at: z.json(),
-						job_name: z.union([z.string(), z.null()]).optional(),
-						start_time: z.json(),
-					})
-					.strict(),
+						])
+						.nullish(),
+					job_id: z.number().int().nullish(),
+					end_time: z.json().nullish(),
+					job_entity_id: z.union([z.string(), z.null()]).nullish(),
+					created_at: z.json().nullish(),
+					job_name: z.union([z.string(), z.null()]).nullish(),
+					start_time: z.json().nullish(),
+				}),
 				z.null(),
 			])
-			.optional(),
-		ui_display_type: z.union([
-			z.literal('cron/raw'),
-			z.literal('cron/builder'),
-		]),
+			.nullish(),
+		ui_display_type: z
+			.union([z.literal('cron/raw'), z.literal('cron/builder')])
+			.nullish(),
 		next_run: z
-			.union([z.object({ start_time: z.json() }).strict(), z.null()])
-			.optional(),
-		id: z.number().int().min(1),
-		name: z.union([z.string(), z.string()]),
-		schedule: z.string(),
-		updated_at: z.json(),
-		tag_ids: z.array(z.number().int().min(1)).optional(),
-		created_at: z.json(),
-		active: z.boolean(),
-		description: z.union([z.union([z.string(), z.string()]), z.null()]),
-	})
-	.strict();
+			.union([
+				OpenApiSchemas.looseJsonObject({ start_time: z.json().nullish() }),
+				z.null(),
+			])
+			.nullish(),
+		id: z.number().int().nullish(),
+		name: z.union([z.string(), z.string()]).nullish(),
+		schedule: z.string().nullish(),
+		updated_at: z.json().nullish(),
+		tag_ids: z.array(z.number().int()).nullish(),
+		created_at: z.json().nullish(),
+		active: z.boolean().nullish(),
+		description: z
+			.union([z.union([z.string(), z.string()]), z.null()])
+			.nullish(),
+	}),
+);
 const openApiEndpoint265 = createMetabaseEndpoint(
 	'transformJob.putByJobId',
 	openApiInput265,
@@ -8165,57 +9197,63 @@ const openApiEndpoint265 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput266 = z
-	.object({ path: z.object({ 'job-id': z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput266 = z
-	.object({
-		built_in_type: z.union([z.string(), z.null()]).optional(),
-		entity_id: z.union([z.string(), z.null()]),
+const openApiInput266 = lazySchema(() =>
+	z
+		.object({ path: z.object({ 'job-id': z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput266 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		built_in_type: z.union([z.string(), z.null()]).nullish(),
+		entity_id: z.union([z.string(), z.null()]).nullish(),
 		last_run: z
 			.union([
-				z
-					.object({
-						message: z.union([z.string(), z.null()]),
-						is_active: z.union([z.boolean(), z.null()]),
-						id: z.number().int().min(1),
-						run_method: z.string(),
-						updated_at: z.json(),
-						status: z.union([
+				OpenApiSchemas.looseJsonObject({
+					message: z.union([z.string(), z.null()]).nullish(),
+					is_active: z.union([z.boolean(), z.null()]).nullish(),
+					id: z.number().int().nullish(),
+					run_method: z.string().nullish(),
+					updated_at: z.json().nullish(),
+					status: z
+						.union([
 							z.literal('started'),
 							z.literal('succeeded'),
 							z.literal('failed'),
 							z.literal('timeout'),
 							z.literal('canceled'),
-						]),
-						job_id: z.number().int().min(1),
-						end_time: z.json().optional(),
-						job_entity_id: z.union([z.string(), z.null()]).optional(),
-						created_at: z.json(),
-						job_name: z.union([z.string(), z.null()]).optional(),
-						start_time: z.json(),
-					})
-					.strict(),
+						])
+						.nullish(),
+					job_id: z.number().int().nullish(),
+					end_time: z.json().nullish(),
+					job_entity_id: z.union([z.string(), z.null()]).nullish(),
+					created_at: z.json().nullish(),
+					job_name: z.union([z.string(), z.null()]).nullish(),
+					start_time: z.json().nullish(),
+				}),
 				z.null(),
 			])
-			.optional(),
-		ui_display_type: z.union([
-			z.literal('cron/raw'),
-			z.literal('cron/builder'),
-		]),
+			.nullish(),
+		ui_display_type: z
+			.union([z.literal('cron/raw'), z.literal('cron/builder')])
+			.nullish(),
 		next_run: z
-			.union([z.object({ start_time: z.json() }).strict(), z.null()])
-			.optional(),
-		id: z.number().int().min(1),
-		name: z.union([z.string(), z.string()]),
-		schedule: z.string(),
-		updated_at: z.json(),
-		tag_ids: z.array(z.number().int().min(1)).optional(),
-		created_at: z.json(),
-		active: z.boolean(),
-		description: z.union([z.union([z.string(), z.string()]), z.null()]),
-	})
-	.strict();
+			.union([
+				OpenApiSchemas.looseJsonObject({ start_time: z.json().nullish() }),
+				z.null(),
+			])
+			.nullish(),
+		id: z.number().int().nullish(),
+		name: z.union([z.string(), z.string()]).nullish(),
+		schedule: z.string().nullish(),
+		updated_at: z.json().nullish(),
+		tag_ids: z.array(z.number().int()).nullish(),
+		created_at: z.json().nullish(),
+		active: z.boolean().nullish(),
+		description: z
+			.union([z.union([z.string(), z.string()]), z.null()])
+			.nullish(),
+	}),
+);
 const openApiEndpoint266 = createMetabaseEndpoint(
 	'transformJob.getByJobId',
 	openApiInput266,
@@ -8226,21 +9264,20 @@ const openApiEndpoint266 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput267 = z
-	.object({
-		path: z.object({ 'job-id': z.number().int().min(1) }).strict(),
-		body: z.object({ run_all: z.boolean().optional() }).strict().optional(),
-	})
-	.strict();
-const openApiOutput267 = z.object({
-	body: z
+const openApiInput267 = lazySchema(() =>
+	z
 		.object({
-			job_run_id: z.union([z.number().int().min(1), z.null()]),
-			message: z.json(),
+			path: z.object({ 'job-id': z.number().int().min(1) }).strict(),
+			body: z.object({ run_all: z.boolean().optional() }).strict().optional(),
 		})
 		.strict(),
-	status: z.literal(202),
-});
+);
+const openApiOutput267 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		job_run_id: z.union([z.number().int(), z.null()]).nullish(),
+		message: z.json().nullish(),
+	}),
+);
 const openApiEndpoint267 = createMetabaseEndpoint(
 	'transformJob.postByJobIdRun',
 	openApiInput267,
@@ -8252,72 +9289,80 @@ const openApiEndpoint267 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput268 = z
-	.object({
-		path: z.object({ 'job-id': z.number().int().min(1) }).strict(),
-		query: z
-			.object({
-				status: z
-					.union([
-						z.union([
+const openApiInput268 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ 'job-id': z.number().int().min(1) }).strict(),
+			query: z
+				.object({
+					...metabasePageQueryShape,
+					status: z
+						.union([
+							z.union([
+								z.literal('started'),
+								z.literal('succeeded'),
+								z.literal('failed'),
+								z.literal('timeout'),
+								z.literal('canceled'),
+							]),
+							z.null(),
+						])
+						.optional(),
+					'run-method': z
+						.union([
+							z.union([z.literal('manual'), z.literal('cron')]),
+							z.null(),
+						])
+						.optional(),
+					'start-time': z.union([z.string().min(1), z.null()]).optional(),
+					'sort-column': z
+						.union([
+							z.union([z.literal('start_time'), z.literal('end_time')]),
+							z.null(),
+						])
+						.optional(),
+					'sort-direction': z
+						.union([z.union([z.literal('asc'), z.literal('desc')]), z.null()])
+						.optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput268 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					message: z.union([z.string(), z.null()]).nullish(),
+					is_active: z.union([z.boolean(), z.null()]).nullish(),
+					id: z.number().int().nullish(),
+					run_method: z.string().nullish(),
+					updated_at: z.json().nullish(),
+					status: z
+						.union([
 							z.literal('started'),
 							z.literal('succeeded'),
 							z.literal('failed'),
 							z.literal('timeout'),
 							z.literal('canceled'),
-						]),
-						z.null(),
-					])
-					.optional(),
-				'run-method': z
-					.union([z.union([z.literal('manual'), z.literal('cron')]), z.null()])
-					.optional(),
-				'start-time': z.union([z.string().min(1), z.null()]).optional(),
-				'sort-column': z
-					.union([
-						z.union([z.literal('start_time'), z.literal('end_time')]),
-						z.null(),
-					])
-					.optional(),
-				'sort-direction': z
-					.union([z.union([z.literal('asc'), z.literal('desc')]), z.null()])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput268 = z
-	.object({
-		data: z.array(
-			z
-				.object({
-					message: z.union([z.string(), z.null()]),
-					is_active: z.union([z.boolean(), z.null()]),
-					id: z.number().int().min(1),
-					run_method: z.string(),
-					updated_at: z.json(),
-					status: z.union([
-						z.literal('started'),
-						z.literal('succeeded'),
-						z.literal('failed'),
-						z.literal('timeout'),
-						z.literal('canceled'),
-					]),
-					job_id: z.number().int().min(1),
-					end_time: z.json().optional(),
-					job_entity_id: z.union([z.string(), z.null()]).optional(),
-					created_at: z.json(),
-					job_name: z.union([z.string(), z.null()]).optional(),
-					start_time: z.json(),
-				})
-				.strict(),
-		),
-		limit: z.number().int().min(1),
-		offset: z.number().int(),
-		total: z.number().int(),
-	})
-	.strict();
+						])
+						.nullish(),
+					job_id: z.number().int().nullish(),
+					end_time: z.json().nullish(),
+					job_entity_id: z.union([z.string(), z.null()]).nullish(),
+					created_at: z.json().nullish(),
+					job_name: z.union([z.string(), z.null()]).nullish(),
+					start_time: z.json().nullish(),
+				}),
+			)
+			.nullish(),
+		limit: z.number().int().nullish(),
+		offset: z.number().int().nullish(),
+		total: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint268 = createMetabaseEndpoint(
 	'transformJob.getByJobIdRuns',
 	openApiInput268,
@@ -8329,17 +9374,19 @@ const openApiEndpoint268 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput269 = z
-	.object({
-		path: z
-			.object({
-				'job-id': z.number().int().min(1),
-				'run-id': z.number().int().min(1),
-			})
-			.strict(),
-	})
-	.strict();
-const openApiOutput269 = z.null();
+const openApiInput269 = lazySchema(() =>
+	z
+		.object({
+			path: z
+				.object({
+					'job-id': z.number().int().min(1),
+					'run-id': z.number().int().min(1),
+				})
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput269 = lazySchema(() => z.null());
 const openApiEndpoint269 = createMetabaseEndpoint(
 	'transformJob.postByJobIdRunsByRunIdCancel',
 	openApiInput269,
@@ -8353,48 +9400,52 @@ const openApiEndpoint269 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput270 = z
-	.object({
-		path: z
-			.object({
-				'job-id': z.number().int().min(1),
-				'run-id': z.number().int().min(1),
-			})
-			.strict(),
-	})
-	.strict();
-const openApiOutput270 = z.array(
+const openApiInput270 = lazySchema(() =>
 	z
 		.object({
-			message: z.union([z.string(), z.null()]),
-			user_id: z.union([z.number().int().min(1), z.null()]),
-			checkpoint_hi_value: z.union([z.string(), z.null()]).optional(),
-			is_active: z.union([z.boolean(), z.null()]),
-			transform_id: z.union([z.number().int().min(1), z.null()]),
-			id: z.number().int().min(1),
-			transform: z.union([z.record(z.string(), z.json()), z.null()]).optional(),
-			run_method: z.string(),
-			checkpoint_lo_value: z.union([z.string(), z.null()]).optional(),
-			status: z.union([
-				z.literal('started'),
-				z.literal('succeeded'),
-				z.literal('failed'),
-				z.literal('timeout'),
-				z.literal('canceled'),
-				z.literal('canceling'),
-			]),
-			transform_entity_id: z.union([z.string(), z.null()]).optional(),
-			checkpoint_filter_field_id: z
-				.union([z.number().int().min(1), z.null()])
-				.optional(),
-			end_time: z.json().optional(),
-			metered_as: z.union([z.string(), z.null()]).optional(),
-			dag_run_id: z.union([z.number().int().min(1), z.null()]),
-			transform_name: z.union([z.string(), z.null()]).optional(),
-			start_time: z.json(),
-			job_run_id: z.union([z.number().int().min(1), z.null()]),
+			path: z
+				.object({
+					'job-id': z.number().int().min(1),
+					'run-id': z.number().int().min(1),
+				})
+				.strict(),
 		})
 		.strict(),
+);
+const openApiOutput270 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			message: z.union([z.string(), z.null()]).nullish(),
+			user_id: z.union([z.number().int(), z.null()]).nullish(),
+			checkpoint_hi_value: z.union([z.string(), z.null()]).nullish(),
+			is_active: z.union([z.boolean(), z.null()]).nullish(),
+			transform_id: z.union([z.number().int(), z.null()]).nullish(),
+			id: z.number().int().nullish(),
+			transform: z.union([z.record(z.string(), z.json()), z.null()]).nullish(),
+			run_method: z.string().nullish(),
+			checkpoint_lo_value: z.union([z.string(), z.null()]).nullish(),
+			status: z
+				.union([
+					z.literal('started'),
+					z.literal('succeeded'),
+					z.literal('failed'),
+					z.literal('timeout'),
+					z.literal('canceled'),
+					z.literal('canceling'),
+				])
+				.nullish(),
+			transform_entity_id: z.union([z.string(), z.null()]).nullish(),
+			checkpoint_filter_field_id: z
+				.union([z.number().int(), z.null()])
+				.nullish(),
+			end_time: z.json().nullish(),
+			metered_as: z.union([z.string(), z.null()]).nullish(),
+			dag_run_id: z.union([z.number().int(), z.null()]).nullish(),
+			transform_name: z.union([z.string(), z.null()]).nullish(),
+			start_time: z.json().nullish(),
+			job_run_id: z.union([z.number().int(), z.null()]).nullish(),
+		}),
+	),
 );
 const openApiEndpoint270 = createMetabaseEndpoint(
 	'transformJob.getByJobIdRunsByRunIdTransformRuns',
@@ -8409,41 +9460,43 @@ const openApiEndpoint270 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput271 = z
-	.object({ path: z.object({ 'job-id': z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput271 = z.array(
-	z.object({
-		source_type: z.string(),
-		entity_id: z.union([z.string(), z.null()]),
-		scheduled: z.boolean().optional(),
-		id: z.number().int().min(1),
-		creator: z
-			.object({
-				is_qbnewb: z.boolean().optional(),
-				last_login: z.json().optional(),
-				id: z.number().int().min(1),
-				email: z.string(),
-				is_data_analyst: z.boolean().optional(),
-				is_superuser: z.boolean().optional(),
-				tenant_id: z.union([z.string(), z.null()]).optional(),
-				last_name: z.union([z.string(), z.null()]),
-				first_name: z.union([z.string(), z.null()]),
-				date_joined: z.json().optional(),
-				common_name: z.union([z.string(), z.null()]).optional(),
-			})
-			.strict(),
-		name: z.string(),
-		updated_at: z.json(),
-		dependency: z.boolean().optional(),
-		collection_id: z.union([z.number().int().min(1), z.null()]),
-		source: z.json(),
-		target: z.json(),
-		created_at: z.json(),
-		creator_id: z.number().int().min(1),
-		run_trigger: z.union([z.string(), z.null()]).optional(),
-		description: z.union([z.string(), z.null()]),
-	}),
+const openApiInput271 = lazySchema(() =>
+	z
+		.object({ path: z.object({ 'job-id': z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput271 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			source_type: z.string().nullish(),
+			entity_id: z.union([z.string(), z.null()]).nullish(),
+			scheduled: z.boolean().nullish(),
+			id: z.number().int().nullish(),
+			creator: OpenApiSchemas.looseJsonObject({
+				is_qbnewb: z.boolean().nullish(),
+				last_login: z.json().nullish(),
+				id: z.number().int().nullish(),
+				email: z.string().nullish(),
+				is_data_analyst: z.boolean().nullish(),
+				is_superuser: z.boolean().nullish(),
+				tenant_id: z.union([z.string(), z.null()]).nullish(),
+				last_name: z.union([z.string(), z.null()]).nullish(),
+				first_name: z.union([z.string(), z.null()]).nullish(),
+				date_joined: z.json().nullish(),
+				common_name: z.union([z.string(), z.null()]).nullish(),
+			}).nullish(),
+			name: z.string().nullish(),
+			updated_at: z.json().nullish(),
+			dependency: z.boolean().nullish(),
+			collection_id: z.union([z.number().int(), z.null()]).nullish(),
+			source: z.json().nullish(),
+			target: z.json().nullish(),
+			created_at: z.json().nullish(),
+			creator_id: z.number().int().nullish(),
+			run_trigger: z.union([z.string(), z.null()]).nullish(),
+			description: z.union([z.string(), z.null()]).nullish(),
+		}),
+	),
 );
 const openApiEndpoint271 = createMetabaseEndpoint(
 	'transformJob.getByJobIdTransforms',
@@ -8458,25 +9511,27 @@ const openApiEndpoint271 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput272 = z
-	.object({
-		body: z
-			.object({ name: z.string().min(1) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput272 = z
-	.object({
-		built_in_type: z.union([z.string(), z.null()]).optional(),
-		can_run: z.boolean().optional(),
-		created_at: z.json(),
-		entity_id: z.union([z.string(), z.null()]),
-		id: z.number().int().min(1),
-		name: z.union([z.string(), z.string()]),
-		updated_at: z.json(),
-	})
-	.strict();
+const openApiInput272 = lazySchema(() =>
+	z
+		.object({
+			body: z
+				.object({ name: z.string().min(1) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput272 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		built_in_type: z.union([z.string(), z.null()]).nullish(),
+		can_run: z.boolean().nullish(),
+		created_at: z.json().nullish(),
+		entity_id: z.union([z.string(), z.null()]).nullish(),
+		id: z.number().int().nullish(),
+		name: z.union([z.string(), z.string()]).nullish(),
+		updated_at: z.json().nullish(),
+	}),
+);
 const openApiEndpoint272 = createMetabaseEndpoint(
 	'transformTag.post',
 	openApiInput272,
@@ -8484,19 +9539,19 @@ const openApiEndpoint272 = createMetabaseEndpoint(
 	(input) => ({ method: 'POST', path: '/api/transform-tag', body: input.body }),
 );
 
-const openApiInput273 = z.object({}).strict();
-const openApiOutput273 = z.array(
-	z
-		.object({
-			built_in_type: z.union([z.string(), z.null()]).optional(),
-			can_run: z.boolean().optional(),
-			created_at: z.json(),
-			entity_id: z.union([z.string(), z.null()]),
-			id: z.number().int().min(1),
-			name: z.union([z.string(), z.string()]),
-			updated_at: z.json(),
-		})
-		.strict(),
+const openApiInput273 = lazySchema(() => z.object({}).strict());
+const openApiOutput273 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			built_in_type: z.union([z.string(), z.null()]).nullish(),
+			can_run: z.boolean().nullish(),
+			created_at: z.json().nullish(),
+			entity_id: z.union([z.string(), z.null()]).nullish(),
+			id: z.number().int().nullish(),
+			name: z.union([z.string(), z.string()]).nullish(),
+			updated_at: z.json().nullish(),
+		}),
+	),
 );
 const openApiEndpoint273 = createMetabaseEndpoint(
 	'transformTag.get',
@@ -8505,26 +9560,28 @@ const openApiEndpoint273 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/transform-tag' }),
 );
 
-const openApiInput274 = z
-	.object({
-		path: z.object({ 'tag-id': z.number().int().min(1) }).strict(),
-		body: z
-			.object({ name: z.string().min(1) })
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput274 = z
-	.object({
-		built_in_type: z.union([z.string(), z.null()]).optional(),
-		can_run: z.boolean().optional(),
-		created_at: z.json(),
-		entity_id: z.union([z.string(), z.null()]),
-		id: z.number().int().min(1),
-		name: z.union([z.string(), z.string()]),
-		updated_at: z.json(),
-	})
-	.strict();
+const openApiInput274 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ 'tag-id': z.number().int().min(1) }).strict(),
+			body: z
+				.object({ name: z.string().min(1) })
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput274 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		built_in_type: z.union([z.string(), z.null()]).nullish(),
+		can_run: z.boolean().nullish(),
+		created_at: z.json().nullish(),
+		entity_id: z.union([z.string(), z.null()]).nullish(),
+		id: z.number().int().nullish(),
+		name: z.union([z.string(), z.string()]).nullish(),
+		updated_at: z.json().nullish(),
+	}),
+);
 const openApiEndpoint274 = createMetabaseEndpoint(
 	'transformTag.putByTagId',
 	openApiInput274,
@@ -8536,10 +9593,12 @@ const openApiEndpoint274 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput275 = z
-	.object({ path: z.object({ 'tag-id': z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput275 = z.null();
+const openApiInput275 = lazySchema(() =>
+	z
+		.object({ path: z.object({ 'tag-id': z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput275 = lazySchema(() => z.null());
 const openApiEndpoint275 = createMetabaseEndpoint(
 	'transformTag.deleteByTagId',
 	openApiInput275,
@@ -8550,115 +9609,116 @@ const openApiEndpoint275 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput276 = z
-	.object({
-		query: z
-			.object({
-				'run-methods': z
-					.union([
-						z.array(z.union([z.literal('manual'), z.literal('cron')])),
-						z.null(),
-					])
-					.optional(),
-				'end-time': z.union([z.string().min(1), z.null()]).optional(),
-				'start-time': z.union([z.string().min(1), z.null()]).optional(),
-				'transform-tag-ids': z
-					.union([z.array(z.number().int().min(0)), z.null()])
-					.optional(),
-				'sort-direction': z
-					.union([z.literal('asc'), z.literal('desc')])
-					.optional(),
-				'user-id': z.union([z.number().int().min(1), z.null()]).optional(),
-				statuses: z
-					.union([
-						z.array(
-							z.union([
-								z.literal('started'),
-								z.literal('succeeded'),
-								z.literal('failed'),
-								z.literal('timeout'),
-							]),
-						),
-						z.null(),
-					])
-					.optional(),
-				'transform-ids': z
-					.union([z.array(z.number().int().min(1)), z.null()])
-					.optional(),
-				'sort-column': z
-					.union([
-						z.literal('transform-name'),
-						z.literal('start-time'),
-						z.literal('end-time'),
-						z.literal('status'),
-						z.literal('run-method'),
-						z.literal('transform-tags'),
-						z.literal('duration'),
-					])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput276 = z
-	.object({
-		data: z.array(
-			z
+const openApiInput276 = lazySchema(() =>
+	z
+		.object({
+			query: z
 				.object({
-					message: z.union([z.string(), z.null()]),
-					user_id: z.union([z.number().int().min(1), z.null()]),
-					checkpoint_hi_value: z.union([z.string(), z.null()]).optional(),
-					is_active: z.union([z.boolean(), z.null()]),
-					transform_id: z.union([z.number().int().min(1), z.null()]),
-					id: z.number().int().min(1),
-					transform: z
+					...metabasePageQueryShape,
+					'run-methods': z
 						.union([
-							z
-								.object({
-									collection: z
-										.union([z.record(z.string(), z.json()), z.null()])
-										.optional(),
-									collection_id: z
-										.union([z.number().int().min(1), z.null()])
-										.optional(),
-									deleted: z.boolean().optional(),
-									id: z.number().int().min(1).optional(),
-									name: z.string().optional(),
-									tag_ids: z.array(z.number().int().min(1)).optional(),
-								})
-								.strict(),
+							z.array(z.union([z.literal('manual'), z.literal('cron')])),
 							z.null(),
 						])
 						.optional(),
-					run_method: z.string(),
-					checkpoint_lo_value: z.union([z.string(), z.null()]).optional(),
-					status: z.union([
-						z.literal('started'),
-						z.literal('succeeded'),
-						z.literal('failed'),
-						z.literal('timeout'),
-						z.literal('canceled'),
-						z.literal('canceling'),
-					]),
-					transform_entity_id: z.union([z.string(), z.null()]).optional(),
-					checkpoint_filter_field_id: z
-						.union([z.number().int().min(1), z.null()])
+					'end-time': z.union([z.string().min(1), z.null()]).optional(),
+					'start-time': z.union([z.string().min(1), z.null()]).optional(),
+					'transform-tag-ids': z
+						.union([z.array(z.number().int().min(0)), z.null()])
 						.optional(),
-					end_time: z.json().optional(),
-					metered_as: z.union([z.string(), z.null()]).optional(),
-					dag_run_id: z.union([z.number().int().min(1), z.null()]).optional(),
-					transform_name: z.union([z.string(), z.null()]).optional(),
-					start_time: z.json(),
-					job_run_id: z.union([z.number().int().min(1), z.null()]).optional(),
+					'sort-direction': z
+						.union([z.literal('asc'), z.literal('desc')])
+						.optional(),
+					'user-id': z.union([z.number().int().min(1), z.null()]).optional(),
+					statuses: z
+						.union([
+							z.array(
+								z.union([
+									z.literal('started'),
+									z.literal('succeeded'),
+									z.literal('failed'),
+									z.literal('timeout'),
+								]),
+							),
+							z.null(),
+						])
+						.optional(),
+					'transform-ids': z
+						.union([z.array(z.number().int().min(1)), z.null()])
+						.optional(),
+					'sort-column': z
+						.union([
+							z.literal('transform-name'),
+							z.literal('start-time'),
+							z.literal('end-time'),
+							z.literal('status'),
+							z.literal('run-method'),
+							z.literal('transform-tags'),
+							z.literal('duration'),
+						])
+						.optional(),
 				})
-				.strict(),
-		),
-		limit: z.number().int().min(1),
-		offset: z.number().int(),
-		total: z.number().int(),
-	})
-	.strict();
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput276 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					message: z.union([z.string(), z.null()]).nullish(),
+					user_id: z.union([z.number().int(), z.null()]).nullish(),
+					checkpoint_hi_value: z.union([z.string(), z.null()]).nullish(),
+					is_active: z.union([z.boolean(), z.null()]).nullish(),
+					transform_id: z.union([z.number().int(), z.null()]).nullish(),
+					id: z.number().int().nullish(),
+					transform: z
+						.union([
+							OpenApiSchemas.looseJsonObject({
+								collection: z
+									.union([z.record(z.string(), z.json()), z.null()])
+									.nullish(),
+								collection_id: z.union([z.number().int(), z.null()]).nullish(),
+								deleted: z.boolean().nullish(),
+								id: z.number().int().nullish(),
+								name: z.string().nullish(),
+								tag_ids: z.array(z.number().int()).nullish(),
+							}),
+							z.null(),
+						])
+						.nullish(),
+					run_method: z.string().nullish(),
+					checkpoint_lo_value: z.union([z.string(), z.null()]).nullish(),
+					status: z
+						.union([
+							z.literal('started'),
+							z.literal('succeeded'),
+							z.literal('failed'),
+							z.literal('timeout'),
+							z.literal('canceled'),
+							z.literal('canceling'),
+						])
+						.nullish(),
+					transform_entity_id: z.union([z.string(), z.null()]).nullish(),
+					checkpoint_filter_field_id: z
+						.union([z.number().int(), z.null()])
+						.nullish(),
+					end_time: z.json().nullish(),
+					metered_as: z.union([z.string(), z.null()]).nullish(),
+					dag_run_id: z.union([z.number().int(), z.null()]).nullish(),
+					transform_name: z.union([z.string(), z.null()]).nullish(),
+					start_time: z.json().nullish(),
+					job_run_id: z.union([z.number().int(), z.null()]).nullish(),
+				}),
+			)
+			.nullish(),
+		limit: z.number().int().nullish(),
+		offset: z.number().int().nullish(),
+		total: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint276 = createMetabaseEndpoint(
 	'transform.getRun',
 	openApiInput276,
@@ -8670,58 +9730,56 @@ const openApiEndpoint276 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput277 = z
-	.object({ path: z.object({ 'run-id': z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput277 = z
-	.object({
-		message: z.union([z.string(), z.null()]),
-		user_id: z.union([z.number().int().min(1), z.null()]),
-		checkpoint_hi_value: z.union([z.string(), z.null()]).optional(),
-		is_active: z.union([z.boolean(), z.null()]),
-		transform_id: z.union([z.number().int().min(1), z.null()]),
-		id: z.number().int().min(1),
+const openApiInput277 = lazySchema(() =>
+	z
+		.object({ path: z.object({ 'run-id': z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput277 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		message: z.union([z.string(), z.null()]).nullish(),
+		user_id: z.union([z.number().int(), z.null()]).nullish(),
+		checkpoint_hi_value: z.union([z.string(), z.null()]).nullish(),
+		is_active: z.union([z.boolean(), z.null()]).nullish(),
+		transform_id: z.union([z.number().int(), z.null()]).nullish(),
+		id: z.number().int().nullish(),
 		transform: z
 			.union([
-				z
-					.object({
-						collection: z
-							.union([z.record(z.string(), z.json()), z.null()])
-							.optional(),
-						collection_id: z
-							.union([z.number().int().min(1), z.null()])
-							.optional(),
-						deleted: z.boolean().optional(),
-						id: z.number().int().min(1).optional(),
-						name: z.string().optional(),
-						tag_ids: z.array(z.number().int().min(1)).optional(),
-					})
-					.strict(),
+				OpenApiSchemas.looseJsonObject({
+					collection: z
+						.union([z.record(z.string(), z.json()), z.null()])
+						.nullish(),
+					collection_id: z.union([z.number().int(), z.null()]).nullish(),
+					deleted: z.boolean().nullish(),
+					id: z.number().int().nullish(),
+					name: z.string().nullish(),
+					tag_ids: z.array(z.number().int()).nullish(),
+				}),
 				z.null(),
 			])
-			.optional(),
-		run_method: z.string(),
-		checkpoint_lo_value: z.union([z.string(), z.null()]).optional(),
-		status: z.union([
-			z.literal('started'),
-			z.literal('succeeded'),
-			z.literal('failed'),
-			z.literal('timeout'),
-			z.literal('canceled'),
-			z.literal('canceling'),
-		]),
-		transform_entity_id: z.union([z.string(), z.null()]).optional(),
-		checkpoint_filter_field_id: z
-			.union([z.number().int().min(1), z.null()])
-			.optional(),
-		end_time: z.json().optional(),
-		metered_as: z.union([z.string(), z.null()]).optional(),
-		dag_run_id: z.union([z.number().int().min(1), z.null()]).optional(),
-		transform_name: z.union([z.string(), z.null()]).optional(),
-		start_time: z.json(),
-		job_run_id: z.union([z.number().int().min(1), z.null()]).optional(),
-	})
-	.strict();
+			.nullish(),
+		run_method: z.string().nullish(),
+		checkpoint_lo_value: z.union([z.string(), z.null()]).nullish(),
+		status: z
+			.union([
+				z.literal('started'),
+				z.literal('succeeded'),
+				z.literal('failed'),
+				z.literal('timeout'),
+				z.literal('canceled'),
+				z.literal('canceling'),
+			])
+			.nullish(),
+		transform_entity_id: z.union([z.string(), z.null()]).nullish(),
+		checkpoint_filter_field_id: z.union([z.number().int(), z.null()]).nullish(),
+		end_time: z.json().nullish(),
+		metered_as: z.union([z.string(), z.null()]).nullish(),
+		dag_run_id: z.union([z.number().int(), z.null()]).nullish(),
+		transform_name: z.union([z.string(), z.null()]).nullish(),
+		start_time: z.json().nullish(),
+		job_run_id: z.union([z.number().int(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint277 = createMetabaseEndpoint(
 	'transform.getRunByRunId',
 	openApiInput277,
@@ -8732,102 +9790,109 @@ const openApiEndpoint277 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput278 = z
-	.object({
-		query: z
-			.object({
-				types: z
-					.union([
-						z.array(
-							z.union([
-								z.literal('job'),
-								z.literal('dag'),
-								z.literal('transform'),
-							]),
-						),
-						z.null(),
-					])
-					.optional(),
-				statuses: z
-					.union([
-						z.array(
-							z.union([
-								z.literal('started'),
-								z.literal('succeeded'),
-								z.literal('failed'),
-								z.literal('timeout'),
-								z.literal('canceled'),
-								z.literal('canceling'),
-							]),
-						),
-						z.null(),
-					])
-					.optional(),
-				'run-methods': z
-					.union([
-						z.array(z.union([z.literal('manual'), z.literal('cron')])),
-						z.null(),
-					])
-					.optional(),
-				'start-time': z.union([z.string().min(1), z.null()]).optional(),
-				'end-time': z.union([z.string().min(1), z.null()]).optional(),
-				'transform-ids': z
-					.union([z.array(z.number().int().min(1)), z.null()])
-					.optional(),
-				'sort-column': z
-					.union([
-						z.union([z.literal('start_time'), z.literal('end_time')]),
-						z.null(),
-					])
-					.optional(),
-				'sort-direction': z
-					.union([z.union([z.literal('asc'), z.literal('desc')]), z.null()])
-					.optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput278 = z
-	.object({
-		data: z.array(
-			z
+const openApiInput278 = lazySchema(() =>
+	z
+		.object({
+			query: z
 				.object({
-					message: z.union([z.string(), z.null()]),
-					run_type: z.union([
-						z.literal('job'),
-						z.literal('dag'),
-						z.literal('transform'),
-					]),
-					user_id: z.union([z.number().int().min(1), z.null()]),
-					entity_id: z.union([z.number().int().min(1), z.null()]),
-					is_active: z.union([z.boolean(), z.null()]),
-					transform_count: z.union([z.number().int().min(1), z.null()]),
-					id: z.number().int().min(1),
-					run_method: z.union([z.string(), z.null()]),
-					name: z.union([z.union([z.string(), z.string()]), z.null()]),
-					direction: z.union([
-						z.union([z.literal('upstream'), z.literal('downstream')]),
-						z.null(),
-					]),
-					status: z.union([
-						z.literal('started'),
-						z.literal('succeeded'),
-						z.literal('failed'),
-						z.literal('timeout'),
-						z.literal('canceled'),
-						z.literal('canceling'),
-					]),
-					end_time: z.json().optional(),
-					start_time: z.json(),
+					...metabasePageQueryShape,
+					types: z
+						.union([
+							z.array(
+								z.union([
+									z.literal('job'),
+									z.literal('dag'),
+									z.literal('transform'),
+								]),
+							),
+							z.null(),
+						])
+						.optional(),
+					statuses: z
+						.union([
+							z.array(
+								z.union([
+									z.literal('started'),
+									z.literal('succeeded'),
+									z.literal('failed'),
+									z.literal('timeout'),
+									z.literal('canceled'),
+									z.literal('canceling'),
+								]),
+							),
+							z.null(),
+						])
+						.optional(),
+					'run-methods': z
+						.union([
+							z.array(z.union([z.literal('manual'), z.literal('cron')])),
+							z.null(),
+						])
+						.optional(),
+					'start-time': z.union([z.string().min(1), z.null()]).optional(),
+					'end-time': z.union([z.string().min(1), z.null()]).optional(),
+					'transform-ids': z
+						.union([z.array(z.number().int().min(1)), z.null()])
+						.optional(),
+					'sort-column': z
+						.union([
+							z.union([z.literal('start_time'), z.literal('end_time')]),
+							z.null(),
+						])
+						.optional(),
+					'sort-direction': z
+						.union([z.union([z.literal('asc'), z.literal('desc')]), z.null()])
+						.optional(),
 				})
-				.strict(),
-		),
-		limit: z.number().int().min(1),
-		offset: z.number().int(),
-		total: z.number().int(),
-	})
-	.strict();
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput278 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		data: z
+			.array(
+				OpenApiSchemas.looseJsonObject({
+					message: z.union([z.string(), z.null()]).nullish(),
+					run_type: z
+						.union([z.literal('job'), z.literal('dag'), z.literal('transform')])
+						.nullish(),
+					user_id: z.union([z.number().int(), z.null()]).nullish(),
+					entity_id: z.union([z.number().int(), z.null()]).nullish(),
+					is_active: z.union([z.boolean(), z.null()]).nullish(),
+					transform_count: z.union([z.number().int(), z.null()]).nullish(),
+					id: z.number().int().nullish(),
+					run_method: z.union([z.string(), z.null()]).nullish(),
+					name: z
+						.union([z.union([z.string(), z.string()]), z.null()])
+						.nullish(),
+					direction: z
+						.union([
+							z.union([z.literal('upstream'), z.literal('downstream')]),
+							z.null(),
+						])
+						.nullish(),
+					status: z
+						.union([
+							z.literal('started'),
+							z.literal('succeeded'),
+							z.literal('failed'),
+							z.literal('timeout'),
+							z.literal('canceled'),
+							z.literal('canceling'),
+						])
+						.nullish(),
+					end_time: z.json().nullish(),
+					start_time: z.json().nullish(),
+				}),
+			)
+			.nullish(),
+		limit: z.number().int().nullish(),
+		offset: z.number().int().nullish(),
+		total: z.number().int().nullish(),
+	}),
+);
 const openApiEndpoint278 = createMetabaseEndpoint(
 	'transform.getRuns',
 	openApiInput278,
@@ -8839,107 +9904,105 @@ const openApiEndpoint278 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput279 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput279 = z
-	.object({
-		table: z.union([z.record(z.string(), z.json()), z.null()]).optional(),
+const openApiInput279 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput279 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		table: z.union([z.record(z.string(), z.json()), z.null()]).nullish(),
 		owner: z
 			.union([
-				z
-					.object({
-						common_name: z.union([z.string(), z.null()]).optional(),
-						email: z.string(),
-						first_name: z.union([z.string(), z.null()]).optional(),
-						id: z.number().int().min(1).optional(),
-						last_name: z.union([z.string(), z.null()]).optional(),
-					})
-					.strict(),
+				OpenApiSchemas.looseJsonObject({
+					common_name: z.union([z.string(), z.null()]).nullish(),
+					email: z.string().nullish(),
+					first_name: z.union([z.string(), z.null()]).nullish(),
+					id: z.number().int().nullish(),
+					last_name: z.union([z.string(), z.null()]).nullish(),
+				}),
 				z.null(),
 			])
-			.optional(),
-		can_read: z.boolean().optional(),
-		source_type: z.string(),
-		entity_id: z.union([z.string(), z.null()]),
+			.nullish(),
+		can_read: z.boolean().nullish(),
+		source_type: z.string().nullish(),
+		entity_id: z.union([z.string(), z.null()]).nullish(),
 		last_run: z
 			.union([
-				z
-					.object({
-						message: z.union([z.string(), z.null()]),
-						user_id: z.union([z.number().int().min(1), z.null()]),
-						checkpoint_hi_value: z.union([z.string(), z.null()]).optional(),
-						is_active: z.union([z.boolean(), z.null()]),
-						transform_id: z.number().int().min(1),
-						id: z.number().int().min(1),
-						run_method: z.string(),
-						checkpoint_lo_value: z.union([z.string(), z.null()]).optional(),
-						status: z.union([
+				OpenApiSchemas.looseJsonObject({
+					message: z.union([z.string(), z.null()]).nullish(),
+					user_id: z.union([z.number().int(), z.null()]).nullish(),
+					checkpoint_hi_value: z.union([z.string(), z.null()]).nullish(),
+					is_active: z.union([z.boolean(), z.null()]).nullish(),
+					transform_id: z.number().int().nullish(),
+					id: z.number().int().nullish(),
+					run_method: z.string().nullish(),
+					checkpoint_lo_value: z.union([z.string(), z.null()]).nullish(),
+					status: z
+						.union([
 							z.literal('started'),
 							z.literal('succeeded'),
 							z.literal('failed'),
 							z.literal('timeout'),
 							z.literal('canceled'),
 							z.literal('canceling'),
-						]),
-						transform_entity_id: z.union([z.string(), z.null()]).optional(),
-						checkpoint_filter_field_id: z
-							.union([z.number().int().min(1), z.null()])
-							.optional(),
-						end_time: z.json().optional(),
-						metered_as: z.union([z.string(), z.null()]).optional(),
-						dag_run_id: z.union([z.number().int().min(1), z.null()]).optional(),
-						transform_name: z.union([z.string(), z.null()]).optional(),
-						start_time: z.json(),
-						job_run_id: z.union([z.number().int().min(1), z.null()]).optional(),
-					})
-					.strict(),
+						])
+						.nullish(),
+					transform_entity_id: z.union([z.string(), z.null()]).nullish(),
+					checkpoint_filter_field_id: z
+						.union([z.number().int(), z.null()])
+						.nullish(),
+					end_time: z.json().nullish(),
+					metered_as: z.union([z.string(), z.null()]).nullish(),
+					dag_run_id: z.union([z.number().int(), z.null()]).nullish(),
+					transform_name: z.union([z.string(), z.null()]).nullish(),
+					start_time: z.json().nullish(),
+					job_run_id: z.union([z.number().int(), z.null()]).nullish(),
+				}),
 				z.null(),
 			])
-			.optional(),
-		source_database_id: z.union([z.number().int().min(1), z.null()]).optional(),
-		id: z.number().int().min(1),
-		owner_email: z.union([z.string(), z.null()]).optional(),
-		target_db_id: z.union([z.number().int().min(1), z.null()]).optional(),
-		creator: z
-			.object({
-				is_qbnewb: z.boolean().optional(),
-				last_login: z.json().optional(),
-				id: z.number().int().min(1),
-				email: z.string(),
-				is_data_analyst: z.boolean().optional(),
-				is_superuser: z.boolean().optional(),
-				tenant_id: z.json().optional(),
-				last_name: z.union([z.string(), z.null()]),
-				first_name: z.union([z.string(), z.null()]),
-				date_joined: z.json().optional(),
-				common_name: z.union([z.string(), z.null()]).optional(),
-			})
-			.strict(),
-		owner_user_id: z.union([z.number().int().min(1), z.null()]).optional(),
-		name: z.string(),
-		updated_at: z.json(),
-		source_readable: z.union([z.boolean(), z.null()]).optional(),
-		tag_ids: z.array(z.number().int().min(1)).optional(),
+			.nullish(),
+		source_database_id: z.union([z.number().int(), z.null()]).nullish(),
+		id: z.number().int().nullish(),
+		owner_email: z.union([z.string(), z.null()]).nullish(),
+		target_db_id: z.union([z.number().int(), z.null()]).nullish(),
+		creator: OpenApiSchemas.looseJsonObject({
+			is_qbnewb: z.boolean().nullish(),
+			last_login: z.json().nullish(),
+			id: z.number().int().nullish(),
+			email: z.string().nullish(),
+			is_data_analyst: z.boolean().nullish(),
+			is_superuser: z.boolean().nullish(),
+			tenant_id: z.json().nullish(),
+			last_name: z.union([z.string(), z.null()]).nullish(),
+			first_name: z.union([z.string(), z.null()]).nullish(),
+			date_joined: z.json().nullish(),
+			common_name: z.union([z.string(), z.null()]).nullish(),
+		}).nullish(),
+		owner_user_id: z.union([z.number().int(), z.null()]).nullish(),
+		name: z.string().nullish(),
+		updated_at: z.json().nullish(),
+		source_readable: z.union([z.boolean(), z.null()]).nullish(),
+		tag_ids: z.array(z.number().int()).nullish(),
 		table_dependencies: z
 			.union([z.array(z.record(z.string(), z.json())), z.null()])
-			.optional(),
-		can_write: z.boolean().optional(),
-		collection_id: z.union([z.number().int().min(1), z.null()]),
-		can_execute: z.boolean().optional(),
-		source: z.json(),
+			.nullish(),
+		can_write: z.boolean().nullish(),
+		collection_id: z.union([z.number().int(), z.null()]).nullish(),
+		can_execute: z.boolean().nullish(),
+		source: z.json().nullish(),
 		requestable_indexes: z
-			.union([OpenApiSchemas.MetabaseOpenApiOutputSchema294, z.null()])
-			.optional(),
-		last_checkpoint_value: z.union([z.string(), z.null()]).optional(),
-		target: z.json(),
-		created_at: z.json(),
-		creator_id: z.number().int().min(1),
-		run_trigger: z.union([z.string(), z.null()]).optional(),
-		target_table_id: z.union([z.number().int().min(1), z.null()]).optional(),
-		description: z.union([z.string(), z.null()]),
-	})
-	.strict();
+			.union([OpenApiSchemas.MetabaseOpenApiOutputSchema294(), z.null()])
+			.nullish(),
+		last_checkpoint_value: z.union([z.string(), z.null()]).nullish(),
+		target: z.json().nullish(),
+		created_at: z.json().nullish(),
+		creator_id: z.number().int().nullish(),
+		run_trigger: z.union([z.string(), z.null()]).nullish(),
+		target_table_id: z.union([z.number().int(), z.null()]).nullish(),
+		description: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint279 = createMetabaseEndpoint(
 	'transform.getById',
 	openApiInput279,
@@ -8950,123 +10013,126 @@ const openApiEndpoint279 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput280 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({
-				owner_email: z.union([z.string(), z.null()]).optional(),
-				owner_user_id: z.union([z.number().int().min(1), z.null()]).optional(),
-				name: z.string().optional(),
-				tag_ids: z.array(z.number().int().min(1)).optional(),
-				collection_id: z.union([z.number().int().min(1), z.null()]).optional(),
-				source: OpenApiSchemas.MetabaseOpenApiInputSchema705.optional(),
-				target: OpenApiSchemas.MetabaseOpenApiInputSchema706.optional(),
-				run_trigger: OpenApiSchemas.MetabaseOpenApiInputSchema700.optional(),
-				description: z.union([z.string(), z.null()]).optional(),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput280 = z
-	.object({
-		table: z.union([z.record(z.string(), z.json()), z.null()]).optional(),
+const openApiInput280 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({
+					owner_email: z.union([z.string(), z.null()]).optional(),
+					owner_user_id: z
+						.union([z.number().int().min(1), z.null()])
+						.optional(),
+					name: z.string().optional(),
+					tag_ids: z.array(z.number().int().min(1)).optional(),
+					collection_id: z
+						.union([z.number().int().min(1), z.null()])
+						.optional(),
+					source: OpenApiSchemas.MetabaseOpenApiInputSchema705().optional(),
+					target: OpenApiSchemas.MetabaseOpenApiInputSchema706().optional(),
+					run_trigger:
+						OpenApiSchemas.MetabaseOpenApiInputSchema700().optional(),
+					description: z.union([z.string(), z.null()]).optional(),
+				})
+				.strict()
+				.optional(),
+		})
+		.strict(),
+);
+const openApiOutput280 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		table: z.union([z.record(z.string(), z.json()), z.null()]).nullish(),
 		owner: z
 			.union([
-				z
-					.object({
-						common_name: z.union([z.string(), z.null()]).optional(),
-						email: z.string(),
-						first_name: z.union([z.string(), z.null()]).optional(),
-						id: z.number().int().min(1).optional(),
-						last_name: z.union([z.string(), z.null()]).optional(),
-					})
-					.strict(),
+				OpenApiSchemas.looseJsonObject({
+					common_name: z.union([z.string(), z.null()]).nullish(),
+					email: z.string().nullish(),
+					first_name: z.union([z.string(), z.null()]).nullish(),
+					id: z.number().int().nullish(),
+					last_name: z.union([z.string(), z.null()]).nullish(),
+				}),
 				z.null(),
 			])
-			.optional(),
-		can_read: z.boolean().optional(),
-		source_type: z.string(),
-		entity_id: z.union([z.string(), z.null()]),
+			.nullish(),
+		can_read: z.boolean().nullish(),
+		source_type: z.string().nullish(),
+		entity_id: z.union([z.string(), z.null()]).nullish(),
 		last_run: z
 			.union([
-				z
-					.object({
-						message: z.union([z.string(), z.null()]),
-						user_id: z.union([z.number().int().min(1), z.null()]),
-						checkpoint_hi_value: z.union([z.string(), z.null()]).optional(),
-						is_active: z.union([z.boolean(), z.null()]),
-						transform_id: z.number().int().min(1),
-						id: z.number().int().min(1),
-						run_method: z.string(),
-						checkpoint_lo_value: z.union([z.string(), z.null()]).optional(),
-						status: z.union([
+				OpenApiSchemas.looseJsonObject({
+					message: z.union([z.string(), z.null()]).nullish(),
+					user_id: z.union([z.number().int(), z.null()]).nullish(),
+					checkpoint_hi_value: z.union([z.string(), z.null()]).nullish(),
+					is_active: z.union([z.boolean(), z.null()]).nullish(),
+					transform_id: z.number().int().nullish(),
+					id: z.number().int().nullish(),
+					run_method: z.string().nullish(),
+					checkpoint_lo_value: z.union([z.string(), z.null()]).nullish(),
+					status: z
+						.union([
 							z.literal('started'),
 							z.literal('succeeded'),
 							z.literal('failed'),
 							z.literal('timeout'),
 							z.literal('canceled'),
 							z.literal('canceling'),
-						]),
-						transform_entity_id: z.union([z.string(), z.null()]).optional(),
-						checkpoint_filter_field_id: z
-							.union([z.number().int().min(1), z.null()])
-							.optional(),
-						end_time: z.json().optional(),
-						metered_as: z.union([z.string(), z.null()]).optional(),
-						dag_run_id: z.union([z.number().int().min(1), z.null()]).optional(),
-						transform_name: z.union([z.string(), z.null()]).optional(),
-						start_time: z.json(),
-						job_run_id: z.union([z.number().int().min(1), z.null()]).optional(),
-					})
-					.strict(),
+						])
+						.nullish(),
+					transform_entity_id: z.union([z.string(), z.null()]).nullish(),
+					checkpoint_filter_field_id: z
+						.union([z.number().int(), z.null()])
+						.nullish(),
+					end_time: z.json().nullish(),
+					metered_as: z.union([z.string(), z.null()]).nullish(),
+					dag_run_id: z.union([z.number().int(), z.null()]).nullish(),
+					transform_name: z.union([z.string(), z.null()]).nullish(),
+					start_time: z.json().nullish(),
+					job_run_id: z.union([z.number().int(), z.null()]).nullish(),
+				}),
 				z.null(),
 			])
-			.optional(),
-		source_database_id: z.union([z.number().int().min(1), z.null()]).optional(),
-		id: z.number().int().min(1),
-		owner_email: z.union([z.string(), z.null()]).optional(),
-		target_db_id: z.union([z.number().int().min(1), z.null()]).optional(),
-		creator: z
-			.object({
-				is_qbnewb: z.boolean().optional(),
-				last_login: z.json().optional(),
-				id: z.number().int().min(1),
-				email: z.string(),
-				is_data_analyst: z.boolean().optional(),
-				is_superuser: z.boolean().optional(),
-				tenant_id: z.json().optional(),
-				last_name: z.union([z.string(), z.null()]),
-				first_name: z.union([z.string(), z.null()]),
-				date_joined: z.json().optional(),
-				common_name: z.union([z.string(), z.null()]).optional(),
-			})
-			.strict(),
-		owner_user_id: z.union([z.number().int().min(1), z.null()]).optional(),
-		name: z.string(),
-		updated_at: z.json(),
-		source_readable: z.union([z.boolean(), z.null()]).optional(),
-		tag_ids: z.array(z.number().int().min(1)).optional(),
+			.nullish(),
+		source_database_id: z.union([z.number().int(), z.null()]).nullish(),
+		id: z.number().int().nullish(),
+		owner_email: z.union([z.string(), z.null()]).nullish(),
+		target_db_id: z.union([z.number().int(), z.null()]).nullish(),
+		creator: OpenApiSchemas.looseJsonObject({
+			is_qbnewb: z.boolean().nullish(),
+			last_login: z.json().nullish(),
+			id: z.number().int().nullish(),
+			email: z.string().nullish(),
+			is_data_analyst: z.boolean().nullish(),
+			is_superuser: z.boolean().nullish(),
+			tenant_id: z.json().nullish(),
+			last_name: z.union([z.string(), z.null()]).nullish(),
+			first_name: z.union([z.string(), z.null()]).nullish(),
+			date_joined: z.json().nullish(),
+			common_name: z.union([z.string(), z.null()]).nullish(),
+		}).nullish(),
+		owner_user_id: z.union([z.number().int(), z.null()]).nullish(),
+		name: z.string().nullish(),
+		updated_at: z.json().nullish(),
+		source_readable: z.union([z.boolean(), z.null()]).nullish(),
+		tag_ids: z.array(z.number().int()).nullish(),
 		table_dependencies: z
 			.union([z.array(z.record(z.string(), z.json())), z.null()])
-			.optional(),
-		can_write: z.boolean().optional(),
-		collection_id: z.union([z.number().int().min(1), z.null()]),
-		can_execute: z.boolean().optional(),
-		source: z.json(),
+			.nullish(),
+		can_write: z.boolean().nullish(),
+		collection_id: z.union([z.number().int(), z.null()]).nullish(),
+		can_execute: z.boolean().nullish(),
+		source: z.json().nullish(),
 		requestable_indexes: z
-			.union([OpenApiSchemas.MetabaseOpenApiOutputSchema294, z.null()])
-			.optional(),
-		last_checkpoint_value: z.union([z.string(), z.null()]).optional(),
-		target: z.json(),
-		created_at: z.json(),
-		creator_id: z.number().int().min(1),
-		run_trigger: z.union([z.string(), z.null()]).optional(),
-		target_table_id: z.union([z.number().int().min(1), z.null()]).optional(),
-		description: z.union([z.string(), z.null()]),
-	})
-	.strict();
+			.union([OpenApiSchemas.MetabaseOpenApiOutputSchema294(), z.null()])
+			.nullish(),
+		last_checkpoint_value: z.union([z.string(), z.null()]).nullish(),
+		target: z.json().nullish(),
+		created_at: z.json().nullish(),
+		creator_id: z.number().int().nullish(),
+		run_trigger: z.union([z.string(), z.null()]).nullish(),
+		target_table_id: z.union([z.number().int(), z.null()]).nullish(),
+		description: z.union([z.string(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint280 = createMetabaseEndpoint(
 	'transform.putById',
 	openApiInput280,
@@ -9078,10 +10144,12 @@ const openApiEndpoint280 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput281 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput281 = z.null();
+const openApiInput281 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput281 = lazySchema(() => z.null());
 const openApiEndpoint281 = createMetabaseEndpoint(
 	'transform.deleteById',
 	openApiInput281,
@@ -9092,10 +10160,12 @@ const openApiEndpoint281 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput282 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput282 = z.null();
+const openApiInput282 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput282 = lazySchema(() => z.null());
 const openApiEndpoint282 = createMetabaseEndpoint(
 	'transform.postByIdCancel',
 	openApiInput282,
@@ -9106,18 +10176,25 @@ const openApiEndpoint282 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput283 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		query: z
-			.object({
-				direction: z.union([z.literal('upstream'), z.literal('downstream')]),
-			})
-			.strict(),
-	})
-	.strict();
-const openApiOutput283 = z.array(
-	z.object({ id: z.number().int().min(1), name: z.string() }).strict(),
+const openApiInput283 = lazySchema(() =>
+	z
+		.object({
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			query: z
+				.object({
+					direction: z.union([z.literal('upstream'), z.literal('downstream')]),
+				})
+				.strict(),
+		})
+		.strict(),
+);
+const openApiOutput283 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			id: z.number().int().nullish(),
+			name: z.string().nullish(),
+		}),
+	),
 );
 const openApiEndpoint283 = createMetabaseEndpoint(
 	'transform.getByIdDagTransforms',
@@ -9130,114 +10207,106 @@ const openApiEndpoint283 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput284 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput284 = z.array(
+const openApiInput284 = lazySchema(() =>
 	z
-		.object({
-			table: z.union([z.record(z.string(), z.json()), z.null()]).optional(),
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput284 = lazySchema(() =>
+	z.array(
+		OpenApiSchemas.looseJsonObject({
+			table: z.union([z.record(z.string(), z.json()), z.null()]).nullish(),
 			owner: z
 				.union([
-					z
-						.object({
-							common_name: z.union([z.string(), z.null()]).optional(),
-							email: z.string(),
-							first_name: z.union([z.string(), z.null()]).optional(),
-							id: z.number().int().min(1).optional(),
-							last_name: z.union([z.string(), z.null()]).optional(),
-						})
-						.strict(),
+					OpenApiSchemas.looseJsonObject({
+						common_name: z.union([z.string(), z.null()]).nullish(),
+						email: z.string().nullish(),
+						first_name: z.union([z.string(), z.null()]).nullish(),
+						id: z.number().int().nullish(),
+						last_name: z.union([z.string(), z.null()]).nullish(),
+					}),
 					z.null(),
 				])
-				.optional(),
-			can_read: z.boolean().optional(),
-			source_type: z.string(),
-			entity_id: z.union([z.string(), z.null()]),
+				.nullish(),
+			can_read: z.boolean().nullish(),
+			source_type: z.string().nullish(),
+			entity_id: z.union([z.string(), z.null()]).nullish(),
 			last_run: z
 				.union([
-					z
-						.object({
-							message: z.union([z.string(), z.null()]),
-							user_id: z.union([z.number().int().min(1), z.null()]),
-							checkpoint_hi_value: z.union([z.string(), z.null()]).optional(),
-							is_active: z.union([z.boolean(), z.null()]),
-							transform_id: z.number().int().min(1),
-							id: z.number().int().min(1),
-							run_method: z.string(),
-							checkpoint_lo_value: z.union([z.string(), z.null()]).optional(),
-							status: z.union([
+					OpenApiSchemas.looseJsonObject({
+						message: z.union([z.string(), z.null()]).nullish(),
+						user_id: z.union([z.number().int(), z.null()]).nullish(),
+						checkpoint_hi_value: z.union([z.string(), z.null()]).nullish(),
+						is_active: z.union([z.boolean(), z.null()]).nullish(),
+						transform_id: z.number().int().nullish(),
+						id: z.number().int().nullish(),
+						run_method: z.string().nullish(),
+						checkpoint_lo_value: z.union([z.string(), z.null()]).nullish(),
+						status: z
+							.union([
 								z.literal('started'),
 								z.literal('succeeded'),
 								z.literal('failed'),
 								z.literal('timeout'),
 								z.literal('canceled'),
 								z.literal('canceling'),
-							]),
-							transform_entity_id: z.union([z.string(), z.null()]).optional(),
-							checkpoint_filter_field_id: z
-								.union([z.number().int().min(1), z.null()])
-								.optional(),
-							end_time: z.json().optional(),
-							metered_as: z.union([z.string(), z.null()]).optional(),
-							dag_run_id: z
-								.union([z.number().int().min(1), z.null()])
-								.optional(),
-							transform_name: z.union([z.string(), z.null()]).optional(),
-							start_time: z.json(),
-							job_run_id: z
-								.union([z.number().int().min(1), z.null()])
-								.optional(),
-						})
-						.strict(),
+							])
+							.nullish(),
+						transform_entity_id: z.union([z.string(), z.null()]).nullish(),
+						checkpoint_filter_field_id: z
+							.union([z.number().int(), z.null()])
+							.nullish(),
+						end_time: z.json().nullish(),
+						metered_as: z.union([z.string(), z.null()]).nullish(),
+						dag_run_id: z.union([z.number().int(), z.null()]).nullish(),
+						transform_name: z.union([z.string(), z.null()]).nullish(),
+						start_time: z.json().nullish(),
+						job_run_id: z.union([z.number().int(), z.null()]).nullish(),
+					}),
 					z.null(),
 				])
-				.optional(),
-			source_database_id: z
-				.union([z.number().int().min(1), z.null()])
-				.optional(),
-			id: z.number().int().min(1),
-			owner_email: z.union([z.string(), z.null()]).optional(),
-			target_db_id: z.union([z.number().int().min(1), z.null()]).optional(),
-			creator: z
-				.object({
-					is_qbnewb: z.boolean().optional(),
-					last_login: z.json().optional(),
-					id: z.number().int().min(1),
-					email: z.string(),
-					is_data_analyst: z.boolean().optional(),
-					is_superuser: z.boolean().optional(),
-					tenant_id: z.json().optional(),
-					last_name: z.union([z.string(), z.null()]),
-					first_name: z.union([z.string(), z.null()]),
-					date_joined: z.json().optional(),
-					common_name: z.union([z.string(), z.null()]).optional(),
-				})
-				.strict(),
-			owner_user_id: z.union([z.number().int().min(1), z.null()]).optional(),
-			name: z.string(),
-			updated_at: z.json(),
-			source_readable: z.union([z.boolean(), z.null()]).optional(),
-			tag_ids: z.array(z.number().int().min(1)).optional(),
+				.nullish(),
+			source_database_id: z.union([z.number().int(), z.null()]).nullish(),
+			id: z.number().int().nullish(),
+			owner_email: z.union([z.string(), z.null()]).nullish(),
+			target_db_id: z.union([z.number().int(), z.null()]).nullish(),
+			creator: OpenApiSchemas.looseJsonObject({
+				is_qbnewb: z.boolean().nullish(),
+				last_login: z.json().nullish(),
+				id: z.number().int().nullish(),
+				email: z.string().nullish(),
+				is_data_analyst: z.boolean().nullish(),
+				is_superuser: z.boolean().nullish(),
+				tenant_id: z.json().nullish(),
+				last_name: z.union([z.string(), z.null()]).nullish(),
+				first_name: z.union([z.string(), z.null()]).nullish(),
+				date_joined: z.json().nullish(),
+				common_name: z.union([z.string(), z.null()]).nullish(),
+			}).nullish(),
+			owner_user_id: z.union([z.number().int(), z.null()]).nullish(),
+			name: z.string().nullish(),
+			updated_at: z.json().nullish(),
+			source_readable: z.union([z.boolean(), z.null()]).nullish(),
+			tag_ids: z.array(z.number().int()).nullish(),
 			table_dependencies: z
 				.union([z.array(z.record(z.string(), z.json())), z.null()])
-				.optional(),
-			can_write: z.boolean().optional(),
-			collection_id: z.union([z.number().int().min(1), z.null()]),
-			can_execute: z.boolean().optional(),
-			source: z.json(),
+				.nullish(),
+			can_write: z.boolean().nullish(),
+			collection_id: z.union([z.number().int(), z.null()]).nullish(),
+			can_execute: z.boolean().nullish(),
+			source: z.json().nullish(),
 			requestable_indexes: z
-				.union([OpenApiSchemas.MetabaseOpenApiOutputSchema294, z.null()])
-				.optional(),
-			last_checkpoint_value: z.union([z.string(), z.null()]).optional(),
-			target: z.json(),
-			created_at: z.json(),
-			creator_id: z.number().int().min(1),
-			run_trigger: z.union([z.string(), z.null()]).optional(),
-			target_table_id: z.union([z.number().int().min(1), z.null()]).optional(),
-			description: z.union([z.string(), z.null()]),
-		})
-		.strict(),
+				.union([OpenApiSchemas.MetabaseOpenApiOutputSchema294(), z.null()])
+				.nullish(),
+			last_checkpoint_value: z.union([z.string(), z.null()]).nullish(),
+			target: z.json().nullish(),
+			created_at: z.json().nullish(),
+			creator_id: z.number().int().nullish(),
+			run_trigger: z.union([z.string(), z.null()]).nullish(),
+			target_table_id: z.union([z.number().int(), z.null()]).nullish(),
+			description: z.union([z.string(), z.null()]).nullish(),
+		}),
+	),
 );
 const openApiEndpoint284 = createMetabaseEndpoint(
 	'transform.getByIdDependencies',
@@ -9249,10 +10318,12 @@ const openApiEndpoint284 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput285 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput285 = z.null();
+const openApiInput285 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput285 = lazySchema(() => z.null());
 const openApiEndpoint285 = createMetabaseEndpoint(
 	'transform.postByIdResetCheckpoint',
 	openApiInput285,
@@ -9263,18 +10334,17 @@ const openApiEndpoint285 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput286 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput286 = z.object({
-	body: z
-		.object({
-			message: z.json(),
-			run_id: z.union([z.number().int().min(1), z.null()]),
-		})
+const openApiInput286 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
 		.strict(),
-	status: z.literal(202),
-});
+);
+const openApiOutput286 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		message: z.json().nullish(),
+		run_id: z.union([z.number().int(), z.null()]).nullish(),
+	}),
+);
 const openApiEndpoint286 = createMetabaseEndpoint(
 	'transform.postByIdRun',
 	openApiInput286,
@@ -9285,26 +10355,25 @@ const openApiEndpoint286 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput287 = z
-	.object({
-		path: z.object({ id: z.number().int().min(1) }).strict(),
-		body: z
-			.object({
-				direction: z.union([z.literal('upstream'), z.literal('downstream')]),
-			})
-			.strict()
-			.optional(),
-	})
-	.strict();
-const openApiOutput287 = z.object({
-	body: z
+const openApiInput287 = lazySchema(() =>
+	z
 		.object({
-			dag_run_id: z.union([z.number().int().min(1), z.null()]),
-			message: z.json(),
+			path: z.object({ id: z.number().int().min(1) }).strict(),
+			body: z
+				.object({
+					direction: z.union([z.literal('upstream'), z.literal('downstream')]),
+				})
+				.strict()
+				.optional(),
 		})
 		.strict(),
-	status: z.literal(202),
-});
+);
+const openApiOutput287 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({
+		dag_run_id: z.union([z.number().int(), z.null()]).nullish(),
+		message: z.json().nullish(),
+	}),
+);
 const openApiEndpoint287 = createMetabaseEndpoint(
 	'transform.postByIdRunDag',
 	openApiInput287,
@@ -9316,10 +10385,12 @@ const openApiEndpoint287 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput288 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput288 = z.null();
+const openApiInput288 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput288 = lazySchema(() => z.null());
 const openApiEndpoint288 = createMetabaseEndpoint(
 	'transform.deleteByIdTable',
 	openApiInput288,
@@ -9330,8 +10401,10 @@ const openApiEndpoint288 = createMetabaseEndpoint(
 	}),
 );
 
-const openApiInput289 = z.object({}).strict();
-const openApiOutput289 = OpenApiSchemas.MetabaseOpenApiOutputSchema707;
+const openApiInput289 = lazySchema(() => z.object({}).strict());
+const openApiOutput289 = lazySchema(() =>
+	OpenApiSchemas.MetabaseOpenApiOutputSchema707(),
+);
 const openApiEndpoint289 = createMetabaseEndpoint(
 	'user.getCurrent',
 	openApiInput289,
@@ -9339,10 +10412,14 @@ const openApiEndpoint289 = createMetabaseEndpoint(
 	(input) => ({ method: 'GET', path: '/api/user/current' }),
 );
 
-const openApiInput290 = z
-	.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
-	.strict();
-const openApiOutput290 = z.object({ password_reset_url: z.string() });
+const openApiInput290 = lazySchema(() =>
+	z
+		.object({ path: z.object({ id: z.number().int().min(1) }).strict() })
+		.strict(),
+);
+const openApiOutput290 = lazySchema(() =>
+	OpenApiSchemas.looseJsonObject({ password_reset_url: z.string().nullish() }),
+);
 const openApiEndpoint290 = createMetabaseEndpoint(
 	'user.postByIdPasswordResetUrl',
 	openApiInput290,
@@ -9539,11 +10616,6 @@ export const MetabaseOpenApiEndpoints = {
 		getTransformsByIdInspectByLensId: openApiEndpoint161,
 		postTransformsByIdInspectByLensIdQuery: openApiEndpoint162,
 	},
-	embedMcp: {
-		getBootstrap: openApiEndpoint163,
-		postFeedback: openApiEndpoint164,
-		getQueriesByHandle: openApiEndpoint165,
-	},
 	embedTheme: {
 		get: openApiEndpoint166,
 		post: openApiEndpoint167,
@@ -9730,842 +10802,2309 @@ export const MetabaseOpenApiEndpoints = {
 } as const;
 
 export const MetabaseOpenApiEndpointSchemas = {
-	'action.get': { input: openApiInput0, output: openApiOutput0 },
-	'action.post': { input: openApiInput1, output: openApiOutput1 },
-	'action.postExecute': { input: openApiInput2, output: openApiOutput2 },
-	'action.getPublic': { input: openApiInput3, output: openApiOutput3 },
-	'action.getByActionId': { input: openApiInput4, output: openApiOutput4 },
+	'action.get': {
+		get input() {
+			return openApiInput0();
+		},
+		get output() {
+			return openApiOutput0();
+		},
+	},
+	'action.post': {
+		get input() {
+			return openApiInput1();
+		},
+		get output() {
+			return openApiOutput1();
+		},
+	},
+	'action.postExecute': {
+		get input() {
+			return openApiInput2();
+		},
+		get output() {
+			return openApiOutput2();
+		},
+	},
+	'action.getPublic': {
+		get input() {
+			return openApiInput3();
+		},
+		get output() {
+			return openApiOutput3();
+		},
+	},
+	'action.getByActionId': {
+		get input() {
+			return openApiInput4();
+		},
+		get output() {
+			return openApiOutput4();
+		},
+	},
 	'action.postByActionIdExecuteValues': {
-		input: openApiInput5,
-		output: openApiOutput5,
+		get input() {
+			return openApiInput5();
+		},
+		get output() {
+			return openApiOutput5();
+		},
 	},
-	'agent.postV1Collection': { input: openApiInput6, output: openApiOutput6 },
+	'agent.postV1Collection': {
+		get input() {
+			return openApiInput6();
+		},
+		get output() {
+			return openApiOutput6();
+		},
+	},
 	'agent.postV1ConstructNativeQuery': {
-		input: openApiInput7,
-		output: openApiOutput7,
+		get input() {
+			return openApiInput7();
+		},
+		get output() {
+			return openApiOutput7();
+		},
 	},
-	'agent.postV1Dashboard': { input: openApiInput8, output: openApiOutput8 },
-	'agent.putV1DashboardById': { input: openApiInput9, output: openApiOutput9 },
-	'agent.postV1Execute': { input: openApiInput10, output: openApiOutput10 },
-	'agent.postV1ExecuteSql': { input: openApiInput11, output: openApiOutput11 },
-	'agent.postV1Metric': { input: openApiInput12, output: openApiOutput12 },
-	'agent.putV1MetricById': { input: openApiInput13, output: openApiOutput13 },
-	'agent.getV1Ping': { input: openApiInput14, output: openApiOutput14 },
-	'agent.postV1Question': { input: openApiInput15, output: openApiOutput15 },
-	'agent.putV1QuestionById': { input: openApiInput16, output: openApiOutput16 },
+	'agent.postV1Dashboard': {
+		get input() {
+			return openApiInput8();
+		},
+		get output() {
+			return openApiOutput8();
+		},
+	},
+	'agent.putV1DashboardById': {
+		get input() {
+			return openApiInput9();
+		},
+		get output() {
+			return openApiOutput9();
+		},
+	},
+	'agent.postV1Execute': {
+		get input() {
+			return openApiInput10();
+		},
+		get output() {
+			return openApiOutput10();
+		},
+	},
+	'agent.postV1ExecuteSql': {
+		get input() {
+			return openApiInput11();
+		},
+		get output() {
+			return openApiOutput11();
+		},
+	},
+	'agent.postV1Metric': {
+		get input() {
+			return openApiInput12();
+		},
+		get output() {
+			return openApiOutput12();
+		},
+	},
+	'agent.putV1MetricById': {
+		get input() {
+			return openApiInput13();
+		},
+		get output() {
+			return openApiOutput13();
+		},
+	},
+	'agent.getV1Ping': {
+		get input() {
+			return openApiInput14();
+		},
+		get output() {
+			return openApiOutput14();
+		},
+	},
+	'agent.postV1Question': {
+		get input() {
+			return openApiInput15();
+		},
+		get output() {
+			return openApiOutput15();
+		},
+	},
+	'agent.putV1QuestionById': {
+		get input() {
+			return openApiInput16();
+		},
+		get output() {
+			return openApiOutput16();
+		},
+	},
 	'agent.postV1QuestionByIdQuery': {
-		input: openApiInput17,
-		output: openApiOutput17,
+		get input() {
+			return openApiInput17();
+		},
+		get output() {
+			return openApiOutput17();
+		},
 	},
 	'agent.postV1ReadResource': {
-		input: openApiInput18,
-		output: openApiOutput18,
+		get input() {
+			return openApiInput18();
+		},
+		get output() {
+			return openApiOutput18();
+		},
 	},
-	'agent.postV1Search': { input: openApiInput19, output: openApiOutput19 },
+	'agent.postV1Search': {
+		get input() {
+			return openApiInput19();
+		},
+		get output() {
+			return openApiOutput19();
+		},
+	},
 	'agent.postV2ConstructQuery': {
-		input: openApiInput20,
-		output: openApiOutput20,
+		get input() {
+			return openApiInput20();
+		},
+		get output() {
+			return openApiOutput20();
+		},
 	},
-	'agent.postV2Query': { input: openApiInput21, output: openApiOutput21 },
-	'analytics.postInternal': { input: openApiInput22, output: openApiOutput22 },
+	'agent.postV2Query': {
+		get input() {
+			return openApiInput21();
+		},
+		get output() {
+			return openApiOutput21();
+		},
+	},
+	'analytics.postInternal': {
+		get input() {
+			return openApiInput22();
+		},
+		get output() {
+			return openApiOutput22();
+		},
+	},
 	'apiKey.putByIdRegenerate': {
-		input: openApiInput23,
-		output: openApiOutput23,
+		get input() {
+			return openApiInput23();
+		},
+		get output() {
+			return openApiOutput23();
+		},
 	},
-	'cache.get': { input: openApiInput24, output: openApiOutput24 },
-	'cache.put': { input: openApiInput25, output: openApiOutput25 },
-	'cache.delete': { input: openApiInput26, output: openApiOutput26 },
-	'cache.postInvalidate': { input: openApiInput27, output: openApiOutput27 },
+	'cache.get': {
+		get input() {
+			return openApiInput24();
+		},
+		get output() {
+			return openApiOutput24();
+		},
+	},
+	'cache.put': {
+		get input() {
+			return openApiInput25();
+		},
+		get output() {
+			return openApiOutput25();
+		},
+	},
+	'cache.delete': {
+		get input() {
+			return openApiInput26();
+		},
+		get output() {
+			return openApiOutput26();
+		},
+	},
+	'cache.postInvalidate': {
+		get input() {
+			return openApiInput27();
+		},
+		get output() {
+			return openApiOutput27();
+		},
+	},
 	'dashboard.postByDashboardIdDashcardByDashcardIdExecuteValues': {
-		input: openApiInput28,
-		output: openApiOutput28,
+		get input() {
+			return openApiInput28();
+		},
+		get output() {
+			return openApiOutput28();
+		},
 	},
-	'dashboard.postByIdPdf': { input: openApiInput29, output: openApiOutput29 },
+	'dashboard.postByIdPdf': {
+		get input() {
+			return openApiInput29();
+		},
+		get output() {
+			return openApiOutput29();
+		},
+	},
 	'dataStudio.postTableDiscardValues': {
-		input: openApiInput30,
-		output: openApiOutput30,
+		get input() {
+			return openApiInput30();
+		},
+		get output() {
+			return openApiOutput30();
+		},
 	},
 	'dataStudio.postTableEdit': {
-		input: openApiInput31,
-		output: openApiOutput31,
+		get input() {
+			return openApiInput31();
+		},
+		get output() {
+			return openApiOutput31();
+		},
 	},
 	'dataStudio.postTableRescanValues': {
-		input: openApiInput32,
-		output: openApiOutput32,
+		get input() {
+			return openApiInput32();
+		},
+		get output() {
+			return openApiOutput32();
+		},
 	},
 	'dataStudio.postTableSelection': {
-		input: openApiInput33,
-		output: openApiOutput33,
+		get input() {
+			return openApiInput33();
+		},
+		get output() {
+			return openApiOutput33();
+		},
 	},
 	'dataStudio.postTableSyncSchema': {
-		input: openApiInput34,
-		output: openApiOutput34,
+		get input() {
+			return openApiInput34();
+		},
+		get output() {
+			return openApiOutput34();
+		},
 	},
-	'database.getByIdSchemas': { input: openApiInput35, output: openApiOutput35 },
+	'database.getByIdSchemas': {
+		get input() {
+			return openApiInput35();
+		},
+		get output() {
+			return openApiOutput35();
+		},
+	},
 	'database.getByIdSettingsAvailable': {
-		input: openApiInput36,
-		output: openApiOutput36,
+		get input() {
+			return openApiInput36();
+		},
+		get output() {
+			return openApiOutput36();
+		},
 	},
-	'dataset.post': { input: openApiInput37, output: openApiOutput37 },
-	'dataset.postPivot': { input: openApiInput38, output: openApiOutput38 },
+	'dataset.post': {
+		get input() {
+			return openApiInput37();
+		},
+		get output() {
+			return openApiOutput37();
+		},
+	},
+	'dataset.postPivot': {
+		get input() {
+			return openApiInput38();
+		},
+		get output() {
+			return openApiOutput38();
+		},
+	},
 	'dataset.postByExportFormat': {
-		input: openApiInput39,
-		output: openApiOutput39,
+		get input() {
+			return openApiInput39();
+		},
+		get output() {
+			return openApiOutput39();
+		},
 	},
-	'document.getPublic': { input: openApiInput40, output: openApiOutput40 },
+	'document.getPublic': {
+		get input() {
+			return openApiInput40();
+		},
+		get output() {
+			return openApiOutput40();
+		},
+	},
 	'document.postByDocumentIdPublicLink': {
-		input: openApiInput41,
-		output: openApiOutput41,
+		get input() {
+			return openApiInput41();
+		},
+		get output() {
+			return openApiOutput41();
+		},
 	},
 	'document.postByFromDocumentIdCopy': {
-		input: openApiInput42,
-		output: openApiOutput42,
+		get input() {
+			return openApiInput42();
+		},
+		get output() {
+			return openApiOutput42();
+		},
 	},
 	'ee.getAiControlsMcpPermissions': {
-		input: openApiInput43,
-		output: openApiOutput43,
+		get input() {
+			return openApiInput43();
+		},
+		get output() {
+			return openApiOutput43();
+		},
 	},
 	'ee.putAiControlsMcpPermissions': {
-		input: openApiInput44,
-		output: openApiOutput44,
+		get input() {
+			return openApiInput44();
+		},
+		get output() {
+			return openApiOutput44();
+		},
 	},
 	'ee.postAiControlsMcpPermissionsAdvanced': {
-		input: openApiInput45,
-		output: openApiOutput45,
+		get input() {
+			return openApiInput45();
+		},
+		get output() {
+			return openApiOutput45();
+		},
 	},
 	'ee.deleteAiControlsMcpPermissionsAdvanced': {
-		input: openApiInput46,
-		output: openApiOutput46,
+		get input() {
+			return openApiInput46();
+		},
+		get output() {
+			return openApiOutput46();
+		},
 	},
 	'ee.getAiControlsPermissions': {
-		input: openApiInput47,
-		output: openApiOutput47,
+		get input() {
+			return openApiInput47();
+		},
+		get output() {
+			return openApiOutput47();
+		},
 	},
 	'ee.putAiControlsPermissions': {
-		input: openApiInput48,
-		output: openApiOutput48,
+		get input() {
+			return openApiInput48();
+		},
+		get output() {
+			return openApiOutput48();
+		},
 	},
 	'ee.postAiControlsPermissionsAdvanced': {
-		input: openApiInput49,
-		output: openApiOutput49,
+		get input() {
+			return openApiInput49();
+		},
+		get output() {
+			return openApiOutput49();
+		},
 	},
 	'ee.deleteAiControlsPermissionsAdvanced': {
-		input: openApiInput50,
-		output: openApiOutput50,
+		get input() {
+			return openApiInput50();
+		},
+		get output() {
+			return openApiOutput50();
+		},
 	},
 	'ee.getAiControlsUsageGroup': {
-		input: openApiInput51,
-		output: openApiOutput51,
+		get input() {
+			return openApiInput51();
+		},
+		get output() {
+			return openApiOutput51();
+		},
 	},
 	'ee.getAiControlsUsageGroupByGroupId': {
-		input: openApiInput52,
-		output: openApiOutput52,
+		get input() {
+			return openApiInput52();
+		},
+		get output() {
+			return openApiOutput52();
+		},
 	},
 	'ee.putAiControlsUsageGroupByGroupId': {
-		input: openApiInput53,
-		output: openApiOutput53,
+		get input() {
+			return openApiInput53();
+		},
+		get output() {
+			return openApiOutput53();
+		},
 	},
 	'ee.getAiControlsUsageInstance': {
-		input: openApiInput54,
-		output: openApiOutput54,
+		get input() {
+			return openApiInput54();
+		},
+		get output() {
+			return openApiOutput54();
+		},
 	},
 	'ee.putAiControlsUsageInstance': {
-		input: openApiInput55,
-		output: openApiOutput55,
+		get input() {
+			return openApiInput55();
+		},
+		get output() {
+			return openApiOutput55();
+		},
 	},
 	'ee.getAiControlsUsageTenant': {
-		input: openApiInput56,
-		output: openApiOutput56,
+		get input() {
+			return openApiInput56();
+		},
+		get output() {
+			return openApiOutput56();
+		},
 	},
 	'ee.getAiControlsUsageTenantByTenantId': {
-		input: openApiInput57,
-		output: openApiOutput57,
+		get input() {
+			return openApiInput57();
+		},
+		get output() {
+			return openApiOutput57();
+		},
 	},
 	'ee.putAiControlsUsageTenantByTenantId': {
-		input: openApiInput58,
-		output: openApiOutput58,
+		get input() {
+			return openApiInput58();
+		},
+		get output() {
+			return openApiOutput58();
+		},
 	},
-	'ee.getApps': { input: openApiInput59, output: openApiOutput59 },
+	'ee.getApps': {
+		get input() {
+			return openApiInput59();
+		},
+		get output() {
+			return openApiOutput59();
+		},
+	},
 	'ee.postAppsGenerateActions': {
-		input: openApiInput60,
-		output: openApiOutput60,
+		get input() {
+			return openApiInput60();
+		},
+		get output() {
+			return openApiOutput60();
+		},
 	},
 	'ee.postAppsGenerateQueries': {
-		input: openApiInput61,
-		output: openApiOutput61,
+		get input() {
+			return openApiInput61();
+		},
+		get output() {
+			return openApiOutput61();
+		},
 	},
 	'ee.getAppsGenerateSchema': {
-		input: openApiInput62,
-		output: openApiOutput62,
+		get input() {
+			return openApiInput62();
+		},
+		get output() {
+			return openApiOutput62();
+		},
 	},
-	'ee.getAppsRepoStatus': { input: openApiInput63, output: openApiOutput63 },
-	'ee.getAppsSandboxHost': { input: openApiInput64, output: openApiOutput64 },
-	'ee.putAppsBySlug': { input: openApiInput65, output: openApiOutput65 },
-	'ee.getAppsBySlug': { input: openApiInput66, output: openApiOutput66 },
-	'ee.getAppsBySlugBundle': { input: openApiInput67, output: openApiOutput67 },
+	'ee.getAppsRepoStatus': {
+		get input() {
+			return openApiInput63();
+		},
+		get output() {
+			return openApiOutput63();
+		},
+	},
+	'ee.getAppsSandboxHost': {
+		get input() {
+			return openApiInput64();
+		},
+		get output() {
+			return openApiOutput64();
+		},
+	},
+	'ee.putAppsBySlug': {
+		get input() {
+			return openApiInput65();
+		},
+		get output() {
+			return openApiOutput65();
+		},
+	},
+	'ee.getAppsBySlug': {
+		get input() {
+			return openApiInput66();
+		},
+		get output() {
+			return openApiOutput66();
+		},
+	},
+	'ee.getAppsBySlugBundle': {
+		get input() {
+			return openApiInput67();
+		},
+		get output() {
+			return openApiOutput67();
+		},
+	},
 	'ee.getAppsBySlugGroupPermissionWarnings': {
-		input: openApiInput68,
-		output: openApiOutput68,
+		get input() {
+			return openApiInput68();
+		},
+		get output() {
+			return openApiOutput68();
+		},
 	},
-	'ee.getAppsBySlugGroups': { input: openApiInput69, output: openApiOutput69 },
-	'ee.postAppsBySlugGroups': { input: openApiInput70, output: openApiOutput70 },
+	'ee.getAppsBySlugGroups': {
+		get input() {
+			return openApiInput69();
+		},
+		get output() {
+			return openApiOutput69();
+		},
+	},
+	'ee.postAppsBySlugGroups': {
+		get input() {
+			return openApiInput70();
+		},
+		get output() {
+			return openApiOutput70();
+		},
+	},
 	'ee.deleteAppsBySlugGroupsByGroupId': {
-		input: openApiInput71,
-		output: openApiOutput71,
+		get input() {
+			return openApiInput71();
+		},
+		get output() {
+			return openApiOutput71();
+		},
 	},
 	'ee.postAuditAppAnalyticsDevExport': {
-		input: openApiInput72,
-		output: openApiOutput72,
+		get input() {
+			return openApiInput72();
+		},
+		get output() {
+			return openApiOutput72();
+		},
 	},
 	'ee.deleteCloudAddOnsByProductType': {
-		input: openApiInput73,
-		output: openApiOutput73,
+		get input() {
+			return openApiInput73();
+		},
+		get output() {
+			return openApiOutput73();
+		},
 	},
 	'ee.getContentDiagnosticsDuplicated': {
-		input: openApiInput74,
-		output: openApiOutput74,
+		get input() {
+			return openApiInput74();
+		},
+		get output() {
+			return openApiOutput74();
+		},
 	},
 	'ee.getContentDiagnosticsImbalanced': {
-		input: openApiInput75,
-		output: openApiOutput75,
+		get input() {
+			return openApiInput75();
+		},
+		get output() {
+			return openApiOutput75();
+		},
 	},
 	'ee.postContentDiagnosticsInvalidate': {
-		input: openApiInput76,
-		output: openApiOutput76,
+		get input() {
+			return openApiInput76();
+		},
+		get output() {
+			return openApiOutput76();
+		},
 	},
 	'ee.getContentDiagnosticsSlow': {
-		input: openApiInput77,
-		output: openApiOutput77,
+		get input() {
+			return openApiInput77();
+		},
+		get output() {
+			return openApiOutput77();
+		},
 	},
 	'ee.getContentDiagnosticsStale': {
-		input: openApiInput78,
-		output: openApiOutput78,
+		get input() {
+			return openApiInput78();
+		},
+		get output() {
+			return openApiOutput78();
+		},
 	},
 	'ee.getContentTranslationDictionary': {
-		input: openApiInput79,
-		output: openApiOutput79,
+		get input() {
+			return openApiInput79();
+		},
+		get output() {
+			return openApiOutput79();
+		},
 	},
-	'ee.postCustomVizPlugin': { input: openApiInput80, output: openApiOutput80 },
-	'ee.getCustomVizPlugin': { input: openApiInput81, output: openApiOutput81 },
+	'ee.postCustomVizPlugin': {
+		get input() {
+			return openApiInput80();
+		},
+		get output() {
+			return openApiOutput80();
+		},
+	},
+	'ee.getCustomVizPlugin': {
+		get input() {
+			return openApiInput81();
+		},
+		get output() {
+			return openApiOutput81();
+		},
+	},
 	'ee.postCustomVizPluginDev': {
-		input: openApiInput82,
-		output: openApiOutput82,
+		get input() {
+			return openApiInput82();
+		},
+		get output() {
+			return openApiOutput82();
+		},
 	},
 	'ee.getCustomVizPluginList': {
-		input: openApiInput83,
-		output: openApiOutput83,
+		get input() {
+			return openApiInput83();
+		},
+		get output() {
+			return openApiOutput83();
+		},
 	},
 	'ee.getCustomVizPluginSandboxHost': {
-		input: openApiInput84,
-		output: openApiOutput84,
+		get input() {
+			return openApiInput84();
+		},
+		get output() {
+			return openApiOutput84();
+		},
 	},
 	'ee.deleteCustomVizPluginById': {
-		input: openApiInput85,
-		output: openApiOutput85,
+		get input() {
+			return openApiInput85();
+		},
+		get output() {
+			return openApiOutput85();
+		},
 	},
 	'ee.putCustomVizPluginById': {
-		input: openApiInput86,
-		output: openApiOutput86,
+		get input() {
+			return openApiInput86();
+		},
+		get output() {
+			return openApiOutput86();
+		},
 	},
 	'ee.getCustomVizPluginByIdAsset': {
-		input: openApiInput87,
-		output: openApiOutput87,
+		get input() {
+			return openApiInput87();
+		},
+		get output() {
+			return openApiOutput87();
+		},
 	},
 	'ee.putCustomVizPluginByIdBundle': {
-		input: openApiInput88,
-		output: openApiOutput88,
+		get input() {
+			return openApiInput88();
+		},
+		get output() {
+			return openApiOutput88();
+		},
 	},
 	'ee.getCustomVizPluginByIdBundle': {
-		input: openApiInput89,
-		output: openApiOutput89,
+		get input() {
+			return openApiInput89();
+		},
+		get output() {
+			return openApiOutput89();
+		},
 	},
 	'ee.putCustomVizPluginByIdDevUrl': {
-		input: openApiInput90,
-		output: openApiOutput90,
+		get input() {
+			return openApiInput90();
+		},
+		get output() {
+			return openApiOutput90();
+		},
 	},
 	'ee.postCustomVizPluginByIdRefresh': {
-		input: openApiInput91,
-		output: openApiOutput91,
+		get input() {
+			return openApiInput91();
+		},
+		get output() {
+			return openApiOutput91();
+		},
 	},
 	'ee.getDataComplexityScoreComplexity': {
-		input: openApiInput92,
-		output: openApiOutput92,
+		get input() {
+			return openApiInput92();
+		},
+		get output() {
+			return openApiOutput92();
+		},
 	},
 	'ee.postDataStudioTablePublishTables': {
-		input: openApiInput93,
-		output: openApiOutput93,
+		get input() {
+			return openApiInput93();
+		},
+		get output() {
+			return openApiOutput93();
+		},
 	},
 	'ee.postDataStudioTableUnpublishTables': {
-		input: openApiInput94,
-		output: openApiOutput94,
+		get input() {
+			return openApiInput94();
+		},
+		get output() {
+			return openApiOutput94();
+		},
 	},
 	'ee.getDataStudioTableByIdPublishingInfo': {
-		input: openApiInput95,
-		output: openApiOutput95,
+		get input() {
+			return openApiInput95();
+		},
+		get output() {
+			return openApiOutput95();
+		},
 	},
 	'ee.getDependenciesBackfillStatus': {
-		input: openApiInput96,
-		output: openApiOutput96,
+		get input() {
+			return openApiInput96();
+		},
+		get output() {
+			return openApiOutput96();
+		},
 	},
-	'ee.getDependenciesGraph': { input: openApiInput97, output: openApiOutput97 },
+	'ee.getDependenciesGraph': {
+		get input() {
+			return openApiInput97();
+		},
+		get output() {
+			return openApiOutput97();
+		},
+	},
 	'ee.getDependenciesGraphBreaking': {
-		input: openApiInput98,
-		output: openApiOutput98,
+		get input() {
+			return openApiInput98();
+		},
+		get output() {
+			return openApiOutput98();
+		},
 	},
 	'ee.getDependenciesGraphBroken': {
-		input: openApiInput99,
-		output: openApiOutput99,
+		get input() {
+			return openApiInput99();
+		},
+		get output() {
+			return openApiOutput99();
+		},
 	},
 	'ee.getDependenciesGraphDependents': {
-		input: openApiInput100,
-		output: openApiOutput100,
+		get input() {
+			return openApiInput100();
+		},
+		get output() {
+			return openApiOutput100();
+		},
 	},
 	'ee.getDependenciesGraphUnreferenced': {
-		input: openApiInput101,
-		output: openApiOutput101,
+		get input() {
+			return openApiInput101();
+		},
+		get output() {
+			return openApiOutput101();
+		},
 	},
-	'ee.getErd': { input: openApiInput102, output: openApiOutput102 },
+	'ee.getErd': {
+		get input() {
+			return openApiInput102();
+		},
+		get output() {
+			return openApiOutput102();
+		},
+	},
 	'ee.postGsheetsConnection': {
-		input: openApiInput103,
-		output: openApiOutput103,
+		get input() {
+			return openApiInput103();
+		},
+		get output() {
+			return openApiOutput103();
+		},
 	},
 	'ee.getGsheetsConnection': {
-		input: openApiInput104,
-		output: openApiOutput104,
+		get input() {
+			return openApiInput104();
+		},
+		get output() {
+			return openApiOutput104();
+		},
 	},
 	'ee.getGsheetsServiceAccount': {
-		input: openApiInput105,
-		output: openApiOutput105,
+		get input() {
+			return openApiInput105();
+		},
+		get output() {
+			return openApiOutput105();
+		},
 	},
-	'ee.getLibrary': { input: openApiInput106, output: openApiOutput106 },
+	'ee.getLibrary': {
+		get input() {
+			return openApiInput106();
+		},
+		get output() {
+			return openApiOutput106();
+		},
+	},
 	'ee.getMetabotAnalyticsConversations': {
-		input: openApiInput107,
-		output: openApiOutput107,
+		get input() {
+			return openApiInput107();
+		},
+		get output() {
+			return openApiOutput107();
+		},
 	},
 	'ee.getMetabotAnalyticsConversationsById': {
-		input: openApiInput108,
-		output: openApiOutput108,
+		get input() {
+			return openApiInput108();
+		},
+		get output() {
+			return openApiOutput108();
+		},
 	},
-	'ee.getMetabotUsage': { input: openApiInput109, output: openApiOutput109 },
+	'ee.getMetabotUsage': {
+		get input() {
+			return openApiInput109();
+		},
+		get output() {
+			return openApiOutput109();
+		},
+	},
 	'ee.getMfaAdminEnrolledUsers': {
-		input: openApiInput110,
-		output: openApiOutput110,
+		get input() {
+			return openApiInput110();
+		},
+		get output() {
+			return openApiOutput110();
+		},
 	},
 	'ee.getMfaAdminOverview': {
-		input: openApiInput111,
-		output: openApiOutput111,
+		get input() {
+			return openApiInput111();
+		},
+		get output() {
+			return openApiOutput111();
+		},
 	},
 	'ee.getMfaAdminUnenrolledUsers': {
-		input: openApiInput112,
-		output: openApiOutput112,
+		get input() {
+			return openApiInput112();
+		},
+		get output() {
+			return openApiOutput112();
+		},
 	},
-	'ee.postMfaEnroll': { input: openApiInput113, output: openApiOutput113 },
+	'ee.postMfaEnroll': {
+		get input() {
+			return openApiInput113();
+		},
+		get output() {
+			return openApiOutput113();
+		},
+	},
 	'ee.postMfaEnrollConfirm': {
-		input: openApiInput114,
-		output: openApiOutput114,
+		get input() {
+			return openApiInput114();
+		},
+		get output() {
+			return openApiOutput114();
+		},
 	},
 	'ee.postMfaRecoveryCodes': {
-		input: openApiInput115,
-		output: openApiOutput115,
+		get input() {
+			return openApiInput115();
+		},
+		get output() {
+			return openApiOutput115();
+		},
 	},
-	'ee.getMfaStatus': { input: openApiInput116, output: openApiOutput116 },
-	'ee.getPermissionDebug': { input: openApiInput117, output: openApiOutput117 },
+	'ee.getMfaStatus': {
+		get input() {
+			return openApiInput116();
+		},
+		get output() {
+			return openApiOutput116();
+		},
+	},
+	'ee.getPermissionDebug': {
+		get input() {
+			return openApiInput117();
+		},
+		get output() {
+			return openApiOutput117();
+		},
+	},
 	'ee.getRemoteSyncBranches': {
-		input: openApiInput118,
-		output: openApiOutput118,
+		get input() {
+			return openApiInput118();
+		},
+		get output() {
+			return openApiOutput118();
+		},
 	},
 	'ee.postRemoteSyncCreateBranch': {
-		input: openApiInput119,
-		output: openApiOutput119,
+		get input() {
+			return openApiInput119();
+		},
+		get output() {
+			return openApiOutput119();
+		},
 	},
 	'ee.getRemoteSyncCurrentTask': {
-		input: openApiInput120,
-		output: openApiOutput120,
+		get input() {
+			return openApiInput120();
+		},
+		get output() {
+			return openApiOutput120();
+		},
 	},
 	'ee.postRemoteSyncCurrentTaskCancel': {
-		input: openApiInput121,
-		output: openApiOutput121,
+		get input() {
+			return openApiInput121();
+		},
+		get output() {
+			return openApiOutput121();
+		},
 	},
-	'ee.getRemoteSyncDirty': { input: openApiInput122, output: openApiOutput122 },
+	'ee.getRemoteSyncDirty': {
+		get input() {
+			return openApiInput122();
+		},
+		get output() {
+			return openApiOutput122();
+		},
+	},
 	'ee.postRemoteSyncExport': {
-		input: openApiInput123,
-		output: openApiOutput123,
+		get input() {
+			return openApiInput123();
+		},
+		get output() {
+			return openApiOutput123();
+		},
 	},
 	'ee.getRemoteSyncExportPreflight': {
-		input: openApiInput124,
-		output: openApiOutput124,
+		get input() {
+			return openApiInput124();
+		},
+		get output() {
+			return openApiOutput124();
+		},
 	},
 	'ee.getRemoteSyncHasRemoteChanges': {
-		input: openApiInput125,
-		output: openApiOutput125,
+		get input() {
+			return openApiInput125();
+		},
+		get output() {
+			return openApiOutput125();
+		},
 	},
 	'ee.postRemoteSyncImport': {
-		input: openApiInput126,
-		output: openApiOutput126,
+		get input() {
+			return openApiInput126();
+		},
+		get output() {
+			return openApiOutput126();
+		},
 	},
 	'ee.getRemoteSyncIsDirty': {
-		input: openApiInput127,
-		output: openApiOutput127,
+		get input() {
+			return openApiInput127();
+		},
+		get output() {
+			return openApiOutput127();
+		},
 	},
 	'ee.putRemoteSyncSettings': {
-		input: openApiInput128,
-		output: openApiOutput128,
+		get input() {
+			return openApiInput128();
+		},
+		get output() {
+			return openApiOutput128();
+		},
 	},
 	'ee.postRemoteSyncStash': {
-		input: openApiInput129,
-		output: openApiOutput129,
+		get input() {
+			return openApiInput129();
+		},
+		get output() {
+			return openApiOutput129();
+		},
 	},
 	'ee.postRemoteSyncTestConnection': {
-		input: openApiInput130,
-		output: openApiOutput130,
+		get input() {
+			return openApiInput130();
+		},
+		get output() {
+			return openApiOutput130();
+		},
 	},
 	'ee.postReplacementCheckReplaceSource': {
-		input: openApiInput131,
-		output: openApiOutput131,
+		get input() {
+			return openApiInput131();
+		},
+		get output() {
+			return openApiOutput131();
+		},
 	},
 	'ee.postReplacementReplaceModelWithTransform': {
-		input: openApiInput132,
-		output: openApiOutput132,
+		get input() {
+			return openApiInput132();
+		},
+		get output() {
+			return openApiOutput132();
+		},
 	},
 	'ee.postReplacementReplaceSource': {
-		input: openApiInput133,
-		output: openApiOutput133,
+		get input() {
+			return openApiInput133();
+		},
+		get output() {
+			return openApiOutput133();
+		},
 	},
-	'ee.getReplacementRuns': { input: openApiInput134, output: openApiOutput134 },
+	'ee.getReplacementRuns': {
+		get input() {
+			return openApiInput134();
+		},
+		get output() {
+			return openApiOutput134();
+		},
+	},
 	'ee.getReplacementRunsById': {
-		input: openApiInput135,
-		output: openApiOutput135,
+		get input() {
+			return openApiInput135();
+		},
+		get output() {
+			return openApiOutput135();
+		},
 	},
 	'ee.postReplacementRunsByIdCancel': {
-		input: openApiInput136,
-		output: openApiOutput136,
+		get input() {
+			return openApiInput136();
+		},
+		get output() {
+			return openApiOutput136();
+		},
 	},
-	'ee.getSecurityCenter': { input: openApiInput137, output: openApiOutput137 },
+	'ee.getSecurityCenter': {
+		get input() {
+			return openApiInput137();
+		},
+		get output() {
+			return openApiOutput137();
+		},
+	},
 	'ee.postSecurityCenterAcknowledge': {
-		input: openApiInput138,
-		output: openApiOutput138,
+		get input() {
+			return openApiInput138();
+		},
+		get output() {
+			return openApiOutput138();
+		},
 	},
 	'ee.postSecurityCenterSync': {
-		input: openApiInput139,
-		output: openApiOutput139,
+		get input() {
+			return openApiInput139();
+		},
+		get output() {
+			return openApiOutput139();
+		},
 	},
 	'ee.postSecurityCenterTestNotification': {
-		input: openApiInput140,
-		output: openApiOutput140,
+		get input() {
+			return openApiInput140();
+		},
+		get output() {
+			return openApiOutput140();
+		},
 	},
 	'ee.postSecurityCenterByAdvisoryIdAcknowledge': {
-		input: openApiInput141,
-		output: openApiOutput141,
+		get input() {
+			return openApiInput141();
+		},
+		get output() {
+			return openApiOutput141();
+		},
 	},
 	'ee.getSessionManagement': {
-		input: openApiInput142,
-		output: openApiOutput142,
+		get input() {
+			return openApiInput142();
+		},
+		get output() {
+			return openApiOutput142();
+		},
 	},
 	'ee.postSessionManagementRevoke': {
-		input: openApiInput143,
-		output: openApiOutput143,
+		get input() {
+			return openApiInput143();
+		},
+		get output() {
+			return openApiOutput143();
+		},
 	},
 	'ee.postSupportAccessGrant': {
-		input: openApiInput144,
-		output: openApiOutput144,
+		get input() {
+			return openApiInput144();
+		},
+		get output() {
+			return openApiOutput144();
+		},
 	},
 	'ee.getSupportAccessGrant': {
-		input: openApiInput145,
-		output: openApiOutput145,
+		get input() {
+			return openApiInput145();
+		},
+		get output() {
+			return openApiOutput145();
+		},
 	},
 	'ee.getSupportAccessGrantCurrent': {
-		input: openApiInput146,
-		output: openApiOutput146,
+		get input() {
+			return openApiInput146();
+		},
+		get output() {
+			return openApiOutput146();
+		},
 	},
 	'ee.putSupportAccessGrantByIdRevoke': {
-		input: openApiInput147,
-		output: openApiOutput147,
+		get input() {
+			return openApiInput147();
+		},
+		get output() {
+			return openApiOutput147();
+		},
 	},
-	'ee.postTenant': { input: openApiInput148, output: openApiOutput148 },
-	'ee.getTenant': { input: openApiInput149, output: openApiOutput149 },
-	'ee.putTenantById': { input: openApiInput150, output: openApiOutput150 },
-	'ee.getTenantById': { input: openApiInput151, output: openApiOutput151 },
-	'ee.getTransformTest': { input: openApiInput152, output: openApiOutput152 },
-	'ee.postTransformTest': { input: openApiInput153, output: openApiOutput153 },
+	'ee.postTenant': {
+		get input() {
+			return openApiInput148();
+		},
+		get output() {
+			return openApiOutput148();
+		},
+	},
+	'ee.getTenant': {
+		get input() {
+			return openApiInput149();
+		},
+		get output() {
+			return openApiOutput149();
+		},
+	},
+	'ee.putTenantById': {
+		get input() {
+			return openApiInput150();
+		},
+		get output() {
+			return openApiOutput150();
+		},
+	},
+	'ee.getTenantById': {
+		get input() {
+			return openApiInput151();
+		},
+		get output() {
+			return openApiOutput151();
+		},
+	},
+	'ee.getTransformTest': {
+		get input() {
+			return openApiInput152();
+		},
+		get output() {
+			return openApiOutput152();
+		},
+	},
+	'ee.postTransformTest': {
+		get input() {
+			return openApiInput153();
+		},
+		get output() {
+			return openApiOutput153();
+		},
+	},
 	'ee.getTransformTestById': {
-		input: openApiInput154,
-		output: openApiOutput154,
+		get input() {
+			return openApiInput154();
+		},
+		get output() {
+			return openApiOutput154();
+		},
 	},
 	'ee.putTransformTestById': {
-		input: openApiInput155,
-		output: openApiOutput155,
+		get input() {
+			return openApiInput155();
+		},
+		get output() {
+			return openApiOutput155();
+		},
 	},
 	'ee.deleteTransformTestById': {
-		input: openApiInput156,
-		output: openApiOutput156,
+		get input() {
+			return openApiInput156();
+		},
+		get output() {
+			return openApiOutput156();
+		},
 	},
 	'ee.getTransformTestByIdRun': {
-		input: openApiInput157,
-		output: openApiOutput157,
+		get input() {
+			return openApiInput157();
+		},
+		get output() {
+			return openApiOutput157();
+		},
 	},
 	'ee.postTransformTestByIdRun': {
-		input: openApiInput158,
-		output: openApiOutput158,
+		get input() {
+			return openApiInput158();
+		},
+		get output() {
+			return openApiOutput158();
+		},
 	},
 	'ee.postTransformsPythonTestRun': {
-		input: openApiInput159,
-		output: openApiOutput159,
+		get input() {
+			return openApiInput159();
+		},
+		get output() {
+			return openApiOutput159();
+		},
 	},
 	'ee.getTransformsByIdInspect': {
-		input: openApiInput160,
-		output: openApiOutput160,
+		get input() {
+			return openApiInput160();
+		},
+		get output() {
+			return openApiOutput160();
+		},
 	},
 	'ee.getTransformsByIdInspectByLensId': {
-		input: openApiInput161,
-		output: openApiOutput161,
+		get input() {
+			return openApiInput161();
+		},
+		get output() {
+			return openApiOutput161();
+		},
 	},
 	'ee.postTransformsByIdInspectByLensIdQuery': {
-		input: openApiInput162,
-		output: openApiOutput162,
+		get input() {
+			return openApiInput162();
+		},
+		get output() {
+			return openApiOutput162();
+		},
 	},
-	'embedMcp.getBootstrap': { input: openApiInput163, output: openApiOutput163 },
-	'embedMcp.postFeedback': { input: openApiInput164, output: openApiOutput164 },
-	'embedMcp.getQueriesByHandle': {
-		input: openApiInput165,
-		output: openApiOutput165,
+	'embedTheme.get': {
+		get input() {
+			return openApiInput166();
+		},
+		get output() {
+			return openApiOutput166();
+		},
 	},
-	'embedTheme.get': { input: openApiInput166, output: openApiOutput166 },
-	'embedTheme.post': { input: openApiInput167, output: openApiOutput167 },
+	'embedTheme.post': {
+		get input() {
+			return openApiInput167();
+		},
+		get output() {
+			return openApiOutput167();
+		},
+	},
 	'embedTheme.postSeedDefaults': {
-		input: openApiInput168,
-		output: openApiOutput168,
+		get input() {
+			return openApiInput168();
+		},
+		get output() {
+			return openApiOutput168();
+		},
 	},
-	'embedTheme.getById': { input: openApiInput169, output: openApiOutput169 },
-	'embedTheme.putById': { input: openApiInput170, output: openApiOutput170 },
-	'embedTheme.deleteById': { input: openApiInput171, output: openApiOutput171 },
+	'embedTheme.getById': {
+		get input() {
+			return openApiInput169();
+		},
+		get output() {
+			return openApiOutput169();
+		},
+	},
+	'embedTheme.putById': {
+		get input() {
+			return openApiInput170();
+		},
+		get output() {
+			return openApiOutput170();
+		},
+	},
+	'embedTheme.deleteById': {
+		get input() {
+			return openApiInput171();
+		},
+		get output() {
+			return openApiOutput171();
+		},
+	},
 	'embedTheme.postByIdCopy': {
-		input: openApiInput172,
-		output: openApiOutput172,
+		get input() {
+			return openApiInput172();
+		},
+		get output() {
+			return openApiOutput172();
+		},
 	},
 	'embeddingHub.getChecklist': {
-		input: openApiInput173,
-		output: openApiOutput173,
+		get input() {
+			return openApiInput173();
+		},
+		get output() {
+			return openApiOutput173();
+		},
 	},
 	'embeddingSdk.getReact18Hosts': {
-		input: openApiInput174,
-		output: openApiOutput174,
+		get input() {
+			return openApiInput174();
+		},
+		get output() {
+			return openApiOutput174();
+		},
 	},
 	'evalTrace.getBySessionId': {
-		input: openApiInput175,
-		output: openApiOutput175,
+		get input() {
+			return openApiInput175();
+		},
+		get output() {
+			return openApiOutput175();
+		},
 	},
-	'exploration.post': { input: openApiInput176, output: openApiOutput176 },
+	'exploration.post': {
+		get input() {
+			return openApiInput176();
+		},
+		get output() {
+			return openApiOutput176();
+		},
+	},
 	'exploration.getDimensions': {
-		input: openApiInput177,
-		output: openApiOutput177,
+		get input() {
+			return openApiInput177();
+		},
+		get output() {
+			return openApiOutput177();
+		},
 	},
-	'exploration.getMine': { input: openApiInput178, output: openApiOutput178 },
+	'exploration.getMine': {
+		get input() {
+			return openApiInput178();
+		},
+		get output() {
+			return openApiOutput178();
+		},
+	},
 	'exploration.putPageByIdStarred': {
-		input: openApiInput179,
-		output: openApiOutput179,
+		get input() {
+			return openApiInput179();
+		},
+		get output() {
+			return openApiOutput179();
+		},
 	},
 	'exploration.putPagesHidden': {
-		input: openApiInput180,
-		output: openApiOutput180,
+		get input() {
+			return openApiInput180();
+		},
+		get output() {
+			return openApiOutput180();
+		},
 	},
 	'exploration.getQueryById': {
-		input: openApiInput181,
-		output: openApiOutput181,
+		get input() {
+			return openApiInput181();
+		},
+		get output() {
+			return openApiOutput181();
+		},
 	},
 	'exploration.postThreadByThreadIdCancel': {
-		input: openApiInput182,
-		output: openApiOutput182,
+		get input() {
+			return openApiInput182();
+		},
+		get output() {
+			return openApiOutput182();
+		},
 	},
 	'exploration.postThreadByThreadIdRestart': {
-		input: openApiInput183,
-		output: openApiOutput183,
+		get input() {
+			return openApiInput183();
+		},
+		get output() {
+			return openApiOutput183();
+		},
 	},
-	'exploration.getById': { input: openApiInput184, output: openApiOutput184 },
-	'exploration.putById': { input: openApiInput185, output: openApiOutput185 },
+	'exploration.getById': {
+		get input() {
+			return openApiInput184();
+		},
+		get output() {
+			return openApiOutput184();
+		},
+	},
+	'exploration.putById': {
+		get input() {
+			return openApiInput185();
+		},
+		get output() {
+			return openApiOutput185();
+		},
+	},
 	'exploration.deleteById': {
-		input: openApiInput186,
-		output: openApiOutput186,
+		get input() {
+			return openApiInput186();
+		},
+		get output() {
+			return openApiOutput186();
+		},
 	},
 	'exploration.postByIdExploreFurther': {
-		input: openApiInput187,
-		output: openApiOutput187,
+		get input() {
+			return openApiInput187();
+		},
+		get output() {
+			return openApiOutput187();
+		},
 	},
 	'exploration.postByIdSummaryAppend': {
-		input: openApiInput188,
-		output: openApiOutput188,
+		get input() {
+			return openApiInput188();
+		},
+		get output() {
+			return openApiOutput188();
+		},
 	},
-	'field.postTableIds': { input: openApiInput189, output: openApiOutput189 },
-	'healthInspector.get': { input: openApiInput190, output: openApiOutput190 },
-	'index.get': { input: openApiInput191, output: openApiOutput191 },
-	'index.postRequest': { input: openApiInput192, output: openApiOutput192 },
-	'index.getRequestById': { input: openApiInput193, output: openApiOutput193 },
-	'index.putRequestById': { input: openApiInput194, output: openApiOutput194 },
+	'field.postTableIds': {
+		get input() {
+			return openApiInput189();
+		},
+		get output() {
+			return openApiOutput189();
+		},
+	},
+	'healthInspector.get': {
+		get input() {
+			return openApiInput190();
+		},
+		get output() {
+			return openApiOutput190();
+		},
+	},
+	'index.get': {
+		get input() {
+			return openApiInput191();
+		},
+		get output() {
+			return openApiOutput191();
+		},
+	},
+	'index.postRequest': {
+		get input() {
+			return openApiInput192();
+		},
+		get output() {
+			return openApiOutput192();
+		},
+	},
+	'index.getRequestById': {
+		get input() {
+			return openApiInput193();
+		},
+		get output() {
+			return openApiOutput193();
+		},
+	},
+	'index.putRequestById': {
+		get input() {
+			return openApiInput194();
+		},
+		get output() {
+			return openApiOutput194();
+		},
+	},
 	'llm.postExtractSources': {
-		input: openApiInput195,
-		output: openApiOutput195,
+		get input() {
+			return openApiInput195();
+		},
+		get output() {
+			return openApiOutput195();
+		},
 	},
-	'llm.getModels': { input: openApiInput196, output: openApiOutput196 },
-	'llm.getProviderTypes': { input: openApiInput197, output: openApiOutput197 },
-	'llm.getProviders': { input: openApiInput198, output: openApiOutput198 },
-	'llm.postProviders': { input: openApiInput199, output: openApiOutput199 },
-	'llm.putProvidersByKey': { input: openApiInput200, output: openApiOutput200 },
+	'llm.getModels': {
+		get input() {
+			return openApiInput196();
+		},
+		get output() {
+			return openApiOutput196();
+		},
+	},
+	'llm.getProviderTypes': {
+		get input() {
+			return openApiInput197();
+		},
+		get output() {
+			return openApiOutput197();
+		},
+	},
+	'llm.getProviders': {
+		get input() {
+			return openApiInput198();
+		},
+		get output() {
+			return openApiOutput198();
+		},
+	},
+	'llm.postProviders': {
+		get input() {
+			return openApiInput199();
+		},
+		get output() {
+			return openApiOutput199();
+		},
+	},
+	'llm.putProvidersByKey': {
+		get input() {
+			return openApiInput200();
+		},
+		get output() {
+			return openApiOutput200();
+		},
+	},
 	'llm.deleteProvidersByKey': {
-		input: openApiInput201,
-		output: openApiOutput201,
+		get input() {
+			return openApiInput201();
+		},
+		get output() {
+			return openApiOutput201();
+		},
 	},
-	'logger.getPresets': { input: openApiInput202, output: openApiOutput202 },
-	'measure.post': { input: openApiInput203, output: openApiOutput203 },
-	'measure.get': { input: openApiInput204, output: openApiOutput204 },
-	'measure.getById': { input: openApiInput205, output: openApiOutput205 },
-	'measure.putById': { input: openApiInput206, output: openApiOutput206 },
+	'logger.getPresets': {
+		get input() {
+			return openApiInput202();
+		},
+		get output() {
+			return openApiOutput202();
+		},
+	},
+	'measure.post': {
+		get input() {
+			return openApiInput203();
+		},
+		get output() {
+			return openApiOutput203();
+		},
+	},
+	'measure.get': {
+		get input() {
+			return openApiInput204();
+		},
+		get output() {
+			return openApiOutput204();
+		},
+	},
+	'measure.getById': {
+		get input() {
+			return openApiInput205();
+		},
+		get output() {
+			return openApiOutput205();
+		},
+	},
+	'measure.putById': {
+		get input() {
+			return openApiInput206();
+		},
+		get output() {
+			return openApiOutput206();
+		},
+	},
 	'measure.getByIdDimensionByDimensionKeyRemapping': {
-		input: openApiInput207,
-		output: openApiOutput207,
+		get input() {
+			return openApiInput207();
+		},
+		get output() {
+			return openApiOutput207();
+		},
 	},
 	'measure.getByIdDimensionByDimensionKeySearch': {
-		input: openApiInput208,
-		output: openApiOutput208,
+		get input() {
+			return openApiInput208();
+		},
+		get output() {
+			return openApiOutput208();
+		},
 	},
 	'measure.getByIdDimensionByDimensionKeyValues': {
-		input: openApiInput209,
-		output: openApiOutput209,
+		get input() {
+			return openApiInput209();
+		},
+		get output() {
+			return openApiOutput209();
+		},
 	},
 	'metabot.getConversations': {
-		input: openApiInput210,
-		output: openApiOutput210,
+		get input() {
+			return openApiInput210();
+		},
+		get output() {
+			return openApiOutput210();
+		},
 	},
 	'metabot.getConversationsById': {
-		input: openApiInput211,
-		output: openApiOutput211,
+		get input() {
+			return openApiInput211();
+		},
+		get output() {
+			return openApiOutput211();
+		},
 	},
 	'metabot.postConversationsByIdFork': {
-		input: openApiInput212,
-		output: openApiOutput212,
+		get input() {
+			return openApiInput212();
+		},
+		get output() {
+			return openApiOutput212();
+		},
 	},
 	'metabot.postConversationsByIdSavedEntity': {
-		input: openApiInput213,
-		output: openApiOutput213,
+		get input() {
+			return openApiInput213();
+		},
+		get output() {
+			return openApiOutput213();
+		},
 	},
 	'metabot.getConversationsByIdTitle': {
-		input: openApiInput214,
-		output: openApiOutput214,
+		get input() {
+			return openApiInput214();
+		},
+		get output() {
+			return openApiOutput214();
+		},
 	},
 	'metabot.postDocumentGenerateContent': {
-		input: openApiInput215,
-		output: openApiOutput215,
+		get input() {
+			return openApiInput215();
+		},
+		get output() {
+			return openApiOutput215();
+		},
 	},
-	'metabot.postFeedback': { input: openApiInput216, output: openApiOutput216 },
+	'metabot.postFeedback': {
+		get input() {
+			return openApiInput216();
+		},
+		get output() {
+			return openApiOutput216();
+		},
+	},
 	'metabot.postMetabotByIdPromptSuggestionsRegenerate': {
-		input: openApiInput217,
-		output: openApiOutput217,
+		get input() {
+			return openApiInput217();
+		},
+		get output() {
+			return openApiOutput217();
+		},
 	},
 	'metabot.getPermissionsUserPermissions': {
-		input: openApiInput218,
-		output: openApiOutput218,
+		get input() {
+			return openApiInput218();
+		},
+		get output() {
+			return openApiOutput218();
+		},
 	},
 	'metabot.putSlackSettings': {
-		input: openApiInput219,
-		output: openApiOutput219,
+		get input() {
+			return openApiInput219();
+		},
+		get output() {
+			return openApiOutput219();
+		},
 	},
 	'metabot.postSourceFeedback': {
-		input: openApiInput220,
-		output: openApiOutput220,
+		get input() {
+			return openApiInput220();
+		},
+		get output() {
+			return openApiOutput220();
+		},
 	},
-	'metric.get': { input: openApiInput221, output: openApiOutput221 },
+	'metric.get': {
+		get input() {
+			return openApiInput221();
+		},
+		get output() {
+			return openApiOutput221();
+		},
+	},
 	'metric.postBreakoutValues': {
-		input: openApiInput222,
-		output: openApiOutput222,
+		get input() {
+			return openApiInput222();
+		},
+		get output() {
+			return openApiOutput222();
+		},
 	},
-	'metric.postDataset': { input: openApiInput223, output: openApiOutput223 },
-	'metric.getById': { input: openApiInput224, output: openApiOutput224 },
+	'metric.postDataset': {
+		get input() {
+			return openApiInput223();
+		},
+		get output() {
+			return openApiOutput223();
+		},
+	},
+	'metric.getById': {
+		get input() {
+			return openApiInput224();
+		},
+		get output() {
+			return openApiOutput224();
+		},
+	},
 	'metric.getByIdDimension': {
-		input: openApiInput225,
-		output: openApiOutput225,
+		get input() {
+			return openApiInput225();
+		},
+		get output() {
+			return openApiOutput225();
+		},
 	},
 	'metric.postByIdDimensionAdd': {
-		input: openApiInput226,
-		output: openApiOutput226,
+		get input() {
+			return openApiInput226();
+		},
+		get output() {
+			return openApiOutput226();
+		},
 	},
 	'metric.postByIdDimensionRemove': {
-		input: openApiInput227,
-		output: openApiOutput227,
+		get input() {
+			return openApiInput227();
+		},
+		get output() {
+			return openApiOutput227();
+		},
 	},
 	'metric.postByIdDimensionReorder': {
-		input: openApiInput228,
-		output: openApiOutput228,
+		get input() {
+			return openApiInput228();
+		},
+		get output() {
+			return openApiOutput228();
+		},
 	},
 	'metric.postByIdDimensionSetDefault': {
-		input: openApiInput229,
-		output: openApiOutput229,
+		get input() {
+			return openApiInput229();
+		},
+		get output() {
+			return openApiOutput229();
+		},
 	},
 	'metric.postByIdDimensionByDimensionKey': {
-		input: openApiInput230,
-		output: openApiOutput230,
+		get input() {
+			return openApiInput230();
+		},
+		get output() {
+			return openApiOutput230();
+		},
 	},
 	'metric.getByIdDimensionByDimensionKeyRemapping': {
-		input: openApiInput231,
-		output: openApiOutput231,
+		get input() {
+			return openApiInput231();
+		},
+		get output() {
+			return openApiOutput231();
+		},
 	},
 	'metric.getByIdDimensionByDimensionKeySearch': {
-		input: openApiInput232,
-		output: openApiOutput232,
+		get input() {
+			return openApiInput232();
+		},
+		get output() {
+			return openApiOutput232();
+		},
 	},
 	'metric.getByIdDimensionByDimensionKeyValues': {
-		input: openApiInput233,
-		output: openApiOutput233,
+		get input() {
+			return openApiInput233();
+		},
+		get output() {
+			return openApiOutput233();
+		},
 	},
-	'notification.post': { input: openApiInput234, output: openApiOutput234 },
-	'notification.getAdmin': { input: openApiInput235, output: openApiOutput235 },
+	'notification.post': {
+		get input() {
+			return openApiInput234();
+		},
+		get output() {
+			return openApiOutput234();
+		},
+	},
+	'notification.getAdmin': {
+		get input() {
+			return openApiInput235();
+		},
+		get output() {
+			return openApiOutput235();
+		},
+	},
 	'notification.postAdminBulk': {
-		input: openApiInput236,
-		output: openApiOutput236,
+		get input() {
+			return openApiInput236();
+		},
+		get output() {
+			return openApiOutput236();
+		},
 	},
 	'notification.getAdminById': {
-		input: openApiInput237,
-		output: openApiOutput237,
+		get input() {
+			return openApiInput237();
+		},
+		get output() {
+			return openApiOutput237();
+		},
 	},
 	'oauth.getAuthorizations': {
-		input: openApiInput238,
-		output: openApiOutput238,
+		get input() {
+			return openApiInput238();
+		},
+		get output() {
+			return openApiOutput238();
+		},
 	},
-	'osi.getAiContext': { input: openApiInput239, output: openApiOutput239 },
+	'osi.getAiContext': {
+		get input() {
+			return openApiInput239();
+		},
+		get output() {
+			return openApiOutput239();
+		},
+	},
 	'osi.postAiContextReconcile': {
-		input: openApiInput240,
-		output: openApiOutput240,
+		get input() {
+			return openApiInput240();
+		},
+		get output() {
+			return openApiOutput240();
+		},
 	},
 	'osi.getAiContextByEntityTypeByEntityLocalId': {
-		input: openApiInput241,
-		output: openApiOutput241,
+		get input() {
+			return openApiInput241();
+		},
+		get output() {
+			return openApiOutput241();
+		},
 	},
 	'osi.putAiContextByEntityTypeByEntityLocalId': {
-		input: openApiInput242,
-		output: openApiOutput242,
+		get input() {
+			return openApiInput242();
+		},
+		get output() {
+			return openApiOutput242();
+		},
 	},
 	'permissions.getInviteGroupIds': {
-		input: openApiInput243,
-		output: openApiOutput243,
+		get input() {
+			return openApiInput243();
+		},
+		get output() {
+			return openApiOutput243();
+		},
 	},
 	'previewEmbed.getCardByTokenParamsByParamKeyValues': {
-		input: openApiInput244,
-		output: openApiOutput244,
+		get input() {
+			return openApiInput244();
+		},
+		get output() {
+			return openApiOutput244();
+		},
 	},
 	'public.postDashboardByUuidDashcardByDashcardIdExecuteValues': {
-		input: openApiInput245,
-		output: openApiOutput245,
+		get input() {
+			return openApiInput245();
+		},
+		get output() {
+			return openApiOutput245();
+		},
 	},
 	'session.getIllustrationByKey': {
-		input: openApiInput246,
-		output: openApiOutput246,
+		get input() {
+			return openApiInput246();
+		},
+		get output() {
+			return openApiOutput246();
+		},
 	},
-	'session.postMfaEnroll': { input: openApiInput247, output: openApiOutput247 },
+	'session.postMfaEnroll': {
+		get input() {
+			return openApiInput247();
+		},
+		get output() {
+			return openApiOutput247();
+		},
+	},
 	'session.postMfaSendEmailOtp': {
-		input: openApiInput248,
-		output: openApiOutput248,
+		get input() {
+			return openApiInput248();
+		},
+		get output() {
+			return openApiOutput248();
+		},
 	},
-	'slack.getAppInfo': { input: openApiInput249, output: openApiOutput249 },
-	'slack.getManifest': { input: openApiInput250, output: openApiOutput250 },
+	'slack.getAppInfo': {
+		get input() {
+			return openApiInput249();
+		},
+		get output() {
+			return openApiOutput249();
+		},
+	},
+	'slack.getManifest': {
+		get input() {
+			return openApiInput250();
+		},
+		get output() {
+			return openApiOutput250();
+		},
+	},
 	'table.putByIdFieldsOrder': {
-		input: openApiInput251,
-		output: openApiOutput251,
+		get input() {
+			return openApiInput251();
+		},
+		get output() {
+			return openApiOutput251();
+		},
 	},
-	'task.getRuns': { input: openApiInput252, output: openApiOutput252 },
-	'task.getRunsEntities': { input: openApiInput253, output: openApiOutput253 },
-	'task.getRunsById': { input: openApiInput254, output: openApiOutput254 },
-	'timeline.post': { input: openApiInput255, output: openApiOutput255 },
-	'timeline.get': { input: openApiInput256, output: openApiOutput256 },
-	'timeline.getById': { input: openApiInput257, output: openApiOutput257 },
-	'transform.get': { input: openApiInput258, output: openApiOutput258 },
-	'transform.post': { input: openApiInput259, output: openApiOutput259 },
+	'task.getRuns': {
+		get input() {
+			return openApiInput252();
+		},
+		get output() {
+			return openApiOutput252();
+		},
+	},
+	'task.getRunsEntities': {
+		get input() {
+			return openApiInput253();
+		},
+		get output() {
+			return openApiOutput253();
+		},
+	},
+	'task.getRunsById': {
+		get input() {
+			return openApiInput254();
+		},
+		get output() {
+			return openApiOutput254();
+		},
+	},
+	'timeline.post': {
+		get input() {
+			return openApiInput255();
+		},
+		get output() {
+			return openApiOutput255();
+		},
+	},
+	'timeline.get': {
+		get input() {
+			return openApiInput256();
+		},
+		get output() {
+			return openApiOutput256();
+		},
+	},
+	'timeline.getById': {
+		get input() {
+			return openApiInput257();
+		},
+		get output() {
+			return openApiOutput257();
+		},
+	},
+	'transform.get': {
+		get input() {
+			return openApiInput258();
+		},
+		get output() {
+			return openApiOutput258();
+		},
+	},
+	'transform.post': {
+		get input() {
+			return openApiInput259();
+		},
+		get output() {
+			return openApiOutput259();
+		},
+	},
 	'transformDagRun.postByRunIdCancel': {
-		input: openApiInput260,
-		output: openApiOutput260,
+		get input() {
+			return openApiInput260();
+		},
+		get output() {
+			return openApiOutput260();
+		},
 	},
 	'transformDagRun.getByRunIdTransformRuns': {
-		input: openApiInput261,
-		output: openApiOutput261,
+		get input() {
+			return openApiInput261();
+		},
+		get output() {
+			return openApiOutput261();
+		},
 	},
-	'transformJob.post': { input: openApiInput262, output: openApiOutput262 },
-	'transformJob.get': { input: openApiInput263, output: openApiOutput263 },
+	'transformJob.post': {
+		get input() {
+			return openApiInput262();
+		},
+		get output() {
+			return openApiOutput262();
+		},
+	},
+	'transformJob.get': {
+		get input() {
+			return openApiInput263();
+		},
+		get output() {
+			return openApiOutput263();
+		},
+	},
 	'transformJob.putActive': {
-		input: openApiInput264,
-		output: openApiOutput264,
+		get input() {
+			return openApiInput264();
+		},
+		get output() {
+			return openApiOutput264();
+		},
 	},
 	'transformJob.putByJobId': {
-		input: openApiInput265,
-		output: openApiOutput265,
+		get input() {
+			return openApiInput265();
+		},
+		get output() {
+			return openApiOutput265();
+		},
 	},
 	'transformJob.getByJobId': {
-		input: openApiInput266,
-		output: openApiOutput266,
+		get input() {
+			return openApiInput266();
+		},
+		get output() {
+			return openApiOutput266();
+		},
 	},
 	'transformJob.postByJobIdRun': {
-		input: openApiInput267,
-		output: openApiOutput267,
+		get input() {
+			return openApiInput267();
+		},
+		get output() {
+			return openApiOutput267();
+		},
 	},
 	'transformJob.getByJobIdRuns': {
-		input: openApiInput268,
-		output: openApiOutput268,
+		get input() {
+			return openApiInput268();
+		},
+		get output() {
+			return openApiOutput268();
+		},
 	},
 	'transformJob.postByJobIdRunsByRunIdCancel': {
-		input: openApiInput269,
-		output: openApiOutput269,
+		get input() {
+			return openApiInput269();
+		},
+		get output() {
+			return openApiOutput269();
+		},
 	},
 	'transformJob.getByJobIdRunsByRunIdTransformRuns': {
-		input: openApiInput270,
-		output: openApiOutput270,
+		get input() {
+			return openApiInput270();
+		},
+		get output() {
+			return openApiOutput270();
+		},
 	},
 	'transformJob.getByJobIdTransforms': {
-		input: openApiInput271,
-		output: openApiOutput271,
+		get input() {
+			return openApiInput271();
+		},
+		get output() {
+			return openApiOutput271();
+		},
 	},
-	'transformTag.post': { input: openApiInput272, output: openApiOutput272 },
-	'transformTag.get': { input: openApiInput273, output: openApiOutput273 },
+	'transformTag.post': {
+		get input() {
+			return openApiInput272();
+		},
+		get output() {
+			return openApiOutput272();
+		},
+	},
+	'transformTag.get': {
+		get input() {
+			return openApiInput273();
+		},
+		get output() {
+			return openApiOutput273();
+		},
+	},
 	'transformTag.putByTagId': {
-		input: openApiInput274,
-		output: openApiOutput274,
+		get input() {
+			return openApiInput274();
+		},
+		get output() {
+			return openApiOutput274();
+		},
 	},
 	'transformTag.deleteByTagId': {
-		input: openApiInput275,
-		output: openApiOutput275,
+		get input() {
+			return openApiInput275();
+		},
+		get output() {
+			return openApiOutput275();
+		},
 	},
-	'transform.getRun': { input: openApiInput276, output: openApiOutput276 },
+	'transform.getRun': {
+		get input() {
+			return openApiInput276();
+		},
+		get output() {
+			return openApiOutput276();
+		},
+	},
 	'transform.getRunByRunId': {
-		input: openApiInput277,
-		output: openApiOutput277,
+		get input() {
+			return openApiInput277();
+		},
+		get output() {
+			return openApiOutput277();
+		},
 	},
-	'transform.getRuns': { input: openApiInput278, output: openApiOutput278 },
-	'transform.getById': { input: openApiInput279, output: openApiOutput279 },
-	'transform.putById': { input: openApiInput280, output: openApiOutput280 },
-	'transform.deleteById': { input: openApiInput281, output: openApiOutput281 },
+	'transform.getRuns': {
+		get input() {
+			return openApiInput278();
+		},
+		get output() {
+			return openApiOutput278();
+		},
+	},
+	'transform.getById': {
+		get input() {
+			return openApiInput279();
+		},
+		get output() {
+			return openApiOutput279();
+		},
+	},
+	'transform.putById': {
+		get input() {
+			return openApiInput280();
+		},
+		get output() {
+			return openApiOutput280();
+		},
+	},
+	'transform.deleteById': {
+		get input() {
+			return openApiInput281();
+		},
+		get output() {
+			return openApiOutput281();
+		},
+	},
 	'transform.postByIdCancel': {
-		input: openApiInput282,
-		output: openApiOutput282,
+		get input() {
+			return openApiInput282();
+		},
+		get output() {
+			return openApiOutput282();
+		},
 	},
 	'transform.getByIdDagTransforms': {
-		input: openApiInput283,
-		output: openApiOutput283,
+		get input() {
+			return openApiInput283();
+		},
+		get output() {
+			return openApiOutput283();
+		},
 	},
 	'transform.getByIdDependencies': {
-		input: openApiInput284,
-		output: openApiOutput284,
+		get input() {
+			return openApiInput284();
+		},
+		get output() {
+			return openApiOutput284();
+		},
 	},
 	'transform.postByIdResetCheckpoint': {
-		input: openApiInput285,
-		output: openApiOutput285,
+		get input() {
+			return openApiInput285();
+		},
+		get output() {
+			return openApiOutput285();
+		},
 	},
-	'transform.postByIdRun': { input: openApiInput286, output: openApiOutput286 },
+	'transform.postByIdRun': {
+		get input() {
+			return openApiInput286();
+		},
+		get output() {
+			return openApiOutput286();
+		},
+	},
 	'transform.postByIdRunDag': {
-		input: openApiInput287,
-		output: openApiOutput287,
+		get input() {
+			return openApiInput287();
+		},
+		get output() {
+			return openApiOutput287();
+		},
 	},
 	'transform.deleteByIdTable': {
-		input: openApiInput288,
-		output: openApiOutput288,
+		get input() {
+			return openApiInput288();
+		},
+		get output() {
+			return openApiOutput288();
+		},
 	},
-	'user.getCurrent': { input: openApiInput289, output: openApiOutput289 },
+	'user.getCurrent': {
+		get input() {
+			return openApiInput289();
+		},
+		get output() {
+			return openApiOutput289();
+		},
+	},
 	'user.postByIdPasswordResetUrl': {
-		input: openApiInput290,
-		output: openApiOutput290,
+		get input() {
+			return openApiInput290();
+		},
+		get output() {
+			return openApiOutput290();
+		},
 	},
 } as const;
 
@@ -10766,547 +13305,579 @@ export const MetabaseOpenApiEndpointMeta = {
 	'ee.getAiControlsMcpPermissions': {
 		riskLevel: 'read',
 		description:
-			'List the MCP tool policy of every group, with the tools it can name and the current permission mode.',
+			'Pro/Enterprise only. List the MCP tool policy of every group, with the tools it can name and the current permission mode.',
 	},
 	'ee.putAiControlsMcpPermissions': {
 		riskLevel: 'destructive',
 		description:
-			'Set the MCP tool policy of the given groups, in one transaction, and return the policy of every group.',
+			'Pro/Enterprise only. Set the MCP tool policy of the given groups, in one transaction, and return the policy of every group.',
 	},
 	'ee.postAiControlsMcpPermissionsAdvanced': {
 		riskLevel: 'destructive',
-		description: 'Switch to group-level MCP tool access.',
+		description: 'Pro/Enterprise only. Switch to group-level MCP tool access.',
 	},
 	'ee.deleteAiControlsMcpPermissionsAdvanced': {
 		riskLevel: 'destructive',
-		description: 'Switch back to All Users only.',
+		description: 'Pro/Enterprise only. Switch back to All Users only.',
 	},
 	'ee.getAiControlsPermissions': {
 		riskLevel: 'read',
 		description:
-			'List all metabot permissions for all groups, filling in defaults for missing entries.',
+			'Pro/Enterprise only. List all metabot permissions for all groups, filling in defaults for missing entries.',
 	},
 	'ee.putAiControlsPermissions': {
 		riskLevel: 'destructive',
-		description: 'Update metabot permissions for all groups.',
+		description:
+			'Pro/Enterprise only. Update metabot permissions for all groups.',
 	},
 	'ee.postAiControlsPermissionsAdvanced': {
 		riskLevel: 'destructive',
-		description: 'Switch to group-level permissions.',
+		description: 'Pro/Enterprise only. Switch to group-level permissions.',
 	},
 	'ee.deleteAiControlsPermissionsAdvanced': {
 		riskLevel: 'destructive',
-		description: 'Switch back to simple permissions.',
+		description: 'Pro/Enterprise only. Switch back to simple permissions.',
 	},
 	'ee.getAiControlsUsageGroup': {
 		riskLevel: 'read',
-		description: 'Get all group-level metabot usage limits.',
+		description:
+			'Pro/Enterprise only. Get all group-level metabot usage limits.',
 	},
 	'ee.getAiControlsUsageGroupByGroupId': {
 		riskLevel: 'read',
-		description: 'Get the metabot usage limit for a specific group.',
+		description:
+			'Pro/Enterprise only. Get the metabot usage limit for a specific group.',
 	},
 	'ee.putAiControlsUsageGroupByGroupId': {
 		riskLevel: 'write',
-		description: 'Set or update the metabot usage limit for a specific group.',
+		description:
+			'Pro/Enterprise only. Set or update the metabot usage limit for a specific group.',
 	},
 	'ee.getAiControlsUsageInstance': {
 		riskLevel: 'read',
-		description: 'Get the instance-wide metabot usage limit.',
+		description:
+			'Pro/Enterprise only. Get the instance-wide metabot usage limit.',
 	},
 	'ee.putAiControlsUsageInstance': {
 		riskLevel: 'write',
-		description: 'Set or update the instance-wide metabot usage limit.',
+		description:
+			'Pro/Enterprise only. Set or update the instance-wide metabot usage limit.',
 	},
 	'ee.getAiControlsUsageTenant': {
 		riskLevel: 'read',
-		description: 'Get all tenant-level metabot usage limits.',
+		description:
+			'Pro/Enterprise only. Get all tenant-level metabot usage limits.',
 	},
 	'ee.getAiControlsUsageTenantByTenantId': {
 		riskLevel: 'read',
-		description: 'Get the metabot usage limit for a specific tenant.',
+		description:
+			'Pro/Enterprise only. Get the metabot usage limit for a specific tenant.',
 	},
 	'ee.putAiControlsUsageTenantByTenantId': {
 		riskLevel: 'write',
-		description: 'Set or update the metabot usage limit for a specific tenant.',
+		description:
+			'Pro/Enterprise only. Set or update the metabot usage limit for a specific tenant.',
 	},
 	'ee.getApps': {
 		riskLevel: 'read',
-		description: 'List the data apps the user can read.',
+		description: 'Pro/Enterprise only. List the data apps the user can read.',
 	},
 	'ee.postAppsGenerateActions': {
 		riskLevel: 'read',
 		description:
-			'The YAML files of the implicit actions a data app defines, one per `defineAction` export in `actions`, in its collection with the entity ID `collection`.',
+			'Pro/Enterprise only. The YAML files of the implicit actions a data app defines, one per `defineAction` export in `actions`, in its collection with the entity ID `collection`.',
 	},
 	'ee.postAppsGenerateQueries': {
 		riskLevel: 'read',
 		description:
-			'The YAML files of the questions a data app defines, one per `defineQuery` export in `queries`, in its collection with the entity ID `collection`.',
+			'Pro/Enterprise only. The YAML files of the questions a data app defines, one per `defineQuery` export in `queries`, in its collection with the entity ID `collection`.',
 	},
 	'ee.getAppsGenerateSchema': {
 		riskLevel: 'read',
 		description:
-			"The `src/metabase.schema.ts` file of a data app: the Library's published tables, with their fields, segments and measures, and its metrics.",
+			"Pro/Enterprise only. The `src/metabase.schema.ts` file of a data app: the Library's published tables, with their fields, segments and measures, and its metrics.",
 	},
 	'ee.getAppsRepoStatus': {
 		riskLevel: 'read',
 		description:
-			'Status of the connected repository as it relates to data apps.',
+			'Pro/Enterprise only. Status of the connected repository as it relates to data apps.',
 	},
 	'ee.getAppsSandboxHost': {
 		riskLevel: 'read',
 		description:
-			"Serve the document used as the `src` of the Near-Membrane realm iframe, carrying a per-document CSP that confines `'unsafe-eval'` to that realm.",
+			"Pro/Enterprise only. Serve the document used as the `src` of the Near-Membrane realm iframe, carrying a per-document CSP that confines `'unsafe-eval'` to that realm.",
 	},
 	'ee.putAppsBySlug': {
 		riskLevel: 'write',
-		description: 'Enable or disable a data app.',
+		description: 'Pro/Enterprise only. Enable or disable a data app.',
 	},
 	'ee.getAppsBySlug': {
 		riskLevel: 'read',
 		description:
-			'Fetch metadata for a single data app by its slug, disabled ones to superusers only.',
+			'Pro/Enterprise only. Fetch metadata for a single data app by its slug, disabled ones to superusers only.',
 	},
 	'ee.getAppsBySlugBundle': {
 		riskLevel: 'read',
 		description:
-			'Serve the cached JS bundle for a single data app by slug, disabled ones to superusers only.',
+			'Pro/Enterprise only. Serve the cached JS bundle for a single data app by slug, disabled ones to superusers only.',
 	},
 	'ee.getAppsBySlugGroupPermissionWarnings': {
 		riskLevel: 'read',
 		description:
-			'Return missing table access for the groups listed for this app.',
+			'Pro/Enterprise only. Return missing table access for the groups listed for this app.',
 	},
 	'ee.getAppsBySlugGroups': {
 		riskLevel: 'read',
 		description:
-			"List the groups other than Administrators that can read a data app's resource collection.",
+			"Pro/Enterprise only. List the groups other than Administrators that can read a data app's resource collection.",
 	},
 	'ee.postAppsBySlugGroups': {
 		riskLevel: 'destructive',
 		description:
-			"Grant a batch of internal groups read access to a data app's resource collection atomically.",
+			"Pro/Enterprise only. Grant a batch of internal groups read access to a data app's resource collection atomically.",
 	},
 	'ee.deleteAppsBySlugGroupsByGroupId': {
 		riskLevel: 'destructive',
-		description: "Revoke a group's access to a data app's resource collection.",
+		description:
+			"Pro/Enterprise only. Revoke a group's access to a data app's resource collection.",
 	},
 	'ee.postAuditAppAnalyticsDevExport': {
 		riskLevel: 'read',
 		description:
-			'Export analytics content as a .tar.gz file for local development.',
+			'Pro/Enterprise only. Export analytics content as a .tar.gz file for local development.',
 	},
 	'ee.deleteCloudAddOnsByProductType': {
 		riskLevel: 'destructive',
-		description: 'Remove an add-on.',
+		description: 'Pro/Enterprise only. Remove an add-on.',
 	},
 	'ee.getContentDiagnosticsDuplicated': {
 		riskLevel: 'read',
 		description:
-			'List **duplicated** findings - the latest valid finding per (entity, finding-type) across the duplicated finding types (currently just `duplicate_name`), permission-filtered for the current user.',
+			'Pro/Enterprise only. List **duplicated** findings - the latest valid finding per (entity, finding-type) across the duplicated finding types (currently just `duplicate_name`), permission-filtered for the current user.',
 	},
 	'ee.getContentDiagnosticsImbalanced': {
 		riskLevel: 'read',
 		description:
-			'List **imbalanced** findings - the latest valid finding per (entity, finding-type) across the `empty`/`sparse`/`crowded` checkers, permission-filtered for the current user.',
+			'Pro/Enterprise only. List **imbalanced** findings - the latest valid finding per (entity, finding-type) across the `empty`/`sparse`/`crowded` checkers, permission-filtered for the current user.',
 	},
 	'ee.postContentDiagnosticsInvalidate': {
 		riskLevel: 'write',
-		description: 'Dismiss the findings with `ids`.',
+		description: 'Pro/Enterprise only. Dismiss the findings with `ids`.',
 	},
 	'ee.getContentDiagnosticsSlow': {
 		riskLevel: 'read',
 		description:
-			'List **slow** findings - the latest valid `slow` finding per entity, permission-filtered for the current user.',
+			'Pro/Enterprise only. List **slow** findings - the latest valid `slow` finding per entity, permission-filtered for the current user.',
 	},
 	'ee.getContentDiagnosticsStale': {
 		riskLevel: 'read',
 		description:
-			'List **stale** findings - the latest valid `stale` finding per entity, permission-filtered for the current user.',
+			'Pro/Enterprise only. List **stale** findings - the latest valid `stale` finding per entity, permission-filtered for the current user.',
 	},
 	'ee.getContentTranslationDictionary': {
 		riskLevel: 'read',
 		description:
-			'Fetch the content translation dictionary for authenticated users (auth-based embedding flows).',
+			'Pro/Enterprise only. Fetch the content translation dictionary for authenticated users (auth-based embedding flows).',
 	},
 	'ee.postCustomVizPlugin': {
 		riskLevel: 'destructive',
 		description:
-			'Register a new custom visualization plugin from an uploaded tar.gz bundle.',
+			'Pro/Enterprise only. Register a new custom visualization plugin from an uploaded tar.gz bundle.',
 	},
 	'ee.getCustomVizPlugin': {
 		riskLevel: 'read',
-		description: 'List all registered custom visualization plugins.',
+		description:
+			'Pro/Enterprise only. List all registered custom visualization plugins.',
 	},
 	'ee.postCustomVizPluginDev': {
 		riskLevel: 'destructive',
 		description:
-			'Register a dev-only custom visualization plugin from a local dev server.',
+			'Pro/Enterprise only. Register a dev-only custom visualization plugin from a local dev server.',
 	},
 	'ee.getCustomVizPluginList': {
 		riskLevel: 'read',
-		description: 'List active and enabled custom visualization plugins.',
+		description:
+			'Pro/Enterprise only. List active and enabled custom visualization plugins.',
 	},
 	'ee.getCustomVizPluginSandboxHost': {
 		riskLevel: 'read',
 		description:
-			'Serve a minimal HTML document used as the iframe `src` for the near-membrane custom-viz sandbox.',
+			'Pro/Enterprise only. Serve a minimal HTML document used as the iframe `src` for the near-membrane custom-viz sandbox.',
 	},
 	'ee.deleteCustomVizPluginById': {
 		riskLevel: 'destructive',
 		description:
-			'Remove a custom visualization plugin and evict its on-disk cache.',
+			'Pro/Enterprise only. Remove a custom visualization plugin and evict its on-disk cache.',
 	},
 	'ee.putCustomVizPluginById': {
 		riskLevel: 'destructive',
-		description: 'Update a custom visualization plugin.',
+		description: 'Pro/Enterprise only. Update a custom visualization plugin.',
 	},
 	'ee.getCustomVizPluginByIdAsset': {
 		riskLevel: 'read',
-		description: "Serve the plugin's icon image from its bundle.",
+		description:
+			"Pro/Enterprise only. Serve the plugin's icon image from its bundle.",
 	},
 	'ee.putCustomVizPluginByIdBundle': {
 		riskLevel: 'destructive',
-		description: 'Replace the bundle for an existing plugin.',
+		description:
+			'Pro/Enterprise only. Replace the bundle for an existing plugin.',
 	},
 	'ee.getCustomVizPluginByIdBundle': {
 		riskLevel: 'read',
-		description: 'Serve the JS bundle for a plugin from the on-disk cache.',
+		description:
+			'Pro/Enterprise only. Serve the JS bundle for a plugin from the on-disk cache.',
 	},
 	'ee.putCustomVizPluginByIdDevUrl': {
 		riskLevel: 'destructive',
-		description: 'Set or clear the dev base URL for a plugin (e.g.',
+		description:
+			'Pro/Enterprise only. Set or clear the dev base URL for a plugin (e.g.',
 	},
 	'ee.postCustomVizPluginByIdRefresh': {
 		riskLevel: 'destructive',
 		description:
-			'Re-fetch the manifest from the dev server for a dev-only plugin.',
+			'Pro/Enterprise only. Re-fetch the manifest from the dev server for a dev-only plugin.',
 	},
 	'ee.getDataComplexityScoreComplexity': {
 		riskLevel: 'read',
 		description:
-			'Return the most recently stored Data Complexity Score for this instance.',
+			'Pro/Enterprise only. Return the most recently stored Data Complexity Score for this instance.',
 	},
 	'ee.postDataStudioTablePublishTables': {
 		riskLevel: 'destructive',
 		description:
-			'Set collection for each of selected tables and all upstream dependencies recursively.',
+			'Pro/Enterprise only. Set collection for each of selected tables and all upstream dependencies recursively.',
 	},
 	'ee.postDataStudioTableUnpublishTables': {
 		riskLevel: 'destructive',
 		description:
-			'Unset collection for each of selected tables and all downstream dependents recursively.',
+			'Pro/Enterprise only. Unset collection for each of selected tables and all downstream dependents recursively.',
 	},
 	'ee.getDataStudioTableByIdPublishingInfo': {
 		riskLevel: 'read',
 		description:
-			'Return the latest valid publishing information for a published table, or no content when unavailable.',
+			'Pro/Enterprise only. Return the latest valid publishing information for a published table, or no content when unavailable.',
 	},
 	'ee.getDependenciesBackfillStatus': {
 		riskLevel: 'read',
 		description:
-			'Whether no entity awaits the computation of its dependencies, as `complete`, for superusers.',
+			'Pro/Enterprise only. Whether no entity awaits the computation of its dependencies, as `complete`, for superusers.',
 	},
 	'ee.getDependenciesGraph': {
 		riskLevel: 'read',
 		description:
-			'This endpoint takes an :id and a supported entity :type, and returns a graph of all its upstream dependencies.',
+			'Pro/Enterprise only. This endpoint takes an :id and a supported entity :type, and returns a graph of all its upstream dependencies.',
 	},
 	'ee.getDependenciesGraphBreaking': {
 		riskLevel: 'read',
 		description:
-			'Returns a list of entities that are breaking other entities (sources of errors).',
+			'Pro/Enterprise only. Returns a list of entities that are breaking other entities (sources of errors).',
 	},
 	'ee.getDependenciesGraphBroken': {
 		riskLevel: 'read',
-		description: 'Returns the broken dependents for a specific source entity.',
+		description:
+			'Pro/Enterprise only. Returns the broken dependents for a specific source entity.',
 	},
 	'ee.getDependenciesGraphDependents': {
 		riskLevel: 'read',
-		description: 'Returns a list of dependents for the specified entity.',
+		description:
+			'Pro/Enterprise only. Returns a list of dependents for the specified entity.',
 	},
 	'ee.getDependenciesGraphUnreferenced': {
 		riskLevel: 'read',
-		description: 'Returns a list of all unreferenced items in the instance.',
+		description:
+			'Pro/Enterprise only. Returns a list of all unreferenced items in the instance.',
 	},
 	'ee.getErd': {
 		riskLevel: 'read',
 		description:
-			'Return an Entity Relationship Diagram (ERD) for tables and their FK relationships.',
+			'Pro/Enterprise only. Return an Entity Relationship Diagram (ERD) for tables and their FK relationships.',
 	},
 	'ee.postGsheetsConnection': {
 		riskLevel: 'write',
 		description:
-			"Hook up a new google drive folder or sheet that will be watched and have its content ETL'd into Metabase.",
+			"Pro/Enterprise only. Hook up a new google drive folder or sheet that will be watched and have its content ETL'd into Metabase.",
 	},
 	'ee.getGsheetsConnection': {
 		riskLevel: 'read',
-		description: 'Check the status of a connection.',
+		description: 'Pro/Enterprise only. Check the status of a connection.',
 	},
 	'ee.getGsheetsServiceAccount': {
 		riskLevel: 'read',
 		description:
-			"Checks to see if service-account is setup or not, delegates to HM only if we haven't set it from a metabase cluster before.",
+			"Pro/Enterprise only. Checks to see if service-account is setup or not, delegates to HM only if we haven't set it from a metabase cluster before.",
 	},
-	'ee.getLibrary': { riskLevel: 'read', description: 'Get the Library.' },
+	'ee.getLibrary': {
+		riskLevel: 'read',
+		description: 'Pro/Enterprise only. Get the Library.',
+	},
 	'ee.getMetabotAnalyticsConversations': {
 		riskLevel: 'read',
 		description:
-			'Return paginated list of AI conversations with summary statistics.',
+			'Pro/Enterprise only. Return paginated list of AI conversations with summary statistics.',
 	},
 	'ee.getMetabotAnalyticsConversationsById': {
 		riskLevel: 'read',
 		description:
-			'Return full details for a specific conversation including all messages.',
+			'Pro/Enterprise only. Return full details for a specific conversation including all messages.',
 	},
 	'ee.getMetabotUsage': {
 		riskLevel: 'read',
 		description:
-			'Fetch current Metabot token usage for the current billing period.',
+			'Pro/Enterprise only. Fetch current Metabot token usage for the current billing period.',
 	},
 	'ee.getMfaAdminEnrolledUsers': {
 		riskLevel: 'read',
-		description: 'Admin: users who have a confirmed second factor.',
+		description:
+			'Pro/Enterprise only. Admin: users who have a confirmed second factor.',
 	},
 	'ee.getMfaAdminOverview': {
 		riskLevel: 'read',
 		description:
-			"Admin: enrollment overview — how many users have (and haven't) set up a second factor, and whether the instance encrypts secrets at rest.",
+			"Pro/Enterprise only. Admin: enrollment overview — how many users have (and haven't) set up a second factor, and whether the instance encrypts secrets at rest.",
 	},
 	'ee.getMfaAdminUnenrolledUsers': {
 		riskLevel: 'read',
-		description: 'Admin: active users who have not set up a second factor.',
+		description:
+			'Pro/Enterprise only. Admin: active users who have not set up a second factor.',
 	},
 	'ee.postMfaEnroll': {
 		riskLevel: 'destructive',
-		description: 'Start TOTP enrollment for the current user.',
+		description:
+			'Pro/Enterprise only. Start TOTP enrollment for the current user.',
 	},
 	'ee.postMfaEnrollConfirm': {
 		riskLevel: 'destructive',
 		description:
-			'Confirm TOTP enrollment by verifying a code from the authenticator app.',
+			'Pro/Enterprise only. Confirm TOTP enrollment by verifying a code from the authenticator app.',
 	},
 	'ee.postMfaRecoveryCodes': {
 		riskLevel: 'destructive',
 		description:
-			"Regenerate the current user's recovery codes, invalidating the entire previous set.",
+			"Pro/Enterprise only. Regenerate the current user's recovery codes, invalidating the entire previous set.",
 	},
 	'ee.getMfaStatus': {
 		riskLevel: 'read',
-		description: "The current user's MFA status, for the account-settings UI.",
+		description:
+			"Pro/Enterprise only. The current user's MFA status, for the account-settings UI.",
 	},
 	'ee.getPermissionDebug': {
 		riskLevel: 'read',
 		description:
-			'This endpoint expects a `user_id`, a `model_id` to debug permissions against, and `action_type`.',
+			'Pro/Enterprise only. This endpoint expects a `user_id`, a `model_id` to debug permissions against, and `action_type`.',
 	},
 	'ee.getRemoteSyncBranches': {
 		riskLevel: 'read',
-		description: 'Get list of branches from the configured source.',
+		description:
+			'Pro/Enterprise only. Get list of branches from the configured source.',
 	},
 	'ee.postRemoteSyncCreateBranch': {
 		riskLevel: 'destructive',
 		description:
-			'Create a new branch from the current remote-sync branch and switches the current remote-sync branch to it.',
+			'Pro/Enterprise only. Create a new branch from the current remote-sync branch and switches the current remote-sync branch to it.',
 	},
 	'ee.getRemoteSyncCurrentTask': {
 		riskLevel: 'read',
-		description: 'Get the current sync task',
+		description: 'Pro/Enterprise only. Get the current sync task',
 	},
 	'ee.postRemoteSyncCurrentTaskCancel': {
 		riskLevel: 'destructive',
-		description: 'Cancels the current task if one is running',
+		description:
+			'Pro/Enterprise only. Cancels the current task if one is running',
 	},
 	'ee.getRemoteSyncDirty': {
 		riskLevel: 'read',
 		description:
-			'Return all models with changes that have not been pushed to the remote sync source in any remote-synced collection.',
+			'Pro/Enterprise only. Return all models with changes that have not been pushed to the remote sync source in any remote-synced collection.',
 	},
 	'ee.postRemoteSyncExport': {
 		riskLevel: 'destructive',
 		description:
-			'Export the current state of the Remote Sync collection to a Source.',
+			'Pro/Enterprise only. Export the current state of the Remote Sync collection to a Source.',
 	},
 	'ee.getRemoteSyncExportPreflight': {
 		riskLevel: 'read',
 		description:
-			'Dry-run preview of what pushing the current state would do given the live remote branch, without writing anything.',
+			'Pro/Enterprise only. Dry-run preview of what pushing the current state would do given the live remote branch, without writing anything.',
 	},
 	'ee.getRemoteSyncHasRemoteChanges': {
 		riskLevel: 'read',
 		description:
-			'Check if there are new changes on the remote branch that can be pulled.',
+			'Pro/Enterprise only. Check if there are new changes on the remote branch that can be pulled.',
 	},
 	'ee.postRemoteSyncImport': {
 		riskLevel: 'destructive',
-		description: 'Import Metabase content from configured Remote Sync source.',
+		description:
+			'Pro/Enterprise only. Import Metabase content from configured Remote Sync source.',
 	},
 	'ee.getRemoteSyncIsDirty': {
 		riskLevel: 'read',
 		description:
-			'Check if any remote-synced collection or collection item has local changes that have not been pushed to the remote sync source.',
+			'Pro/Enterprise only. Check if any remote-synced collection or collection item has local changes that have not been pushed to the remote sync source.',
 	},
 	'ee.putRemoteSyncSettings': {
 		riskLevel: 'write',
-		description: 'Update Remote Sync related settings.',
+		description: 'Pro/Enterprise only. Update Remote Sync related settings.',
 	},
 	'ee.postRemoteSyncStash': {
 		riskLevel: 'destructive',
 		description:
-			'Stashes changes to a new branch, and changes the current branch to it.',
+			'Pro/Enterprise only. Stashes changes to a new branch, and changes the current branch to it.',
 	},
 	'ee.postRemoteSyncTestConnection': {
 		riskLevel: 'read',
 		description:
-			'Test whether the Remote Sync credentials can reach the git repository.',
+			'Pro/Enterprise only. Test whether the Remote Sync credentials can reach the git repository.',
 	},
 	'ee.postReplacementCheckReplaceSource': {
 		riskLevel: 'read',
 		description:
-			'Check whether a source entity can be replaced by a target entity.',
+			'Pro/Enterprise only. Check whether a source entity can be replaced by a target entity.',
 	},
 	'ee.postReplacementReplaceModelWithTransform': {
 		riskLevel: 'destructive',
 		description:
-			'Create a transform from a model, execute it, and replace all usages of the model with the output table.',
+			'Pro/Enterprise only. Create a transform from a model, execute it, and replace all usages of the model with the output table.',
 	},
 	'ee.postReplacementReplaceSource': {
 		riskLevel: 'destructive',
 		description:
-			'Replace all usages of a source entity with a target entity asynchronously.',
+			'Pro/Enterprise only. Replace all usages of a source entity with a target entity asynchronously.',
 	},
 	'ee.getReplacementRuns': {
 		riskLevel: 'read',
-		description: 'List replacement runs, optionally filtered by is-active.',
+		description:
+			'Pro/Enterprise only. List replacement runs, optionally filtered by is-active.',
 	},
 	'ee.getReplacementRunsById': {
 		riskLevel: 'read',
-		description: 'Get the status of a source replacement run.',
+		description:
+			'Pro/Enterprise only. Get the status of a source replacement run.',
 	},
 	'ee.postReplacementRunsByIdCancel': {
 		riskLevel: 'destructive',
-		description: 'Cancel a running source replacement.',
+		description: 'Pro/Enterprise only. Cancel a running source replacement.',
 	},
 	'ee.getSecurityCenter': {
 		riskLevel: 'read',
-		description: 'List all security advisories with match status.',
+		description:
+			'Pro/Enterprise only. List all security advisories with match status.',
 	},
 	'ee.postSecurityCenterAcknowledge': {
 		riskLevel: 'write',
-		description: 'Acknowledge multiple security advisories.',
+		description:
+			'Pro/Enterprise only. Acknowledge multiple security advisories.',
 	},
 	'ee.postSecurityCenterSync': {
 		riskLevel: 'write',
-		description: 'Trigger an async advisory sync + re-evaluation.',
+		description:
+			'Pro/Enterprise only. Trigger an async advisory sync + re-evaluation.',
 	},
 	'ee.postSecurityCenterTestNotification': {
 		riskLevel: 'destructive',
 		description:
-			'Send a test notification through the given Security Center channels.',
+			'Pro/Enterprise only. Send a test notification through the given Security Center channels.',
 	},
 	'ee.postSecurityCenterByAdvisoryIdAcknowledge': {
 		riskLevel: 'write',
-		description: 'Acknowledge a security advisory.',
+		description: 'Pro/Enterprise only. Acknowledge a security advisory.',
 	},
 	'ee.getSessionManagement': {
 		riskLevel: 'read',
-		description: 'List sessions.',
+		description: 'Pro/Enterprise only. List sessions.',
 	},
 	'ee.postSessionManagementRevoke': {
 		riskLevel: 'destructive',
 		description:
-			'Revoke — end — every live session matching the given criteria, which are the filters the list endpoint takes.',
+			'Pro/Enterprise only. Revoke — end — every live session matching the given criteria, which are the filters the list endpoint takes.',
 	},
 	'ee.postSupportAccessGrant': {
 		riskLevel: 'destructive',
-		description: 'Create a new support access grant.',
+		description: 'Pro/Enterprise only. Create a new support access grant.',
 	},
 	'ee.getSupportAccessGrant': {
 		riskLevel: 'read',
 		description:
-			'List support access grants with optional filtering and pagination.',
+			'Pro/Enterprise only. List support access grants with optional filtering and pagination.',
 	},
 	'ee.getSupportAccessGrantCurrent': {
 		riskLevel: 'read',
 		description:
-			'Get the currently active support access grant, if one exists.',
+			'Pro/Enterprise only. Get the currently active support access grant, if one exists.',
 	},
 	'ee.putSupportAccessGrantByIdRevoke': {
 		riskLevel: 'destructive',
-		description: 'Revoke an existing support access grant.',
+		description:
+			'Pro/Enterprise only. Revoke an existing support access grant.',
 	},
-	'ee.postTenant': { riskLevel: 'write', description: 'Create a new Tenant' },
-	'ee.getTenant': { riskLevel: 'read', description: 'Get all tenants' },
+	'ee.postTenant': {
+		riskLevel: 'write',
+		description: 'Pro/Enterprise only. Create a new Tenant',
+	},
+	'ee.getTenant': {
+		riskLevel: 'read',
+		description: 'Pro/Enterprise only. Get all tenants',
+	},
 	'ee.putTenantById': {
 		riskLevel: 'destructive',
 		description:
-			'Update a tenant, can set name, attributes, or whether this tenant is active.',
+			'Pro/Enterprise only. Update a tenant, can set name, attributes, or whether this tenant is active.',
 	},
 	'ee.getTenantById': {
 		riskLevel: 'read',
-		description: 'Get info about a tenant',
+		description: 'Pro/Enterprise only. Get info about a tenant',
 	},
 	'ee.getTransformTest': {
 		riskLevel: 'read',
 		description:
-			'List the transform tests with their newest runs, optionally only those of one transform.',
+			'Pro/Enterprise only. List the transform tests with their newest runs, optionally only those of one transform.',
 	},
 	'ee.postTransformTest': {
 		riskLevel: 'write',
-		description: 'Create a transform test.',
+		description: 'Pro/Enterprise only. Create a transform test.',
 	},
 	'ee.getTransformTestById': {
 		riskLevel: 'read',
-		description: 'Get a transform test with its newest run.',
+		description:
+			'Pro/Enterprise only. Get a transform test with its newest run.',
 	},
 	'ee.putTransformTestById': {
 		riskLevel: 'write',
-		description: 'Update a transform test.',
+		description: 'Pro/Enterprise only. Update a transform test.',
 	},
 	'ee.deleteTransformTestById': {
 		riskLevel: 'destructive',
-		description: 'Delete a transform test.',
+		description: 'Pro/Enterprise only. Delete a transform test.',
 	},
 	'ee.getTransformTestByIdRun': {
 		riskLevel: 'read',
-		description: 'List the runs of a transform test, newest first.',
+		description:
+			'Pro/Enterprise only. List the runs of a transform test, newest first.',
 	},
 	'ee.postTransformTestByIdRun': {
 		riskLevel: 'destructive',
-		description: 'Run a transform test, which reading it is enough to do.',
+		description:
+			'Pro/Enterprise only. Run a transform test, which reading it is enough to do.',
 	},
 	'ee.postTransformsPythonTestRun': {
 		riskLevel: 'destructive',
 		description:
-			'Evaluate an ad-hoc python transform on a sample of input data.',
+			'Pro/Enterprise only. Evaluate an ad-hoc python transform on a sample of input data.',
 	},
 	'ee.getTransformsByIdInspect': {
 		riskLevel: 'read',
-		description: 'Phase 1: Discover available lenses for a transform.',
+		description:
+			'Pro/Enterprise only. Phase 1: Discover available lenses for a transform.',
 	},
 	'ee.getTransformsByIdInspectByLensId': {
 		riskLevel: 'read',
-		description: 'Phase 2: Get full lens contents for a transform.',
+		description:
+			'Pro/Enterprise only. Phase 2: Get full lens contents for a transform.',
 	},
 	'ee.postTransformsByIdInspectByLensIdQuery': {
 		riskLevel: 'read',
 		description:
-			'Execute a query in the context of a transform inspector lens.',
-	},
-	'embedMcp.getBootstrap': {
-		riskLevel: 'read',
-		description:
-			'Everything the MCP Apps iframe needs to mount, so its UI credential never authenticates a general REST endpoint.',
-	},
-	'embedMcp.postFeedback': {
-		riskLevel: 'write',
-		description: 'Persist MCP Apps visualization feedback.',
-	},
-	'embedMcp.getQueriesByHandle': {
-		riskLevel: 'read',
-		description:
-			'Resolve a query handle to the base64-encoded MBQL the iframe should render.',
+			'Pro/Enterprise only. Execute a query in the context of a transform inspector lens.',
 	},
 	'embedTheme.get': {
 		riskLevel: 'read',
@@ -11862,11 +14433,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput0.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput0.safeParse(value).success,
+		isInputValid: (value) => openApiInput0().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput0().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint0(ctx, openApiInput0.parse(input)),
+				await openApiEndpoint0(ctx, openApiInput0().parse(input)),
 			),
 	},
 	{
@@ -11878,11 +14449,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { id: 1 },
 		expectedOptions: { method: 'POST', body: { name: '', type: 'implicit' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput1.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput1.safeParse(value).success,
+		isInputValid: (value) => openApiInput1().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput1().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint1(ctx, openApiInput1.parse(input)),
+				await openApiEndpoint1(ctx, openApiInput1().parse(input)),
 			),
 	},
 	{
@@ -11897,11 +14468,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			body: { action: { name: '', type: 'implicit' } },
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput2.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput2.safeParse(value).success,
+		isInputValid: (value) => openApiInput2().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput2().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint2(ctx, openApiInput2.parse(input)),
+				await openApiEndpoint2(ctx, openApiInput2().parse(input)),
 			),
 	},
 	{
@@ -11913,11 +14484,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput3.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput3.safeParse(value).success,
+		isInputValid: (value) => openApiInput3().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput3().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint3(ctx, openApiInput3.parse(input)),
+				await openApiEndpoint3(ctx, openApiInput3().parse(input)),
 			),
 	},
 	{
@@ -11929,11 +14500,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { id: 1 },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput4.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput4.safeParse(value).success,
+		isInputValid: (value) => openApiInput4().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput4().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint4(ctx, openApiInput4.parse(input)),
+				await openApiEndpoint4(ctx, openApiInput4().parse(input)),
 			),
 	},
 	{
@@ -11945,11 +14516,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: {},
 		expectedOptions: { method: 'POST', body: { parameters: {} } },
 		multipart: false,
-		isInputValid: (value) => openApiInput5.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput5.safeParse(value).success,
+		isInputValid: (value) => openApiInput5().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput5().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint5(ctx, openApiInput5.parse(input)),
+				await openApiEndpoint5(ctx, openApiInput5().parse(input)),
 			),
 	},
 	{
@@ -11961,11 +14532,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { id: 1, name: 'a', parent_id: 1, location: 'a', description: '' },
 		expectedOptions: { method: 'POST', body: { name: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput6.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput6.safeParse(value).success,
+		isInputValid: (value) => openApiInput6().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput6().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint6(ctx, openApiInput6.parse(input)),
+				await openApiEndpoint6(ctx, openApiInput6().parse(input)),
 			),
 	},
 	{
@@ -11981,11 +14552,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			requestTimeoutMs: 120000,
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput7.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput7.safeParse(value).success,
+		isInputValid: (value) => openApiInput7().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput7().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint7(ctx, openApiInput7.parse(input)),
+				await openApiEndpoint7(ctx, openApiInput7().parse(input)),
 			),
 	},
 	{
@@ -12006,11 +14577,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST', body: { name: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput8.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput8.safeParse(value).success,
+		isInputValid: (value) => openApiInput8().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput8().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint8(ctx, openApiInput8.parse(input)),
+				await openApiEndpoint8(ctx, openApiInput8().parse(input)),
 			),
 	},
 	{
@@ -12031,11 +14602,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'PUT', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput9.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput9.safeParse(value).success,
+		isInputValid: (value) => openApiInput9().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput9().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint9(ctx, openApiInput9.parse(input)),
+				await openApiEndpoint9(ctx, openApiInput9().parse(input)),
 			),
 	},
 	{
@@ -12047,11 +14618,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { status: 'completed' },
 		expectedOptions: { method: 'POST', body: { query: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput10.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput10.safeParse(value).success,
+		isInputValid: (value) => openApiInput10().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput10().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint10(ctx, openApiInput10.parse(input)),
+				await openApiEndpoint10(ctx, openApiInput10().parse(input)),
 			),
 	},
 	{
@@ -12067,11 +14638,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			requestTimeoutMs: 120000,
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput11.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput11.safeParse(value).success,
+		isInputValid: (value) => openApiInput11().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput11().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint11(ctx, openApiInput11.parse(input)),
+				await openApiEndpoint11(ctx, openApiInput11().parse(input)),
 			),
 	},
 	{
@@ -12091,11 +14662,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST', body: { name: 'a', query: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput12.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput12.safeParse(value).success,
+		isInputValid: (value) => openApiInput12().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput12().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint12(ctx, openApiInput12.parse(input)),
+				await openApiEndpoint12(ctx, openApiInput12().parse(input)),
 			),
 	},
 	{
@@ -12115,11 +14686,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'PUT', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput13.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput13.safeParse(value).success,
+		isInputValid: (value) => openApiInput13().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput13().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint13(ctx, openApiInput13.parse(input)),
+				await openApiEndpoint13(ctx, openApiInput13().parse(input)),
 			),
 	},
 	{
@@ -12131,11 +14702,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { message: '' },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput14.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput14.safeParse(value).success,
+		isInputValid: (value) => openApiInput14().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput14().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint14(ctx, openApiInput14.parse(input)),
+				await openApiEndpoint14(ctx, openApiInput14().parse(input)),
 			),
 	},
 	{
@@ -12155,11 +14726,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST', body: { name: 'a', query: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput15.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput15.safeParse(value).success,
+		isInputValid: (value) => openApiInput15().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput15().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint15(ctx, openApiInput15.parse(input)),
+				await openApiEndpoint15(ctx, openApiInput15().parse(input)),
 			),
 	},
 	{
@@ -12179,11 +14750,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'PUT', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput16.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput16.safeParse(value).success,
+		isInputValid: (value) => openApiInput16().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput16().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint16(ctx, openApiInput16.parse(input)),
+				await openApiEndpoint16(ctx, openApiInput16().parse(input)),
 			),
 	},
 	{
@@ -12195,11 +14766,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { status: 'completed' },
 		expectedOptions: { method: 'POST', body: {}, requestTimeoutMs: 120000 },
 		multipart: false,
-		isInputValid: (value) => openApiInput17.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput17.safeParse(value).success,
+		isInputValid: (value) => openApiInput17().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput17().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint17(ctx, openApiInput17.parse(input)),
+				await openApiEndpoint17(ctx, openApiInput17().parse(input)),
 			),
 	},
 	{
@@ -12211,11 +14782,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { resources: [], output: '' },
 		expectedOptions: { method: 'POST', body: { uris: [] } },
 		multipart: false,
-		isInputValid: (value) => openApiInput18.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput18.safeParse(value).success,
+		isInputValid: (value) => openApiInput18().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput18().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint18(ctx, openApiInput18.parse(input)),
+				await openApiEndpoint18(ctx, openApiInput18().parse(input)),
 			),
 	},
 	{
@@ -12227,11 +14798,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [], total_count: 1 },
 		expectedOptions: { method: 'POST', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput19.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput19.safeParse(value).success,
+		isInputValid: (value) => openApiInput19().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput19().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint19(ctx, openApiInput19.parse(input)),
+				await openApiEndpoint19(ctx, openApiInput19().parse(input)),
 			),
 	},
 	{
@@ -12247,11 +14818,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			requestTimeoutMs: 120000,
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput20.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput20.safeParse(value).success,
+		isInputValid: (value) => openApiInput20().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput20().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint20(ctx, openApiInput20.parse(input)),
+				await openApiEndpoint20(ctx, openApiInput20().parse(input)),
 			),
 	},
 	{
@@ -12267,11 +14838,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			requestTimeoutMs: 120000,
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput21.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput21.safeParse(value).success,
+		isInputValid: (value) => openApiInput21().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput21().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint21(ctx, openApiInput21.parse(input)),
+				await openApiEndpoint21(ctx, openApiInput21().parse(input)),
 			),
 	},
 	{
@@ -12283,11 +14854,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'POST', body: { events: [] } },
 		multipart: false,
-		isInputValid: (value) => openApiInput22.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput22.safeParse(value).success,
+		isInputValid: (value) => openApiInput22().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput22().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint22(ctx, openApiInput22.parse(input)),
+				await openApiEndpoint22(ctx, openApiInput22().parse(input)),
 			),
 	},
 	{
@@ -12304,11 +14875,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'PUT' },
 		multipart: false,
-		isInputValid: (value) => openApiInput23.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput23.safeParse(value).success,
+		isInputValid: (value) => openApiInput23().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput23().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint23(ctx, openApiInput23.parse(input)),
+				await openApiEndpoint23(ctx, openApiInput23().parse(input)),
 			),
 	},
 	{
@@ -12320,11 +14891,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [] },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput24.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput24.safeParse(value).success,
+		isInputValid: (value) => openApiInput24().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput24().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint24(ctx, openApiInput24.parse(input)),
+				await openApiEndpoint24(ctx, openApiInput24().parse(input)),
 			),
 	},
 	{
@@ -12341,11 +14912,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			body: { model: 'root', model_id: 0, strategy: { type: 'nocache' } },
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput25.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput25.safeParse(value).success,
+		isInputValid: (value) => openApiInput25().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput25().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint25(ctx, openApiInput25.parse(input)),
+				await openApiEndpoint25(ctx, openApiInput25().parse(input)),
 			),
 	},
 	{
@@ -12360,11 +14931,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			body: { model: 'root', model_id: [] },
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput26.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput26.safeParse(value).success,
+		isInputValid: (value) => openApiInput26().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput26().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint26(ctx, openApiInput26.parse(input)),
+				await openApiEndpoint26(ctx, openApiInput26().parse(input)),
 			),
 	},
 	{
@@ -12373,14 +14944,14 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		method: 'POST',
 		path: '/api/cache/invalidate',
 		input: { query: {} },
-		output: { status: 200, body: { count: 1, message: '' } },
+		output: { count: 1, message: '' },
 		expectedOptions: { method: 'POST', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput27.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput27.safeParse(value).success,
+		isInputValid: (value) => openApiInput27().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput27().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint27(ctx, openApiInput27.parse(input)),
+				await openApiEndpoint27(ctx, openApiInput27().parse(input)),
 			),
 	},
 	{
@@ -12393,11 +14964,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: {},
 		expectedOptions: { method: 'POST', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput28.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput28.safeParse(value).success,
+		isInputValid: (value) => openApiInput28().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput28().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint28(ctx, openApiInput28.parse(input)),
+				await openApiEndpoint28(ctx, openApiInput28().parse(input)),
 			),
 	},
 	{
@@ -12420,11 +14991,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			requestTimeoutMs: 120000,
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput29.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput29.safeParse(value).success,
+		isInputValid: (value) => openApiInput29().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput29().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint29(ctx, openApiInput29.parse(input)),
+				await openApiEndpoint29(ctx, openApiInput29().parse(input)),
 			),
 	},
 	{
@@ -12436,11 +15007,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'POST', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput30.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput30.safeParse(value).success,
+		isInputValid: (value) => openApiInput30().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput30().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint30(ctx, openApiInput30.parse(input)),
+				await openApiEndpoint30(ctx, openApiInput30().parse(input)),
 			),
 	},
 	{
@@ -12452,11 +15023,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: {},
 		expectedOptions: { method: 'POST', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput31.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput31.safeParse(value).success,
+		isInputValid: (value) => openApiInput31().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput31().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint31(ctx, openApiInput31.parse(input)),
+				await openApiEndpoint31(ctx, openApiInput31().parse(input)),
 			),
 	},
 	{
@@ -12468,11 +15039,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'POST', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput32.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput32.safeParse(value).success,
+		isInputValid: (value) => openApiInput32().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput32().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint32(ctx, openApiInput32.parse(input)),
+				await openApiEndpoint32(ctx, openApiInput32().parse(input)),
 			),
 	},
 	{
@@ -12495,11 +15066,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput33.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput33.safeParse(value).success,
+		isInputValid: (value) => openApiInput33().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput33().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint33(ctx, openApiInput33.parse(input)),
+				await openApiEndpoint33(ctx, openApiInput33().parse(input)),
 			),
 	},
 	{
@@ -12511,11 +15082,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'POST', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput34.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput34.safeParse(value).success,
+		isInputValid: (value) => openApiInput34().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput34().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint34(ctx, openApiInput34.parse(input)),
+				await openApiEndpoint34(ctx, openApiInput34().parse(input)),
 			),
 	},
 	{
@@ -12527,11 +15098,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput35.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput35.safeParse(value).success,
+		isInputValid: (value) => openApiInput35().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput35().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint35(ctx, openApiInput35.parse(input)),
+				await openApiEndpoint35(ctx, openApiInput35().parse(input)),
 			),
 	},
 	{
@@ -12543,11 +15114,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { settings: {} },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput36.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput36.safeParse(value).success,
+		isInputValid: (value) => openApiInput36().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput36().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint36(ctx, openApiInput36.parse(input)),
+				await openApiEndpoint36(ctx, openApiInput36().parse(input)),
 			),
 	},
 	{
@@ -12563,11 +15134,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			requestTimeoutMs: 120000,
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput37.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput37.safeParse(value).success,
+		isInputValid: (value) => openApiInput37().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput37().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint37(ctx, openApiInput37.parse(input)),
+				await openApiEndpoint37(ctx, openApiInput37().parse(input)),
 			),
 	},
 	{
@@ -12583,11 +15154,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			requestTimeoutMs: 120000,
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput38.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput38.safeParse(value).success,
+		isInputValid: (value) => openApiInput38().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput38().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint38(ctx, openApiInput38.parse(input)),
+				await openApiEndpoint38(ctx, openApiInput38().parse(input)),
 			),
 	},
 	{
@@ -12613,11 +15184,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			requestTimeoutMs: 120000,
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput39.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput39.safeParse(value).success,
+		isInputValid: (value) => openApiInput39().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput39().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint39(ctx, openApiInput39.parse(input)),
+				await openApiEndpoint39(ctx, openApiInput39().parse(input)),
 			),
 	},
 	{
@@ -12629,11 +15200,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput40.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput40.safeParse(value).success,
+		isInputValid: (value) => openApiInput40().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput40().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint40(ctx, openApiInput40.parse(input)),
+				await openApiEndpoint40(ctx, openApiInput40().parse(input)),
 			),
 	},
 	{
@@ -12645,11 +15216,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { uuid: '00000000-0000-4000-8000-000000000001' },
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput41.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput41.safeParse(value).success,
+		isInputValid: (value) => openApiInput41().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput41().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint41(ctx, openApiInput41.parse(input)),
+				await openApiEndpoint41(ctx, openApiInput41().parse(input)),
 			),
 	},
 	{
@@ -12661,11 +15232,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { id: 1 },
 		expectedOptions: { method: 'POST', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput42.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput42.safeParse(value).success,
+		isInputValid: (value) => openApiInput42().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput42().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint42(ctx, openApiInput42.parse(input)),
+				await openApiEndpoint42(ctx, openApiInput42().parse(input)),
 			),
 	},
 	{
@@ -12677,11 +15248,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { advanced: false, tools: [], permissions: [] },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput43.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput43.safeParse(value).success,
+		isInputValid: (value) => openApiInput43().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput43().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint43(ctx, openApiInput43.parse(input)),
+				await openApiEndpoint43(ctx, openApiInput43().parse(input)),
 			),
 	},
 	{
@@ -12693,11 +15264,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { advanced: false, tools: [], permissions: [] },
 		expectedOptions: { method: 'PUT', body: { permissions: [] } },
 		multipart: false,
-		isInputValid: (value) => openApiInput44.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput44.safeParse(value).success,
+		isInputValid: (value) => openApiInput44().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput44().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint44(ctx, openApiInput44.parse(input)),
+				await openApiEndpoint44(ctx, openApiInput44().parse(input)),
 			),
 	},
 	{
@@ -12709,11 +15280,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { advanced: false, tools: [], permissions: [] },
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput45.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput45.safeParse(value).success,
+		isInputValid: (value) => openApiInput45().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput45().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint45(ctx, openApiInput45.parse(input)),
+				await openApiEndpoint45(ctx, openApiInput45().parse(input)),
 			),
 	},
 	{
@@ -12725,11 +15296,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { advanced: false, tools: [], permissions: [] },
 		expectedOptions: { method: 'DELETE' },
 		multipart: false,
-		isInputValid: (value) => openApiInput46.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput46.safeParse(value).success,
+		isInputValid: (value) => openApiInput46().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput46().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint46(ctx, openApiInput46.parse(input)),
+				await openApiEndpoint46(ctx, openApiInput46().parse(input)),
 			),
 	},
 	{
@@ -12741,11 +15312,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { permissions: [], advanced: false },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput47.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput47.safeParse(value).success,
+		isInputValid: (value) => openApiInput47().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput47().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint47(ctx, openApiInput47.parse(input)),
+				await openApiEndpoint47(ctx, openApiInput47().parse(input)),
 			),
 	},
 	{
@@ -12757,11 +15328,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { permissions: [], advanced: false },
 		expectedOptions: { method: 'PUT', body: { permissions: [] } },
 		multipart: false,
-		isInputValid: (value) => openApiInput48.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput48.safeParse(value).success,
+		isInputValid: (value) => openApiInput48().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput48().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint48(ctx, openApiInput48.parse(input)),
+				await openApiEndpoint48(ctx, openApiInput48().parse(input)),
 			),
 	},
 	{
@@ -12773,11 +15344,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { permissions: [], advanced: false },
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput49.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput49.safeParse(value).success,
+		isInputValid: (value) => openApiInput49().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput49().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint49(ctx, openApiInput49.parse(input)),
+				await openApiEndpoint49(ctx, openApiInput49().parse(input)),
 			),
 	},
 	{
@@ -12789,11 +15360,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { permissions: [], advanced: false },
 		expectedOptions: { method: 'DELETE' },
 		multipart: false,
-		isInputValid: (value) => openApiInput50.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput50.safeParse(value).success,
+		isInputValid: (value) => openApiInput50().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput50().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint50(ctx, openApiInput50.parse(input)),
+				await openApiEndpoint50(ctx, openApiInput50().parse(input)),
 			),
 	},
 	{
@@ -12805,11 +15376,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput51.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput51.safeParse(value).success,
+		isInputValid: (value) => openApiInput51().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput51().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint51(ctx, openApiInput51.parse(input)),
+				await openApiEndpoint51(ctx, openApiInput51().parse(input)),
 			),
 	},
 	{
@@ -12821,11 +15392,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { group_id: 1, max_usage: 0 },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput52.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput52.safeParse(value).success,
+		isInputValid: (value) => openApiInput52().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput52().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint52(ctx, openApiInput52.parse(input)),
+				await openApiEndpoint52(ctx, openApiInput52().parse(input)),
 			),
 	},
 	{
@@ -12837,11 +15408,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { group_id: 1, max_usage: 0 },
 		expectedOptions: { method: 'PUT', body: { max_usage: 0 } },
 		multipart: false,
-		isInputValid: (value) => openApiInput53.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput53.safeParse(value).success,
+		isInputValid: (value) => openApiInput53().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput53().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint53(ctx, openApiInput53.parse(input)),
+				await openApiEndpoint53(ctx, openApiInput53().parse(input)),
 			),
 	},
 	{
@@ -12853,11 +15424,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { max_usage: 0 },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput54.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput54.safeParse(value).success,
+		isInputValid: (value) => openApiInput54().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput54().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint54(ctx, openApiInput54.parse(input)),
+				await openApiEndpoint54(ctx, openApiInput54().parse(input)),
 			),
 	},
 	{
@@ -12869,11 +15440,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { max_usage: 0 },
 		expectedOptions: { method: 'PUT', body: { max_usage: 0 } },
 		multipart: false,
-		isInputValid: (value) => openApiInput55.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput55.safeParse(value).success,
+		isInputValid: (value) => openApiInput55().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput55().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint55(ctx, openApiInput55.parse(input)),
+				await openApiEndpoint55(ctx, openApiInput55().parse(input)),
 			),
 	},
 	{
@@ -12885,11 +15456,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput56.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput56.safeParse(value).success,
+		isInputValid: (value) => openApiInput56().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput56().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint56(ctx, openApiInput56.parse(input)),
+				await openApiEndpoint56(ctx, openApiInput56().parse(input)),
 			),
 	},
 	{
@@ -12901,11 +15472,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { tenant_id: 1, max_usage: 0 },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput57.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput57.safeParse(value).success,
+		isInputValid: (value) => openApiInput57().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput57().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint57(ctx, openApiInput57.parse(input)),
+				await openApiEndpoint57(ctx, openApiInput57().parse(input)),
 			),
 	},
 	{
@@ -12917,11 +15488,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { tenant_id: 1, max_usage: 0 },
 		expectedOptions: { method: 'PUT', body: { max_usage: 0 } },
 		multipart: false,
-		isInputValid: (value) => openApiInput58.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput58.safeParse(value).success,
+		isInputValid: (value) => openApiInput58().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput58().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint58(ctx, openApiInput58.parse(input)),
+				await openApiEndpoint58(ctx, openApiInput58().parse(input)),
 			),
 	},
 	{
@@ -12933,11 +15504,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput59.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput59.safeParse(value).success,
+		isInputValid: (value) => openApiInput59().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput59().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint59(ctx, openApiInput59.parse(input)),
+				await openApiEndpoint59(ctx, openApiInput59().parse(input)),
 			),
 	},
 	{
@@ -12952,11 +15523,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			body: { collection: 'aaaaaaaaaaaaaaaaaaaaa', actions: {} },
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput60.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput60.safeParse(value).success,
+		isInputValid: (value) => openApiInput60().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput60().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint60(ctx, openApiInput60.parse(input)),
+				await openApiEndpoint60(ctx, openApiInput60().parse(input)),
 			),
 	},
 	{
@@ -12971,11 +15542,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			body: { collection: 'aaaaaaaaaaaaaaaaaaaaa', queries: {} },
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput61.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput61.safeParse(value).success,
+		isInputValid: (value) => openApiInput61().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput61().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint61(ctx, openApiInput61.parse(input)),
+				await openApiEndpoint61(ctx, openApiInput61().parse(input)),
 			),
 	},
 	{
@@ -12987,11 +15558,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput62.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput62.safeParse(value).success,
+		isInputValid: (value) => openApiInput62().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput62().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint62(ctx, openApiInput62.parse(input)),
+				await openApiEndpoint62(ctx, openApiInput62().parse(input)),
 			),
 	},
 	{
@@ -13003,11 +15574,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { configured: false, url: '' },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput63.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput63.safeParse(value).success,
+		isInputValid: (value) => openApiInput63().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput63().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint63(ctx, openApiInput63.parse(input)),
+				await openApiEndpoint63(ctx, openApiInput63().parse(input)),
 			),
 	},
 	{
@@ -13025,11 +15596,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET', responseType: 'binary' },
 		multipart: false,
-		isInputValid: (value) => openApiInput64.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput64.safeParse(value).success,
+		isInputValid: (value) => openApiInput64().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput64().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint64(ctx, openApiInput64.parse(input)),
+				await openApiEndpoint64(ctx, openApiInput64().parse(input)),
 			),
 	},
 	{
@@ -13055,11 +15626,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'PUT', body: { enabled: false } },
 		multipart: false,
-		isInputValid: (value) => openApiInput65.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput65.safeParse(value).success,
+		isInputValid: (value) => openApiInput65().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput65().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint65(ctx, openApiInput65.parse(input)),
+				await openApiEndpoint65(ctx, openApiInput65().parse(input)),
 			),
 	},
 	{
@@ -13085,11 +15656,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput66.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput66.safeParse(value).success,
+		isInputValid: (value) => openApiInput66().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput66().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint66(ctx, openApiInput66.parse(input)),
+				await openApiEndpoint66(ctx, openApiInput66().parse(input)),
 			),
 	},
 	{
@@ -13107,11 +15678,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET', responseType: 'binary' },
 		multipart: false,
-		isInputValid: (value) => openApiInput67.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput67.safeParse(value).success,
+		isInputValid: (value) => openApiInput67().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput67().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint67(ctx, openApiInput67.parse(input)),
+				await openApiEndpoint67(ctx, openApiInput67().parse(input)),
 			),
 	},
 	{
@@ -13123,11 +15694,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput68.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput68.safeParse(value).success,
+		isInputValid: (value) => openApiInput68().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput68().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint68(ctx, openApiInput68.parse(input)),
+				await openApiEndpoint68(ctx, openApiInput68().parse(input)),
 			),
 	},
 	{
@@ -13139,11 +15710,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput69.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput69.safeParse(value).success,
+		isInputValid: (value) => openApiInput69().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput69().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint69(ctx, openApiInput69.parse(input)),
+				await openApiEndpoint69(ctx, openApiInput69().parse(input)),
 			),
 	},
 	{
@@ -13155,11 +15726,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'POST', body: { group_ids: [1] } },
 		multipart: false,
-		isInputValid: (value) => openApiInput70.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput70.safeParse(value).success,
+		isInputValid: (value) => openApiInput70().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput70().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint70(ctx, openApiInput70.parse(input)),
+				await openApiEndpoint70(ctx, openApiInput70().parse(input)),
 			),
 	},
 	{
@@ -13171,11 +15742,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'DELETE' },
 		multipart: false,
-		isInputValid: (value) => openApiInput71.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput71.safeParse(value).success,
+		isInputValid: (value) => openApiInput71().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput71().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint71(ctx, openApiInput71.parse(input)),
+				await openApiEndpoint71(ctx, openApiInput71().parse(input)),
 			),
 	},
 	{
@@ -13197,11 +15768,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			requestTimeoutMs: 120000,
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput72.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput72.safeParse(value).success,
+		isInputValid: (value) => openApiInput72().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput72().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint72(ctx, openApiInput72.parse(input)),
+				await openApiEndpoint72(ctx, openApiInput72().parse(input)),
 			),
 	},
 	{
@@ -13213,11 +15784,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { status: 1, body: null },
 		expectedOptions: { method: 'DELETE' },
 		multipart: false,
-		isInputValid: (value) => openApiInput73.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput73.safeParse(value).success,
+		isInputValid: (value) => openApiInput73().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput73().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint73(ctx, openApiInput73.parse(input)),
+				await openApiEndpoint73(ctx, openApiInput73().parse(input)),
 			),
 	},
 	{
@@ -13235,11 +15806,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput74.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput74.safeParse(value).success,
+		isInputValid: (value) => openApiInput74().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput74().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint74(ctx, openApiInput74.parse(input)),
+				await openApiEndpoint74(ctx, openApiInput74().parse(input)),
 			),
 	},
 	{
@@ -13257,11 +15828,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput75.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput75.safeParse(value).success,
+		isInputValid: (value) => openApiInput75().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput75().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint75(ctx, openApiInput75.parse(input)),
+				await openApiEndpoint75(ctx, openApiInput75().parse(input)),
 			),
 	},
 	{
@@ -13273,11 +15844,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { invalidated: [], skipped: [] },
 		expectedOptions: { method: 'POST', body: { ids: [1] } },
 		multipart: false,
-		isInputValid: (value) => openApiInput76.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput76.safeParse(value).success,
+		isInputValid: (value) => openApiInput76().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput76().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint76(ctx, openApiInput76.parse(input)),
+				await openApiEndpoint76(ctx, openApiInput76().parse(input)),
 			),
 	},
 	{
@@ -13295,11 +15866,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput77.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput77.safeParse(value).success,
+		isInputValid: (value) => openApiInput77().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput77().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint77(ctx, openApiInput77.parse(input)),
+				await openApiEndpoint77(ctx, openApiInput77().parse(input)),
 			),
 	},
 	{
@@ -13317,11 +15888,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput78.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput78.safeParse(value).success,
+		isInputValid: (value) => openApiInput78().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput78().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint78(ctx, openApiInput78.parse(input)),
+				await openApiEndpoint78(ctx, openApiInput78().parse(input)),
 			),
 	},
 	{
@@ -13333,11 +15904,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [] },
 		expectedOptions: { method: 'GET', query: { locale: '' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput79.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput79.safeParse(value).success,
+		isInputValid: (value) => openApiInput79().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput79().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint79(ctx, openApiInput79.parse(input)),
+				await openApiEndpoint79(ctx, openApiInput79().parse(input)),
 			),
 	},
 	{
@@ -13367,11 +15938,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST', requestTimeoutMs: 120000 },
 		multipart: true,
-		isInputValid: (value) => openApiInput80.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput80.safeParse(value).success,
+		isInputValid: (value) => openApiInput80().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput80().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint80(ctx, openApiInput80.parse(input)),
+				await openApiEndpoint80(ctx, openApiInput80().parse(input)),
 			),
 	},
 	{
@@ -13383,11 +15954,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput81.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput81.safeParse(value).success,
+		isInputValid: (value) => openApiInput81().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput81().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint81(ctx, openApiInput81.parse(input)),
+				await openApiEndpoint81(ctx, openApiInput81().parse(input)),
 			),
 	},
 	{
@@ -13409,11 +15980,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST', body: { dev_bundle_url: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput82.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput82.safeParse(value).success,
+		isInputValid: (value) => openApiInput82().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput82().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint82(ctx, openApiInput82.parse(input)),
+				await openApiEndpoint82(ctx, openApiInput82().parse(input)),
 			),
 	},
 	{
@@ -13425,11 +15996,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput83.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput83.safeParse(value).success,
+		isInputValid: (value) => openApiInput83().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput83().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint83(ctx, openApiInput83.parse(input)),
+				await openApiEndpoint83(ctx, openApiInput83().parse(input)),
 			),
 	},
 	{
@@ -13447,11 +16018,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET', responseType: 'binary' },
 		multipart: false,
-		isInputValid: (value) => openApiInput84.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput84.safeParse(value).success,
+		isInputValid: (value) => openApiInput84().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput84().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint84(ctx, openApiInput84.parse(input)),
+				await openApiEndpoint84(ctx, openApiInput84().parse(input)),
 			),
 	},
 	{
@@ -13463,11 +16034,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'DELETE' },
 		multipart: false,
-		isInputValid: (value) => openApiInput85.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput85.safeParse(value).success,
+		isInputValid: (value) => openApiInput85().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput85().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint85(ctx, openApiInput85.parse(input)),
+				await openApiEndpoint85(ctx, openApiInput85().parse(input)),
 			),
 	},
 	{
@@ -13489,11 +16060,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'PUT', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput86.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput86.safeParse(value).success,
+		isInputValid: (value) => openApiInput86().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput86().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint86(ctx, openApiInput86.parse(input)),
+				await openApiEndpoint86(ctx, openApiInput86().parse(input)),
 			),
 	},
 	{
@@ -13515,11 +16086,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			responseType: 'binary',
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput87.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput87.safeParse(value).success,
+		isInputValid: (value) => openApiInput87().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput87().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint87(ctx, openApiInput87.parse(input)),
+				await openApiEndpoint87(ctx, openApiInput87().parse(input)),
 			),
 	},
 	{
@@ -13550,11 +16121,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'PUT', requestTimeoutMs: 120000 },
 		multipart: true,
-		isInputValid: (value) => openApiInput88.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput88.safeParse(value).success,
+		isInputValid: (value) => openApiInput88().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput88().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint88(ctx, openApiInput88.parse(input)),
+				await openApiEndpoint88(ctx, openApiInput88().parse(input)),
 			),
 	},
 	{
@@ -13572,11 +16143,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET', responseType: 'binary' },
 		multipart: false,
-		isInputValid: (value) => openApiInput89.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput89.safeParse(value).success,
+		isInputValid: (value) => openApiInput89().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput89().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint89(ctx, openApiInput89.parse(input)),
+				await openApiEndpoint89(ctx, openApiInput89().parse(input)),
 			),
 	},
 	{
@@ -13588,11 +16159,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { dev_bundle_url: '' },
 		expectedOptions: { method: 'PUT', body: { dev_bundle_url: '' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput90.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput90.safeParse(value).success,
+		isInputValid: (value) => openApiInput90().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput90().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint90(ctx, openApiInput90.parse(input)),
+				await openApiEndpoint90(ctx, openApiInput90().parse(input)),
 			),
 	},
 	{
@@ -13614,11 +16185,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput91.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput91.safeParse(value).success,
+		isInputValid: (value) => openApiInput91().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput91().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint91(ctx, openApiInput91.parse(input)),
+				await openApiEndpoint91(ctx, openApiInput91().parse(input)),
 			),
 	},
 	{
@@ -13635,11 +16206,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput92.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput92.safeParse(value).success,
+		isInputValid: (value) => openApiInput92().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput92().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint92(ctx, openApiInput92.parse(input)),
+				await openApiEndpoint92(ctx, openApiInput92().parse(input)),
 			),
 	},
 	{
@@ -13651,11 +16222,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { target_collection: {} },
 		expectedOptions: { method: 'POST', body: { collection_id: 1 } },
 		multipart: false,
-		isInputValid: (value) => openApiInput93.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput93.safeParse(value).success,
+		isInputValid: (value) => openApiInput93().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput93().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint93(ctx, openApiInput93.parse(input)),
+				await openApiEndpoint93(ctx, openApiInput93().parse(input)),
 			),
 	},
 	{
@@ -13667,11 +16238,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'POST', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput94.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput94.safeParse(value).success,
+		isInputValid: (value) => openApiInput94().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput94().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint94(ctx, openApiInput94.parse(input)),
+				await openApiEndpoint94(ctx, openApiInput94().parse(input)),
 			),
 	},
 	{
@@ -13686,11 +16257,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput95.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput95.safeParse(value).success,
+		isInputValid: (value) => openApiInput95().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput95().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint95(ctx, openApiInput95.parse(input)),
+				await openApiEndpoint95(ctx, openApiInput95().parse(input)),
 			),
 	},
 	{
@@ -13702,11 +16273,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { complete: false },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput96.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput96.safeParse(value).success,
+		isInputValid: (value) => openApiInput96().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput96().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint96(ctx, openApiInput96.parse(input)),
+				await openApiEndpoint96(ctx, openApiInput96().parse(input)),
 			),
 	},
 	{
@@ -13718,11 +16289,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { nodes: [], edges: [] },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput97.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput97.safeParse(value).success,
+		isInputValid: (value) => openApiInput97().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput97().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint97(ctx, openApiInput97.parse(input)),
+				await openApiEndpoint97(ctx, openApiInput97().parse(input)),
 			),
 	},
 	{
@@ -13734,11 +16305,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [], total: 0, offset: 0, limit: 1 },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput98.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput98.safeParse(value).success,
+		isInputValid: (value) => openApiInput98().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput98().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint98(ctx, openApiInput98.parse(input)),
+				await openApiEndpoint98(ctx, openApiInput98().parse(input)),
 			),
 	},
 	{
@@ -13750,11 +16321,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET', query: { id: 1, type: 'transform' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput99.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput99.safeParse(value).success,
+		isInputValid: (value) => openApiInput99().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput99().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint99(ctx, openApiInput99.parse(input)),
+				await openApiEndpoint99(ctx, openApiInput99().parse(input)),
 			),
 	},
 	{
@@ -13766,11 +16337,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET', query: { id: 1, type: 'transform' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput100.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput100.safeParse(value).success,
+		isInputValid: (value) => openApiInput100().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput100().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint100(ctx, openApiInput100.parse(input)),
+				await openApiEndpoint100(ctx, openApiInput100().parse(input)),
 			),
 	},
 	{
@@ -13782,11 +16353,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [], total: 0, offset: 0, limit: 1 },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput101.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput101.safeParse(value).success,
+		isInputValid: (value) => openApiInput101().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput101().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint101(ctx, openApiInput101.parse(input)),
+				await openApiEndpoint101(ctx, openApiInput101().parse(input)),
 			),
 	},
 	{
@@ -13798,11 +16369,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { nodes: [], edges: [] },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput102.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput102.safeParse(value).success,
+		isInputValid: (value) => openApiInput102().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput102().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint102(ctx, openApiInput102.parse(input)),
+				await openApiEndpoint102(ctx, openApiInput102().parse(input)),
 			),
 	},
 	{
@@ -13814,11 +16385,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { error: false, message: 'a' },
 		expectedOptions: { method: 'POST', body: { url: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput103.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput103.safeParse(value).success,
+		isInputValid: (value) => openApiInput103().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput103().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint103(ctx, openApiInput103.parse(input)),
+				await openApiEndpoint103(ctx, openApiInput103().parse(input)),
 			),
 	},
 	{
@@ -13830,11 +16401,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { error: false, message: 'a' },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput104.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput104.safeParse(value).success,
+		isInputValid: (value) => openApiInput104().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput104().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint104(ctx, openApiInput104.parse(input)),
+				await openApiEndpoint104(ctx, openApiInput104().parse(input)),
 			),
 	},
 	{
@@ -13846,11 +16417,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { email: '' },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput105.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput105.safeParse(value).success,
+		isInputValid: (value) => openApiInput105().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput105().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint105(ctx, openApiInput105.parse(input)),
+				await openApiEndpoint105(ctx, openApiInput105().parse(input)),
 			),
 	},
 	{
@@ -13862,11 +16433,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { id: 1, name: '', description: '', archived: false },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput106.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput106.safeParse(value).success,
+		isInputValid: (value) => openApiInput106().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput106().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint106(ctx, openApiInput106.parse(input)),
+				await openApiEndpoint106(ctx, openApiInput106().parse(input)),
 			),
 	},
 	{
@@ -13878,11 +16449,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [], total: 0, limit: 0, offset: 0 },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput107.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput107.safeParse(value).success,
+		isInputValid: (value) => openApiInput107().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput107().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint107(ctx, openApiInput107.parse(input)),
+				await openApiEndpoint107(ctx, openApiInput107().parse(input)),
 			),
 	},
 	{
@@ -13915,11 +16486,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput108.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput108.safeParse(value).success,
+		isInputValid: (value) => openApiInput108().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput108().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint108(ctx, openApiInput108.parse(input)),
+				await openApiEndpoint108(ctx, openApiInput108().parse(input)),
 			),
 	},
 	{
@@ -13931,11 +16502,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { is_locked: false, tokens: 1, updated_at: '' },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput109.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput109.safeParse(value).success,
+		isInputValid: (value) => openApiInput109().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput109().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint109(ctx, openApiInput109.parse(input)),
+				await openApiEndpoint109(ctx, openApiInput109().parse(input)),
 			),
 	},
 	{
@@ -13947,11 +16518,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [], total: 1, limit: 1, offset: 1 },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput110.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput110.safeParse(value).success,
+		isInputValid: (value) => openApiInput110().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput110().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint110(ctx, openApiInput110.parse(input)),
+				await openApiEndpoint110(ctx, openApiInput110().parse(input)),
 			),
 	},
 	{
@@ -13967,11 +16538,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput111.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput111.safeParse(value).success,
+		isInputValid: (value) => openApiInput111().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput111().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint111(ctx, openApiInput111.parse(input)),
+				await openApiEndpoint111(ctx, openApiInput111().parse(input)),
 			),
 	},
 	{
@@ -13983,11 +16554,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [], total: 1, limit: 1, offset: 1 },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput112.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput112.safeParse(value).success,
+		isInputValid: (value) => openApiInput112().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput112().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint112(ctx, openApiInput112.parse(input)),
+				await openApiEndpoint112(ctx, openApiInput112().parse(input)),
 			),
 	},
 	{
@@ -13999,11 +16570,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { secret: 'a', otpauth_uri: 'a' },
 		expectedOptions: { method: 'POST', body: { password: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput113.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput113.safeParse(value).success,
+		isInputValid: (value) => openApiInput113().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput113().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint113(ctx, openApiInput113.parse(input)),
+				await openApiEndpoint113(ctx, openApiInput113().parse(input)),
 			),
 	},
 	{
@@ -14015,11 +16586,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { recovery_codes: [] },
 		expectedOptions: { method: 'POST', body: { code: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput114.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput114.safeParse(value).success,
+		isInputValid: (value) => openApiInput114().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput114().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint114(ctx, openApiInput114.parse(input)),
+				await openApiEndpoint114(ctx, openApiInput114().parse(input)),
 			),
 	},
 	{
@@ -14031,11 +16602,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { recovery_codes: [] },
 		expectedOptions: { method: 'POST', body: { code: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput115.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput115.safeParse(value).success,
+		isInputValid: (value) => openApiInput115().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput115().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint115(ctx, openApiInput115.parse(input)),
+				await openApiEndpoint115(ctx, openApiInput115().parse(input)),
 			),
 	},
 	{
@@ -14053,11 +16624,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput116.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput116.safeParse(value).success,
+		isInputValid: (value) => openApiInput116().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput116().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint116(ctx, openApiInput116.parse(input)),
+				await openApiEndpoint116(ctx, openApiInput116().parse(input)),
 			),
 	},
 	{
@@ -14081,11 +16652,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			requestTimeoutMs: 120000,
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput117.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput117.safeParse(value).success,
+		isInputValid: (value) => openApiInput117().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput117().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint117(ctx, openApiInput117.parse(input)),
+				await openApiEndpoint117(ctx, openApiInput117().parse(input)),
 			),
 	},
 	{
@@ -14097,11 +16668,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { items: [] },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput118.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput118.safeParse(value).success,
+		isInputValid: (value) => openApiInput118().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput118().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint118(ctx, openApiInput118.parse(input)),
+				await openApiEndpoint118(ctx, openApiInput118().parse(input)),
 			),
 	},
 	{
@@ -14113,11 +16684,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { status: '', message: '' },
 		expectedOptions: { method: 'POST', body: { name: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput119.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput119.safeParse(value).success,
+		isInputValid: (value) => openApiInput119().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput119().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint119(ctx, openApiInput119.parse(input)),
+				await openApiEndpoint119(ctx, openApiInput119().parse(input)),
 			),
 	},
 	{
@@ -14135,11 +16706,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput120.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput120.safeParse(value).success,
+		isInputValid: (value) => openApiInput120().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput120().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint120(ctx, openApiInput120.parse(input)),
+				await openApiEndpoint120(ctx, openApiInput120().parse(input)),
 			),
 	},
 	{
@@ -14157,11 +16728,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput121.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput121.safeParse(value).success,
+		isInputValid: (value) => openApiInput121().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput121().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint121(ctx, openApiInput121.parse(input)),
+				await openApiEndpoint121(ctx, openApiInput121().parse(input)),
 			),
 	},
 	{
@@ -14173,11 +16744,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { dirty: [] },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput122.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput122.safeParse(value).success,
+		isInputValid: (value) => openApiInput122().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput122().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint122(ctx, openApiInput122.parse(input)),
+				await openApiEndpoint122(ctx, openApiInput122().parse(input)),
 			),
 	},
 	{
@@ -14189,11 +16760,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { message: '', task_id: 1 },
 		expectedOptions: { method: 'POST', body: { branch: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput123.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput123.safeParse(value).success,
+		isInputValid: (value) => openApiInput123().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput123().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint123(ctx, openApiInput123.parse(input)),
+				await openApiEndpoint123(ctx, openApiInput123().parse(input)),
 			),
 	},
 	{
@@ -14212,11 +16783,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET', query: { branch: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput124.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput124.safeParse(value).success,
+		isInputValid: (value) => openApiInput124().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput124().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint124(ctx, openApiInput124.parse(input)),
+				await openApiEndpoint124(ctx, openApiInput124().parse(input)),
 			),
 	},
 	{
@@ -14233,11 +16804,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput125.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput125.safeParse(value).success,
+		isInputValid: (value) => openApiInput125().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput125().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint125(ctx, openApiInput125.parse(input)),
+				await openApiEndpoint125(ctx, openApiInput125().parse(input)),
 			),
 	},
 	{
@@ -14249,11 +16820,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { status: 'success', task_id: 1 },
 		expectedOptions: { method: 'POST', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput126.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput126.safeParse(value).success,
+		isInputValid: (value) => openApiInput126().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput126().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint126(ctx, openApiInput126.parse(input)),
+				await openApiEndpoint126(ctx, openApiInput126().parse(input)),
 			),
 	},
 	{
@@ -14265,11 +16836,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { is_dirty: false },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput127.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput127.safeParse(value).success,
+		isInputValid: (value) => openApiInput127().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput127().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint127(ctx, openApiInput127.parse(input)),
+				await openApiEndpoint127(ctx, openApiInput127().parse(input)),
 			),
 	},
 	{
@@ -14281,11 +16852,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { success: false },
 		expectedOptions: { method: 'PUT', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput128.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput128.safeParse(value).success,
+		isInputValid: (value) => openApiInput128().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput128().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint128(ctx, openApiInput128.parse(input)),
+				await openApiEndpoint128(ctx, openApiInput128().parse(input)),
 			),
 	},
 	{
@@ -14300,11 +16871,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			body: { new_branch: 'a', message: 'a' },
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput129.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput129.safeParse(value).success,
+		isInputValid: (value) => openApiInput129().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput129().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint129(ctx, openApiInput129.parse(input)),
+				await openApiEndpoint129(ctx, openApiInput129().parse(input)),
 			),
 	},
 	{
@@ -14316,11 +16887,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { status: 'success' },
 		expectedOptions: { method: 'POST', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput130.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput130.safeParse(value).success,
+		isInputValid: (value) => openApiInput130().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput130().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint130(ctx, openApiInput130.parse(input)),
+				await openApiEndpoint130(ctx, openApiInput130().parse(input)),
 			),
 	},
 	{
@@ -14347,11 +16918,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			},
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput131.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput131.safeParse(value).success,
+		isInputValid: (value) => openApiInput131().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput131().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint131(ctx, openApiInput131.parse(input)),
+				await openApiEndpoint131(ctx, openApiInput131().parse(input)),
 			),
 	},
 	{
@@ -14366,7 +16937,7 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 				transform_target: { type: 'table', name: '' },
 			},
 		},
-		output: { status: 202, body: { run_id: 1 } },
+		output: { run_id: 1 },
 		expectedOptions: {
 			method: 'POST',
 			body: {
@@ -14376,11 +16947,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			},
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput132.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput132.safeParse(value).success,
+		isInputValid: (value) => openApiInput132().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput132().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint132(ctx, openApiInput132.parse(input)),
+				await openApiEndpoint132(ctx, openApiInput132().parse(input)),
 			),
 	},
 	{
@@ -14396,7 +16967,7 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 				target_entity_type: 'card',
 			},
 		},
-		output: { status: 202, body: { run_id: 1 } },
+		output: { run_id: 1 },
 		expectedOptions: {
 			method: 'POST',
 			body: {
@@ -14407,11 +16978,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			},
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput133.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput133.safeParse(value).success,
+		isInputValid: (value) => openApiInput133().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput133().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint133(ctx, openApiInput133.parse(input)),
+				await openApiEndpoint133(ctx, openApiInput133().parse(input)),
 			),
 	},
 	{
@@ -14423,11 +16994,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput134.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput134.safeParse(value).success,
+		isInputValid: (value) => openApiInput134().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput134().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint134(ctx, openApiInput134.parse(input)),
+				await openApiEndpoint134(ctx, openApiInput134().parse(input)),
 			),
 	},
 	{
@@ -14452,11 +17023,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput135.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput135.safeParse(value).success,
+		isInputValid: (value) => openApiInput135().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput135().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint135(ctx, openApiInput135.parse(input)),
+				await openApiEndpoint135(ctx, openApiInput135().parse(input)),
 			),
 	},
 	{
@@ -14468,11 +17039,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { success: false },
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput136.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput136.safeParse(value).success,
+		isInputValid: (value) => openApiInput136().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput136().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint136(ctx, openApiInput136.parse(input)),
+				await openApiEndpoint136(ctx, openApiInput136().parse(input)),
 			),
 	},
 	{
@@ -14484,11 +17055,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { last_checked_at: '2026-01-02T03:04:05Z', advisories: [] },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput137.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput137.safeParse(value).success,
+		isInputValid: (value) => openApiInput137().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput137().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint137(ctx, openApiInput137.parse(input)),
+				await openApiEndpoint137(ctx, openApiInput137().parse(input)),
 			),
 	},
 	{
@@ -14500,11 +17071,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'POST', body: { advisory_ids: [] } },
 		multipart: false,
-		isInputValid: (value) => openApiInput138.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput138.safeParse(value).success,
+		isInputValid: (value) => openApiInput138().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput138().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint138(ctx, openApiInput138.parse(input)),
+				await openApiEndpoint138(ctx, openApiInput138().parse(input)),
 			),
 	},
 	{
@@ -14516,11 +17087,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { status: 'a' },
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput139.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput139.safeParse(value).success,
+		isInputValid: (value) => openApiInput139().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput139().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint139(ctx, openApiInput139.parse(input)),
+				await openApiEndpoint139(ctx, openApiInput139().parse(input)),
 			),
 	},
 	{
@@ -14532,11 +17103,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { success: false },
 		expectedOptions: { method: 'POST', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput140.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput140.safeParse(value).success,
+		isInputValid: (value) => openApiInput140().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput140().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint140(ctx, openApiInput140.parse(input)),
+				await openApiEndpoint140(ctx, openApiInput140().parse(input)),
 			),
 	},
 	{
@@ -14553,11 +17124,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput141.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput141.safeParse(value).success,
+		isInputValid: (value) => openApiInput141().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput141().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint141(ctx, openApiInput141.parse(input)),
+				await openApiEndpoint141(ctx, openApiInput141().parse(input)),
 			),
 	},
 	{
@@ -14569,11 +17140,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { total: 0, limit: 1, offset: 0, data: [] },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput142.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput142.safeParse(value).success,
+		isInputValid: (value) => openApiInput142().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput142().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint142(ctx, openApiInput142.parse(input)),
+				await openApiEndpoint142(ctx, openApiInput142().parse(input)),
 			),
 	},
 	{
@@ -14585,11 +17156,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { revoked: 0, remaining: 0, user_ids: [] },
 		expectedOptions: { method: 'POST', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput143.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput143.safeParse(value).success,
+		isInputValid: (value) => openApiInput143().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput143().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint143(ctx, openApiInput143.parse(input)),
+				await openApiEndpoint143(ctx, openApiInput143().parse(input)),
 			),
 	},
 	{
@@ -14614,11 +17185,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST', body: { grant_duration_minutes: 1 } },
 		multipart: false,
-		isInputValid: (value) => openApiInput144.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput144.safeParse(value).success,
+		isInputValid: (value) => openApiInput144().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput144().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint144(ctx, openApiInput144.parse(input)),
+				await openApiEndpoint144(ctx, openApiInput144().parse(input)),
 			),
 	},
 	{
@@ -14630,11 +17201,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [], total: 0, limit: 1, offset: 0 },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput145.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput145.safeParse(value).success,
+		isInputValid: (value) => openApiInput145().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput145().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint145(ctx, openApiInput145.parse(input)),
+				await openApiEndpoint145(ctx, openApiInput145().parse(input)),
 			),
 	},
 	{
@@ -14659,11 +17230,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput146.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput146.safeParse(value).success,
+		isInputValid: (value) => openApiInput146().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput146().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint146(ctx, openApiInput146.parse(input)),
+				await openApiEndpoint146(ctx, openApiInput146().parse(input)),
 			),
 	},
 	{
@@ -14688,11 +17259,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'PUT' },
 		multipart: false,
-		isInputValid: (value) => openApiInput147.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput147.safeParse(value).success,
+		isInputValid: (value) => openApiInput147().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput147().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint147(ctx, openApiInput147.parse(input)),
+				await openApiEndpoint147(ctx, openApiInput147().parse(input)),
 			),
 	},
 	{
@@ -14710,11 +17281,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST', body: { name: 'a', slug: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput148.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput148.safeParse(value).success,
+		isInputValid: (value) => openApiInput148().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput148().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint148(ctx, openApiInput148.parse(input)),
+				await openApiEndpoint148(ctx, openApiInput148().parse(input)),
 			),
 	},
 	{
@@ -14726,11 +17297,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [] },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput149.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput149.safeParse(value).success,
+		isInputValid: (value) => openApiInput149().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput149().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint149(ctx, openApiInput149.parse(input)),
+				await openApiEndpoint149(ctx, openApiInput149().parse(input)),
 			),
 	},
 	{
@@ -14748,11 +17319,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'PUT', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput150.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput150.safeParse(value).success,
+		isInputValid: (value) => openApiInput150().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput150().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint150(ctx, openApiInput150.parse(input)),
+				await openApiEndpoint150(ctx, openApiInput150().parse(input)),
 			),
 	},
 	{
@@ -14770,11 +17341,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput151.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput151.safeParse(value).success,
+		isInputValid: (value) => openApiInput151().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput151().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint151(ctx, openApiInput151.parse(input)),
+				await openApiEndpoint151(ctx, openApiInput151().parse(input)),
 			),
 	},
 	{
@@ -14786,11 +17357,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput152.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput152.safeParse(value).success,
+		isInputValid: (value) => openApiInput152().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput152().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint152(ctx, openApiInput152.parse(input)),
+				await openApiEndpoint152(ctx, openApiInput152().parse(input)),
 			),
 	},
 	{
@@ -14817,11 +17388,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			body: { transform_id: 1, name: 'a', inputs: [], expectations: [] },
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput153.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput153.safeParse(value).success,
+		isInputValid: (value) => openApiInput153().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput153().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint153(ctx, openApiInput153.parse(input)),
+				await openApiEndpoint153(ctx, openApiInput153().parse(input)),
 			),
 	},
 	{
@@ -14852,11 +17423,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput154.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput154.safeParse(value).success,
+		isInputValid: (value) => openApiInput154().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput154().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint154(ctx, openApiInput154.parse(input)),
+				await openApiEndpoint154(ctx, openApiInput154().parse(input)),
 			),
 	},
 	{
@@ -14878,11 +17449,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'PUT', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput155.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput155.safeParse(value).success,
+		isInputValid: (value) => openApiInput155().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput155().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint155(ctx, openApiInput155.parse(input)),
+				await openApiEndpoint155(ctx, openApiInput155().parse(input)),
 			),
 	},
 	{
@@ -14894,11 +17465,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'DELETE' },
 		multipart: false,
-		isInputValid: (value) => openApiInput156.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput156.safeParse(value).success,
+		isInputValid: (value) => openApiInput156().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput156().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint156(ctx, openApiInput156.parse(input)),
+				await openApiEndpoint156(ctx, openApiInput156().parse(input)),
 			),
 	},
 	{
@@ -14910,11 +17481,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [], limit: 1, offset: 1, total: 1 },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput157.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput157.safeParse(value).success,
+		isInputValid: (value) => openApiInput157().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput157().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint157(ctx, openApiInput157.parse(input)),
+				await openApiEndpoint157(ctx, openApiInput157().parse(input)),
 			),
 	},
 	{
@@ -14926,11 +17497,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { status: 'passed', expectations: [], tables: {} },
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput158.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput158.safeParse(value).success,
+		isInputValid: (value) => openApiInput158().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput158().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint158(ctx, openApiInput158.parse(input)),
+				await openApiEndpoint158(ctx, openApiInput158().parse(input)),
 			),
 	},
 	{
@@ -14945,11 +17516,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			body: { code: '', source_tables: [{ alias: '' }] },
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput159.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput159.safeParse(value).success,
+		isInputValid: (value) => openApiInput159().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput159().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint159(ctx, openApiInput159.parse(input)),
+				await openApiEndpoint159(ctx, openApiInput159().parse(input)),
 			),
 	},
 	{
@@ -14961,11 +17532,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { name: '', status: 'not-run', sources: [], available_lenses: [] },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput160.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput160.safeParse(value).success,
+		isInputValid: (value) => openApiInput160().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput160().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint160(ctx, openApiInput160.parse(input)),
+				await openApiEndpoint160(ctx, openApiInput160().parse(input)),
 			),
 	},
 	{
@@ -14977,11 +17548,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { id: '', display_name: '', sections: [], cards: [] },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput161.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput161.safeParse(value).success,
+		isInputValid: (value) => openApiInput161().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput161().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint161(ctx, openApiInput161.parse(input)),
+				await openApiEndpoint161(ctx, openApiInput161().parse(input)),
 			),
 	},
 	{
@@ -15000,85 +17571,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			requestTimeoutMs: 120000,
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput162.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput162.safeParse(value).success,
+		isInputValid: (value) => openApiInput162().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput162().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint162(ctx, openApiInput162.parse(input)),
-			),
-	},
-	{
-		shortPath: 'embedMcp.getBootstrap',
-		operationId: 'get-api-embed-mcp-bootstrap',
-		method: 'GET',
-		path: '/api/embed-mcp/bootstrap',
-		input: {},
-		output: {
-			user: {
-				id: 1,
-				locale: '',
-				is_superuser: false,
-				is_data_analyst: false,
-				is_qbnewb: false,
-				tenant_id: 1,
-				personal_collection_id: 1,
-				permissions: {
-					can_create_queries: false,
-					can_create_native_queries: false,
-				},
-			},
-			settings: {},
-		},
-		expectedOptions: { method: 'GET' },
-		multipart: false,
-		isInputValid: (value) => openApiInput163.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput163.safeParse(value).success,
-		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
-			JsonValueSchema.parse(
-				await openApiEndpoint163(ctx, openApiInput163.parse(input)),
-			),
-	},
-	{
-		shortPath: 'embedMcp.postFeedback',
-		operationId: 'post-api-embed-mcp-feedback',
-		method: 'POST',
-		path: '/api/embed-mcp/feedback',
-		input: {
-			body: {
-				feedback: { positive: false },
-				conversation_data: { source: 'mcp' },
-			},
-		},
-		output: null,
-		expectedOptions: {
-			method: 'POST',
-			body: {
-				feedback: { positive: false },
-				conversation_data: { source: 'mcp' },
-			},
-		},
-		multipart: false,
-		isInputValid: (value) => openApiInput164.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput164.safeParse(value).success,
-		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
-			JsonValueSchema.parse(
-				await openApiEndpoint164(ctx, openApiInput164.parse(input)),
-			),
-	},
-	{
-		shortPath: 'embedMcp.getQueriesByHandle',
-		operationId: 'get-api-embed-mcp-queries-handle',
-		method: 'GET',
-		path: '/api/embed-mcp/queries/00000000-0000-4000-8000-000000000001',
-		input: { path: { handle: '00000000-0000-4000-8000-000000000001' } },
-		output: { query: 'a', prompt: '' },
-		expectedOptions: { method: 'GET' },
-		multipart: false,
-		isInputValid: (value) => openApiInput165.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput165.safeParse(value).success,
-		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
-			JsonValueSchema.parse(
-				await openApiEndpoint165(ctx, openApiInput165.parse(input)),
+				await openApiEndpoint162(ctx, openApiInput162().parse(input)),
 			),
 	},
 	{
@@ -15090,11 +17587,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput166.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput166.safeParse(value).success,
+		isInputValid: (value) => openApiInput166().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput166().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint166(ctx, openApiInput166.parse(input)),
+				await openApiEndpoint166(ctx, openApiInput166().parse(input)),
 			),
 	},
 	{
@@ -15114,11 +17611,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST', body: { name: 'a', settings: {} } },
 		multipart: false,
-		isInputValid: (value) => openApiInput167.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput167.safeParse(value).success,
+		isInputValid: (value) => openApiInput167().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput167().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint167(ctx, openApiInput167.parse(input)),
+				await openApiEndpoint167(ctx, openApiInput167().parse(input)),
 			),
 	},
 	{
@@ -15130,11 +17627,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'POST', body: { themes: [] } },
 		multipart: false,
-		isInputValid: (value) => openApiInput168.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput168.safeParse(value).success,
+		isInputValid: (value) => openApiInput168().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput168().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint168(ctx, openApiInput168.parse(input)),
+				await openApiEndpoint168(ctx, openApiInput168().parse(input)),
 			),
 	},
 	{
@@ -15154,11 +17651,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput169.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput169.safeParse(value).success,
+		isInputValid: (value) => openApiInput169().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput169().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint169(ctx, openApiInput169.parse(input)),
+				await openApiEndpoint169(ctx, openApiInput169().parse(input)),
 			),
 	},
 	{
@@ -15178,11 +17675,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'PUT', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput170.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput170.safeParse(value).success,
+		isInputValid: (value) => openApiInput170().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput170().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint170(ctx, openApiInput170.parse(input)),
+				await openApiEndpoint170(ctx, openApiInput170().parse(input)),
 			),
 	},
 	{
@@ -15194,11 +17691,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'DELETE' },
 		multipart: false,
-		isInputValid: (value) => openApiInput171.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput171.safeParse(value).success,
+		isInputValid: (value) => openApiInput171().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput171().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint171(ctx, openApiInput171.parse(input)),
+				await openApiEndpoint171(ctx, openApiInput171().parse(input)),
 			),
 	},
 	{
@@ -15218,11 +17715,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput172.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput172.safeParse(value).success,
+		isInputValid: (value) => openApiInput172().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput172().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint172(ctx, openApiInput172.parse(input)),
+				await openApiEndpoint172(ctx, openApiInput172().parse(input)),
 			),
 	},
 	{
@@ -15253,11 +17750,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput173.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput173.safeParse(value).success,
+		isInputValid: (value) => openApiInput173().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput173().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint173(ctx, openApiInput173.parse(input)),
+				await openApiEndpoint173(ctx, openApiInput173().parse(input)),
 			),
 	},
 	{
@@ -15269,11 +17766,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput174.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput174.safeParse(value).success,
+		isInputValid: (value) => openApiInput174().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput174().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint174(ctx, openApiInput174.parse(input)),
+				await openApiEndpoint174(ctx, openApiInput174().parse(input)),
 			),
 	},
 	{
@@ -15291,11 +17788,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET', responseType: 'binary' },
 		multipart: false,
-		isInputValid: (value) => openApiInput175.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput175.safeParse(value).success,
+		isInputValid: (value) => openApiInput175().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput175().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint175(ctx, openApiInput175.parse(input)),
+				await openApiEndpoint175(ctx, openApiInput175().parse(input)),
 			),
 	},
 	{
@@ -15307,11 +17804,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { id: 1, name: '', creator_id: 1 },
 		expectedOptions: { method: 'POST', body: { name: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput176.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput176.safeParse(value).success,
+		isInputValid: (value) => openApiInput176().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput176().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint176(ctx, openApiInput176.parse(input)),
+				await openApiEndpoint176(ctx, openApiInput176().parse(input)),
 			),
 	},
 	{
@@ -15323,11 +17820,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { metrics: [], dimension_groups: [] },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput177.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput177.safeParse(value).success,
+		isInputValid: (value) => openApiInput177().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput177().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint177(ctx, openApiInput177.parse(input)),
+				await openApiEndpoint177(ctx, openApiInput177().parse(input)),
 			),
 	},
 	{
@@ -15339,11 +17836,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { total: 0, limit: 0, offset: 0, data: [] },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput178.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput178.safeParse(value).success,
+		isInputValid: (value) => openApiInput178().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput178().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint178(ctx, openApiInput178.parse(input)),
+				await openApiEndpoint178(ctx, openApiInput178().parse(input)),
 			),
 	},
 	{
@@ -15355,11 +17852,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'PUT', body: { starred: false } },
 		multipart: false,
-		isInputValid: (value) => openApiInput179.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput179.safeParse(value).success,
+		isInputValid: (value) => openApiInput179().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput179().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint179(ctx, openApiInput179.parse(input)),
+				await openApiEndpoint179(ctx, openApiInput179().parse(input)),
 			),
 	},
 	{
@@ -15371,11 +17868,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'PUT', body: { page_ids: [], hidden: false } },
 		multipart: false,
-		isInputValid: (value) => openApiInput180.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput180.safeParse(value).success,
+		isInputValid: (value) => openApiInput180().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput180().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint180(ctx, openApiInput180.parse(input)),
+				await openApiEndpoint180(ctx, openApiInput180().parse(input)),
 			),
 	},
 	{
@@ -15387,11 +17884,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'GET', query: {}, requestTimeoutMs: 120000 },
 		multipart: false,
-		isInputValid: (value) => openApiInput181.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput181.safeParse(value).success,
+		isInputValid: (value) => openApiInput181().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput181().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint181(ctx, openApiInput181.parse(input)),
+				await openApiEndpoint181(ctx, openApiInput181().parse(input)),
 			),
 	},
 	{
@@ -15403,11 +17900,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { id: 1, canceled_at: null, completed_at: null },
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput182.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput182.safeParse(value).success,
+		isInputValid: (value) => openApiInput182().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput182().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint182(ctx, openApiInput182.parse(input)),
+				await openApiEndpoint182(ctx, openApiInput182().parse(input)),
 			),
 	},
 	{
@@ -15419,11 +17916,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { id: 1, name: '', creator_id: 1 },
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput183.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput183.safeParse(value).success,
+		isInputValid: (value) => openApiInput183().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput183().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint183(ctx, openApiInput183.parse(input)),
+				await openApiEndpoint183(ctx, openApiInput183().parse(input)),
 			),
 	},
 	{
@@ -15435,11 +17932,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { id: 1, name: '', creator_id: 1 },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput184.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput184.safeParse(value).success,
+		isInputValid: (value) => openApiInput184().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput184().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint184(ctx, openApiInput184.parse(input)),
+				await openApiEndpoint184(ctx, openApiInput184().parse(input)),
 			),
 	},
 	{
@@ -15451,11 +17948,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { id: 1, name: '', creator_id: 1 },
 		expectedOptions: { method: 'PUT', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput185.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput185.safeParse(value).success,
+		isInputValid: (value) => openApiInput185().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput185().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint185(ctx, openApiInput185.parse(input)),
+				await openApiEndpoint185(ctx, openApiInput185().parse(input)),
 			),
 	},
 	{
@@ -15467,11 +17964,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'DELETE' },
 		multipart: false,
-		isInputValid: (value) => openApiInput186.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput186.safeParse(value).success,
+		isInputValid: (value) => openApiInput186().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput186().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint186(ctx, openApiInput186.parse(input)),
+				await openApiEndpoint186(ctx, openApiInput186().parse(input)),
 			),
 	},
 	{
@@ -15509,11 +18006,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			},
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput187.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput187.safeParse(value).success,
+		isInputValid: (value) => openApiInput187().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput187().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint187(ctx, openApiInput187.parse(input)),
+				await openApiEndpoint187(ctx, openApiInput187().parse(input)),
 			),
 	},
 	{
@@ -15548,11 +18045,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			},
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput188.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput188.safeParse(value).success,
+		isInputValid: (value) => openApiInput188().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput188().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint188(ctx, openApiInput188.parse(input)),
+				await openApiEndpoint188(ctx, openApiInput188().parse(input)),
 			),
 	},
 	{
@@ -15564,11 +18061,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { table_ids: [] },
 		expectedOptions: { method: 'POST', body: { field_ids: [] } },
 		multipart: false,
-		isInputValid: (value) => openApiInput189.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput189.safeParse(value).success,
+		isInputValid: (value) => openApiInput189().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput189().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint189(ctx, openApiInput189.parse(input)),
+				await openApiEndpoint189(ctx, openApiInput189().parse(input)),
 			),
 	},
 	{
@@ -15580,11 +18077,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput190.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput190.safeParse(value).success,
+		isInputValid: (value) => openApiInput190().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput190().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint190(ctx, openApiInput190.parse(input)),
+				await openApiEndpoint190(ctx, openApiInput190().parse(input)),
 			),
 	},
 	{
@@ -15596,11 +18093,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [] },
 		expectedOptions: { method: 'GET', query: { 'transform-id': 1 } },
 		multipart: false,
-		isInputValid: (value) => openApiInput191.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput191.safeParse(value).success,
+		isInputValid: (value) => openApiInput191().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput191().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint191(ctx, openApiInput191.parse(input)),
+				await openApiEndpoint191(ctx, openApiInput191().parse(input)),
 			),
 	},
 	{
@@ -15634,11 +18131,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			},
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput192.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput192.safeParse(value).success,
+		isInputValid: (value) => openApiInput192().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput192().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint192(ctx, openApiInput192.parse(input)),
+				await openApiEndpoint192(ctx, openApiInput192().parse(input)),
 			),
 	},
 	{
@@ -15661,11 +18158,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput193.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput193.safeParse(value).success,
+		isInputValid: (value) => openApiInput193().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput193().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint193(ctx, openApiInput193.parse(input)),
+				await openApiEndpoint193(ctx, openApiInput193().parse(input)),
 			),
 	},
 	{
@@ -15698,11 +18195,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			},
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput194.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput194.safeParse(value).success,
+		isInputValid: (value) => openApiInput194().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput194().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint194(ctx, openApiInput194.parse(input)),
+				await openApiEndpoint194(ctx, openApiInput194().parse(input)),
 			),
 	},
 	{
@@ -15714,11 +18211,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { tables: [], card_ids: [] },
 		expectedOptions: { method: 'POST', body: { database_id: 1, sql: '' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput195.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput195.safeParse(value).success,
+		isInputValid: (value) => openApiInput195().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput195().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint195(ctx, openApiInput195.parse(input)),
+				await openApiEndpoint195(ctx, openApiInput195().parse(input)),
 			),
 	},
 	{
@@ -15730,11 +18227,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput196.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput196.safeParse(value).success,
+		isInputValid: (value) => openApiInput196().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput196().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint196(ctx, openApiInput196.parse(input)),
+				await openApiEndpoint196(ctx, openApiInput196().parse(input)),
 			),
 	},
 	{
@@ -15746,11 +18243,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput197.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput197.safeParse(value).success,
+		isInputValid: (value) => openApiInput197().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput197().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint197(ctx, openApiInput197.parse(input)),
+				await openApiEndpoint197(ctx, openApiInput197().parse(input)),
 			),
 	},
 	{
@@ -15762,11 +18259,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput198.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput198.safeParse(value).success,
+		isInputValid: (value) => openApiInput198().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput198().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint198(ctx, openApiInput198.parse(input)),
+				await openApiEndpoint198(ctx, openApiInput198().parse(input)),
 			),
 	},
 	{
@@ -15787,19 +18284,19 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST', body: { type: '' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput199.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput199.safeParse(value).success,
+		isInputValid: (value) => openApiInput199().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput199().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint199(ctx, openApiInput199.parse(input)),
+				await openApiEndpoint199(ctx, openApiInput199().parse(input)),
 			),
 	},
 	{
 		shortPath: 'llm.putProvidersByKey',
 		operationId: 'put-api-llm-providers-key',
 		method: 'PUT',
-		path: '/api/llm/providers/',
-		input: { path: { key: '' }, body: {} },
+		path: '/api/llm/providers/openai',
+		input: { path: { key: 'openai' }, body: {} },
 		output: {
 			key: '',
 			type: '',
@@ -15812,27 +18309,27 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'PUT', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput200.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput200.safeParse(value).success,
+		isInputValid: (value) => openApiInput200().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput200().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint200(ctx, openApiInput200.parse(input)),
+				await openApiEndpoint200(ctx, openApiInput200().parse(input)),
 			),
 	},
 	{
 		shortPath: 'llm.deleteProvidersByKey',
 		operationId: 'delete-api-llm-providers-key',
 		method: 'DELETE',
-		path: '/api/llm/providers/',
-		input: { path: { key: '' } },
+		path: '/api/llm/providers/openai',
+		input: { path: { key: 'openai' } },
 		output: null,
 		expectedOptions: { method: 'DELETE' },
 		multipart: false,
-		isInputValid: (value) => openApiInput201.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput201.safeParse(value).success,
+		isInputValid: (value) => openApiInput201().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput201().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint201(ctx, openApiInput201.parse(input)),
+				await openApiEndpoint201(ctx, openApiInput201().parse(input)),
 			),
 	},
 	{
@@ -15844,11 +18341,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput202.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput202.safeParse(value).success,
+		isInputValid: (value) => openApiInput202().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput202().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint202(ctx, openApiInput202.parse(input)),
+				await openApiEndpoint202(ctx, openApiInput202().parse(input)),
 			),
 	},
 	{
@@ -15880,11 +18377,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			},
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput203.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput203.safeParse(value).success,
+		isInputValid: (value) => openApiInput203().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput203().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint203(ctx, openApiInput203.parse(input)),
+				await openApiEndpoint203(ctx, openApiInput203().parse(input)),
 			),
 	},
 	{
@@ -15896,11 +18393,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput204.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput204.safeParse(value).success,
+		isInputValid: (value) => openApiInput204().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput204().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint204(ctx, openApiInput204.parse(input)),
+				await openApiEndpoint204(ctx, openApiInput204().parse(input)),
 			),
 	},
 	{
@@ -15921,11 +18418,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput205.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput205.safeParse(value).success,
+		isInputValid: (value) => openApiInput205().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput205().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint205(ctx, openApiInput205.parse(input)),
+				await openApiEndpoint205(ctx, openApiInput205().parse(input)),
 			),
 	},
 	{
@@ -15946,11 +18443,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'PUT', body: { revision_message: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput206.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput206.safeParse(value).success,
+		isInputValid: (value) => openApiInput206().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput206().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint206(ctx, openApiInput206.parse(input)),
+				await openApiEndpoint206(ctx, openApiInput206().parse(input)),
 			),
 	},
 	{
@@ -15965,11 +18462,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [null],
 		expectedOptions: { method: 'GET', query: { value: '' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput207.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput207.safeParse(value).success,
+		isInputValid: (value) => openApiInput207().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput207().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint207(ctx, openApiInput207.parse(input)),
+				await openApiEndpoint207(ctx, openApiInput207().parse(input)),
 			),
 	},
 	{
@@ -15984,11 +18481,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET', query: { query: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput208.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput208.safeParse(value).success,
+		isInputValid: (value) => openApiInput208().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput208().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint208(ctx, openApiInput208.parse(input)),
+				await openApiEndpoint208(ctx, openApiInput208().parse(input)),
 			),
 	},
 	{
@@ -16002,11 +18499,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { has_more_values: false, values: [] },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput209.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput209.safeParse(value).success,
+		isInputValid: (value) => openApiInput209().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput209().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint209(ctx, openApiInput209.parse(input)),
+				await openApiEndpoint209(ctx, openApiInput209().parse(input)),
 			),
 	},
 	{
@@ -16018,11 +18515,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [], total: 0, limit: 0, offset: 0 },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput210.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput210.safeParse(value).success,
+		isInputValid: (value) => openApiInput210().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput210().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint210(ctx, openApiInput210.parse(input)),
+				await openApiEndpoint210(ctx, openApiInput210().parse(input)),
 			),
 	},
 	{
@@ -16042,11 +18539,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput211.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput211.safeParse(value).success,
+		isInputValid: (value) => openApiInput211().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput211().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint211(ctx, openApiInput211.parse(input)),
+				await openApiEndpoint211(ctx, openApiInput211().parse(input)),
 			),
 	},
 	{
@@ -16072,11 +18569,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			body: { message_id: '00000000-0000-4000-8000-000000000001' },
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput212.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput212.safeParse(value).success,
+		isInputValid: (value) => openApiInput212().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput212().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint212(ctx, openApiInput212.parse(input)),
+				await openApiEndpoint212(ctx, openApiInput212().parse(input)),
 			),
 	},
 	{
@@ -16115,11 +18612,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			},
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput213.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput213.safeParse(value).success,
+		isInputValid: (value) => openApiInput213().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput213().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint213(ctx, openApiInput213.parse(input)),
+				await openApiEndpoint213(ctx, openApiInput213().parse(input)),
 			),
 	},
 	{
@@ -16131,11 +18628,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { status: 'ready', title: '' },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput214.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput214.safeParse(value).success,
+		isInputValid: (value) => openApiInput214().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput214().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint214(ctx, openApiInput214.parse(input)),
+				await openApiEndpoint214(ctx, openApiInput214().parse(input)),
 			),
 	},
 	{
@@ -16157,11 +18654,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST', body: { instructions: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput215.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput215.safeParse(value).success,
+		isInputValid: (value) => openApiInput215().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput215().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint215(ctx, openApiInput215.parse(input)),
+				await openApiEndpoint215(ctx, openApiInput215().parse(input)),
 			),
 	},
 	{
@@ -16176,11 +18673,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			body: { metabot_id: 1, message_id: 'a', positive: false },
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput216.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput216.safeParse(value).success,
+		isInputValid: (value) => openApiInput216().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput216().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint216(ctx, openApiInput216.parse(input)),
+				await openApiEndpoint216(ctx, openApiInput216().parse(input)),
 			),
 	},
 	{
@@ -16192,11 +18689,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { status: 'generated', prompt_count: 1 },
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput217.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput217.safeParse(value).success,
+		isInputValid: (value) => openApiInput217().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput217().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint217(ctx, openApiInput217.parse(input)),
+				await openApiEndpoint217(ctx, openApiInput217().parse(input)),
 			),
 	},
 	{
@@ -16215,11 +18712,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput218.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput218.safeParse(value).success,
+		isInputValid: (value) => openApiInput218().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput218().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint218(ctx, openApiInput218.parse(input)),
+				await openApiEndpoint218(ctx, openApiInput218().parse(input)),
 			),
 	},
 	{
@@ -16244,11 +18741,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			},
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput219.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput219.safeParse(value).success,
+		isInputValid: (value) => openApiInput219().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput219().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint219(ctx, openApiInput219.parse(input)),
+				await openApiEndpoint219(ctx, openApiInput219().parse(input)),
 			),
 	},
 	{
@@ -16277,11 +18774,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			},
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput220.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput220.safeParse(value).success,
+		isInputValid: (value) => openApiInput220().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput220().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint220(ctx, openApiInput220.parse(input)),
+				await openApiEndpoint220(ctx, openApiInput220().parse(input)),
 			),
 	},
 	{
@@ -16293,11 +18790,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { total: 0, limit: 1, offset: 0, data: [] },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput221.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput221.safeParse(value).success,
+		isInputValid: (value) => openApiInput221().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput221().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint221(ctx, openApiInput221.parse(input)),
+				await openApiEndpoint221(ctx, openApiInput221().parse(input)),
 			),
 	},
 	{
@@ -16315,11 +18812,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			requestTimeoutMs: 120000,
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput222.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput222.safeParse(value).success,
+		isInputValid: (value) => openApiInput222().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput222().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint222(ctx, openApiInput222.parse(input)),
+				await openApiEndpoint222(ctx, openApiInput222().parse(input)),
 			),
 	},
 	{
@@ -16337,11 +18834,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			requestTimeoutMs: 120000,
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput223.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput223.safeParse(value).success,
+		isInputValid: (value) => openApiInput223().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput223().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint223(ctx, openApiInput223.parse(input)),
+				await openApiEndpoint223(ctx, openApiInput223().parse(input)),
 			),
 	},
 	{
@@ -16360,11 +18857,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput224.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput224.safeParse(value).success,
+		isInputValid: (value) => openApiInput224().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput224().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint224(ctx, openApiInput224.parse(input)),
+				await openApiEndpoint224(ctx, openApiInput224().parse(input)),
 			),
 	},
 	{
@@ -16376,11 +18873,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { added: [], addable: [] },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput225.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput225.safeParse(value).success,
+		isInputValid: (value) => openApiInput225().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput225().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint225(ctx, openApiInput225.parse(input)),
+				await openApiEndpoint225(ctx, openApiInput225().parse(input)),
 			),
 	},
 	{
@@ -16392,11 +18889,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'POST', body: { dimensions: [] } },
 		multipart: false,
-		isInputValid: (value) => openApiInput226.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput226.safeParse(value).success,
+		isInputValid: (value) => openApiInput226().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput226().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint226(ctx, openApiInput226.parse(input)),
+				await openApiEndpoint226(ctx, openApiInput226().parse(input)),
 			),
 	},
 	{
@@ -16408,11 +18905,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'POST', body: { dimension_ids: [] } },
 		multipart: false,
-		isInputValid: (value) => openApiInput227.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput227.safeParse(value).success,
+		isInputValid: (value) => openApiInput227().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput227().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint227(ctx, openApiInput227.parse(input)),
+				await openApiEndpoint227(ctx, openApiInput227().parse(input)),
 			),
 	},
 	{
@@ -16424,11 +18921,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'POST', body: { dimension_ids: [] } },
 		multipart: false,
-		isInputValid: (value) => openApiInput228.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput228.safeParse(value).success,
+		isInputValid: (value) => openApiInput228().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput228().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint228(ctx, openApiInput228.parse(input)),
+				await openApiEndpoint228(ctx, openApiInput228().parse(input)),
 			),
 	},
 	{
@@ -16440,11 +18937,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'POST', body: { dimension_id: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput229.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput229.safeParse(value).success,
+		isInputValid: (value) => openApiInput229().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput229().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint229(ctx, openApiInput229.parse(input)),
+				await openApiEndpoint229(ctx, openApiInput229().parse(input)),
 			),
 	},
 	{
@@ -16459,11 +18956,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: {},
 		expectedOptions: { method: 'POST', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput230.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput230.safeParse(value).success,
+		isInputValid: (value) => openApiInput230().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput230().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint230(ctx, openApiInput230.parse(input)),
+				await openApiEndpoint230(ctx, openApiInput230().parse(input)),
 			),
 	},
 	{
@@ -16478,11 +18975,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [null],
 		expectedOptions: { method: 'GET', query: { value: '' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput231.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput231.safeParse(value).success,
+		isInputValid: (value) => openApiInput231().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput231().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint231(ctx, openApiInput231.parse(input)),
+				await openApiEndpoint231(ctx, openApiInput231().parse(input)),
 			),
 	},
 	{
@@ -16497,11 +18994,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET', query: { query: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput232.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput232.safeParse(value).success,
+		isInputValid: (value) => openApiInput232().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput232().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint232(ctx, openApiInput232.parse(input)),
+				await openApiEndpoint232(ctx, openApiInput232().parse(input)),
 			),
 	},
 	{
@@ -16515,11 +19012,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { has_more_values: false, values: [] },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput233.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput233.safeParse(value).success,
+		isInputValid: (value) => openApiInput233().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput233().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint233(ctx, openApiInput233.parse(input)),
+				await openApiEndpoint233(ctx, openApiInput233().parse(input)),
 			),
 	},
 	{
@@ -16536,11 +19033,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			body: { payload_type: 'notification/dashboard', payload: { card_id: 1 } },
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput234.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput234.safeParse(value).success,
+		isInputValid: (value) => openApiInput234().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput234().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint234(ctx, openApiInput234.parse(input)),
+				await openApiEndpoint234(ctx, openApiInput234().parse(input)),
 			),
 	},
 	{
@@ -16552,11 +19049,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [], total: 0, limit: 1, offset: 0 },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput235.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput235.safeParse(value).success,
+		isInputValid: (value) => openApiInput235().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput235().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint235(ctx, openApiInput235.parse(input)),
+				await openApiEndpoint235(ctx, openApiInput235().parse(input)),
 			),
 	},
 	{
@@ -16571,11 +19068,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			body: { notification_ids: [1], action: 'archive' },
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput236.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput236.safeParse(value).success,
+		isInputValid: (value) => openApiInput236().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput236().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint236(ctx, openApiInput236.parse(input)),
+				await openApiEndpoint236(ctx, openApiInput236().parse(input)),
 			),
 	},
 	{
@@ -16599,11 +19096,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput237.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput237.safeParse(value).success,
+		isInputValid: (value) => openApiInput237().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput237().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint237(ctx, openApiInput237.parse(input)),
+				await openApiEndpoint237(ctx, openApiInput237().parse(input)),
 			),
 	},
 	{
@@ -16615,11 +19112,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { total: 0, limit: 1, offset: 0, data: [] },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput238.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput238.safeParse(value).success,
+		isInputValid: (value) => openApiInput238().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput238().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint238(ctx, openApiInput238.parse(input)),
+				await openApiEndpoint238(ctx, openApiInput238().parse(input)),
 			),
 	},
 	{
@@ -16631,11 +19128,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [], total: 1, limit: 1, offset: 1 },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput239.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput239.safeParse(value).success,
+		isInputValid: (value) => openApiInput239().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput239().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint239(ctx, openApiInput239.parse(input)),
+				await openApiEndpoint239(ctx, openApiInput239().parse(input)),
 			),
 	},
 	{
@@ -16650,11 +19147,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput240.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput240.safeParse(value).success,
+		isInputValid: (value) => openApiInput240().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput240().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint240(ctx, openApiInput240.parse(input)),
+				await openApiEndpoint240(ctx, openApiInput240().parse(input)),
 			),
 	},
 	{
@@ -16666,11 +19163,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { entity_type: '', entity_local_id: 1, ai_context: {} },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput241.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput241.safeParse(value).success,
+		isInputValid: (value) => openApiInput241().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput241().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint241(ctx, openApiInput241.parse(input)),
+				await openApiEndpoint241(ctx, openApiInput241().parse(input)),
 			),
 	},
 	{
@@ -16685,11 +19182,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { entity_type: '', entity_local_id: 1, ai_context: {} },
 		expectedOptions: { method: 'PUT', body: { ai_context: {} } },
 		multipart: false,
-		isInputValid: (value) => openApiInput242.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput242.safeParse(value).success,
+		isInputValid: (value) => openApiInput242().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput242().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint242(ctx, openApiInput242.parse(input)),
+				await openApiEndpoint242(ctx, openApiInput242().parse(input)),
 			),
 	},
 	{
@@ -16701,27 +19198,27 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET', query: { type: 'dashboard', id: 1 } },
 		multipart: false,
-		isInputValid: (value) => openApiInput243.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput243.safeParse(value).success,
+		isInputValid: (value) => openApiInput243().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput243().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint243(ctx, openApiInput243.parse(input)),
+				await openApiEndpoint243(ctx, openApiInput243().parse(input)),
 			),
 	},
 	{
 		shortPath: 'previewEmbed.getCardByTokenParamsByParamKeyValues',
 		operationId: 'get-api-preview_embed-card-token-params-param-key-values',
 		method: 'GET',
-		path: '/api/preview_embed/card//params//values',
-		input: { path: { token: '', 'param-key': '' } },
+		path: '/api/preview_embed/card/a/params/a/values',
+		input: { path: { token: 'a', 'param-key': 'a' } },
 		output: { has_more_values: false, values: [] },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput244.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput244.safeParse(value).success,
+		isInputValid: (value) => openApiInput244().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput244().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint244(ctx, openApiInput244.parse(input)),
+				await openApiEndpoint244(ctx, openApiInput244().parse(input)),
 			),
 	},
 	{
@@ -16737,11 +19234,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: {},
 		expectedOptions: { method: 'POST', body: { parameters: {} } },
 		multipart: false,
-		isInputValid: (value) => openApiInput245.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput245.safeParse(value).success,
+		isInputValid: (value) => openApiInput245().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput245().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint245(ctx, openApiInput245.parse(input)),
+				await openApiEndpoint245(ctx, openApiInput245().parse(input)),
 			),
 	},
 	{
@@ -16759,11 +19256,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET', query: {}, responseType: 'binary' },
 		multipart: false,
-		isInputValid: (value) => openApiInput246.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput246.safeParse(value).success,
+		isInputValid: (value) => openApiInput246().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput246().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint246(ctx, openApiInput246.parse(input)),
+				await openApiEndpoint246(ctx, openApiInput246().parse(input)),
 			),
 	},
 	{
@@ -16772,17 +19269,17 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		method: 'POST',
 		path: '/api/session/mfa/enroll',
 		input: { body: { enrollment_token: 'a', code: 'a' } },
-		output: { status: 200, cookies: {}, body: { id: 'a', recovery_codes: [] } },
+		output: { id: 'a', recovery_codes: [] },
 		expectedOptions: {
 			method: 'POST',
 			body: { enrollment_token: 'a', code: 'a' },
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput247.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput247.safeParse(value).success,
+		isInputValid: (value) => openApiInput247().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput247().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint247(ctx, openApiInput247.parse(input)),
+				await openApiEndpoint247(ctx, openApiInput247().parse(input)),
 			),
 	},
 	{
@@ -16794,11 +19291,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { success: true },
 		expectedOptions: { method: 'POST', body: { challenge_token: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput248.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput248.safeParse(value).success,
+		isInputValid: (value) => openApiInput248().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput248().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint248(ctx, openApiInput248.parse(input)),
+				await openApiEndpoint248(ctx, openApiInput248().parse(input)),
 			),
 	},
 	{
@@ -16814,11 +19311,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput249.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput249.safeParse(value).success,
+		isInputValid: (value) => openApiInput249().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput249().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint249(ctx, openApiInput249.parse(input)),
+				await openApiEndpoint249(ctx, openApiInput249().parse(input)),
 			),
 	},
 	{
@@ -16834,11 +19331,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput250.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput250.safeParse(value).success,
+		isInputValid: (value) => openApiInput250().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput250().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint250(ctx, openApiInput250.parse(input)),
+				await openApiEndpoint250(ctx, openApiInput250().parse(input)),
 			),
 	},
 	{
@@ -16850,11 +19347,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { success: true },
 		expectedOptions: { method: 'PUT', body: [] },
 		multipart: false,
-		isInputValid: (value) => openApiInput251.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput251.safeParse(value).success,
+		isInputValid: (value) => openApiInput251().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput251().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint251(ctx, openApiInput251.parse(input)),
+				await openApiEndpoint251(ctx, openApiInput251().parse(input)),
 			),
 	},
 	{
@@ -16866,11 +19363,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { total: 0, limit: 1, offset: 0, data: [] },
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput252.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput252.safeParse(value).success,
+		isInputValid: (value) => openApiInput252().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput252().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint252(ctx, openApiInput252.parse(input)),
+				await openApiEndpoint252(ctx, openApiInput252().parse(input)),
 			),
 	},
 	{
@@ -16885,11 +19382,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			query: { 'run-type': 'alert', 'started-at': 'a' },
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput253.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput253.safeParse(value).success,
+		isInputValid: (value) => openApiInput253().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput253().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint253(ctx, openApiInput253.parse(input)),
+				await openApiEndpoint253(ctx, openApiInput253().parse(input)),
 			),
 	},
 	{
@@ -16910,11 +19407,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput254.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput254.safeParse(value).success,
+		isInputValid: (value) => openApiInput254().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput254().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint254(ctx, openApiInput254.parse(input)),
+				await openApiEndpoint254(ctx, openApiInput254().parse(input)),
 			),
 	},
 	{
@@ -16926,11 +19423,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { id: 1 },
 		expectedOptions: { method: 'POST', body: { name: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput255.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput255.safeParse(value).success,
+		isInputValid: (value) => openApiInput255().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput255().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint255(ctx, openApiInput255.parse(input)),
+				await openApiEndpoint255(ctx, openApiInput255().parse(input)),
 			),
 	},
 	{
@@ -16942,11 +19439,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput256.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput256.safeParse(value).success,
+		isInputValid: (value) => openApiInput256().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput256().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint256(ctx, openApiInput256.parse(input)),
+				await openApiEndpoint256(ctx, openApiInput256().parse(input)),
 			),
 	},
 	{
@@ -16958,11 +19455,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { id: 1 },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput257.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput257.safeParse(value).success,
+		isInputValid: (value) => openApiInput257().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput257().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint257(ctx, openApiInput257.parse(input)),
+				await openApiEndpoint257(ctx, openApiInput257().parse(input)),
 			),
 	},
 	{
@@ -16974,11 +19471,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput258.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput258.safeParse(value).success,
+		isInputValid: (value) => openApiInput258().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput258().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint258(ctx, openApiInput258.parse(input)),
+				await openApiEndpoint258(ctx, openApiInput258().parse(input)),
 			),
 	},
 	{
@@ -17022,11 +19519,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 			},
 		},
 		multipart: false,
-		isInputValid: (value) => openApiInput259.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput259.safeParse(value).success,
+		isInputValid: (value) => openApiInput259().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput259().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint259(ctx, openApiInput259.parse(input)),
+				await openApiEndpoint259(ctx, openApiInput259().parse(input)),
 			),
 	},
 	{
@@ -17038,11 +19535,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput260.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput260.safeParse(value).success,
+		isInputValid: (value) => openApiInput260().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput260().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint260(ctx, openApiInput260.parse(input)),
+				await openApiEndpoint260(ctx, openApiInput260().parse(input)),
 			),
 	},
 	{
@@ -17054,11 +19551,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput261.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput261.safeParse(value).success,
+		isInputValid: (value) => openApiInput261().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput261().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint261(ctx, openApiInput261.parse(input)),
+				await openApiEndpoint261(ctx, openApiInput261().parse(input)),
 			),
 	},
 	{
@@ -17080,11 +19577,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST', body: { name: 'a', schedule: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput262.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput262.safeParse(value).success,
+		isInputValid: (value) => openApiInput262().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput262().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint262(ctx, openApiInput262.parse(input)),
+				await openApiEndpoint262(ctx, openApiInput262().parse(input)),
 			),
 	},
 	{
@@ -17096,11 +19593,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput263.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput263.safeParse(value).success,
+		isInputValid: (value) => openApiInput263().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput263().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint263(ctx, openApiInput263.parse(input)),
+				await openApiEndpoint263(ctx, openApiInput263().parse(input)),
 			),
 	},
 	{
@@ -17112,11 +19609,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { updated: 1, failed: 1 },
 		expectedOptions: { method: 'PUT', body: { active: false } },
 		multipart: false,
-		isInputValid: (value) => openApiInput264.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput264.safeParse(value).success,
+		isInputValid: (value) => openApiInput264().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput264().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint264(ctx, openApiInput264.parse(input)),
+				await openApiEndpoint264(ctx, openApiInput264().parse(input)),
 			),
 	},
 	{
@@ -17138,11 +19635,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'PUT', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput265.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput265.safeParse(value).success,
+		isInputValid: (value) => openApiInput265().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput265().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint265(ctx, openApiInput265.parse(input)),
+				await openApiEndpoint265(ctx, openApiInput265().parse(input)),
 			),
 	},
 	{
@@ -17164,11 +19661,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput266.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput266.safeParse(value).success,
+		isInputValid: (value) => openApiInput266().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput266().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint266(ctx, openApiInput266.parse(input)),
+				await openApiEndpoint266(ctx, openApiInput266().parse(input)),
 			),
 	},
 	{
@@ -17177,14 +19674,14 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		method: 'POST',
 		path: '/api/transform-job/1/run',
 		input: { path: { 'job-id': 1 }, body: {} },
-		output: { status: 202, body: { message: null, job_run_id: 1 } },
+		output: { message: null, job_run_id: 1 },
 		expectedOptions: { method: 'POST', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput267.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput267.safeParse(value).success,
+		isInputValid: (value) => openApiInput267().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput267().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint267(ctx, openApiInput267.parse(input)),
+				await openApiEndpoint267(ctx, openApiInput267().parse(input)),
 			),
 	},
 	{
@@ -17196,11 +19693,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [], limit: 1, offset: 1, total: 1 },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput268.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput268.safeParse(value).success,
+		isInputValid: (value) => openApiInput268().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput268().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint268(ctx, openApiInput268.parse(input)),
+				await openApiEndpoint268(ctx, openApiInput268().parse(input)),
 			),
 	},
 	{
@@ -17212,11 +19709,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput269.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput269.safeParse(value).success,
+		isInputValid: (value) => openApiInput269().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput269().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint269(ctx, openApiInput269.parse(input)),
+				await openApiEndpoint269(ctx, openApiInput269().parse(input)),
 			),
 	},
 	{
@@ -17228,11 +19725,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput270.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput270.safeParse(value).success,
+		isInputValid: (value) => openApiInput270().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput270().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint270(ctx, openApiInput270.parse(input)),
+				await openApiEndpoint270(ctx, openApiInput270().parse(input)),
 			),
 	},
 	{
@@ -17244,11 +19741,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput271.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput271.safeParse(value).success,
+		isInputValid: (value) => openApiInput271().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput271().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint271(ctx, openApiInput271.parse(input)),
+				await openApiEndpoint271(ctx, openApiInput271().parse(input)),
 			),
 	},
 	{
@@ -17266,11 +19763,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'POST', body: { name: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput272.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput272.safeParse(value).success,
+		isInputValid: (value) => openApiInput272().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput272().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint272(ctx, openApiInput272.parse(input)),
+				await openApiEndpoint272(ctx, openApiInput272().parse(input)),
 			),
 	},
 	{
@@ -17282,11 +19779,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput273.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput273.safeParse(value).success,
+		isInputValid: (value) => openApiInput273().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput273().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint273(ctx, openApiInput273.parse(input)),
+				await openApiEndpoint273(ctx, openApiInput273().parse(input)),
 			),
 	},
 	{
@@ -17304,11 +19801,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'PUT', body: { name: 'a' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput274.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput274.safeParse(value).success,
+		isInputValid: (value) => openApiInput274().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput274().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint274(ctx, openApiInput274.parse(input)),
+				await openApiEndpoint274(ctx, openApiInput274().parse(input)),
 			),
 	},
 	{
@@ -17320,11 +19817,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'DELETE' },
 		multipart: false,
-		isInputValid: (value) => openApiInput275.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput275.safeParse(value).success,
+		isInputValid: (value) => openApiInput275().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput275().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint275(ctx, openApiInput275.parse(input)),
+				await openApiEndpoint275(ctx, openApiInput275().parse(input)),
 			),
 	},
 	{
@@ -17336,11 +19833,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [], limit: 1, offset: 1, total: 1 },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput276.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput276.safeParse(value).success,
+		isInputValid: (value) => openApiInput276().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput276().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint276(ctx, openApiInput276.parse(input)),
+				await openApiEndpoint276(ctx, openApiInput276().parse(input)),
 			),
 	},
 	{
@@ -17361,11 +19858,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput277.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput277.safeParse(value).success,
+		isInputValid: (value) => openApiInput277().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput277().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint277(ctx, openApiInput277.parse(input)),
+				await openApiEndpoint277(ctx, openApiInput277().parse(input)),
 			),
 	},
 	{
@@ -17377,11 +19874,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { data: [], limit: 1, offset: 1, total: 1 },
 		expectedOptions: { method: 'GET', query: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput278.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput278.safeParse(value).success,
+		isInputValid: (value) => openApiInput278().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput278().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint278(ctx, openApiInput278.parse(input)),
+				await openApiEndpoint278(ctx, openApiInput278().parse(input)),
 			),
 	},
 	{
@@ -17406,11 +19903,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput279.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput279.safeParse(value).success,
+		isInputValid: (value) => openApiInput279().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput279().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint279(ctx, openApiInput279.parse(input)),
+				await openApiEndpoint279(ctx, openApiInput279().parse(input)),
 			),
 	},
 	{
@@ -17435,11 +19932,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'PUT', body: {} },
 		multipart: false,
-		isInputValid: (value) => openApiInput280.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput280.safeParse(value).success,
+		isInputValid: (value) => openApiInput280().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput280().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint280(ctx, openApiInput280.parse(input)),
+				await openApiEndpoint280(ctx, openApiInput280().parse(input)),
 			),
 	},
 	{
@@ -17451,11 +19948,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'DELETE' },
 		multipart: false,
-		isInputValid: (value) => openApiInput281.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput281.safeParse(value).success,
+		isInputValid: (value) => openApiInput281().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput281().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint281(ctx, openApiInput281.parse(input)),
+				await openApiEndpoint281(ctx, openApiInput281().parse(input)),
 			),
 	},
 	{
@@ -17467,11 +19964,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput282.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput282.safeParse(value).success,
+		isInputValid: (value) => openApiInput282().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput282().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint282(ctx, openApiInput282.parse(input)),
+				await openApiEndpoint282(ctx, openApiInput282().parse(input)),
 			),
 	},
 	{
@@ -17483,11 +19980,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET', query: { direction: 'upstream' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput283.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput283.safeParse(value).success,
+		isInputValid: (value) => openApiInput283().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput283().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint283(ctx, openApiInput283.parse(input)),
+				await openApiEndpoint283(ctx, openApiInput283().parse(input)),
 			),
 	},
 	{
@@ -17499,11 +19996,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: [],
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput284.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput284.safeParse(value).success,
+		isInputValid: (value) => openApiInput284().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput284().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint284(ctx, openApiInput284.parse(input)),
+				await openApiEndpoint284(ctx, openApiInput284().parse(input)),
 			),
 	},
 	{
@@ -17515,11 +20012,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput285.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput285.safeParse(value).success,
+		isInputValid: (value) => openApiInput285().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput285().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint285(ctx, openApiInput285.parse(input)),
+				await openApiEndpoint285(ctx, openApiInput285().parse(input)),
 			),
 	},
 	{
@@ -17528,14 +20025,14 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		method: 'POST',
 		path: '/api/transform/1/run',
 		input: { path: { id: 1 } },
-		output: { status: 202, body: { message: null, run_id: 1 } },
+		output: { message: null, run_id: 1 },
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput286.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput286.safeParse(value).success,
+		isInputValid: (value) => openApiInput286().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput286().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint286(ctx, openApiInput286.parse(input)),
+				await openApiEndpoint286(ctx, openApiInput286().parse(input)),
 			),
 	},
 	{
@@ -17544,14 +20041,14 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		method: 'POST',
 		path: '/api/transform/1/run-dag',
 		input: { path: { id: 1 }, body: { direction: 'upstream' } },
-		output: { status: 202, body: { message: null, dag_run_id: 1 } },
+		output: { message: null, dag_run_id: 1 },
 		expectedOptions: { method: 'POST', body: { direction: 'upstream' } },
 		multipart: false,
-		isInputValid: (value) => openApiInput287.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput287.safeParse(value).success,
+		isInputValid: (value) => openApiInput287().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput287().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint287(ctx, openApiInput287.parse(input)),
+				await openApiEndpoint287(ctx, openApiInput287().parse(input)),
 			),
 	},
 	{
@@ -17563,11 +20060,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: null,
 		expectedOptions: { method: 'DELETE' },
 		multipart: false,
-		isInputValid: (value) => openApiInput288.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput288.safeParse(value).success,
+		isInputValid: (value) => openApiInput288().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput288().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint288(ctx, openApiInput288.parse(input)),
+				await openApiEndpoint288(ctx, openApiInput288().parse(input)),
 			),
 	},
 	{
@@ -17613,11 +20110,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		},
 		expectedOptions: { method: 'GET' },
 		multipart: false,
-		isInputValid: (value) => openApiInput289.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput289.safeParse(value).success,
+		isInputValid: (value) => openApiInput289().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput289().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint289(ctx, openApiInput289.parse(input)),
+				await openApiEndpoint289(ctx, openApiInput289().parse(input)),
 			),
 	},
 	{
@@ -17629,11 +20126,11 @@ export const MetabaseOpenApiTestCases: MetabaseOpenApiTestCase[] = [
 		output: { password_reset_url: '' },
 		expectedOptions: { method: 'POST' },
 		multipart: false,
-		isInputValid: (value) => openApiInput290.safeParse(value).success,
-		isOutputValid: (value) => openApiOutput290.safeParse(value).success,
+		isInputValid: (value) => openApiInput290().safeParse(value).success,
+		isOutputValid: (value) => openApiOutput290().safeParse(value).success,
 		invoke: async (ctx: MetabaseContext, input: MetabaseOpenApiTestValue) =>
 			JsonValueSchema.parse(
-				await openApiEndpoint290(ctx, openApiInput290.parse(input)),
+				await openApiEndpoint290(ctx, openApiInput290().parse(input)),
 			),
 	},
 ];
