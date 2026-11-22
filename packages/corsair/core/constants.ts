@@ -518,6 +518,7 @@ export const BaseProviders = [
 	'perigon',
 	'pipelinecrm',
 	'placid',
+	'persistiq',
 	'plain',
 	'persona',
 	'pexels',
@@ -1284,6 +1285,7 @@ export const ProviderDisplayNames = {
 	perigon: 'Perigon',
 	pipelinecrm: 'Pipeline CRM',
 	placid: 'Placid',
+	persistiq: 'PersistIQ',
 	plain: 'Plain',
 	persona: 'Persona',
 	pexels: 'Pexels',
@@ -2057,6 +2059,7 @@ export type AllProviders =
 	| 'perigon'
 	| 'pipelinecrm'
 	| 'placid'
+	| 'persistiq'
 	| 'plain'
 	| 'persona'
 	| 'pexels'

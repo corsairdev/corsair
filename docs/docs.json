@@ -4245,6 +4245,14 @@
                 ]
               },
               {
+                "group": "PersistIQ",
+                "pages": [
+                  "plugins/persistiq/overview",
+                  "plugins/persistiq/api",
+                  "plugins/persistiq/database"
+                ]
+              },
+              {
                 "group": "Persona",
                 "pages": [
                   "plugins/persona/overview",
