@@ -1,0 +1,1724 @@
+---
+title: "Paradym API reference"
+sidebarTitle: "API"
+description: "API reference for the Paradym plugin in Corsair: every `paradym.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Credential Templates
+
+### archive
+
+`credentialTemplates.archive`
+
+Archive an SD-JWT VC credential template
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.paradym.api.credentialTemplates.archive({ credentialTemplateId: "tmpl_1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credentialTemplateId` | `string` | Yes | Template id |
+
+Archived templates can be restored with credentialTemplates.unarchive.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Archived template id |
+| `success` | `boolean` | Yes | Whether the archive succeeded |
+
+
+
+---
+
+### create
+
+`credentialTemplates.create`
+
+Create an SD-JWT VC credential template with its attributes
+
+**Risk:** `write`
+
+```ts
+await corsair.paradym.api.credentialTemplates.create({ type: "urn:eudi:pid:1", name: "PID", attributes: { given_name: { name: "given_name", required: true } }, revocable: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | Credential type identifier, e.g. urn:eudi:pid:1 |
+| `name` | `string` | Yes | Template name |
+| `attributes` | `object` | Yes | Credential attributes keyed by attribute name |
+| `revocable` | `boolean` | No | Enable revocation for credentials from this template |
+| `validFrom` | `string \| object` | No | A date, e.g. 2026-11-21, or &#123; future: &#123; days, months, years &#125; &#125; |
+| `validUntil` | `string \| object` | No | A date, or &#123; start: issuance \| validFrom, future: &#123; days, months, years &#125; &#125; |
+
+The attributes object is keyed by attribute name; Paradym validates its contents, including the credential type identifier.
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+Record<string, {
+}>
+```
+</Accordion>
+
+<Accordion title="validFrom full type">
+
+```ts
+string | {
+  future: {
+    days?: number,
+    months?: number,
+    years?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="validUntil full type">
+
+```ts
+string | {
+  start: issuance | validFrom,
+  future: {
+    days?: number,
+    months?: number,
+    years?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Template id |
+| `walletId` | `string \| null` | No | Wallet the template belongs to |
+| `name` | `string \| null` | No | Template name |
+| `description` | `string \| null` | No | Template description |
+| `format` | `string \| null` | No | Credential format |
+| `revocable` | `boolean \| null` | No | Whether credentials from this template can be revoked |
+| `archived` | `boolean \| null` | No | Whether the template is archived |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last modification timestamp |
+
+
+
+---
+
+### get
+
+`credentialTemplates.get`
+
+Read one SD-JWT VC credential template
+
+**Risk:** `read`
+
+```ts
+await corsair.paradym.api.credentialTemplates.get({ credentialTemplateId: "tmpl_1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credentialTemplateId` | `string` | Yes | Template id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Template id |
+| `walletId` | `string \| null` | No | Wallet the template belongs to |
+| `name` | `string \| null` | No | Template name |
+| `description` | `string \| null` | No | Template description |
+| `format` | `string \| null` | No | Credential format |
+| `revocable` | `boolean \| null` | No | Whether credentials from this template can be revoked |
+| `archived` | `boolean \| null` | No | Whether the template is archived |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last modification timestamp |
+
+
+
+---
+
+### list
+
+`credentialTemplates.list`
+
+List SD-JWT VC credential templates
+
+**Risk:** `read`
+
+```ts
+await corsair.paradym.api.credentialTemplates.list({ sort: "name" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | Results per page (sent as page[size]); the meta.page response carries maxSize |
+| `pageAfter` | `string` | No | Cursor of the first record to return (sent as page[after]; take it from meta.page.after) |
+| `pageBefore` | `string` | No | Cursor of the last record to return (sent as page[before]; take it from meta.page.before) |
+| `sort` | `id \| -id \| name \| -name \| createdAt \| -createdAt \| updatedAt \| -updatedAt` | No | Sort field; "-" prefix sorts descending |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Templates on this page |
+| `meta` | `object` | Yes | Pagination metadata for the list |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  walletId?: string | null,
+  name?: string | null,
+  description?: string | null,
+  format?: string | null,
+  revocable?: boolean | null,
+  archived?: boolean | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: {
+    maxSize?: string | null,
+    size?: string | null,
+    after?: string | null,
+    before?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unarchive
+
+`credentialTemplates.unarchive`
+
+Unarchive an SD-JWT VC credential template
+
+**Risk:** `write`
+
+```ts
+await corsair.paradym.api.credentialTemplates.unarchive({ credentialTemplateId: "tmpl_1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credentialTemplateId` | `string` | Yes | Template id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credentialTemplateId` | `string` | Yes | Unarchived template id |
+| `success` | `boolean` | Yes | Whether the unarchive succeeded |
+
+
+
+---
+
+### update
+
+`credentialTemplates.update`
+
+Update an SD-JWT VC credential template
+
+**Risk:** `write`
+
+```ts
+await corsair.paradym.api.credentialTemplates.update({ credentialTemplateId: "tmpl_1", name: "PID v2", attributes: { given_name: { type: "string" } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credentialTemplateId` | `string` | Yes | Template id |
+| `name` | `string` | Yes | Template name |
+| `attributes` | `object` | Yes | Credential attributes keyed by attribute name |
+| `validFrom` | `string \| object` | No | A date, e.g. 2026-11-21, or &#123; future: &#123; days, months, years &#125; &#125; |
+| `validUntil` | `string \| object` | No | A date, or &#123; start: issuance \| validFrom, future: &#123; days, months, years &#125; &#125; |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+Record<string, {
+}>
+```
+</Accordion>
+
+<Accordion title="validFrom full type">
+
+```ts
+string | {
+  future: {
+    days?: number,
+    months?: number,
+    years?: number
+  }
+}
+```
+</Accordion>
+
+<Accordion title="validUntil full type">
+
+```ts
+string | {
+  start: issuance | validFrom,
+  future: {
+    days?: number,
+    months?: number,
+    years?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Template id |
+| `walletId` | `string \| null` | No | Wallet the template belongs to |
+| `name` | `string \| null` | No | Template name |
+| `description` | `string \| null` | No | Template description |
+| `format` | `string \| null` | No | Credential format |
+| `revocable` | `boolean \| null` | No | Whether credentials from this template can be revoked |
+| `archived` | `boolean \| null` | No | Whether the template is archived |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last modification timestamp |
+
+
+
+---
+
+## Issuance
+
+### createOffer
+
+`issuance.createOffer`
+
+Create a credential offer a holder wallet can accept
+
+**Risk:** `write`
+
+```ts
+await corsair.paradym.api.issuance.createOffer({ credentials: [{ credentialTemplateId: "tmpl_1", attributes: { given_name: "Jane" } }], expirationInMinutes: 15 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credentials` | `object[]` | Yes | The credentials to be issued in this offer |
+| `expirationInMinutes` | `number` | No | Minutes until the offer expires |
+
+The answer carries the offer URI, QR image and deep link a holder wallet opens; the session stays open until the wallet completes it.
+
+<AccordionGroup>
+<Accordion title="credentials full type">
+
+```ts
+{
+  credentialTemplateId: string,
+  attributes?: Record<string, any>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Issuance session id |
+| `status` | `string` | Yes | Session status, e.g. offered, completed, failed, expired |
+| `offerUri` | `string \| null` | No | Credential offer URI a wallet opens |
+| `offerQrUri` | `string \| null` | No | QR image of the offer |
+| `offerDeeplinkUri` | `string \| null` | No | Deep link of the offer |
+| `offerDeeplinkQrUri` | `string \| null` | No | QR image of the deep link |
+| `expiresAt` | `string \| null` | No | When the offer expires |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last modification timestamp |
+
+
+
+---
+
+### getSession
+
+`issuance.getSession`
+
+Read one OpenID4VC issuance session
+
+**Risk:** `read`
+
+```ts
+await corsair.paradym.api.issuance.getSession({ issuanceId: "issuance_1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issuanceId` | `string` | Yes | Issuance session id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Issuance session id |
+| `status` | `string` | Yes | Session status, e.g. offered, completed, failed, expired |
+| `offerUri` | `string \| null` | No | Credential offer URI a wallet opens |
+| `offerQrUri` | `string \| null` | No | QR image of the offer |
+| `offerDeeplinkUri` | `string \| null` | No | Deep link of the offer |
+| `offerDeeplinkQrUri` | `string \| null` | No | QR image of the deep link |
+| `expiresAt` | `string \| null` | No | When the offer expires |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last modification timestamp |
+
+
+
+---
+
+### listSessions
+
+`issuance.listSessions`
+
+List OpenID4VC issuance sessions with their statuses
+
+**Risk:** `read`
+
+```ts
+await corsair.paradym.api.issuance.listSessions({ filterStatus: "offered", pageSize: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filterStatus` | `string` | No | Filter by session status (sent as filter[status]) |
+| `filterId` | `string` | No | Filter by id (sent as filter[id]) |
+| `sort` | `id \| -id \| createdAt \| -createdAt \| updatedAt \| -updatedAt` | No | Sort field; "-" prefix sorts descending |
+| `pageSize` | `number` | No | Results per page (sent as page[size]); the meta.page response carries maxSize |
+| `pageAfter` | `string` | No | Cursor of the first record to return (sent as page[after]; take it from meta.page.after) |
+| `pageBefore` | `string` | No | Cursor of the last record to return (sent as page[before]; take it from meta.page.before) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Issuance sessions on this page |
+| `meta` | `object` | Yes | Pagination metadata for the list |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  offerUri?: string | null,
+  offerQrUri?: string | null,
+  offerDeeplinkUri?: string | null,
+  offerDeeplinkQrUri?: string | null,
+  expiresAt?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: {
+    maxSize?: string | null,
+    size?: string | null,
+    after?: string | null,
+    before?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Presentation Templates
+
+### archive
+
+`presentationTemplates.archive`
+
+Archive a presentation template
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.paradym.api.presentationTemplates.archive({ presentationTemplateId: "pres_1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationTemplateId` | `string` | Yes | Template id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Archived template id |
+| `success` | `boolean` | Yes | Whether the archive succeeded |
+
+
+
+---
+
+### create
+
+`presentationTemplates.create`
+
+Create a presentation template defining what a holder must present
+
+**Risk:** `write`
+
+```ts
+await corsair.paradym.api.presentationTemplates.create({ name: "PID check", credentials: [{ type: "urn:eudi:pid:1", format: "sd-jwt-vc", attributes: { given_name: {} } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Template name |
+| `credentials` | `object[]` | Yes | The credentials the holder must present |
+
+The credentials array names the credential types and attributes the holder must present; Paradym validates the per-format attribute definitions.
+
+<AccordionGroup>
+<Accordion title="credentials full type">
+
+```ts
+{
+  format: sd-jwt-vc | mdoc | anoncreds,
+  type?: string,
+  schema?: string,
+  attributes: Record<string, {
+  }>,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Template id |
+| `name` | `string` | Yes | Template name |
+| `description` | `string \| null` | No | Template description |
+| `credentials` | `object[] \| null` | No | The credentials the holder must present |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last modification timestamp |
+
+<AccordionGroup>
+<Accordion title="credentials full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`presentationTemplates.get`
+
+Read one presentation template
+
+**Risk:** `read`
+
+```ts
+await corsair.paradym.api.presentationTemplates.get({ presentationTemplateId: "pres_1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationTemplateId` | `string` | Yes | Template id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Template id |
+| `name` | `string` | Yes | Template name |
+| `description` | `string \| null` | No | Template description |
+| `credentials` | `object[] \| null` | No | The credentials the holder must present |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last modification timestamp |
+
+<AccordionGroup>
+<Accordion title="credentials full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`presentationTemplates.list`
+
+List presentation templates
+
+**Risk:** `read`
+
+```ts
+await corsair.paradym.api.presentationTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | Results per page (sent as page[size]); the meta.page response carries maxSize |
+| `pageAfter` | `string` | No | Cursor of the first record to return (sent as page[after]; take it from meta.page.after) |
+| `pageBefore` | `string` | No | Cursor of the last record to return (sent as page[before]; take it from meta.page.before) |
+| `sort` | `id \| -id \| name \| -name \| createdAt \| -createdAt \| updatedAt \| -updatedAt` | No | Sort field; "-" prefix sorts descending |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Templates on this page |
+| `meta` | `object` | Yes | Pagination metadata for the list |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string | null,
+  credentials?: {
+  }[] | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: {
+    maxSize?: string | null,
+    size?: string | null,
+    after?: string | null,
+    before?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`presentationTemplates.update`
+
+Update a presentation template
+
+**Risk:** `write`
+
+```ts
+await corsair.paradym.api.presentationTemplates.update({ presentationTemplateId: "pres_1", name: "Renamed", credentials: [{ format: "sd-jwt-vc", type: "urn:eudi:pid:1", attributes: { given_name: {} } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationTemplateId` | `string` | Yes | Template id |
+| `name` | `string` | Yes | Template name |
+| `credentials` | `object[]` | Yes | The credentials to present |
+
+<AccordionGroup>
+<Accordion title="credentials full type">
+
+```ts
+{
+  format: sd-jwt-vc | mdoc | anoncreds,
+  type?: string,
+  schema?: string,
+  attributes: Record<string, {
+  }>,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Template id |
+| `name` | `string` | Yes | Template name |
+| `description` | `string \| null` | No | Template description |
+| `credentials` | `object[] \| null` | No | The credentials the holder must present |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last modification timestamp |
+
+<AccordionGroup>
+<Accordion title="credentials full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Revocation
+
+### batch
+
+`revocation.batch`
+
+Revoke issued credentials in one batch; revocation cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.paradym.api.revocation.batch({ issuedCredentialIds: ["cred_1", "cred_2"], notifyWallet: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `issuedCredentialIds` | `string[]` | Yes | Issued credential ids to revoke |
+| `notifyWallet` | `boolean` | No | Notify the holder wallet about the revocation |
+
+Revokes every listed issued credential; revocation cannot be undone.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `revokedCredentials` | `object[]` | Yes | The credentials the batch revoked |
+
+<AccordionGroup>
+<Accordion title="revokedCredentials full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Trusted Entities
+
+### create
+
+`trustedEntities.create`
+
+Create a trusted entity from DIDs or X.509 certificates
+
+**Risk:** `write`
+
+```ts
+await corsair.paradym.api.trustedEntities.create({ name: "Government issuer", dids: [{ did: "did:web:example.gov" }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name that identifies the trusted entity |
+| `dids` | `object[]` | No | DIDs to trust from this entity |
+| `certificates` | `object[]` | No | X.509 certificates to trust from this entity |
+
+Trust at least one DID or one certificate.
+
+<AccordionGroup>
+<Accordion title="dids full type">
+
+```ts
+{
+  did: string
+}[]
+```
+</Accordion>
+
+<Accordion title="certificates full type">
+
+```ts
+{
+  certificate: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Trusted entity id |
+| `name` | `string` | Yes | Trusted entity name |
+| `dids` | `object[]` | Yes | DIDs trusted from this entity |
+| `certificates` | `object[]` | Yes | X.509 certificates trusted from this entity |
+| `etsiLotes` | `object[]` | Yes | ETSI trusted lists linked to this entity |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last modification timestamp |
+
+<AccordionGroup>
+<Accordion title="dids full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="certificates full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="etsiLotes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`trustedEntities.delete`
+
+Delete a trusted entity
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.paradym.api.trustedEntities.delete({ trustedEntityId: "te_1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trustedEntityId` | `string` | Yes | Trusted entity id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Deleted trusted entity id |
+| `success` | `boolean` | Yes | Whether the delete succeeded |
+
+
+
+---
+
+### get
+
+`trustedEntities.get`
+
+Read one trusted entity
+
+**Risk:** `read`
+
+```ts
+await corsair.paradym.api.trustedEntities.get({ trustedEntityId: "te_1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `trustedEntityId` | `string` | Yes | Trusted entity id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Trusted entity id |
+| `name` | `string` | Yes | Trusted entity name |
+| `dids` | `object[]` | Yes | DIDs trusted from this entity |
+| `certificates` | `object[]` | Yes | X.509 certificates trusted from this entity |
+| `etsiLotes` | `object[]` | Yes | ETSI trusted lists linked to this entity |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last modification timestamp |
+
+<AccordionGroup>
+<Accordion title="dids full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="certificates full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="etsiLotes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`trustedEntities.list`
+
+List trusted entities with their DIDs and certificates
+
+**Risk:** `read`
+
+```ts
+await corsair.paradym.api.trustedEntities.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | Results per page (sent as page[size]); the meta.page response carries maxSize |
+| `pageAfter` | `string` | No | Cursor of the first record to return (sent as page[after]; take it from meta.page.after) |
+| `pageBefore` | `string` | No | Cursor of the last record to return (sent as page[before]; take it from meta.page.before) |
+| `sort` | `id \| -id \| name \| -name \| createdAt \| -createdAt \| updatedAt \| -updatedAt` | No | Sort field; "-" prefix sorts descending |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Trusted entities on this page |
+| `meta` | `object` | Yes | Pagination metadata for the list |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  dids: {
+  }[],
+  certificates: {
+  }[],
+  etsiLotes: {
+  }[],
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: {
+    maxSize?: string | null,
+    size?: string | null,
+    after?: string | null,
+    before?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Verification
+
+### complete
+
+`verification.complete`
+
+Mark a succeeded verification session as completed
+
+**Risk:** `write`
+
+```ts
+await corsair.paradym.api.verification.complete({ verificationId: "verification_1", challenge: "challenge-1", responseCode: "code-1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `verificationId` | `string` | Yes | Verification session id |
+| `challenge` | `string` | Yes | The challenge the verification request was created with |
+| `responseCode` | `string` | Yes | The response_code the wallet redirect returned |
+
+Completes a redirect-flow session with the challenge it was created with and the response_code the wallet redirect returned.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Verification session id |
+| `status` | `string` | Yes | Session status, e.g. requested, verified, failed, expired |
+| `presentationTemplateId` | `string` | Yes | Presentation template the session verifies against |
+| `authorizationRequestUri` | `string \| null` | No | Authorization request URI a wallet opens |
+| `authorizationRequestQrUri` | `string \| null` | No | QR image of the request |
+| `authorizationRequestDeeplinkUri` | `string \| null` | No | Deep link of the request |
+| `authorizationRequestDeeplinkQrUri` | `string \| null` | No | QR image of the deep link |
+| `expiresAt` | `string \| null` | No | When the session expires |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last modification timestamp |
+
+
+
+---
+
+### createRequest
+
+`verification.createRequest`
+
+Create a verification session a holder wallet responds to
+
+**Risk:** `write`
+
+```ts
+await corsair.paradym.api.verification.createRequest({ presentationTemplateId: "pres_1", expirationInMinutes: 10, challenge: "nonce-123" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presentationTemplateId` | `string` | Yes | Presentation template defining what the holder must present |
+| `expirationInMinutes` | `number` | No | Minutes until the session expires |
+| `challenge` | `string` | No | Challenge bound into the authorization request |
+| `redirectUri` | `string` | No | Where the wallet redirects after presenting |
+| `requireResponseEncryption` | `boolean` | No | Require the wallet to encrypt the presentation response |
+
+The answer carries the authorization request URI, QR image and deep link.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Verification session id |
+| `status` | `string` | Yes | Session status, e.g. requested, verified, failed, expired |
+| `presentationTemplateId` | `string` | Yes | Presentation template the session verifies against |
+| `authorizationRequestUri` | `string \| null` | No | Authorization request URI a wallet opens |
+| `authorizationRequestQrUri` | `string \| null` | No | QR image of the request |
+| `authorizationRequestDeeplinkUri` | `string \| null` | No | Deep link of the request |
+| `authorizationRequestDeeplinkQrUri` | `string \| null` | No | QR image of the deep link |
+| `expiresAt` | `string \| null` | No | When the session expires |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last modification timestamp |
+
+
+
+---
+
+### getSession
+
+`verification.getSession`
+
+Read one OpenID4VC verification session, including presented credentials
+
+**Risk:** `read`
+
+```ts
+await corsair.paradym.api.verification.getSession({ verificationId: "verification_1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `verificationId` | `string` | Yes | Verification session id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Verification session id |
+| `status` | `string` | Yes | Session status, e.g. requested, verified, failed, expired |
+| `presentationTemplateId` | `string` | Yes | Presentation template the session verifies against |
+| `authorizationRequestUri` | `string \| null` | No | Authorization request URI a wallet opens |
+| `authorizationRequestQrUri` | `string \| null` | No | QR image of the request |
+| `authorizationRequestDeeplinkUri` | `string \| null` | No | Deep link of the request |
+| `authorizationRequestDeeplinkQrUri` | `string \| null` | No | QR image of the deep link |
+| `expiresAt` | `string \| null` | No | When the session expires |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last modification timestamp |
+
+
+
+---
+
+### listSessions
+
+`verification.listSessions`
+
+List OpenID4VC verification sessions with their statuses
+
+**Risk:** `read`
+
+```ts
+await corsair.paradym.api.verification.listSessions({ filterStatus: "verified" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filterStatus` | `string` | No | Filter by session status (sent as filter[status]) |
+| `filterId` | `string` | No | Filter by id (sent as filter[id]) |
+| `sort` | `id \| -id \| createdAt \| -createdAt \| updatedAt \| -updatedAt` | No | Sort field; "-" prefix sorts descending |
+| `pageSize` | `number` | No | Results per page (sent as page[size]); the meta.page response carries maxSize |
+| `pageAfter` | `string` | No | Cursor of the first record to return (sent as page[after]; take it from meta.page.after) |
+| `pageBefore` | `string` | No | Cursor of the last record to return (sent as page[before]; take it from meta.page.before) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Verification sessions on this page |
+| `meta` | `object` | Yes | Pagination metadata for the list |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  presentationTemplateId: string,
+  authorizationRequestUri?: string | null,
+  authorizationRequestQrUri?: string | null,
+  authorizationRequestDeeplinkUri?: string | null,
+  authorizationRequestDeeplinkQrUri?: string | null,
+  expiresAt?: string | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: {
+    maxSize?: string | null,
+    size?: string | null,
+    after?: string | null,
+    before?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Wallets
+
+### create
+
+`wallets.create`
+
+Create a wallet with its own agent, templates and credentials
+
+**Risk:** `write`
+
+```ts
+await corsair.paradym.api.wallets.create({ name: "Government wallet", verificationDataAccess: "webhook" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Wallet name |
+| `verificationDataAccess` | `webhook \| once \| 15min` | No | How long presented credential data stays readable: webhook (only in the webhook), once (one read) or 15min |
+| `openId4VcVersion` | `v1` | No | OpenID4VC version this wallet interoperates with |
+
+Wallet creation gives the wallet its own agent and template space.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Wallet id |
+| `name` | `string` | Yes | Wallet name |
+| `ownerId` | `string` | Yes | Id of the owning user |
+| `verificationDataAccess` | `string \| null` | No | Access mode for presented data: webhook, once or 15min |
+| `createdAt` | `string` | Yes | Creation timestamp |
+| `updatedAt` | `string` | Yes | Last modification timestamp |
+
+
+
+---
+
+### get
+
+`wallets.get`
+
+Read one wallet by id
+
+**Risk:** `read`
+
+```ts
+await corsair.paradym.api.wallets.get({ walletId: "8f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `walletId` | `string` | Yes | Wallet id |
+
+Paradym has no single-wallet GET route, so this reads the wallet list filtered by id.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Wallet id |
+| `name` | `string` | Yes | Wallet name |
+| `ownerId` | `string` | Yes | Id of the owning user |
+| `verificationDataAccess` | `string \| null` | No | Access mode for presented data: webhook, once or 15min |
+| `createdAt` | `string` | Yes | Creation timestamp |
+| `updatedAt` | `string` | Yes | Last modification timestamp |
+
+
+
+---
+
+### list
+
+`wallets.list`
+
+List wallets, searched by name or filtered by id and name
+
+**Risk:** `read`
+
+```ts
+await corsair.paradym.api.wallets.list({ searchName: "Government", sort: "-createdAt" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchName` | `string` | No | Search by name (sent as search[name]) |
+| `filterId` | `string` | No | Filter by id (sent as filter[id]) |
+| `filterName` | `string` | No | Filter by exact name (sent as filter[name]) |
+| `sort` | `id \| -id \| createdAt \| -createdAt \| updatedAt \| -updatedAt` | No | Sort field; "-" prefix sorts descending |
+| `pageSize` | `number` | No | Results per page (sent as page[size]); the meta.page response carries maxSize |
+| `pageAfter` | `string` | No | Cursor of the first record to return (sent as page[after]; take it from meta.page.after) |
+| `pageBefore` | `string` | No | Cursor of the last record to return (sent as page[before]; take it from meta.page.before) |
+
+Needs no wallet id; searches by name and filters by id or exact name.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Wallets on this page |
+| `meta` | `object` | Yes | Pagination metadata for the list |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  ownerId: string,
+  verificationDataAccess?: string | null,
+  createdAt: string,
+  updatedAt: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: {
+    maxSize?: string | null,
+    size?: string | null,
+    after?: string | null,
+    before?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`wallets.update`
+
+Rename a wallet or change its verification data access
+
+**Risk:** `write`
+
+```ts
+await corsair.paradym.api.wallets.update({ walletId: "8f2a1c3d-4e5f-6a7b-8c9d-0e1f2a3b4c5d", name: "Renamed" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `walletId` | `string` | Yes | Wallet id |
+| `name` | `string` | No | New wallet name |
+| `verificationDataAccess` | `webhook \| once \| 15min` | No | How long presented credential data stays readable: webhook (only in the webhook), once (one read) or 15min |
+
+Takes the wallet id as an explicit input, not the account wallet.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Wallet id |
+| `name` | `string` | Yes | Wallet name |
+| `ownerId` | `string` | Yes | Id of the owning user |
+| `verificationDataAccess` | `string \| null` | No | Access mode for presented data: webhook, once or 15min |
+| `createdAt` | `string` | Yes | Creation timestamp |
+| `updatedAt` | `string` | Yes | Last modification timestamp |
+
+
+
+---
+
+## Webhooks
+
+### createSubscription
+
+`webhooks.createSubscription`
+
+Create a webhook subscription for the event types you choose
+
+**Risk:** `write`
+
+```ts
+await corsair.paradym.api.webhooks.createSubscription({ name: "Deal desk", url: "https://example.com/webhooks/paradym", eventTypes: ["openid4vc.issuance.completed"] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Subscription name |
+| `url` | `string` | Yes | Endpoint deliveries are posted to |
+| `eventTypes` | `string[]` | Yes | Event types to subscribe to, e.g. openid4vc.issuance.completed, openid4vc.verification.verified, didcomm.connection.created, certificate.renewal.required |
+
+The answer carries the subscription's signatureSecret: store it (keys.set_webhook_signature) so deliveries can be verified.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Subscription id |
+| `name` | `string` | Yes | Subscription name |
+| `url` | `string` | Yes | Endpoint deliveries are posted to |
+| `walletId` | `string` | Yes | Wallet the subscription belongs to |
+| `eventTypes` | `string[]` | Yes | Event types the subscription delivers |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last modification timestamp |
+| `signatureSecret` | `string` | Yes | Secret used to verify delivery signatures (HMAC-SHA256 over the raw body, hex, in the X-Paradym-HMAC-SHA-256 header) |
+
+
+
+---
+
+### deleteSubscription
+
+`webhooks.deleteSubscription`
+
+Delete a webhook subscription; deliveries stop until it is created again
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.paradym.api.webhooks.deleteSubscription({ webhookSubscriptionId: "whs_1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookSubscriptionId` | `string` | Yes | Subscription id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Deleted subscription id |
+| `success` | `boolean` | Yes | Whether the delete succeeded |
+
+
+
+---
+
+### getDelivery
+
+`webhooks.getDelivery`
+
+Read one webhook delivery with its attempt history
+
+**Risk:** `read`
+
+```ts
+await corsair.paradym.api.webhooks.getDelivery({ deliveryId: "del_1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deliveryId` | `string` | Yes | Delivery id |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Delivery id |
+| `status` | `string` | Yes | Delivery status, e.g. pending, delivered, failed |
+| `eventType` | `string` | Yes | Event type that was delivered |
+| `webhookSubscriptionId` | `string` | Yes | Subscription the delivery belongs to |
+| `attemptCount` | `number \| null` | No | Delivery attempts made so far |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last modification timestamp |
+| `completedAt` | `string \| null` | No | When the delivery succeeded |
+| `lastAttemptAt` | `string \| null` | No | When the last attempt ran |
+| `nextAttemptAt` | `string \| null` | No | When the next retry runs |
+
+
+
+---
+
+### listDeliveries
+
+`webhooks.listDeliveries`
+
+List webhook deliveries with their statuses
+
+**Risk:** `read`
+
+```ts
+await corsair.paradym.api.webhooks.listDeliveries({ filterStatus: "failed" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | Results per page (sent as page[size]); the meta.page response carries maxSize |
+| `pageAfter` | `string` | No | Cursor of the first record to return (sent as page[after]; take it from meta.page.after) |
+| `pageBefore` | `string` | No | Cursor of the last record to return (sent as page[before]; take it from meta.page.before) |
+| `filterStatus` | `string` | No | Filter by delivery status (sent as filter[status]) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Deliveries on this page |
+| `meta` | `object` | Yes | Pagination metadata for the list |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  eventType: string,
+  webhookSubscriptionId: string,
+  attemptCount?: number | null,
+  createdAt?: string | null,
+  updatedAt?: string | null,
+  completedAt?: string | null,
+  lastAttemptAt?: string | null,
+  nextAttemptAt?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: {
+    maxSize?: string | null,
+    size?: string | null,
+    after?: string | null,
+    before?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSubscriptions
+
+`webhooks.listSubscriptions`
+
+List the wallet webhook subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.paradym.api.webhooks.listSubscriptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | Results per page (sent as page[size]); the meta.page response carries maxSize |
+| `pageAfter` | `string` | No | Cursor of the first record to return (sent as page[after]; take it from meta.page.after) |
+| `pageBefore` | `string` | No | Cursor of the last record to return (sent as page[before]; take it from meta.page.before) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | Subscriptions in the wallet |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  url: string,
+  walletId: string,
+  eventTypes: string[],
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### redeliverDelivery
+
+`webhooks.redeliverDelivery`
+
+Redeliver a pending or failed webhook delivery: the payload is posted to the subscription URL again
+
+**Risk:** `destructive`
+
+```ts
+await corsair.paradym.api.webhooks.redeliverDelivery({ deliveryId: "del_1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deliveryId` | `string` | Yes | Delivery id |
+
+Redelivers a pending or failed delivery to the subscription URL.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Delivery id |
+| `status` | `string` | Yes | Delivery status, e.g. pending, delivered, failed |
+| `eventType` | `string` | Yes | Event type that was delivered |
+| `webhookSubscriptionId` | `string` | Yes | Subscription the delivery belongs to |
+| `attemptCount` | `number \| null` | No | Delivery attempts made so far |
+| `createdAt` | `string \| null` | No | Creation timestamp |
+| `updatedAt` | `string \| null` | No | Last modification timestamp |
+| `completedAt` | `string \| null` | No | When the delivery succeeded |
+| `lastAttemptAt` | `string \| null` | No | When the last attempt ran |
+| `nextAttemptAt` | `string \| null` | No | When the next retry runs |
+
+
+
+---
+

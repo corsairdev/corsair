@@ -494,6 +494,7 @@ export const BaseProviders = [
 	'outlook',
 	'pagerduty',
 	'pandadoc',
+	'paradym',
 	'paperform',
 	'parallel',
 	'parma',
@@ -1261,6 +1262,7 @@ export const ProviderDisplayNames = {
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
 	pandadoc: 'PandaDoc',
+	paradym: 'Paradym',
 	paperform: 'Paperform',
 	parallel: 'Parallel',
 	parma: 'Parma',
@@ -2035,6 +2037,7 @@ export type AllProviders =
 	| 'outlook'
 	| 'pagerduty'
 	| 'pandadoc'
+	| 'paradym'
 	| 'paperform'
 	| 'parallel'
 	| 'parma'
