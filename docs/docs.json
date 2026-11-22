@@ -3520,6 +3520,14 @@
                 ]
               },
               {
+                "group": "Listen Notes",
+                "pages": [
+                  "plugins/listennotes/overview",
+                  "plugins/listennotes/api",
+                  "plugins/listennotes/database"
+                ]
+              },
+              {
                 "group": "LiteScrape",
                 "pages": [
                   "plugins/litescrape/overview",
