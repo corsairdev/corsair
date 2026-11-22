@@ -9,6 +9,7 @@ import {
 	requestDownload,
 } from './endpoints/recordings';
 import { listMembers, list as listTeams } from './endpoints/teams';
+import { storableMeeting } from './endpoints/types';
 import { list as listUsers } from './endpoints/users';
 import { create as createWebhook, remove } from './endpoints/webhooks';
 import { errorHandlers } from './error-handlers';
@@ -23,10 +24,12 @@ jest.mock('corsair/core', () => ({
 
 type Ctx = Parameters<typeof listMeetings>[0];
 
+// `unknown`: the fake database records whatever each entity is given, across entity types.
 const upserts: Array<[string, string, unknown]> = [];
 
 function entity(name: string) {
 	return {
+		// `unknown`: same fake database, any entity's record.
 		upsertByEntityId: async (id: string, data: unknown) => {
 			upserts.push([name, id, data]);
 			return null;
@@ -44,6 +47,7 @@ const ctx = {
 
 const BASE = 'https://api.fathom.ai/external/v1';
 
+// `unknown`: test responses are arbitrary JSON, including deliberately malformed ones.
 function json(status: number, body: unknown) {
 	return new Response(JSON.stringify(body), {
 		status,
@@ -106,7 +110,9 @@ describe('Fathom AI endpoints', () => {
 		expect(call.headers.get('X-Api-Key')).toBe('fathom-test-key');
 		expect(call.headers.get('Authorization')).toBeNull();
 		expect(result).toEqual(page);
-		expect(upserts).toEqual([['meetings', '123456789', MEETING]]);
+		expect(upserts).toEqual([
+			['meetings', '123456789', storableMeeting(MEETING)],
+		]);
 		expect(logEventFromContext).toHaveBeenCalledWith(
 			ctx,
 			'fathomai.meetings.list',
@@ -368,9 +374,76 @@ describe('Fathom AI endpoints', () => {
 		expect(result).toEqual({ id: 'ikEoQ4bVoq4JYUmc', deleted: true });
 	});
 
+	it('stores meeting metadata only, so a basic list after a rich one keeps the same record', async () => {
+		const rich = { limit: 10, next_cursor: null, items: [MEETING] };
+		const basicMeeting = storableMeeting(MEETING);
+		const basic = { limit: 10, next_cursor: null, items: [basicMeeting] };
+		fetchMock
+			.mockResolvedValueOnce(json(200, rich))
+			.mockResolvedValueOnce(json(200, basic));
+
+		const first = await listMeetings(ctx, {
+			include_transcript: true,
+			include_summary: true,
+			include_action_items: true,
+		});
+		await listMeetings(ctx, {});
+
+		expect(first.items[0]?.transcript).toEqual(MEETING.transcript);
+		const [richRecord, basicRecord] = upserts.map(([, , data]) => data);
+		expect(richRecord).toEqual(basicRecord);
+		expect(richRecord).not.toHaveProperty('transcript');
+		expect(richRecord).not.toHaveProperty('default_summary');
+		expect(richRecord).toMatchObject({ recording_id: 123456789 });
+	});
+
+	it('keeps email addresses and destination URLs out of a failed request', async () => {
+		fetchMock.mockResolvedValue(json(400, { error: 'Bad request' }));
+
+		// `unknown`: a rejection value is untyped until the assertion narrows it.
+		const error = await listMeetings(ctx, {
+			recorded_by: ['ceo@acme.com'],
+		}).catch((e: unknown) => e);
+
+		expect(error).toBeInstanceOf(ApiError);
+		const apiError = error as ApiError;
+		expect(apiError.status).toBe(400);
+		expect(apiError.body).toEqual({ error: 'Bad request' });
+		const exposed = JSON.stringify({
+			url: apiError.url,
+			message: apiError.message,
+			request: apiError.request,
+		});
+		expect(exposed).not.toContain('acme.com');
+		expect(apiError.url).toBe(`${BASE}/meetings`);
+
+		fetchMock.mockResolvedValue(json(404, { error: 'Not found' }));
+		const transcriptError = await getTranscript(ctx, {
+			recording_id: 42,
+			destination_url: 'https://example.com/hook?token=abc',
+		}).catch((e: unknown) => e);
+		expect(JSON.stringify(transcriptError)).not.toContain('token=abc');
+		expect((transcriptError as ApiError).url).toBe(
+			`${BASE}/recordings/{recording_id}/transcript`,
+		);
+	});
+
+	it('accepts enum values Fathom adds to responses later', async () => {
+		fetchMock.mockResolvedValue(
+			json(200, {
+				limit: 10,
+				next_cursor: null,
+				items: [{ ...MEETING, shared_with: 'some_new_sharing_mode' }],
+			}),
+		);
+		const result = await listMeetings(ctx, {});
+		expect(result.items[0]?.shared_with).toBe('some_new_sharing_mode');
+	});
+
 	it('passes a 401 through as ApiError without persisting or logging', async () => {
 		fetchMock.mockResolvedValue(json(401, { error: 'Unauthorized' }));
 
+		// `unknown`: a rejection value is untyped until the assertion narrows it.
 		const error = await listTeams(ctx, {}).catch((e: unknown) => e);
 
 		expect(error).toBeInstanceOf(ApiError);

@@ -33,6 +33,7 @@ function safeEqual(left: string, right: string): boolean {
 // Fathom signs with the Standard Webhooks scheme: base64 HMAC-SHA256 over
 // `${webhook-id}.${webhook-timestamp}.${raw body}`, keyed by the base64 secret after `whsec_`.
 export function verifyFathomAiWebhook(
+	// `unknown` payload: the signature covers the raw body, so verification never reads the parsed payload.
 	request: WebhookRequest<unknown>,
 	secret: string | undefined,
 	now: number = Math.floor(Date.now() / 1000),

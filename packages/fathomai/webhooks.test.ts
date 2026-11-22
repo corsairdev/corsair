@@ -1,6 +1,7 @@
 import { processWebhook } from 'corsair';
 import { createCorsair, logEventFromContext } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
+import { storableMeeting } from './endpoints/types';
 import { fathomai } from './index';
 import { MEETING } from './test-fixtures';
 import { contentReady } from './webhooks/meetings';
@@ -154,6 +155,7 @@ describe('meetings.contentReady handler', () => {
 	type Ctx = Parameters<typeof contentReady.handler>[0];
 	type Req = Parameters<typeof contentReady.handler>[1];
 
+	// `unknown`: the fake database records whatever the handler stores.
 	const upserts: Array<[string, unknown]> = [];
 
 	function ctxWithSecret(key: string) {
@@ -162,6 +164,7 @@ describe('meetings.contentReady handler', () => {
 			key,
 			db: {
 				meetings: {
+					// `unknown`: same fake database record.
 					upsertByEntityId: async (id: string, data: unknown) => {
 						upserts.push([id, data]);
 						return { id: 'entity-1' };
@@ -194,7 +197,7 @@ describe('meetings.contentReady handler', () => {
 			corsairEntityId: 'entity-1',
 			data: MEETING,
 		});
-		expect(upserts).toEqual([['123456789', MEETING]]);
+		expect(upserts).toEqual([['123456789', storableMeeting(MEETING)]]);
 		expect(logEventFromContext).toHaveBeenCalledWith(
 			ctx,
 			'fathomai.webhook.meetings.contentReady',
@@ -254,7 +257,8 @@ describe('a delivery through processWebhook', () => {
 			expect(result.response).toMatchObject({ success: true });
 			const stored =
 				await corsair.fathomai.db.meetings.findByEntityId('123456789');
-			expect(stored?.data).toEqual(MEETING);
+			expect(stored?.data).toEqual(storableMeeting(MEETING));
+			expect(stored?.data).not.toHaveProperty('transcript');
 		} finally {
 			testDb.cleanup();
 		}
