@@ -6,6 +6,7 @@ import { metabaseAuthConfig, metabaseEndpointSchemas } from './index';
 // Exercises the fixes from the live run against a self-hosted Metabase 0.65 (11-23) through the real
 // endpoint wrapper and client, with fetch stubbed.
 
+// `unknown`: test bodies are arbitrary JSON, including shapes the schemas must reject.
 function jsonResponse(body: unknown, status = 200): Response {
 	return new Response(JSON.stringify(body), {
 		status,
@@ -68,6 +69,7 @@ describe('Metabase review fixes', () => {
 		await expect(
 			endpoints.llm.putProvidersByKey(ctx, { path: { key: '' }, body: {} }),
 		).rejects.toThrow('Metabase path parameter is invalid');
+		// `as unknown as number`: an empty id is not a valid input type, which is the point of the check.
 		await expect(
 			endpoints.collections.get(ctx, { path: { id: '' as unknown as number } }),
 		).rejects.toThrow();
@@ -124,12 +126,14 @@ describe('Metabase review fixes', () => {
 		await endpoints.metric.get(ctx, { query });
 		await endpoints.task.getRuns(ctx, { query });
 		await endpoints.notification.getAdmin(ctx, { query });
+		await endpoints.ee.getMetabotAnalyticsConversations(ctx, { query });
+		await endpoints.ee.getSupportAccessGrant(ctx, { query });
 		for (const call of fetchMock.mock.calls) {
 			const url = new URL(String(call[0]));
 			expect(url.searchParams.get('limit')).toBe('25');
 			expect(url.searchParams.get('offset')).toBe('50');
 		}
-		expect(fetchMock).toHaveBeenCalledTimes(7);
+		expect(fetchMock).toHaveBeenCalledTimes(9);
 	});
 
 	it('keeps response fields the OpenAPI document does not list', async () => {

@@ -2026,6 +2026,7 @@ const openApiInput74 = lazySchema(() =>
 		.object({
 			query: z
 				.object({
+					...metabasePageQueryShape,
 					'include-personal-collections': z.boolean().optional(),
 					'sort-column': z
 						.union([
@@ -2181,6 +2182,7 @@ const openApiInput75 = lazySchema(() =>
 		.object({
 			query: z
 				.object({
+					...metabasePageQueryShape,
 					'include-personal-collections': z.boolean().optional(),
 					'sort-column': z
 						.union([
@@ -2368,6 +2370,7 @@ const openApiInput77 = lazySchema(() =>
 		.object({
 			query: z
 				.object({
+					...metabasePageQueryShape,
 					'include-personal-collections': z.boolean().optional(),
 					'sort-column': z
 						.union([
@@ -2519,6 +2522,7 @@ const openApiInput78 = lazySchema(() =>
 		.object({
 			query: z
 				.object({
+					...metabasePageQueryShape,
 					'include-personal-collections': z.boolean().optional(),
 					'sort-column': z
 						.union([
@@ -3236,6 +3240,7 @@ const openApiInput98 = lazySchema(() =>
 		.object({
 			query: z
 				.object({
+					...metabasePageQueryShape,
 					types: z
 						.union([
 							OpenApiSchemas.MetabaseOpenApiInputSchema131(),
@@ -3421,6 +3426,7 @@ const openApiInput101 = lazySchema(() =>
 		.object({
 			query: z
 				.object({
+					...metabasePageQueryShape,
 					types: z
 						.union([
 							OpenApiSchemas.MetabaseOpenApiInputSchema131(),
@@ -3559,6 +3565,7 @@ const openApiInput107 = lazySchema(() =>
 		.object({
 			query: z
 				.object({
+					...metabasePageQueryShape,
 					sort_by: z
 						.union([
 							z.union([
@@ -3824,7 +3831,10 @@ const openApiInput110 = lazySchema(() =>
 	z
 		.object({
 			query: z
-				.object({ query: z.union([z.string(), z.null()]).optional() })
+				.object({
+					...metabasePageQueryShape,
+					query: z.union([z.string(), z.null()]).optional(),
+				})
 				.strict()
 				.optional(),
 		})
@@ -3884,7 +3894,10 @@ const openApiInput112 = lazySchema(() =>
 	z
 		.object({
 			query: z
-				.object({ query: z.union([z.string(), z.null()]).optional() })
+				.object({
+					...metabasePageQueryShape,
+					query: z.union([z.string(), z.null()]).optional(),
+				})
 				.strict()
 				.optional(),
 		})
@@ -4798,6 +4811,7 @@ const openApiInput142 = lazySchema(() =>
 		.object({
 			query: z
 				.object({
+					...metabasePageQueryShape,
 					status: z.union([z.literal('ended'), z.literal('all')]).optional(),
 				})
 				.strict()
@@ -4866,6 +4880,7 @@ const openApiInput145 = lazySchema(() =>
 		.object({
 			query: z
 				.object({
+					...metabasePageQueryShape,
 					'ticket-number': z.union([z.string(), z.null()]).optional(),
 					'user-id': z.union([z.number().int().min(1), z.null()]).optional(),
 					'include-revoked': z.union([z.boolean(), z.null()]).optional(),
@@ -5185,6 +5200,7 @@ const openApiInput157 = lazySchema(() =>
 			path: z.object({ id: z.number().int().min(1) }).strict(),
 			query: z
 				.object({
+					...metabasePageQueryShape,
 					statuses: z
 						.union([
 							z.array(OpenApiSchemas.MetabaseOpenApiInputSchema179()),
