@@ -2656,7 +2656,12 @@ await corsair.metabase.api.dataset.post({ "body": { "type": "internal" } });
 ```ts
 JsonValue | JsonValue | {
   database: number,
-  type: native | query
+  type: native,
+  native: JsonValue
+} | {
+  database: number,
+  type: query,
+  query: JsonValue
 }
 ```
 </Accordion>
@@ -2747,7 +2752,12 @@ The route description specifies a file download while the OpenAPI success schema
   pivot_results?: boolean,
   query: JsonValue | JsonValue | {
     database: number,
-    type: native | query
+    type: native,
+    native: JsonValue
+  } | {
+    database: number,
+    type: query,
+    query: JsonValue
   },
   visualization_settings?: Record<string, JsonValue>
 }
@@ -2809,7 +2819,12 @@ await corsair.metabase.api.dataset.postPivot({ "body": { "stages": [{ "lib/type"
 ```ts
 JsonValue | {
   database: number,
-  type: native | query
+  type: native,
+  native: JsonValue
+} | {
+  database: number,
+  type: query,
+  query: JsonValue
 }
 ```
 </Accordion>
@@ -8398,7 +8413,7 @@ Pro/Enterprise only. Revoke — end — every live session matching the given cr
 **Risk:** `destructive`
 
 ```ts
-await corsair.metabase.api.ee.postSessionManagementRevoke({ "body": {  } });
+await corsair.metabase.api.ee.postSessionManagementRevoke({ "body": { "user-id": 42 } });
 ```
 
 **Input**
@@ -8406,6 +8421,8 @@ await corsair.metabase.api.ee.postSessionManagementRevoke({ "body": {  } });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `body` | `JsonValue \| null` | No | — |
+
+An empty body matches every eligible live session on the instance. Pass a filter such as user-id to end one user's sessions.
 
 
 
@@ -8547,7 +8564,12 @@ await corsair.metabase.api.ee.postTransformsByIdInspectByLensIdQuery({ "path": {
   } | null,
   query: JsonValue | {
     database: number,
-    type: native | query
+    type: native,
+    native: JsonValue
+  } | {
+    database: number,
+    type: query,
+    query: JsonValue
   }
 }
 ```
@@ -11357,7 +11379,7 @@ Delete a provider connection.
 **Risk:** `destructive`
 
 ```ts
-await corsair.metabase.api.llm.deleteProvidersByKey({ "path": { "key": "" } });
+await corsair.metabase.api.llm.deleteProvidersByKey({ "path": { "key": "openai" } });
 ```
 
 **Input**
@@ -11657,7 +11679,7 @@ Update a provider connection.
 **Risk:** `write`
 
 ```ts
-await corsair.metabase.api.llm.putProvidersByKey({ "path": { "key": "" }, "body": {  } });
+await corsair.metabase.api.llm.putProvidersByKey({ "path": { "key": "openai" }, "body": {  } });
 ```
 
 **Input**
@@ -11782,7 +11804,12 @@ await corsair.metabase.api.measure.get({  });
   table_id?: number | null,
   definition?: JsonValue | {
     database: number,
-    type: native | query
+    type: native,
+    native: JsonValue
+  } | {
+    database: number,
+    type: query,
+    query: JsonValue
   } | null,
   created_at?: JsonValue | null,
   creator_id?: number | null,
@@ -11861,7 +11888,12 @@ await corsair.metabase.api.measure.getById({ "path": { "id": 1 }, "query": {  } 
 ```ts
 JsonValue | {
   database: number,
-  type: native | query
+  type: native,
+  native: JsonValue
+} | {
+  database: number,
+  type: query,
+  query: JsonValue
 } | null
 ```
 </Accordion>
@@ -12033,7 +12065,12 @@ await corsair.metabase.api.measure.post({ "body": { "name": "a", "definition": {
 {
   definition: JsonValue | {
     database: number,
-    type: native | query
+    type: native,
+    native: JsonValue
+  } | {
+    database: number,
+    type: query,
+    query: JsonValue
   },
   description?: string | null,
   name: string
@@ -12069,7 +12106,12 @@ await corsair.metabase.api.measure.post({ "body": { "name": "a", "definition": {
 ```ts
 JsonValue | {
   database: number,
-  type: native | query
+  type: native,
+  native: JsonValue
+} | {
+  database: number,
+  type: query,
+  query: JsonValue
 } | null
 ```
 </Accordion>
@@ -12115,7 +12157,12 @@ await corsair.metabase.api.measure.putById({ "path": { "id": 1 }, "body": { "rev
   archived?: boolean | null,
   definition?: JsonValue | {
     database: number,
-    type: native | query
+    type: native,
+    native: JsonValue
+  } | {
+    database: number,
+    type: query,
+    query: JsonValue
   } | null,
   description?: string | null,
   name?: string | null,
@@ -12152,7 +12199,12 @@ await corsair.metabase.api.measure.putById({ "path": { "id": 1 }, "body": { "rev
 ```ts
 JsonValue | {
   database: number,
-  type: native | query
+  type: native,
+  native: JsonValue
+} | {
+  database: number,
+  type: query,
+  query: JsonValue
 } | null
 ```
 </Accordion>
@@ -12589,7 +12641,12 @@ await corsair.metabase.api.metabot.postConversationsByIdSavedEntity({ "path": { 
     dashboard_tab_id?: number | null,
     dataset_query: JsonValue | {
       database: number,
-      type: native | query
+      type: native,
+      native: JsonValue
+    } | {
+      database: number,
+      type: query,
+      query: JsonValue
     },
     description?: string | null,
     display: string,
@@ -12626,7 +12683,12 @@ await corsair.metabase.api.metabot.postConversationsByIdSavedEntity({ "path": { 
 ```ts
 JsonValue | {
   database: number,
-  type: native | query
+  type: native,
+  native: JsonValue
+} | {
+  database: number,
+  type: query,
+  query: JsonValue
 } | null
 ```
 </Accordion>
@@ -12684,7 +12746,12 @@ await corsair.metabase.api.metabot.postDocumentGenerateContent({ "body": { "inst
   database_id?: number | null,
   dataset_query?: JsonValue | {
     database: number,
-    type: native | query
+    type: native,
+    native: JsonValue
+  } | {
+    database: number,
+    type: query,
+    query: JsonValue
   } | null,
   name?: string | null,
   parameters?: JsonValue[] | null | null,
@@ -13667,9 +13734,9 @@ await corsair.metabase.api.notification.getAdminById({ "path": { "id": 1 } });
 
 `notification.post`
 
-Create a new notification, return the created notification.
+Create a new notification (alert or subscription), return the created notification. With email or Slack set up, Metabase can send it to its recipients right away.
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.metabase.api.notification.post({ "body": { "payload_type": "notification/dashboard", "payload": { "card_id": 1 } } });
@@ -14071,7 +14138,7 @@ Embedded version of api.card filter values endpoint.
 **Risk:** `read`
 
 ```ts
-await corsair.metabase.api.previewEmbed.getCardByTokenParamsByParamKeyValues({ "path": { "token": "", "param-key": "" } });
+await corsair.metabase.api.previewEmbed.getCardByTokenParamsByParamKeyValues({ "path": { "token": "<signed embed JWT>", "param-key": "<parameter id from the card>" } });
 ```
 
 **Input**
@@ -15655,7 +15722,12 @@ await corsair.metabase.api.transform.post({ "body": { "name": "", "source": { "t
   source: {
     query: JsonValue | {
       database: number,
-      type: native | query
+      type: native,
+      native: JsonValue
+    } | {
+      database: number,
+      type: query,
+      query: JsonValue
     },
     source-incremental-strategy?: {
       checkpoint-filter-field-id?: number,
@@ -16042,7 +16114,12 @@ await corsair.metabase.api.transform.putById({ "path": { "id": 1 }, "body": {  }
   source?: {
     query: JsonValue | {
       database: number,
-      type: native | query
+      type: native,
+      native: JsonValue
+    } | {
+      database: number,
+      type: query,
+      query: JsonValue
     },
     source-incremental-strategy?: {
       checkpoint-filter-field-id?: number,

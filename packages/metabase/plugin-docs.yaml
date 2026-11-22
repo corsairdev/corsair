@@ -4,8 +4,9 @@ domain: metabase.com
 recommendedAuth: api_key
 factory:
   note: >-
-    Each account stores its Metabase instance origin as `base_url` (for example https://example.metabaseapp.com) next to
-    its API key; `metabase({ baseUrl })` overrides it for a single-instance setup. Use HTTPS, or HTTP only for localhost
+    Each account needs its Metabase instance origin before the first call: store it as `base_url` next to the API key
+    (`keys.set_base_url('https://example.metabaseapp.com')`, or the Base URL field when connecting in Hub). For a
+    single-instance setup pass `metabase({ baseUrl })` instead; it overrides the stored value. Use HTTPS, or HTTP only for localhost
     development. Metabase grants each API key the permissions of its assigned group.
 overviewNote: >-
   Metabase's REST API is unversioned. The current latest documentation is for Metabase 65, but available routes depend
@@ -16,6 +17,7 @@ overviewNote: >-
   Operations under `ee.` call Pro/Enterprise routes, which an open-source instance answers with 404. Metabase's
   MCP Apps routes (`/api/embed-mcp/*`) are left out: they need an MCP session header that only Metabase's embed sets.
 apiNotes:
+  "ee.postSessionManagementRevoke": "An empty body matches every eligible live session on the instance. Pass a filter such as user-id to end one user's sessions."
   "collections.delete": "DELETE /api/collection/{id} permanently removes a collection; the operation is marked destructive."
   "collectionPermissions.graph.update": "The permission-graph update can overwrite supplied entries. force=true persists the supplied graph without a revision check and can overwrite concurrent updates; the operation is marked destructive."
   "collections.items.list": "Collection item rows are heterogeneous and the OpenAPI schema intentionally leaves their item fields open. The plugin preserves JSON-compatible fields instead of claiming a fixed model."
@@ -376,7 +378,7 @@ apiExamples:
   "ee.getSessionManagement":
     call: "{ \"query\": {  } }"
   "ee.postSessionManagementRevoke":
-    call: "{ \"body\": {  } }"
+    call: "{ \"body\": { \"user-id\": 42 } }"
   "ee.postSupportAccessGrant":
     call: "{ \"body\": { \"grant_duration_minutes\": 1 } }"
   "ee.getSupportAccessGrant":
@@ -484,9 +486,9 @@ apiExamples:
   "llm.postProviders":
     call: "{ \"body\": { \"type\": \"\" } }"
   "llm.putProvidersByKey":
-    call: "{ \"path\": { \"key\": \"\" }, \"body\": {  } }"
+    call: "{ \"path\": { \"key\": \"openai\" }, \"body\": {  } }"
   "llm.deleteProvidersByKey":
-    call: "{ \"path\": { \"key\": \"\" } }"
+    call: "{ \"path\": { \"key\": \"openai\" } }"
   "logger.getPresets":
     call: "{  }"
   "measure.post":
@@ -572,7 +574,7 @@ apiExamples:
   "permissions.getInviteGroupIds":
     call: "{ \"query\": { \"type\": \"dashboard\", \"id\": 1 } }"
   "previewEmbed.getCardByTokenParamsByParamKeyValues":
-    call: "{ \"path\": { \"token\": \"\", \"param-key\": \"\" } }"
+    call: "{ \"path\": { \"token\": \"<signed embed JWT>\", \"param-key\": \"<parameter id from the card>\" } }"
   "public.postDashboardByUuidDashcardByDashcardIdExecuteValues":
     call: "{ \"path\": { \"uuid\": \"00000000-0000-4000-8000-000000000001\", \"dashcard-id\": 1 }, \"body\": { \"parameters\": {  } } }"
   "session.getIllustrationByKey":
