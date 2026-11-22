@@ -1961,7 +1961,7 @@ await corsair.productboard.api.teams.list({
 ```ts
 {
   id: string,
-  type: team,
+  type: string,
   fields: {
     name: string,
     handle: string
@@ -2064,7 +2064,7 @@ await corsair.productboard.api.teams.search({
 ```ts
 {
   id: string,
-  type: team,
+  type: string,
   fields: {
     name: string,
     handle: string
@@ -2203,7 +2203,7 @@ The plugin validates notification URL syntax, length, and the HTTPS prefix; Prod
 ```ts
 {
   id: string,
-  type: webhook,
+  type: string,
   links: {
     self: string
   }
@@ -2275,16 +2275,16 @@ await corsair.productboard.api.webhooks.get({ webhookId: '00000000-0000-4000-800
 ```ts
 {
   id: string,
-  type: webhook,
-  createdAt: string,
+  type: string,
+  createdAt?: string,
   fields: {
     name: string,
     events: {
-      eventType: feature.created | feature.updated | feature.deleted | component.created | component.updated | product.created | product.updated | release.created | release.updated | release.deleted | feature-release-assignment.updated | hierarchy-entity.custom-field-value.updated | note.created | note.updated | note.deleted | insight.created | insight.deleted | key-result.created | key-result.updated | key-result.deleted | objective.created | objective.updated | objective.deleted | initiative.created | initiative.updated | initiative.deleted
+      eventType: string
     }[],
     notification: {
       url: string,
-      version: 1
+      version: number
     }
   },
   links: {
@@ -2324,7 +2324,7 @@ await corsair.productboard.api.webhooks.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `data` | `object[]` | Yes | — |
-| `links` | `object` | Yes | — |
+| `links` | `object` | No | — |
 
 <AccordionGroup>
 <Accordion title="data full type">
@@ -2332,16 +2332,16 @@ await corsair.productboard.api.webhooks.list({});
 ```ts
 {
   id: string,
-  type: webhook,
-  createdAt: string,
+  type: string,
+  createdAt?: string,
   fields: {
     name: string,
     events: {
-      eventType: feature.created | feature.updated | feature.deleted | component.created | component.updated | product.created | product.updated | release.created | release.updated | release.deleted | feature-release-assignment.updated | hierarchy-entity.custom-field-value.updated | note.created | note.updated | note.deleted | insight.created | insight.deleted | key-result.created | key-result.updated | key-result.deleted | objective.created | objective.updated | objective.deleted | initiative.created | initiative.updated | initiative.deleted
+      eventType: string
     }[],
     notification: {
       url: string,
-      version: 1
+      version: number
     }
   },
   links: {
@@ -2355,7 +2355,7 @@ await corsair.productboard.api.webhooks.list({});
 
 ```ts
 {
-  next: string | null
+  next?: string | null
 }
 ```
 </Accordion>
@@ -2364,3 +2364,4 @@ await corsair.productboard.api.webhooks.list({});
 
 
 ---
+
