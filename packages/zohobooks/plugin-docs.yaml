@@ -152,7 +152,7 @@ apiExamples:
   bankRules.skipSuggestedBankAccountRule:
     args: {"query":{"organization_id":"999999999999999"}}
   bankRules.listBankAccountMatchFilters:
-    args: {"query":{"organization_id":"999999999999999"}}
+    args: {"query":{"organization_id":"999999999999999","account_id":"999999999999999"}}
   bankRules.createBankAccountMatchFilter:
     args: {"query":{"organization_id":"999999999999999"},"body":{}}
   bankRules.updateBankAccountMatchFilter:
@@ -382,7 +382,7 @@ apiExamples:
   contacts.listContactBankAccounts:
     args: {"pathParams":{"contact_id":"999999999999999"},"query":{"organization_id":"999999999999999"}}
   contacts.listAllContactBankAccounts:
-    args: {"query":{"organization_id":"999999999999999"}}
+    args: {"query":{"organization_id":"999999999999999","contact_ids":"999999999999999"}}
   contacts.addContactCard:
     args: {"pathParams":{"contact_id":"999999999999999"},"query":{"organization_id":"999999999999999"},"body":{}}
   contacts.getContactCard:
@@ -394,7 +394,7 @@ apiExamples:
   contacts.listContactCards:
     args: {"pathParams":{"contact_id":"999999999999999"},"query":{"organization_id":"999999999999999"}}
   contacts.getContactCardCount:
-    args: {"query":{"organization_id":"999999999999999"}}
+    args: {"query":{"organization_id":"999999999999999","contact_ids":"999999999999999"}}
   contacts.listAllContactPersons:
     args: {"query":{"organization_id":"999999999999999"}}
   contacts.getContactContactPerson:
@@ -580,7 +580,7 @@ apiExamples:
   creditNotes.deleteCreditNoteSubstatus:
     args: {"pathParams":{"creditnote_id":"999999999999999","substatus_id":"999999999999999"},"query":{"organization_id":"999999999999999"}}
   creditNotes.listCreditNotesEinvoice:
-    args: {"query":{"organization_id":"999999999999999"}}
+    args: {"query":{"organization_id":"999999999999999","creditnote_ids":"999999999999999"}}
   creditNotes.pushCreditNotesEinvoice:
     args: {"query":{"organization_id":"999999999999999"}}
   creditNotes.cancelCreditNotesEinvoice:
@@ -1046,7 +1046,7 @@ apiExamples:
   invoices.updateInvoiceMetadata:
     args: {"pathParams":{"invoice_id":"999999999999999","metadata_name":"Sample record"},"query":{"organization_id":"999999999999999"}}
   invoices.listInvoicesEinvoice:
-    args: {"query":{"organization_id":"999999999999999"}}
+    args: {"query":{"organization_id":"999999999999999","invoice_ids":"999999999999999"}}
   invoices.pushInvoicesEinvoice:
     args: {"query":{"organization_id":"999999999999999"}}
   invoices.cancelInvoicesEinvoice:
@@ -1594,9 +1594,9 @@ apiExamples:
   salesOrder.approveSalesOrder:
     args: {"pathParams":{"salesorder_id":"999999999999999"},"query":{"organization_id":"999999999999999"}}
   salesOrder.bulkExportSalesOrdersAsPdf:
-    args: {"query":{"organization_id":"999999999999999"}}
+    args: {"query":{"organization_id":"999999999999999","salesorder_ids":"999999999999999"}}
   salesOrder.bulkPrintSalesOrders:
-    args: {"query":{"organization_id":"999999999999999"}}
+    args: {"query":{"organization_id":"999999999999999","salesorder_ids":"999999999999999"}}
   salesOrder.updateSalesOrderBillingAddress:
     args: {"pathParams":{"salesorder_id":"999999999999999"},"query":{"organization_id":"999999999999999"},"body":{}}
   salesOrder.updateSalesOrderShippingAddress:

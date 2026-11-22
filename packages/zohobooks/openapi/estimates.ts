@@ -2615,6 +2615,11 @@ export const operations = [
 				contentType: 'application/json',
 				schema: { $ref: '#/components/schemas/bulk-export-estimates-response' },
 			},
+			{
+				status: '200',
+				contentType: 'application/pdf',
+				schema: { type: 'string', format: 'binary' },
+			},
 		],
 		scopes: ['ZohoBooks.estimates.READ'],
 		riskLevel: 'read',
@@ -2653,6 +2658,11 @@ export const operations = [
 				status: '200',
 				contentType: 'application/json',
 				schema: { $ref: '#/components/schemas/bulk-print-estimates-response' },
+			},
+			{
+				status: '200',
+				contentType: 'application/pdf',
+				schema: { type: 'string', format: 'binary' },
 			},
 		],
 		scopes: ['ZohoBooks.estimates.READ'],

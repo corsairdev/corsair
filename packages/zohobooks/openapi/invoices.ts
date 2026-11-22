@@ -4966,6 +4966,11 @@ export const operations = [
 				contentType: 'application/json',
 				schema: { $ref: '#/components/schemas/bulk-export-invoices-response' },
 			},
+			{
+				status: '200',
+				contentType: 'application/pdf',
+				schema: { type: 'string', format: 'binary' },
+			},
 		],
 		scopes: ['ZohoBooks.invoices.READ'],
 		riskLevel: 'read',
@@ -5004,6 +5009,11 @@ export const operations = [
 				status: '200',
 				contentType: 'application/json',
 				schema: { $ref: '#/components/schemas/bulk-print-invoices-response' },
+			},
+			{
+				status: '200',
+				contentType: 'application/pdf',
+				schema: { type: 'string', format: 'binary' },
 			},
 		],
 		scopes: ['ZohoBooks.invoices.READ'],
@@ -8482,6 +8492,14 @@ export const operations = [
 				required: true,
 				description:
 					'ID of the organization.  Note: This value is a set of numeric characters.',
+				schema: { type: 'string' },
+			},
+			{
+				name: 'invoice_ids',
+				in: 'query',
+				required: true,
+				description:
+					'Comma-separated invoice IDs. Required by the API, though the Zoho OpenAPI leaves it out.',
 				schema: { type: 'string' },
 			},
 		],

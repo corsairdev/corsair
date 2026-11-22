@@ -4461,6 +4461,14 @@ export const operations = [
 					'ID of the organization. Note: This value is a set of numeric characters.',
 				schema: { type: 'string' },
 			},
+			{
+				name: 'contact_ids',
+				in: 'query',
+				required: true,
+				description:
+					'Comma-separated contact IDs. Required by the API, though the Zoho OpenAPI leaves it out.',
+				schema: { type: 'string' },
+			},
 		],
 		responses: [
 			{
@@ -4717,6 +4725,14 @@ export const operations = [
 				required: true,
 				description:
 					'ID of the organization. Note: This value is a set of numeric characters.',
+				schema: { type: 'string' },
+			},
+			{
+				name: 'contact_ids',
+				in: 'query',
+				required: true,
+				description:
+					'Comma-separated contact IDs. Required by the API, though the Zoho OpenAPI leaves it out.',
 				schema: { type: 'string' },
 			},
 		],

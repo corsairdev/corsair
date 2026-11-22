@@ -2913,6 +2913,14 @@ export const operations = [
 					'ID of the organization. Note: This value is a set of numeric characters.',
 				schema: { type: 'string' },
 			},
+			{
+				name: 'salesorder_ids',
+				in: 'query',
+				required: true,
+				description:
+					'Comma-separated sales order IDs to export as one PDF. Required by the API, though the Zoho OpenAPI leaves it out.',
+				schema: { type: 'string' },
+			},
 		],
 		responses: [
 			{
@@ -2921,6 +2929,11 @@ export const operations = [
 				schema: {
 					$ref: '#/components/schemas/bulk-export-sales-orders-response',
 				},
+			},
+			{
+				status: '200',
+				contentType: 'application/pdf',
+				schema: { type: 'string', format: 'binary' },
 			},
 		],
 		scopes: ['ZohoBooks.salesorders.READ'],
@@ -2946,6 +2959,14 @@ export const operations = [
 					'ID of the organization. Note: This value is a set of numeric characters.',
 				schema: { type: 'string' },
 			},
+			{
+				name: 'salesorder_ids',
+				in: 'query',
+				required: true,
+				description:
+					'Comma-separated sales order IDs to print. Required by the API, though the Zoho OpenAPI leaves it out.',
+				schema: { type: 'string' },
+			},
 		],
 		responses: [
 			{
@@ -2954,6 +2975,11 @@ export const operations = [
 				schema: {
 					$ref: '#/components/schemas/bulk-print-sales-orders-response',
 				},
+			},
+			{
+				status: '200',
+				contentType: 'application/pdf',
+				schema: { type: 'string', format: 'binary' },
 			},
 		],
 		scopes: ['ZohoBooks.salesorders.READ'],

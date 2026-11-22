@@ -4649,6 +4649,14 @@ export const operations = [
 				description: 'ID of the organization',
 				schema: { type: 'string' },
 			},
+			{
+				name: 'creditnote_ids',
+				in: 'query',
+				required: true,
+				description:
+					'Comma-separated credit note IDs. Required by the API, though the Zoho OpenAPI leaves it out.',
+				schema: { type: 'string' },
+			},
 		],
 		responses: [
 			{

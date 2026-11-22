@@ -836,6 +836,14 @@ export const operations = [
 				description: 'ID of the organization',
 				schema: { type: 'string' },
 			},
+			{
+				name: 'account_id',
+				in: 'query',
+				required: true,
+				description:
+					'ID of the bank account whose match filters are listed. Required by the API, though the Zoho OpenAPI leaves it out.',
+				schema: { type: 'string' },
+			},
 		],
 		responses: [
 			{
