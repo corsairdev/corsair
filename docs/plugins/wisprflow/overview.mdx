@@ -108,7 +108,7 @@ await tenant.wisprflow.api.transcriptions.warmup({});
 ```ts
 const tenant = corsair.withTenant('acme');
 await tenant.wisprflow.api.transcriptions.create({
-	audio: 'UklGRiQAAABXQVZFZm10IBAAAAABAAEAgD4AAAB9AAACABAAZGF0YQAAAAA=',
+	audio: '<base64 of a 16kHz mono PCM16 WAV recording, up to 25MB or 6 minutes>',
 	language: ['en'],
 });
 ```

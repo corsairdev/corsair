@@ -10,7 +10,7 @@ examples:
     path: transcriptions.create
     title: Transcribe a dictation
     args:
-      audio: UklGRiQAAABXQVZFZm10IBAAAAABAAEAgD4AAAB9AAACABAAZGF0YQAAAAA=
+      audio: <base64 of a 16kHz mono PCM16 WAV recording, up to 25MB or 6 minutes>
       language:
         - en
 dbExample:
