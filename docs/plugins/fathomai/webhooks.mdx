@@ -69,8 +69,8 @@ A recorded meeting finished processing; carries the meeting with the transcript,
 | `scheduled_end_time` | `string` | Yes | — |
 | `recording_start_time` | `string` | Yes | — |
 | `recording_end_time` | `string` | Yes | — |
-| `calendar_invitees_domains_type` | `only_internal \| one_or_more_external` | Yes | — |
-| `shared_with` | `no_teams \| single_team \| multiple_teams \| all_teams` | Yes | — |
+| `calendar_invitees_domains_type` | `only_internal \| one_or_more_external \| string` | Yes | — |
+| `shared_with` | `no_teams \| single_team \| multiple_teams \| all_teams \| string` | Yes | — |
 | `transcript_language` | `string` | Yes | — |
 | `transcript` | `object[] \| null` | No | — |
 | `default_summary` | `object \| null` | No | — |
@@ -204,8 +204,8 @@ A recorded meeting finished processing; carries the meeting with the transcript,
   scheduled_end_time: string,
   recording_start_time: string,
   recording_end_time: string,
-  calendar_invitees_domains_type: only_internal | one_or_more_external,
-  shared_with: no_teams | single_team | multiple_teams | all_teams,
+  calendar_invitees_domains_type: only_internal | one_or_more_external | string,
+  shared_with: no_teams | single_team | multiple_teams | all_teams | string,
   transcript_language: string,
   transcript?: {
     speaker: {

@@ -67,8 +67,8 @@ await corsair.fathomai.api.meetings.list({});
   scheduled_end_time: string,
   recording_start_time: string,
   recording_end_time: string,
-  calendar_invitees_domains_type: only_internal | one_or_more_external,
-  shared_with: no_teams | single_team | multiple_teams | all_teams,
+  calendar_invitees_domains_type: only_internal | one_or_more_external | string,
+  shared_with: no_teams | single_team | multiple_teams | all_teams | string,
   transcript_language: string,
   transcript?: {
     speaker: {
@@ -176,7 +176,7 @@ await corsair.fathomai.api.meetingTypes.list({});
 ```ts
 {
   name: string,
-  status: active | inactive,
+  status: active | inactive | string,
   created_at: string
 }[]
 ```
@@ -216,10 +216,10 @@ await corsair.fathomai.api.recordings.getDownload({});
 |------|------|----------|-------------|
 | `download_id` | `string` | Yes | — |
 | `recording_id` | `number` | Yes | — |
-| `status` | `processing \| completed \| failed \| expired` | Yes | — |
+| `status` | `processing \| completed \| failed \| expired \| string` | Yes | — |
 | `video` | `object` | No | — |
 | `audio` | `object` | No | — |
-| `failure_reason` | `generation_failed \| generation_timeout` | No | — |
+| `failure_reason` | `generation_failed \| generation_timeout \| string` | No | — |
 
 <AccordionGroup>
 <Accordion title="video full type">
@@ -366,10 +366,10 @@ await corsair.fathomai.api.recordings.requestDownload({});
 |------|------|----------|-------------|
 | `download_id` | `string` | Yes | — |
 | `recording_id` | `number` | Yes | — |
-| `status` | `processing \| completed \| failed \| expired` | Yes | — |
+| `status` | `processing \| completed \| failed \| expired \| string` | Yes | — |
 | `video` | `object` | No | — |
 | `audio` | `object` | No | — |
-| `failure_reason` | `generation_failed \| generation_timeout` | No | — |
+| `failure_reason` | `generation_failed \| generation_timeout \| string` | No | — |
 
 <AccordionGroup>
 <Accordion title="video full type">
@@ -536,14 +536,14 @@ await corsair.fathomai.api.users.list({});
   name: string | null,
   email: string,
   created_at: string,
-  status: active | deactivated | invited,
+  status: active | deactivated | invited | string,
   permissions?: {
     settings_access: {
-      level: none | team_admin | account_admin,
+      level: none | team_admin | account_admin | string,
       teams: string[]
     },
     view_access: {
-      level: own_meetings | team | multiple_teams | all_teams,
+      level: own_meetings | team | multiple_teams | all_teams | string,
       teams: string[]
     }
   }
@@ -595,7 +595,7 @@ await corsair.fathomai.api.webhooks.create({});
 | `include_crm_matches` | `boolean` | Yes | — |
 | `include_summary` | `boolean` | Yes | — |
 | `include_action_items` | `boolean` | Yes | — |
-| `triggered_for` | `(my_recordings \| shared_external_recordings \| my_shared_with_team_recordings \| shared_team_recordings)[]` | Yes | — |
+| `triggered_for` | `(my_recordings \| shared_external_recordings \| my_shared_with_team_recordings \| shared_team_recordings \| string)[]` | Yes | — |
 
 
 
