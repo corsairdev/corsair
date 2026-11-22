@@ -1,6 +1,7 @@
 import type { CorsairContext } from 'corsair/core';
 import type { QuickBooksContext } from '..';
 import { makeAuthenticatedQuickBooksRequest } from '../client';
+import { responseSchema } from './schema-mode';
 import type {
 	QuickBooksEndpointInputs,
 	QuickBooksEndpointOutputs,
@@ -29,7 +30,9 @@ export async function get(
 		{},
 		ctx.options.environment,
 	);
-	return QuickBooksEndpointOutputSchemas.companyGet.parse(response);
+	return responseSchema(QuickBooksEndpointOutputSchemas.companyGet).parse(
+		response,
+	) as QuickBooksEndpointOutputs['companyGet'];
 }
 
 export async function list(
@@ -44,5 +47,7 @@ export async function list(
 		{ query: { query: 'SELECT * FROM CompanyInfo' } },
 		ctx.options.environment,
 	);
-	return QuickBooksEndpointOutputSchemas.companyList.parse(response);
+	return responseSchema(QuickBooksEndpointOutputSchemas.companyList).parse(
+		response,
+	) as QuickBooksEndpointOutputs['companyList'];
 }

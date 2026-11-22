@@ -3,14 +3,10 @@ import {
 	CatalogEndpoints,
 	CompanyEndpoints,
 } from './endpoints';
-import {
-	QuickBooksCatalogEndpointSchemas,
-	QuickBooksCatalogTestCases,
-} from './endpoints/catalog';
-import {
-	QuickBooksSpecialEndpointSchemas,
-	QuickBooksSpecialTestCases,
-} from './endpoints/special';
+import { QuickBooksCatalogEndpointSchemas } from './endpoints/catalog';
+import { QuickBooksCatalogTestCases } from './endpoints/catalog-cases';
+import { QuickBooksSpecialEndpointSchemas } from './endpoints/special';
+import { QuickBooksSpecialTestCases } from './endpoints/special-cases';
 
 const quickBooksCatalogTestCases = [
 	...QuickBooksCatalogTestCases,
@@ -226,10 +222,27 @@ describe('QuickBooks verified endpoint requests', () => {
 		expect(fetchMock).not.toHaveBeenCalled();
 	});
 
-	it('rejects an invalid provider response instead of returning it', async () => {
+	it('returns an account that carries a field the model catalog lacks', async () => {
 		fetchMock.mockResolvedValue(
 			mockJsonResponse({
-				Account: { ...account, undocumented: 'unvalidated' },
+				Account: { ...account, CurrentBalanceWithSubAccounts: 0 },
+				time: '2026-11-18T12:00:00Z',
+			}),
+		);
+		await expect(
+			AccountsEndpoints.get(context, {
+				realmId: '12345678',
+				accountId: '35',
+			}),
+		).resolves.toMatchObject({
+			Account: { Id: '35', CurrentBalanceWithSubAccounts: 0 },
+		});
+	});
+
+	it('rejects a response without the Account envelope', async () => {
+		fetchMock.mockResolvedValue(
+			mockJsonResponse({
+				QueryResponse: {},
 				time: '2026-11-18T12:00:00Z',
 			}),
 		);

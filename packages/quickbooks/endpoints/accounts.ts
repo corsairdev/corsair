@@ -1,6 +1,7 @@
 import type { CorsairContext } from 'corsair/core';
 import type { QuickBooksContext } from '..';
 import { makeAuthenticatedQuickBooksRequest } from '../client';
+import { responseSchema } from './schema-mode';
 import type {
 	QuickBooksEndpointInputs,
 	QuickBooksEndpointOutputs,
@@ -48,7 +49,9 @@ export async function create(
 		},
 		ctx.options.environment,
 	);
-	return QuickBooksEndpointOutputSchemas.accountsCreate.parse(response);
+	return responseSchema(QuickBooksEndpointOutputSchemas.accountsCreate).parse(
+		response,
+	) as QuickBooksEndpointOutputs['accountsCreate'];
 }
 
 export async function get(
@@ -63,7 +66,9 @@ export async function get(
 		{},
 		ctx.options.environment,
 	);
-	return QuickBooksEndpointOutputSchemas.accountsGet.parse(response);
+	return responseSchema(QuickBooksEndpointOutputSchemas.accountsGet).parse(
+		response,
+	) as QuickBooksEndpointOutputs['accountsGet'];
 }
 
 export async function list(
@@ -85,5 +90,7 @@ export async function list(
 		{ query: { query } },
 		ctx.options.environment,
 	);
-	return QuickBooksEndpointOutputSchemas.accountsList.parse(response);
+	return responseSchema(QuickBooksEndpointOutputSchemas.accountsList).parse(
+		response,
+	) as QuickBooksEndpointOutputs['accountsList'];
 }
