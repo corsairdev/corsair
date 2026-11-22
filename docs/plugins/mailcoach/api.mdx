@@ -390,7 +390,7 @@ Has an additional 5 requests/second burst limit per team, in addition to the nor
 
 `campaigns.create`
 
-Create a campaign draft. Without schedule_at it is not sent; with schedule_at Mailcoach schedules it to send at that time.
+Create a campaign draft; it is not sent. Use campaigns.schedule or campaigns.send to deliver it.
 
 **Risk:** `write`
 
@@ -414,13 +414,12 @@ await corsair.mailcoach.api.campaigns.create({
 | `fields` | `Record<string, JsonValue>` | No | — |
 | `segment_uuid` | `string` | No | — |
 | `html` | `string` | No | — |
-| `schedule_at` | `string` | No | — |
 | `utm_tags` | `boolean` | No | — |
 | `add_subscriber_tags` | `boolean` | No | — |
 | `add_subscriber_link_tags` | `boolean` | No | — |
 | `disable_webview` | `boolean` | No | — |
 
-Creates a draft. Without schedule_at nothing is sent; with schedule_at Mailcoach schedules the send for that UTC time. Use either template fields or inline HTML as appropriate.
+Creates a draft; nothing is sent. Scheduling is campaigns.schedule and sending is campaigns.send, both destructive. Use either template fields or inline HTML as appropriate.
 
 
 
@@ -658,6 +657,87 @@ await corsair.mailcoach.api.campaigns.opens({ campaignUuid: '0762df4d-8516-4eb3-
 
 ---
 
+### schedule
+
+`campaigns.schedule`
+
+Schedule a campaign to send to its audience at schedule_at (UTC). Resend all campaign settings; this is a full update.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mailcoach.api.campaigns.schedule({
+	campaignUuid: '0762df4d-8516-4eb3-95db-b26492cf221c',
+	body: {
+		name: 'November newsletter',
+		email_list_uuid: 'a69075c6-ff5c-4b6a-b217-12026cb72e4f',
+		html: '<p>Latest news</p>',
+		schedule_at: '2026-12-01 09:00:00',
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignUuid` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+Schedules delivery to the campaign audience at schedule_at (UTC, YYYY-MM-DD HH:mm:ss). This is a full PUT: resend every campaign setting.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  name: string,
+  email_list_uuid: string,
+  subject?: string,
+  template_uuid?: string,
+  fields?: Record<string, JsonValue>,
+  segment_uuid?: string,
+  html?: string,
+  utm_tags?: boolean,
+  add_subscriber_tags?: boolean,
+  add_subscriber_link_tags?: boolean,
+  disable_webview?: boolean,
+  schedule_at: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  uuid: string,
+  name?: string,
+  subject?: string | null,
+  html?: string | null,
+  scheduled_at?: string | null,
+  status?: string,
+  email_list_uuid?: string,
+  segment_uuid?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### send
 
 `campaigns.send`
@@ -764,7 +844,7 @@ await corsair.mailcoach.api.campaigns.unsubscribes({ campaignUuid: '0762df4d-851
 
 `campaigns.update`
 
-Replace campaign settings; include all intended fields because omitted values can reset. Setting schedule_at schedules the campaign to send.
+Replace draft campaign settings; include all intended fields because omitted values (including a schedule) reset.
 
 **Risk:** `write`
 
@@ -782,7 +862,7 @@ await corsair.mailcoach.api.campaigns.update({
 | `campaignUuid` | `string` | Yes | — |
 | `body` | `object` | Yes | — |
 
-This is not a sparse patch: omitted content, segment, or scheduling values can reset. Resend the full intended draft settings. schedule_at uses UTC in YYYY-MM-DD HH:mm:ss form and schedules the campaign to send.
+This is not a sparse patch: omitted content, segment, or scheduling values can reset. Resend the full intended draft settings. Updating a scheduled campaign through this operation clears its schedule.
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -796,7 +876,6 @@ This is not a sparse patch: omitted content, segment, or scheduling values can r
   fields?: Record<string, JsonValue>,
   segment_uuid?: string,
   html?: string,
-  schedule_at?: string,
   utm_tags?: boolean,
   add_subscriber_tags?: boolean,
   add_subscriber_link_tags?: boolean,
@@ -1659,7 +1738,7 @@ Append CSV rows without repeating the header, then call start separately.
   uuid: string,
   status?: string,
   email_list_uuid?: string,
-  imported_subscribers_count?: number,
+  imported_subscribers_count?: number | null,
   error_count?: number
 }
 ```
@@ -1717,7 +1796,7 @@ Creates a draft only. CSV imports bypass confirmation and can resubscribe or uns
   uuid: string,
   status?: string,
   email_list_uuid?: string,
-  imported_subscribers_count?: number,
+  imported_subscribers_count?: number | null,
   error_count?: number
 }
 ```
@@ -1787,7 +1866,7 @@ await corsair.mailcoach.api.subscriberImports.get({ importUuid: '2ca0e737-b907-4
   uuid: string,
   status?: string,
   email_list_uuid?: string,
-  imported_subscribers_count?: number,
+  imported_subscribers_count?: number | null,
   error_count?: number
 }
 ```
@@ -1834,7 +1913,7 @@ await corsair.mailcoach.api.subscriberImports.list({});
   uuid: string,
   status?: string,
   email_list_uuid?: string,
-  imported_subscribers_count?: number,
+  imported_subscribers_count?: number | null,
   error_count?: number
 }[]
 ```
@@ -1940,7 +2019,7 @@ Only draft imports can be updated; resend both required fields.
   uuid: string,
   status?: string,
   email_list_uuid?: string,
-  imported_subscribers_count?: number,
+  imported_subscribers_count?: number | null,
   error_count?: number
 }
 ```

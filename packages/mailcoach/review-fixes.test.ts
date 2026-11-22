@@ -7,11 +7,14 @@ import type { MailcoachContext } from './index';
 
 const UUID = '00000000-0000-4000-8000-000000000001';
 
-function context(options: MailcoachContext['options']): MailcoachContext {
+function context(
+	options: MailcoachContext['options'],
+	key = 'mailcoach-test-token',
+): MailcoachContext {
 	return {
 		endpoints: {},
 		$getAccountId: () => Promise.resolve('test-account'),
-		key: 'mailcoach-test-token',
+		key,
 		options,
 		keys: {
 			get_dek: () => Promise.resolve('test-dek'),
@@ -39,24 +42,30 @@ describe('Mailcoach review fixes', () => {
 				}),
 		);
 		await MailcoachOperations['user.get'].endpoint(
-			context({
-				key: 'mailcoach-test-token',
-				apiUrl: 'https://team-a.mailcoach.app/api',
-			}),
+			context(
+				{ key: 'team-a-token', apiUrl: 'https://team-a.mailcoach.app/api' },
+				'team-a-token',
+			),
 			{},
 		);
 		expect(String(fetchSpy.mock.calls[0]?.[0])).toBe(
 			'https://team-a.mailcoach.app/api/user',
 		);
+		expect(
+			new Headers(fetchSpy.mock.calls[0]?.[1]?.headers).get('authorization'),
+		).toBe('Bearer team-a-token');
 
 		// Without an options key, the account's stored token and URL stay paired.
 		await MailcoachOperations['user.get'].endpoint(
-			context({ apiUrl: 'https://team-a.mailcoach.app/api' }),
+			context({ apiUrl: 'https://team-a.mailcoach.app/api' }, 'stored-token'),
 			{},
 		);
 		expect(String(fetchSpy.mock.calls[1]?.[0])).toBe(
 			'https://team-b.mailcoach.app/api/user',
 		);
+		expect(
+			new Headers(fetchSpy.mock.calls[1]?.[1]?.headers).get('authorization'),
+		).toBe('Bearer stored-token');
 	});
 
 	it('accepts the empty-array extra_attributes Laravel returns', () => {
@@ -81,12 +90,45 @@ describe('Mailcoach review fixes', () => {
 		).toBe(true);
 	});
 
-	it('says that schedule_at schedules a send on create and update', () => {
-		expect(MailcoachOperations['campaigns.create'].description).toContain(
-			'schedule_at',
+	it('keeps scheduling out of draft edits and behind a destructive operation', () => {
+		const draft = { name: 'Draft', email_list_uuid: UUID };
+		expect(
+			MailcoachEndpointInputSchemas['campaigns.create'].safeParse({
+				...draft,
+				schedule_at: '2027-01-02 03:04:05',
+			}).success,
+		).toBe(false);
+		expect(
+			MailcoachEndpointInputSchemas['campaigns.update'].safeParse({
+				campaignUuid: UUID,
+				body: { ...draft, schedule_at: '2027-01-02 03:04:05' },
+			}).success,
+		).toBe(false);
+		expect(MailcoachOperations['campaigns.create'].riskLevel).toBe('write');
+		expect(MailcoachOperations['campaigns.schedule'].riskLevel).toBe(
+			'destructive',
 		);
-		expect(MailcoachOperations['campaigns.update'].description).toContain(
-			'schedule_at',
+	});
+
+	it('accepts a null imported_subscribers_count on draft imports', () => {
+		expect(
+			MailcoachEndpointOutputSchemas['subscriberImports.create'].safeParse({
+				data: { uuid: UUID, status: 'draft', imported_subscribers_count: null },
+			}).success,
+		).toBe(true);
+	});
+
+	it('rejects a transactional send that mixes mail_name with inline content', () => {
+		const send = MailcoachEndpointInputSchemas['transactionalMails.send'];
+		const base = { from: 'a@corsair.dev', to: 'b@corsair.dev' };
+		expect(
+			send.safeParse({ ...base, mail_name: 'welcome', subject: 'Hi' }).success,
+		).toBe(false);
+		expect(send.safeParse({ ...base, mail_name: 'welcome' }).success).toBe(
+			true,
 		);
+		expect(
+			send.safeParse({ ...base, subject: 'Hi', text: 'Hello' }).success,
+		).toBe(true);
 	});
 });
