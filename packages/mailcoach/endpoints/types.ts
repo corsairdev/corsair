@@ -68,7 +68,7 @@ const ImportSchema = ResourceSchema.extend({
 	// Documented: draft, pending, importing, completed, failed.
 	status: z.string().optional(),
 	email_list_uuid: z.string().optional(),
-	imported_subscribers_count: z.number().optional(),
+	imported_subscribers_count: z.number().nullable().optional(),
 	error_count: z.number().optional(),
 }).passthrough();
 const TagSchema = ResourceSchema.extend({
@@ -369,10 +369,14 @@ const TransactionalMailBody = z
 	.strict()
 	.superRefine((mail, context) => {
 		const savedTemplate = mail.mail_name !== undefined;
+		const anyInline =
+			mail.subject !== undefined ||
+			mail.html !== undefined ||
+			mail.text !== undefined;
 		const inlineContent =
 			mail.subject !== undefined &&
 			(mail.html !== undefined || mail.text !== undefined);
-		if (savedTemplate === inlineContent) {
+		if (savedTemplate ? anyInline : !inlineContent) {
 			context.addIssue({
 				code: 'custom',
 				message: 'Provide either mail_name or subject with html/text content.',
