@@ -11096,5 +11096,11 @@
         "title": "Flights, hotels and shopping search, inbound webhooks, managed pricing"
       }
     ]
+  },
+  {
+    "date": "2026-11-22",
+    "package": "cloud",
+    "version": "0.2.21",
+    "changes": []
   }
 ]
