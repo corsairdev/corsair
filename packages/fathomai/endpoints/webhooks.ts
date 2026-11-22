@@ -39,5 +39,8 @@ export const remove: FathomAiEndpoints['webhooksDelete'] = async (
 		{ id },
 		'completed',
 	);
-	return { id, deleted: true };
+	return FathomAiEndpointOutputSchemas.webhooksDelete.parse({
+		id,
+		deleted: true,
+	});
 };

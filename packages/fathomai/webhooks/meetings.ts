@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { FathomAiWebhooks } from '..';
+import { storableMeeting } from '../endpoints/types';
 import { isFathomAiDelivery, verifyFathomAiWebhook } from './types';
 
 export const contentReady: FathomAiWebhooks['meetingContentReady'] = {
@@ -14,7 +15,7 @@ export const contentReady: FathomAiWebhooks['meetingContentReady'] = {
 		const meeting = request.payload;
 		const entity = await ctx.db.meetings.upsertByEntityId(
 			String(meeting.recording_id),
-			meeting,
+			storableMeeting(meeting),
 		);
 		await logEventFromContext(
 			ctx,

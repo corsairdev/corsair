@@ -1,6 +1,10 @@
 import { z } from 'zod';
 
 const RecordingId = z.number().int().positive();
+
+// Response enums accept values Fathom adds later instead of failing the whole response.
+const openEnum = <const T extends readonly [string, ...string[]]>(values: T) =>
+	z.union([z.enum(values), z.string()]);
 const Cursor = z.string().min(1).optional();
 
 const TranscriptItemSchema = z.object({
@@ -80,11 +84,11 @@ export const MeetingSchema = z.object({
 	scheduled_end_time: z.string(),
 	recording_start_time: z.string(),
 	recording_end_time: z.string(),
-	calendar_invitees_domains_type: z.enum([
+	calendar_invitees_domains_type: openEnum([
 		'only_internal',
 		'one_or_more_external',
 	]),
-	shared_with: z.enum([
+	shared_with: openEnum([
 		'no_teams',
 		'single_team',
 		'multiple_teams',
@@ -107,7 +111,7 @@ export const MeetingSchema = z.object({
 
 export const MeetingTypeSchema = z.object({
 	name: z.string(),
-	status: z.enum(['active', 'inactive']),
+	status: openEnum(['active', 'inactive']),
 	created_at: z.string(),
 });
 
@@ -122,22 +126,33 @@ export const TeamMemberSchema = z.object({
 	created_at: z.string(),
 });
 
-const UserStatus = z.enum(['active', 'deactivated', 'invited']);
-const SettingsAccessLevel = z.enum(['none', 'team_admin', 'account_admin']);
+const UserStatusValues = ['active', 'deactivated', 'invited'] as const;
+const SettingsAccessLevelValues = [
+	'none',
+	'team_admin',
+	'account_admin',
+] as const;
+const UserStatus = z.enum(UserStatusValues);
+const SettingsAccessLevel = z.enum(SettingsAccessLevelValues);
 
 export const UserSchema = z.object({
 	name: z.string().nullable(),
 	email: z.string(),
 	created_at: z.string(),
-	status: UserStatus,
+	status: openEnum(UserStatusValues),
 	permissions: z
 		.object({
 			settings_access: z.object({
-				level: SettingsAccessLevel,
+				level: openEnum(SettingsAccessLevelValues),
 				teams: z.array(z.string()),
 			}),
 			view_access: z.object({
-				level: z.enum(['own_meetings', 'team', 'multiple_teams', 'all_teams']),
+				level: openEnum([
+					'own_meetings',
+					'team',
+					'multiple_teams',
+					'all_teams',
+				]),
 				teams: z.array(z.string()),
 			}),
 		})
@@ -154,20 +169,22 @@ const DownloadFileSchema = z.object({
 const RecordingDownloadSchema = z.object({
 	download_id: z.string(),
 	recording_id: RecordingId,
-	status: z.enum(['processing', 'completed', 'failed', 'expired']),
+	status: openEnum(['processing', 'completed', 'failed', 'expired']),
 	video: DownloadFileSchema.optional(),
 	audio: DownloadFileSchema.optional(),
-	failure_reason: z
-		.enum(['generation_failed', 'generation_timeout'])
-		.optional(),
+	failure_reason: openEnum([
+		'generation_failed',
+		'generation_timeout',
+	]).optional(),
 });
 
-const WebhookTrigger = z.enum([
+const WebhookTriggerValues = [
 	'my_recordings',
 	'shared_external_recordings',
 	'my_shared_with_team_recordings',
 	'shared_team_recordings',
-]);
+] as const;
+const WebhookTrigger = z.enum(WebhookTriggerValues);
 
 const WebhookSchema = z.object({
 	id: z.string(),
@@ -178,7 +195,7 @@ const WebhookSchema = z.object({
 	include_crm_matches: z.boolean(),
 	include_summary: z.boolean(),
 	include_action_items: z.boolean(),
-	triggered_for: z.array(WebhookTrigger),
+	triggered_for: z.array(openEnum(WebhookTriggerValues)),
 });
 
 const CallbackResponseSchema = z.object({ destination_url: z.string() });
@@ -302,6 +319,35 @@ export type FathomAiEndpointOutputs = {
 };
 
 export type Meeting = z.infer<typeof MeetingSchema>;
+
+// The fields a meeting only carries when an `include_*` flag (or a webhook setting) asks for them.
+// `unknown` in storableMeeting's bound: their values are dropped, never read.
+const MEETING_CONTENT_FIELDS = [
+	'transcript',
+	'default_summary',
+	'action_items',
+	'highlights',
+	'crm_matches',
+] as const;
+
+/**
+ * The meeting record kept in the local database: metadata only. Transcripts, summaries, action items,
+ * highlights and CRM matches are returned to the caller but not stored, so a later list call without
+ * the `include_*` flags writes the same record instead of wiping content an earlier call saved.
+ */
+export function storableMeeting<
+	T extends Partial<Record<(typeof MEETING_CONTENT_FIELDS)[number], unknown>>,
+>(meeting: T): Omit<T, (typeof MEETING_CONTENT_FIELDS)[number]> {
+	const {
+		transcript,
+		default_summary,
+		action_items,
+		highlights,
+		crm_matches,
+		...stored
+	} = meeting;
+	return stored;
+}
 export type MeetingType = z.infer<typeof MeetingTypeSchema>;
 export type Team = z.infer<typeof TeamSchema>;
 export type TeamMember = z.infer<typeof TeamMemberSchema>;

@@ -4,6 +4,7 @@ import { makeFathomAiRequest } from '../client';
 import {
 	FathomAiEndpointInputSchemas,
 	FathomAiEndpointOutputSchemas,
+	storableMeeting,
 } from './types';
 
 export const list: FathomAiEndpoints['meetingsList'] = async (ctx, input) => {
@@ -23,7 +24,7 @@ export const list: FathomAiEndpoints['meetingsList'] = async (ctx, input) => {
 	for (const meeting of response.items) {
 		await ctx.db.meetings.upsertByEntityId(
 			String(meeting.recording_id),
-			meeting,
+			storableMeeting(meeting),
 		);
 	}
 	await logEventFromContext(
