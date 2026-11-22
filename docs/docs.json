@@ -3470,6 +3470,14 @@
                 ]
               },
               {
+                "group": "Lexoffice",
+                "pages": [
+                  "plugins/lexoffice/overview",
+                  "plugins/lexoffice/api",
+                  "plugins/lexoffice/database"
+                ]
+              },
+              {
                 "group": "Linear",
                 "pages": [
                   "plugins/linear/overview",
