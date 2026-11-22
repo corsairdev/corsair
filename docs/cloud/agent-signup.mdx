@@ -126,7 +126,7 @@ Send the key as a Bearer header to `mcp_url`. `setup` in the response has the Cl
     ```
   </Tab>
   <Tab title="Cursor">
-    Add this to `~/.cursor/mcp.json`, or `.cursor/mcp.json` in a project. Other clients that read an `mcpServers` file take the same block.
+    Add this to `~/.cursor/mcp.json`, or `.cursor/mcp.json` in a project. Cursor fills in `${env:LUG_API_KEY}` from the environment, so the key stays out of a file you might commit. Set `LUG_API_KEY` to your key in your shell profile, then restart Cursor.
 
     ```json
     {
@@ -134,7 +134,7 @@ Send the key as a Bearer header to `mcp_url`. `setup` in the response has the Cl
         "lug": {
           "url": "https://agent-k3x9q2ab.lug.dev/agent",
           "headers": {
-            "Authorization": "Bearer mcpk_..."
+            "Authorization": "Bearer ${env:LUG_API_KEY}"
           }
         }
       }
