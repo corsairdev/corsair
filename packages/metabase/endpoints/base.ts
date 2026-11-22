@@ -24,6 +24,7 @@ export function buildMetabasePath(
 		}
 		const segment = String(value);
 		if (
+			segment === '' ||
 			segment === '.' ||
 			segment === '..' ||
 			/[\\/?#\u0000-\u001f]/u.test(segment)
@@ -38,12 +39,47 @@ export function buildMetabasePath(
 	return path;
 }
 
+// Paths and zod's messages only (no input or response values), so query text and record data stay out of errors.
+function describeIssues(error: z.ZodError): string {
+	return error.issues
+		.slice(0, 5)
+		.map((issue) => `${issue.path.join('.') || '(root)'}: ${issue.message}`)
+		.join('; ');
+}
+
 export function encodeCollectionId(id: number | string): string {
 	const value = String(id);
-	if (value === '.' || value === '..' || /[\\/?#\u0000-\u001f]/u.test(value)) {
-		throw new Error('Invalid collection ID path segment');
+	if (
+		value === '' ||
+		value === '.' ||
+		value === '..' ||
+		/[\\/?#\u0000-\u001f]/u.test(value)
+	) {
+		throw new MetabaseAPIError('Invalid collection ID path segment');
 	}
 	return encodeURIComponent(value).replace(/\./gu, '%2E');
+}
+
+/**
+ * Builds a schema on first use and caches it. The generated operations wrap every schema in
+ * this so importing the plugin doesn't construct hundreds of zod objects up front.
+ */
+export function lazySchema<Schema extends z.ZodType>(
+	build: () => Schema,
+): () => Schema {
+	let cached: Schema | undefined;
+	return () => {
+		cached ??= build();
+		return cached;
+	};
+}
+
+type SchemaSource<Schema extends z.ZodType> = Schema | (() => Schema);
+
+function resolveSchema<Schema extends z.ZodType>(
+	source: SchemaSource<Schema>,
+): Schema {
+	return typeof source === 'function' ? source() : source;
 }
 
 export function createMetabaseEndpoint<
@@ -51,8 +87,8 @@ export function createMetabaseEndpoint<
 	OutputSchema extends z.ZodType,
 >(
 	operation: string,
-	inputSchema: InputSchema,
-	outputSchema: OutputSchema,
+	inputSchemaSource: SchemaSource<InputSchema>,
+	outputSchemaSource: SchemaSource<OutputSchema>,
 	buildRequest: (input: z.output<InputSchema>) => MetabaseRequestPlan,
 ): CorsairEndpoint<
 	MetabaseContext,
@@ -60,13 +96,15 @@ export function createMetabaseEndpoint<
 	z.output<OutputSchema>
 > {
 	return async (ctx, input) => {
-		let parsedInput: z.output<InputSchema>;
-		try {
-			parsedInput = inputSchema.parse(input);
-		} catch {
-			throw new MetabaseAPIError('Metabase request input failed validation');
+		const inputSchema = resolveSchema(inputSchemaSource);
+		const outputSchema = resolveSchema(outputSchemaSource);
+		const parsedInput = inputSchema.safeParse(input);
+		if (!parsedInput.success) {
+			throw new MetabaseAPIError(
+				`Metabase request input failed validation: ${describeIssues(parsedInput.error)}`,
+			);
 		}
-		const plan = buildRequest(parsedInput);
+		const plan = buildRequest(parsedInput.data);
 		const { path, ...planOptions } = plan;
 		const requestOptions: MetabaseRequestOptions = { ...planOptions };
 		if (
@@ -87,19 +125,21 @@ export function createMetabaseEndpoint<
 		) {
 			requestOptions.maxUploadBytes = ctx.options.maxUploadBytes;
 		}
+		const baseUrl =
+			ctx.options.baseUrl ?? (await ctx.keys.get_base_url()) ?? undefined;
 		const response: MetabaseResponse = await makeMetabaseRequest(
 			path,
 			ctx.key,
-			ctx.options.baseUrl,
+			baseUrl,
 			requestOptions,
 		);
-		let parsedOutput: z.output<OutputSchema>;
-		try {
-			parsedOutput = outputSchema.parse(response);
-		} catch {
-			throw new MetabaseAPIError('Metabase response failed validation');
+		const parsedOutput = outputSchema.safeParse(response);
+		if (!parsedOutput.success) {
+			throw new MetabaseAPIError(
+				`Metabase response failed validation: ${describeIssues(parsedOutput.error)}`,
+			);
 		}
 		await logEventFromContext(ctx, `metabase.${operation}`, {}, 'completed');
-		return parsedOutput;
+		return parsedOutput.data;
 	};
 }

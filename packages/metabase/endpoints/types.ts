@@ -26,6 +26,13 @@ const ModelSchema = z.enum([
 	'metric',
 	'card',
 ]);
+// Metabase's offset-paging middleware reads these on the item and dashboard-question candidate lists
+// (the responses echo `limit`/`offset`), though the OpenAPI document leaves them out.
+const PageQueryShape = {
+	limit: z.number().int().min(1).optional(),
+	offset: z.number().int().min(0).optional(),
+};
+const PageQuerySchema = z.object(PageQueryShape).strict();
 const PinnedStateSchema = z.enum(['is_not_pinned', 'is_pinned', 'all']);
 const SortDirectionSchema = z.enum(['desc', 'asc']);
 const CollectionTypeSchema = z.enum(['remote-synced']);
@@ -61,6 +68,7 @@ const CollectionUpdateBodySchema = z
 
 const CollectionItemsQuerySchema = z
 	.object({
+		...PageQueryShape,
 		q: z.string().nullable().optional(),
 		'pinned-state': PinnedStateSchema.nullable().optional(),
 		archived: z.boolean().nullable().optional(),
@@ -85,6 +93,7 @@ const CollectionItemsQuerySchema = z
 
 const RootItemsQuerySchema = z
 	.object({
+		...PageQueryShape,
 		'collection-type': CollectionTypeSchema.nullable().optional(),
 		'include-library': z.boolean().nullable().optional(),
 		q: z.string().nullable().optional(),
@@ -221,7 +230,13 @@ const CollectionTreeInputSchema = z
 	.object({ query: TreeQuerySchema.optional() })
 	.strict();
 const CollectionCandidatesInputSchema = z
-	.object({ path: z.object({ id: NumericCollectionIdSchema }).strict() })
+	.object({
+		path: z.object({ id: NumericCollectionIdSchema }).strict(),
+		query: PageQuerySchema.optional(),
+	})
+	.strict();
+const CollectionRootCandidatesInputSchema = z
+	.object({ query: PageQuerySchema.optional() })
 	.strict();
 const RootMoveCandidatesInputSchema = z
 	.object({ body: MoveCandidatesBodySchema.optional() })
@@ -339,7 +354,7 @@ export const MetabaseEndpointInputSchemas = {
 	collectionRootGet: CollectionRootInputSchema,
 	collectionRootItems: CollectionRootItemsInputSchema,
 	collectionRootItemsMetadata: CollectionRootItemsMetadataInputSchema,
-	collectionRootCandidates: EmptyInputSchema,
+	collectionRootCandidates: CollectionRootCandidatesInputSchema,
 	collectionRootMoveCandidates: RootMoveCandidatesInputSchema,
 	collectionTrashGet: EmptyInputSchema,
 	collectionTree: CollectionTreeInputSchema,

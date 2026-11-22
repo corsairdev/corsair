@@ -126,9 +126,10 @@ const collectionRootCandidates = createMetabaseEndpoint(
 	'collections.listRootDashboardQuestionCandidates',
 	MetabaseEndpointInputSchemas.collectionRootCandidates,
 	DashboardQuestionCandidatesSchema,
-	() => ({
+	(input) => ({
 		method: 'GET',
 		path: '/api/collection/root/dashboard-question-candidates',
+		query: input.query,
 	}),
 );
 
@@ -168,6 +169,7 @@ const collectionCandidates = createMetabaseEndpoint(
 	(input) => ({
 		method: 'GET',
 		path: `/api/collection/${encodeCollectionId(input.path.id)}/dashboard-question-candidates`,
+		query: input.query,
 	}),
 );
 

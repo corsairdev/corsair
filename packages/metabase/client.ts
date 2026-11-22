@@ -190,10 +190,14 @@ async function releaseResponse(response: Response): Promise<void> {
 	await response.body?.cancel().catch(() => undefined);
 }
 
-async function readBinaryResponse(
+class MetabaseResponseTooLargeError extends MetabaseAPIError {}
+
+// Counts bytes as they stream in and stops at the limit, so a large body never sits in memory whole.
+async function readBodyBytes(
 	response: Response,
 	maxBytes: number,
-): Promise<MetabaseBinaryResponse> {
+	kind: 'binary' | 'JSON',
+): Promise<Uint8Array> {
 	const reader = response.body?.getReader();
 	const chunks: Uint8Array[] = [];
 	let size = 0;
@@ -204,8 +208,8 @@ async function readBinaryResponse(
 			size += chunk.value.byteLength;
 			if (size > maxBytes) {
 				await reader.cancel().catch(() => undefined);
-				throw new MetabaseAPIError(
-					`Metabase binary response exceeds the ${maxBytes}-byte limit`,
+				throw new MetabaseResponseTooLargeError(
+					`Metabase ${kind} response exceeds the ${maxBytes}-byte limit`,
 				);
 			}
 			chunks.push(chunk.value);
@@ -217,6 +221,15 @@ async function readBinaryResponse(
 		bytes.set(chunk, offset);
 		offset += chunk.byteLength;
 	}
+	return bytes;
+}
+
+async function readBinaryResponse(
+	response: Response,
+	maxBytes: number,
+): Promise<MetabaseBinaryResponse> {
+	const bytes = await readBodyBytes(response, maxBytes, 'binary');
+	const size = bytes.byteLength;
 	const headerValues = {
 		contentDisposition: response.headers.get('Content-Disposition'),
 		contentSecurityPolicy: response.headers.get('Content-Security-Policy'),
@@ -386,8 +399,10 @@ export async function makeMetabaseRequest(
 		if (options.responseType === 'binary') {
 			try {
 				return await readBinaryResponse(response, maxResponseBytes);
-			} catch {
+			} catch (error: unknown) {
+				// `unknown` because stream readers reject with runtime-specific values.
 				await releaseResponse(response);
+				if (error instanceof MetabaseResponseTooLargeError) throw error;
 				throw new MetabaseAPIError(
 					'Metabase binary response could not be read',
 				);
@@ -402,9 +417,17 @@ export async function makeMetabaseRequest(
 			);
 		}
 
+		let bytes: Uint8Array;
+		try {
+			bytes = await readBodyBytes(response, maxResponseBytes, 'JSON');
+		} catch (error: unknown) {
+			// `unknown` because stream readers reject with runtime-specific values that can carry the URL.
+			if (error instanceof MetabaseResponseTooLargeError) throw error;
+			throw new MetabaseAPIError('Metabase response could not be read');
+		}
 		try {
 			// `unknown` because decoded provider JSON is untrusted until the endpoint output schema validates it.
-			const payload: unknown = await response.json();
+			const payload: unknown = JSON.parse(new TextDecoder().decode(bytes));
 			return JsonValueSchema.parse(payload);
 		} catch {
 			throw new MetabaseAPIError('Metabase returned invalid JSON');

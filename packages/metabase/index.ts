@@ -38,13 +38,28 @@ export type MetabasePluginOptions = {
 	permissions?: PluginPermissionsConfig<typeof metabaseEndpointsNested>;
 };
 
+/**
+ * Metabase is self-hosted or on a per-customer Metabase Cloud host, so each account stores its
+ * instance URL (`base_url`, e.g. `https://example.metabaseapp.com`) next to the API key.
+ * `options.baseUrl` still overrides it for single-instance setups.
+ */
+export const metabaseAuthConfig = {
+	api_key: {
+		account: ['base_url'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type MetabaseContext = CorsairPluginContext<
 	typeof MetabaseSchema,
-	MetabasePluginOptions
+	MetabasePluginOptions,
+	undefined,
+	typeof metabaseAuthConfig
 >;
 
-export type MetabaseKeyBuilderContext =
-	KeyBuilderContext<MetabasePluginOptions>;
+export type MetabaseKeyBuilderContext = KeyBuilderContext<
+	MetabasePluginOptions,
+	typeof metabaseAuthConfig
+>;
 export type MetabaseBoundEndpoints = BindEndpoints<
 	typeof metabaseEndpointsNested
 >;
@@ -213,17 +228,14 @@ const metabaseEndpointMeta = {
 	...MetabaseOpenApiEndpointMeta,
 } as const satisfies RequiredPluginEndpointMeta<typeof metabaseEndpointsNested>;
 
-export const metabaseAuthConfig = {
-	api_key: {},
-} as const satisfies PluginAuthConfig;
-
 export type BaseMetabasePlugin<T extends MetabasePluginOptions> = CorsairPlugin<
 	'metabase',
 	typeof MetabaseSchema,
 	typeof metabaseEndpointsNested,
 	Record<string, never>,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof metabaseAuthConfig
 >;
 
 export type InternalMetabasePlugin = BaseMetabasePlugin<MetabasePluginOptions>;
