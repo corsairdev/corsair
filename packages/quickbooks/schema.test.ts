@@ -287,7 +287,9 @@ describe('QuickBooks endpoint schemas', () => {
 	});
 
 	it('strictly models the Batch item operation variants and 30-item cap', () => {
-		const inputSchema = QuickBooksSpecialEndpointSchemas['batch.execute'].input;
+		const batchSchemas = QuickBooksSpecialEndpointSchemas['batch.execute'];
+		if (!batchSchemas) throw new Error('Missing batch.execute schemas');
+		const inputSchema = batchSchemas.input;
 		const realmId = '12345678';
 		const cases = [
 			{ bId: 'query-1', Query: 'SELECT * FROM Account' },

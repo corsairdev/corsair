@@ -2362,10 +2362,14 @@ export const QuickBooksSpecialEndpoints = {
 	batch: { execute: executeBatch },
 	changeDataCapture: { changes: getChangedData },
 } as const;
-export const QuickBooksSpecialEndpointSchemas = {
+// Typed loosely on purpose: the exact types live in QuickBooksSpecialEndpointInputs/Outputs.
+export const QuickBooksSpecialEndpointSchemas: Record<
+	string,
+	{ readonly input: z.ZodType; readonly output: z.ZodType }
+> = {
 	'batch.execute': lazySchemaEntry(BatchOutputInputSchema, BatchOutputSchema),
 	'changeDataCapture.changes': lazySchemaEntry(CdcInputSchema, CdcOutputSchema),
-} as const;
+};
 export const QuickBooksSpecialEndpointMeta = {
 	'batch.execute': {
 		riskLevel: 'destructive',

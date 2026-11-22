@@ -6,6 +6,12 @@ import {
 } from './special';
 
 // Mocked request/response cases for endpoints.test.ts. Not imported by the plugin.
+
+function specialSchemasFor(id: string) {
+	const entry = QuickBooksSpecialEndpointSchemas[id];
+	if (!entry) throw new Error(`No schemas for ${id}`);
+	return entry;
+}
 const cdcTestTimestamp = new Date().toISOString();
 export const QuickBooksSpecialTestCases: QuickBooksCatalogTestCase[] = [
 	{
@@ -30,8 +36,8 @@ export const QuickBooksSpecialTestCases: QuickBooksCatalogTestCase[] = [
 			realmId: '12345678',
 			items: [{ bId: 'batch-1', Query: 'SELECT * FROM Account' }],
 		},
-		inputSchema: QuickBooksSpecialEndpointSchemas['batch.execute'].input,
-		outputSchema: QuickBooksSpecialEndpointSchemas['batch.execute'].output,
+		inputSchema: specialSchemasFor('batch.execute').input,
+		outputSchema: specialSchemasFor('batch.execute').output,
 		invoke: (ctx) =>
 			executeBatch(ctx, {
 				realmId: '12345678',
@@ -60,10 +66,8 @@ export const QuickBooksSpecialTestCases: QuickBooksCatalogTestCase[] = [
 			entities: ['Customer'],
 			changedSince: cdcTestTimestamp,
 		},
-		inputSchema:
-			QuickBooksSpecialEndpointSchemas['changeDataCapture.changes'].input,
-		outputSchema:
-			QuickBooksSpecialEndpointSchemas['changeDataCapture.changes'].output,
+		inputSchema: specialSchemasFor('changeDataCapture.changes').input,
+		outputSchema: specialSchemasFor('changeDataCapture.changes').output,
 		invoke: (ctx) =>
 			getChangedData(ctx, {
 				realmId: '12345678',
