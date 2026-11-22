@@ -3,8 +3,9 @@ import { z } from 'zod';
 /*
  * The model schemas are generated from Intuit's model catalog, which lists
  * only some of each entity's fields and models several fields with the wrong
- * shape (single objects that arrive as arrays, enums Intuit extends). They stay
- * the documented contract in `endpointSchemas` and the docs. At runtime:
+ * shape (single objects that arrive as arrays, enums Intuit extends). Output
+ * schemas stay the documented contract in `endpointSchemas` and the docs; the
+ * published input schemas are the request checks below. At runtime:
  * - responses are parsed with a lenient copy, so a QuickBooks record that
  *   carries a field or shape the catalog lacks still reaches the caller
  *   (above all after a write that already happened);
@@ -55,13 +56,19 @@ function lenient(
 					defOf(field).type !== 'optional';
 				fields[name] = required ? inner : inner.nullish();
 			}
-			const object = z.looseObject(fields);
-			out = top ? object : z.union([object, z.array(object)]);
+			out = z.looseObject(fields);
 			break;
 		}
 		case 'array': {
 			const item = lenient((schema as z.ZodArray<AnySchema>).element, false);
-			out = z.union([z.array(item), item]);
+			// A list QuickBooks sends as one bare item comes back wrapped, matching the declared type.
+			out = z.preprocess(
+				(value) =>
+					value === undefined || value === null || Array.isArray(value)
+						? value
+						: [value],
+				z.array(item),
+			);
 			break;
 		}
 		case 'union': {
@@ -92,7 +99,8 @@ function lenient(
 		case 'string':
 		case 'number':
 		case 'boolean':
-			out = anyLeaf;
+			// A whole response that is one value (a download URL) keeps its check.
+			out = top ? schema : anyLeaf;
 			break;
 		default:
 			out = schema;
@@ -145,8 +153,13 @@ function looseBody(schema: AnySchema, nested: boolean): AnySchema {
 					name === 'Id' ||
 					name === 'SyncToken' ||
 					defOf(field).type === 'literal';
+				// Line and address Ids are assigned by QuickBooks; a nested { Id, SyncToken }
+				// reference (a recurring template to delete) still needs its Id.
+				const namesNestedRecord =
+					nested && isRequired(shape.Id) && isRequired(shape.SyncToken);
 				const optional =
-					(nested && name === 'Id') || (identifiesRecord && !keepsRequired);
+					(nested && name === 'Id' && !namesNestedRecord) ||
+					(identifiesRecord && !keepsRequired);
 				fields[name] = optional ? inner.optional() : inner;
 			}
 			out = z.looseObject(fields);

@@ -129,7 +129,7 @@ apiExamples:
   billPayment.void:
     call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0","sparse":true}}'
   budget.create:
-    call: '{"realmId":"12345678","body":{"EndDate":"sample","StartDate":"sample"}}'
+    call: '{"realmId":"12345678","body":{"EndDate":"2026-12-31","StartDate":"2026-01-01"}}'
   budget.delete:
     call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
   budget.get:
@@ -137,7 +137,7 @@ apiExamples:
   budget.list:
     call: '{"realmId":"12345678"}'
   budget.update:
-    call: '{"realmId":"12345678","body":{"EndDate":"sample","StartDate":"sample","Id":"35","SyncToken":"0"}}'
+    call: '{"realmId":"12345678","body":{"EndDate":"2026-12-31","StartDate":"2026-01-01","Id":"35","SyncToken":"0"}}'
   cashFlow.list:
     call: '{"realmId":"12345678","params":{}}'
   changeDataCapture.changes:
@@ -201,7 +201,7 @@ apiExamples:
   creditMemo.update:
     call: '{"realmId":"12345678","body":{"Line":[],"CustomerRef":{"value":"sample"},"Id":"35","SyncToken":"0"}}'
   customer.create:
-    call: '{"realmId":"12345678","body":{}}'
+    call: '{"realmId":"12345678","body":{"DisplayName":"Example Customer Ltd"}}'
   customer.get:
     call: '{"realmId":"12345678","customerId":"35"}'
   customer.list:
@@ -305,7 +305,7 @@ apiExamples:
   item.create:
     call: '{"realmId":"12345678","body":{"Name":"sample"}}'
   item.createCategory:
-    call: '{"realmId":"12345678","body":{"Type":"sample","Name":"sample"}}'
+    call: '{"realmId":"12345678","body":{"Type":"Category","Name":"sample"}}'
   item.getBundle:
     call: '{"realmId":"12345678","itemId":"35"}'
   item.getCategory:
@@ -321,7 +321,7 @@ apiExamples:
   item.update:
     call: '{"realmId":"12345678","body":{"Name":"sample","Id":"35","SyncToken":"0"}}'
   item.updateCategory:
-    call: '{"realmId":"12345678","body":{"Name":"sample","Type":"sample","Id":"35","SyncToken":"0"}}'
+    call: '{"realmId":"12345678","body":{"Name":"sample","Type":"Category","Id":"35","SyncToken":"0"}}'
   journalEntry.create:
     call: '{"realmId":"12345678","body":{"Line":[{"DetailType":"JournalEntryLineDetail","Amount":100,"JournalEntryLineDetail":{"PostingType":"Debit","AccountRef":{"value":"39"}}},{"DetailType":"JournalEntryLineDetail","Amount":100,"JournalEntryLineDetail":{"PostingType":"Credit","AccountRef":{"value":"44"}}}]}}'
   journalEntry.delete:

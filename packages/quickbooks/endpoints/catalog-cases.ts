@@ -904,7 +904,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			ProjectRef: { value: 'sample' },
 			Line: [
 				{
-					DetailType: 'PaymentLineDetail',
+					DetailType: 'SalesItemLineDetail',
 					SalesItemLineDetail: {},
 					Amount: 1,
 					Id: '1',
@@ -942,7 +942,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				ProjectRef: { value: 'sample' },
 				Line: [
 					{
-						DetailType: 'PaymentLineDetail',
+						DetailType: 'SalesItemLineDetail',
 						SalesItemLineDetail: {},
 						Amount: 1,
 						Id: '1',
@@ -960,7 +960,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 					ProjectRef: { value: 'sample' },
 					Line: [
 						{
-							DetailType: 'PaymentLineDetail',
+							DetailType: 'SalesItemLineDetail',
 							SalesItemLineDetail: {},
 							Amount: 1,
 							Id: '1',
@@ -1651,7 +1651,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		expectedBody: {
 			Line: [
 				{
-					DetailType: 'PaymentLineDetail',
+					DetailType: 'SalesItemLineDetail',
 					SalesItemLineDetail: {},
 					Amount: 1,
 					Id: '1',
@@ -1676,7 +1676,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			body: {
 				Line: [
 					{
-						DetailType: 'PaymentLineDetail',
+						DetailType: 'SalesItemLineDetail',
 						SalesItemLineDetail: {},
 						Amount: 1,
 						Id: '1',
@@ -1693,7 +1693,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				body: {
 					Line: [
 						{
-							DetailType: 'PaymentLineDetail',
+							DetailType: 'SalesItemLineDetail',
 							SalesItemLineDetail: {},
 							Amount: 1,
 							Id: '1',
@@ -2488,7 +2488,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		expectedBody: {
 			Line: [
 				{
-					DetailType: 'PaymentLineDetail',
+					DetailType: 'SalesItemLineDetail',
 					SalesItemLineDetail: {},
 					Amount: 1,
 					Id: '1',
@@ -2513,7 +2513,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			body: {
 				Line: [
 					{
-						DetailType: 'PaymentLineDetail',
+						DetailType: 'SalesItemLineDetail',
 						SalesItemLineDetail: {},
 						Amount: 1,
 						Id: '1',
@@ -2530,7 +2530,7 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 				body: {
 					Line: [
 						{
-							DetailType: 'PaymentLineDetail',
+							DetailType: 'SalesItemLineDetail',
 							SalesItemLineDetail: {},
 							Amount: 1,
 							Id: '1',
@@ -3392,20 +3392,20 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		method: 'POST',
 		expectedPath: '/v3/company/12345678/item',
 		expectedQuery: {},
-		expectedBody: { Type: 'sample', Name: 'sample' },
+		expectedBody: { Type: 'Category', Name: 'sample' },
 		requestKind: 'json',
 		response: {
 			kind: 'json',
 			body: { Item: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		},
 		expectedResult: { Item: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
-		input: { realmId: '12345678', body: { Type: 'sample', Name: 'sample' } },
+		input: { realmId: '12345678', body: { Type: 'Category', Name: 'sample' } },
 		inputSchema: schemasFor('item.createCategory').input,
 		outputSchema: schemasFor('item.createCategory').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['item']['createCategory'](ctx, {
 				realmId: '12345678',
-				body: { Type: 'sample', Name: 'sample' },
+				body: { Type: 'Category', Name: 'sample' },
 			}),
 	},
 	{

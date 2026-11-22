@@ -29,6 +29,8 @@ export type QuickBooksRequestOptions = {
 	headers?: Record<string, string>;
 	responseType?: 'binary';
 	basePath?: 'v3' | 'manage';
+	/** Transport timeout; core's default is 20 s. */
+	timeoutMs?: number;
 };
 
 export type QuickBooksAuthenticatedContext = {
@@ -43,6 +45,20 @@ export type QuickBooksAuthenticatedContext = {
  * file data. The provider's Fault body, the status and the rate-limit fields
  * stay, so callers and core's 401/429 handling see the same error.
  */
+const EMAIL = /[\w.+-]+@[\w-]+(\.[\w-]+)+/g;
+
+// Intuit's fault text can quote a submitted email address (fault 2210); keep the rest of the Fault.
+function redactEmails(value: unknown): unknown {
+	if (typeof value === 'string') return value.replace(EMAIL, '[email]');
+	if (Array.isArray(value)) return value.map(redactEmails);
+	if (value && typeof value === 'object') {
+		return Object.fromEntries(
+			Object.entries(value).map(([key, inner]) => [key, redactEmails(inner)]),
+		);
+	}
+	return value;
+}
+
 function sanitizeQuickBooksError(
 	error: ApiError,
 	path: string,
@@ -57,9 +73,9 @@ function sanitizeQuickBooksError(
 		ok: false,
 		status: error.status,
 		statusText: error.statusText,
-		body: error.body,
+		body: redactEmails(error.body),
 	};
-	return new ApiError(request, response, error.message, {
+	return new ApiError(request, response, String(redactEmails(error.message)), {
 		...(error.retryAfter !== undefined ? { retryAfter: error.retryAfter } : {}),
 		...(error.rateLimitReset !== undefined
 			? { rateLimitReset: error.rateLimitReset }
@@ -95,6 +111,7 @@ export async function makeQuickBooksRequest<T>(
 		BASE: `${API_HOSTS[environment ?? 'production']}/${basePath}`,
 		VERSION: basePath === 'v3' ? '3' : '',
 		WITH_CREDENTIALS: false,
+		...(options.timeoutMs ? { TIMEOUT: options.timeoutMs } : {}),
 		CREDENTIALS: 'omit',
 		TOKEN: accessToken,
 	};
@@ -116,11 +133,59 @@ export async function makeQuickBooksRequest<T>(
 }
 
 /**
+ * QuickBooks can answer 200 with a top-level Fault instead of the entity.
+ * Batch and upload answers carry per-item faults next to their results, so
+ * only a top-level Fault counts as a failed request.
+ */
+function throwOnTopLevelFault<T>(
+	result: T,
+	path: string,
+	options: QuickBooksRequestOptions,
+): T {
+	if (result && typeof result === 'object' && 'Fault' in result) {
+		throw sanitizeQuickBooksError(
+			new ApiError(
+				{ method: options.method ?? 'GET', url: path },
+				{
+					url: path,
+					ok: false,
+					status: 200,
+					statusText: 'QuickBooks Fault',
+					body: result,
+				},
+				'QuickBooks answered with a Fault',
+			),
+			path,
+			options,
+		);
+	}
+	return result;
+}
+
+export async function makeAuthenticatedQuickBooksRequest<T>(
+	ctx: QuickBooksAuthenticatedContext,
+	path: string,
+	options: QuickBooksRequestOptions,
+	environment?: QuickBooksEnvironment,
+): Promise<T> {
+	return throwOnTopLevelFault(
+		await sendAuthenticatedQuickBooksRequest<T>(
+			ctx,
+			path,
+			options,
+			environment,
+		),
+		path,
+		options,
+	);
+}
+
+/**
  * Refreshes and retries this one request once after a 401. Core automatically
  * retries reads, but a write must refresh at this request boundary so a failed
  * auth response cannot suppress a safe retry or repeat earlier side effects.
  */
-export async function makeAuthenticatedQuickBooksRequest<T>(
+async function sendAuthenticatedQuickBooksRequest<T>(
 	ctx: QuickBooksAuthenticatedContext,
 	path: string,
 	options: QuickBooksRequestOptions,

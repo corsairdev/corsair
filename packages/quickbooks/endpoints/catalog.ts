@@ -765,7 +765,8 @@ const billPayment_voidDef = {
 		path: `company/${encodeURIComponent(input.realmId)}/billpayment`,
 		method: 'POST',
 		query: { operation: 'update', include: 'void' },
-		body: input.body,
+		// This void is a sparse update; QuickBooks requires sparse: true in the body.
+		body: { ...input.body, sparse: true },
 	}),
 } as const;
 const billPayment_voidEndpoint = defineEndpoint(billPayment_voidDef);
@@ -2906,6 +2907,7 @@ const exchangerate_updateInput = lazySchema(() =>
 					SyncToken: SyncTokenSchema,
 					SourceCurrencyCode: z.string().regex(/^[A-Z]{3}$/),
 					Rate: z.number().positive(),
+					AsOfDate: z.string().date(),
 				})
 				.strict(),
 		})
@@ -3989,7 +3991,8 @@ const payment_voidDef = {
 		path: `company/${encodeURIComponent(input.realmId)}/payment`,
 		method: 'POST',
 		query: { operation: 'update', include: 'void' },
-		body: input.body,
+		// This void is a sparse update; QuickBooks requires sparse: true in the body.
+		body: { ...input.body, sparse: true },
 	}),
 } as const;
 const payment_voidEndpoint = defineEndpoint(payment_voidDef);
@@ -4757,6 +4760,17 @@ const purchaseOrder_updateDef = {
 } as const;
 const purchaseOrder_updateEndpoint = defineEndpoint(purchaseOrder_updateDef);
 
+// A recurring template body names exactly one transaction type ({ Invoice: {...} }).
+function oneRecurringTransactionType<T extends object>(body: T): T {
+	const types = Object.keys(body);
+	if (types.length !== 1) {
+		throw new Error(
+			`A recurring transaction body needs exactly one transaction type, got ${types.length === 0 ? 'none' : types.join(', ')}.`,
+		);
+	}
+	return body;
+}
+
 const recurringTransaction_createInput = lazySchema(() =>
 	z
 		.object({
@@ -4782,7 +4796,7 @@ const recurringTransaction_createDef = {
 	) => ({
 		path: `company/${encodeURIComponent(input.realmId)}/recurringtransaction`,
 		method: 'POST',
-		body: input.body,
+		body: oneRecurringTransactionType(input.body),
 	}),
 } as const;
 const recurringTransaction_createEndpoint = defineEndpoint(
@@ -4820,7 +4834,7 @@ const recurringTransaction_deleteDef = {
 		path: `company/${encodeURIComponent(input.realmId)}/recurringtransaction`,
 		method: 'POST',
 		query: { operation: 'delete' },
-		body: input.body,
+		body: oneRecurringTransactionType(input.body),
 	}),
 } as const;
 const recurringTransaction_deleteEndpoint = defineEndpoint(
@@ -5422,7 +5436,8 @@ const salesReceipt_voidDef = {
 		path: `company/${encodeURIComponent(input.realmId)}/salesreceipt`,
 		method: 'POST',
 		query: { operation: 'update', include: 'void' },
-		body: input.body,
+		// This void is a sparse update; QuickBooks requires sparse: true in the body.
+		body: { ...input.body, sparse: true },
 	}),
 } as const;
 const salesReceipt_voidEndpoint = defineEndpoint(salesReceipt_voidDef);
@@ -7452,710 +7467,775 @@ export const QuickBooksCatalogEndpoints = {
 } as const;
 
 // Typed loosely on purpose: each operation's exact types live in QuickBooksCatalogEndpointInputs/Outputs.
+// Inputs are the request checks the endpoints run (requestSchema); outputs stay the documented models.
+function runtimeSchemaEntry<I extends z.ZodType, O extends z.ZodType>(
+	input: () => I,
+	output: () => O,
+) {
+	return lazySchemaEntry(() => requestSchema(input()), output);
+}
+
 export const QuickBooksCatalogEndpointSchemas: Record<
 	string,
 	{ readonly input: z.ZodType; readonly output: z.ZodType }
 > = {
-	'apAgingDetail.list': lazySchemaEntry(
+	'apAgingDetail.list': runtimeSchemaEntry(
 		apAgingDetail_listInput,
 		apAgingDetail_listOutput,
 	),
-	'apAgingSummary.list': lazySchemaEntry(
+	'apAgingSummary.list': runtimeSchemaEntry(
 		apAgingSummary_listInput,
 		apAgingSummary_listOutput,
 	),
-	'arAgingDetail.list': lazySchemaEntry(
+	'arAgingDetail.list': runtimeSchemaEntry(
 		arAgingDetail_listInput,
 		arAgingDetail_listOutput,
 	),
-	'arAgingSummary.list': lazySchemaEntry(
+	'arAgingSummary.list': runtimeSchemaEntry(
 		arAgingSummary_listInput,
 		arAgingSummary_listOutput,
 	),
-	'accounts.update': lazySchemaEntry(
+	'accounts.update': runtimeSchemaEntry(
 		accounts_updateInput,
 		accounts_updateOutput,
 	),
-	'accountListDetail.list': lazySchemaEntry(
+	'accountListDetail.list': runtimeSchemaEntry(
 		accountListDetail_listInput,
 		accountListDetail_listOutput,
 	),
-	'attachable.create': lazySchemaEntry(
+	'attachable.create': runtimeSchemaEntry(
 		attachable_createInput,
 		attachable_createOutput,
 	),
-	'attachable.delete': lazySchemaEntry(
+	'attachable.delete': runtimeSchemaEntry(
 		attachable_deleteInput,
 		attachable_deleteOutput,
 	),
-	'attachable.download': lazySchemaEntry(
+	'attachable.download': runtimeSchemaEntry(
 		attachable_downloadInput,
 		attachable_downloadOutput,
 	),
-	'attachable.list': lazySchemaEntry(
+	'attachable.list': runtimeSchemaEntry(
 		attachable_listInput,
 		attachable_listOutput,
 	),
-	'attachable.get': lazySchemaEntry(attachable_getInput, attachable_getOutput),
-	'attachable.update': lazySchemaEntry(
+	'attachable.get': runtimeSchemaEntry(
+		attachable_getInput,
+		attachable_getOutput,
+	),
+	'attachable.update': runtimeSchemaEntry(
 		attachable_updateInput,
 		attachable_updateOutput,
 	),
-	'attachable.upload': lazySchemaEntry(
+	'attachable.upload': runtimeSchemaEntry(
 		attachable_uploadInput,
 		attachable_uploadOutput,
 	),
-	'balanceSheet.list': lazySchemaEntry(
+	'balanceSheet.list': runtimeSchemaEntry(
 		balanceSheet_listInput,
 		balanceSheet_listOutput,
 	),
-	'bill.create': lazySchemaEntry(bill_createInput, bill_createOutput),
-	'bill.delete': lazySchemaEntry(bill_deleteInput, bill_deleteOutput),
-	'bill.list': lazySchemaEntry(bill_listInput, bill_listOutput),
-	'bill.get': lazySchemaEntry(bill_getInput, bill_getOutput),
-	'bill.update': lazySchemaEntry(bill_updateInput, bill_updateOutput),
-	'billPayment.create': lazySchemaEntry(
+	'bill.create': runtimeSchemaEntry(bill_createInput, bill_createOutput),
+	'bill.delete': runtimeSchemaEntry(bill_deleteInput, bill_deleteOutput),
+	'bill.list': runtimeSchemaEntry(bill_listInput, bill_listOutput),
+	'bill.get': runtimeSchemaEntry(bill_getInput, bill_getOutput),
+	'bill.update': runtimeSchemaEntry(bill_updateInput, bill_updateOutput),
+	'billPayment.create': runtimeSchemaEntry(
 		billPayment_createInput,
 		billPayment_createOutput,
 	),
-	'billPayment.void': lazySchemaEntry(
+	'billPayment.void': runtimeSchemaEntry(
 		billPayment_voidInput,
 		billPayment_voidOutput,
 	),
-	'billPayment.delete': lazySchemaEntry(
+	'billPayment.delete': runtimeSchemaEntry(
 		billPayment_deleteInput,
 		billPayment_deleteOutput,
 	),
-	'billPayment.list': lazySchemaEntry(
+	'billPayment.list': runtimeSchemaEntry(
 		billPayment_listInput,
 		billPayment_listOutput,
 	),
-	'billPayment.get': lazySchemaEntry(
+	'billPayment.get': runtimeSchemaEntry(
 		billPayment_getInput,
 		billPayment_getOutput,
 	),
-	'billPayment.update': lazySchemaEntry(
+	'billPayment.update': runtimeSchemaEntry(
 		billPayment_updateInput,
 		billPayment_updateOutput,
 	),
-	'budget.create': lazySchemaEntry(budget_createInput, budget_createOutput),
-	'budget.delete': lazySchemaEntry(budget_deleteInput, budget_deleteOutput),
-	'budget.list': lazySchemaEntry(budget_listInput, budget_listOutput),
-	'budget.get': lazySchemaEntry(budget_getInput, budget_getOutput),
-	'budget.update': lazySchemaEntry(budget_updateInput, budget_updateOutput),
-	'cashFlow.list': lazySchemaEntry(cashFlow_listInput, cashFlow_listOutput),
-	'changeOrder.create': lazySchemaEntry(
+	'budget.create': runtimeSchemaEntry(budget_createInput, budget_createOutput),
+	'budget.delete': runtimeSchemaEntry(budget_deleteInput, budget_deleteOutput),
+	'budget.list': runtimeSchemaEntry(budget_listInput, budget_listOutput),
+	'budget.get': runtimeSchemaEntry(budget_getInput, budget_getOutput),
+	'budget.update': runtimeSchemaEntry(budget_updateInput, budget_updateOutput),
+	'cashFlow.list': runtimeSchemaEntry(cashFlow_listInput, cashFlow_listOutput),
+	'changeOrder.create': runtimeSchemaEntry(
 		changeOrder_createInput,
 		changeOrder_createOutput,
 	),
-	'changeOrder.delete': lazySchemaEntry(
+	'changeOrder.delete': runtimeSchemaEntry(
 		changeOrder_deleteInput,
 		changeOrder_deleteOutput,
 	),
-	'changeOrder.get': lazySchemaEntry(
+	'changeOrder.get': runtimeSchemaEntry(
 		changeOrder_getInput,
 		changeOrder_getOutput,
 	),
-	'changeOrder.update': lazySchemaEntry(
+	'changeOrder.update': runtimeSchemaEntry(
 		changeOrder_updateInput,
 		changeOrder_updateOutput,
 	),
-	'class.create': lazySchemaEntry(class_createInput, class_createOutput),
-	'class.list': lazySchemaEntry(class_listInput, class_listOutput),
-	'class.get': lazySchemaEntry(class_getInput, class_getOutput),
-	'class.update': lazySchemaEntry(class_updateInput, class_updateOutput),
-	'companyCurrency.create': lazySchemaEntry(
+	'class.create': runtimeSchemaEntry(class_createInput, class_createOutput),
+	'class.list': runtimeSchemaEntry(class_listInput, class_listOutput),
+	'class.get': runtimeSchemaEntry(class_getInput, class_getOutput),
+	'class.update': runtimeSchemaEntry(class_updateInput, class_updateOutput),
+	'companyCurrency.create': runtimeSchemaEntry(
 		companyCurrency_createInput,
 		companyCurrency_createOutput,
 	),
-	'companyCurrency.list': lazySchemaEntry(
+	'companyCurrency.list': runtimeSchemaEntry(
 		companyCurrency_listInput,
 		companyCurrency_listOutput,
 	),
-	'companyCurrency.get': lazySchemaEntry(
+	'companyCurrency.get': runtimeSchemaEntry(
 		companyCurrency_getInput,
 		companyCurrency_getOutput,
 	),
-	'companyCurrency.update': lazySchemaEntry(
+	'companyCurrency.update': runtimeSchemaEntry(
 		companyCurrency_updateInput,
 		companyCurrency_updateOutput,
 	),
-	'company.update': lazySchemaEntry(company_updateInput, company_updateOutput),
-	'company.sparseUpdate': lazySchemaEntry(
+	'company.update': runtimeSchemaEntry(
+		company_updateInput,
+		company_updateOutput,
+	),
+	'company.sparseUpdate': runtimeSchemaEntry(
 		company_sparseUpdateInput,
 		company_sparseUpdateOutput,
 	),
-	'creditCardPayment.create': lazySchemaEntry(
+	'creditCardPayment.create': runtimeSchemaEntry(
 		creditCardPayment_createInput,
 		creditCardPayment_createOutput,
 	),
-	'creditCardPayment.delete': lazySchemaEntry(
+	'creditCardPayment.delete': runtimeSchemaEntry(
 		creditCardPayment_deleteInput,
 		creditCardPayment_deleteOutput,
 	),
-	'creditCardPayment.list': lazySchemaEntry(
+	'creditCardPayment.list': runtimeSchemaEntry(
 		creditCardPayment_listInput,
 		creditCardPayment_listOutput,
 	),
-	'creditCardPayment.get': lazySchemaEntry(
+	'creditCardPayment.get': runtimeSchemaEntry(
 		creditCardPayment_getInput,
 		creditCardPayment_getOutput,
 	),
-	'creditCardPayment.update': lazySchemaEntry(
+	'creditCardPayment.update': runtimeSchemaEntry(
 		creditCardPayment_updateInput,
 		creditCardPayment_updateOutput,
 	),
-	'creditCardPayment.sparseUpdate': lazySchemaEntry(
+	'creditCardPayment.sparseUpdate': runtimeSchemaEntry(
 		creditCardPayment_sparseUpdateInput,
 		creditCardPayment_sparseUpdateOutput,
 	),
-	'creditMemo.create': lazySchemaEntry(
+	'creditMemo.create': runtimeSchemaEntry(
 		creditMemo_createInput,
 		creditMemo_createOutput,
 	),
-	'creditMemo.delete': lazySchemaEntry(
+	'creditMemo.delete': runtimeSchemaEntry(
 		creditMemo_deleteInput,
 		creditMemo_deleteOutput,
 	),
-	'creditMemo.getPdf': lazySchemaEntry(
+	'creditMemo.getPdf': runtimeSchemaEntry(
 		creditMemo_getPdfInput,
 		creditMemo_getPdfOutput,
 	),
-	'creditMemo.list': lazySchemaEntry(
+	'creditMemo.list': runtimeSchemaEntry(
 		creditMemo_listInput,
 		creditMemo_listOutput,
 	),
-	'creditMemo.get': lazySchemaEntry(creditMemo_getInput, creditMemo_getOutput),
-	'creditMemo.send': lazySchemaEntry(
+	'creditMemo.get': runtimeSchemaEntry(
+		creditMemo_getInput,
+		creditMemo_getOutput,
+	),
+	'creditMemo.send': runtimeSchemaEntry(
 		creditMemo_sendInput,
 		creditMemo_sendOutput,
 	),
-	'creditMemo.update': lazySchemaEntry(
+	'creditMemo.update': runtimeSchemaEntry(
 		creditMemo_updateInput,
 		creditMemo_updateOutput,
 	),
-	'customer.create': lazySchemaEntry(
+	'customer.create': runtimeSchemaEntry(
 		customer_createInput,
 		customer_createOutput,
 	),
-	'customer.list': lazySchemaEntry(customer_listInput, customer_listOutput),
-	'customer.get': lazySchemaEntry(customer_getInput, customer_getOutput),
-	'customer.update': lazySchemaEntry(
+	'customer.list': runtimeSchemaEntry(customer_listInput, customer_listOutput),
+	'customer.get': runtimeSchemaEntry(customer_getInput, customer_getOutput),
+	'customer.update': runtimeSchemaEntry(
 		customer_updateInput,
 		customer_updateOutput,
 	),
-	'customer.sparseUpdate': lazySchemaEntry(
+	'customer.sparseUpdate': runtimeSchemaEntry(
 		customer_sparseUpdateInput,
 		customer_sparseUpdateOutput,
 	),
-	'customerBalance.list': lazySchemaEntry(
+	'customerBalance.list': runtimeSchemaEntry(
 		customerBalance_listInput,
 		customerBalance_listOutput,
 	),
-	'customerBalanceDetail.list': lazySchemaEntry(
+	'customerBalanceDetail.list': runtimeSchemaEntry(
 		customerBalanceDetail_listInput,
 		customerBalanceDetail_listOutput,
 	),
-	'customerIncome.list': lazySchemaEntry(
+	'customerIncome.list': runtimeSchemaEntry(
 		customerIncome_listInput,
 		customerIncome_listOutput,
 	),
-	'customerType.list': lazySchemaEntry(
+	'customerType.list': runtimeSchemaEntry(
 		customerType_listInput,
 		customerType_listOutput,
 	),
-	'customerType.get': lazySchemaEntry(
+	'customerType.get': runtimeSchemaEntry(
 		customerType_getInput,
 		customerType_getOutput,
 	),
-	'department.create': lazySchemaEntry(
+	'department.create': runtimeSchemaEntry(
 		department_createInput,
 		department_createOutput,
 	),
-	'department.list': lazySchemaEntry(
+	'department.list': runtimeSchemaEntry(
 		department_listInput,
 		department_listOutput,
 	),
-	'department.get': lazySchemaEntry(department_getInput, department_getOutput),
-	'department.update': lazySchemaEntry(
+	'department.get': runtimeSchemaEntry(
+		department_getInput,
+		department_getOutput,
+	),
+	'department.update': runtimeSchemaEntry(
 		department_updateInput,
 		department_updateOutput,
 	),
-	'deposit.create': lazySchemaEntry(deposit_createInput, deposit_createOutput),
-	'deposit.delete': lazySchemaEntry(deposit_deleteInput, deposit_deleteOutput),
-	'deposit.list': lazySchemaEntry(deposit_listInput, deposit_listOutput),
-	'deposit.get': lazySchemaEntry(deposit_getInput, deposit_getOutput),
-	'deposit.update': lazySchemaEntry(deposit_updateInput, deposit_updateOutput),
-	'deposit.sparseUpdate': lazySchemaEntry(
+	'deposit.create': runtimeSchemaEntry(
+		deposit_createInput,
+		deposit_createOutput,
+	),
+	'deposit.delete': runtimeSchemaEntry(
+		deposit_deleteInput,
+		deposit_deleteOutput,
+	),
+	'deposit.list': runtimeSchemaEntry(deposit_listInput, deposit_listOutput),
+	'deposit.get': runtimeSchemaEntry(deposit_getInput, deposit_getOutput),
+	'deposit.update': runtimeSchemaEntry(
+		deposit_updateInput,
+		deposit_updateOutput,
+	),
+	'deposit.sparseUpdate': runtimeSchemaEntry(
 		deposit_sparseUpdateInput,
 		deposit_sparseUpdateOutput,
 	),
-	'employee.create': lazySchemaEntry(
+	'employee.create': runtimeSchemaEntry(
 		employee_createInput,
 		employee_createOutput,
 	),
-	'employee.list': lazySchemaEntry(employee_listInput, employee_listOutput),
-	'employee.get': lazySchemaEntry(employee_getInput, employee_getOutput),
-	'employee.update': lazySchemaEntry(
+	'employee.list': runtimeSchemaEntry(employee_listInput, employee_listOutput),
+	'employee.get': runtimeSchemaEntry(employee_getInput, employee_getOutput),
+	'employee.update': runtimeSchemaEntry(
 		employee_updateInput,
 		employee_updateOutput,
 	),
-	'estimate.create': lazySchemaEntry(
+	'estimate.create': runtimeSchemaEntry(
 		estimate_createInput,
 		estimate_createOutput,
 	),
-	'estimate.delete': lazySchemaEntry(
+	'estimate.delete': runtimeSchemaEntry(
 		estimate_deleteInput,
 		estimate_deleteOutput,
 	),
-	'estimate.getPdf': lazySchemaEntry(
+	'estimate.getPdf': runtimeSchemaEntry(
 		estimate_getPdfInput,
 		estimate_getPdfOutput,
 	),
-	'estimate.list': lazySchemaEntry(estimate_listInput, estimate_listOutput),
-	'estimate.get': lazySchemaEntry(estimate_getInput, estimate_getOutput),
-	'estimate.send': lazySchemaEntry(estimate_sendInput, estimate_sendOutput),
-	'estimate.sparseUpdate': lazySchemaEntry(
+	'estimate.list': runtimeSchemaEntry(estimate_listInput, estimate_listOutput),
+	'estimate.get': runtimeSchemaEntry(estimate_getInput, estimate_getOutput),
+	'estimate.send': runtimeSchemaEntry(estimate_sendInput, estimate_sendOutput),
+	'estimate.sparseUpdate': runtimeSchemaEntry(
 		estimate_sparseUpdateInput,
 		estimate_sparseUpdateOutput,
 	),
-	'estimate.update': lazySchemaEntry(
+	'estimate.update': runtimeSchemaEntry(
 		estimate_updateInput,
 		estimate_updateOutput,
 	),
-	'exchangerate.get': lazySchemaEntry(
+	'exchangerate.get': runtimeSchemaEntry(
 		exchangerate_getInput,
 		exchangerate_getOutput,
 	),
-	'exchangerate.list': lazySchemaEntry(
+	'exchangerate.list': runtimeSchemaEntry(
 		exchangerate_listInput,
 		exchangerate_listOutput,
 	),
-	'exchangerate.update': lazySchemaEntry(
+	'exchangerate.update': runtimeSchemaEntry(
 		exchangerate_updateInput,
 		exchangerate_updateOutput,
 	),
-	'generalLedger.list': lazySchemaEntry(
+	'generalLedger.list': runtimeSchemaEntry(
 		generalLedger_listInput,
 		generalLedger_listOutput,
 	),
-	'inventoryAdjustment.create': lazySchemaEntry(
+	'inventoryAdjustment.create': runtimeSchemaEntry(
 		inventoryAdjustment_createInput,
 		inventoryAdjustment_createOutput,
 	),
-	'inventoryAdjustment.delete': lazySchemaEntry(
+	'inventoryAdjustment.delete': runtimeSchemaEntry(
 		inventoryAdjustment_deleteInput,
 		inventoryAdjustment_deleteOutput,
 	),
-	'inventoryAdjustment.get': lazySchemaEntry(
+	'inventoryAdjustment.get': runtimeSchemaEntry(
 		inventoryAdjustment_getInput,
 		inventoryAdjustment_getOutput,
 	),
-	'inventoryAdjustment.sparseUpdate': lazySchemaEntry(
+	'inventoryAdjustment.sparseUpdate': runtimeSchemaEntry(
 		inventoryAdjustment_sparseUpdateInput,
 		inventoryAdjustment_sparseUpdateOutput,
 	),
-	'inventoryValuationDetail.list': lazySchemaEntry(
+	'inventoryValuationDetail.list': runtimeSchemaEntry(
 		inventoryValuationDetail_listInput,
 		inventoryValuationDetail_listOutput,
 	),
-	'inventoryValuationSummary.list': lazySchemaEntry(
+	'inventoryValuationSummary.list': runtimeSchemaEntry(
 		inventoryValuationSummary_listInput,
 		inventoryValuationSummary_listOutput,
 	),
-	'invoice.create': lazySchemaEntry(invoice_createInput, invoice_createOutput),
-	'invoice.delete': lazySchemaEntry(invoice_deleteInput, invoice_deleteOutput),
-	'invoice.void': lazySchemaEntry(invoice_voidInput, invoice_voidOutput),
-	'invoice.getPdf': lazySchemaEntry(invoice_getPdfInput, invoice_getPdfOutput),
-	'invoice.list': lazySchemaEntry(invoice_listInput, invoice_listOutput),
-	'invoice.get': lazySchemaEntry(invoice_getInput, invoice_getOutput),
-	'invoice.send': lazySchemaEntry(invoice_sendInput, invoice_sendOutput),
-	'invoice.sparseUpdate': lazySchemaEntry(
+	'invoice.create': runtimeSchemaEntry(
+		invoice_createInput,
+		invoice_createOutput,
+	),
+	'invoice.delete': runtimeSchemaEntry(
+		invoice_deleteInput,
+		invoice_deleteOutput,
+	),
+	'invoice.void': runtimeSchemaEntry(invoice_voidInput, invoice_voidOutput),
+	'invoice.getPdf': runtimeSchemaEntry(
+		invoice_getPdfInput,
+		invoice_getPdfOutput,
+	),
+	'invoice.list': runtimeSchemaEntry(invoice_listInput, invoice_listOutput),
+	'invoice.get': runtimeSchemaEntry(invoice_getInput, invoice_getOutput),
+	'invoice.send': runtimeSchemaEntry(invoice_sendInput, invoice_sendOutput),
+	'invoice.sparseUpdate': runtimeSchemaEntry(
 		invoice_sparseUpdateInput,
 		invoice_sparseUpdateOutput,
 	),
-	'invoice.update': lazySchemaEntry(invoice_updateInput, invoice_updateOutput),
-	'item.create': lazySchemaEntry(item_createInput, item_createOutput),
-	'item.createCategory': lazySchemaEntry(
+	'invoice.update': runtimeSchemaEntry(
+		invoice_updateInput,
+		invoice_updateOutput,
+	),
+	'item.create': runtimeSchemaEntry(item_createInput, item_createOutput),
+	'item.createCategory': runtimeSchemaEntry(
 		item_createCategoryInput,
 		item_createCategoryOutput,
 	),
-	'item.listBundles': lazySchemaEntry(
+	'item.listBundles': runtimeSchemaEntry(
 		item_listBundlesInput,
 		item_listBundlesOutput,
 	),
-	'item.listCategories': lazySchemaEntry(
+	'item.listCategories': runtimeSchemaEntry(
 		item_listCategoriesInput,
 		item_listCategoriesOutput,
 	),
-	'item.listItems': lazySchemaEntry(item_listItemsInput, item_listItemsOutput),
-	'item.getBundle': lazySchemaEntry(item_getBundleInput, item_getBundleOutput),
-	'item.getCategory': lazySchemaEntry(
+	'item.listItems': runtimeSchemaEntry(
+		item_listItemsInput,
+		item_listItemsOutput,
+	),
+	'item.getBundle': runtimeSchemaEntry(
+		item_getBundleInput,
+		item_getBundleOutput,
+	),
+	'item.getCategory': runtimeSchemaEntry(
 		item_getCategoryInput,
 		item_getCategoryOutput,
 	),
-	'item.getItem': lazySchemaEntry(item_getItemInput, item_getItemOutput),
-	'item.update': lazySchemaEntry(item_updateInput, item_updateOutput),
-	'item.updateCategory': lazySchemaEntry(
+	'item.getItem': runtimeSchemaEntry(item_getItemInput, item_getItemOutput),
+	'item.update': runtimeSchemaEntry(item_updateInput, item_updateOutput),
+	'item.updateCategory': runtimeSchemaEntry(
 		item_updateCategoryInput,
 		item_updateCategoryOutput,
 	),
-	'journalEntry.create': lazySchemaEntry(
+	'journalEntry.create': runtimeSchemaEntry(
 		journalEntry_createInput,
 		journalEntry_createOutput,
 	),
-	'journalEntry.delete': lazySchemaEntry(
+	'journalEntry.delete': runtimeSchemaEntry(
 		journalEntry_deleteInput,
 		journalEntry_deleteOutput,
 	),
-	'journalEntry.list': lazySchemaEntry(
+	'journalEntry.list': runtimeSchemaEntry(
 		journalEntry_listInput,
 		journalEntry_listOutput,
 	),
-	'journalEntry.get': lazySchemaEntry(
+	'journalEntry.get': runtimeSchemaEntry(
 		journalEntry_getInput,
 		journalEntry_getOutput,
 	),
-	'journalEntry.update': lazySchemaEntry(
+	'journalEntry.update': runtimeSchemaEntry(
 		journalEntry_updateInput,
 		journalEntry_updateOutput,
 	),
-	'journalEntry.sparseUpdate': lazySchemaEntry(
+	'journalEntry.sparseUpdate': runtimeSchemaEntry(
 		journalEntry_sparseUpdateInput,
 		journalEntry_sparseUpdateOutput,
 	),
-	'journalReport.list': lazySchemaEntry(
+	'journalReport.list': runtimeSchemaEntry(
 		journalReport_listInput,
 		journalReport_listOutput,
 	),
-	'payment.create': lazySchemaEntry(payment_createInput, payment_createOutput),
-	'payment.delete': lazySchemaEntry(payment_deleteInput, payment_deleteOutput),
-	'payment.void': lazySchemaEntry(payment_voidInput, payment_voidOutput),
-	'payment.getPdf': lazySchemaEntry(payment_getPdfInput, payment_getPdfOutput),
-	'payment.list': lazySchemaEntry(payment_listInput, payment_listOutput),
-	'payment.get': lazySchemaEntry(payment_getInput, payment_getOutput),
-	'payment.send': lazySchemaEntry(payment_sendInput, payment_sendOutput),
-	'payment.update': lazySchemaEntry(payment_updateInput, payment_updateOutput),
-	'paymentMethod.create': lazySchemaEntry(
+	'payment.create': runtimeSchemaEntry(
+		payment_createInput,
+		payment_createOutput,
+	),
+	'payment.delete': runtimeSchemaEntry(
+		payment_deleteInput,
+		payment_deleteOutput,
+	),
+	'payment.void': runtimeSchemaEntry(payment_voidInput, payment_voidOutput),
+	'payment.getPdf': runtimeSchemaEntry(
+		payment_getPdfInput,
+		payment_getPdfOutput,
+	),
+	'payment.list': runtimeSchemaEntry(payment_listInput, payment_listOutput),
+	'payment.get': runtimeSchemaEntry(payment_getInput, payment_getOutput),
+	'payment.send': runtimeSchemaEntry(payment_sendInput, payment_sendOutput),
+	'payment.update': runtimeSchemaEntry(
+		payment_updateInput,
+		payment_updateOutput,
+	),
+	'paymentMethod.create': runtimeSchemaEntry(
 		paymentMethod_createInput,
 		paymentMethod_createOutput,
 	),
-	'paymentMethod.list': lazySchemaEntry(
+	'paymentMethod.list': runtimeSchemaEntry(
 		paymentMethod_listInput,
 		paymentMethod_listOutput,
 	),
-	'paymentMethod.get': lazySchemaEntry(
+	'paymentMethod.get': runtimeSchemaEntry(
 		paymentMethod_getInput,
 		paymentMethod_getOutput,
 	),
-	'paymentMethod.update': lazySchemaEntry(
+	'paymentMethod.update': runtimeSchemaEntry(
 		paymentMethod_updateInput,
 		paymentMethod_updateOutput,
 	),
-	'preferences.list': lazySchemaEntry(
+	'preferences.list': runtimeSchemaEntry(
 		preferences_listInput,
 		preferences_listOutput,
 	),
-	'preferences.get': lazySchemaEntry(
+	'preferences.get': runtimeSchemaEntry(
 		preferences_getInput,
 		preferences_getOutput,
 	),
-	'preferences.update': lazySchemaEntry(
+	'preferences.update': runtimeSchemaEntry(
 		preferences_updateInput,
 		preferences_updateOutput,
 	),
-	'profitAndLoss.list': lazySchemaEntry(
+	'profitAndLoss.list': runtimeSchemaEntry(
 		profitAndLoss_listInput,
 		profitAndLoss_listOutput,
 	),
-	'profitAndLossDetail.list': lazySchemaEntry(
+	'profitAndLossDetail.list': runtimeSchemaEntry(
 		profitAndLossDetail_listInput,
 		profitAndLossDetail_listOutput,
 	),
-	'purchase.create': lazySchemaEntry(
+	'purchase.create': runtimeSchemaEntry(
 		purchase_createInput,
 		purchase_createOutput,
 	),
-	'purchase.delete': lazySchemaEntry(
+	'purchase.delete': runtimeSchemaEntry(
 		purchase_deleteInput,
 		purchase_deleteOutput,
 	),
-	'purchase.list': lazySchemaEntry(purchase_listInput, purchase_listOutput),
-	'purchase.get': lazySchemaEntry(purchase_getInput, purchase_getOutput),
-	'purchase.update': lazySchemaEntry(
+	'purchase.list': runtimeSchemaEntry(purchase_listInput, purchase_listOutput),
+	'purchase.get': runtimeSchemaEntry(purchase_getInput, purchase_getOutput),
+	'purchase.update': runtimeSchemaEntry(
 		purchase_updateInput,
 		purchase_updateOutput,
 	),
-	'purchaseOrder.create': lazySchemaEntry(
+	'purchaseOrder.create': runtimeSchemaEntry(
 		purchaseOrder_createInput,
 		purchaseOrder_createOutput,
 	),
-	'purchaseOrder.delete': lazySchemaEntry(
+	'purchaseOrder.delete': runtimeSchemaEntry(
 		purchaseOrder_deleteInput,
 		purchaseOrder_deleteOutput,
 	),
-	'purchaseOrder.getPdf': lazySchemaEntry(
+	'purchaseOrder.getPdf': runtimeSchemaEntry(
 		purchaseOrder_getPdfInput,
 		purchaseOrder_getPdfOutput,
 	),
-	'purchaseOrder.list': lazySchemaEntry(
+	'purchaseOrder.list': runtimeSchemaEntry(
 		purchaseOrder_listInput,
 		purchaseOrder_listOutput,
 	),
-	'purchaseOrder.get': lazySchemaEntry(
+	'purchaseOrder.get': runtimeSchemaEntry(
 		purchaseOrder_getInput,
 		purchaseOrder_getOutput,
 	),
-	'purchaseOrder.send': lazySchemaEntry(
+	'purchaseOrder.send': runtimeSchemaEntry(
 		purchaseOrder_sendInput,
 		purchaseOrder_sendOutput,
 	),
-	'purchaseOrder.update': lazySchemaEntry(
+	'purchaseOrder.update': runtimeSchemaEntry(
 		purchaseOrder_updateInput,
 		purchaseOrder_updateOutput,
 	),
-	'recurringTransaction.create': lazySchemaEntry(
+	'recurringTransaction.create': runtimeSchemaEntry(
 		recurringTransaction_createInput,
 		recurringTransaction_createOutput,
 	),
-	'recurringTransaction.delete': lazySchemaEntry(
+	'recurringTransaction.delete': runtimeSchemaEntry(
 		recurringTransaction_deleteInput,
 		recurringTransaction_deleteOutput,
 	),
-	'recurringTransaction.list': lazySchemaEntry(
+	'recurringTransaction.list': runtimeSchemaEntry(
 		recurringTransaction_listInput,
 		recurringTransaction_listOutput,
 	),
-	'recurringTransaction.get': lazySchemaEntry(
+	'recurringTransaction.get': runtimeSchemaEntry(
 		recurringTransaction_getInput,
 		recurringTransaction_getOutput,
 	),
-	'refundReceipt.create': lazySchemaEntry(
+	'refundReceipt.create': runtimeSchemaEntry(
 		refundReceipt_createInput,
 		refundReceipt_createOutput,
 	),
-	'refundReceipt.delete': lazySchemaEntry(
+	'refundReceipt.delete': runtimeSchemaEntry(
 		refundReceipt_deleteInput,
 		refundReceipt_deleteOutput,
 	),
-	'refundReceipt.getPdf': lazySchemaEntry(
+	'refundReceipt.getPdf': runtimeSchemaEntry(
 		refundReceipt_getPdfInput,
 		refundReceipt_getPdfOutput,
 	),
-	'refundReceipt.list': lazySchemaEntry(
+	'refundReceipt.list': runtimeSchemaEntry(
 		refundReceipt_listInput,
 		refundReceipt_listOutput,
 	),
-	'refundReceipt.get': lazySchemaEntry(
+	'refundReceipt.get': runtimeSchemaEntry(
 		refundReceipt_getInput,
 		refundReceipt_getOutput,
 	),
-	'refundReceipt.send': lazySchemaEntry(
+	'refundReceipt.send': runtimeSchemaEntry(
 		refundReceipt_sendInput,
 		refundReceipt_sendOutput,
 	),
-	'refundReceipt.sparseUpdate': lazySchemaEntry(
+	'refundReceipt.sparseUpdate': runtimeSchemaEntry(
 		refundReceipt_sparseUpdateInput,
 		refundReceipt_sparseUpdateOutput,
 	),
-	'refundReceipt.update': lazySchemaEntry(
+	'refundReceipt.update': runtimeSchemaEntry(
 		refundReceipt_updateInput,
 		refundReceipt_updateOutput,
 	),
-	'reimburseCharge.list': lazySchemaEntry(
+	'reimburseCharge.list': runtimeSchemaEntry(
 		reimburseCharge_listInput,
 		reimburseCharge_listOutput,
 	),
-	'reimburseCharge.get': lazySchemaEntry(
+	'reimburseCharge.get': runtimeSchemaEntry(
 		reimburseCharge_getInput,
 		reimburseCharge_getOutput,
 	),
-	'salesByClassSummary.list': lazySchemaEntry(
+	'salesByClassSummary.list': runtimeSchemaEntry(
 		salesByClassSummary_listInput,
 		salesByClassSummary_listOutput,
 	),
-	'salesByCustomer.list': lazySchemaEntry(
+	'salesByCustomer.list': runtimeSchemaEntry(
 		salesByCustomer_listInput,
 		salesByCustomer_listOutput,
 	),
-	'salesByDepartment.list': lazySchemaEntry(
+	'salesByDepartment.list': runtimeSchemaEntry(
 		salesByDepartment_listInput,
 		salesByDepartment_listOutput,
 	),
-	'salesByProduct.list': lazySchemaEntry(
+	'salesByProduct.list': runtimeSchemaEntry(
 		salesByProduct_listInput,
 		salesByProduct_listOutput,
 	),
-	'salesReceipt.create': lazySchemaEntry(
+	'salesReceipt.create': runtimeSchemaEntry(
 		salesReceipt_createInput,
 		salesReceipt_createOutput,
 	),
-	'salesReceipt.delete': lazySchemaEntry(
+	'salesReceipt.delete': runtimeSchemaEntry(
 		salesReceipt_deleteInput,
 		salesReceipt_deleteOutput,
 	),
-	'salesReceipt.void': lazySchemaEntry(
+	'salesReceipt.void': runtimeSchemaEntry(
 		salesReceipt_voidInput,
 		salesReceipt_voidOutput,
 	),
-	'salesReceipt.getPdf': lazySchemaEntry(
+	'salesReceipt.getPdf': runtimeSchemaEntry(
 		salesReceipt_getPdfInput,
 		salesReceipt_getPdfOutput,
 	),
-	'salesReceipt.list': lazySchemaEntry(
+	'salesReceipt.list': runtimeSchemaEntry(
 		salesReceipt_listInput,
 		salesReceipt_listOutput,
 	),
-	'salesReceipt.get': lazySchemaEntry(
+	'salesReceipt.get': runtimeSchemaEntry(
 		salesReceipt_getInput,
 		salesReceipt_getOutput,
 	),
-	'salesReceipt.send': lazySchemaEntry(
+	'salesReceipt.send': runtimeSchemaEntry(
 		salesReceipt_sendInput,
 		salesReceipt_sendOutput,
 	),
-	'salesReceipt.update': lazySchemaEntry(
+	'salesReceipt.update': runtimeSchemaEntry(
 		salesReceipt_updateInput,
 		salesReceipt_updateOutput,
 	),
-	'salesReceipt.sparseUpdate': lazySchemaEntry(
+	'salesReceipt.sparseUpdate': runtimeSchemaEntry(
 		salesReceipt_sparseUpdateInput,
 		salesReceipt_sparseUpdateOutput,
 	),
-	'taxAgency.create': lazySchemaEntry(
+	'taxAgency.create': runtimeSchemaEntry(
 		taxAgency_createInput,
 		taxAgency_createOutput,
 	),
-	'taxAgency.list': lazySchemaEntry(taxAgency_listInput, taxAgency_listOutput),
-	'taxAgency.get': lazySchemaEntry(taxAgency_getInput, taxAgency_getOutput),
-	'taxClassification.get': lazySchemaEntry(
+	'taxAgency.list': runtimeSchemaEntry(
+		taxAgency_listInput,
+		taxAgency_listOutput,
+	),
+	'taxAgency.get': runtimeSchemaEntry(taxAgency_getInput, taxAgency_getOutput),
+	'taxClassification.get': runtimeSchemaEntry(
 		taxClassification_getInput,
 		taxClassification_getOutput,
 	),
-	'taxClassification.listChildren': lazySchemaEntry(
+	'taxClassification.listChildren': runtimeSchemaEntry(
 		taxClassification_listChildrenInput,
 		taxClassification_listChildrenOutput,
 	),
-	'taxClassification.list': lazySchemaEntry(
+	'taxClassification.list': runtimeSchemaEntry(
 		taxClassification_listInput,
 		taxClassification_listOutput,
 	),
-	'taxClassification.listByLevel': lazySchemaEntry(
+	'taxClassification.listByLevel': runtimeSchemaEntry(
 		taxClassification_listByLevelInput,
 		taxClassification_listByLevelOutput,
 	),
-	'taxCode.list': lazySchemaEntry(taxCode_listInput, taxCode_listOutput),
-	'taxCode.get': lazySchemaEntry(taxCode_getInput, taxCode_getOutput),
-	'taxPayment.list': lazySchemaEntry(
+	'taxCode.list': runtimeSchemaEntry(taxCode_listInput, taxCode_listOutput),
+	'taxCode.get': runtimeSchemaEntry(taxCode_getInput, taxCode_getOutput),
+	'taxPayment.list': runtimeSchemaEntry(
 		taxPayment_listInput,
 		taxPayment_listOutput,
 	),
-	'taxPayment.get': lazySchemaEntry(taxPayment_getInput, taxPayment_getOutput),
-	'taxRate.list': lazySchemaEntry(taxRate_listInput, taxRate_listOutput),
-	'taxRate.get': lazySchemaEntry(taxRate_getInput, taxRate_getOutput),
-	'taxService.create': lazySchemaEntry(
+	'taxPayment.get': runtimeSchemaEntry(
+		taxPayment_getInput,
+		taxPayment_getOutput,
+	),
+	'taxRate.list': runtimeSchemaEntry(taxRate_listInput, taxRate_listOutput),
+	'taxRate.get': runtimeSchemaEntry(taxRate_getInput, taxRate_getOutput),
+	'taxService.create': runtimeSchemaEntry(
 		taxService_createInput,
 		taxService_createOutput,
 	),
-	'taxSummary.list': lazySchemaEntry(
+	'taxSummary.list': runtimeSchemaEntry(
 		taxSummary_listInput,
 		taxSummary_listOutput,
 	),
-	'term.create': lazySchemaEntry(term_createInput, term_createOutput),
-	'term.list': lazySchemaEntry(term_listInput, term_listOutput),
-	'term.get': lazySchemaEntry(term_getInput, term_getOutput),
-	'term.update': lazySchemaEntry(term_updateInput, term_updateOutput),
-	'timeActivity.create': lazySchemaEntry(
+	'term.create': runtimeSchemaEntry(term_createInput, term_createOutput),
+	'term.list': runtimeSchemaEntry(term_listInput, term_listOutput),
+	'term.get': runtimeSchemaEntry(term_getInput, term_getOutput),
+	'term.update': runtimeSchemaEntry(term_updateInput, term_updateOutput),
+	'timeActivity.create': runtimeSchemaEntry(
 		timeActivity_createInput,
 		timeActivity_createOutput,
 	),
-	'timeActivity.delete': lazySchemaEntry(
+	'timeActivity.delete': runtimeSchemaEntry(
 		timeActivity_deleteInput,
 		timeActivity_deleteOutput,
 	),
-	'timeActivity.list': lazySchemaEntry(
+	'timeActivity.list': runtimeSchemaEntry(
 		timeActivity_listInput,
 		timeActivity_listOutput,
 	),
-	'timeActivity.get': lazySchemaEntry(
+	'timeActivity.get': runtimeSchemaEntry(
 		timeActivity_getInput,
 		timeActivity_getOutput,
 	),
-	'timeActivity.update': lazySchemaEntry(
+	'timeActivity.update': runtimeSchemaEntry(
 		timeActivity_updateInput,
 		timeActivity_updateOutput,
 	),
-	'transactionList.list': lazySchemaEntry(
+	'transactionList.list': runtimeSchemaEntry(
 		transactionList_listInput,
 		transactionList_listOutput,
 	),
-	'transactionListByCustomer.list': lazySchemaEntry(
+	'transactionListByCustomer.list': runtimeSchemaEntry(
 		transactionListByCustomer_listInput,
 		transactionListByCustomer_listOutput,
 	),
-	'transactionListByVendor.list': lazySchemaEntry(
+	'transactionListByVendor.list': runtimeSchemaEntry(
 		transactionListByVendor_listInput,
 		transactionListByVendor_listOutput,
 	),
-	'transactionListWithSplits.list': lazySchemaEntry(
+	'transactionListWithSplits.list': runtimeSchemaEntry(
 		transactionListWithSplits_listInput,
 		transactionListWithSplits_listOutput,
 	),
-	'transfer.create': lazySchemaEntry(
+	'transfer.create': runtimeSchemaEntry(
 		transfer_createInput,
 		transfer_createOutput,
 	),
-	'transfer.delete': lazySchemaEntry(
+	'transfer.delete': runtimeSchemaEntry(
 		transfer_deleteInput,
 		transfer_deleteOutput,
 	),
-	'transfer.list': lazySchemaEntry(transfer_listInput, transfer_listOutput),
-	'transfer.get': lazySchemaEntry(transfer_getInput, transfer_getOutput),
-	'transfer.sparseUpdate': lazySchemaEntry(
+	'transfer.list': runtimeSchemaEntry(transfer_listInput, transfer_listOutput),
+	'transfer.get': runtimeSchemaEntry(transfer_getInput, transfer_getOutput),
+	'transfer.sparseUpdate': runtimeSchemaEntry(
 		transfer_sparseUpdateInput,
 		transfer_sparseUpdateOutput,
 	),
-	'transfer.update': lazySchemaEntry(
+	'transfer.update': runtimeSchemaEntry(
 		transfer_updateInput,
 		transfer_updateOutput,
 	),
-	'trialBalance.list': lazySchemaEntry(
+	'trialBalance.list': runtimeSchemaEntry(
 		trialBalance_listInput,
 		trialBalance_listOutput,
 	),
-	'vendor.create': lazySchemaEntry(vendor_createInput, vendor_createOutput),
-	'vendor.list': lazySchemaEntry(vendor_listInput, vendor_listOutput),
-	'vendor.get': lazySchemaEntry(vendor_getInput, vendor_getOutput),
-	'vendor.update': lazySchemaEntry(vendor_updateInput, vendor_updateOutput),
-	'vendorBalance.list': lazySchemaEntry(
+	'vendor.create': runtimeSchemaEntry(vendor_createInput, vendor_createOutput),
+	'vendor.list': runtimeSchemaEntry(vendor_listInput, vendor_listOutput),
+	'vendor.get': runtimeSchemaEntry(vendor_getInput, vendor_getOutput),
+	'vendor.update': runtimeSchemaEntry(vendor_updateInput, vendor_updateOutput),
+	'vendorBalance.list': runtimeSchemaEntry(
 		vendorBalance_listInput,
 		vendorBalance_listOutput,
 	),
-	'vendorBalanceDetail.list': lazySchemaEntry(
+	'vendorBalanceDetail.list': runtimeSchemaEntry(
 		vendorBalanceDetail_listInput,
 		vendorBalanceDetail_listOutput,
 	),
-	'vendorCredit.create': lazySchemaEntry(
+	'vendorCredit.create': runtimeSchemaEntry(
 		vendorCredit_createInput,
 		vendorCredit_createOutput,
 	),
-	'vendorCredit.delete': lazySchemaEntry(
+	'vendorCredit.delete': runtimeSchemaEntry(
 		vendorCredit_deleteInput,
 		vendorCredit_deleteOutput,
 	),
-	'vendorCredit.list': lazySchemaEntry(
+	'vendorCredit.list': runtimeSchemaEntry(
 		vendorCredit_listInput,
 		vendorCredit_listOutput,
 	),
-	'vendorCredit.get': lazySchemaEntry(
+	'vendorCredit.get': runtimeSchemaEntry(
 		vendorCredit_getInput,
 		vendorCredit_getOutput,
 	),
-	'vendorCredit.update': lazySchemaEntry(
+	'vendorCredit.update': runtimeSchemaEntry(
 		vendorCredit_updateInput,
 		vendorCredit_updateOutput,
 	),
-	'vendorExpenses.list': lazySchemaEntry(
+	'vendorExpenses.list': runtimeSchemaEntry(
 		vendorExpenses_listInput,
 		vendorExpenses_listOutput,
 	),

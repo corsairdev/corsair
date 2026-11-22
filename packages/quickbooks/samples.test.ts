@@ -26,6 +26,8 @@ describe('QuickBooks operations against Intuit catalog samples', () => {
 
 	beforeEach(() => {
 		fetchMock = jest.spyOn(globalThis, 'fetch');
+		// Only the responses each test queues may be used; anything else would reach the network.
+		fetchMock.mockRejectedValue(new Error('Unexpected fetch in sample test'));
 	});
 
 	afterEach(() => {
@@ -181,7 +183,10 @@ describe('QuickBooks operations against Intuit catalog samples', () => {
 			realmId,
 			items: request.BatchItemRequest,
 		});
-		expect(result.BatchItemResponse[0]?.bId).toBe('bid1');
+		const expected = sample('Batch.BatchRequest0').response as {
+			BatchItemResponse: unknown[];
+		};
+		expect(result.BatchItemResponse).toEqual(expected.BatchItemResponse);
 		await expect(
 			CatalogEndpoints.batch.execute(context, {
 				realmId,
@@ -255,6 +260,92 @@ describe('QuickBooks operations against Intuit catalog samples', () => {
 			AttachableRef: [{ EntityRef: { type: 'Invoice', value: '95' } }],
 			FileName: 'receipt.pdf',
 		});
+	});
+
+	it('wraps a single listed item in an array and keeps QueryResponse an object', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({
+					QueryResponse: { Class: { Id: '5', Name: 'France' } },
+					time: '2026-11-18T12:00:00Z',
+				}),
+				{ status: 200, headers: { 'Content-Type': 'application/json' } },
+			),
+		);
+		const result = await CatalogEndpoints.class.list(context, { realmId });
+		expect(result.QueryResponse.Class).toEqual([{ Id: '5', Name: 'France' }]);
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify({ QueryResponse: [], time: 't' }), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		await expect(
+			CatalogEndpoints.class.list(context, { realmId }),
+		).rejects.toThrow();
+	});
+
+	it('treats a 200 answer with a top-level Fault as a failed request', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({
+					Fault: {
+						Error: [
+							{
+								Message: 'Invalid email',
+								Detail: 'Email pat@example.com is not valid',
+								code: '2210',
+							},
+						],
+						type: 'ValidationFault',
+					},
+					time: 't',
+				}),
+				{ status: 200, headers: { 'Content-Type': 'application/json' } },
+			),
+		);
+		const failure = await CatalogEndpoints.customer
+			.create(context, { realmId, body: { DisplayName: 'Pat' } })
+			.catch((caught: unknown) => caught);
+		expect(failure).toBeInstanceOf(Error);
+		expect(JSON.stringify(failure)).toContain('2210');
+		expect(JSON.stringify(failure)).not.toContain('pat@example.com');
+	});
+
+	it('sends sparse: true on payment voids and needs one recurring type', async () => {
+		answer('Invoice.Void0');
+		await CatalogEndpoints.payment.void(context, {
+			realmId,
+			body: { Id: '69', SyncToken: '2' },
+		});
+		expect(sent().body).toEqual({ Id: '69', SyncToken: '2', sparse: true });
+		await expect(
+			CatalogEndpoints.recurringTransaction.delete(context, {
+				realmId,
+				body: {},
+			}),
+		).rejects.toThrow('exactly one transaction type');
+		await expect(
+			CatalogEndpoints.recurringTransaction.delete(context, {
+				realmId,
+				body: { Invoice: { SyncToken: '0' } } as never,
+			}),
+		).rejects.toThrow();
+	});
+
+	it('reports a batch answer without per-item results as unconfirmed', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(JSON.stringify({ time: 't' }), {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+			}),
+		);
+		await expect(
+			CatalogEndpoints.batch.execute(context, {
+				realmId,
+				items: [{ bId: 'q1', Query: 'select * from Customer' }],
+			}),
+		).rejects.toThrow('check them before retrying');
 	});
 
 	it('creates a customer with the documented contact fields', async () => {

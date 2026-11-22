@@ -2289,6 +2289,23 @@ const BatchRuntimeInputSchema = lazySchema(() =>
 									: entities.length === 1 &&
 										item.operation !== undefined &&
 										typeof item[entities[0] as string] === 'object';
+							const entity = item[entities[0] as string];
+							if (
+								valid &&
+								item.optionsData === 'void' &&
+								!(
+									entity &&
+									typeof entity === 'object' &&
+									'sparse' in entity &&
+									entity.sparse === true
+								)
+							) {
+								ctx.addIssue({
+									code: 'custom',
+									message:
+										'A void batch item is a sparse update: its entity needs Id, SyncToken and sparse: true.',
+								});
+							}
 							if (!valid) {
 								ctx.addIssue({
 									code: 'custom',
@@ -2328,12 +2345,24 @@ export async function executeBatch(
 	const response: unknown = await makeAuthenticatedQuickBooksRequest<unknown>(
 		ctx,
 		`company/${encodeURIComponent(input.realmId)}/batch`,
-		{ method: 'POST', body: { BatchItemRequest: input.items } },
+		// Intuit lets a batch run up to 120 s server-side; core's default timeout is 20 s.
+		{
+			method: 'POST',
+			body: { BatchItemRequest: input.items },
+			timeoutMs: 120_000,
+		},
 		ctx.options.environment,
 	);
-	return responseSchema(BatchOutputSchema(), false).parse(response) as z.output<
-		ReturnType<typeof BatchOutputSchema>
-	>;
+	const result = responseSchema(BatchOutputSchema(), false).parse(
+		response,
+	) as z.output<ReturnType<typeof BatchOutputSchema>>;
+	if (!Array.isArray(result?.BatchItemResponse)) {
+		// No per-item results means nobody can tell which writes landed; never report that as success.
+		throw new Error(
+			'QuickBooks answered the batch without BatchItemResponse. Some items may have been applied; check them before retrying.',
+		);
+	}
+	return result;
 }
 export async function getChangedData(
 	ctx: SpecialContext,
