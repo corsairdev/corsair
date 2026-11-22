@@ -12,7 +12,8 @@ const Pagination = z.object({
 	link: z.string().nullable(),
 	total_count: z.string().regex(/^\d+$/).nullable(),
 });
-const EmptyResponse = z.union([z.object({}).strict(), z.undefined()]);
+// Updates and status changes answer with the changed record; deletes answer with no body.
+const EmptyResponse = z.union([z.object({}).passthrough(), z.undefined()]);
 const Decimal = z.union([z.string(), z.number()]);
 
 // FreeAgent documents these response objects as evolving resource records; known fields are checked while future provider fields remain intact.
@@ -455,7 +456,8 @@ const BankTransactions = {
 		EmptyResponse,
 		{
 			method: 'DELETE',
-			path: (input) => `/v2/bank_transaction/${encodeURIComponent(input.id)}`,
+			// The docs show /v2/bank_transaction/:id, which answers 404; the plural route deletes (checked on the sandbox).
+			path: (input) => `/v2/bank_transactions/${encodeURIComponent(input.id)}`,
 		},
 	),
 	uploadStatement: defineOperation(

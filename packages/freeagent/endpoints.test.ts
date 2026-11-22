@@ -219,8 +219,9 @@ const wireCases: readonly WireCase[] = [
 		method: 'PUT',
 		pathAndQuery: `/v2/contacts/${encodedId}`,
 		body: { contact: { organisation_name: 'Updated Ltd' } },
-		response: null,
-		expected: undefined,
+		// The sandbox answers PUT /v2/contacts/:id with the updated contact.
+		response: { contact: { ...contact, organisation_name: 'Updated Ltd' } },
+		expected: { contact: { ...contact, organisation_name: 'Updated Ltd' } },
 	},
 	{
 		name: 'contacts.delete',
@@ -717,7 +718,7 @@ const wireCases: readonly WireCase[] = [
 		handler: BankingEndpoints.bankTransactions.delete,
 		input: { id: '1' },
 		method: 'DELETE',
-		pathAndQuery: '/v2/bank_transaction/1',
+		pathAndQuery: '/v2/bank_transactions/1',
 		body: undefined,
 		response: null,
 		expected: undefined,
@@ -1865,7 +1866,7 @@ const wireCases: readonly WireCase[] = [
 		handler: CatalogEndpoints.priceListItems.delete,
 		input: { id: '1' },
 		method: 'DELETE',
-		pathAndQuery: '/v2/price_list_item/1',
+		pathAndQuery: '/v2/price_list_items/1',
 		body: undefined,
 		response: null,
 		expected: undefined,
@@ -3488,6 +3489,27 @@ const wireCases: readonly WireCase[] = [
 		method: 'PUT',
 		pathAndQuery: '/v2/tasks/1',
 		body: { task: { status: 'Completed' } },
+		// The sandbox answers updates with the changed record.
+		response: {
+			task: {
+				url: 'https://api.freeagent.com/v2/tasks/1',
+				status: 'Completed',
+			},
+		},
+		expected: {
+			task: {
+				url: 'https://api.freeagent.com/v2/tasks/1',
+				status: 'Completed',
+			},
+		},
+	},
+	{
+		name: 'tasks.delete',
+		handler: TimeUserEndpoints.tasks.delete,
+		input: { id: '1' },
+		method: 'DELETE',
+		pathAndQuery: '/v2/tasks/1',
+		body: undefined,
 		response: null,
 		expected: undefined,
 	},

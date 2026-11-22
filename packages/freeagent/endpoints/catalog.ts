@@ -2,7 +2,8 @@ import { z } from 'zod';
 import { defineOperation } from './operation';
 
 // Catalog response attributes differ by resource subtype and company tax configuration; documented variants are retained after validation.
-const EmptyResponse = z.union([z.object({}).strict(), z.undefined()]);
+// Updates and status changes answer with the changed record; deletes answer with no body.
+const EmptyResponse = z.union([z.object({}).passthrough(), z.undefined()]);
 const Decimal = z.union([z.string(), z.number()]);
 const PageQuery = z
 	.object({
@@ -305,7 +306,8 @@ const PriceListItems = {
 	}),
 	delete: defineOperation(PriceListItemGetInput, EmptyResponse, {
 		method: 'DELETE',
-		path: (input) => `/v2/price_list_item/${encodeURIComponent(input.id)}`,
+		// The docs show /v2/price_list_item/:id, which answers 404; the plural route deletes (checked on the sandbox).
+		path: (input) => `/v2/price_list_items/${encodeURIComponent(input.id)}`,
 	}),
 };
 const SalesTaxPeriods = {

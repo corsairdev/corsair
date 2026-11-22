@@ -2,7 +2,8 @@ import { z } from 'zod';
 import { defineOperation } from './operation';
 
 // Expense and bill responses conditionally include mileage, tax, attachment, CIS, stock, and asset fields.
-const EmptyResponse = z.union([z.object({}).strict(), z.undefined()]);
+// Updates and status changes answer with the changed record; deletes answer with no body.
+const EmptyResponse = z.union([z.object({}).passthrough(), z.undefined()]);
 const Decimal = z.union([z.string(), z.number()]);
 const PageQuery = z
 	.object({

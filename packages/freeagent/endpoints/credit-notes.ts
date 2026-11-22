@@ -2,7 +2,8 @@ import { z } from 'zod';
 import { defineOperation } from './operation';
 
 // Credit-note response fields include account-specific tax data and optional provider-calculated totals.
-const EmptyResponse = z.union([z.object({}).strict(), z.undefined()]);
+// Updates and status changes answer with the changed record; deletes answer with no body.
+const EmptyResponse = z.union([z.object({}).passthrough(), z.undefined()]);
 const Decimal = z.union([z.string(), z.number()]);
 const PageQuery = z
 	.object({

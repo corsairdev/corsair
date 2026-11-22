@@ -2,7 +2,8 @@ import { z } from 'zod';
 import { defineOperation } from './operation';
 
 // User, payroll, and timeslip resources include optional fields that depend on permissions, tax-year status, and running timers.
-const EmptyResponse = z.union([z.object({}).strict(), z.undefined()]);
+// Updates and status changes answer with the changed record; deletes answer with no body.
+const EmptyResponse = z.union([z.object({}).passthrough(), z.undefined()]);
 const Decimal = z.union([z.string(), z.number()]);
 const PageQuery = z
 	.object({
@@ -455,6 +456,11 @@ const Tasks = {
 		path: (input) => `/v2/tasks/${encodeURIComponent(input.id)}`,
 		body: (input) => ({ task: input.task }),
 	}),
+	// The Tasks docs print DELETE /v2/users/:id; DELETE /v2/tasks/:id is the route that deletes a task (checked on the sandbox).
+	delete: defineOperation(TaskGetInput, EmptyResponse, {
+		method: 'DELETE',
+		path: (input) => `/v2/tasks/${encodeURIComponent(input.id)}`,
+	}),
 };
 const Timeslips = {
 	list: defineOperation(TimeslipListInput, TimeslipListOutput, {
@@ -527,6 +533,7 @@ export const TimeUserEndpointSchemas = {
 	'tasks.get': { input: TaskGetInput, output: TaskOutput },
 	'tasks.create': { input: TaskCreateInput, output: TaskOutput },
 	'tasks.update': { input: TaskUpdateInput, output: EmptyResponse },
+	'tasks.delete': { input: TaskGetInput, output: EmptyResponse },
 	'timeslips.list': { input: TimeslipListInput, output: TimeslipListOutput },
 	'timeslips.get': { input: TimeslipGetInput, output: TimeslipOutput },
 	'timeslips.create': { input: TimeslipCreateInput, output: TimeslipOutput },
@@ -591,6 +598,10 @@ export const TimeUserEndpointMeta = {
 		description: 'Create a task under a project',
 	},
 	'tasks.update': { riskLevel: 'write', description: 'Update a task' },
+	'tasks.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a task',
+	},
 	'timeslips.list': {
 		riskLevel: 'read',
 		description: 'List timeslips with filters, nesting and pagination',

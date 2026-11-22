@@ -2,7 +2,8 @@ import { z } from 'zod';
 import { defineOperation } from './operation';
 
 // Estimate and line-item responses include optional calculated totals and tax fields from the provider.
-const EmptyResponse = z.union([z.object({}).strict(), z.undefined()]);
+// Updates and status changes answer with the changed record; deletes answer with no body.
+const EmptyResponse = z.union([z.object({}).passthrough(), z.undefined()]);
 const Decimal = z.union([z.string(), z.number()]);
 const PageQuery = z
 	.object({

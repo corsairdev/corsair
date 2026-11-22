@@ -102,7 +102,8 @@ const RecurringInvoiceSchema = z
 		always_show_bic_and_iban: z.boolean().optional(),
 		payment_terms_in_days: z.number().int().optional(),
 		invoice_items: z.array(RecurringInvoiceItemSchema).optional(),
-		payment_methods: PaymentMethodsSchema.optional(),
+		// Responses keep every method key FreeAgent sends; inputs use PaymentMethodsSchema.
+		payment_methods: z.record(z.string(), z.boolean()).optional(),
 	})
 	.passthrough();
 
@@ -454,7 +455,11 @@ const PaginationHeadersSchema = z.object({
 	link: z.string().nullable(),
 	total_count: z.string().regex(/^\d+$/).nullable(),
 });
-const EmptyResponseSchema = z.union([z.object({}).strict(), z.undefined()]);
+// Updates answer with the changed record (contacts, projects, invoices); deletes answer with no body.
+const EmptyResponseSchema = z.union([
+	z.object({}).passthrough(),
+	z.undefined(),
+]);
 
 const ContactsListResponseSchema = z
 	.object({ contacts: z.array(ContactSchema) })

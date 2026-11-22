@@ -2,7 +2,8 @@ import { z } from 'zod';
 import { defineOperation } from './operation';
 
 // FreeAgent accounting reports and category records have optional, account-specific response fields that vary by report and company configuration.
-const EmptyResponse = z.union([z.object({}).strict(), z.undefined()]);
+// Updates and status changes answer with the changed record; deletes answer with no body.
+const EmptyResponse = z.union([z.object({}).passthrough(), z.undefined()]);
 const Decimal = z.union([z.string(), z.number()]);
 const PageQuery = z
 	.object({
@@ -172,6 +173,7 @@ const BalanceAccount = z
 		total_debit_value: z.number(),
 	})
 	.passthrough();
+// Sections leave out `accounts` when they have none (seen on the sandbox).
 const BalanceSheet = z
 	.object({
 		accounting_period_start_date: z.string().date().optional(),
@@ -179,24 +181,24 @@ const BalanceSheet = z
 		currency: z.string().optional(),
 		capital_assets: z
 			.object({
-				accounts: z.array(BalanceAccount),
+				accounts: z.array(BalanceAccount).optional(),
 				net_book_value: z.number().optional(),
 			})
 			.passthrough()
 			.optional(),
 		current_assets: z
-			.object({ accounts: z.array(BalanceAccount) })
+			.object({ accounts: z.array(BalanceAccount).optional() })
 			.passthrough()
 			.optional(),
 		current_liabilities: z
-			.object({ accounts: z.array(BalanceAccount) })
+			.object({ accounts: z.array(BalanceAccount).optional() })
 			.passthrough()
 			.optional(),
 		net_current_assets: z.number().optional(),
 		total_assets: z.number().optional(),
 		owners_equity: z
 			.object({
-				accounts: z.array(BalanceAccount),
+				accounts: z.array(BalanceAccount).optional(),
 				retained_profit: z.number().optional(),
 			})
 			.passthrough()
