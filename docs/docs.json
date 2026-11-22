@@ -4287,6 +4287,15 @@
                 ]
               },
               {
+                "group": "Piggy",
+                "pages": [
+                  "plugins/piggy/overview",
+                  "plugins/piggy/api",
+                  "plugins/piggy/database",
+                  "plugins/piggy/webhooks"
+                ]
+              },
+              {
                 "group": "Piloterr",
                 "pages": [
                   "plugins/piloterr/overview",

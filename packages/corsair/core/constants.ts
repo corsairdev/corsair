@@ -512,6 +512,7 @@ export const BaseProviders = [
 	'pdl',
 	'perplexityai',
 	'phantombuster',
+	'piggy',
 	'pingdom',
 	'pinecone',
 	'pipedrive',
@@ -1280,6 +1281,7 @@ export const ProviderDisplayNames = {
 	pdl: 'People Data Labs',
 	perplexityai: 'Perplexity AI',
 	phantombuster: 'PhantomBuster',
+	piggy: 'Piggy',
 	pingdom: 'Pingdom',
 	pinecone: 'Pinecone',
 	pipedrive: 'Pipedrive',
@@ -2055,6 +2057,7 @@ export type AllProviders =
 	| 'pdl'
 	| 'perplexityai'
 	| 'phantombuster'
+	| 'piggy'
 	| 'pinecone'
 	| 'pingdom'
 	| 'pipedrive'
