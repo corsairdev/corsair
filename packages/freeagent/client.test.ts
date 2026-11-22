@@ -81,7 +81,7 @@ describe('FreeAgent client', () => {
 	});
 
 	it.each(['POST', 'PUT', 'DELETE'] as const)(
-		'redacts request and echoed response data when a %s fails',
+		"drops the sent body but keeps FreeAgent's error when a %s fails",
 		async (method) => {
 			const email = 'contact@example.test';
 			const address = '14 Private Road';
@@ -89,20 +89,20 @@ describe('FreeAgent client', () => {
 				method === 'DELETE'
 					? undefined
 					: { contact: { email, address1: address } };
+			// FreeAgent names the failing field without echoing the value (checked on the sandbox).
+			const providerBody = {
+				errors: [{ message: 'email is not a valid email address' }],
+			};
 			const transportError = new ApiError(
-				{
-					method,
-					url: '/v2/contacts',
-					body,
-				},
+				{ method, url: '/v2/contacts', body },
 				{
 					url: `${FREEAGENT_API_BASE}/v2/contacts`,
 					ok: false,
-					status: 403,
-					statusText: 'Forbidden',
-					body: { errors: { message: `Rejected ${email} at ${address}` } },
+					status: 422,
+					statusText: 'Unprocessable Entity',
+					body: providerBody,
 				},
-				`Rejected ${email} at ${address}`,
+				'Unprocessable Entity',
 				{
 					retryAfter: 5000,
 					rateLimitReset: 6000,
@@ -116,34 +116,26 @@ describe('FreeAgent client', () => {
 			const caught = await makeFreeAgentRequest(
 				'/v2/contacts',
 				'access-token',
-				{
-					method,
-					body,
-				},
+				{ method, body },
 			).catch((error: unknown) => error);
 
 			expect(caught).toBeInstanceOf(ApiError);
 			if (!(caught instanceof ApiError)) {
-				throw new Error('Expected a sanitized ApiError');
+				throw new Error('Expected an ApiError');
 			}
-			expect(caught).not.toBe(transportError);
 			expect(caught).toMatchObject({
-				status: 403,
-				statusText: 'Forbidden',
+				status: 422,
+				statusText: 'Unprocessable Entity',
 				retryAfter: 5000,
 				rateLimitReset: 6000,
 				rateLimitRemaining: 3,
 				rateLimitLimit: 120,
-				url: FREEAGENT_API_BASE,
-				request: { method, url: '/' },
-				body: undefined,
+				body: providerBody,
+				request: { method, url: '/v2/contacts' },
 			});
 			expect(caught.request.body).toBeUndefined();
-			expect(caught.message).toBe('FreeAgent API request failed with HTTP 403');
 			expect(JSON.stringify(caught)).not.toContain(email);
 			expect(JSON.stringify(caught)).not.toContain(address);
-			expect(caught.message).not.toContain(email);
-			expect(caught.message).not.toContain(address);
 		},
 	);
 

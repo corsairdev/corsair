@@ -38,17 +38,26 @@ export function freeAgentApiBase(sandbox: boolean | undefined): string {
 	return sandbox ? FREEAGENT_SANDBOX_API_BASE : FREEAGENT_API_BASE;
 }
 
-function sanitizeWriteError(error: ApiError, sandbox: boolean): ApiError {
+/**
+ * Core's ApiError keeps the request body, so a failed write would carry the
+ * contact details, invoice lines or email text it sent. Rebuild it without the
+ * body. FreeAgent's own error body names the failing field without echoing the
+ * value ("email is not a valid email address"), so it stays: it is what tells
+ * the caller how to fix the request. Status and rate-limit fields are kept.
+ */
+function sanitizeWriteError(error: ApiError): ApiError {
+	const { body: _sentBody, ...safeRequest } = error.request;
+	void _sentBody;
 	return new ApiError(
-		{ method: error.request.method, url: '/' },
+		safeRequest,
 		{
-			url: freeAgentApiBase(sandbox),
+			url: error.url,
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
-			body: undefined,
+			body: error.body,
 		},
-		`FreeAgent API request failed with HTTP ${error.status}`,
+		error.message,
 		{
 			retryAfter: error.retryAfter,
 			rateLimitReset: error.rateLimitReset,
@@ -103,8 +112,7 @@ export async function makeFreeAgentRequest<T>(
 			(method === 'POST' || method === 'PUT' || method === 'DELETE') &&
 			error instanceof ApiError
 		) {
-			// Provider error bodies and request diagnostics can echo arbitrary customer data.
-			throw sanitizeWriteError(error, sandbox);
+			throw sanitizeWriteError(error);
 		}
 		throw error;
 	}
