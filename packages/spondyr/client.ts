@@ -25,42 +25,90 @@ export type SpondyrCredentials = { apiKey: string; applicationToken: string };
 /**
  * Spondyr answers every failure, including a bad key, with HTTP 400 and a body
  * that still carries `APIStatus: 'ERROR'`. Some routes answer 404 for the same
- * reason. The status code alone says nothing, so this error reads the envelope.
+ * reason, and a 200 can carry `APIStatus: 'ERROR'` too (the endpoints call
+ * `assertApiStatus` on every body for that).
  *
- * A 200 with `APIStatus: 'ERROR'` is also a failure. The endpoints call
- * `assertApiStatus` on every body for that reason.
+ * Failures surface as core's `ApiError`, rebuilt so the message is Spondyr's
+ * `ErrorMessage` and nothing from the request survives: document `Data` carries
+ * names and addresses. Status, `retryAfter` and the method stay, so the error
+ * handlers and core's management layer still see them.
  */
-export class SpondyrAPIError extends Error {
-	readonly status?: number;
-	/** Milliseconds from a Retry-After header, when Spondyr sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request, which decides replay safety. */
-	readonly method?: string;
-	/** The provider's machine-readable status: `OK` or `ERROR`. */
-	readonly apiStatus?: string;
+export function spondyrApiError(params: {
+	method: SpondyrRequest['method'];
+	path: string;
+	status: number;
+	statusText?: string;
+	// unknown: provider or proxy bodies have no fixed shape.
+	body: unknown;
+	fallback: string;
+	/** Replaces the described message, e.g. to name the refused operation. */
+	message?: string;
+	retryAfter?: number;
+	rateLimit?: Pick<
+		ApiError,
+		'rateLimitReset' | 'rateLimitRemaining' | 'rateLimitLimit'
+	>;
+}): ApiError {
+	const described = describeSpondyrError(
+		params.status,
+		params.body,
+		params.fallback,
+	);
+	const record = asRecord(params.body);
+	return new ApiError(
+		{ method: params.method, url: params.path },
+		{
+			url: `${SPONDYR_API_BASE}/${params.path}`,
+			ok: false,
+			status: params.status,
+			statusText: params.statusText ?? '',
+			body: {
+				APIStatus: described.apiStatus,
+				ErrorMessage:
+					typeof record?.ErrorMessage === 'string'
+						? record.ErrorMessage
+						: undefined,
+			},
+		},
+		params.message ?? described.message,
+		{
+			retryAfter: params.retryAfter,
+			rateLimitReset: params.rateLimit?.rateLimitReset,
+			rateLimitRemaining: params.rateLimit?.rateLimitRemaining,
+			rateLimitLimit: params.rateLimit?.rateLimitLimit,
+		},
+	);
+}
 
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			retryAfter?: number;
-			method?: string;
-			apiStatus?: string;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'SpondyrAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-		this.apiStatus = options.apiStatus;
+/**
+ * Spondyr's database errors quote the stored document back, e.g. "Conversion
+ * failed when converting the nvarchar value '{"OrderNumber":12345,...}'" (seen
+ * live on a status call right after a send). Quoted JSON is replaced so
+ * document data stays out of error messages.
+ */
+export function redactEchoedData(message: string): string {
+	// A plain scan rather than a regex: the text comes from the provider.
+	let out = '';
+	let index = 0;
+	while (index < message.length) {
+		const start = message.indexOf("'", index);
+		const opener = message[start + 1];
+		if (start === -1 || (opener !== '{' && opener !== '[')) {
+			out += message.slice(index, start === -1 ? undefined : start + 1);
+			if (start === -1) break;
+			index = start + 1;
+			continue;
+		}
+		const close = opener === '{' ? "}'" : "]'";
+		const end = message.lastIndexOf(close);
+		if (end <= start) {
+			out += message.slice(index);
+			break;
+		}
+		out += `${message.slice(index, start)}'<document data>'`;
+		index = end + close.length;
 	}
-
-	get isRateLimit(): boolean {
-		return this.status === 429;
-	}
+	return out;
 }
 
 /** Reads `ErrorMessage` and `APIStatus` out of a Spondyr envelope. */
@@ -73,10 +121,11 @@ export function describeSpondyrError(
 	const record = asRecord(body);
 	const errorMessage = record?.ErrorMessage;
 	const apiStatus = record?.APIStatus;
-	const text =
+	const raw =
 		typeof errorMessage === 'string' && errorMessage.length > 0
 			? errorMessage
 			: (typeof record?.Message === 'string' && record.Message) || fallback;
+	const text = redactEchoedData(raw);
 	return {
 		message: status === undefined ? text : `Spondyr ${status}: ${text}`,
 		apiStatus: typeof apiStatus === 'string' ? apiStatus : undefined,
@@ -139,23 +188,21 @@ export async function makeSpondyrRequest(
 			// unknown: see above.
 			rateLimitConfig: SPONDYR_RATE_LIMIT_CONFIG,
 		});
-	} catch (error) {
-		if (error instanceof SpondyrAPIError) throw error;
+	} catch (error: unknown) {
+		// unknown: request() rejects with ApiError or a runtime network error.
 		if (error instanceof ApiError) {
-			const described = describeSpondyrError(
-				error.status,
-				error.body,
-				error.message,
-			);
-			throw new SpondyrAPIError(described.message, {
-				cause: error,
-				apiStatus: described.apiStatus,
+			throw spondyrApiError({
+				method,
+				path,
+				status: error.status,
+				statusText: error.statusText,
+				body: error.body,
+				fallback: error.message,
+				retryAfter: error.retryAfter,
+				rateLimit: error,
 			});
 		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new SpondyrAPIError(error.message, { cause: error, method });
-		}
-		throw new SpondyrAPIError('Unknown Spondyr error', { method });
+		// Network errors and timeouts go through unchanged.
+		throw error;
 	}
 }

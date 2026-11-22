@@ -340,12 +340,12 @@ const defaultAuthType = 'api_key' as const;
 
 const spondyrEndpointMeta = {
 	'correspondence.send': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Generate correspondence from a Transaction Type and either deliver it or hold it for `correspondence.deliver`',
 	},
 	'correspondence.deliver': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Deliver correspondence that was generated with `is_generate_only`, optionally to extra recipients',
 	},
@@ -355,7 +355,7 @@ const spondyrEndpointMeta = {
 			'Read the status of a generated request, one entry per template, with each recipient delivery result',
 	},
 	'correspondence.retry': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Retry the templates that errored on a previous request',
 	},
 	'correspondence.search': {
@@ -364,7 +364,7 @@ const spondyrEndpointMeta = {
 			'Search past requests by batch, Event Type or Search Filter, with paging up to 250 a page',
 	},
 	'batch.send': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Generate correspondence for a list of data objects in one request, optionally merging shared data into each',
 	},
@@ -561,7 +561,6 @@ export function spondyr<const T extends SpondyrPluginOptions>(
 }
 
 export type { SpondyrCredentials } from './client';
-export { makeSpondyrRequest, SpondyrAPIError } from './client';
 export type {
 	BatchSendInput,
 	BatchStatusInput,
@@ -588,4 +587,3 @@ export type {
 	UpdateTemplateInput,
 	UpdateTransactionTypeInput,
 } from './endpoints/types';
-export { SpondyrOperationError } from './error-handlers';

@@ -1,15 +1,15 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { SpondyrContext } from '..';
 import type { SpondyrCredentials, SpondyrRequest } from '../client';
-import { makeSpondyrRequest } from '../client';
-import { SpondyrOperationError } from '../error-handlers';
+import { makeSpondyrRequest, spondyrApiError } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
 /** The slice of the account key manager the client needs. */
 export type SpondyrCredentialContext = {
-	keys: {
+	// Absent when the key comes from the plugin option and no database-backed key manager runs.
+	keys?: {
 		get_api_key: () => Promise<string | null | undefined>;
 		get_application_token: () => Promise<string | null | undefined>;
 	};
@@ -26,11 +26,10 @@ export async function resolveCredentials(
 	apiKey: string,
 ): Promise<SpondyrCredentials> {
 	const applicationToken =
-		ctx.options?.applicationToken ?? (await ctx.keys.get_application_token());
+		ctx.options?.applicationToken ?? (await ctx.keys?.get_application_token());
+	// Core turns AuthMissingError into a connect prompt for the missing field.
 	if (!applicationToken) {
-		throw new SpondyrOperationError(
-			'The Application Token is missing from the account. Add it alongside the API key.',
-		);
+		throw new AuthMissingError('spondyr', 'application_token');
 	}
 	return { apiKey, applicationToken };
 }
@@ -59,8 +58,9 @@ export async function call<Input extends z.ZodType, Output extends z.ZodType>(
 ): Promise<z.output<Output>> {
 	const parsed = operation.input.parse(rawInput ?? {});
 	const credentials = await resolveCredentials(ctx, ctx.key);
-	const raw = await makeSpondyrRequest(credentials, toRequest(parsed));
-	if (!options.skipStatusCheck) assertApiStatus(raw, operation.event);
+	const request = toRequest(parsed);
+	const raw = await makeSpondyrRequest(credentials, request);
+	if (!options.skipStatusCheck) assertApiStatus(raw, operation.event, request);
 	const result = operation.output.parse(
 		options.shape ? options.shape(raw, parsed) : raw,
 	);
@@ -83,6 +83,7 @@ export function assertApiStatus(
 	// unknown: the raw envelope, before the operation's output schema runs.
 	raw: unknown, // unknown: the raw envelope, before the output schema runs.
 	operation: string,
+	request: Pick<SpondyrRequest, 'method' | 'path'>,
 ): void {
 	if (typeof raw !== 'object' || raw === null) return;
 	const record = raw as Record<string, unknown>; // unknown: narrowed above.
@@ -91,5 +92,15 @@ export function assertApiStatus(
 		typeof record.ErrorMessage === 'string' && record.ErrorMessage.length > 0
 			? record.ErrorMessage
 			: 'no message given';
-	throw new SpondyrOperationError(`${operation} was refused: ${message}`);
+	// Spondyr reports the refusal on a 2xx; it is the same kind of failure it
+	// otherwise answers with a 400, so it surfaces as a 400 ApiError.
+	throw spondyrApiError({
+		method: request.method,
+		path: request.path,
+		status: 400,
+		statusText: 'APIStatus ERROR',
+		body: record,
+		fallback: message,
+		message: `${operation} was refused: ${message}`,
+	});
 }
