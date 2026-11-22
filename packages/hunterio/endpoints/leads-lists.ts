@@ -186,10 +186,11 @@ export const merge: HunterioEndpoints['leadsListsMerge'] = async (
 	input,
 ) => {
 	const parsed = HunterioEndpointInputSchemas.leadsListsMerge.parse(input);
+	const { id, ...body } = parsed;
 
 	const response = await makeHunterioRequest<
 		HunterioEndpointOutputs['leadsListsMerge']
-	>(`/leads_lists/${parsed.id}/merge`, ctx.key, { method: 'POST' });
+	>(`/leads_lists/${id}/merge`, ctx.key, { method: 'POST', body });
 
 	const parsedResponse =
 		HunterioEndpointOutputSchemas.leadsListsMerge.parse(response);
@@ -197,7 +198,7 @@ export const merge: HunterioEndpoints['leadsListsMerge'] = async (
 	await logEventFromContext(
 		ctx,
 		'hunterio.leadsLists.merge',
-		{ id: parsed.id },
+		{ id, destinationLeadsListId: body.destination_leads_list_id },
 		'completed',
 	);
 

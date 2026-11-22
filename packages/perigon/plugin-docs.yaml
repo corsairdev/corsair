@@ -1,0 +1,56 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub.
+# `pnpm validate:plugins` fails until the TODO is replaced.
+displayName: "Perigon"
+description: "Perigon is a news intelligence API over a large article index. This plugin searches articles (one result per published URL), lists story clusters, journalists and resolved people and company entities, and reads the account's usage and limits."
+domain: perigon.io
+recommendedAuth: api_key
+overviewNote: >
+  Authenticate with the API key from the Developers section of your Perigon
+  account; the plugin sends it in the x-api-key header (the docs also allow
+  a query parameter and a Bearer header — the header keeps the key out of
+  URLs). Every route here is a GET.
+
+  Articles API returns one result per published article URL; Stories API
+  returns clustered narratives. The limits endpoint is free to poll — it
+  does not count against your quota — and reports requestsUsed, requestLimit
+  and resetAt. Article body text may be truncated on some plans; check
+  articleContentTruncation in limits.get.
+
+  Lists answer { status, numResults, articles } (articles) or
+  { status, numResults, results } (the rest); numResults is the total match
+  count and pages are numbered from 0. Filters that take several values
+  (source, topic, country, ...) accept a list and OR them. This plugin
+  exposes the common filters from Perigon's OpenAPI. Monitors, Social (X, Reddit, LinkedIn), vector search and
+  the summarizer are documented by Perigon but not part of this plugin.
+
+  Every operation is described in the official docs:
+  https://docs.perigon.io/openapi.json
+examples:
+  read:
+    path: articles.list
+    title: Search articles
+    args:
+      q: 'climate AND policy'
+      from: '2025-11-01'
+      size: 25
+      page: 0
+apiExamples:
+  articles.list:
+    call: '{ q: "climate AND policy", category: "Business", source: ["reuters.com", "apnews.com"], from: "2025-11-01", sortBy: "date", size: 25 }'
+  stories.list:
+    call: '{ q: "semiconductor", minUniqueSources: 3, sortBy: "updatedAt" }'
+  journalists.list:
+    call: '{ q: "technology", source: "example.com" }'
+  people.list:
+    call: '{ name: "Ada Lovelace" }'
+  companies.list:
+    call: '{ q: "semiconductor", country: "us", size: 10 }'
+  limits.get:
+    call: '{}'
+apiNotes:
+  articles.list: 'One result per published article URL; showReprints: false drops syndicated copies. Content may be plan-truncated; limits.get reports articleContentTruncation.'
+  stories.list: 'Clustered narratives; use clusterId from an article to reach its story.'
+  journalists.list: 'q searches names, titles and bios; filter by publisher domain, topic or country.'
+  people.list: 'Person entities keyed by Wikidata id; search by name (this route has no q).'
+  companies.list: 'Company entities with domains, symbols, sector and size.'
+  limits.get: 'Answers { data: { requestsUsed, requestLimit, maxPageSize, paginationLimit, resetAt } }.'
