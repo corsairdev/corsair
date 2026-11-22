@@ -12,6 +12,8 @@ overviewNote: |
   - **Admin only:** `users.list` returns 403 unless the key belongs to an account admin.
   - **Recording downloads:** `recordings.requestDownload` starts a job. Poll `recordings.getDownload` until `status` is `completed`, then fetch the signed `url` of whichever file came back before its `expires_at`: `video` for a video recording, `audio` for an audio-only one, which can complete straight away.
   - **Stored data:** `meetings.list` and the webhook store meeting metadata only. Transcripts, summaries, action items, highlights and CRM matches are returned but not stored.
+apiNotes:
+  "webhooks.create": "Set at least one of include_transcript, include_summary, include_action_items or include_crm_matches to true; Fathom rejects a webhook that includes nothing, and the input check does too."
 references:
   - title: Fathom API Reference
     url: https://developers.fathom.ai/api-reference

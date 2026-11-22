@@ -581,6 +581,8 @@ await corsair.fathomai.api.webhooks.create({});
 | `include_summary` | `boolean` | No | — |
 | `include_transcript` | `boolean` | No | — |
 
+Set at least one of include_transcript, include_summary, include_action_items or include_crm_matches to true; Fathom rejects a webhook that includes nothing, and the input check does too.
+
 
 
 **Output**
