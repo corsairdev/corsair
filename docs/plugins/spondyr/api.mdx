@@ -1020,7 +1020,7 @@ Delete a Search Filter; existing tags stay on the documents
 **Risk:** `destructive`
 
 ```ts
-await corsair.spondyr.api.searchFilters.delete({ search: 'OrderNumber' });
+await corsair.spondyr.api.searchFilters.delete({ transaction_type: 'Customer Orders', search: 'OrderNumber' });
 ```
 
 **Input**
@@ -1052,7 +1052,7 @@ Get one Search Filter and the tag it writes onto correspondence
 **Risk:** `read`
 
 ```ts
-await corsair.spondyr.api.searchFilters.get({ search: 'OrderNumber' });
+await corsair.spondyr.api.searchFilters.get({ transaction_type: 'Customer Orders', search: 'OrderNumber' });
 ```
 
 **Input**
@@ -1062,7 +1062,7 @@ await corsair.spondyr.api.searchFilters.get({ search: 'OrderNumber' });
 | `transaction_type` | `string` | Yes | The Transaction Type the Search Filter belongs to |
 | `search` | `string` | Yes | — |
 
-This route takes only the name; it is not scoped by Transaction Type.
+Spondyr needs the Transaction Type as well as the name here and on delete, although its docs list only the name.
 
 
 

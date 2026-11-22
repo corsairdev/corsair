@@ -87,13 +87,13 @@ apiExamples:
   searchFilters.list:
     call: "{ transaction_type: 'Customer Orders' }"
   searchFilters.get:
-    call: "{ search: 'OrderNumber' }"
+    call: "{ transaction_type: 'Customer Orders', search: 'OrderNumber' }"
   searchFilters.create:
     call: "{ transaction_type: 'Customer Orders', name: 'OrderNumber', tag: '{OrderNumber}' }"
   searchFilters.update:
     call: "{ transaction_type: 'Customer Orders', search: 'OrderNumber', name: 'OrderNumber', tag: '{OrderNumber}' }"
   searchFilters.delete:
-    call: "{ search: 'OrderNumber' }"
+    call: "{ transaction_type: 'Customer Orders', search: 'OrderNumber' }"
   templates.list:
     call: "{ transaction_type: 'Customer Orders' }"
   templates.get:
@@ -115,6 +115,6 @@ apiNotes:
   transactionTypes.create: '`template_json` is the JSON sample that defines the fields available to templates.'
   transactionTypes.delete: 'Deletes the type along with the templates, conditions and search filters built on it.'
   recipients.create: 'Any address field may hold a `{FieldName}` placeholder that Spondyr resolves from the transaction data.'
-  searchFilters.get: 'This route takes only the name; it is not scoped by Transaction Type.'
+  searchFilters.get: 'Spondyr needs the Transaction Type as well as the name here and on delete, although its docs list only the name.'
   templates.create: 'Upload the file with `templates.uploadContent` first and pass its ReferenceID. DocuSign delivery needs at least one signer.'
   templates.uploadContent: 'Content is base64, and the returned ReferenceID can attach to one template only.'
