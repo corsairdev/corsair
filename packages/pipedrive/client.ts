@@ -458,21 +458,26 @@ export async function makePipedriveBinaryRequest(
 				response = nextResponse;
 				continue;
 			}
-			const nextUrl = new URL(location, currentUrl);
+			// A malformed Location would throw a TypeError that keeps the raw URL (it may carry a
+			// presigned signature); turn it into the same sanitized redirect error.
+			const nextUrl = URL.canParse(location, currentUrl)
+				? new URL(location, currentUrl)
+				: undefined;
 			await nextResponse.body?.cancel().catch(() => undefined);
 			const isPublicHttpsHop =
-				nextUrl.protocol === 'https:' &&
+				nextUrl?.protocol === 'https:' &&
 				nextUrl.username === '' &&
 				nextUrl.password === '';
-			if (!isTrustedPipedriveRedirect(nextUrl)) sendCredentials = false;
-			if (!isPublicHttpsHop) {
+			if (nextUrl && !isTrustedPipedriveRedirect(nextUrl))
+				sendCredentials = false;
+			if (!nextUrl || !isPublicHttpsHop) {
 				throw new ApiError(
 					{ method: options.method, url: endpoint },
 					{
 						url: safeUrl,
 						ok: false,
 						status: nextResponse.status,
-						statusText: nextResponse.statusText,
+						statusText: `HTTP ${nextResponse.status}`,
 						body: { error: 'Pipedrive file download redirect was rejected' },
 					},
 					'Pipedrive file download redirected to a non-https location',
@@ -488,7 +493,7 @@ export async function makePipedriveBinaryRequest(
 						url: safeUrl,
 						ok: false,
 						status: nextResponse.status,
-						statusText: nextResponse.statusText,
+						statusText: `HTTP ${nextResponse.status}`,
 						body: { error: 'Pipedrive file download redirect limit reached' },
 					},
 					'Pipedrive file download exceeded its redirect limit',
@@ -500,8 +505,13 @@ export async function makePipedriveBinaryRequest(
 		}
 		if (!response.ok) {
 			const reset = Number(response.headers.get('x-ratelimit-reset'));
+			// Only Pipedrive's own throttling may set a retry delay; a storage 429 is not
+			// a reason to replay the authenticated request.
 			const retryAfter =
-				response.status === 429 && Number.isFinite(reset) && reset > 0
+				sendCredentials &&
+				response.status === 429 &&
+				Number.isFinite(reset) &&
+				reset > 0
 					? reset * 1000
 					: undefined;
 			await response.body?.cancel().catch(() => undefined);
@@ -511,7 +521,7 @@ export async function makePipedriveBinaryRequest(
 					url: safeUrl,
 					ok: false,
 					status: response.status,
-					statusText: response.statusText,
+					statusText: `HTTP ${response.status}`,
 					body: { error: 'Pipedrive binary request failed' },
 				},
 				`Pipedrive request failed with HTTP ${response.status}`,

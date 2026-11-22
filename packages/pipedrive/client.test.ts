@@ -181,6 +181,72 @@ describe('Pipedrive HTTP client', () => {
 		}
 	});
 
+	it('turns a malformed redirect into a sanitized error', async () => {
+		const originalFetch = globalThis.fetch;
+		globalThis.fetch = jest.fn().mockResolvedValue(
+			new Response(null, {
+				status: 302,
+				headers: {
+					Location: 'https://[bad-host/presigned?X-Amz-Signature=sig',
+				},
+			}),
+		);
+		try {
+			const rejection = await makePipedriveBinaryRequest(
+				'/files/7/download',
+				'test-token',
+				'api_key',
+				{ method: 'GET', apiVersion: 'v1' },
+			).catch(
+				// `unknown` because a rejected fetch promise may contain any JavaScript value.
+				(error: unknown) => error,
+			);
+			expect(rejection).toBeInstanceOf(ApiError);
+			expect(JSON.stringify(rejection)).not.toContain('X-Amz-Signature');
+			expect(String(rejection)).not.toContain('X-Amz-Signature');
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+	});
+
+	it('does not turn a storage 429 into a Pipedrive retry delay', async () => {
+		const originalFetch = globalThis.fetch;
+		globalThis.fetch = jest
+			.fn()
+			.mockResolvedValueOnce(
+				new Response(null, {
+					status: 302,
+					headers: { Location: 'https://storage.example.com/f/7?sig=abc' },
+				}),
+			)
+			.mockResolvedValueOnce(
+				new Response(null, {
+					status: 429,
+					statusText: 'Slow Down for customer@example.com',
+					headers: { 'x-ratelimit-reset': '5' },
+				}),
+			);
+		try {
+			const rejection = await makePipedriveBinaryRequest(
+				'/files/7/download',
+				'test-token',
+				'api_key',
+				{ method: 'GET', apiVersion: 'v1' },
+			).catch(
+				// `unknown` because a rejected fetch promise may contain any JavaScript value.
+				(error: unknown) => error,
+			);
+			expect(rejection).toBeInstanceOf(ApiError);
+			if (!(rejection instanceof ApiError))
+				throw new Error('Expected ApiError');
+			expect(rejection.status).toBe(429);
+			expect(rejection.retryAfter).toBeUndefined();
+			expect(JSON.stringify(rejection)).not.toContain('customer@example.com');
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
+	});
+
 	it('rejects a non-https file redirect and keeps the token out of the error', async () => {
 		const originalFetch = globalThis.fetch;
 		const fetchMock = jest.fn().mockResolvedValue(

@@ -1538,7 +1538,7 @@ Get all supported currencies (GET /currencies; 20 API tokens; OAuth scopes: base
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV1.currencies.getCurrencies({ query: { "term": "x" } });
+await corsair.pipedrive.api.apiV1.currencies.getCurrencies({ query: { "term": "acme" } });
 ```
 
 **Input**
@@ -3061,7 +3061,7 @@ List updates about deal field values (GET /deals/&#123;id&#125;/changelog; 20 AP
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV1.deals.getDealChangelog({ path: { "id": 1 }, query: { "cursor": "x", "limit": 1 } });
+await corsair.pipedrive.api.apiV1.deals.getDealChangelog({ path: { "id": 1 }, query: { "limit": 1 } });
 ```
 
 **Input**
@@ -3729,7 +3729,7 @@ List updates about participants of a deal (GET /deals/&#123;id&#125;/participant
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV1.deals.getDealParticipantsChangelog({ path: { "id": 1 }, query: { "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV1.deals.getDealParticipantsChangelog({ path: { "id": 1 }, query: { "limit": 1 } });
 ```
 
 **Input**
@@ -4594,7 +4594,7 @@ await corsair.pipedrive.api.apiV1.files.downloadFile({ path: { "id": 1 } });
 |------|------|----------|-------------|
 | `path` | `object` | Yes | — |
 
-GET https://api.pipedrive.com/v1/files/&#123;id&#125;/download. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full, activities:read, activities:full, contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Files. API tokens use x-api-token; OAuth access tokens use Bearer authorization. The binary adapter returns content_type, base64, and byte_length (maximum 20 MiB) and follows HTTPS redirects only to *.pipedrive.com; cross-origin redirects are rejected without forwarding credentials.
+GET https://api.pipedrive.com/v1/files/&#123;id&#125;/download. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): deals:read, deals:full, activities:read, activities:full, contacts:read, contacts:full. See https://developers.pipedrive.com/docs/api/v1/Files. API tokens use x-api-token; OAuth access tokens use Bearer authorization. The binary adapter returns content_type, base64, and byte_length (maximum 20 MiB) and follows HTTPS redirects. Pipedrive answers with a 302 to presigned storage (S3), which is fetched with no token or other request headers; non-HTTPS redirects are rejected.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -6277,7 +6277,7 @@ Add a lead (POST /leads; 10 API tokens; OAuth scopes: leads:full)
 **Risk:** `write`
 
 ```ts
-await corsair.pipedrive.api.apiV1.leads.addLead({ body: { "title": "x" } });
+await corsair.pipedrive.api.apiV1.leads.addLead({ body: { "title": "Acme renewal", "person_id": 1 } });
 ```
 
 **Input**
@@ -6286,7 +6286,7 @@ await corsair.pipedrive.api.apiV1.leads.addLead({ body: { "title": "x" } });
 |------|------|----------|-------------|
 | `body` | `object` | Yes | — |
 
-POST https://api.pipedrive.com/v1/leads. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): leads:full. See https://developers.pipedrive.com/docs/api/v1/Leads. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+POST https://api.pipedrive.com/v1/leads. The official OpenAPI x-token-cost is 10 API tokens. OAuth scope(s): leads:full. See https://developers.pipedrive.com/docs/api/v1/Leads. API tokens use x-api-token; OAuth access tokens use Bearer authorization. Pipedrive needs person_id or organization_id of an existing record.
 
 <AccordionGroup>
 <Accordion title="body full type">
@@ -6747,7 +6747,7 @@ Search leads (GET /leads/search; 40 API tokens; OAuth scopes: leads:read, leads:
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV1.leads.searchLeads({ query: { "term": "x", "fields": ["custom_fields"], "exact_match": false, "person_id": 1, "organization_id": 1, "include_fields": ["lead.was_seen"], "start": 1, "limit": 1 } });
+await corsair.pipedrive.api.apiV1.leads.searchLeads({ query: { "term": "acme", "fields": ["custom_fields"], "exact_match": false, "person_id": 1, "organization_id": 1, "include_fields": ["lead.was_seen"], "start": 1, "limit": 1 } });
 ```
 
 **Input**
@@ -10238,7 +10238,7 @@ List updates about organization field values (GET /organizations/&#123;id&#125;/
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV1.organizations.getOrganizationChangelog({ path: { "id": 1 }, query: { "cursor": "x", "limit": 1 } });
+await corsair.pipedrive.api.apiV1.organizations.getOrganizationChangelog({ path: { "id": 1 }, query: { "limit": 1 } });
 ```
 
 **Input**
@@ -11773,7 +11773,7 @@ List updates about person field values (GET /persons/&#123;id&#125;/changelog; 2
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV1.persons.getPersonChangelog({ path: { "id": 1 }, query: { "cursor": "x", "limit": 1 } });
+await corsair.pipedrive.api.apiV1.persons.getPersonChangelog({ path: { "id": 1 }, query: { "limit": 1 } });
 ```
 
 **Input**
@@ -14810,7 +14810,7 @@ Get all projects (GET /projects; 20 API tokens; OAuth scopes: projects:read, pro
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV1.projects.getProjects({ query: { "cursor": "x", "limit": 1, "filter_id": 1, "status": "x", "phase_id": 1, "include_archived": false } });
+await corsair.pipedrive.api.apiV1.projects.getProjects({ query: { "limit": 1, "filter_id": 1, "status": "x", "phase_id": 1, "include_archived": false } });
 ```
 
 **Input**
@@ -15305,7 +15305,7 @@ Get all project templates (GET /projectTemplates; 20 API tokens; OAuth scopes: p
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV1.projectTemplates.getProjectTemplates({ query: { "cursor": "x", "limit": 1 } });
+await corsair.pipedrive.api.apiV1.projectTemplates.getProjectTemplates({ query: { "limit": 1 } });
 ```
 
 **Input**
@@ -17139,7 +17139,7 @@ Get all tasks (GET /tasks; 20 API tokens; OAuth scopes: projects:read, projects:
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV1.tasks.getTasks({ query: { "cursor": "x", "limit": 1, "assignee_id": 1, "project_id": 1, "parent_task_id": 1, "done": 0 } });
+await corsair.pipedrive.api.apiV1.tasks.getTasks({ query: { "limit": 1, "assignee_id": 1, "project_id": 1, "parent_task_id": 1, "done": 0 } });
 ```
 
 **Input**
@@ -17319,7 +17319,7 @@ await corsair.pipedrive.api.apiV1.userConnections.getUserConnections({  });
 
 **Input:** _empty object_
 
-GET https://api.pipedrive.com/v1/userConnections. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): base. See https://developers.pipedrive.com/docs/api/v1/UserConnections. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+GET https://api.pipedrive.com/v1/userConnections. The official OpenAPI x-token-cost is 20 API tokens. OAuth scope(s): base. See https://developers.pipedrive.com/docs/api/v1/UserConnections. API tokens use x-api-token; OAuth access tokens use Bearer authorization. In a live check (11-23) an API token got an empty HTML page instead of JSON from this route.
 
 
 **Output**
@@ -17437,7 +17437,7 @@ Find users by name (GET /users/find; 40 API tokens; OAuth scopes: users:read)
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV1.users.findUsersByName({ query: { "term": "x", "search_by_email": 0 } });
+await corsair.pipedrive.api.apiV1.users.findUsersByName({ query: { "term": "acme", "search_by_email": 0 } });
 ```
 
 **Input**
@@ -18225,7 +18225,7 @@ Get all activity fields (GET /activityFields; 10 API tokens; OAuth scopes: admin
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.activityFields.getActivityFields({ query: { "include_fields": ["ui_visibility"], "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.activityFields.getActivityFields({ query: { "include_fields": ["ui_visibility"], "limit": 1 } });
 ```
 
 **Input**
@@ -18742,7 +18742,7 @@ Get all deal fields (GET /dealFields; 10 API tokens; OAuth scopes: deals:read, d
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.dealFields.getDealFields({ query: { "include_fields": ["ui_visibility"], "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.dealFields.getDealFields({ query: { "include_fields": ["ui_visibility"], "limit": 1 } });
 ```
 
 **Input**
@@ -19098,7 +19098,7 @@ List installments added to a list of deals (GET /deals/installments; 10 API toke
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.dealInstallments.getInstallments({ query: { "deal_ids": [1], "cursor": "x", "limit": 1, "sort_by": "id", "sort_direction": "asc" } });
+await corsair.pipedrive.api.apiV2.dealInstallments.getInstallments({ query: { "deal_ids": [1], "limit": 1, "sort_by": "id", "sort_direction": "asc" } });
 ```
 
 **Input**
@@ -19161,7 +19161,7 @@ Add an installment to a deal (POST /deals/&#123;id&#125;/installments; 5 API tok
 **Risk:** `write`
 
 ```ts
-await corsair.pipedrive.api.apiV2.dealInstallments.postInstallment({ path: { "id": 1 }, body: { "description": "x", "amount": 1, "billing_date": "x" } });
+await corsair.pipedrive.api.apiV2.dealInstallments.postInstallment({ path: { "id": 1 }, body: { "description": "x", "amount": 1, "billing_date": "2026-12-01" } });
 ```
 
 **Input**
@@ -19566,7 +19566,7 @@ await corsair.pipedrive.api.apiV2.dealProducts.deleteManyDealProducts({ path: { 
 | `path` | `object` | Yes | — |
 | `query` | `object` | No | — |
 
-DELETE https://api.pipedrive.com/api/v2/deals/&#123;id&#125;/products. The official OpenAPI x-token-cost is 15 API tokens. OAuth scope(s): products:full, deals:full. See https://developers.pipedrive.com/docs/api/v1/DealProducts. API tokens use x-api-token; OAuth access tokens use Bearer authorization.
+DELETE https://api.pipedrive.com/api/v2/deals/&#123;id&#125;/products. The official OpenAPI x-token-cost is 15 API tokens. OAuth scope(s): products:full, deals:full. See https://developers.pipedrive.com/docs/api/v1/DealProducts. API tokens use x-api-token; OAuth access tokens use Bearer authorization. Without query.ids Pipedrive removes up to 100 products attached to the deal; pass ids to remove only those.
 
 <AccordionGroup>
 <Accordion title="path full type">
@@ -19631,7 +19631,7 @@ List products attached to a deal (GET /deals/&#123;id&#125;/products; 10 API tok
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.dealProducts.getDealProducts({ path: { "id": 1 }, query: { "cursor": "x", "limit": 1, "sort_by": "id", "sort_direction": "asc" } });
+await corsair.pipedrive.api.apiV2.dealProducts.getDealProducts({ path: { "id": 1 }, query: { "limit": 1, "sort_by": "id", "sort_direction": "asc" } });
 ```
 
 **Input**
@@ -19729,7 +19729,7 @@ Get deal products of several deals (GET /deals/products; 10 API tokens; OAuth sc
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.dealProducts.getDealsProducts({ query: { "deal_ids": [1], "cursor": "x", "limit": 1, "sort_by": "id", "sort_direction": "asc" } });
+await corsair.pipedrive.api.apiV2.dealProducts.getDealsProducts({ query: { "deal_ids": [1], "limit": 1, "sort_by": "id", "sort_direction": "asc" } });
 ```
 
 **Input**
@@ -20221,7 +20221,7 @@ Get all archived deals (GET /deals/archived; 20 API tokens; OAuth scopes: deals:
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.deals.getArchivedDeals({ query: { "filter_id": 1, "ids": [1], "owner_id": 1, "person_id": 1, "org_id": 1, "pipeline_id": 1, "stage_id": 1, "status": ["open"], "updated_since": "x", "updated_until": "x", "sort_by": "id", "sort_direction": "asc", "include_fields": ["next_activity_id"], "custom_fields": ["x"], "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.deals.getArchivedDeals({ query: { "filter_id": 1, "ids": [1], "owner_id": 1, "person_id": 1, "org_id": 1, "pipeline_id": 1, "stage_id": 1, "status": ["open"], "updated_since": "x", "updated_until": "x", "sort_by": "id", "sort_direction": "asc", "include_fields": ["next_activity_id"], "custom_fields": ["x"], "limit": 1 } });
 ```
 
 **Input**
@@ -20401,7 +20401,7 @@ List followers of a deal (GET /deals/&#123;id&#125;/followers; 10 API tokens; OA
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.deals.getDealFollowers({ path: { "id": 1 }, query: { "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.deals.getDealFollowers({ path: { "id": 1 }, query: { "limit": 1 } });
 ```
 
 **Input**
@@ -20478,7 +20478,7 @@ List followers changelog of a deal (GET /deals/&#123;id&#125;/followers/changelo
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.deals.getDealFollowersChangelog({ path: { "id": 1 }, query: { "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.deals.getDealFollowersChangelog({ path: { "id": 1 }, query: { "limit": 1 } });
 ```
 
 **Input**
@@ -20632,7 +20632,7 @@ Search deals (GET /deals/search; 20 API tokens; OAuth scopes: deals:read, deals:
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.deals.searchDeals({ query: { "term": "x", "fields": ["custom_fields"], "exact_match": false, "person_id": 1, "organization_id": 1, "status": "open", "include_fields": ["deal.cc_email"], "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.deals.searchDeals({ query: { "term": "acme", "fields": ["custom_fields"], "exact_match": false, "person_id": 1, "organization_id": 1, "status": "open", "include_fields": ["deal.cc_email"], "limit": 1 } });
 ```
 
 **Input**
@@ -20810,7 +20810,7 @@ Perform a search from multiple item types (GET /itemSearch; 20 API tokens; OAuth
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.itemSearch.searchItem({ query: { "term": "x", "item_types": ["deal"], "fields": ["address"], "search_for_related_items": false, "exact_match": false, "include_fields": ["deal.cc_email"], "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.itemSearch.searchItem({ query: { "term": "acme", "item_types": ["deal"], "fields": ["address"], "search_for_related_items": false, "exact_match": false, "include_fields": ["deal.cc_email"], "limit": 1 } });
 ```
 
 **Input**
@@ -20891,7 +20891,7 @@ Perform a search using a specific field from an item type (GET /itemSearch/field
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.itemSearch.searchItemByField({ query: { "term": "x", "entity_type": "deal", "match": "exact", "field": "x", "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.itemSearch.searchItemByField({ query: { "term": "acme", "entity_type": "deal", "match": "exact", "field": "x", "limit": 1 } });
 ```
 
 **Input**
@@ -21106,7 +21106,7 @@ Search leads (GET /leads/search; 20 API tokens; OAuth scopes: leads:read, leads:
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.leads.searchLeads({ query: { "term": "x", "fields": ["custom_fields"], "exact_match": false, "person_id": 1, "organization_id": 1, "include_fields": ["lead.was_seen"], "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.leads.searchLeads({ query: { "term": "acme", "fields": ["custom_fields"], "exact_match": false, "person_id": 1, "organization_id": 1, "include_fields": ["lead.was_seen"], "limit": 1 } });
 ```
 
 **Input**
@@ -21636,7 +21636,7 @@ Get all organization fields (GET /organizationFields; 10 API tokens; OAuth scope
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.organizationFields.getOrganizationFields({ query: { "include_fields": ["ui_visibility"], "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.organizationFields.getOrganizationFields({ query: { "include_fields": ["ui_visibility"], "limit": 1 } });
 ```
 
 **Input**
@@ -22061,7 +22061,7 @@ List followers of an organization (GET /organizations/&#123;id&#125;/followers; 
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.organizations.getOrganizationFollowers({ path: { "id": 1 }, query: { "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.organizations.getOrganizationFollowers({ path: { "id": 1 }, query: { "limit": 1 } });
 ```
 
 **Input**
@@ -22138,7 +22138,7 @@ List followers changelog of an organization (GET /organizations/&#123;id&#125;/f
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.organizations.getOrganizationFollowersChangelog({ path: { "id": 1 }, query: { "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.organizations.getOrganizationFollowersChangelog({ path: { "id": 1 }, query: { "limit": 1 } });
 ```
 
 **Input**
@@ -22217,7 +22217,7 @@ Search organizations (GET /organizations/search; 20 API tokens; OAuth scopes: co
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.organizations.searchOrganization({ query: { "term": "x", "fields": ["address"], "exact_match": false, "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.organizations.searchOrganization({ query: { "term": "acme", "fields": ["address"], "exact_match": false, "limit": 1 } });
 ```
 
 **Input**
@@ -22714,7 +22714,7 @@ Get all person fields (GET /personFields; 10 API tokens; OAuth scopes: contacts:
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.personFields.getPersonFields({ query: { "include_fields": ["ui_visibility"], "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.personFields.getPersonFields({ query: { "include_fields": ["ui_visibility"], "limit": 1 } });
 ```
 
 **Input**
@@ -23121,7 +23121,7 @@ List followers of a person (GET /persons/&#123;id&#125;/followers; 10 API tokens
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.persons.getPersonFollowers({ path: { "id": 1 }, query: { "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.persons.getPersonFollowers({ path: { "id": 1 }, query: { "limit": 1 } });
 ```
 
 **Input**
@@ -23198,7 +23198,7 @@ List followers changelog of a person (GET /persons/&#123;id&#125;/followers/chan
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.persons.getPersonFollowersChangelog({ path: { "id": 1 }, query: { "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.persons.getPersonFollowersChangelog({ path: { "id": 1 }, query: { "limit": 1 } });
 ```
 
 **Input**
@@ -23341,7 +23341,7 @@ Search persons (GET /persons/search; 20 API tokens; OAuth scopes: contacts:read,
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.persons.searchPersons({ query: { "term": "x", "fields": ["custom_fields"], "exact_match": false, "organization_id": 1, "include_fields": ["person.picture"], "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.persons.searchPersons({ query: { "term": "acme", "fields": ["custom_fields"], "exact_match": false, "organization_id": 1, "include_fields": ["person.picture"], "limit": 1 } });
 ```
 
 **Input**
@@ -23609,7 +23609,7 @@ Get all pipelines (GET /pipelines; 5 API tokens; OAuth scopes: deals:read, deals
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.pipelines.getPipelines({ query: { "sort_by": "id", "sort_direction": "asc", "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.pipelines.getPipelines({ query: { "sort_by": "id", "sort_direction": "asc", "limit": 1 } });
 ```
 
 **Input**
@@ -24136,7 +24136,7 @@ Get all product fields (GET /productFields; 10 API tokens; OAuth scopes: product
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.productFields.getProductFields({ query: { "include_fields": ["ui_visibility"], "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.productFields.getProductFields({ query: { "include_fields": ["ui_visibility"], "limit": 1 } });
 ```
 
 **Input**
@@ -25076,7 +25076,7 @@ Get all project fields (GET /projectFields; 10 API tokens; OAuth scopes: project
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.projectFields.getProjectFields({ query: { "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.projectFields.getProjectFields({ query: { "limit": 1 } });
 ```
 
 **Input**
@@ -25884,7 +25884,7 @@ Get all archived projects (GET /projects/archived; 10 API tokens; OAuth scopes: 
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.projects.getArchivedProjects({ query: { "filter_id": 1, "status": "x", "phase_id": 1, "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.projects.getArchivedProjects({ query: { "filter_id": 1, "status": "x", "phase_id": 1, "limit": 1 } });
 ```
 
 **Input**
@@ -26046,7 +26046,7 @@ List updates about project field values (GET /projects/&#123;id&#125;/changelog;
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.projects.getProjectChangelog({ path: { "id": 1 }, query: { "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.projects.getProjectChangelog({ path: { "id": 1 }, query: { "limit": 1 } });
 ```
 
 **Input**
@@ -26129,7 +26129,7 @@ Get all projects (GET /projects; 10 API tokens; OAuth scopes: projects:read, pro
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.projects.getProjects({ query: { "filter_id": 1, "status": "x", "phase_id": 1, "deal_id": 1, "person_id": 1, "org_id": 1, "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.projects.getProjects({ query: { "filter_id": 1, "status": "x", "phase_id": 1, "deal_id": 1, "person_id": 1, "org_id": 1, "limit": 1 } });
 ```
 
 **Input**
@@ -26264,7 +26264,7 @@ Search projects (GET /projects/search; 20 API tokens; OAuth scopes: projects:rea
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.projects.searchProjects({ query: { "term": "x", "fields": ["custom_fields"], "exact_match": false, "person_id": 1, "organization_id": 1, "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.projects.searchProjects({ query: { "term": "acme", "fields": ["custom_fields"], "exact_match": false, "person_id": 1, "organization_id": 1, "limit": 1 } });
 ```
 
 **Input**
@@ -26538,7 +26538,7 @@ Get all project templates (GET /projectTemplates; 10 API tokens; OAuth scopes: p
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.projectTemplates.getProjectTemplates({ query: { "cursor": "x", "limit": 1 } });
+await corsair.pipedrive.api.apiV2.projectTemplates.getProjectTemplates({ query: { "limit": 1 } });
 ```
 
 **Input**
@@ -26797,7 +26797,7 @@ Get all stages (GET /stages; 5 API tokens; OAuth scopes: deals:read, deals:full,
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.stages.getStages({ query: { "pipeline_id": 1, "sort_by": "id", "sort_direction": "asc", "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.stages.getStages({ query: { "pipeline_id": 1, "sort_by": "id", "sort_direction": "asc", "limit": 1 } });
 ```
 
 **Input**
@@ -26953,7 +26953,7 @@ List followers of a user (GET /users/&#123;id&#125;/followers; 10 API tokens; OA
 **Risk:** `read`
 
 ```ts
-await corsair.pipedrive.api.apiV2.users.getUserFollowers({ path: { "id": 1 }, query: { "limit": 1, "cursor": "x" } });
+await corsair.pipedrive.api.apiV2.users.getUserFollowers({ path: { "id": 1 }, query: { "limit": 1 } });
 ```
 
 **Input**
