@@ -519,6 +519,7 @@ export const BaseProviders = [
 	'placid',
 	'plain',
 	'piloterr',
+	'pilvio',
 	'platerecognizer',
 	'ploid',
 	'pointagram',
@@ -1281,6 +1282,7 @@ export const ProviderDisplayNames = {
 	placid: 'Placid',
 	plain: 'Plain',
 	piloterr: 'Piloterr',
+	pilvio: 'Pilvio',
 	platerecognizer: 'Plate Recognizer',
 	ploid: 'Ploid',
 	pointagram: 'Pointagram',
@@ -2050,6 +2052,7 @@ export type AllProviders =
 	| 'placid'
 	| 'plain'
 	| 'piloterr'
+	| 'pilvio'
 	| 'platerecognizer'
 	| 'ploid'
 	| 'pointagram'

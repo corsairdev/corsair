@@ -4252,6 +4252,14 @@
                 ]
               },
               {
+                "group": "Pilvio",
+                "pages": [
+                  "plugins/pilvio/overview",
+                  "plugins/pilvio/api",
+                  "plugins/pilvio/database"
+                ]
+              },
+              {
                 "group": "Pinecone",
                 "pages": [
                   "plugins/pinecone/overview",
