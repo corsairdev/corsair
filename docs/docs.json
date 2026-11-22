@@ -4063,6 +4063,15 @@
                 ]
               },
               {
+                "group": "PandaDoc",
+                "pages": [
+                  "plugins/pandadoc/overview",
+                  "plugins/pandadoc/api",
+                  "plugins/pandadoc/database",
+                  "plugins/pandadoc/webhooks"
+                ]
+              },
+              {
                 "group": "Paperform",
                 "pages": [
                   "plugins/paperform/overview",
