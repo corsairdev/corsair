@@ -11397,5 +11397,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/persona",
+    "dir": "packages/persona",
+    "name": "Persona",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
