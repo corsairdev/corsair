@@ -45,7 +45,8 @@ export type QuickBooksAuthenticatedContext = {
  * file data. The provider's Fault body, the status and the rate-limit fields
  * stay, so callers and core's 401/429 handling see the same error.
  */
-const EMAIL = /[\w.+-]+@[\w-]+(\.[\w-]+)+/g;
+// Any local@domain form, dotted or not (pat@localhost).
+const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)*/g;
 
 // Intuit's fault text can quote a submitted email address (fault 2210); keep the rest of the Fault.
 function redactEmails(value: unknown): unknown {

@@ -10,6 +10,7 @@ const context = {
 	endpoints: {},
 };
 
+// unknown because samples are Intuit's raw JSON; each test hands them to a typed endpoint that validates them.
 function sample(name: string): { request?: unknown; response?: unknown } {
 	const found = intuitSamples[name];
 	if (!found) throw new Error(`Missing Intuit sample ${name}`);
@@ -43,6 +44,7 @@ describe('QuickBooks operations against Intuit catalog samples', () => {
 		);
 	}
 
+	// unknown because the sent body is whatever JSON the endpoint serialized; tests compare it with fixtures.
 	function sent(): { url: URL; body: unknown } {
 		const call = fetchMock.mock.calls.at(-1);
 		if (!call) throw new Error('Expected a provider request');
@@ -184,6 +186,7 @@ describe('QuickBooks operations against Intuit catalog samples', () => {
 			items: request.BatchItemRequest,
 		});
 		const expected = sample('Batch.BatchRequest0').response as {
+			// unknown[] because the items are Intuit's raw sample JSON, compared as-is with the result.
 			BatchItemResponse: unknown[];
 		};
 		expect(result.BatchItemResponse).toEqual(expected.BatchItemResponse);
@@ -306,6 +309,7 @@ describe('QuickBooks operations against Intuit catalog samples', () => {
 		);
 		const failure = await CatalogEndpoints.customer
 			.create(context, { realmId, body: { DisplayName: 'Pat' } })
+			// unknown because a rejection can carry any value; the expectations below inspect it.
 			.catch((caught: unknown) => caught);
 		expect(failure).toBeInstanceOf(Error);
 		expect(JSON.stringify(failure)).toContain('2210');
@@ -346,6 +350,60 @@ describe('QuickBooks operations against Intuit catalog samples', () => {
 				items: [{ bId: 'q1', Query: 'select * from Customer' }],
 			}),
 		).rejects.toThrow('check them before retrying');
+	});
+
+	it('keeps CDC rows tied to their entity and checks a download URL', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({
+					CDCResponse: [{ QueryResponse: [{ Customer: { Id: '5' } }, {}] }],
+					time: 't',
+				}),
+				{ status: 200, headers: { 'Content-Type': 'application/json' } },
+			),
+		);
+		const changes = await CatalogEndpoints.changeDataCapture.changes(context, {
+			realmId,
+			entities: ['Customer'],
+			changedSince: new Date(Date.now() - 60_000).toISOString(),
+		});
+		expect(changes.CDCResponse[0]?.QueryResponse[0]).toEqual({
+			Customer: [{ Id: '5' }],
+		});
+
+		fetchMock.mockResolvedValueOnce(
+			new Response('not an absolute URL', {
+				status: 200,
+				headers: { 'Content-Type': 'text/plain' },
+			}),
+		);
+		await expect(
+			CatalogEndpoints.attachable.download(context, {
+				realmId,
+				attachableId: '1',
+			}),
+		).rejects.toThrow();
+	});
+
+	it('masks dotless email addresses in fault text', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({
+					Fault: {
+						Error: [
+							{ Message: 'Invalid', Detail: 'pat@localhost', code: '2210' },
+						],
+					},
+				}),
+				{ status: 400, headers: { 'Content-Type': 'application/json' } },
+			),
+		);
+		// unknown because a rejection can carry any value; the expectations below inspect it.
+		const failure = await CatalogEndpoints.customer
+			.create(context, { realmId, body: { DisplayName: 'Pat' } })
+			.catch((caught: unknown) => caught);
+		expect(JSON.stringify(failure)).not.toContain('pat@localhost');
+		expect(JSON.stringify(failure)).toContain('2210');
 	});
 
 	it('creates a customer with the documented contact fields', async () => {

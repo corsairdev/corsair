@@ -72,10 +72,16 @@ function lenient(
 			break;
 		}
 		case 'union': {
-			const options = (def.options as AnySchema[]).map((option) =>
-				lenient(option, top, requireEnvelope),
-			);
-			out = z.union(options as [AnySchema, AnySchema, ...AnySchema[]]);
+			const options = def.options as AnySchema[];
+			out = top
+				? z.union(
+						options.map((option) => lenient(option, top, requireEnvelope)) as [
+							AnySchema,
+							AnySchema,
+							...AnySchema[],
+						],
+					)
+				: lenientUnion(options);
 			break;
 		}
 		case 'lazy': {
@@ -107,6 +113,55 @@ function lenient(
 	}
 	if (!top) lenientCache.set(schema, out);
 	return out;
+}
+
+function objectKeys(schema: AnySchema): string[] {
+	const def = defOf(schema);
+	if (def.type === 'object') return Object.keys((schema as z.ZodObject).shape);
+	if (def.type === 'optional' || def.type === 'nullable') {
+		return objectKeys(def.innerType as AnySchema);
+	}
+	return [];
+}
+
+/**
+ * Lenient union: alternatives become loose, so zod's "first that parses" would
+ * always pick the first one (a CDC row `{ Customer: [...] }` would land in the
+ * empty or `Account` alternative). Try first the alternatives whose own keys
+ * (not shared by every alternative) appear in the value, then the rest in order.
+ */
+function lenientUnion(options: AnySchema[]): AnySchema {
+	const loose = options.map((option) => lenient(option, false));
+	const keys = options.map(objectKeys);
+	const shared = keys.reduce<string[]>(
+		(common, list, index) =>
+			index === 0 ? list : common.filter((key) => list.includes(key)),
+		[],
+	);
+	const own = keys.map((list) => list.filter((key) => !shared.includes(key)));
+	// unknown because the value is untrusted provider JSON until an alternative parses it.
+	return z.unknown().transform((value, context) => {
+		const present =
+			value && typeof value === 'object' && !Array.isArray(value)
+				? Object.keys(value)
+				: [];
+		const order = loose
+			.map((_, index) => index)
+			.sort(
+				(a, b) =>
+					Number((own[b] ?? []).some((key) => present.includes(key))) -
+					Number((own[a] ?? []).some((key) => present.includes(key))),
+			);
+		for (const index of order) {
+			const parsed = loose[index]?.safeParse(value);
+			if (parsed?.success) return parsed.data;
+		}
+		context.addIssue({
+			code: 'custom',
+			message: 'The value matches none of the documented shapes',
+		});
+		return z.NEVER;
+	});
 }
 
 /**

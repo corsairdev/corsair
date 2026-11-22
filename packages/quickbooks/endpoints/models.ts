@@ -3326,7 +3326,8 @@ const paymentresponseSchema = lazySchema(() =>
 			UnappliedAmt: z.number().optional(),
 			DepositToAccountRef: referencetypeSchema().optional(),
 			CurrencyRef: currencyrefSchema().optional(),
-			TotalAmt: z.number(),
+			// Optional: Intuit's Payment update sample omits it, and payment.update reuses this model.
+			TotalAmt: z.number().optional(),
 			ExchangeRate: z.number().optional(),
 			Line: z.array(linelinkedtxnSchema()).optional(),
 			ProjectRef: referencetypeSchema().optional(),
