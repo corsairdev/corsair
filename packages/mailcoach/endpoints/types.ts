@@ -52,18 +52,21 @@ const SubscriberSchema = ResourceSchema.extend({
 	email: z.string().optional(),
 	first_name: z.string().nullable().optional(),
 	last_name: z.string().nullable().optional(),
-	extra_attributes: JsonObjectSchema.optional(),
+	// Laravel serialises an empty attribute map as []; accept it alongside the object form.
+	extra_attributes: z
+		.union([JsonObjectSchema, z.array(MailcoachJsonValueSchema).max(0)])
+		.optional(),
 	tags: z.array(z.string()).optional(),
-	status: z.enum(['unconfirmed', 'subscribed', 'unsubscribed']).optional(),
+	// Documented: unconfirmed, subscribed, unsubscribed. A string, so a new status doesn't fail reads.
+	status: z.string().optional(),
 	subscribed_at: z.string().nullable().optional(),
 	unsubscribed_at: z.string().nullable().optional(),
 	created_at: z.string().optional(),
 	updated_at: z.string().optional(),
 }).passthrough();
 const ImportSchema = ResourceSchema.extend({
-	status: z
-		.enum(['draft', 'pending', 'importing', 'completed', 'failed'])
-		.optional(),
+	// Documented: draft, pending, importing, completed, failed.
+	status: z.string().optional(),
 	email_list_uuid: z.string().optional(),
 	imported_subscribers_count: z.number().optional(),
 	error_count: z.number().optional(),
@@ -127,7 +130,8 @@ const SendSchema = ResourceSchema.extend({
 }).passthrough();
 const SuppressionSchema = ResourceSchema.extend({
 	email: z.string().optional(),
-	reason: z.enum(['hard_bounce', 'spam_complaint', 'manual']).optional(),
+	// Documented: hard_bounce, spam_complaint, manual.
+	reason: z.string().optional(),
 	created_at: z.string().optional(),
 	updated_at: z.string().optional(),
 }).passthrough();
@@ -440,7 +444,7 @@ const ImageFileSchema = z
 	.strict();
 
 const ApiUserOutput = data(
-	z.object({ id: z.number(), email: z.string().email() }).strict(),
+	z.object({ id: z.number(), email: z.string() }).passthrough(),
 );
 const PaginatedResource = <T extends z.ZodType>(resource: T) => page(resource);
 

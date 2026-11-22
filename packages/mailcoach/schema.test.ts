@@ -32,6 +32,29 @@ describe('Mailcoach schemas', () => {
 		}
 	});
 
+	it('keeps reads working when Mailcoach adds fields or new status values', () => {
+		expect(
+			MailcoachEndpointOutputSchemas['user.get'].safeParse({
+				data: { id: 1, email: 'owner@example.com', name: 'Owner' },
+			}).success,
+		).toBe(true);
+		expect(
+			MailcoachEndpointOutputSchemas['subscribers.get'].safeParse({
+				data: { uuid: UUID, status: 'cleaned' },
+			}).success,
+		).toBe(true);
+		expect(
+			MailcoachEndpointOutputSchemas['subscriberImports.get'].safeParse({
+				data: { uuid: UUID, status: 'paused' },
+			}).success,
+		).toBe(true);
+		expect(
+			MailcoachEndpointOutputSchemas['suppressions.get'].safeParse({
+				data: { uuid: UUID, reason: 'soft_bounce' },
+			}).success,
+		).toBe(true);
+	});
+
 	it('rejects null as an invalid response for every registered endpoint', () => {
 		for (const schema of Object.values(MailcoachEndpointOutputSchemas)) {
 			expect(schema.safeParse(null).success).toBe(false);
