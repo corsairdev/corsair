@@ -179,26 +179,34 @@ export const ProductboardWebhookCreateBodySchema = z
 	})
 	.strict();
 
-const ProductboardWebhookReferenceSchema = z.object({
-	id: z.string().uuid(),
-	type: z.literal('webhook'),
-	links: z.object({ self: z.string().url() }),
-});
+// Webhook responses stay open (event types, formats and fields Productboard adds); the
+// create body above keeps the strict spec. `notification` keeps stripping unknown keys so
+// a stored authorization header is never returned to the caller.
+const ProductboardWebhookReferenceSchema = z
+	.object({
+		id: z.string(),
+		type: z.string(),
+		links: z.object({ self: z.string() }).catchall(ProductboardJsonSchema),
+	})
+	.catchall(ProductboardJsonSchema);
 
-const ProductboardWebhookSubscriptionSchema = z.object({
-	id: z.string().uuid(),
-	type: z.literal('webhook'),
-	createdAt: z.iso.datetime({ offset: true }),
-	fields: z.object({
-		name: z.string().min(1).max(255),
-		events: ProductboardWebhookEventsSchema,
-		notification: z.object({
-			url: z.string().url().max(1024),
-			version: z.literal(1),
-		}),
-	}),
-	links: z.object({ self: z.string().url() }),
-});
+const ProductboardWebhookSubscriptionSchema = z
+	.object({
+		id: z.string(),
+		type: z.string(),
+		createdAt: z.string().optional(),
+		fields: z
+			.object({
+				name: z.string(),
+				events: z.array(
+					z.object({ eventType: z.string() }).catchall(ProductboardJsonSchema),
+				),
+				notification: z.object({ url: z.string(), version: z.number() }),
+			})
+			.catchall(ProductboardJsonSchema),
+		links: z.object({ self: z.string() }).catchall(ProductboardJsonSchema),
+	})
+	.catchall(ProductboardJsonSchema);
 
 export const ProductboardWebhookCreateOutputSchema = z.object({
 	data: ProductboardWebhookReferenceSchema,
@@ -210,7 +218,10 @@ export const ProductboardWebhookGetOutputSchema = z.object({
 
 export const ProductboardWebhookListOutputSchema = z.object({
 	data: z.array(ProductboardWebhookSubscriptionSchema),
-	links: z.object({ next: z.string().nullable() }),
+	links: z
+		.object({ next: z.string().nullable().optional() })
+		.catchall(ProductboardJsonSchema)
+		.optional(),
 });
 
 export const ProductboardWebhookDeleteOutputSchema = z.null();
@@ -231,21 +242,21 @@ export const ProductboardListOutputSchema = z
 	})
 	.catchall(ProductboardJsonSchema);
 
+// Response fields stay plain strings (no uuid, url, datetime or length checks) so a
+// format Productboard varies doesn't fail the read; requests keep the strict spec.
 const ProductboardTeamResourceSchema = z
 	.object({
-		id: z.string().uuid(),
-		type: z.literal('team'),
+		id: z.string(),
+		type: z.string(),
 		fields: z
 			.object({
-				name: z.string().min(1),
-				handle: z.string().min(1),
+				name: z.string(),
+				handle: z.string(),
 			})
 			.catchall(ProductboardJsonSchema),
-		createdAt: z.iso.datetime({ offset: true }),
-		updatedAt: z.iso.datetime({ offset: true }),
-		links: z
-			.object({ self: z.string().url() })
-			.catchall(ProductboardJsonSchema),
+		createdAt: z.string(),
+		updatedAt: z.string(),
+		links: z.object({ self: z.string() }).catchall(ProductboardJsonSchema),
 	})
 	.catchall(ProductboardJsonSchema);
 
