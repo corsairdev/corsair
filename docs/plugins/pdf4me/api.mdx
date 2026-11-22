@@ -1,0 +1,640 @@
+---
+title: "PDF4me API reference"
+sidebarTitle: "API"
+description: "API reference for the PDF4me plugin in Corsair: every `pdf4me.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Convert
+
+### htmlToPdf
+
+`convert.htmlToPdf`
+
+Render HTML content into a PDF
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pdf4me.api.convert.htmlToPdf({ htmlContent: "<h1>Hello</h1>", docName: "page.html", format: "A4" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `htmlContent` | `string` | Yes | HTML to render into a PDF; the plugin base64-encodes it |
+| `docName` | `string` | Yes | Name of the HTML source including .html, e.g. page.html |
+| `layout` | `Portrait \| Landscape` | No | Page layout |
+| `format` | `A0 \| A1 \| A2 \| A3 \| A4 \| A5 \| A6 \| A7 \| A8 \| Legal \| Tabloid \| Statement \| Executive` | No | Page format; A4 when unset |
+| `scale` | `number` | No | Render scale; 0.8 when unset |
+| `topMargin` | `string` | No | CSS length, e.g. 40px |
+| `bottomMargin` | `string` | No | CSS length, e.g. 40px |
+| `leftMargin` | `string` | No | CSS length, e.g. 40px |
+| `rightMargin` | `string` | No | CSS length, e.g. 40px |
+| `printBackground` | `boolean` | No | Print CSS backgrounds; true when unset |
+| `displayHeaderFooter` | `boolean` | No | Show the header and footer; false when unset |
+| `jobIdExt` | `string` | No | Your own reference for this call, stored with the API call log |
+| `isAsync` | `boolean` | No | Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it) |
+| `callBackUrl` | `string` | No | URL notified when an asynchronous job completes |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string \| null` | No | File name of the produced document |
+| `fileContent` | `string \| null` | No | The produced document, base64-encoded |
+| `documents` | `object[]` | No | The produced documents, when the action makes several |
+| `jobId` | `string \| null` | No | Job id; poll it with jobs.status |
+| `status` | `string \| null` | No | Job state the API reports, e.g. Accepted |
+| `statusUrl` | `string \| null` | No | GetActionStatus URL for this job |
+| `message` | `string \| null` | No | The API message about the job |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  fileName?: string | null,
+  fileContent?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ocrPdf
+
+`convert.ocrPdf`
+
+Run OCR on a scanned PDF to make its text editable; the API answers a job, so poll jobs.status for the file
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pdf4me.api.convert.ocrPdf({ docContent: "<base64>", docName: "scan.pdf", ocrWhenNeeded: true, language: "English" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docContent` | `string` | Yes | Source file: base64 content, a pdf4meblobid://&lt;id&gt; reference, or an https URL |
+| `docName` | `string` | Yes | Source file name including its extension; the API dispatches on it |
+| `qualityType` | `Draft \| High` | No | OCR quality |
+| `ocrWhenNeeded` | `boolean` | No | Run OCR only when the document needs it |
+| `language` | `string` | No | Document language, e.g. English |
+| `jobIdExt` | `string` | No | Your own reference for this call, stored with the API call log |
+| `isAsync` | `boolean` | No | Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it) |
+| `callBackUrl` | `string` | No | URL notified when an asynchronous job completes |
+
+Always runs as a job: poll jobs.status with the jobId for the file. ocrWhenNeeded goes out as the string the API expects.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string \| null` | No | File name of the produced document |
+| `fileContent` | `string \| null` | No | The produced document, base64-encoded |
+| `documents` | `object[]` | No | The produced documents, when the action makes several |
+| `jobId` | `string \| null` | No | Job id; poll it with jobs.status |
+| `status` | `string \| null` | No | Job state the API reports, e.g. Accepted |
+| `statusUrl` | `string \| null` | No | GetActionStatus URL for this job |
+| `message` | `string \| null` | No | The API message about the job |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  fileName?: string | null,
+  fileContent?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pdfToWord
+
+`convert.pdfToWord`
+
+Convert a PDF to a Word document; the API answers a job, so poll jobs.status for the file
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pdf4me.api.convert.pdfToWord({ docContent: "<base64>", docName: "document.pdf", qualityType: "Draft" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docContent` | `string` | Yes | Source file: base64 content, a pdf4meblobid://&lt;id&gt; reference, or an https URL |
+| `docName` | `string` | Yes | Source file name including its extension; the API dispatches on it |
+| `qualityType` | `Draft \| High` | No | Conversion quality; other values are refused |
+| `ocrWhenNeeded` | `boolean` | No | Run OCR on scanned pages |
+| `language` | `string` | No | Document language for OCR, e.g. English |
+| `jobIdExt` | `string` | No | Your own reference for this call, stored with the API call log |
+| `isAsync` | `boolean` | No | Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it) |
+| `callBackUrl` | `string` | No | URL notified when an asynchronous job completes |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string \| null` | No | File name of the produced document |
+| `fileContent` | `string \| null` | No | The produced document, base64-encoded |
+| `documents` | `object[]` | No | The produced documents, when the action makes several |
+| `jobId` | `string \| null` | No | Job id; poll it with jobs.status |
+| `status` | `string \| null` | No | Job state the API reports, e.g. Accepted |
+| `statusUrl` | `string \| null` | No | GetActionStatus URL for this job |
+| `message` | `string \| null` | No | The API message about the job |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  fileName?: string | null,
+  fileContent?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Extract
+
+### pdfFormData
+
+`extract.pdfFormData`
+
+Extract the values of filled PDF form fields
+
+**Risk:** `read`
+
+```ts
+await corsair.pdf4me.api.extract.pdfFormData({ docContent: "<base64>", docName: "filled-form.pdf" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docContent` | `string` | Yes | Source file: base64 content, a pdf4meblobid://&lt;id&gt; reference, or an https URL |
+| `docName` | `string` | Yes | Source file name including its extension; the API dispatches on it |
+| `jobIdExt` | `string` | No | Your own reference for this call, stored with the API call log |
+| `isAsync` | `boolean` | No | Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it) |
+| `callBackUrl` | `string` | No | URL notified when an asynchronous job completes |
+
+Answers formData: field values keyed by field name.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formData` | `Record<string, any> \| null` | No | Form field values keyed by field name |
+
+
+
+---
+
+### tableFromPdf
+
+`extract.tableFromPdf`
+
+Extract tables from a PDF
+
+**Risk:** `read`
+
+```ts
+await corsair.pdf4me.api.extract.tableFromPdf({ docContent: "<base64>", docName: "document.pdf" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docContent` | `string` | Yes | Source file: base64 content, a pdf4meblobid://&lt;id&gt; reference, or an https URL |
+| `docName` | `string` | Yes | Source file name including its extension; the API dispatches on it |
+| `jobIdExt` | `string` | No | Your own reference for this call, stored with the API call log |
+| `isAsync` | `boolean` | No | Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it) |
+| `callBackUrl` | `string` | No | URL notified when an asynchronous job completes |
+
+Answers tableList: one entry per page with its table rows.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tableList` | `object[] \| null` | No | One entry per page with its table rows |
+
+<AccordionGroup>
+<Accordion title="tableList full type">
+
+```ts
+{
+  pageNumber?: number | null,
+  table?: any[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Jobs
+
+### status
+
+`jobs.status`
+
+Poll a job (isAsync, or PDF-to-Word and OCR, which always run as jobs); a finished job answers its file
+
+**Risk:** `read`
+
+```ts
+await corsair.pdf4me.api.jobs.status({ jobId: "job-1" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | Job id the async answer returned |
+
+GETs GetActionStatus with the job id. A finished job answers its file (isFinished true, fileContent); a running one answers its status.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string \| null` | No | Job id; poll it with jobs.status |
+| `status` | `string \| null` | No | Job state the API reports, e.g. Accepted |
+| `statusUrl` | `string \| null` | No | GetActionStatus URL for this job |
+| `message` | `string \| null` | No | The API message about the job |
+| `isFinished` | `boolean \| null` | No | True once GetActionStatus answered the finished file |
+| `fileName` | `string \| null` | No | File name of the result, once finished |
+| `fileContent` | `string \| null` | No | The result document, base64-encoded, once finished |
+
+
+
+---
+
+## Pdf
+
+### compress
+
+`pdf.compress`
+
+Compress a PDF with a documented profile (Max, Web, Print, Default)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pdf4me.api.pdf.compress({ docContent: "<base64>", docName: "document.pdf", optimizeProfile: "Web" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docContent` | `string` | Yes | Source file: base64 content, a pdf4meblobid://&lt;id&gt; reference, or an https URL |
+| `docName` | `string` | Yes | Source file name including its extension; the API dispatches on it |
+| `optimizeProfile` | `Max \| Web \| Print \| Default` | No | Compression profile; Default is mapped to Max server-side; an unknown value fails with 400 |
+| `jobIdExt` | `string` | No | Your own reference for this call, stored with the API call log |
+| `isAsync` | `boolean` | No | Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it) |
+| `callBackUrl` | `string` | No | URL notified when an asynchronous job completes |
+
+optimizeProfile values: Max, Web, Print, Default. Default is mapped to Max server-side; an unknown value fails with 400 Invalid Optimization Profile.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string \| null` | No | File name of the produced document |
+| `fileContent` | `string \| null` | No | The produced document, base64-encoded |
+| `documents` | `object[]` | No | The produced documents, when the action makes several |
+| `jobId` | `string \| null` | No | Job id; poll it with jobs.status |
+| `status` | `string \| null` | No | Job state the API reports, e.g. Accepted |
+| `statusUrl` | `string \| null` | No | GetActionStatus URL for this job |
+| `message` | `string \| null` | No | The API message about the job |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  fileName?: string | null,
+  fileContent?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deletePages
+
+`pdf.deletePages`
+
+Return a copy of a PDF without the given pages; the source file is not changed
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pdf4me.api.pdf.deletePages({ docContent: "<base64>", docName: "document.pdf", pageNumbers: "2,4-5" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docContent` | `string` | Yes | Source file: base64 content, a pdf4meblobid://&lt;id&gt; reference, or an https URL |
+| `docName` | `string` | Yes | Source file name including its extension; the API dispatches on it |
+| `pageNumbers` | `number[] \| string` | Yes | Pages to delete: [1, 3] or "1,3,5-7" |
+| `jobIdExt` | `string` | No | Your own reference for this call, stored with the API call log |
+| `isAsync` | `boolean` | No | Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it) |
+| `callBackUrl` | `string` | No | URL notified when an asynchronous job completes |
+
+Answers a new PDF without the pages; the source file is not changed. Marked destructive because each call uses a billed API call.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string \| null` | No | File name of the produced document |
+| `fileContent` | `string \| null` | No | The produced document, base64-encoded |
+| `documents` | `object[]` | No | The produced documents, when the action makes several |
+| `jobId` | `string \| null` | No | Job id; poll it with jobs.status |
+| `status` | `string \| null` | No | Job state the API reports, e.g. Accepted |
+| `statusUrl` | `string \| null` | No | GetActionStatus URL for this job |
+| `message` | `string \| null` | No | The API message about the job |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  fileName?: string | null,
+  fileContent?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### extractPages
+
+`pdf.extractPages`
+
+Extract the given pages into a new PDF
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pdf4me.api.pdf.extractPages({ docContent: "<base64>", docName: "document.pdf", pageNumbers: [1, 3] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docContent` | `string` | Yes | Source file: base64 content, a pdf4meblobid://&lt;id&gt; reference, or an https URL |
+| `docName` | `string` | Yes | Source file name including its extension; the API dispatches on it |
+| `pageNumbers` | `number[] \| string` | Yes | Pages to extract: [1, 3] or "1,3,5-7" |
+| `jobIdExt` | `string` | No | Your own reference for this call, stored with the API call log |
+| `isAsync` | `boolean` | No | Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it) |
+| `callBackUrl` | `string` | No | URL notified when an asynchronous job completes |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string \| null` | No | File name of the produced document |
+| `fileContent` | `string \| null` | No | The produced document, base64-encoded |
+| `documents` | `object[]` | No | The produced documents, when the action makes several |
+| `jobId` | `string \| null` | No | Job id; poll it with jobs.status |
+| `status` | `string \| null` | No | Job state the API reports, e.g. Accepted |
+| `statusUrl` | `string \| null` | No | GetActionStatus URL for this job |
+| `message` | `string \| null` | No | The API message about the job |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  fileName?: string | null,
+  fileContent?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getInfo
+
+`pdf.getInfo`
+
+Read PDF metadata: page count, dimensions, author and more
+
+**Risk:** `read`
+
+```ts
+await corsair.pdf4me.api.pdf.getInfo({ docContent: "<base64>", docName: "document.pdf" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docContent` | `string` | Yes | Source file: base64 content, a pdf4meblobid://&lt;id&gt; reference, or an https URL |
+| `docName` | `string` | Yes | Source file name including its extension; the API dispatches on it |
+
+Calls GetPdfMetadata (the documented GetPdfInformation route answers 404). Reads page count, size, author, version and more.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string \| null` | No | Document title |
+| `subject` | `string \| null` | No | Document subject |
+| `author` | `string \| null` | No | Document author |
+| `creator` | `string \| null` | No | Creating application |
+| `producer` | `string \| null` | No | Producing application |
+| `keywords` | `string \| null` | No | Document keywords |
+| `pageCount` | `number \| null` | No | Number of pages |
+| `size` | `number \| null` | No | File size in bytes |
+| `pdfVersion` | `string \| null` | No | PDF version, e.g. 1.4 |
+| `pdfCompliance` | `string \| null` | No | PDF/A compliance, if any |
+| `documentId` | `string \| null` | No | PDF document id |
+| `isEncrypted` | `boolean \| null` | No | Whether the PDF is encrypted |
+| `isLinearized` | `boolean \| null` | No | Whether the PDF is linearized |
+| `isSigned` | `boolean \| null` | No | Whether the PDF is signed |
+| `creationDate` | `string \| null` | No | Creation date |
+| `modDate` | `string \| null` | No | Last modification date |
+| `pageHeightInMM` | `number \| null` | No | First page height, mm |
+| `pageWidthInMM` | `number \| null` | No | First page width, mm |
+| `orientation` | `string \| null` | No | Orientation as the API spells it (Potrait, Landscape) |
+
+
+
+---
+
+### merge
+
+`pdf.merge`
+
+Merge multiple PDFs into one; array order is the merge order
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pdf4me.api.pdf.merge({ docContent: ["<base64 of first.pdf>", "<base64 of second.pdf>"], docName: "merged.pdf" });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docContent` | `string[]` | Yes | The PDFs to merge, base64-encoded; array order is the merge order |
+| `docName` | `string` | Yes | Source file name including its extension; the API dispatches on it |
+| `jobIdExt` | `string` | No | Your own reference for this call, stored with the API call log |
+| `isAsync` | `boolean` | No | Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it) |
+| `callBackUrl` | `string` | No | URL notified when an asynchronous job completes |
+
+docContent is an array and the array order is the merge order. The answer is the merged PDF.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string \| null` | No | File name of the produced document |
+| `fileContent` | `string \| null` | No | The produced document, base64-encoded |
+| `documents` | `object[]` | No | The produced documents, when the action makes several |
+| `jobId` | `string \| null` | No | Job id; poll it with jobs.status |
+| `status` | `string \| null` | No | Job state the API reports, e.g. Accepted |
+| `statusUrl` | `string \| null` | No | GetActionStatus URL for this job |
+| `message` | `string \| null` | No | The API message about the job |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  fileName?: string | null,
+  fileContent?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### split
+
+`pdf.split`
+
+Split a PDF after a page, every N pages, after listed pages or by page ranges; the parts come back in documents
+
+**Risk:** `destructive`
+
+```ts
+await corsair.pdf4me.api.pdf.split({ docContent: "<base64>", docName: "document.pdf", splitAction: "SplitAfterPage", splitActionNumber: 3 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `docContent` | `string` | Yes | Source file: base64 content, a pdf4meblobid://&lt;id&gt; reference, or an https URL |
+| `docName` | `string` | Yes | Source file name including its extension; the API dispatches on it |
+| `splitAction` | `SplitAfterPage \| RecurringSplitAfterPage \| SplitSequence \| SplitRanges` | No | How to split |
+| `splitActionNumber` | `number` | No | Page to split after (SplitAfterPage) or every N pages (RecurringSplitAfterPage) |
+| `splitSequence` | `number[]` | No | Pages to split after (SplitSequence) |
+| `splitRanges` | `string` | No | Page ranges, one document each, e.g. "1-2,3" (SplitRanges) |
+| `fileNaming` | `string` | No | How parts are named, e.g. NameAsPerOrder |
+| `jobIdExt` | `string` | No | Your own reference for this call, stored with the API call log |
+| `isAsync` | `boolean` | No | Process asynchronously and return a job to poll at jobs.status (only honoured by actions that support it) |
+| `callBackUrl` | `string` | No | URL notified when an asynchronous job completes |
+
+splitAction picks after a page, every N pages, after listed pages or by ranges; the parts come back in documents.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fileName` | `string \| null` | No | File name of the produced document |
+| `fileContent` | `string \| null` | No | The produced document, base64-encoded |
+| `documents` | `object[]` | No | The produced documents, when the action makes several |
+| `jobId` | `string \| null` | No | Job id; poll it with jobs.status |
+| `status` | `string \| null` | No | Job state the API reports, e.g. Accepted |
+| `statusUrl` | `string \| null` | No | GetActionStatus URL for this job |
+| `message` | `string \| null` | No | The API message about the job |
+
+<AccordionGroup>
+<Accordion title="documents full type">
+
+```ts
+{
+  fileName?: string | null,
+  fileContent?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
