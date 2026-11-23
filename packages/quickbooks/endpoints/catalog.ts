@@ -9056,7 +9056,8 @@ export const QuickBooksCatalogEndpointMeta = {
 		description: 'QuickBooks Sparse update a salesreceipt',
 	},
 	'taxAgency.create': {
-		riskLevel: 'write',
+		// QuickBooks has no delete for this record.
+		riskLevel: 'destructive',
 		description: 'QuickBooks Create a taxagency',
 	},
 	'taxAgency.list': {
@@ -9108,7 +9109,8 @@ export const QuickBooksCatalogEndpointMeta = {
 		description: 'QuickBooks Read a taxrate',
 	},
 	'taxService.create': {
-		riskLevel: 'write',
+		// QuickBooks has no delete for this record.
+		riskLevel: 'destructive',
 		description: 'QuickBooks Create a taxservice',
 	},
 	'taxSummary.list': {

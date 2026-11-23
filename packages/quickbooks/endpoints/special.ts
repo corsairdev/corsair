@@ -96,6 +96,8 @@ type BatchSparseUpdateItems<T extends readonly string[]> = {
 };
 const BatchItemInputSchema = lazySchema(() =>
 	z.union([
+		// unknown because Array.map widens the tuple to one union element type; the mapped tuple type restores
+		// one alternative per entity name, in the same order map produced them.
 		...(BATCH_SPARSE_UPDATE_ENTITIES.map((entity) =>
 			batchSparseUpdateItem(entity),
 		) as unknown as BatchSparseUpdateItems<
