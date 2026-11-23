@@ -755,6 +755,7 @@ export const BaseProviders = [
 	'whautomate',
 	'whoisfreaks',
 	'winstonai',
+	'wisprflow',
 	'witai',
 	'wix',
 	'wiza',
@@ -1527,6 +1528,7 @@ export const ProviderDisplayNames = {
 	whautomate: 'Whautomate',
 	whoisfreaks: 'Whoisfreaks',
 	winstonai: 'Winston AI',
+	wisprflow: 'Wispr Flow',
 	witai: 'WitAi',
 	wix: 'Wix',
 	wiza: 'Wiza',
@@ -2306,6 +2308,7 @@ export type AllProviders =
 	| 'whautomate'
 	| 'whoisfreaks'
 	| 'winstonai'
+	| 'wisprflow'
 	| 'witai'
 	| 'wix'
 	| 'wiza'

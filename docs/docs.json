@@ -6229,6 +6229,14 @@
                 ]
               },
               {
+                "group": "Wispr Flow",
+                "pages": [
+                  "plugins/wisprflow/overview",
+                  "plugins/wisprflow/api",
+                  "plugins/wisprflow/database"
+                ]
+              },
+              {
                 "group": "Wit.ai",
                 "pages": [
                   "plugins/witai/overview",
