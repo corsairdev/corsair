@@ -1,0 +1,169 @@
+---
+title: "Moco plugin"
+sidebarTitle: "Overview"
+description: "Business management with Moco - track time entries, manage projects, clients, contacts and deals, read invoices and set their status, and look up users and the current profile."
+---
+
+Use **Moco** through Corsair: one client, typed API calls.
+
+Moco serves every account from its own subdomain, so the account stores two
+things: the API key (user key from profile &gt; Integrations, or an account key
+from Settings &gt; Extensions &gt; API & Webhooks) and the subdomain of
+`{subdomain}.mocoapp.com`. Requests authenticate with
+`Authorization: Token token=<key>`.
+
+- **Lists are paginated in response headers**, which the client cannot
+return, so every list takes a 1-based `page` and derives `next_page`: it is
+the next page number while the page comes back with the full default 100
+entries and null once it is short.
+- **Time entries belong to the authenticated user.** Moco has no
+`user_id` filter on create; an account key with the staff permission can act
+as another user via the API's `X-IMPERSONATE-USER-ID` header, which this
+plugin does not set. Send `hours` or `seconds`, not both.
+- **Nothing to create is required at the schema level** because Moco's spec
+marks no upsert field as required; a request the server rejects answers 422
+with field errors, which the thrown error carries on `errors`.
+- **Archiving is reversible** by the matching unarchive call; deletes are
+not. Deleting a billed time entry is refused by Moco.
+- **Invoice status changes** accept created, sent, overdue and ignored.
+Paid, partially paid, draft and disregarded states are reached through
+payments and other API calls this plugin does not wrap.
+- **PDF downloads** (`/invoices/{id}.pdf`, `/offers/{id}.pdf`) are not
+wrapped: they are binary responses the client cannot hand back.
+- **Rate limits.** About 120 requests per 2 minutes (unlimited plan 1200).
+The plugin retries 429 with exponential backoff and never replays a write
+after a 5xx or a network failure, because Moco documents no idempotency
+keys.
+
+**What you get:**
+
+- 35 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/moco better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/moco better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/moco better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/moco better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { moco } from '@corsair-dev/moco';
+
+export const corsair = createCorsair({
+	plugins: [
+		moco(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store two things on the account before the first call: the Moco API key and the account subdomain (the `{subdomain}` part of `{subdomain}.mocoapp.com`). The key comes from profile > Integrations (user key) or Settings > Extensions > API & Webhooks (account key).
+
+```sh
+pnpm corsair setup --plugin=moco --tenant=acme api_key=<your-key> subdomain=<your-subdomain>
+```
+
+Or pass them as plugin options (`key`, `subdomain`). Requests authenticate with `Authorization: Token token=<key>`. See [API key auth](/concepts/api-key).
+
+```ts
+moco({ key: '...', subdomain: 'acme' })
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'moco',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List active projects**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.moco.api.projects.list({});
+```
+
+
+**Track half an hour on a task**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.moco.api.activities.create({
+	date: '2026-04-09',
+	project_id: 1234567,
+	task_id: 7536,
+	seconds: 1800,
+	description: 'Kickoff call',
+	billable: true,
+});
+```
+
+
+See the full list on the [API](/plugins/moco/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/moco/api">
+    Every `moco.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

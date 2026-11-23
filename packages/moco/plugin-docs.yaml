@@ -1,0 +1,136 @@
+displayName: Moco
+description: Business management with Moco - track time entries, manage projects, clients, contacts and deals, read invoices and set their status, and look up users and the current profile.
+domain: mocoapp.com
+recommendedAuth: api_key
+overviewNote: |
+  Moco serves every account from its own subdomain, so the account stores two
+  things: the API key (user key from profile > Integrations, or an account key
+  from Settings > Extensions > API & Webhooks) and the subdomain of
+  `{subdomain}.mocoapp.com`. Requests authenticate with
+  `Authorization: Token token=<key>`.
+
+  - **Lists are paginated in response headers**, which the client cannot
+  return, so every list takes a 1-based `page` and derives `next_page`: it is
+  the next page number while the page comes back with the full default 100
+  entries and null once it is short.
+  - **Time entries belong to the authenticated user.** Moco has no
+  `user_id` filter on create; an account key with the staff permission can act
+  as another user via the API's `X-IMPERSONATE-USER-ID` header, which this
+  plugin does not set. Send `hours` or `seconds`, not both.
+  - **Nothing to create is required at the schema level** because Moco's spec
+  marks no upsert field as required; a request the server rejects answers 422
+  with field errors, which the thrown error carries on `errors`.
+  - **Archiving is reversible** by the matching unarchive call; deletes are
+  not. Deleting a billed time entry is refused by Moco.
+  - **Invoice status changes** accept created, sent, overdue and ignored.
+  Paid, partially paid, draft and disregarded states are reached through
+  payments and other API calls this plugin does not wrap.
+  - **PDF downloads** (`/invoices/{id}.pdf`, `/offers/{id}.pdf`) are not
+  wrapped: they are binary responses the client cannot hand back.
+  - **Rate limits.** About 120 requests per 2 minutes (unlimited plan 1200).
+  The plugin retries 429 with exponential backoff and never replays a write
+  after a 5xx or a network failure, because Moco documents no idempotency
+  keys.
+examples:
+  read:
+    path: projects.list
+    title: List active projects
+    args: {}
+  write:
+    path: activities.create
+    title: Track half an hour on a task
+    args:
+      date: '2026-04-09'
+      project_id: 1234567
+      task_id: 7536
+      seconds: 1800
+      description: Kickoff call
+      billable: true
+apiExamples:
+  session.verify: {}
+  profile.get: {}
+  activities.list:
+    call: "{ from: '2026-04-01', to: '2026-04-30', project_id: 1234567 }"
+  activities.get:
+    call: "{ id: 654321 }"
+  activities.create:
+    call: "{ date: '2026-04-09', project_id: 1234567, task_id: 7536, seconds: 1800, description: 'Kickoff call', billable: true }"
+  activities.update:
+    call: "{ id: 654321, description: 'Kickoff call with follow-up', seconds: 2700 }"
+  activities.delete:
+    call: "{ id: 654321 }"
+  projects.list:
+    call: "{ include_archived: false, company_id: 889 }"
+  projects.get:
+    call: "{ id: 1234567, include_company: true }"
+  projects.create:
+    call: "{ name: 'Website Relaunch', company_id: 889, currency: 'EUR' }"
+  projects.update:
+    call: "{ id: 1234567, name: 'Website Relaunch 2026' }"
+  projects.archive:
+    call: "{ id: 1234567 }"
+  projects.unarchive:
+    call: "{ id: 1234567 }"
+  projects.report:
+    call: "{ id: 1234567 }"
+  companies.list:
+    call: "{ type: 'customer', term: 'beachy' }"
+  companies.get:
+    call: "{ id: 889 }"
+  companies.create:
+    call: "{ name: 'Beachy', type: 'customer', country_code: 'DE', currency: 'EUR' }"
+  companies.update:
+    call: "{ id: 889, info: 'Retainer client' }"
+  companies.archive:
+    call: "{ id: 889 }"
+  companies.unarchive:
+    call: "{ id: 889 }"
+  contacts.list:
+    call: "{ term: 'jana' }"
+  contacts.get:
+    call: "{ id: 4471 }"
+  contacts.create:
+    call: "{ firstname: 'Jana', lastname: 'Berger', gender: 'F', company_id: 889, work_email: 'jana.berger@beachy.example' }"
+  contacts.update:
+    call: "{ id: 4471, job_position: 'CEO' }"
+  contacts.delete:
+    call: "{ id: 4471 }"
+  deals.list:
+    call: "{ status: 'pending' }"
+  deals.get:
+    call: "{ id: 991 }"
+  deals.create:
+    call: "{ name: 'Website Relaunch', deal_category_id: 12, money: 50000, currency: 'EUR', status: 'pending' }"
+  deals.update:
+    call: "{ id: 991, status: 'won', closed_on: '2026-04-15' }"
+  deals.delete:
+    call: "{ id: 991 }"
+  invoices.list:
+    call: "{ status: 'created', date_from: '2026-01-01' }"
+  invoices.get:
+    call: "{ id: 777001 }"
+  invoices.updateStatus:
+    call: "{ id: 777001, status: 'sent' }"
+  users.list:
+    call: "{ include_archived: false }"
+  users.get:
+    call: "{ id: 933590696 }"
+apiNotes:
+  activities.list: |
+    `GET /activities` with from, to, user_id, task_id, company_id, project_id,
+    deal_id, billable, billed, term, tag and remote_id filters. The bare array
+    is returned as `{ items, next_page }`.
+  activities.create: |
+    `POST /activities`. The entry belongs to the authenticated user. The spec
+    marks no request field as required; Moco answers 422 with
+    `{ errors: { field: [messages] } }` for a missing one.
+  projects.report: |
+    `GET /projects/{id}/report`. The body is a free-form set of indicators
+    (budget, invoiced total, hours, costs by task), passed through as
+    `{ report }`.
+  invoices.updateStatus: |
+    `PUT /invoices/{id}/update_status` with `{ status }` in
+    created, sent, overdue or ignored. Locked invoices refuse with 422.
+  session.verify: |
+    `GET /session`. Returns `{ id, uuid }` for the key's user; a cheap check
+    that the key and subdomain work.

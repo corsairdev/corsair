@@ -3738,6 +3738,14 @@
                 ]
               },
               {
+                "group": "Moco",
+                "pages": [
+                  "plugins/moco/overview",
+                  "plugins/moco/api",
+                  "plugins/moco/database"
+                ]
+              },
+              {
                 "group": "Modelry",
                 "pages": [
                   "plugins/modelry/overview",

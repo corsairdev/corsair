@@ -1,0 +1,3159 @@
+---
+title: "Moco API reference"
+sidebarTitle: "API"
+description: "API reference for the Moco plugin in Corsair: every `moco.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Activities
+
+### create
+
+`activities.create`
+
+Create a time entry on a project task for the authenticated user, in hours or seconds
+
+**Risk:** `write`
+
+```ts
+await corsair.moco.api.activities.create({ date: '2026-04-09', project_id: 1234567, task_id: 7536, seconds: 1800, description: 'Kickoff call', billable: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | No | — |
+| `project_id` | `number` | No | — |
+| `task_id` | `number` | No | — |
+| `company_id` | `number` | No | — |
+| `hours` | `number` | No | Tracked hours as a decimal; seconds are derived. |
+| `seconds` | `number` | No | Tracked seconds; hours are derived. |
+| `description` | `string` | No | — |
+| `tag` | `string` | No | — |
+| `billable` | `boolean` | No | — |
+| `remote_service` | `trello \| jira \| asana \| basecamp \| wunderlist \| basecamp2 \| basecamp3 \| toggl \| mite \| github \| youtrack` | No | — |
+| `remote_url` | `string` | No | — |
+| `remote_id` | `string` | No | — |
+| `stop_timer` | `boolean` | No | — |
+
+`POST /activities`. The entry belongs to the authenticated user. The spec
+marks no request field as required; Moco answers 422 with
+`{ errors: { field: [messages] } }` for a missing one.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `date` | `string \| null` | No | — |
+| `hours` | `number \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `billed` | `boolean \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `invoice_id` | `number \| null` | No | — |
+| `tag` | `string \| null` | No | — |
+| `remote_service` | `string \| null` | No | — |
+| `remote_id` | `string \| null` | No | — |
+| `remote_url` | `string \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `task` | `object \| null` | No | — |
+| `customer` | `object \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `deal` | `object \| null` | No | — |
+| `hourly_rate` | `number \| null` | No | — |
+| `seconds` | `number \| null` | No | — |
+| `worked_seconds` | `number \| null` | No | — |
+| `timer_started_at` | `string \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number | null,
+  identifier?: string | null,
+  name?: string | null,
+  billable?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="task full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  billable?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="deal full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`activities.delete`
+
+Delete a time entry; billed entries cannot be deleted this way
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moco.api.activities.delete({ id: 654321 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`activities.get`
+
+Read one time entry
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.activities.get({ id: 654321 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `date` | `string \| null` | No | — |
+| `hours` | `number \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `billed` | `boolean \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `invoice_id` | `number \| null` | No | — |
+| `tag` | `string \| null` | No | — |
+| `remote_service` | `string \| null` | No | — |
+| `remote_id` | `string \| null` | No | — |
+| `remote_url` | `string \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `task` | `object \| null` | No | — |
+| `customer` | `object \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `deal` | `object \| null` | No | — |
+| `hourly_rate` | `number \| null` | No | — |
+| `seconds` | `number \| null` | No | — |
+| `worked_seconds` | `number \| null` | No | — |
+| `timer_started_at` | `string \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number | null,
+  identifier?: string | null,
+  name?: string | null,
+  billable?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="task full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  billable?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="deal full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`activities.list`
+
+List time entries with date, user, project, task, billable and billed filters, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.activities.list({ from: '2026-04-01', to: '2026-04-30', project_id: 1234567 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `string` | No | Only activities on or after this date. |
+| `to` | `string` | No | Only activities on or before this date. |
+| `user_id` | `number` | No | — |
+| `task_id` | `number` | No | — |
+| `company_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `deal_id` | `number` | No | — |
+| `billable` | `boolean` | No | — |
+| `billed` | `boolean` | No | — |
+| `term` | `string` | No | Full-text search term. |
+| `tag` | `string` | No | — |
+| `remote_id` | `string` | No | — |
+| `page` | `number` | No | 1-based page. Moco pages with 100 entries per default page; next_page is null once a page comes back short. |
+
+`GET /activities` with from, to, user_id, task_id, company_id, project_id,
+deal_id, billable, billed, term, tag and remote_id filters. The bare array
+is returned as `{ items, next_page }`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  date?: string | null,
+  hours?: number | null,
+  description?: string | null,
+  billed?: boolean | null,
+  billable?: boolean | null,
+  invoice_id?: number | null,
+  tag?: string | null,
+  remote_service?: string | null,
+  remote_id?: string | null,
+  remote_url?: string | null,
+  project?: {
+    id?: number | null,
+    identifier?: string | null,
+    name?: string | null,
+    billable?: boolean | null
+  } | null,
+  task?: {
+    id?: number | null,
+    name?: string | null,
+    billable?: boolean | null
+  } | null,
+  customer?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  user?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  deal?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  hourly_rate?: number | null,
+  seconds?: number | null,
+  worked_seconds?: number | null,
+  timer_started_at?: string | null,
+  custom_properties?: Record<string, unknown> | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`activities.update`
+
+Update a time entry
+
+**Risk:** `write`
+
+```ts
+await corsair.moco.api.activities.update({ id: 654321, description: 'Kickoff call with follow-up', seconds: 2700 });
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  date?: string,
+  project_id?: number,
+  task_id?: number,
+  company_id?: number,
+  hours?: number,
+  seconds?: number,
+  description?: string,
+  tag?: string,
+  billable?: boolean,
+  remote_service?: trello | jira | asana | basecamp | wunderlist | basecamp2 | basecamp3 | toggl | mite | github | youtrack,
+  remote_url?: string,
+  remote_id?: string,
+  stop_timer?: boolean
+}& {
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `date` | `string \| null` | No | — |
+| `hours` | `number \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `billed` | `boolean \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `invoice_id` | `number \| null` | No | — |
+| `tag` | `string \| null` | No | — |
+| `remote_service` | `string \| null` | No | — |
+| `remote_id` | `string \| null` | No | — |
+| `remote_url` | `string \| null` | No | — |
+| `project` | `object \| null` | No | — |
+| `task` | `object \| null` | No | — |
+| `customer` | `object \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `deal` | `object \| null` | No | — |
+| `hourly_rate` | `number \| null` | No | — |
+| `seconds` | `number \| null` | No | — |
+| `worked_seconds` | `number \| null` | No | — |
+| `timer_started_at` | `string \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number | null,
+  identifier?: string | null,
+  name?: string | null,
+  billable?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="task full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  billable?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="deal full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Companies
+
+### archive
+
+`companies.archive`
+
+Archive a company; unarchive reverses it
+
+**Risk:** `write`
+
+```ts
+await corsair.moco.api.companies.archive({ id: 889 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  id?: number | null,
+  type?: string | null,
+  identifier?: string | null,
+  name?: string | null,
+  website?: string | null,
+  email?: string | null,
+  billing_email_cc?: string | null,
+  phone?: string | null,
+  fax?: string | null,
+  address?: string | null,
+  country_code?: string | null,
+  vat_identifier?: string | null,
+  iban?: string | null,
+  tags?: string[] | null,
+  custom_properties?: Record<string, unknown> | null,
+  user?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  info?: string | null,
+  footer?: string | null,
+  active?: boolean | null,
+  archived_on?: string | null,
+  currency?: string | null,
+  default_invoice_due_days?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`companies.create`
+
+Create a client, supplier or organization
+
+**Risk:** `write`
+
+```ts
+await corsair.moco.api.companies.create({ name: 'Beachy', type: 'customer', country_code: 'DE', currency: 'EUR' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `type` | `customer \| supplier \| organization` | No | — |
+| `identifier` | `string` | No | — |
+| `email` | `string` | No | — |
+| `website` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `fax` | `string` | No | — |
+| `address` | `string` | No | — |
+| `country_code` | `string` | No | — |
+| `currency` | `string` | No | Three-letter currency code. |
+| `vat_identifier` | `string` | No | — |
+| `iban` | `string` | No | — |
+| `info` | `string` | No | — |
+| `footer` | `string` | No | — |
+| `default_invoice_due_days` | `number` | No | — |
+| `billing_email_cc` | `string` | No | — |
+| `billing_notes` | `string` | No | — |
+| `user_id` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `custom_properties` | `Record<string, unknown>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `identifier` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `billing_email_cc` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `fax` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `vat_identifier` | `string \| null` | No | — |
+| `iban` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `info` | `string \| null` | No | — |
+| `footer` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `archived_on` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `default_invoice_due_days` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`companies.get`
+
+Read one company
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.companies.get({ id: 889 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `identifier` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `billing_email_cc` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `fax` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `vat_identifier` | `string \| null` | No | — |
+| `iban` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `info` | `string \| null` | No | — |
+| `footer` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `archived_on` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `default_invoice_due_days` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`companies.list`
+
+List clients, suppliers and organizations, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.companies.list({ type: 'customer', term: 'beachy' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_archived` | `boolean` | No | — |
+| `type` | `customer \| supplier \| organization` | No | — |
+| `tags` | `string` | No | Comma-separated tags. |
+| `identifier` | `string` | No | — |
+| `term` | `string` | No | — |
+| `page` | `number` | No | 1-based page. Moco pages with 100 entries per default page; next_page is null once a page comes back short. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  type?: string | null,
+  identifier?: string | null,
+  name?: string | null,
+  website?: string | null,
+  email?: string | null,
+  billing_email_cc?: string | null,
+  phone?: string | null,
+  fax?: string | null,
+  address?: string | null,
+  country_code?: string | null,
+  vat_identifier?: string | null,
+  iban?: string | null,
+  tags?: string[] | null,
+  custom_properties?: Record<string, unknown> | null,
+  user?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  info?: string | null,
+  footer?: string | null,
+  active?: boolean | null,
+  archived_on?: string | null,
+  currency?: string | null,
+  default_invoice_due_days?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unarchive
+
+`companies.unarchive`
+
+Unarchive a company
+
+**Risk:** `write`
+
+```ts
+await corsair.moco.api.companies.unarchive({ id: 889 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  id?: number | null,
+  type?: string | null,
+  identifier?: string | null,
+  name?: string | null,
+  website?: string | null,
+  email?: string | null,
+  billing_email_cc?: string | null,
+  phone?: string | null,
+  fax?: string | null,
+  address?: string | null,
+  country_code?: string | null,
+  vat_identifier?: string | null,
+  iban?: string | null,
+  tags?: string[] | null,
+  custom_properties?: Record<string, unknown> | null,
+  user?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  info?: string | null,
+  footer?: string | null,
+  active?: boolean | null,
+  archived_on?: string | null,
+  currency?: string | null,
+  default_invoice_due_days?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`companies.update`
+
+Update a company
+
+**Risk:** `write`
+
+```ts
+await corsair.moco.api.companies.update({ id: 889, info: 'Retainer client' });
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  name?: string,
+  type?: customer | supplier | organization,
+  identifier?: string,
+  email?: string,
+  website?: string,
+  phone?: string,
+  fax?: string,
+  address?: string,
+  country_code?: string,
+  currency?: string,
+  vat_identifier?: string,
+  iban?: string,
+  info?: string,
+  footer?: string,
+  default_invoice_due_days?: number,
+  billing_email_cc?: string,
+  billing_notes?: string,
+  user_id?: number,
+  tags?: string[],
+  custom_properties?: Record<string, unknown>
+}& {
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `identifier` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `website` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `billing_email_cc` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `fax` | `string \| null` | No | — |
+| `address` | `string \| null` | No | — |
+| `country_code` | `string \| null` | No | — |
+| `vat_identifier` | `string \| null` | No | — |
+| `iban` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `info` | `string \| null` | No | — |
+| `footer` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `archived_on` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `default_invoice_due_days` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact person for a company
+
+**Risk:** `write`
+
+```ts
+await corsair.moco.api.contacts.create({ firstname: 'Jana', lastname: 'Berger', gender: 'F', company_id: 889, work_email: 'jana.berger@beachy.example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gender` | `U \| M \| F` | No | U unknown, M male, F female. |
+| `firstname` | `string` | No | — |
+| `lastname` | `string` | No | — |
+| `title` | `string` | No | — |
+| `job_position` | `string` | No | — |
+| `mobile_phone` | `string` | No | — |
+| `work_phone` | `string` | No | — |
+| `work_email` | `string` | No | — |
+| `work_address` | `string` | No | — |
+| `home_email` | `string` | No | — |
+| `home_address` | `string` | No | — |
+| `birthday` | `string` | No | — |
+| `salutation` | `string` | No | — |
+| `info` | `string` | No | — |
+| `company_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `tags` | `string[]` | No | — |
+| `custom_properties` | `Record<string, unknown>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `gender` | `string \| null` | No | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `job_position` | `string \| null` | No | — |
+| `mobile_phone` | `string \| null` | No | — |
+| `work_phone` | `string \| null` | No | — |
+| `work_fax` | `string \| null` | No | — |
+| `work_email` | `string \| null` | No | — |
+| `work_address` | `string \| null` | No | — |
+| `home_email` | `string \| null` | No | — |
+| `home_address` | `string \| null` | No | — |
+| `birthday` | `string \| null` | No | — |
+| `salutation` | `string \| null` | No | — |
+| `info` | `string \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `company` | `object \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact person
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moco.api.contacts.delete({ id: 4471 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Read one contact person
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.contacts.get({ id: 4471 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `gender` | `string \| null` | No | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `job_position` | `string \| null` | No | — |
+| `mobile_phone` | `string \| null` | No | — |
+| `work_phone` | `string \| null` | No | — |
+| `work_fax` | `string \| null` | No | — |
+| `work_email` | `string \| null` | No | — |
+| `work_address` | `string \| null` | No | — |
+| `home_email` | `string \| null` | No | — |
+| `home_address` | `string \| null` | No | — |
+| `birthday` | `string \| null` | No | — |
+| `salutation` | `string \| null` | No | — |
+| `info` | `string \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `company` | `object \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contact persons, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.contacts.list({ term: 'jana' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `string` | No | Comma-separated tags. |
+| `term` | `string` | No | — |
+| `phone` | `string` | No | — |
+| `page` | `number` | No | 1-based page. Moco pages with 100 entries per default page; next_page is null once a page comes back short. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  gender?: string | null,
+  firstname?: string | null,
+  lastname?: string | null,
+  title?: string | null,
+  job_position?: string | null,
+  mobile_phone?: string | null,
+  work_phone?: string | null,
+  work_fax?: string | null,
+  work_email?: string | null,
+  work_address?: string | null,
+  home_email?: string | null,
+  home_address?: string | null,
+  birthday?: string | null,
+  salutation?: string | null,
+  info?: string | null,
+  avatar_url?: string | null,
+  tags?: string[] | null,
+  custom_properties?: Record<string, unknown> | null,
+  company?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  user?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact person
+
+**Risk:** `write`
+
+```ts
+await corsair.moco.api.contacts.update({ id: 4471, job_position: 'CEO' });
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  gender?: U | M | F,
+  firstname?: string,
+  lastname?: string,
+  title?: string,
+  job_position?: string,
+  mobile_phone?: string,
+  work_phone?: string,
+  work_email?: string,
+  work_address?: string,
+  home_email?: string,
+  home_address?: string,
+  birthday?: string,
+  salutation?: string,
+  info?: string,
+  company_id?: number,
+  user_id?: number,
+  tags?: string[],
+  custom_properties?: Record<string, unknown>
+}& {
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `gender` | `string \| null` | No | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `job_position` | `string \| null` | No | — |
+| `mobile_phone` | `string \| null` | No | — |
+| `work_phone` | `string \| null` | No | — |
+| `work_fax` | `string \| null` | No | — |
+| `work_email` | `string \| null` | No | — |
+| `work_address` | `string \| null` | No | — |
+| `home_email` | `string \| null` | No | — |
+| `home_address` | `string \| null` | No | — |
+| `birthday` | `string \| null` | No | — |
+| `salutation` | `string \| null` | No | — |
+| `info` | `string \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `company` | `object \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="company full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Deals
+
+### create
+
+`deals.create`
+
+Create a deal in a deal category
+
+**Risk:** `write`
+
+```ts
+await corsair.moco.api.deals.create({ name: 'Website Relaunch', deal_category_id: 12, money: 50000, currency: 'EUR', status: 'pending' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `deal_category_id` | `number` | No | — |
+| `money` | `number` | No | — |
+| `currency` | `string` | No | Three-letter currency code. |
+| `status` | `potential \| pending \| won \| lost \| dropped` | No | — |
+| `company_id` | `number` | No | — |
+| `customer_id` | `number` | No | A contact person id. |
+| `person_id` | `number` | No | — |
+| `user_id` | `number` | No | — |
+| `info` | `string` | No | — |
+| `reminder_date` | `string` | No | — |
+| `closed_on` | `string` | No | — |
+| `service_period_from` | `string` | No | — |
+| `service_period_to` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `custom_properties` | `Record<string, unknown>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `reminder_date` | `string \| null` | No | — |
+| `closed_on` | `string \| null` | No | — |
+| `money` | `number \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `info` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `person` | `object \| null` | No | — |
+| `company` | `object \| null` | No | — |
+| `category` | `object \| null` | No | — |
+| `service_period_from` | `string \| null` | No | — |
+| `service_period_to` | `string \| null` | No | — |
+| `inbox_email_address` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="person full type">
+
+```ts
+{
+  id?: number | null,
+  gender?: string | null,
+  firstname?: string | null,
+  lastname?: string | null,
+  title?: string | null,
+  job_position?: string | null,
+  mobile_phone?: string | null,
+  work_phone?: string | null,
+  work_fax?: string | null,
+  work_email?: string | null,
+  work_address?: string | null,
+  home_email?: string | null,
+  home_address?: string | null,
+  birthday?: string | null,
+  salutation?: string | null,
+  info?: string | null,
+  avatar_url?: string | null,
+  tags?: string[] | null,
+  custom_properties?: Record<string, unknown> | null,
+  company?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  user?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="company full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="category full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`deals.delete`
+
+Delete a deal
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moco.api.deals.delete({ id: 991 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+### get
+
+`deals.get`
+
+Read one deal
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.deals.get({ id: 991 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `reminder_date` | `string \| null` | No | — |
+| `closed_on` | `string \| null` | No | — |
+| `money` | `number \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `info` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `person` | `object \| null` | No | — |
+| `company` | `object \| null` | No | — |
+| `category` | `object \| null` | No | — |
+| `service_period_from` | `string \| null` | No | — |
+| `service_period_to` | `string \| null` | No | — |
+| `inbox_email_address` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="person full type">
+
+```ts
+{
+  id?: number | null,
+  gender?: string | null,
+  firstname?: string | null,
+  lastname?: string | null,
+  title?: string | null,
+  job_position?: string | null,
+  mobile_phone?: string | null,
+  work_phone?: string | null,
+  work_fax?: string | null,
+  work_email?: string | null,
+  work_address?: string | null,
+  home_email?: string | null,
+  home_address?: string | null,
+  birthday?: string | null,
+  salutation?: string | null,
+  info?: string | null,
+  avatar_url?: string | null,
+  tags?: string[] | null,
+  custom_properties?: Record<string, unknown> | null,
+  company?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  user?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="company full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="category full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`deals.list`
+
+List deals with status, close date, company and contact filters, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.deals.list({ status: 'pending' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `potential \| pending \| won \| lost \| dropped` | No | — |
+| `tags` | `string` | No | Comma-separated tags. |
+| `closed_from` | `string` | No | — |
+| `closed_to` | `string` | No | — |
+| `company_id` | `number` | No | — |
+| `person_id` | `number` | No | — |
+| `page` | `number` | No | 1-based page. Moco pages with 100 entries per default page; next_page is null once a page comes back short. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  status?: string | null,
+  reminder_date?: string | null,
+  closed_on?: string | null,
+  money?: number | null,
+  currency?: string | null,
+  info?: string | null,
+  tags?: string[] | null,
+  custom_properties?: Record<string, unknown> | null,
+  user?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  person?: {
+    id?: number | null,
+    gender?: string | null,
+    firstname?: string | null,
+    lastname?: string | null,
+    title?: string | null,
+    job_position?: string | null,
+    mobile_phone?: string | null,
+    work_phone?: string | null,
+    work_fax?: string | null,
+    work_email?: string | null,
+    work_address?: string | null,
+    home_email?: string | null,
+    home_address?: string | null,
+    birthday?: string | null,
+    salutation?: string | null,
+    info?: string | null,
+    avatar_url?: string | null,
+    tags?: string[] | null,
+    custom_properties?: Record<string, unknown> | null,
+    company?: {
+      id?: number | null,
+      name?: string | null
+    } | null,
+    user?: {
+      id?: number | null,
+      firstname?: string | null,
+      lastname?: string | null
+    } | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  } | null,
+  company?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  category?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  service_period_from?: string | null,
+  service_period_to?: string | null,
+  inbox_email_address?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`deals.update`
+
+Update a deal, including its status
+
+**Risk:** `write`
+
+```ts
+await corsair.moco.api.deals.update({ id: 991, status: 'won', closed_on: '2026-04-15' });
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  name?: string,
+  deal_category_id?: number,
+  money?: number,
+  currency?: string,
+  status?: potential | pending | won | lost | dropped,
+  company_id?: number,
+  customer_id?: number,
+  person_id?: number,
+  user_id?: number,
+  info?: string,
+  reminder_date?: string,
+  closed_on?: string,
+  service_period_from?: string,
+  service_period_to?: string,
+  tags?: string[],
+  custom_properties?: Record<string, unknown>
+}& {
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `reminder_date` | `string \| null` | No | — |
+| `closed_on` | `string \| null` | No | — |
+| `money` | `number \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `info` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `person` | `object \| null` | No | — |
+| `company` | `object \| null` | No | — |
+| `category` | `object \| null` | No | — |
+| `service_period_from` | `string \| null` | No | — |
+| `service_period_to` | `string \| null` | No | — |
+| `inbox_email_address` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="person full type">
+
+```ts
+{
+  id?: number | null,
+  gender?: string | null,
+  firstname?: string | null,
+  lastname?: string | null,
+  title?: string | null,
+  job_position?: string | null,
+  mobile_phone?: string | null,
+  work_phone?: string | null,
+  work_fax?: string | null,
+  work_email?: string | null,
+  work_address?: string | null,
+  home_email?: string | null,
+  home_address?: string | null,
+  birthday?: string | null,
+  salutation?: string | null,
+  info?: string | null,
+  avatar_url?: string | null,
+  tags?: string[] | null,
+  custom_properties?: Record<string, unknown> | null,
+  company?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  user?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="company full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="category full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Invoices
+
+### get
+
+`invoices.get`
+
+Read one invoice with its line items, payments and reminders
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.invoices.get({ id: 777001 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `customer_id` | `number \| null` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `offer_id` | `number \| null` | No | — |
+| `identifier` | `string \| null` | No | — |
+| `date` | `string \| null` | No | — |
+| `due_date` | `string \| null` | No | — |
+| `service_period` | `string \| null` | No | — |
+| `service_period_from` | `string \| null` | No | — |
+| `service_period_to` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `reversed` | `boolean \| null` | No | — |
+| `reversal` | `boolean \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `recipient_address` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `net_total` | `number \| null` | No | — |
+| `tax` | `number \| null` | No | — |
+| `gross_total` | `number \| null` | No | — |
+| `discount` | `number \| null` | No | — |
+| `cash_discount` | `number \| null` | No | — |
+| `cash_discount_days` | `number \| null` | No | — |
+| `locked` | `boolean \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `user` | `object \| null` | No | — |
+| `file_url` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+| `salutation` | `string \| null` | No | — |
+| `footer` | `string \| null` | No | — |
+| `items` | `object[] \| null` | No | — |
+| `payments` | `Record<string, unknown>[] \| null` | No | — |
+| `reminders` | `Record<string, unknown>[] \| null` | No | — |
+| `internal_contact` | `object \| null` | No | — |
+| `activity_hours_modified` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  position?: number | null,
+  unit?: string | null,
+  quantity?: number | null,
+  time_entry_type?: string | null,
+  description?: string | null,
+  rate?: number | null,
+  rate_by_hour?: number | null,
+  total?: number | null,
+  tax?: number | null,
+  type?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="internal_contact full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`invoices.list`
+
+List invoices with status, date, client and project filters, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.invoices.list({ status: 'created', date_from: '2026-01-01' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `draft \| created \| sent \| partially_paid \| paid \| overdue \| ignored \| disregarded` | No | — |
+| `include_disregarded` | `boolean` | No | — |
+| `not_booked` | `boolean` | No | — |
+| `date_from` | `string` | No | — |
+| `date_to` | `string` | No | — |
+| `service_period_from` | `string` | No | — |
+| `service_period_to` | `string` | No | — |
+| `tags` | `string` | No | Comma-separated tags. |
+| `identifier` | `string` | No | — |
+| `term` | `string` | No | — |
+| `company_id` | `number` | No | — |
+| `project_id` | `number` | No | — |
+| `page` | `number` | No | 1-based page. Moco pages with 100 entries per default page; next_page is null once a page comes back short. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  customer_id?: number | null,
+  project_id?: number | null,
+  offer_id?: number | null,
+  identifier?: string | null,
+  date?: string | null,
+  due_date?: string | null,
+  service_period?: string | null,
+  service_period_from?: string | null,
+  service_period_to?: string | null,
+  status?: string | null,
+  reversed?: boolean | null,
+  reversal?: boolean | null,
+  title?: string | null,
+  recipient_address?: string | null,
+  currency?: string | null,
+  net_total?: number | null,
+  tax?: number | null,
+  gross_total?: number | null,
+  discount?: number | null,
+  cash_discount?: number | null,
+  cash_discount_days?: number | null,
+  locked?: boolean | null,
+  custom_properties?: Record<string, unknown> | null,
+  tags?: string[] | null,
+  user?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  file_url?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateStatus
+
+`invoices.updateStatus`
+
+Move an invoice to created, sent, overdue or ignored; locked invoices refuse the change
+
+**Risk:** `write`
+
+```ts
+await corsair.moco.api.invoices.updateStatus({ id: 777001, status: 'sent' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `status` | `created \| sent \| overdue \| ignored` | Yes | The API accepts created, sent, overdue and ignored here. |
+
+`PUT /invoices/{id}/update_status` with `{ status }` in
+created, sent, overdue or ignored. Locked invoices refuse with 422.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `number` | Yes | — |
+
+
+
+---
+
+## Profile
+
+### get
+
+`profile.get`
+
+Read the profile of the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.profile.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `uuid` | `string \| null` | No | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `role` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `locale` | `string \| null` | No | — |
+| `gender` | `string \| null` | No | — |
+| `birthday` | `string \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+## Projects
+
+### archive
+
+`projects.archive`
+
+Archive a project; unarchive reverses it
+
+**Risk:** `write`
+
+```ts
+await corsair.moco.api.projects.archive({ id: 1234567 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number | null,
+  identifier?: string | null,
+  name?: string | null,
+  active?: boolean | null,
+  billable?: boolean | null,
+  fixed_price?: boolean | null,
+  retainer?: boolean | null,
+  start_date?: string | null,
+  finish_date?: string | null,
+  currency?: string | null,
+  billing_variant?: string | null,
+  budget?: number | null,
+  budget_monthly?: number | null,
+  budget_expenses?: number | null,
+  hourly_rate?: number | null,
+  info?: string | null,
+  color?: string | null,
+  tags?: string[] | null,
+  custom_properties?: Record<string, unknown> | null,
+  leader?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  co_leader?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  customer?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  deal?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  project_group?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  billing_contact?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  contact?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  secondary_contact?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  archived_on?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`projects.create`
+
+Create a project for a client
+
+**Risk:** `write`
+
+```ts
+await corsair.moco.api.projects.create({ name: 'Website Relaunch', company_id: 889, currency: 'EUR' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | No | — |
+| `name` | `string` | No | — |
+| `company_id` | `number` | No | — |
+| `leader_id` | `number` | No | — |
+| `co_leader_id` | `number` | No | — |
+| `contact_id` | `number` | No | — |
+| `secondary_contact_id` | `number` | No | — |
+| `billing_contact_id` | `number` | No | — |
+| `deal_id` | `number` | No | — |
+| `project_group_id` | `number` | No | — |
+| `currency` | `string` | No | Three-letter currency code. |
+| `hourly_rate` | `number` | No | — |
+| `budget` | `number` | No | — |
+| `budget_monthly` | `number` | No | — |
+| `budget_expenses` | `number` | No | — |
+| `start_date` | `string` | No | — |
+| `finish_date` | `string` | No | — |
+| `fixed_price` | `boolean` | No | — |
+| `retainer` | `boolean` | No | — |
+| `billing_variant` | `string` | No | — |
+| `billing_address` | `string` | No | — |
+| `billing_email_to` | `string` | No | — |
+| `billing_email_cc` | `string` | No | — |
+| `billing_notes` | `string` | No | — |
+| `setting_include_time_report` | `boolean` | No | — |
+| `info` | `string` | No | — |
+| `color` | `string` | No | — |
+| `skip_favorite` | `boolean` | No | — |
+| `tags` | `string[]` | No | — |
+| `custom_properties` | `Record<string, unknown>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `identifier` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `fixed_price` | `boolean \| null` | No | — |
+| `retainer` | `boolean \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `finish_date` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `billing_variant` | `string \| null` | No | — |
+| `budget` | `number \| null` | No | — |
+| `budget_monthly` | `number \| null` | No | — |
+| `budget_expenses` | `number \| null` | No | — |
+| `hourly_rate` | `number \| null` | No | — |
+| `info` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `leader` | `object \| null` | No | — |
+| `co_leader` | `object \| null` | No | — |
+| `customer` | `object \| null` | No | — |
+| `deal` | `object \| null` | No | — |
+| `project_group` | `object \| null` | No | — |
+| `billing_contact` | `object \| null` | No | — |
+| `contact` | `object \| null` | No | — |
+| `secondary_contact` | `object \| null` | No | — |
+| `archived_on` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="leader full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="co_leader full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="deal full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="project_group full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing_contact full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="secondary_contact full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Read one project, optionally embedding the client
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.projects.get({ id: 1234567, include_company: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `include_company` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `identifier` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `fixed_price` | `boolean \| null` | No | — |
+| `retainer` | `boolean \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `finish_date` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `billing_variant` | `string \| null` | No | — |
+| `budget` | `number \| null` | No | — |
+| `budget_monthly` | `number \| null` | No | — |
+| `budget_expenses` | `number \| null` | No | — |
+| `hourly_rate` | `number \| null` | No | — |
+| `info` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `leader` | `object \| null` | No | — |
+| `co_leader` | `object \| null` | No | — |
+| `customer` | `object \| null` | No | — |
+| `deal` | `object \| null` | No | — |
+| `project_group` | `object \| null` | No | — |
+| `billing_contact` | `object \| null` | No | — |
+| `contact` | `object \| null` | No | — |
+| `secondary_contact` | `object \| null` | No | — |
+| `archived_on` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="leader full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="co_leader full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="deal full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="project_group full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing_contact full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="secondary_contact full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects with company, leader, tag, date and archive filters, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.projects.list({ include_archived: false, company_id: 889 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_archived` | `boolean` | No | — |
+| `company_id` | `number` | No | — |
+| `leader_id` | `number` | No | — |
+| `project_group_id` | `number` | No | — |
+| `deal_id` | `number` | No | — |
+| `created_from` | `string` | No | — |
+| `created_to` | `string` | No | — |
+| `updated_from` | `string` | No | — |
+| `updated_to` | `string` | No | — |
+| `tags` | `string` | No | Comma-separated tags. |
+| `identifier` | `string` | No | — |
+| `retainer` | `boolean` | No | — |
+| `term` | `string` | No | — |
+| `page` | `number` | No | 1-based page. Moco pages with 100 entries per default page; next_page is null once a page comes back short. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  identifier?: string | null,
+  name?: string | null,
+  active?: boolean | null,
+  billable?: boolean | null,
+  fixed_price?: boolean | null,
+  retainer?: boolean | null,
+  start_date?: string | null,
+  finish_date?: string | null,
+  currency?: string | null,
+  billing_variant?: string | null,
+  budget?: number | null,
+  budget_monthly?: number | null,
+  budget_expenses?: number | null,
+  hourly_rate?: number | null,
+  info?: string | null,
+  color?: string | null,
+  tags?: string[] | null,
+  custom_properties?: Record<string, unknown> | null,
+  leader?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  co_leader?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  customer?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  deal?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  project_group?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  billing_contact?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  contact?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  secondary_contact?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  archived_on?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### report
+
+`projects.report`
+
+Read a project business report: budget, invoiced totals, hours and costs
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.projects.report({ id: 1234567 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+`GET /projects/{id}/report`. The body is a free-form set of indicators
+(budget, invoiced total, hours, costs by task), passed through as
+`{ report }`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `report` | `Record<string, unknown>` | Yes | — |
+
+
+
+---
+
+### unarchive
+
+`projects.unarchive`
+
+Unarchive a project
+
+**Risk:** `write`
+
+```ts
+await corsair.moco.api.projects.unarchive({ id: 1234567 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number | null,
+  identifier?: string | null,
+  name?: string | null,
+  active?: boolean | null,
+  billable?: boolean | null,
+  fixed_price?: boolean | null,
+  retainer?: boolean | null,
+  start_date?: string | null,
+  finish_date?: string | null,
+  currency?: string | null,
+  billing_variant?: string | null,
+  budget?: number | null,
+  budget_monthly?: number | null,
+  budget_expenses?: number | null,
+  hourly_rate?: number | null,
+  info?: string | null,
+  color?: string | null,
+  tags?: string[] | null,
+  custom_properties?: Record<string, unknown> | null,
+  leader?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  co_leader?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  customer?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  deal?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  project_group?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  billing_contact?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  contact?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  secondary_contact?: {
+    id?: number | null,
+    firstname?: string | null,
+    lastname?: string | null
+  } | null,
+  archived_on?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project
+
+**Risk:** `write`
+
+```ts
+await corsair.moco.api.projects.update({ id: 1234567, name: 'Website Relaunch 2026' });
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  identifier?: string,
+  name?: string,
+  company_id?: number,
+  leader_id?: number,
+  co_leader_id?: number,
+  contact_id?: number,
+  secondary_contact_id?: number,
+  billing_contact_id?: number,
+  deal_id?: number,
+  project_group_id?: number,
+  currency?: string,
+  hourly_rate?: number,
+  budget?: number,
+  budget_monthly?: number,
+  budget_expenses?: number,
+  start_date?: string,
+  finish_date?: string,
+  fixed_price?: boolean,
+  retainer?: boolean,
+  billing_variant?: string,
+  billing_address?: string,
+  billing_email_to?: string,
+  billing_email_cc?: string,
+  billing_notes?: string,
+  setting_include_time_report?: boolean,
+  info?: string,
+  color?: string,
+  skip_favorite?: boolean,
+  tags?: string[],
+  custom_properties?: Record<string, unknown>
+}& {
+  id: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `identifier` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `fixed_price` | `boolean \| null` | No | — |
+| `retainer` | `boolean \| null` | No | — |
+| `start_date` | `string \| null` | No | — |
+| `finish_date` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `billing_variant` | `string \| null` | No | — |
+| `budget` | `number \| null` | No | — |
+| `budget_monthly` | `number \| null` | No | — |
+| `budget_expenses` | `number \| null` | No | — |
+| `hourly_rate` | `number \| null` | No | — |
+| `info` | `string \| null` | No | — |
+| `color` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `leader` | `object \| null` | No | — |
+| `co_leader` | `object \| null` | No | — |
+| `customer` | `object \| null` | No | — |
+| `deal` | `object \| null` | No | — |
+| `project_group` | `object \| null` | No | — |
+| `billing_contact` | `object \| null` | No | — |
+| `contact` | `object \| null` | No | — |
+| `secondary_contact` | `object \| null` | No | — |
+| `archived_on` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="leader full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="co_leader full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="customer full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="deal full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="project_group full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="billing_contact full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="secondary_contact full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Session
+
+### verify
+
+`session.verify`
+
+Verify the API key and read the user identity it belongs to
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.session.verify({});
+```
+
+**Input:** _empty object_
+
+`GET /session`. Returns `{ id, uuid }` for the key's user; a cheap check
+that the key and subdomain work.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+| `uuid` | `string` | Yes | — |
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Read one user
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.users.get({ id: 933590696 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `active` | `boolean \| null` | No | — |
+| `extern` | `boolean \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `mobile_phone` | `string \| null` | No | — |
+| `work_phone` | `string \| null` | No | — |
+| `home_address` | `string \| null` | No | — |
+| `info` | `string \| null` | No | — |
+| `birthday` | `string \| null` | No | — |
+| `avatar_url` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `custom_properties` | `Record<string, unknown> \| null` | No | — |
+| `role` | `object \| null` | No | — |
+| `unit` | `object \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="role full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="unit full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`users.list`
+
+List account users, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moco.api.users.list({ include_archived: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `include_archived` | `boolean` | No | — |
+| `email` | `string` | No | — |
+| `tags` | `string` | No | Comma-separated tags. |
+| `page` | `number` | No | 1-based page. Moco pages with 100 entries per default page; next_page is null once a page comes back short. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: number | null,
+  firstname?: string | null,
+  lastname?: string | null,
+  active?: boolean | null,
+  extern?: boolean | null,
+  email?: string | null,
+  mobile_phone?: string | null,
+  work_phone?: string | null,
+  home_address?: string | null,
+  info?: string | null,
+  birthday?: string | null,
+  avatar_url?: string | null,
+  tags?: string[] | null,
+  custom_properties?: Record<string, unknown> | null,
+  role?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  unit?: {
+    id?: number | null,
+    name?: string | null
+  } | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
