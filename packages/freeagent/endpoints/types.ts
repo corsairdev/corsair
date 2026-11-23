@@ -17,6 +17,26 @@ const PageQuerySchema = z
 	})
 	.strict();
 
+// Current FreeAgent invoice docs name these online methods; the forum documents the Stripe/GoCardless pre-authorisation mutual exclusion.
+const PaymentMethodsSchema = z
+	.object({
+		paypal: z.boolean().optional(),
+		gocardless_preauth: z.boolean().optional(),
+		gocardless_instant_bank_pay: z.boolean().optional(),
+		stripe: z.boolean().optional(),
+		tyl: z.boolean().optional(),
+	})
+	.strict()
+	.superRefine((methods, context) => {
+		if (methods.stripe === true && methods.gocardless_preauth === true) {
+			context.addIssue({
+				code: 'custom',
+				message:
+					'Stripe and GoCardless pre-authorised debit cannot both be enabled',
+			});
+		}
+	});
+
 const TrackingGroupLabelSchema = z
 	.object({
 		url: z.string().url(),
@@ -82,6 +102,7 @@ const RecurringInvoiceSchema = z
 		always_show_bic_and_iban: z.boolean().optional(),
 		payment_terms_in_days: z.number().int().optional(),
 		invoice_items: z.array(RecurringInvoiceItemSchema).optional(),
+		// Responses keep every method key FreeAgent sends; inputs use PaymentMethodsSchema.
 		payment_methods: z.record(z.string(), z.boolean()).optional(),
 	})
 	.passthrough();
@@ -174,8 +195,8 @@ const ProjectCreateSchema = ProjectFieldsSchema.extend({
 });
 
 const ProjectSchema = ProjectFieldsSchema.extend({
-	// A URL, or the contact object when the list asks for nested: true.
-	contact: z.union([z.string(), z.object({}).passthrough()]).optional(),
+	// A URL, or the documented contact response object when nested: true.
+	contact: z.union([z.string().url(), ContactSchema]).optional(),
 	name: z.string().optional(),
 	status: z.string().optional(),
 	currency: z.string().optional(),
@@ -301,6 +322,7 @@ const InvoiceFieldsSchema = z
 			])
 			.optional(),
 		place_of_supply: z.string().optional(),
+		payment_methods: PaymentMethodsSchema.optional(),
 		invoice_items: z.array(InvoiceItemInputSchema).optional(),
 	})
 	.strict();
@@ -340,7 +362,11 @@ const InvoiceEmailAttachmentSchema = z
 			.string()
 			.min(1)
 			.max(6_990_508)
-			.regex(/^[A-Za-z0-9+/]*={0,2}$/),
+			.regex(/^[A-Za-z0-9+/]*={0,2}$/)
+			// Base64 comes in complete 4-character groups ("YQ=" is cut short); a length check avoids a backtracking regex on multi-MB files.
+			.refine((value) => value.length % 4 === 0, {
+				message: 'Base64 data must be complete 4-character groups',
+			}),
 		file_name: z.string().min(1),
 	})
 	.strict()
@@ -433,6 +459,7 @@ const PaginationHeadersSchema = z.object({
 	link: z.string().nullable(),
 	total_count: z.string().regex(/^\d+$/).nullable(),
 });
+// Updates answer with the changed record (contacts, projects, invoices); deletes answer with no body.
 const EmptyResponseSchema = z.union([
 	z.object({}).passthrough(),
 	z.undefined(),
