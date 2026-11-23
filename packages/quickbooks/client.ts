@@ -220,6 +220,8 @@ export async function makeAuthenticatedQuickBooksRequest<T>(
 		environment,
 	);
 	if (options.responseType === 'binary') {
+		// unknown because T is the caller's declared type: with responseType 'binary' core returns
+		// { bytes, contentType } whatever T says, and only the PDF getters (which pass T = BinaryResponse) send it.
 		return requirePdf(
 			result as unknown as BinaryResponse,
 			path,

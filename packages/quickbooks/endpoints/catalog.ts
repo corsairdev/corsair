@@ -62,6 +62,7 @@ type CatalogDefinition<I extends z.ZodType, O extends z.ZodType> = {
  */
 export type QuickBooksOpenBody<T> = {
 	// The documented model stays an alternative so interface-typed bodies (no index signature) still fit.
+	// unknown because the extra fields are whatever else Intuit documents for the entity; requestSchema checks their envelope at runtime.
 	[K in keyof T]: K extends 'body'
 		? T[K] | (T[K] & Record<string, unknown>)
 		: T[K];

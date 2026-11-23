@@ -195,7 +195,7 @@ export function responseSchema(
 
 // Object-level refinements (one recurring transaction type per body) survive the loosened copy.
 function keepChecks(def: Def, schema: z.ZodObject): AnySchema {
-	// The check type is erased on the rebuilt object; the checks ran on the same object shape before.
+	// unknown because zod erases the check's input type on the rebuilt object; the checks ran on the same object shape before.
 	const checks = def.checks as
 		| z.core.$ZodCheck<Record<string, unknown>>[]
 		| undefined;
