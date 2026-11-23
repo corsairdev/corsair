@@ -255,7 +255,7 @@ await corsair.fathomai.api.recordings.getDownload({});
 
 `recordings.getSummary`
 
-Get the AI summary of a recording, or have Fathom POST it to a destination_url
+Get the AI summary of a recording
 
 **Risk:** `read`
 
@@ -268,29 +268,29 @@ await corsair.fathomai.api.recordings.getSummary({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `recording_id` | `number` | Yes | — |
-| `destination_url` | `string` | No | — |
 
 `summary` is null when the recording has no generated summary (Fathom's onboarding demo call, for one), although the API reference marks it as always set.
 
 
 
-**Output:** `object`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `summary` | `object \| null` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="summary full type">
 
 ```ts
 {
-  summary: {
-    template_name: string | null,
-    markdown_formatted: string | null
-  } | null
-} | {
-  destination_url: string
-}
+  template_name: string | null,
+  markdown_formatted: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -299,7 +299,7 @@ await corsair.fathomai.api.recordings.getSummary({});
 
 `recordings.getTranscript`
 
-Get the speaker-labelled transcript of a recording, or have Fathom POST it to a destination_url
+Get the speaker-labelled transcript of a recording
 
 **Risk:** `read`
 
@@ -312,31 +312,31 @@ await corsair.fathomai.api.recordings.getTranscript({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `recording_id` | `number` | Yes | — |
-| `destination_url` | `string` | No | — |
 
 
 
-**Output:** `object`
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transcript` | `object[]` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="Output full type">
+<Accordion title="transcript full type">
 
 ```ts
 {
-  transcript: {
-    speaker: {
-      display_name: string,
-      matched_calendar_invitee_email?: string | null
-    },
-    text: string,
-    timestamp: string
-  }[]
-} | {
-  destination_url: string
-}
+  speaker: {
+    display_name: string,
+    matched_calendar_invitee_email?: string | null
+  },
+  text: string,
+  timestamp: string
+}[]
 ```
 </Accordion>
 </AccordionGroup>
+
 
 
 ---
@@ -400,6 +400,72 @@ Fathom answers 422 when the recording has no downloadable media.
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+### sendSummary
+
+`recordings.sendSummary`
+
+Have Fathom POST the AI summary of a recording to a destination_url
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fathomai.api.recordings.sendSummary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recording_id` | `number` | Yes | — |
+| `destination_url` | `string` | Yes | — |
+
+Fathom POSTs `{recording_id, summary}` to destination_url within a second or two, signed like a webhook delivery (the API client's secret and the same frozen `webhook-timestamp`). The meetings.contentReady handler does not claim these callbacks.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `destination_url` | `string` | Yes | — |
+
+
+
+---
+
+### sendTranscript
+
+`recordings.sendTranscript`
+
+Have Fathom POST the speaker-labelled transcript of a recording to a destination_url
+
+**Risk:** `destructive`
+
+```ts
+await corsair.fathomai.api.recordings.sendTranscript({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recording_id` | `number` | Yes | — |
+| `destination_url` | `string` | Yes | — |
+
+Fathom POSTs `{recording_id, transcript}` to destination_url, signed and stamped like the `recordings.sendSummary` callback.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `destination_url` | `string` | Yes | — |
 
 
 
