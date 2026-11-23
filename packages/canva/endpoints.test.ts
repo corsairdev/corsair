@@ -399,6 +399,14 @@ describe('plugin metadata', () => {
 		}
 	});
 
+	it('signs in with PKCE, as Canva requires', () => {
+		expect(plugin.oauthConfig).toMatchObject({
+			pkce: true,
+			tokenAuthMethod: 'basic',
+			authParams: { code_challenge_method: 's256' },
+		});
+	});
+
 	it('keeps exporting a read', () => {
 		expect(meta['exports.create']?.riskLevel).toBe('read');
 		expect(meta['exports.download']?.riskLevel).toBe('read');

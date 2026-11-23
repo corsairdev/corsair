@@ -965,6 +965,11 @@ export function canva<const T extends CanvaPluginOptions>(
 			providerName: 'Canva',
 			authUrl: 'https://www.canva.com/api/oauth/authorize',
 			tokenUrl: 'https://api.canva.com/rest/v1/oauth/token',
+			// Canva refuses a sign-in without PKCE, spells the method `s256`, and
+			// recommends Basic client auth on the token endpoint.
+			pkce: true,
+			tokenAuthMethod: 'basic',
+			authParams: { code_challenge_method: 's256' },
 			scopes: [
 				'design:meta:read',
 				'design:content:read',
