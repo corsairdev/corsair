@@ -16,4 +16,6 @@ export const getAppJwks: CanvaEndpoints['appsGetJwks'] = async (ctx, input) =>
 		'apps.getJwks',
 		{ ...input },
 		`v1/apps/${seg(input.appId)}/jwks`,
+		// Public keys: Canva answers 500 when a user token comes along.
+		{ method: 'GET', anonymous: true },
 	);

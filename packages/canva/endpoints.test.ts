@@ -18,6 +18,7 @@ type TransportResponse = Awaited<
 >;
 const calls: Call[] = [];
 let replies: unknown[] = [];
+let replyStatus = 200;
 
 // Each endpoint is called with the smallest context it needs: a token, no
 // local tables, and an account lookup that the event logger may call.
@@ -34,6 +35,7 @@ function reply(...bodies: unknown[]) {
 beforeEach(() => {
 	calls.length = 0;
 	replies = [];
+	replyStatus = 200;
 	jest.spyOn(console, 'warn').mockImplementation(() => {});
 	jest
 		.spyOn(globalThis, 'fetch')
@@ -56,7 +58,7 @@ beforeEach(() => {
 				});
 				const next = replies.length > 1 ? replies.shift() : replies[0];
 				return new Response(JSON.stringify(next ?? {}), {
-					status: 200,
+					status: replyStatus,
 					headers: { 'content-type': 'application/json' },
 				});
 			},
@@ -259,6 +261,21 @@ describe('request shapes', () => {
 			'/rest/v1/connect/keys',
 			'/rest/v1/apps/AAF1/jwks',
 		]);
+		// Canva answers 500 to the public JWKS route when a token is sent.
+		expect(calls[0]?.headers.get('authorization')).toBe('Bearer test-token');
+		expect(calls[1]?.headers.get('authorization')).toBeNull();
+	});
+
+	it("passes on Canva's reason for a refusal", async () => {
+		replyStatus = 403;
+		reply({
+			code: 'permission_denied',
+			message:
+				'Not allowed to access getDesignAnalytics, requires one of capabilities [analytics].',
+		});
+		await expect(api.analytics.get(ctx, { designId: 'D1' })).rejects.toThrow(
+			'permission_denied: Not allowed to access getDesignAnalytics, requires one of capabilities [analytics].',
+		);
 	});
 
 	it('still deletes assets the old way', async () => {

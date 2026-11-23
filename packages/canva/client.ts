@@ -44,9 +44,11 @@ export async function makeCanvaRequest<T>(
 		body?: Record<string, unknown> | string | Blob;
 		query?: Record<string, string | number | boolean | undefined>;
 		extraHeaders?: Record<string, string>;
+		/** Send no token: a public route that fails when one is sent (app JWKS). */
+		anonymous?: boolean;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, extraHeaders } = options;
+	const { method = 'GET', body, query, extraHeaders, anonymous } = options;
 	const binary = isBinaryBody(body);
 
 	const config: OpenAPIConfig = {
@@ -54,7 +56,7 @@ export async function makeCanvaRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: anonymous ? undefined : apiKey,
 		HEADERS: {
 			...(binary
 				? { 'Content-Type': 'application/octet-stream' }
@@ -82,15 +84,19 @@ export async function makeCanvaRequest<T>(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			const code =
-				typeof error.body === 'object' &&
-				error.body !== null &&
-				'code' in error.body &&
-				typeof (error.body as { code?: unknown }).code === 'string'
-					? (error.body as { code: string }).code
-					: undefined;
+			const body =
+				typeof error.body === 'object' && error.body !== null
+					? (error.body as { code?: unknown; message?: unknown })
+					: {};
+			const code = typeof body.code === 'string' ? body.code : undefined;
+			// Canva says why it refused (a missing plan capability, an upgrade
+			// link); keep that, since "Forbidden" alone tells the caller nothing.
+			const detail =
+				typeof body.message === 'string' && body.message.trim()
+					? `${code ? `${code}: ` : ''}${body.message.trim()}`
+					: code;
 			throw new CanvaAPIError(
-				error.message,
+				detail ? `${error.message} (${detail})` : error.message,
 				error.status,
 				error.retryAfter,
 				code,
