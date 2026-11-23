@@ -4,7 +4,7 @@ QuickBooks Online Accounting API operations for Corsair.
 
 ## Verified implementation coverage
 
-Intuit's first-party Accounting entity route catalog contains **74 resources, 237 resource-operation entries, and 154 distinct route-definition strings**. This package registers **236 of 237 entries**. Every registered operation has its own Zod request/response contract (see [Validation](#validation)) and a mocked request test. Route variants with distinct paths, query/body semantics, or response types have distinct operation IDs. There is no live API verification claim.
+Intuit's first-party Accounting entity route catalog contains **74 resources, 237 resource-operation entries, and 154 distinct route-definition strings**. This package registers **236 of 237 entries**, plus `item.deleteCategory`, which the catalog lacks but QuickBooks requires to remove a category. Every registered operation has its own Zod request/response contract (see [Validation](#validation)) and a mocked request test. Route variants with distinct paths, query/body semantics, or response types have distinct operation IDs. Every resource family was run against a QuickBooks sandbox company on 2026-11-23 (see [Sandbox run](#sandbox-run)).
 
 The one unregistered entry is `Entitlements.READ`; its source-verified blocker is recorded under [Explicit exclusions](#explicit-exclusions). Webhooks, QuickBooks Payments, and GraphQL are not part of these 237 Accounting REST entries.
 
@@ -64,7 +64,7 @@ Catalog counts include each operation variant separately (including distinct ful
 | InventoryValuationDetail | 1 | `inventoryValuationDetail.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/inventoryvaluationdetail) |
 | InventoryValuationSummary | 1 | `inventoryValuationSummary.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/inventoryvaluationsummary) |
 | Invoice | 9 | `invoice.create`, `invoice.delete`, `invoice.get`, `invoice.getPdf`, `invoice.list`, `invoice.send`, `invoice.sparseUpdate`, `invoice.update`, `invoice.void` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/invoice) |
-| Item | 10 | `item.create`, `item.createCategory`, `item.getBundle`, `item.getCategory`, `item.getItem`, `item.listBundles`, `item.listCategories`, `item.listItems`, `item.update`, `item.updateCategory` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/item) |
+| Item | 10 | `item.create`, `item.createCategory`, `item.getBundle`, `item.getCategory`, `item.getItem`, `item.listBundles`, `item.listCategories`, `item.listItems`, `item.update`, `item.updateCategory` (plus `item.deleteCategory`, outside the catalog) | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/item) |
 | JournalEntry | 6 | `journalEntry.create`, `journalEntry.delete`, `journalEntry.get`, `journalEntry.list`, `journalEntry.sparseUpdate`, `journalEntry.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/journalentry) |
 | JournalReport | 1 | `journalReport.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/journalreport) |
 | Payment | 8 | `payment.create`, `payment.delete`, `payment.get`, `payment.getPdf`, `payment.list`, `payment.send`, `payment.update`, `payment.void` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/payment) |
@@ -103,7 +103,7 @@ Catalog counts include each operation variant separately (including distinct ful
 | VendorCredit | 5 | `vendorCredit.create`, `vendorCredit.delete`, `vendorCredit.get`, `vendorCredit.list`, `vendorCredit.update` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/vendorcredit) |
 | VendorExpenses | 1 | `vendorExpenses.list` | Implemented | [Reference](https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/vendorexpenses) |
 
-Coverage: **236 registered, 1 source-verified blocker**. Static TypeScript/Zod schemas were generated from Intuit's first-party route and model metadata; no generator or source catalog is shipped in this package.
+Coverage: **236 catalog entries registered plus `item.deleteCategory` (237 operations), 1 source-verified blocker**. Static TypeScript/Zod schemas were generated from Intuit's first-party route and model metadata; no generator or source catalog is shipped in this package.
 
 ## Shared Accounting API contract
 
@@ -181,10 +181,32 @@ Install with `pnpm add @corsair-dev/quickbooks`.
 
 `pnpm --dir packages/quickbooks test` runs the mocked/local package suite,
 including `samples.test.ts`, which sends Intuit's documented request bodies and
-parses its documented responses from the model catalog. It does not call a live
-QuickBooks company. The optional read-only live smoke test requires
+parses its documented responses from the model catalog, and
+`sandbox-responses.test.ts`, which parses responses captured from a sandbox
+company. Neither calls QuickBooks. The optional read-only live smoke test requires
 `QUICKBOOKS_ACCESS_TOKEN` and `QUICKBOOKS_REALM_ID` and can be run with
 `pnpm --dir packages/quickbooks test:live`.
+
+## Sandbox run
+
+On 2026-11-23 the operations ran against an Intuit sandbox company (US, with
+Intuit's sample data) through `quickbooks({ environment: 'sandbox' })`: every
+list and get, the reports, PDFs, CDC, batch, attachment upload and download,
+and create, read, update, sparse update, send, void and delete round trips for
+each transaction type. Sends went only to a test inbox. What the sandbox could
+not serve:
+
+- `companyCurrency.*` and `exchangerate.update` need multicurrency, which
+  can't be turned off again once on, so they were not run.
+- `taxPayment.*` (fault 5030, not available for US companies) and
+  `taxSummary.list` (fault 5020, permission denied for this company).
+- `changeOrder.*` needs a project, and projects are created through Intuit's
+  Projects API, not this one.
+- `item.getBundle`: the sample company has no bundles, and bundles can't be
+  created through the API.
+- `customerType.get`: the sample company has no customer types.
+- `taxService.create` and `taxAgency.create` ran, but their records can't be
+  deleted afterwards.
 
 ## Validation
 

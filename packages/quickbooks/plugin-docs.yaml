@@ -2,7 +2,7 @@
 displayName: "QuickBooks"
 description: "QuickBooks Online Accounting operations for all catalogued resources, including reports, transactions, attachments, batch, and change-data capture."
 overviewNote: >-
-  This plugin registers 236 of the 237 operations in Intuit’s first-party Accounting route catalog. The remaining Entitlements.READ operation requires an XML response contract that the package cannot validate; details are in the package README. Pass the company's realmId to each operation: Intuit sends it on the OAuth redirect, and a company admin can read it in QuickBooks under Settings > Account and settings > Billing & subscription (Company ID). Hub does not save it on connect yet. The default minor version is 75.
+  This plugin registers 236 of the 237 operations in Intuit’s first-party Accounting route catalog, plus item.deleteCategory, which the catalog lacks but QuickBooks requires to remove a category. The remaining Entitlements.READ operation requires an XML response contract that the package cannot validate; details are in the package README. Every resource family was run against a QuickBooks sandbox company on 2026-11-23. Pass the company's realmId to each operation: Intuit sends it on the OAuth redirect, and a company admin can read it in QuickBooks under Settings > Account and settings > Billing & subscription (Company ID). Hub does not save it on connect yet. The default minor version is 75.
 apiNotes:
   accounts.create: >-
     POST /v3/company/{realmId}/account. Name must be unique, at most 100
@@ -54,6 +54,37 @@ apiNotes:
     Returns the temporary download URL as text/plain. Intuit states that it
     expires after 15 minutes. Source:
     https://developer.intuit.com/docs/0100_quickbooks_online/0200_dev_guides/accounting/0050_attach_images_and_notes
+  item.deleteCategory: >-
+    POST /v3/company/{realmId}/item?operation=delete with the category's Id
+    and SyncToken. Categories can't be made inactive (QuickBooks answers fault
+    1020 to Active=false); other item types can't be deleted, only made
+    inactive with item.update.
+  taxCode.get: >-
+    Only numeric tax code IDs can be read. The TAX, NON and CustomSalesTax
+    codes that US companies list are pseudo codes; reading them by ID answers
+    fault 2030 (Invalid ID).
+  taxPayment.list: >-
+    TaxPayment is not available for US companies (fault 5030, "not supported
+    for this region").
+  deposit.sparseUpdate: >-
+    QuickBooks still requires DepositToAccountRef and Line in a sparse
+    Deposit update (fault 2020 otherwise).
+  transfer.sparseUpdate: >-
+    QuickBooks still requires FromAccountRef, ToAccountRef and Amount in a
+    sparse Transfer update (fault 2020 otherwise).
+  creditCardPayment.sparseUpdate: >-
+    QuickBooks still requires CreditCardAccountRef, BankAccountRef and Amount
+    in a sparse update (fault 2020 otherwise).
+  companyCurrency.create: >-
+    Needs multicurrency turned on for the company (fault 9029 otherwise).
+    Turning multicurrency on in QuickBooks can't be undone.
+  exchangerate.update: >-
+    Needs multicurrency turned on for the company. Without it, exchangerate.get
+    still returns Intuit's daily rate, but that record has no SyncToken and
+    can't be updated.
+  preferences.update: >-
+    Send Id, SyncToken, sparse: true and only the sections to change.
+    QuickBooks reads settings missing from a full update as turned off.
 examples:
   read:
     path: accounts.list
@@ -322,6 +353,8 @@ apiExamples:
     call: '{"realmId":"12345678","body":{"Name":"sample","Id":"35","SyncToken":"0"}}'
   item.updateCategory:
     call: '{"realmId":"12345678","body":{"Name":"sample","Type":"Category","Id":"35","SyncToken":"0"}}'
+  item.deleteCategory:
+    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
   journalEntry.create:
     call: '{"realmId":"12345678","body":{"Line":[{"DetailType":"JournalEntryLineDetail","Amount":100,"JournalEntryLineDetail":{"PostingType":"Debit","AccountRef":{"value":"39"}}},{"DetailType":"JournalEntryLineDetail","Amount":100,"JournalEntryLineDetail":{"PostingType":"Credit","AccountRef":{"value":"44"}}}]}}'
   journalEntry.delete:
@@ -365,7 +398,7 @@ apiExamples:
   preferences.list:
     call: '{"realmId":"12345678"}'
   preferences.update:
-    call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
+    call: '{"realmId":"12345678","body":{"Id":"1","SyncToken":"0","sparse":true,"SalesFormsPrefs":{"AllowServiceDate":false}}}'
   profitAndLoss.list:
     call: '{"realmId":"12345678","params":{}}'
   profitAndLossDetail.list:
@@ -419,7 +452,7 @@ apiExamples:
   refundReceipt.update:
     call: '{"realmId":"12345678","body":{"DepositToAccountRef":{"value":"sample"},"Line":[],"Id":"35","SyncToken":"0"}}'
   reimburseCharge.get:
-    call: '{"realmId":"12345678","taxrateId":"35"}'
+    call: '{"realmId":"12345678","reimbursechargeId":"35"}'
   reimburseCharge.list:
     call: '{"realmId":"12345678"}'
   salesByClassSummary.list:
@@ -463,7 +496,7 @@ apiExamples:
   taxClassification.listChildren:
     call: '{"realmId":"12345678","parentId":"35"}'
   taxCode.get:
-    call: '{"realmId":"12345678","taxcodeId":"35"}'
+    call: '{"realmId":"12345678","taxcodeId":"2"}'
   taxCode.list:
     call: '{"realmId":"12345678"}'
   taxPayment.get:
