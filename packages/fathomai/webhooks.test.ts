@@ -364,7 +364,7 @@ describe('meetings.contentReady handler', () => {
 });
 
 describe('a delivery through processWebhook', () => {
-	async function createClient(options: { webhookSecret?: string }) {
+	async function createClient(options: Parameters<typeof fathomai>[0]) {
 		const testDb = createTestDatabase();
 		await createIntegrationAndAccount(testDb.db, 'fathomai', 'default');
 		const corsair = createCorsair({
@@ -453,6 +453,49 @@ describe('a delivery through processWebhook', () => {
 				statusCode: 200,
 				error: 'Duplicate delivery',
 			});
+		} finally {
+			testDb.cleanup();
+		}
+	});
+
+	it("handles Fathom's retry when the webhookHooks.after hook failed", async () => {
+		let afterCalls = 0;
+		const { corsair, testDb } = await createClient({
+			webhookSecret: SECRET,
+			webhookHooks: {
+				meetings: {
+					contentReady: {
+						after: async () => {
+							afterCalls += 1;
+							if (afterCalls === 1) throw new Error('hook failed');
+						},
+					},
+				},
+			},
+		});
+		try {
+			const delivery = fathomShapedDelivery(
+				'a7b8c9d0-e1f2-4a3b-8c4d-5e6f7a8b9c03',
+			);
+
+			const first = await processWebhook(
+				corsair,
+				fathomHeaders(delivery),
+				delivery.body,
+			);
+			const retry = await processWebhook(
+				corsair,
+				fathomHeaders(delivery),
+				delivery.body,
+			);
+
+			expect(first.response).toMatchObject({
+				success: false,
+				statusCode: 500,
+				error: 'hook failed',
+			});
+			expect(retry.response).toMatchObject({ success: true });
+			expect(afterCalls).toBe(2);
 		} finally {
 			testDb.cleanup();
 		}

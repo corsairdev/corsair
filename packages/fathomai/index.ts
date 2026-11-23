@@ -26,7 +26,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { FathomAiSchema } from './schema';
-import { MeetingWebhooks } from './webhooks';
+import { MeetingWebhooks, withClaimRelease } from './webhooks';
 import type {
 	FathomAiWebhookOutputs,
 	MeetingContentReadyEvent,
@@ -272,7 +272,7 @@ export function fathomai<const T extends FathomAiPluginOptions>(
 		schema: FathomAiSchema,
 		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+		webhookHooks: withClaimRelease(options.webhookHooks),
 		endpoints: fathomAiEndpointsNested,
 		webhooks: fathomAiWebhooksNested,
 		endpointMeta: fathomAiEndpointMeta,
