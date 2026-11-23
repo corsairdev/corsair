@@ -11799,5 +11799,32 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/metabase",
+    "dir": "packages/metabase",
+    "name": "Metabase",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/quickbooks",
+    "dir": "packages/quickbooks",
+    "name": "QuickBooks",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/zohobooks",
+    "dir": "packages/zohobooks",
+    "name": "Zoho Books",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
