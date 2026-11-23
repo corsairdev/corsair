@@ -454,6 +454,7 @@ export const BaseProviders = [
 	'monday',
 	'mondaymcp',
 	'moonclerk',
+	'moretrees',
 	'motion',
 	'mrscraper',
 	'nango',
@@ -1225,6 +1226,7 @@ export const ProviderDisplayNames = {
 	monday: 'Monday',
 	mondaymcp: 'Monday MCP',
 	moonclerk: 'MoonClerk',
+	moretrees: 'More Trees',
 	motion: 'Motion',
 	mrscraper: 'MrScraper',
 	nango: 'Nango',
@@ -2003,6 +2005,7 @@ export type AllProviders =
 	| 'monday'
 	| 'mondaymcp'
 	| 'moonclerk'
+	| 'moretrees'
 	| 'motion'
 	| 'mrscraper'
 	| 'nango'
