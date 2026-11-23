@@ -270,6 +270,8 @@ await corsair.fathomai.api.recordings.getSummary({});
 | `recording_id` | `number` | Yes | — |
 | `destination_url` | `string` | No | — |
 
+`summary` is null when the recording has no generated summary (Fathom's onboarding demo call, for one), although the API reference marks it as always set.
+
 
 
 **Output:** `object`
@@ -282,7 +284,7 @@ await corsair.fathomai.api.recordings.getSummary({});
   summary: {
     template_name: string | null,
     markdown_formatted: string | null
-  }
+  } | null
 } | {
   destination_url: string
 }
@@ -357,6 +359,8 @@ await corsair.fathomai.api.recordings.requestDownload({});
 |------|------|----------|-------------|
 | `recording_id` | `number` | Yes | — |
 | `destination_url` | `string` | No | — |
+
+Fathom answers 422 when the recording has no downloadable media.
 
 
 
