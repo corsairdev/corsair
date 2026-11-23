@@ -6,6 +6,7 @@ import {
 	buildBlogPostJsonLd,
 	faqsFromJsonLd,
 	faqsVisibleInBody,
+	postLastModified,
 	serializeJsonLd,
 } from './blog-seo';
 
@@ -175,5 +176,24 @@ describe('serializeJsonLd', () => {
 		assert.equal(out.includes('>'), false);
 		assert.equal(out.includes('&'), false);
 		assert.deepEqual(JSON.parse(out), { text: '</script><b>&' });
+	});
+});
+
+describe('postLastModified', () => {
+	it('uses the last edit, so a refreshed post shows a new lastmod', () => {
+		assert.equal(
+			postLastModified({
+				publishedAt: '2026-10-28T09:00:00Z',
+				updatedAt: '2026-11-17T12:30:00Z',
+			}),
+			'2026-11-17T12:30:00Z',
+		);
+	});
+
+	it('falls back to the publish date when there is no edit date', () => {
+		assert.equal(
+			postLastModified({ publishedAt: '2026-10-28T09:00:00Z' }),
+			'2026-10-28T09:00:00Z',
+		);
 	});
 });

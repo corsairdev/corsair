@@ -125,6 +125,17 @@ function authorNode(author: string) {
 	return { '@type': 'Person', name: author };
 }
 
+/**
+ * When a post last changed, for the sitemap's lastmod and JSON-LD dateModified.
+ * Falls back to the publish date for posts never edited after publishing.
+ */
+export function postLastModified(post: {
+	publishedAt: string;
+	updatedAt?: string;
+}): string {
+	return post.updatedAt ?? post.publishedAt;
+}
+
 export function buildBlogPostJsonLd(post: BlogJsonLdInput) {
 	const url = `${SITE_URL}/blog/${post.slug}`;
 	const graph: JsonObject[] = [
@@ -135,7 +146,7 @@ export function buildBlogPostJsonLd(post: BlogJsonLdInput) {
 			url,
 			mainEntityOfPage: { '@type': 'WebPage', '@id': url },
 			datePublished: post.publishedAt,
-			dateModified: post.updatedAt ?? post.publishedAt,
+			dateModified: postLastModified(post),
 			author: authorNode(post.author),
 			publisher: {
 				'@type': 'Organization',
