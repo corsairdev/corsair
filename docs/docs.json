@@ -3682,6 +3682,14 @@
                 ]
               },
               {
+                "group": "Meta Ads",
+                "pages": [
+                  "plugins/metaads/overview",
+                  "plugins/metaads/api",
+                  "plugins/metaads/database"
+                ]
+              },
+              {
                 "group": "Microsoft Clarity",
                 "pages": [
                   "plugins/microsoftclarity/overview",
