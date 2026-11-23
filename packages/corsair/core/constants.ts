@@ -782,6 +782,7 @@ export const BaseProviders = [
 	'zenrows',
 	'zenserp',
 	'zohobigin',
+	'zohobooks',
 	'zohodesk',
 	'zohoinventory',
 	'zohoinvoice',
@@ -1560,6 +1561,7 @@ export const ProviderDisplayNames = {
 	zenrows: 'ZenRows',
 	zenserp: 'Zenserp',
 	zohobigin: 'Zoho Bigin',
+	zohobooks: 'Zoho Books',
 	zohodesk: 'Zoho Desk',
 	zohoinventory: 'Zoho Inventory',
 	zohoinvoice: 'Zoho Invoice',
@@ -2345,6 +2347,7 @@ export type AllProviders =
 	| 'zenrows'
 	| 'zenserp'
 	| 'zohobigin'
+	| 'zohobooks'
 	| 'zohodesk'
 	| 'zohoinventory'
 	| 'zohoinvoice'
