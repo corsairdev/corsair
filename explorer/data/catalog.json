@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-23T11:32:48.581Z",
+  "generatedAt": "2026-11-23T12:04:11.642Z",
   "corsairVersion": "0.2.28",
   "catalogVersion": 2,
   "plugins": [
@@ -3850,6 +3850,21 @@
         "api": 23,
         "webhooks": 0,
         "db": 0
+      }
+    },
+    {
+      "id": "fathomai",
+      "displayName": "Fathom AI Notetaker",
+      "description": "AI meeting recorder that records, transcribes and summarizes calls, with endpoints for meetings, summaries, transcripts, recording downloads, teams, users and webhooks.",
+      "npmPackageName": "@corsair-dev/fathomai",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 13,
+        "webhooks": 1,
+        "db": 5
       }
     },
     {
@@ -81994,6 +82009,90 @@
       "kind": "api",
       "shortPath": "sites.wipe",
       "haystack": "sites.wipe fathom.api.sites.wipe wipe all data from a site (deprecated: returns 410 gone) destructive"
+    },
+    {
+      "pluginId": "fathomai",
+      "kind": "api",
+      "shortPath": "meetings.list",
+      "haystack": "meetings.list fathomai.api.meetings.list list recorded meetings with filters, optionally including transcript, summary, action items, highlights and crm matches read"
+    },
+    {
+      "pluginId": "fathomai",
+      "kind": "api",
+      "shortPath": "meetingTypes.list",
+      "haystack": "meetingtypes.list fathomai.api.meetingtypes.list list the org meeting types; their names filter meetings.list read"
+    },
+    {
+      "pluginId": "fathomai",
+      "kind": "api",
+      "shortPath": "recordings.getDownload",
+      "haystack": "recordings.getdownload fathomai.api.recordings.getdownload poll a recording download; a completed one carries a signed file url valid for about 24 hours read"
+    },
+    {
+      "pluginId": "fathomai",
+      "kind": "api",
+      "shortPath": "recordings.getSummary",
+      "haystack": "recordings.getsummary fathomai.api.recordings.getsummary get the ai summary of a recording read"
+    },
+    {
+      "pluginId": "fathomai",
+      "kind": "api",
+      "shortPath": "recordings.getTranscript",
+      "haystack": "recordings.gettranscript fathomai.api.recordings.gettranscript get the speaker-labelled transcript of a recording read"
+    },
+    {
+      "pluginId": "fathomai",
+      "kind": "api",
+      "shortPath": "recordings.requestDownload",
+      "haystack": "recordings.requestdownload fathomai.api.recordings.requestdownload start generating a downloadable video or audio file for a recording write"
+    },
+    {
+      "pluginId": "fathomai",
+      "kind": "api",
+      "shortPath": "recordings.sendSummary",
+      "haystack": "recordings.sendsummary fathomai.api.recordings.sendsummary have fathom post the ai summary of a recording to a destination_url destructive"
+    },
+    {
+      "pluginId": "fathomai",
+      "kind": "api",
+      "shortPath": "recordings.sendTranscript",
+      "haystack": "recordings.sendtranscript fathomai.api.recordings.sendtranscript have fathom post the speaker-labelled transcript of a recording to a destination_url destructive"
+    },
+    {
+      "pluginId": "fathomai",
+      "kind": "api",
+      "shortPath": "teamMembers.list",
+      "haystack": "teammembers.list fathomai.api.teammembers.list list team members, optionally filtered by team name read"
+    },
+    {
+      "pluginId": "fathomai",
+      "kind": "api",
+      "shortPath": "teams.list",
+      "haystack": "teams.list fathomai.api.teams.list list the teams in the fathom account read"
+    },
+    {
+      "pluginId": "fathomai",
+      "kind": "api",
+      "shortPath": "users.list",
+      "haystack": "users.list fathomai.api.users.list list account users with their status and permissions. needs an account admin key read"
+    },
+    {
+      "pluginId": "fathomai",
+      "kind": "api",
+      "shortPath": "webhooks.create",
+      "haystack": "webhooks.create fathomai.api.webhooks.create register a webhook that fires when new meeting content is ready; returns its signing secret once write"
+    },
+    {
+      "pluginId": "fathomai",
+      "kind": "api",
+      "shortPath": "webhooks.delete",
+      "haystack": "webhooks.delete fathomai.api.webhooks.delete delete a webhook so it stops receiving meeting content destructive"
+    },
+    {
+      "pluginId": "fathomai",
+      "kind": "webhook",
+      "shortPath": "meetings.contentReady",
+      "haystack": "meetings.contentready fathomai.webhooks.meetings.contentready a recorded meeting finished processing; carries the meeting with the transcript, summary, action items and crm matches the webhook was set to include"
     },
     {
       "pluginId": "felt",
