@@ -33,6 +33,7 @@
               "quick-start",
               "cloud/overview",
               "cloud/mcp",
+              "cloud/agent-signup",
               {
                 "group": "Use cases",
                 "pages": [
@@ -432,6 +433,14 @@
                   "plugins/amcards/overview",
                   "plugins/amcards/api",
                   "plugins/amcards/database"
+                ]
+              },
+              {
+                "group": "Amika",
+                "pages": [
+                  "plugins/amika/overview",
+                  "plugins/amika/api",
+                  "plugins/amika/database"
                 ]
               },
               {
@@ -3602,6 +3611,14 @@
                 ]
               },
               {
+                "group": "Mailcoach",
+                "pages": [
+                  "plugins/mailcoach/overview",
+                  "plugins/mailcoach/api",
+                  "plugins/mailcoach/database"
+                ]
+              },
+              {
                 "group": "Mails.so",
                 "pages": [
                   "plugins/mailsso/overview",
@@ -3679,6 +3696,22 @@
                   "plugins/merriamwebsterdict/overview",
                   "plugins/merriamwebsterdict/api",
                   "plugins/merriamwebsterdict/database"
+                ]
+              },
+              {
+                "group": "Meta Ads",
+                "pages": [
+                  "plugins/metaads/overview",
+                  "plugins/metaads/api",
+                  "plugins/metaads/database"
+                ]
+              },
+              {
+                "group": "Metabase",
+                "pages": [
+                  "plugins/metabase/overview",
+                  "plugins/metabase/api",
+                  "plugins/metabase/database"
                 ]
               },
               {
@@ -4517,6 +4550,14 @@
                 ]
               },
               {
+                "group": "Productboard",
+                "pages": [
+                  "plugins/productboard/overview",
+                  "plugins/productboard/api",
+                  "plugins/productboard/database"
+                ]
+              },
+              {
                 "group": "Proofly",
                 "pages": [
                   "plugins/proofly/overview",
@@ -4554,6 +4595,14 @@
                   "plugins/quaderno/overview",
                   "plugins/quaderno/api",
                   "plugins/quaderno/database"
+                ]
+              },
+              {
+                "group": "QuickBooks",
+                "pages": [
+                  "plugins/quickbooks/overview",
+                  "plugins/quickbooks/api",
+                  "plugins/quickbooks/database"
                 ]
               },
               {
@@ -5266,6 +5315,14 @@
                   "plugins/splitwise/overview",
                   "plugins/splitwise/api",
                   "plugins/splitwise/database"
+                ]
+              },
+              {
+                "group": "Spondyr",
+                "pages": [
+                  "plugins/spondyr/overview",
+                  "plugins/spondyr/api",
+                  "plugins/spondyr/database"
                 ]
               },
               {
@@ -6229,6 +6286,14 @@
                 ]
               },
               {
+                "group": "Wispr Flow",
+                "pages": [
+                  "plugins/wisprflow/overview",
+                  "plugins/wisprflow/api",
+                  "plugins/wisprflow/database"
+                ]
+              },
+              {
                 "group": "Wit.ai",
                 "pages": [
                   "plugins/witai/overview",
@@ -6406,6 +6471,14 @@
                   "plugins/zohobigin/overview",
                   "plugins/zohobigin/api",
                   "plugins/zohobigin/database"
+                ]
+              },
+              {
+                "group": "Zoho Books",
+                "pages": [
+                  "plugins/zohobooks/overview",
+                  "plugins/zohobooks/api",
+                  "plugins/zohobooks/database"
                 ]
               },
               {

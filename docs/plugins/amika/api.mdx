@@ -1,0 +1,5921 @@
+---
+title: "Amika API reference"
+sidebarTitle: "API"
+description: "API reference for the Amika plugin in Corsair: every `amika.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Agent Credentials
+
+### claude.check
+
+`agentCredentials.claude.check`
+
+Checks that a stored Claude Code credential can still authenticate.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.agentCredentials.claude.check({ id: 'cred_01M82A4T5Y7XG1F0Q9W3E8R2KD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  status?: string | null
+} | {
+  status?: string | null,
+  message?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### claude.create
+
+`agentCredentials.claude.create`
+
+Stores a Claude Code credential (type oauth or api_key) that rigs can be given.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.agentCredentials.claude.create({
+	name: 'team-claude',
+	value: 'sk-ant-oat01-example',
+	type: 'oauth',
+	scope: 'org',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `type` | `oauth \| api_key` | Yes | — |
+| `scope` | `user \| org` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `org_id` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null \| null` | No | — |
+| `scope` | `string \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+
+
+---
+
+### claude.delete
+
+`agentCredentials.claude.delete`
+
+Deletes a stored Claude Code credential.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.amika.api.agentCredentials.claude.delete({ id: 'cred_01M82A4T5Y7XG1F0Q9W3E8R2KD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Amika accepted the call; it answers with no body. |
+
+
+
+---
+
+### claude.list
+
+`agentCredentials.claude.list`
+
+Lists stored Claude Code credentials (OAuth tokens or API keys) by name and scope, never values.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.agentCredentials.claude.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  scope?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### codex.create
+
+`agentCredentials.codex.create`
+
+Stores a Codex credential (type oauth or api_key) that rigs can be given.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.agentCredentials.codex.create({
+	name: 'team-codex',
+	value: 'codex-auth-json',
+	type: 'oauth',
+	scope: 'org',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `type` | `oauth \| api_key` | Yes | — |
+| `scope` | `user \| org` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `org_id` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null \| null` | No | — |
+| `scope` | `string \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+
+
+---
+
+### codex.delete
+
+`agentCredentials.codex.delete`
+
+Deletes a stored Codex credential.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.amika.api.agentCredentials.codex.delete({ id: 'cred_01M82A4T5Y7XG1F0Q9W3E8R2KE' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Amika accepted the call; it answers with no body. |
+
+
+
+---
+
+### codex.list
+
+`agentCredentials.codex.list`
+
+Lists stored Codex credentials by name and scope, never values.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.agentCredentials.codex.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  scope?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### pi.delete
+
+`agentCredentials.pi.delete`
+
+Deletes the Pi agent credential.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.amika.api.agentCredentials.pi.delete({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Amika accepted the call; it answers with no body. |
+
+
+
+---
+
+### pi.get
+
+`agentCredentials.pi.get`
+
+Reads whether a Pi agent credential is configured.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.agentCredentials.pi.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `configured` | `boolean \| null` | No | — |
+| `secretId` | `string \| null \| null` | No | — |
+
+
+
+---
+
+### pi.set
+
+`agentCredentials.pi.set`
+
+Saves the Pi agent credential.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.agentCredentials.pi.set({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `authJson` | `string` | No | — |
+| `source` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="source full type">
+
+```ts
+{
+  agent: claude | codex,
+  secretId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `configured` | `boolean \| null` | No | — |
+| `secretId` | `string \| null \| null` | No | — |
+
+
+
+---
+
+## Agent Sessions
+
+### get
+
+`agentSessions.get`
+
+Reads one agent session: its rig, agent, status and the messages exchanged so far.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.agentSessions.get({ id: 'ses_01M82A4T5Y7XG1F0Q9W3E8R2KD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string \| null` | No | — |
+| `sandbox_id` | `string \| null` | No | — |
+| `sandbox_name` | `string \| null \| null` | No | — |
+| `agent` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `preview` | `string \| null \| null` | No | — |
+| `model` | `string \| null \| null` | No | — |
+| `effort` | `string \| null \| null` | No | — |
+| `started_at` | `string \| string \| null` | No | — |
+| `ended_at` | `string \| string \| any \| null \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+| `messages` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role?: string | null,
+  content?: string | null,
+  timestamp?: string | null,
+  is_error?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`agentSessions.list`
+
+Lists the organization's agent-session chats, newest first, with each one's rig, agent, model and a preview.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.agentSessions.list({ limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sessions` | `object[] \| null` | No | — |
+| `total` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sessions full type">
+
+```ts
+{
+  session_id?: string | null,
+  sandbox_id?: string | null,
+  sandbox_name?: string | null | null,
+  agent?: string | null,
+  status?: string | null,
+  preview?: string | null | null,
+  model?: string | null | null,
+  effort?: string | null | null,
+  started_at?: string | string | null,
+  ended_at?: string | string | any | null | null,
+  created_at?: string | string | null,
+  updated_at?: string | string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`agentSessions.send`
+
+Sends one message to a coding agent (Claude Code or Codex) in a rig and waits for its reply. Without sandbox_id/sandbox_name/sandbox_ref it creates a new rig from repo_url; pass session_id to continue a chat. A failed turn still answers 200 with is_error: true and the agent CLI's own message. Runs on the rig's stored agent credential and can take minutes.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.amika.api.agentSessions.send({
+	message: 'Run the test suite and fix any failing test, then open a pull request.',
+	agent: 'claude',
+	model: 'opus',
+	repo_url: 'https://github.com/acme/web-app',
+	new_branch_name: 'fix/failing-tests',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | Yes | — |
+| `agent` | `claude \| codex` | No | — |
+| `session_id` | `string` | No | — |
+| `sandbox_id` | `string` | No | Route into the sandbox with this id instead of a fresh one. Matches by id only; send `sandbox_name` or `sandbox_ref` to name the sandbox. At most one of `sandbox_id`, `sandbox_name`, `sandbox_ref`. |
+| `sandbox_name` | `string` | No | Route into the sandbox with this name instead of a fresh one. At most one of `sandbox_id`, `sandbox_name`, `sandbox_ref`. |
+| `sandbox_ref` | `string` | No | Route into the sandbox with this id or name instead of a fresh one; 409 `resource_ref_ambiguous` if the value is one sandbox's id and another's name. At most one of `sandbox_id`, `sandbox_name`, `sandbox_ref`. |
+| `new_session` | `boolean` | No | — |
+| `model` | `fable \| opus \| sonnet \| haiku \| gpt-5.6-sol \| gpt-5.6-terra \| gpt-5.6-luna \| gpt-5.5 \| gpt-5.2 \| null` | No | — |
+| `effort` | `low \| medium \| high \| xhigh \| max \| null` | No | — |
+| `repo_url` | `string` | No | — |
+| `branch` | `string` | No | — |
+| `new_branch_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string \| null` | No | — |
+| `sandbox_id` | `string \| null` | No | — |
+| `agent` | `string \| null` | No | — |
+| `response` | `string \| null` | No | — |
+| `is_error` | `boolean \| null` | No | True when the turn failed. The failure is still a 200: `response` carries the agent CLI's own message (e.g. "Not logged in · Please run /login"). |
+| `is_new_session` | `boolean \| null` | No | — |
+| `created_sandbox` | `boolean \| null` | No | — |
+| `usage` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+  cost_usd?: number | null,
+  input_tokens?: number | null,
+  output_tokens?: number | null,
+  cache_read_tokens?: number | null,
+  cache_creation_tokens?: number | null,
+  duration_ms?: number | null,
+  num_turns?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Api Keys
+
+### create
+
+`apiKeys.create`
+
+Creates an Amika API key (user or organization scope). The value is returned once.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.apiKeys.create({ name: 'ci', scope: 'organization' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Human-readable name for the API key. |
+| `scope` | `organization \| user` | No | Scope of the key to create. Defaults to `organization`; pass `user` to mint a key owned by the calling user. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `scope` | `string \| null` | No | Whether the key is scoped to the caller's organization or to the individual user who owns it. |
+| `obfuscatedValue` | `string \| null` | No | — |
+| `lastUsedAt` | `string \| null \| null` | No | — |
+| `createdAt` | `string \| null` | No | — |
+| `updatedAt` | `string \| null` | No | — |
+| `value` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`apiKeys.delete`
+
+Deletes an Amika API key; anything using it stops working. scope defaults to organization: pass scope user to delete a user key.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.amika.api.apiKeys.delete({ id: 'api_key_01M8284RF56T8511SMWAY2SBME' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | WorkOS API key id. |
+| `scope` | `organization \| user` | No | Scope of the key to delete. Defaults to `organization`; pass `user` to revoke a user-scoped key. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Amika accepted the call; it answers with no body. |
+
+
+
+---
+
+### list
+
+`apiKeys.list`
+
+Lists the caller's Amika API keys (names, scopes, last use; values obfuscated).
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.apiKeys.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scope` | `organization \| user` | No | Restrict the listing to a single scope. Omit to list both organization- and user-scoped keys merged together. |
+| `after` | `string` | No | Pagination cursor returned by a previous list call. |
+| `limit` | `number` | No | Maximum number of API keys to return. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `pageInfo` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  scope?: string | null,
+  obfuscatedValue?: string | null,
+  lastUsedAt?: string | null | null,
+  createdAt?: string | null,
+  updatedAt?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  after?: string | null | null,
+  hasNextPage?: boolean | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Cloud Accounts
+
+### create
+
+`cloudAccounts.create`
+
+Connects a cloud provider account with its API key, so rigs can run there.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.cloudAccounts.create({ provider: 'instabox', name: 'prod-instabox', api_key: 'instabox-api-key' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `instabox` | Yes | — |
+| `name` | `string` | Yes | — |
+| `api_key` | `string` | Yes | The provider API key. Stored encrypted; never returned. |
+| `is_default` | `boolean` | No | Make this the provider's default account. Omitted means false. True unsets the provider's previous default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `provider` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `is_default` | `boolean \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`cloudAccounts.delete`
+
+Disconnects a cloud account and deletes its stored API key.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.amika.api.cloudAccounts.delete({ ref: 'prod-instabox' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | Cloud account id (`cacc_…`) or name. `by` sets how to read it. |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to read `{ref}`: `id`, `name`, or `ref` (id or name; the default). `ref` returns 409 `resource_ref_ambiguous` if the value matches more than one account. `name_or_id` is an alias for `ref`. |
+| `provider` | `instabox` | No | Only match an account on this provider. A name is unique per provider, so this picks one when the org uses the name on several. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Amika accepted the call; it answers with no body. |
+
+
+
+---
+
+### get
+
+`cloudAccounts.get`
+
+Reads one connected cloud account by id or name.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.cloudAccounts.get({ ref: 'prod-instabox' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | Cloud account id (`cacc_…`) or name. `by` sets how to read it. |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to read `{ref}`: `id`, `name`, or `ref` (id or name; the default). `ref` returns 409 `resource_ref_ambiguous` if the value matches more than one account. `name_or_id` is an alias for `ref`. |
+| `provider` | `instabox` | No | Only match an account on this provider. A name is unique per provider, so this picks one when the org uses the name on several. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `provider` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `is_default` | `boolean \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`cloudAccounts.list`
+
+Lists the organization's connected cloud provider accounts that rigs can run in.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.cloudAccounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `instabox` | No | Only accounts on this provider. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  provider?: string | null,
+  name?: string | null,
+  is_default?: boolean | null,
+  created_at?: string | string | null,
+  updated_at?: string | string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSizes
+
+`cloudAccounts.listSizes`
+
+Lists the rig sizes a cloud account offers.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.cloudAccounts.listSizes({ ref: 'prod-instabox' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | Cloud account id (`cacc_…`) or name. `by` sets how to read it. |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to read `{ref}`: `id`, `name`, or `ref` (id or name; the default). `ref` returns 409 `resource_ref_ambiguous` if the value matches more than one account. `name_or_id` is an alias for `ref`. |
+| `provider` | `instabox` | No | Only match an account on this provider. A name is unique per provider, so this picks one when the org uses the name on several. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sizes` | `string[] \| null` | No | The sizes a rig in this account may take, smallest first: those whose vCPUs and memory match a size the provider reports for the account's key. |
+| `from_provider` | `boolean \| null` | No | False when the provider could not be asked: `sizes` is then Amika's table, and the provider refuses a size the account's plan lacks. |
+
+
+
+---
+
+### update
+
+`cloudAccounts.update`
+
+Updates a connected cloud account: its name or API key.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.cloudAccounts.update({ ref: 'prod-instabox', name: 'instabox-prod' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | Cloud account id (`cacc_…`) or name. `by` sets how to read it. |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to read `{ref}`: `id`, `name`, or `ref` (id or name; the default). `ref` returns 409 `resource_ref_ambiguous` if the value matches more than one account. `name_or_id` is an alias for `ref`. |
+| `provider` | `instabox` | No | Only match an account on this provider. A name is unique per provider, so this picks one when the org uses the name on several. |
+| `name` | `string` | No | — |
+| `api_key` | `string` | No | Replace the stored provider API key. |
+| `is_default` | `boolean` | No | True makes this the provider's default account and unsets the previous one. False unsets it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `provider` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `is_default` | `boolean \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+
+
+---
+
+## Command Runs
+
+### cancel
+
+`commandRuns.cancel`
+
+Requests cancellation of a queued or running command run.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.commandRuns.cancel({ id: 'cr_01M82B7K2N4P6Q8R0S2T4V6X8Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Command run id (`cr_…`). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Command run id (`cr_…`). |
+| `rig_id` | `string \| null \| null` | No | Rig the run runs on. Null after the rig is deleted. |
+| `rig_name` | `string \| null \| null` | No | Name of the rig. Null after the rig is deleted. |
+| `session` | `string \| null` | No | Session (FIFO lane) of the run on the rig. |
+| `source` | `object \| null` | No | — |
+| `status` | `string \| null` | No | `queued`: waiting for its session, the rig, or the workspace. `in_progress`: the command started. `completed`: finished; see `conclusion`. |
+| `controller_phase` | `string \| null` | No | Detailed step of the run, for progress displays. Use `status` for logic. |
+| `conclusion` | `string \| null \| null` | No | Result of a `completed` run. Null before completion. `success`: exit code 0. `failure`: non-zero exit code. `cancelled`: cancelled by request. `timed_out`: the command exceeded `timeout_ms`. `queue_timed_out`: the command did not start within `queue_timeout_ms`. `error`: Amika could not run the command. |
+| `exit_code` | `number \| null \| null` | No | Exit code of the command. Null if the command did not exit. |
+| `workspace` | `object \| null` | No | Where the command runs. `rig`: the rig's own files. `git_checkout`: a fresh checkout of `repository_url` at `revision`, made for GitHub Actions runs. |
+| `command` | `string \| null` | No | Shell command. |
+| `cwd` | `string \| null \| null` | No | Working directory as requested. Null: the agent directory (`AMIKA_AGENT_CWD`). |
+| `timeout_ms` | `number \| null` | No | Maximum run time of the command, in ms. |
+| `queue_timeout_ms` | `number \| null \| null` | No | Maximum wait before the command starts, in ms. Null: no limit. |
+| `rig_status_on_finish` | `string \| null \| null` | No | Status to give the rig when its last incomplete run finishes. If more than one run sets it, the run that started last decides. Omit to restore the rig's status from before the runs. |
+| `cancel_requested_at` | `string \| string \| any \| null \| null` | No | When a cancel was requested. |
+| `started_at` | `string \| string \| any \| null \| null` | No | When the run left the queue. |
+| `completed_at` | `string \| string \| any \| null \| null` | No | When the run completed. |
+| `created_at` | `string \| string \| null` | No | When the run was created. |
+| `updated_at` | `string \| string \| null` | No | When the run last changed. |
+
+<AccordionGroup>
+<Accordion title="source full type">
+
+```ts
+{
+  kind?: string | null
+} | {
+  kind?: string | null,
+  repository?: {
+    id?: string | null,
+    owner?: string | null,
+    name?: string | null,
+    url?: string | null
+  } | null,
+  source_sha?: string | null,
+  git_ref?: string | null,
+  head_branch?: string | null,
+  pull_request_number?: number | null | null,
+  workflow_ref?: string | null,
+  workflow_run_id?: string | null,
+  workflow_run_attempt?: number | null,
+  workflow_job_key?: string | null
+} | {
+  kind?: string | null,
+  repository?: {
+    id?: string | null,
+    owner?: string | null,
+    name?: string | null,
+    url?: string | null
+  } | null,
+  installation_id?: string | null,
+  runner_name?: string | null,
+  label_set?: string[] | null,
+  requested_for_job_id?: string | null
+} | {
+  kind?: string | null,
+  job_id?: string | null,
+  job_run_id?: string | null,
+  step?: number | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="workspace full type">
+
+```ts
+{
+  kind?: string | null,
+  repository_url?: string | null,
+  revision?: string | null
+} | {
+  kind?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`commandRuns.create`
+
+Queues one shell command on a rig (run with bash -e -o pipefail) and answers at once. Name an existing rig (rig_id, rig_name or rig_ref) or create one with rig_create; a stopped rig is started. Poll commandRuns.get for status and commandRuns.listEvents for output. An idempotencyKey is made for you when you leave it out.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.amika.api.commandRuns.create({ rig_ref: 'dev-rig', command: 'pnpm install && pnpm test', timeout_ms: 600000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idempotencyKey` | `string` | No | Idempotency-Key header: a retry with the same key and body returns the run or job this key already made. Leave it out and the plugin sends a new random key. |
+| `rig_id` | `string` | No | Existing rig to run on, by id. |
+| `rig_name` | `string` | No | Existing rig to run on, by name. |
+| `rig_ref` | `string` | No | Existing rig to run on, by id or name. Returns 409 `resource_ref_ambiguous` if the value matches one rig's id and another rig's name. |
+| `rig_create` | `object` | No | Create a new rig with this `POST /rigs` body, then run on it. Returns 409 `sandbox_name_conflict` if the name is in use. |
+| `session` | `string` | No | FIFO lane on the rig. Runs in one session start in creation order, one at a time. Runs in different sessions run in parallel. Default `default`. |
+| `command` | `string` | Yes | Shell command. Amika runs it with `bash -e -o pipefail`. |
+| `timeout_ms` | `number` | Yes | Maximum run time of the command, in milliseconds. The clock starts when the command process starts. At the limit, the conclusion is `timed_out`. |
+| `queue_timeout_ms` | `number` | No | Maximum wait from creation until the command process starts, in milliseconds. The wait includes the session queue, rig start, and workspace setup. At the limit, the conclusion is `queue_timed_out`. Omit for no limit. |
+| `rig_status_on_finish` | `active \| stopped \| deleted` | No | Status to give the rig when its last incomplete run finishes. If more than one run sets it, the run that started last decides. Omit to restore the rig's status from before the runs. |
+| `cwd` | `string` | No | Working directory of the command. Absolute, or relative to the agent directory (`AMIKA_AGENT_CWD`). Default: the agent directory. |
+
+<AccordionGroup>
+<Accordion title="rig_create full type">
+
+```ts
+{
+  name: string,
+  repo_url?: string,
+  git_url?: string,
+  github_url?: string,
+  branch?: string,
+  new_branch_name?: string,
+  provider?: daytona | e2b | freestyle | vercel | instabox | smol | lume | amika-hostd | simulate,
+  host_id?: string,
+  cloud_account_id?: string,
+  cloud_account_name?: string,
+  cloud_account_ref?: string,
+  runtime?: string,
+  resources?: {
+    vcpus: number,
+    memoryGib: number,
+    diskGib: number
+  },
+  auto_stop_interval?: number,
+  auto_delete_interval?: number,
+  amika_opencode_web?: string | number | any | null,
+  env_vars?: Record<string, string>,
+  secret_env_vars?: Record<string, string>,
+  disabled_repo_env_var_names?: string[],
+  setup_script_text?: string,
+  skip_setup_script?: boolean,
+  agent_credentials?: {
+    kind: claude | codex,
+    name?: string,
+    type?: oauth | api_key,
+    none?: true
+  }[],
+  preset?: coder | coder-plus-docker | macos-coder,
+  size?: string,
+  snapshot?: string | null,
+  integration_ids?: string[],
+  agent?: claude | codex,
+  github_auth_mode?: pat | app_token,
+  amika_api_key?: {
+    mode: new,
+    scope: org | user
+  } | {
+    mode: none
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Command run id (`cr_…`). |
+| `rig_id` | `string \| null \| null` | No | Rig the run runs on. Null after the rig is deleted. |
+| `rig_name` | `string \| null \| null` | No | Name of the rig. Null after the rig is deleted. |
+| `session` | `string \| null` | No | Session (FIFO lane) of the run on the rig. |
+| `source` | `object \| null` | No | — |
+| `status` | `string \| null` | No | `queued`: waiting for its session, the rig, or the workspace. `in_progress`: the command started. `completed`: finished; see `conclusion`. |
+| `controller_phase` | `string \| null` | No | Detailed step of the run, for progress displays. Use `status` for logic. |
+| `conclusion` | `string \| null \| null` | No | Result of a `completed` run. Null before completion. `success`: exit code 0. `failure`: non-zero exit code. `cancelled`: cancelled by request. `timed_out`: the command exceeded `timeout_ms`. `queue_timed_out`: the command did not start within `queue_timeout_ms`. `error`: Amika could not run the command. |
+| `exit_code` | `number \| null \| null` | No | Exit code of the command. Null if the command did not exit. |
+| `workspace` | `object \| null` | No | Where the command runs. `rig`: the rig's own files. `git_checkout`: a fresh checkout of `repository_url` at `revision`, made for GitHub Actions runs. |
+| `command` | `string \| null` | No | Shell command. |
+| `cwd` | `string \| null \| null` | No | Working directory as requested. Null: the agent directory (`AMIKA_AGENT_CWD`). |
+| `timeout_ms` | `number \| null` | No | Maximum run time of the command, in ms. |
+| `queue_timeout_ms` | `number \| null \| null` | No | Maximum wait before the command starts, in ms. Null: no limit. |
+| `rig_status_on_finish` | `string \| null \| null` | No | Status to give the rig when its last incomplete run finishes. If more than one run sets it, the run that started last decides. Omit to restore the rig's status from before the runs. |
+| `cancel_requested_at` | `string \| string \| any \| null \| null` | No | When a cancel was requested. |
+| `started_at` | `string \| string \| any \| null \| null` | No | When the run left the queue. |
+| `completed_at` | `string \| string \| any \| null \| null` | No | When the run completed. |
+| `created_at` | `string \| string \| null` | No | When the run was created. |
+| `updated_at` | `string \| string \| null` | No | When the run last changed. |
+
+<AccordionGroup>
+<Accordion title="source full type">
+
+```ts
+{
+  kind?: string | null
+} | {
+  kind?: string | null,
+  repository?: {
+    id?: string | null,
+    owner?: string | null,
+    name?: string | null,
+    url?: string | null
+  } | null,
+  source_sha?: string | null,
+  git_ref?: string | null,
+  head_branch?: string | null,
+  pull_request_number?: number | null | null,
+  workflow_ref?: string | null,
+  workflow_run_id?: string | null,
+  workflow_run_attempt?: number | null,
+  workflow_job_key?: string | null
+} | {
+  kind?: string | null,
+  repository?: {
+    id?: string | null,
+    owner?: string | null,
+    name?: string | null,
+    url?: string | null
+  } | null,
+  installation_id?: string | null,
+  runner_name?: string | null,
+  label_set?: string[] | null,
+  requested_for_job_id?: string | null
+} | {
+  kind?: string | null,
+  job_id?: string | null,
+  job_run_id?: string | null,
+  step?: number | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="workspace full type">
+
+```ts
+{
+  kind?: string | null,
+  repository_url?: string | null,
+  revision?: string | null
+} | {
+  kind?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`commandRuns.get`
+
+Reads one command run: status (queued, in_progress, completed), conclusion (success, failure, timed_out...), exit code, timing and its rig.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.commandRuns.get({ id: 'cr_01M82B7K2N4P6Q8R0S2T4V6X8Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Command run id (`cr_…`). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Command run id (`cr_…`). |
+| `rig_id` | `string \| null \| null` | No | Rig the run runs on. Null after the rig is deleted. |
+| `rig_name` | `string \| null \| null` | No | Name of the rig. Null after the rig is deleted. |
+| `session` | `string \| null` | No | Session (FIFO lane) of the run on the rig. |
+| `source` | `object \| null` | No | — |
+| `status` | `string \| null` | No | `queued`: waiting for its session, the rig, or the workspace. `in_progress`: the command started. `completed`: finished; see `conclusion`. |
+| `controller_phase` | `string \| null` | No | Detailed step of the run, for progress displays. Use `status` for logic. |
+| `conclusion` | `string \| null \| null` | No | Result of a `completed` run. Null before completion. `success`: exit code 0. `failure`: non-zero exit code. `cancelled`: cancelled by request. `timed_out`: the command exceeded `timeout_ms`. `queue_timed_out`: the command did not start within `queue_timeout_ms`. `error`: Amika could not run the command. |
+| `exit_code` | `number \| null \| null` | No | Exit code of the command. Null if the command did not exit. |
+| `workspace` | `object \| null` | No | Where the command runs. `rig`: the rig's own files. `git_checkout`: a fresh checkout of `repository_url` at `revision`, made for GitHub Actions runs. |
+| `command` | `string \| null` | No | Shell command. |
+| `cwd` | `string \| null \| null` | No | Working directory as requested. Null: the agent directory (`AMIKA_AGENT_CWD`). |
+| `timeout_ms` | `number \| null` | No | Maximum run time of the command, in ms. |
+| `queue_timeout_ms` | `number \| null \| null` | No | Maximum wait before the command starts, in ms. Null: no limit. |
+| `rig_status_on_finish` | `string \| null \| null` | No | Status to give the rig when its last incomplete run finishes. If more than one run sets it, the run that started last decides. Omit to restore the rig's status from before the runs. |
+| `cancel_requested_at` | `string \| string \| any \| null \| null` | No | When a cancel was requested. |
+| `started_at` | `string \| string \| any \| null \| null` | No | When the run left the queue. |
+| `completed_at` | `string \| string \| any \| null \| null` | No | When the run completed. |
+| `created_at` | `string \| string \| null` | No | When the run was created. |
+| `updated_at` | `string \| string \| null` | No | When the run last changed. |
+
+<AccordionGroup>
+<Accordion title="source full type">
+
+```ts
+{
+  kind?: string | null
+} | {
+  kind?: string | null,
+  repository?: {
+    id?: string | null,
+    owner?: string | null,
+    name?: string | null,
+    url?: string | null
+  } | null,
+  source_sha?: string | null,
+  git_ref?: string | null,
+  head_branch?: string | null,
+  pull_request_number?: number | null | null,
+  workflow_ref?: string | null,
+  workflow_run_id?: string | null,
+  workflow_run_attempt?: number | null,
+  workflow_job_key?: string | null
+} | {
+  kind?: string | null,
+  repository?: {
+    id?: string | null,
+    owner?: string | null,
+    name?: string | null,
+    url?: string | null
+  } | null,
+  installation_id?: string | null,
+  runner_name?: string | null,
+  label_set?: string[] | null,
+  requested_for_job_id?: string | null
+} | {
+  kind?: string | null,
+  job_id?: string | null,
+  job_run_id?: string | null,
+  step?: number | null | null
+} | null
+```
+</Accordion>
+
+<Accordion title="workspace full type">
+
+```ts
+{
+  kind?: string | null,
+  repository_url?: string | null,
+  revision?: string | null
+} | {
+  kind?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`commandRuns.list`
+
+Lists command runs (queued shell commands on rigs), filtered by rig, status or session.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.commandRuns.list({ rig: 'dev-rig' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rig` | `string` | No | Only runs on this rig. `rig_by` sets how to read the value. |
+| `rig_by` | `name \| id \| ref \| name_or_id` | No | How to read `rig`: `id`, `name`, or `ref` (id or name; the default). `name_or_id` is an alias for `ref`. |
+| `session` | `string` | No | Only runs in this session. |
+| `status` | `queued \| in_progress \| completed` | No | Only runs with this status. |
+| `source_kind` | `api \| github_actions \| github_actions_runner \| job` | No | Only runs with this source kind. |
+| `source_id` | `string` | No | Only runs with this canonical source id. Requires `source_kind`. For `job`, the id is the job id. |
+| `limit` | `number` | No | Maximum number of runs to return. 1 to 100, default 20. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[] \| null` | No | Command runs, newest first. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  rig_id?: string | null | null,
+  rig_name?: string | null | null,
+  session?: string | null,
+  source?: {
+    kind?: string | null
+  } | {
+    kind?: string | null,
+    repository?: {
+      id?: string | null,
+      owner?: string | null,
+      name?: string | null,
+      url?: string | null
+    } | null,
+    source_sha?: string | null,
+    git_ref?: string | null,
+    head_branch?: string | null,
+    pull_request_number?: number | null | null,
+    workflow_ref?: string | null,
+    workflow_run_id?: string | null,
+    workflow_run_attempt?: number | null,
+    workflow_job_key?: string | null
+  } | {
+    kind?: string | null,
+    repository?: {
+      id?: string | null,
+      owner?: string | null,
+      name?: string | null,
+      url?: string | null
+    } | null,
+    installation_id?: string | null,
+    runner_name?: string | null,
+    label_set?: string[] | null,
+    requested_for_job_id?: string | null
+  } | {
+    kind?: string | null,
+    job_id?: string | null,
+    job_run_id?: string | null,
+    step?: number | null | null
+  } | null,
+  status?: string | null,
+  controller_phase?: string | null,
+  conclusion?: string | null | null,
+  exit_code?: number | null | null,
+  workspace?: {
+    kind?: string | null,
+    repository_url?: string | null,
+    revision?: string | null
+  } | {
+    kind?: string | null
+  } | null,
+  command?: string | null,
+  cwd?: string | null | null,
+  timeout_ms?: number | null,
+  queue_timeout_ms?: number | null | null,
+  rig_status_on_finish?: string | null | null,
+  cancel_requested_at?: string | string | any | null | null,
+  started_at?: string | string | any | null | null,
+  completed_at?: string | string | any | null | null,
+  created_at?: string | string | null,
+  updated_at?: string | string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEvents
+
+`commandRuns.listEvents`
+
+Reads the output events of a command run after a sequence number: pass the next_sequence of the previous answer as after to read on from there.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.commandRuns.listEvents({ id: 'cr_01M82B7K2N4P6Q8R0S2T4V6X8Z', after: 0, limit: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Command run id (`cr_…`). |
+| `after` | `number \| null` | No | Return events with a sequence number greater than this value. Send the `next_sequence` of the previous response. Default 0. |
+| `limit` | `number` | No | Maximum number of events to return. 1 to 200, default 100. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[] \| null` | No | Events in sequence order. |
+| `next_sequence` | `number \| null` | No | Send as `after` in the next request. Equals `after` when there are no new events. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  sequence?: number | null,
+  stream?: string | null,
+  content?: string | null,
+  byte_length?: number | null,
+  created_at?: string | string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Git User Settings
+
+### get
+
+`gitUserSettings.get`
+
+Reads the caller's git author name and email, which rigs use for commits.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.gitUserSettings.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  configured?: boolean | null,
+  name?: string | null,
+  email?: string | null,
+  suggestion?: {
+    name?: string | null,
+    email?: string | null
+  } | null
+} | {
+  configured?: boolean | null,
+  suggestion?: {
+    name?: string | null,
+    email?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### set
+
+`gitUserSettings.set`
+
+Sets the caller's git author name and email for commits made in rigs.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.gitUserSettings.set({ name: 'Ada Lovelace', email: 'ada@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `org_id` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+## Hosts
+
+### checkHealth
+
+`hosts.checkHealth`
+
+Checks whether a host's daemon is answering.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.hosts.checkHealth({ id: 'host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `message` | `string \| null \| null` | No | — |
+
+
+
+---
+
+### create
+
+`hosts.create`
+
+Registers a host for bring-your-own-compute. amika-hostd setup normally does this.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.hosts.create({ hostname: 'studio-mac', secret: 'replace-with-output-of-openssl-rand-hex-24' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hostname` | `string` | Yes | — |
+| `url` | `string \| null` | No | — |
+| `secret` | `string` | Yes | — |
+| `sizes` | `object` | No | — |
+| `capabilities` | `object \| null` | No | — |
+| `transport_mode` | `listen \| tunnel` | No | — |
+
+<AccordionGroup>
+<Accordion title="sizes full type">
+
+```ts
+Record<string, {
+  vcpus: number,
+  memoryGib: number,
+  diskGib: number,
+  diskGrowOnly: boolean
+}>
+```
+</Accordion>
+
+<Accordion title="capabilities full type">
+
+```ts
+{
+  runtimes: Record<string, {
+    kind: vm | container | host,
+    os: linux | macos,
+    arch?: string,
+    max_running?: number,
+    snapshots: boolean,
+    sizes: Record<string, {
+      vcpus: number,
+      memory_gib: number,
+      disk_gib: number,
+      disk_grow_only?: boolean
+    }>,
+    resources?: {
+      vcpus: number,
+      memory_gib: number,
+      disk_gib: number
+    },
+    ssh_user?: string
+  }>,
+  presets: Record<string, {
+    os: linux | macos,
+    default_runtime: string,
+    runtimes: string[]
+  }>
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `hostname` | `string \| null` | No | — |
+| `url` | `string \| null \| null` | No | — |
+| `org_id` | `string \| null` | No | — |
+| `sizes` | `object \| null` | No | — |
+| `capabilities` | `object \| null` | No | — |
+| `transport_mode` | `string \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sizes full type">
+
+```ts
+Record<string, {
+  vcpus?: number | null,
+  memoryGib?: number | null,
+  diskGib?: number | null,
+  diskGrowOnly?: boolean | null
+}> | null
+```
+</Accordion>
+
+<Accordion title="capabilities full type">
+
+```ts
+{
+  runtimes?: Record<string, {
+    kind?: string | null,
+    os?: string | null,
+    arch?: string | null,
+    max_running?: number | null,
+    snapshots?: boolean | null,
+    sizes?: Record<string, {
+      vcpus?: number | null,
+      memory_gib?: number | null,
+      disk_gib?: number | null,
+      disk_grow_only?: boolean | null
+    }> | null,
+    resources?: {
+      vcpus?: number | null,
+      memory_gib?: number | null,
+      disk_gib?: number | null
+    } | null,
+    ssh_user?: string | null
+  }> | null,
+  presets?: Record<string, {
+    os?: string | null,
+    default_runtime?: string | null,
+    runtimes?: string[] | null
+  }> | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`hosts.delete`
+
+Deletes a host and its stored secret; rigs can no longer be created on it.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.amika.api.hosts.delete({ id: 'host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Amika accepted the call; it answers with no body. |
+
+
+
+---
+
+### enrol
+
+`hosts.enrol`
+
+Enrols a tunnel host with its gateway.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.hosts.enrol({ id: 'host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credential` | `string \| null` | No | The host's secret, whole and opaque. Sent as `x-amika-host-token` when the host dials the gateway. |
+| `generation` | `number \| null` | No | How many times this host's credential has been replaced. The gateway fences a stale connection with it, so a daemon that reconnects sends the generation it enrolled with. |
+| `gateway_url` | `string \| null` | No | The WebSocket address to dial, path included. |
+| `transport_mode` | `string \| null` | No | Always `tunnel`. A `listen` host is refused: it binds a port and is reached at its registered URL. |
+
+
+
+---
+
+### get
+
+`hosts.get`
+
+Reads one of your own hosts: its hostname, runtimes, sizes and status.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.hosts.get({ id: 'host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `hostname` | `string \| null` | No | — |
+| `url` | `string \| null \| null` | No | — |
+| `org_id` | `string \| null` | No | — |
+| `sizes` | `object \| null` | No | — |
+| `capabilities` | `object \| null` | No | — |
+| `transport_mode` | `string \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sizes full type">
+
+```ts
+Record<string, {
+  vcpus?: number | null,
+  memoryGib?: number | null,
+  diskGib?: number | null,
+  diskGrowOnly?: boolean | null
+}> | null
+```
+</Accordion>
+
+<Accordion title="capabilities full type">
+
+```ts
+{
+  runtimes?: Record<string, {
+    kind?: string | null,
+    os?: string | null,
+    arch?: string | null,
+    max_running?: number | null,
+    snapshots?: boolean | null,
+    sizes?: Record<string, {
+      vcpus?: number | null,
+      memory_gib?: number | null,
+      disk_gib?: number | null,
+      disk_grow_only?: boolean | null
+    }> | null,
+    resources?: {
+      vcpus?: number | null,
+      memory_gib?: number | null,
+      disk_gib?: number | null
+    } | null,
+    ssh_user?: string | null
+  }> | null,
+  presets?: Record<string, {
+    os?: string | null,
+    default_runtime?: string | null,
+    runtimes?: string[] | null
+  }> | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`hosts.list`
+
+Lists the organization's own hosts (machines running amika-hostd) and their runtimes and sizes.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.hosts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  hostname?: string | null,
+  url?: string | null | null,
+  org_id?: string | null,
+  sizes?: Record<string, {
+    vcpus?: number | null,
+    memoryGib?: number | null,
+    diskGib?: number | null,
+    diskGrowOnly?: boolean | null
+  }> | null,
+  capabilities?: {
+    runtimes?: Record<string, {
+      kind?: string | null,
+      os?: string | null,
+      arch?: string | null,
+      max_running?: number | null,
+      snapshots?: boolean | null,
+      sizes?: Record<string, {
+        vcpus?: number | null,
+        memory_gib?: number | null,
+        disk_gib?: number | null,
+        disk_grow_only?: boolean | null
+      }> | null,
+      resources?: {
+        vcpus?: number | null,
+        memory_gib?: number | null,
+        disk_gib?: number | null
+      } | null,
+      ssh_user?: string | null
+    }> | null,
+    presets?: Record<string, {
+      os?: string | null,
+      default_runtime?: string | null,
+      runtimes?: string[] | null
+    }> | null
+  } | null | null,
+  transport_mode?: string | null,
+  created_at?: string | string | null,
+  updated_at?: string | string | null,
+  rig?: {
+    id?: string | null,
+    name?: string | null
+  } | null | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### replace
+
+`hosts.replace`
+
+Replaces a host's registration: hostname, URL and settings.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.hosts.replace({ id: 'host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d', hostname: 'studio-mac' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `hostname` | `string` | Yes | — |
+| `url` | `string \| null` | No | — |
+| `secret` | `string` | No | — |
+| `sizes` | `object` | No | — |
+| `capabilities` | `object \| null` | No | — |
+| `transport_mode` | `listen \| tunnel` | No | — |
+
+<AccordionGroup>
+<Accordion title="sizes full type">
+
+```ts
+Record<string, {
+  vcpus: number,
+  memoryGib: number,
+  diskGib: number,
+  diskGrowOnly: boolean
+}>
+```
+</Accordion>
+
+<Accordion title="capabilities full type">
+
+```ts
+{
+  runtimes: Record<string, {
+    kind: vm | container | host,
+    os: linux | macos,
+    arch?: string,
+    max_running?: number,
+    snapshots: boolean,
+    sizes: Record<string, {
+      vcpus: number,
+      memory_gib: number,
+      disk_gib: number,
+      disk_grow_only?: boolean
+    }>,
+    resources?: {
+      vcpus: number,
+      memory_gib: number,
+      disk_gib: number
+    },
+    ssh_user?: string
+  }>,
+  presets: Record<string, {
+    os: linux | macos,
+    default_runtime: string,
+    runtimes: string[]
+  }>
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `hostname` | `string \| null` | No | — |
+| `url` | `string \| null \| null` | No | — |
+| `org_id` | `string \| null` | No | — |
+| `sizes` | `object \| null` | No | — |
+| `capabilities` | `object \| null` | No | — |
+| `transport_mode` | `string \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sizes full type">
+
+```ts
+Record<string, {
+  vcpus?: number | null,
+  memoryGib?: number | null,
+  diskGib?: number | null,
+  diskGrowOnly?: boolean | null
+}> | null
+```
+</Accordion>
+
+<Accordion title="capabilities full type">
+
+```ts
+{
+  runtimes?: Record<string, {
+    kind?: string | null,
+    os?: string | null,
+    arch?: string | null,
+    max_running?: number | null,
+    snapshots?: boolean | null,
+    sizes?: Record<string, {
+      vcpus?: number | null,
+      memory_gib?: number | null,
+      disk_gib?: number | null,
+      disk_grow_only?: boolean | null
+    }> | null,
+    resources?: {
+      vcpus?: number | null,
+      memory_gib?: number | null,
+      disk_gib?: number | null
+    } | null,
+    ssh_user?: string | null
+  }> | null,
+  presets?: Record<string, {
+    os?: string | null,
+    default_runtime?: string | null,
+    runtimes?: string[] | null
+  }> | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Integrations
+
+### disconnect
+
+`integrations.disconnect`
+
+Disconnects an integration provider for the caller and deletes its stored token.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.amika.api.integrations.disconnect({ provider: 'sentry' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Amika accepted the call; it answers with no body. |
+
+
+
+---
+
+### list
+
+`integrations.list`
+
+Lists the caller's connected integrations (GitHub, Sentry, Linear, Pylon).
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.integrations.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  provider?: string | null,
+  connected?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Job Runs
+
+### cancel
+
+`jobRuns.cancel`
+
+Cancels a pending or running job run.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.jobRuns.cancel({ id: 'jr_01M82D2E4G6J8L0N2Q4S6U8W0Y' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Job run id (`jr_…`). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Job run id (`jr_…`). |
+| `job_id` | `string \| null` | No | Job of this job run. |
+| `trigger_kind` | `string \| null` | No | `cron`: the job's schedule. `manual`: `POST /job-runs`. |
+| `scheduled_at` | `string \| string \| null` | No | Time the schedule fired, or the request time for `manual`. Compare with `created_at` to see the delay. |
+| `status` | `string \| null` | No | `pending`: recorded; no step started. `running`: a step's run, or the finish run, did not complete. `succeeded`: every step concluded `success`. `failed`: a step did not succeed, or Amika could not create its run; later steps did not start. `skipped`: `overlap_policy` dropped it. `cancelled`: `POST /job-runs/{id}/cancel` stopped it; later steps did not start. |
+| `current_step` | `number \| null` | No | Index of the step in progress, or of the step that ended the job run. |
+| `step_count` | `number \| null` | No | Number of steps. |
+| `steps` | `object[] \| null` | No | The job's steps when the job run was recorded. Later changes to the job do not change them. |
+| `command_run_ids` | `string[] \| null` | No | One command run per started step, in step order. Read each with `GET /command-runs/{id}`. |
+| `finish_command_run_id` | `string \| null \| null` | No | Command run that applied the job's `rig_status_on_finish` when no step run could. Null when not necessary. |
+| `error` | `string \| null \| null` | No | Why the job run failed, was skipped, or was cancelled. A `running` job run with an `error` waits for its finish run. |
+| `cancel_requested_at` | `string \| string \| any \| null \| null` | No | When `POST /job-runs/{id}/cancel` was called. A `running` job run with this set starts no more steps, and becomes `cancelled` once its current step and any finish run complete. |
+| `rig_id` | `string \| null \| null` | No | Rig of step 0's run. Null before step 0 has a run, and after the rig is deleted. |
+| `rig_name` | `string \| null \| null` | No | Name of the rig. Null when `rig_id` is null. |
+| `created_at` | `string \| string \| null` | No | When the job run was recorded. |
+| `updated_at` | `string \| string \| null` | No | When the job run last changed. |
+| `completed_at` | `string \| string \| any \| null \| null` | No | When the job run became `succeeded`, `failed`, `skipped`, or `cancelled`. |
+
+<AccordionGroup>
+<Accordion title="steps full type">
+
+```ts
+{
+  rig_id?: string | null,
+  rig_name?: string | null,
+  rig_ref?: string | null,
+  rig_create?: {
+    name?: string | null,
+    repo_url?: string | null,
+    git_url?: string | null,
+    github_url?: string | null,
+    branch?: string | null,
+    new_branch_name?: string | null,
+    provider?: string | null,
+    host_id?: string | null,
+    cloud_account_id?: string | null,
+    cloud_account_name?: string | null,
+    cloud_account_ref?: string | null,
+    runtime?: string | null,
+    resources?: {
+      vcpus?: number | null,
+      memoryGib?: number | null,
+      diskGib?: number | null
+    } | null,
+    auto_stop_interval?: number | null,
+    auto_delete_interval?: number | null,
+    amika_opencode_web?: string | number | any | null | null,
+    env_vars?: Record<string, string> | null,
+    secret_env_vars?: Record<string, string> | null,
+    disabled_repo_env_var_names?: string[] | null,
+    setup_script_text?: string | null,
+    skip_setup_script?: boolean | null,
+    agent_credentials?: {
+      kind?: string | null,
+      name?: string | null,
+      type?: string | null,
+      none?: boolean | null
+    }[] | null,
+    preset?: string | null,
+    size?: string | null,
+    snapshot?: string | null | null,
+    integration_ids?: string[] | null,
+    agent?: string | null,
+    github_auth_mode?: string | null,
+    amika_api_key?: {
+      mode?: string | null,
+      scope?: string | null
+    } | {
+      mode?: string | null
+    } | null
+  } | null,
+  session?: string | null,
+  command?: string | null,
+  timeout_ms?: number | null,
+  queue_timeout_ms?: number | null,
+  cwd?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`jobRuns.get`
+
+Reads one job run: status, timing and the command run of each step.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.jobRuns.get({ id: 'jr_01M82D2E4G6J8L0N2Q4S6U8W0Y' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | Job run id (`jr_…`). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Job run id (`jr_…`). |
+| `job_id` | `string \| null` | No | Job of this job run. |
+| `trigger_kind` | `string \| null` | No | `cron`: the job's schedule. `manual`: `POST /job-runs`. |
+| `scheduled_at` | `string \| string \| null` | No | Time the schedule fired, or the request time for `manual`. Compare with `created_at` to see the delay. |
+| `status` | `string \| null` | No | `pending`: recorded; no step started. `running`: a step's run, or the finish run, did not complete. `succeeded`: every step concluded `success`. `failed`: a step did not succeed, or Amika could not create its run; later steps did not start. `skipped`: `overlap_policy` dropped it. `cancelled`: `POST /job-runs/{id}/cancel` stopped it; later steps did not start. |
+| `current_step` | `number \| null` | No | Index of the step in progress, or of the step that ended the job run. |
+| `step_count` | `number \| null` | No | Number of steps. |
+| `steps` | `object[] \| null` | No | The job's steps when the job run was recorded. Later changes to the job do not change them. |
+| `command_run_ids` | `string[] \| null` | No | One command run per started step, in step order. Read each with `GET /command-runs/{id}`. |
+| `finish_command_run_id` | `string \| null \| null` | No | Command run that applied the job's `rig_status_on_finish` when no step run could. Null when not necessary. |
+| `error` | `string \| null \| null` | No | Why the job run failed, was skipped, or was cancelled. A `running` job run with an `error` waits for its finish run. |
+| `cancel_requested_at` | `string \| string \| any \| null \| null` | No | When `POST /job-runs/{id}/cancel` was called. A `running` job run with this set starts no more steps, and becomes `cancelled` once its current step and any finish run complete. |
+| `rig_id` | `string \| null \| null` | No | Rig of step 0's run. Null before step 0 has a run, and after the rig is deleted. |
+| `rig_name` | `string \| null \| null` | No | Name of the rig. Null when `rig_id` is null. |
+| `created_at` | `string \| string \| null` | No | When the job run was recorded. |
+| `updated_at` | `string \| string \| null` | No | When the job run last changed. |
+| `completed_at` | `string \| string \| any \| null \| null` | No | When the job run became `succeeded`, `failed`, `skipped`, or `cancelled`. |
+
+<AccordionGroup>
+<Accordion title="steps full type">
+
+```ts
+{
+  rig_id?: string | null,
+  rig_name?: string | null,
+  rig_ref?: string | null,
+  rig_create?: {
+    name?: string | null,
+    repo_url?: string | null,
+    git_url?: string | null,
+    github_url?: string | null,
+    branch?: string | null,
+    new_branch_name?: string | null,
+    provider?: string | null,
+    host_id?: string | null,
+    cloud_account_id?: string | null,
+    cloud_account_name?: string | null,
+    cloud_account_ref?: string | null,
+    runtime?: string | null,
+    resources?: {
+      vcpus?: number | null,
+      memoryGib?: number | null,
+      diskGib?: number | null
+    } | null,
+    auto_stop_interval?: number | null,
+    auto_delete_interval?: number | null,
+    amika_opencode_web?: string | number | any | null | null,
+    env_vars?: Record<string, string> | null,
+    secret_env_vars?: Record<string, string> | null,
+    disabled_repo_env_var_names?: string[] | null,
+    setup_script_text?: string | null,
+    skip_setup_script?: boolean | null,
+    agent_credentials?: {
+      kind?: string | null,
+      name?: string | null,
+      type?: string | null,
+      none?: boolean | null
+    }[] | null,
+    preset?: string | null,
+    size?: string | null,
+    snapshot?: string | null | null,
+    integration_ids?: string[] | null,
+    agent?: string | null,
+    github_auth_mode?: string | null,
+    amika_api_key?: {
+      mode?: string | null,
+      scope?: string | null
+    } | {
+      mode?: string | null
+    } | null
+  } | null,
+  session?: string | null,
+  command?: string | null,
+  timeout_ms?: number | null,
+  queue_timeout_ms?: number | null,
+  cwd?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`jobRuns.list`
+
+Lists job runs, filtered by job, status or trigger kind.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.jobRuns.list({ job_ref: 'nightly-tests', limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job_id` | `string` | No | Only job runs of this job, by id. |
+| `job_name` | `string` | No | Only job runs of this job, by name. |
+| `job_ref` | `string` | No | Only job runs of this job, by id or name. |
+| `rig` | `string` | No | Only job runs on this rig. `rig_by` sets how to read the value. |
+| `rig_by` | `name \| id \| ref \| name_or_id` | No | How to read `rig`: `id`, `name`, or `ref` (id or name; the default). `name_or_id` is an alias for `ref`. |
+| `status` | `pending \| running \| succeeded \| failed \| skipped \| cancelled` | No | Only job runs with this status. |
+| `trigger_kind` | `cron \| manual` | No | Only job runs with this trigger kind. |
+| `limit` | `number` | No | Maximum number of job runs to return. 1 to 100, default 20. |
+| `latest_per_job` | `true \| false` | No | `true`: return only the latest matching job run of each job, sorted by job id, in pages. |
+| `cursor` | `string` | No | Send the `next_cursor` of the previous page. Requires `latest_per_job=true`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[] \| null` | No | Job runs, newest first. With `latest_per_job`, the latest of each job, sorted by job id. |
+| `next_cursor` | `string \| null \| null` | No | With `latest_per_job`: send as `cursor` to get the next page; null on the last page. Otherwise always null. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  job_id?: string | null,
+  trigger_kind?: string | null,
+  scheduled_at?: string | string | null,
+  status?: string | null,
+  current_step?: number | null,
+  step_count?: number | null,
+  steps?: {
+    rig_id?: string | null,
+    rig_name?: string | null,
+    rig_ref?: string | null,
+    rig_create?: {
+      name?: string | null,
+      repo_url?: string | null,
+      git_url?: string | null,
+      github_url?: string | null,
+      branch?: string | null,
+      new_branch_name?: string | null,
+      provider?: string | null,
+      host_id?: string | null,
+      cloud_account_id?: string | null,
+      cloud_account_name?: string | null,
+      cloud_account_ref?: string | null,
+      runtime?: string | null,
+      resources?: {
+        vcpus?: number | null,
+        memoryGib?: number | null,
+        diskGib?: number | null
+      } | null,
+      auto_stop_interval?: number | null,
+      auto_delete_interval?: number | null,
+      amika_opencode_web?: string | number | any | null | null,
+      env_vars?: Record<string, string> | null,
+      secret_env_vars?: Record<string, string> | null,
+      disabled_repo_env_var_names?: string[] | null,
+      setup_script_text?: string | null,
+      skip_setup_script?: boolean | null,
+      agent_credentials?: {
+        kind?: string | null,
+        name?: string | null,
+        type?: string | null,
+        none?: boolean | null
+      }[] | null,
+      preset?: string | null,
+      size?: string | null,
+      snapshot?: string | null | null,
+      integration_ids?: string[] | null,
+      agent?: string | null,
+      github_auth_mode?: string | null,
+      amika_api_key?: {
+        mode?: string | null,
+        scope?: string | null
+      } | {
+        mode?: string | null
+      } | null
+    } | null,
+    session?: string | null,
+    command?: string | null,
+    timeout_ms?: number | null,
+    queue_timeout_ms?: number | null,
+    cwd?: string | null
+  }[] | null,
+  command_run_ids?: string[] | null,
+  finish_command_run_id?: string | null | null,
+  error?: string | null | null,
+  cancel_requested_at?: string | string | any | null | null,
+  rig_id?: string | null | null,
+  rig_name?: string | null | null,
+  created_at?: string | string | null,
+  updated_at?: string | string | null,
+  completed_at?: string | string | any | null | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`jobRuns.start`
+
+Starts a run of a job now, outside its schedule.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.amika.api.jobRuns.start({ job_ref: 'nightly-tests' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idempotencyKey` | `string` | No | Idempotency-Key header: a retry with the same key and body returns the run or job this key already made. Leave it out and the plugin sends a new random key. |
+| `job_id` | `string` | No | Job to run, by id. |
+| `job_name` | `string` | No | Job to run, by name. |
+| `job_ref` | `string` | No | Job to run, by id or name. Returns 409 `resource_ref_ambiguous` if the value matches one job's id and another job's name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Job run id (`jr_…`). |
+| `job_id` | `string \| null` | No | Job of this job run. |
+| `trigger_kind` | `string \| null` | No | `cron`: the job's schedule. `manual`: `POST /job-runs`. |
+| `scheduled_at` | `string \| string \| null` | No | Time the schedule fired, or the request time for `manual`. Compare with `created_at` to see the delay. |
+| `status` | `string \| null` | No | `pending`: recorded; no step started. `running`: a step's run, or the finish run, did not complete. `succeeded`: every step concluded `success`. `failed`: a step did not succeed, or Amika could not create its run; later steps did not start. `skipped`: `overlap_policy` dropped it. `cancelled`: `POST /job-runs/{id}/cancel` stopped it; later steps did not start. |
+| `current_step` | `number \| null` | No | Index of the step in progress, or of the step that ended the job run. |
+| `step_count` | `number \| null` | No | Number of steps. |
+| `steps` | `object[] \| null` | No | The job's steps when the job run was recorded. Later changes to the job do not change them. |
+| `command_run_ids` | `string[] \| null` | No | One command run per started step, in step order. Read each with `GET /command-runs/{id}`. |
+| `finish_command_run_id` | `string \| null \| null` | No | Command run that applied the job's `rig_status_on_finish` when no step run could. Null when not necessary. |
+| `error` | `string \| null \| null` | No | Why the job run failed, was skipped, or was cancelled. A `running` job run with an `error` waits for its finish run. |
+| `cancel_requested_at` | `string \| string \| any \| null \| null` | No | When `POST /job-runs/{id}/cancel` was called. A `running` job run with this set starts no more steps, and becomes `cancelled` once its current step and any finish run complete. |
+| `rig_id` | `string \| null \| null` | No | Rig of step 0's run. Null before step 0 has a run, and after the rig is deleted. |
+| `rig_name` | `string \| null \| null` | No | Name of the rig. Null when `rig_id` is null. |
+| `created_at` | `string \| string \| null` | No | When the job run was recorded. |
+| `updated_at` | `string \| string \| null` | No | When the job run last changed. |
+| `completed_at` | `string \| string \| any \| null \| null` | No | When the job run became `succeeded`, `failed`, `skipped`, or `cancelled`. |
+
+<AccordionGroup>
+<Accordion title="steps full type">
+
+```ts
+{
+  rig_id?: string | null,
+  rig_name?: string | null,
+  rig_ref?: string | null,
+  rig_create?: {
+    name?: string | null,
+    repo_url?: string | null,
+    git_url?: string | null,
+    github_url?: string | null,
+    branch?: string | null,
+    new_branch_name?: string | null,
+    provider?: string | null,
+    host_id?: string | null,
+    cloud_account_id?: string | null,
+    cloud_account_name?: string | null,
+    cloud_account_ref?: string | null,
+    runtime?: string | null,
+    resources?: {
+      vcpus?: number | null,
+      memoryGib?: number | null,
+      diskGib?: number | null
+    } | null,
+    auto_stop_interval?: number | null,
+    auto_delete_interval?: number | null,
+    amika_opencode_web?: string | number | any | null | null,
+    env_vars?: Record<string, string> | null,
+    secret_env_vars?: Record<string, string> | null,
+    disabled_repo_env_var_names?: string[] | null,
+    setup_script_text?: string | null,
+    skip_setup_script?: boolean | null,
+    agent_credentials?: {
+      kind?: string | null,
+      name?: string | null,
+      type?: string | null,
+      none?: boolean | null
+    }[] | null,
+    preset?: string | null,
+    size?: string | null,
+    snapshot?: string | null | null,
+    integration_ids?: string[] | null,
+    agent?: string | null,
+    github_auth_mode?: string | null,
+    amika_api_key?: {
+      mode?: string | null,
+      scope?: string | null
+    } | {
+      mode?: string | null
+    } | null
+  } | null,
+  session?: string | null,
+  command?: string | null,
+  timeout_ms?: number | null,
+  queue_timeout_ms?: number | null,
+  cwd?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Jobs
+
+### create
+
+`jobs.create`
+
+Creates a job: a cron trigger and 1 to 20 shell steps. Each time the trigger fires, a job run runs the steps in order on one rig. Step 0 names the rig with exactly one of rig_id, rig_name, rig_ref or rig_create; later steps name none and run on step 0's rig. Set enabled false to create it paused. An idempotencyKey is made for you when you leave it out.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.amika.api.jobs.create({
+	name: 'nightly-tests',
+	description: 'Install and run the suite every night',
+	trigger: { kind: 'cron', schedule: '0 3 * * *', timezone: 'America/New_York' },
+	steps: [{ rig_ref: 'dev-rig', command: 'pnpm install --frozen-lockfile', timeout_ms: 600000 }, { command: 'pnpm test', timeout_ms: 1800000 }],
+	rig_status_on_finish: 'stopped',
+	enabled: true,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idempotencyKey` | `string` | No | Idempotency-Key header: a retry with the same key and body returns the run or job this key already made. Leave it out and the plugin sends a new random key. |
+| `name` | `string` | Yes | Unique name in the organization. |
+| `description` | `string` | No | Free text for people. |
+| `trigger` | `object` | Yes | — |
+| `steps` | `object[]` | Yes | 1 to 20 commands. A job run runs them in order, one command run each. A step starts only after the previous step succeeds. |
+| `rig_status_on_finish` | `active \| stopped \| deleted` | No | Status to give the rig when the job run ends, after success or failure. When set, the rig stays up between steps. Omit to restore the rig's status from before the job run. |
+| `overlap_policy` | `skip \| allow` | No | `skip` (default): do not start a scheduled job run while an earlier run of this job is `pending` or `running`; record it as `skipped`. `allow`: start it. |
+| `enabled` | `boolean` | No | Set `false` to create the job paused. Default `true`. |
+
+<AccordionGroup>
+<Accordion title="trigger full type">
+
+```ts
+{
+  kind: cron,
+  schedule: string,
+  timezone?: string
+}
+```
+</Accordion>
+
+<Accordion title="steps full type">
+
+```ts
+{
+  rig_id?: string,
+  rig_name?: string,
+  rig_ref?: string,
+  rig_create?: {
+    name: string,
+    repo_url?: string,
+    git_url?: string,
+    github_url?: string,
+    branch?: string,
+    new_branch_name?: string,
+    provider?: daytona | e2b | freestyle | vercel | instabox | smol | lume | amika-hostd | simulate,
+    host_id?: string,
+    cloud_account_id?: string,
+    cloud_account_name?: string,
+    cloud_account_ref?: string,
+    runtime?: string,
+    resources?: {
+      vcpus: number,
+      memoryGib: number,
+      diskGib: number
+    },
+    auto_stop_interval?: number,
+    auto_delete_interval?: number,
+    amika_opencode_web?: string | number | any | null,
+    env_vars?: Record<string, string>,
+    secret_env_vars?: Record<string, string>,
+    disabled_repo_env_var_names?: string[],
+    setup_script_text?: string,
+    skip_setup_script?: boolean,
+    agent_credentials?: {
+      kind: claude | codex,
+      name?: string,
+      type?: oauth | api_key,
+      none?: true
+    }[],
+    preset?: coder | coder-plus-docker | macos-coder,
+    size?: string,
+    snapshot?: string | null,
+    integration_ids?: string[],
+    agent?: claude | codex,
+    github_auth_mode?: pat | app_token,
+    amika_api_key?: {
+      mode: new,
+      scope: org | user
+    } | {
+      mode: none
+    }
+  },
+  session?: string,
+  command: string,
+  timeout_ms: number,
+  queue_timeout_ms?: number,
+  cwd?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Job id (`job_…`). |
+| `name` | `string \| null` | No | Unique name in the organization. |
+| `description` | `string \| null \| null` | No | Free text for people. |
+| `enabled` | `boolean \| null` | No | `false` while the job is paused. |
+| `trigger` | `object \| null` | No | — |
+| `steps` | `object[] \| null` | No | Commands of each job run, in order. |
+| `rig_status_on_finish` | `string \| null \| null` | No | Status to give the rig when the job run ends, after success or failure. When set, the rig stays up between steps. Omit to restore the rig's status from before the job run. |
+| `overlap_policy` | `string \| null` | No | `skip` (default): do not start a scheduled job run while an earlier run of this job is `pending` or `running`; record it as `skipped`. `allow`: start it. |
+| `next_run_at` | `string \| string \| any \| null \| null` | No | Next time the trigger fires. Amika starts the job run within 30 seconds of it. Null while the job is paused. |
+| `created_at` | `string \| string \| null` | No | When the job was created. |
+| `updated_at` | `string \| string \| null` | No | When the job last changed. |
+
+<AccordionGroup>
+<Accordion title="trigger full type">
+
+```ts
+{
+  kind?: string | null,
+  schedule?: string | null,
+  timezone?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="steps full type">
+
+```ts
+{
+  rig_id?: string | null,
+  rig_name?: string | null,
+  rig_ref?: string | null,
+  rig_create?: {
+    name?: string | null,
+    repo_url?: string | null,
+    git_url?: string | null,
+    github_url?: string | null,
+    branch?: string | null,
+    new_branch_name?: string | null,
+    provider?: string | null,
+    host_id?: string | null,
+    cloud_account_id?: string | null,
+    cloud_account_name?: string | null,
+    cloud_account_ref?: string | null,
+    runtime?: string | null,
+    resources?: {
+      vcpus?: number | null,
+      memoryGib?: number | null,
+      diskGib?: number | null
+    } | null,
+    auto_stop_interval?: number | null,
+    auto_delete_interval?: number | null,
+    amika_opencode_web?: string | number | any | null | null,
+    env_vars?: Record<string, string> | null,
+    secret_env_vars?: Record<string, string> | null,
+    disabled_repo_env_var_names?: string[] | null,
+    setup_script_text?: string | null,
+    skip_setup_script?: boolean | null,
+    agent_credentials?: {
+      kind?: string | null,
+      name?: string | null,
+      type?: string | null,
+      none?: boolean | null
+    }[] | null,
+    preset?: string | null,
+    size?: string | null,
+    snapshot?: string | null | null,
+    integration_ids?: string[] | null,
+    agent?: string | null,
+    github_auth_mode?: string | null,
+    amika_api_key?: {
+      mode?: string | null,
+      scope?: string | null
+    } | {
+      mode?: string | null
+    } | null
+  } | null,
+  session?: string | null,
+  command?: string | null,
+  timeout_ms?: number | null,
+  queue_timeout_ms?: number | null,
+  cwd?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`jobs.delete`
+
+Deletes a job and all of its job runs.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.amika.api.jobs.delete({ job: 'nightly-tests' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `string` | Yes | Job id (`job_…`) or name. `by` sets how to read it. |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to read `{job}`: `id`, `name`, or `ref` (id or name; the default). `ref` returns 409 `resource_ref_ambiguous` if the value matches one job's id and another job's name. `name_or_id` is an alias for `ref`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Amika accepted the call; it answers with no body. |
+
+
+
+---
+
+### get
+
+`jobs.get`
+
+Reads one job by id or name.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.jobs.get({ job: 'nightly-tests' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `string` | Yes | Job id (`job_…`) or name. `by` sets how to read it. |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to read `{job}`: `id`, `name`, or `ref` (id or name; the default). `ref` returns 409 `resource_ref_ambiguous` if the value matches one job's id and another job's name. `name_or_id` is an alias for `ref`. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Job id (`job_…`). |
+| `name` | `string \| null` | No | Unique name in the organization. |
+| `description` | `string \| null \| null` | No | Free text for people. |
+| `enabled` | `boolean \| null` | No | `false` while the job is paused. |
+| `trigger` | `object \| null` | No | — |
+| `steps` | `object[] \| null` | No | Commands of each job run, in order. |
+| `rig_status_on_finish` | `string \| null \| null` | No | Status to give the rig when the job run ends, after success or failure. When set, the rig stays up between steps. Omit to restore the rig's status from before the job run. |
+| `overlap_policy` | `string \| null` | No | `skip` (default): do not start a scheduled job run while an earlier run of this job is `pending` or `running`; record it as `skipped`. `allow`: start it. |
+| `next_run_at` | `string \| string \| any \| null \| null` | No | Next time the trigger fires. Amika starts the job run within 30 seconds of it. Null while the job is paused. |
+| `created_at` | `string \| string \| null` | No | When the job was created. |
+| `updated_at` | `string \| string \| null` | No | When the job last changed. |
+
+<AccordionGroup>
+<Accordion title="trigger full type">
+
+```ts
+{
+  kind?: string | null,
+  schedule?: string | null,
+  timezone?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="steps full type">
+
+```ts
+{
+  rig_id?: string | null,
+  rig_name?: string | null,
+  rig_ref?: string | null,
+  rig_create?: {
+    name?: string | null,
+    repo_url?: string | null,
+    git_url?: string | null,
+    github_url?: string | null,
+    branch?: string | null,
+    new_branch_name?: string | null,
+    provider?: string | null,
+    host_id?: string | null,
+    cloud_account_id?: string | null,
+    cloud_account_name?: string | null,
+    cloud_account_ref?: string | null,
+    runtime?: string | null,
+    resources?: {
+      vcpus?: number | null,
+      memoryGib?: number | null,
+      diskGib?: number | null
+    } | null,
+    auto_stop_interval?: number | null,
+    auto_delete_interval?: number | null,
+    amika_opencode_web?: string | number | any | null | null,
+    env_vars?: Record<string, string> | null,
+    secret_env_vars?: Record<string, string> | null,
+    disabled_repo_env_var_names?: string[] | null,
+    setup_script_text?: string | null,
+    skip_setup_script?: boolean | null,
+    agent_credentials?: {
+      kind?: string | null,
+      name?: string | null,
+      type?: string | null,
+      none?: boolean | null
+    }[] | null,
+    preset?: string | null,
+    size?: string | null,
+    snapshot?: string | null | null,
+    integration_ids?: string[] | null,
+    agent?: string | null,
+    github_auth_mode?: string | null,
+    amika_api_key?: {
+      mode?: string | null,
+      scope?: string | null
+    } | {
+      mode?: string | null
+    } | null
+  } | null,
+  session?: string | null,
+  command?: string | null,
+  timeout_ms?: number | null,
+  queue_timeout_ms?: number | null,
+  cwd?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`jobs.list`
+
+Lists jobs (scheduled commands on rigs) with their trigger, steps and next run.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.jobs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `enabled` | `true \| false` | No | `true`: only enabled jobs. `false`: only paused jobs. |
+| `trigger_kind` | `cron` | No | Only jobs with this trigger kind. |
+| `limit` | `number` | No | Maximum number of jobs to return. 1 to 100, default 50. |
+| `cursor` | `string` | No | Send the `next_cursor` of the previous page. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[] \| null` | No | Jobs, sorted by name. |
+| `next_cursor` | `string \| null \| null` | No | Send as `cursor` to get the next page. Null on the last page. |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null | null,
+  enabled?: boolean | null,
+  trigger?: {
+    kind?: string | null,
+    schedule?: string | null,
+    timezone?: string | null
+  } | null,
+  steps?: {
+    rig_id?: string | null,
+    rig_name?: string | null,
+    rig_ref?: string | null,
+    rig_create?: {
+      name?: string | null,
+      repo_url?: string | null,
+      git_url?: string | null,
+      github_url?: string | null,
+      branch?: string | null,
+      new_branch_name?: string | null,
+      provider?: string | null,
+      host_id?: string | null,
+      cloud_account_id?: string | null,
+      cloud_account_name?: string | null,
+      cloud_account_ref?: string | null,
+      runtime?: string | null,
+      resources?: {
+        vcpus?: number | null,
+        memoryGib?: number | null,
+        diskGib?: number | null
+      } | null,
+      auto_stop_interval?: number | null,
+      auto_delete_interval?: number | null,
+      amika_opencode_web?: string | number | any | null | null,
+      env_vars?: Record<string, string> | null,
+      secret_env_vars?: Record<string, string> | null,
+      disabled_repo_env_var_names?: string[] | null,
+      setup_script_text?: string | null,
+      skip_setup_script?: boolean | null,
+      agent_credentials?: {
+        kind?: string | null,
+        name?: string | null,
+        type?: string | null,
+        none?: boolean | null
+      }[] | null,
+      preset?: string | null,
+      size?: string | null,
+      snapshot?: string | null | null,
+      integration_ids?: string[] | null,
+      agent?: string | null,
+      github_auth_mode?: string | null,
+      amika_api_key?: {
+        mode?: string | null,
+        scope?: string | null
+      } | {
+        mode?: string | null
+      } | null
+    } | null,
+    session?: string | null,
+    command?: string | null,
+    timeout_ms?: number | null,
+    queue_timeout_ms?: number | null,
+    cwd?: string | null
+  }[] | null,
+  rig_status_on_finish?: string | null | null,
+  overlap_policy?: string | null,
+  next_run_at?: string | string | any | null | null,
+  created_at?: string | string | null,
+  updated_at?: string | string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`jobs.update`
+
+Updates a job: its trigger, steps or description; enabled false pauses it and true resumes it. New steps follow the jobs.create rule: only step 0 names a rig.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.amika.api.jobs.update({
+	job: 'nightly-tests',
+	steps: [{ rig_ref: 'dev-rig', command: 'pnpm install --frozen-lockfile', timeout_ms: 600000 }, { command: 'pnpm test -- --ci', timeout_ms: 1800000 }],
+	enabled: false,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `string` | Yes | Job id (`job_…`) or name. `by` sets how to read it. |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to read `{job}`: `id`, `name`, or `ref` (id or name; the default). `ref` returns 409 `resource_ref_ambiguous` if the value matches one job's id and another job's name. `name_or_id` is an alias for `ref`. |
+| `name` | `string` | No | Unique name in the organization. |
+| `description` | `string \| null` | No | Free text for people. Null clears it. |
+| `enabled` | `boolean` | No | `false` pauses the job. `true` resumes it at its next future time. Missed times do not run. |
+| `trigger` | `object` | No | — |
+| `steps` | `object[]` | No | Replaces the whole list. Job runs that already started keep their steps. |
+| `rig_status_on_finish` | `active \| stopped \| deleted \| null` | No | Status to give the rig when the job run ends, after success or failure. When set, the rig stays up between steps. Omit to restore the rig's status from before the job run. Null clears it. |
+| `overlap_policy` | `skip \| allow` | No | `skip` (default): do not start a scheduled job run while an earlier run of this job is `pending` or `running`; record it as `skipped`. `allow`: start it. |
+
+<AccordionGroup>
+<Accordion title="trigger full type">
+
+```ts
+{
+  kind: cron,
+  schedule: string,
+  timezone?: string
+}
+```
+</Accordion>
+
+<Accordion title="steps full type">
+
+```ts
+{
+  rig_id?: string,
+  rig_name?: string,
+  rig_ref?: string,
+  rig_create?: {
+    name: string,
+    repo_url?: string,
+    git_url?: string,
+    github_url?: string,
+    branch?: string,
+    new_branch_name?: string,
+    provider?: daytona | e2b | freestyle | vercel | instabox | smol | lume | amika-hostd | simulate,
+    host_id?: string,
+    cloud_account_id?: string,
+    cloud_account_name?: string,
+    cloud_account_ref?: string,
+    runtime?: string,
+    resources?: {
+      vcpus: number,
+      memoryGib: number,
+      diskGib: number
+    },
+    auto_stop_interval?: number,
+    auto_delete_interval?: number,
+    amika_opencode_web?: string | number | any | null,
+    env_vars?: Record<string, string>,
+    secret_env_vars?: Record<string, string>,
+    disabled_repo_env_var_names?: string[],
+    setup_script_text?: string,
+    skip_setup_script?: boolean,
+    agent_credentials?: {
+      kind: claude | codex,
+      name?: string,
+      type?: oauth | api_key,
+      none?: true
+    }[],
+    preset?: coder | coder-plus-docker | macos-coder,
+    size?: string,
+    snapshot?: string | null,
+    integration_ids?: string[],
+    agent?: claude | codex,
+    github_auth_mode?: pat | app_token,
+    amika_api_key?: {
+      mode: new,
+      scope: org | user
+    } | {
+      mode: none
+    }
+  },
+  session?: string,
+  command: string,
+  timeout_ms: number,
+  queue_timeout_ms?: number,
+  cwd?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | Job id (`job_…`). |
+| `name` | `string \| null` | No | Unique name in the organization. |
+| `description` | `string \| null \| null` | No | Free text for people. |
+| `enabled` | `boolean \| null` | No | `false` while the job is paused. |
+| `trigger` | `object \| null` | No | — |
+| `steps` | `object[] \| null` | No | Commands of each job run, in order. |
+| `rig_status_on_finish` | `string \| null \| null` | No | Status to give the rig when the job run ends, after success or failure. When set, the rig stays up between steps. Omit to restore the rig's status from before the job run. |
+| `overlap_policy` | `string \| null` | No | `skip` (default): do not start a scheduled job run while an earlier run of this job is `pending` or `running`; record it as `skipped`. `allow`: start it. |
+| `next_run_at` | `string \| string \| any \| null \| null` | No | Next time the trigger fires. Amika starts the job run within 30 seconds of it. Null while the job is paused. |
+| `created_at` | `string \| string \| null` | No | When the job was created. |
+| `updated_at` | `string \| string \| null` | No | When the job last changed. |
+
+<AccordionGroup>
+<Accordion title="trigger full type">
+
+```ts
+{
+  kind?: string | null,
+  schedule?: string | null,
+  timezone?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="steps full type">
+
+```ts
+{
+  rig_id?: string | null,
+  rig_name?: string | null,
+  rig_ref?: string | null,
+  rig_create?: {
+    name?: string | null,
+    repo_url?: string | null,
+    git_url?: string | null,
+    github_url?: string | null,
+    branch?: string | null,
+    new_branch_name?: string | null,
+    provider?: string | null,
+    host_id?: string | null,
+    cloud_account_id?: string | null,
+    cloud_account_name?: string | null,
+    cloud_account_ref?: string | null,
+    runtime?: string | null,
+    resources?: {
+      vcpus?: number | null,
+      memoryGib?: number | null,
+      diskGib?: number | null
+    } | null,
+    auto_stop_interval?: number | null,
+    auto_delete_interval?: number | null,
+    amika_opencode_web?: string | number | any | null | null,
+    env_vars?: Record<string, string> | null,
+    secret_env_vars?: Record<string, string> | null,
+    disabled_repo_env_var_names?: string[] | null,
+    setup_script_text?: string | null,
+    skip_setup_script?: boolean | null,
+    agent_credentials?: {
+      kind?: string | null,
+      name?: string | null,
+      type?: string | null,
+      none?: boolean | null
+    }[] | null,
+    preset?: string | null,
+    size?: string | null,
+    snapshot?: string | null | null,
+    integration_ids?: string[] | null,
+    agent?: string | null,
+    github_auth_mode?: string | null,
+    amika_api_key?: {
+      mode?: string | null,
+      scope?: string | null
+    } | {
+      mode?: string | null
+    } | null
+  } | null,
+  session?: string | null,
+  command?: string | null,
+  timeout_ms?: number | null,
+  queue_timeout_ms?: number | null,
+  cwd?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Linear
+
+### settings.get
+
+`linear.settings.get`
+
+Reads the organization's Linear defaults: repository, agent and system prompt. 404 when not set.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.linear.settings.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string \| null` | No | — |
+| `repository_id` | `string \| null \| null` | No | — |
+| `agent_name` | `string \| null \| null` | No | — |
+| `system_prompt` | `string \| null \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+
+
+---
+
+### settings.set
+
+`linear.settings.set`
+
+Sets the organization's Linear defaults: the repository and agent Linear issues use.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.linear.settings.set({ repository_id: 'repo_01M82E3F5H7K9M1P3R5T7V9X1Z', agent_name: 'codex', system_prompt: 'Link the pull request to the issue.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repository_id` | `string \| null` | Yes | — |
+| `agent_name` | `claude \| codex \| null` | Yes | — |
+| `system_prompt` | `string \| null` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string \| null` | No | — |
+| `repository_id` | `string \| null \| null` | No | — |
+| `agent_name` | `string \| null \| null` | No | — |
+| `system_prompt` | `string \| null \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+
+
+---
+
+## Repositories
+
+### clearImage
+
+`repositories.clearImage`
+
+Clears a repository's image configuration, so new rigs use the preset image.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.amika.api.repositories.clearImage({ id: 'repo_01M82E3F5H7K9M1P3R5T7V9X1Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Amika accepted the call; it answers with no body. |
+
+
+
+---
+
+### get
+
+`repositories.get`
+
+Reads one repository and its rig settings.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.repositories.get({ id: 'repo_01M82E3F5H7K9M1P3R5T7V9X1Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `org_id` | `string \| null` | No | — |
+| `user_id` | `string \| null \| null` | No | — |
+| `repo_url` | `string \| null` | No | — |
+| `setup_script` | `string \| null \| null` | No | — |
+| `start_script` | `string \| null \| null` | No | — |
+| `sandbox_preset` | `string \| null \| null` | No | — |
+| `sandbox_size` | `string \| null \| null` | No | — |
+| `default_snapshot` | `string \| null \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+
+
+---
+
+### integrations.list
+
+`repositories.integrations.list`
+
+Lists the MCP integrations new rigs of a repository get.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.repositories.integrations.list({ id: 'repo_01M82E3F5H7K9M1P3R5T7V9X1Z' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  repository_id?: string | null,
+  org_id?: string | null,
+  name?: string | null,
+  mcp_server_type?: string | null,
+  mcp_server_url?: string | null,
+  created_at?: string | string | null,
+  updated_at?: string | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### integrations.set
+
+`repositories.integrations.set`
+
+Replaces the list of MCP integrations new rigs of a repository get.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.repositories.integrations.set({
+	id: 'repo_01M82E3F5H7K9M1P3R5T7V9X1Z',
+	integrations: [{ name: 'lug', mcp_server_type: 'http', mcp_server_url: 'https://mcp.example.com/mcp' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `integrations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="integrations full type">
+
+```ts
+(
+  {
+    name: string,
+    mcp_server_type: http,
+    mcp_server_url: string
+  } | {
+    name: playwright,
+    mcp_server_type: stdio,
+    mcp_server_url?: string
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  repository_id?: string | null,
+  org_id?: string | null,
+  name?: string | null,
+  mcp_server_type?: string | null,
+  mcp_server_url?: string | null,
+  created_at?: string | string | null,
+  updated_at?: string | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`repositories.list`
+
+Lists the organization's repositories and their rig settings (setup script, image, env).
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.repositories.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  org_id?: string | null,
+  user_id?: string | null | null,
+  repo_url?: string | null,
+  setup_script?: string | null | null,
+  start_script?: string | null | null,
+  sandbox_preset?: string | null | null,
+  sandbox_size?: string | null | null,
+  default_snapshot?: string | null | null,
+  created_at?: string | string | null,
+  updated_at?: string | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### upsert
+
+`repositories.upsert`
+
+Creates or updates a repository by repo_url: its setup script, image and environment for new rigs.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.repositories.upsert({ repo_url: 'https://github.com/acme/web-app', setup_script: 'pnpm install' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_url` | `string` | Yes | — |
+| `setup_script` | `string` | No | — |
+| `start_script` | `string` | No | — |
+| `sandbox_preset` | `string \| null` | No | — |
+| `sandbox_size` | `string \| null` | No | — |
+| `default_snapshot` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `org_id` | `string \| null` | No | — |
+| `user_id` | `string \| null \| null` | No | — |
+| `repo_url` | `string \| null` | No | — |
+| `setup_script` | `string \| null \| null` | No | — |
+| `start_script` | `string \| null \| null` | No | — |
+| `sandbox_preset` | `string \| null \| null` | No | — |
+| `sandbox_size` | `string \| null \| null` | No | — |
+| `default_snapshot` | `string \| null \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+
+
+---
+
+## Rigs
+
+### create
+
+`rigs.create`
+
+Creates a rig: a devbox VM with a repo cloned, dependencies set up and agent credentials injected. Runs on Amika Cloud (billed per second), a connected cloud account, or one of your own hosts (host_id). Answers 202 while it boots; poll rigs.get until status is running and setup_status ok (git-failed, setup-failed or sys-setup-failed means setup failed: stop waiting). By default the rig gets a new organization API key as AMIKA_API_KEY (amika_api_key changes that).
+
+**Risk:** `destructive`
+
+```ts
+await corsair.amika.api.rigs.create({
+	name: 'dev-rig',
+	repo_url: 'https://github.com/acme/web-app',
+	preset: 'coder',
+	size: 'a0.m',
+	agent_credentials: [{ kind: 'claude', name: 'team-claude' }],
+	env_vars: { NODE_ENV: 'development' },
+	auto_stop_interval: 30,
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `repo_url` | `string` | No | — |
+| `git_url` | `string` | No | — |
+| `github_url` | `string` | No | — |
+| `branch` | `string` | No | — |
+| `new_branch_name` | `string` | No | — |
+| `provider` | `daytona \| e2b \| freestyle \| vercel \| instabox \| smol \| lume \| amika-hostd \| simulate` | No | — |
+| `host_id` | `string` | No | — |
+| `cloud_account_id` | `string` | No | Run the rig in this connected cloud account (by id). At most one of cloud_account_id, cloud_account_name, cloud_account_ref. Cannot be combined with host_id. |
+| `cloud_account_name` | `string` | No | Run the rig in the connected cloud account with this name; `amika` means Amika Cloud. `provider` narrows the name. |
+| `cloud_account_ref` | `string` | No | Run the rig in the connected cloud account with this id or name. |
+| `runtime` | `string` | No | With `host_id`, the host runtime to run the rig on (`smol`, `lume`). Omitted, the rig runs on its preset's default runtime on that host. Requires `host_id`. |
+| `resources` | `object` | No | With `host_id`, the rig's resources, in place of a named `size`: 1 to 16 vCPUs, at least 64 MiB of memory in whole MiB, and a disk of at least 1 GiB. Requires `host_id`, and cannot be combined with `size`. |
+| `auto_stop_interval` | `number` | No | — |
+| `auto_delete_interval` | `number` | No | — |
+| `amika_opencode_web` | `string \| number \| any \| null` | No | — |
+| `env_vars` | `Record<string, string>` | No | — |
+| `secret_env_vars` | `Record<string, string>` | No | — |
+| `disabled_repo_env_var_names` | `string[]` | No | — |
+| `setup_script_text` | `string` | No | — |
+| `skip_setup_script` | `boolean` | No | — |
+| `agent_credentials` | `object[]` | No | — |
+| `preset` | `coder \| coder-plus-docker \| macos-coder` | No | — |
+| `size` | `string` | No | Providerless sandbox size (for example `a0.m`). Legacy names such as `m` and `medium` are also accepted. The provider is inferred from `provider` or the server default; when omitted, the size defaults to that provider's medium tier. With `host_id`, names one of the host's own sizes instead; a host rig with neither `size` nor `resources` gets 4 vCPUs, 8 GiB of memory and a 20 GiB disk. |
+| `snapshot` | `string \| null` | No | — |
+| `integration_ids` | `string[]` | No | — |
+| `agent` | `claude \| codex` | No | — |
+| `github_auth_mode` | `pat \| app_token` | No | — |
+| `amika_api_key` | `object` | No | The Amika API key the rig gets as `AMIKA_API_KEY`. `{"mode": "new", "scope": "org"}` (default): a new organization key. `{"mode": "new", "scope": "user"}`: a new key for the calling user; a caller with no user cannot use it. `{"mode": "none"}`: no key, and `AMIKA_API_KEY` is not set. A new key is revoked when the rig is deleted. |
+
+<AccordionGroup>
+<Accordion title="resources full type">
+
+```ts
+{
+  vcpus: number,
+  memoryGib: number,
+  diskGib: number
+}
+```
+</Accordion>
+
+<Accordion title="agent_credentials full type">
+
+```ts
+{
+  kind: claude | codex,
+  name?: string,
+  type?: oauth | api_key,
+  none?: true
+}[]
+```
+</Accordion>
+
+<Accordion title="amika_api_key full type">
+
+```ts
+{
+  mode: new,
+  scope: org | user
+} | {
+  mode: none
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `user_id` | `string \| null \| null` | No | — |
+| `org_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `provider` | `string \| null \| null` | No | — |
+| `provider_sandbox_id` | `string \| null \| null` | No | — |
+| `amika_opencode_web` | `string \| null \| null` | No | — |
+| `repo_name` | `string \| null \| null` | No | — |
+| `repo_provider` | `string \| null \| null` | No | — |
+| `repo_id` | `string \| null \| null` | No | — |
+| `repo_url` | `string \| null \| null` | No | — |
+| `branch` | `string \| null \| null` | No | — |
+| `commit_hash` | `string \| null \| null` | No | — |
+| `snapshot` | `string \| null \| null` | No | — |
+| `snapshot_name` | `string \| null \| null` | No | — |
+| `sandbox_preset` | `string \| null \| null` | No | — |
+| `sandbox_size` | `string \| null \| null` | No | — |
+| `sandbox_size_config` | `object \| null` | No | — |
+| `github_auth_mode` | `string \| null \| null` | No | — |
+| `github_credential_provisioned` | `boolean \| null \| null` | No | — |
+| `error_message` | `string \| null \| null` | No | — |
+| `current_session_id` | `string \| null \| null` | No | — |
+| `services` | `object[] \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `setup_status` | `string \| null \| null` | No | — |
+| `live_state_pending` | `boolean \| null` | No | — |
+| `urls_expire_at` | `string \| string \| any \| null \| null` | No | — |
+| `secret_names` | `string[] \| null` | No | — |
+| `mounted_secrets` | `object[] \| null` | No | — |
+| `resolved_agent_credentials` | `object[] \| null` | No | — |
+| `agent_credentials` | `object[] \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `agent_cwd` | `string \| null \| null` | No | — |
+| `ssh_key_status` | `string \| null` | No | — |
+| `origin` | `string \| null \| null` | No | — |
+| `host_id` | `string \| null \| null` | No | — |
+| `cloud_account` | `object \| null` | No | The org's connected cloud account the rig runs in, or null for Amika Cloud. |
+| `runtime` | `string \| null \| null` | No | — |
+| `os` | `string \| null \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sandbox_size_config full type">
+
+```ts
+{
+  name?: string | null | null,
+  vcpus?: number | null,
+  memoryGib?: number | null,
+  diskGib?: number | null,
+  diskGrowOnly?: boolean | null
+} | null | null
+```
+</Accordion>
+
+<Accordion title="services full type">
+
+```ts
+{
+  name?: string | null,
+  url?: string | null,
+  hostPort?: number | null,
+  containerPort?: number | null,
+  protocol?: string | null,
+  kind?: string | null
+}[] | null | null
+```
+</Accordion>
+
+<Accordion title="mounted_secrets full type">
+
+```ts
+{
+  name?: string | null,
+  scope?: string | null,
+  managed?: boolean | null,
+  credential_type?: string | null | null,
+  provider?: string | null | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="resolved_agent_credentials full type">
+
+```ts
+(
+  {
+    kind?: string | null,
+    outcome?: string | null,
+    name?: string | null,
+    type?: string | null,
+    source?: string | null
+  } | {
+    kind?: string | null,
+    outcome?: string | null,
+    reason?: string | null
+  }
+)[] | null
+```
+</Accordion>
+
+<Accordion title="agent_credentials full type">
+
+```ts
+{
+  kind?: string | null,
+  name?: string | null | null,
+  scope?: string | null | null,
+  credential_type?: string | null | null,
+  inject_target?: string | null | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  name?: string | null | null,
+  email?: string | null | null
+} | null | null
+```
+</Accordion>
+
+<Accordion title="cloud_account full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createSshSession
+
+`rigs.createSshSession`
+
+Opens a direct WebSocket SSH session to a rig and returns its connection details. Name the rig by id or name; `sandbox_by` says which (default: either).
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.rigs.createSshSession({ id: 'dev-rig' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `sandbox_by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string \| null` | No | — |
+| `transport` | `string \| null` | No | — |
+| `connect_url` | `string \| null` | No | — |
+| `connect_credential` | `string \| null` | No | — |
+| `sandbox_id` | `string \| null` | No | — |
+| `ssh_user` | `string \| null` | No | — |
+| `host_public_key` | `string \| null` | No | — |
+
+
+
+---
+
+### createTerminalTicket
+
+`rigs.createTerminalTicket`
+
+Mints a single-use ticket for the web terminal of a rig. Name the rig by id or name; `sandbox_by` says which (default: either).
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.rigs.createTerminalTicket({ id: 'dev-rig' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `sandbox_by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ticket` | `string \| null` | No | — |
+| `org_id` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`rigs.delete`
+
+Deletes a rig and its disk. Anything not pushed or snapshotted is lost. A bare-metal rig is your own machine: only the rig and its SSH bridge state go, and the files and settings on the machine stay. With forget "true", Amika only drops its record when the host or provider can't be reached: the machine is left running, so confirm with the host or provider that it is gone. Name the rig by id or name; `by` says which (default: either).
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.amika.api.rigs.delete({ id: 'dev-rig' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+| `forget` | `true \| false` | No | Delete Amika's record of the rig even if its host or provider cannot be reached to destroy the machine. The machine is left running. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean \| null` | No | — |
+
+
+
+---
+
+### get
+
+`rigs.get`
+
+Reads one rig: status, setup status, provider, size, branch, services and timestamps. Name the rig by id or name; `by` says which (default: either).
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.rigs.get({ id: 'dev-rig', by: 'name' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `user_id` | `string \| null \| null` | No | — |
+| `org_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `provider` | `string \| null \| null` | No | — |
+| `provider_sandbox_id` | `string \| null \| null` | No | — |
+| `amika_opencode_web` | `string \| null \| null` | No | — |
+| `repo_name` | `string \| null \| null` | No | — |
+| `repo_provider` | `string \| null \| null` | No | — |
+| `repo_id` | `string \| null \| null` | No | — |
+| `repo_url` | `string \| null \| null` | No | — |
+| `branch` | `string \| null \| null` | No | — |
+| `commit_hash` | `string \| null \| null` | No | — |
+| `snapshot` | `string \| null \| null` | No | — |
+| `snapshot_name` | `string \| null \| null` | No | — |
+| `sandbox_preset` | `string \| null \| null` | No | — |
+| `sandbox_size` | `string \| null \| null` | No | — |
+| `sandbox_size_config` | `object \| null` | No | — |
+| `github_auth_mode` | `string \| null \| null` | No | — |
+| `github_credential_provisioned` | `boolean \| null \| null` | No | — |
+| `error_message` | `string \| null \| null` | No | — |
+| `current_session_id` | `string \| null \| null` | No | — |
+| `services` | `object[] \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `setup_status` | `string \| null \| null` | No | — |
+| `live_state_pending` | `boolean \| null` | No | — |
+| `urls_expire_at` | `string \| string \| any \| null \| null` | No | — |
+| `secret_names` | `string[] \| null` | No | — |
+| `mounted_secrets` | `object[] \| null` | No | — |
+| `resolved_agent_credentials` | `object[] \| null` | No | — |
+| `agent_credentials` | `object[] \| null` | No | — |
+| `created_by` | `object \| null` | No | — |
+| `agent_cwd` | `string \| null \| null` | No | — |
+| `ssh_key_status` | `string \| null` | No | — |
+| `origin` | `string \| null \| null` | No | — |
+| `host_id` | `string \| null \| null` | No | — |
+| `cloud_account` | `object \| null` | No | The org's connected cloud account the rig runs in, or null for Amika Cloud. |
+| `runtime` | `string \| null \| null` | No | — |
+| `os` | `string \| null \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+| `hostname` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sandbox_size_config full type">
+
+```ts
+{
+  name?: string | null | null,
+  vcpus?: number | null,
+  memoryGib?: number | null,
+  diskGib?: number | null,
+  diskGrowOnly?: boolean | null
+} | null | null
+```
+</Accordion>
+
+<Accordion title="services full type">
+
+```ts
+{
+  name?: string | null,
+  url?: string | null,
+  hostPort?: number | null,
+  containerPort?: number | null,
+  protocol?: string | null,
+  kind?: string | null
+}[] | null | null
+```
+</Accordion>
+
+<Accordion title="mounted_secrets full type">
+
+```ts
+{
+  name?: string | null,
+  scope?: string | null,
+  managed?: boolean | null,
+  credential_type?: string | null | null,
+  provider?: string | null | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="resolved_agent_credentials full type">
+
+```ts
+(
+  {
+    kind?: string | null,
+    outcome?: string | null,
+    name?: string | null,
+    type?: string | null,
+    source?: string | null
+  } | {
+    kind?: string | null,
+    outcome?: string | null,
+    reason?: string | null
+  }
+)[] | null
+```
+</Accordion>
+
+<Accordion title="agent_credentials full type">
+
+```ts
+{
+  kind?: string | null,
+  name?: string | null | null,
+  scope?: string | null | null,
+  credential_type?: string | null | null,
+  inject_target?: string | null | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="created_by full type">
+
+```ts
+{
+  name?: string | null | null,
+  email?: string | null | null
+} | null | null
+```
+</Accordion>
+
+<Accordion title="cloud_account full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSlackConversation
+
+`rigs.getSlackConversation`
+
+Reads the Slack thread a Slack-made rig belongs to.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.rigs.getSlackConversation({ id: 'dev-rig' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `sandbox_by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `conversation` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="conversation full type">
+
+```ts
+{
+  conversation_id?: string | null,
+  team_id?: string | null,
+  team_name?: string | null | null,
+  channel_id?: string | null,
+  channel_name?: string | null | null,
+  thread_id?: string | null,
+  status?: string | null | null,
+  agent_name?: string | null | null,
+  messages?: {
+    id?: string | null,
+    author?: string | null,
+    direction?: string | null,
+    contents?: string | null,
+    occurred_at?: string | string | null,
+    is_error?: boolean | null
+  }[] | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSlackMetadata
+
+`rigs.getSlackMetadata`
+
+Lists Slack metadata (team, channel, thread) for the organization's Slack-made rigs, keyed by rig.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.rigs.getSlackMetadata({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metadata` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+Record<string, {
+  conversation_id?: string | null | null,
+  team_id?: string | null,
+  team_name?: string | null | null,
+  team_icon_url?: string | null | null,
+  channel_id?: string | null,
+  channel_name?: string | null | null,
+  thread_id?: string | null,
+  preview?: string | null | null,
+  status?: string | null | null,
+  agent_name?: string | null | null
+}> | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`rigs.list`
+
+Lists the organization's rigs (isolated devbox VMs for coding agents) with their status, provider and size.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.rigs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host_id` | `string` | No | If set, only return rigs on this one of the organization's own hosts. |
+| `live_state` | `true \| false` | No | Set to `false` to skip reading each active rig's live state from its provider. Statuses are then derived from stored state, and rows whose status is unconfirmed carry `live_state_pending: true`. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  user_id?: string | null | null,
+  org_id?: string | null,
+  name?: string | null,
+  provider?: string | null | null,
+  provider_sandbox_id?: string | null | null,
+  amika_opencode_web?: string | null | null,
+  repo_name?: string | null | null,
+  repo_provider?: string | null | null,
+  repo_id?: string | null | null,
+  repo_url?: string | null | null,
+  branch?: string | null | null,
+  commit_hash?: string | null | null,
+  snapshot?: string | null | null,
+  snapshot_name?: string | null | null,
+  sandbox_preset?: string | null | null,
+  sandbox_size?: string | null | null,
+  sandbox_size_config?: {
+    name?: string | null | null,
+    vcpus?: number | null,
+    memoryGib?: number | null,
+    diskGib?: number | null,
+    diskGrowOnly?: boolean | null
+  } | null | null,
+  github_auth_mode?: string | null | null,
+  github_credential_provisioned?: boolean | null | null,
+  error_message?: string | null | null,
+  current_session_id?: string | null | null,
+  services?: {
+    name?: string | null,
+    url?: string | null,
+    hostPort?: number | null,
+    containerPort?: number | null,
+    protocol?: string | null,
+    kind?: string | null
+  }[] | null | null,
+  status?: string | null,
+  setup_status?: string | null | null,
+  live_state_pending?: boolean | null,
+  urls_expire_at?: string | string | any | null | null,
+  secret_names?: string[] | null,
+  mounted_secrets?: {
+    name?: string | null,
+    scope?: string | null,
+    managed?: boolean | null,
+    credential_type?: string | null | null,
+    provider?: string | null | null
+  }[] | null,
+  resolved_agent_credentials?: (
+    {
+      kind?: string | null,
+      outcome?: string | null,
+      name?: string | null,
+      type?: string | null,
+      source?: string | null
+    } | {
+      kind?: string | null,
+      outcome?: string | null,
+      reason?: string | null
+    }
+  )[] | null,
+  agent_credentials?: {
+    kind?: string | null,
+    name?: string | null | null,
+    scope?: string | null | null,
+    credential_type?: string | null | null,
+    inject_target?: string | null | null
+  }[] | null,
+  created_by?: {
+    name?: string | null | null,
+    email?: string | null | null
+  } | null | null,
+  agent_cwd?: string | null | null,
+  ssh_key_status?: string | null,
+  origin?: string | null | null,
+  host_id?: string | null | null,
+  cloud_account?: {
+    id?: string | null,
+    name?: string | null
+  } | null | null,
+  runtime?: string | null | null,
+  os?: string | null | null,
+  created_at?: string | string | null,
+  updated_at?: string | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listIntegrations
+
+`rigs.listIntegrations`
+
+Lists the MCP integrations (Sentry, Linear, Pylon) attached to a rig at creation. Name the rig by id or name; `sandbox_by` says which (default: either).
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.rigs.listIntegrations({ id: 'dev-rig' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `sandbox_by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  sandbox_id?: string | null,
+  name?: string | null,
+  mcp_server_type?: string | null,
+  mcp_server_url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listLifecycleEvents
+
+`rigs.listLifecycleEvents`
+
+Reads the control-plane event feed of a rig: created, setup steps, started, stopped, errors. Name the rig by id or name; `sandbox_by` says which (default: either).
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.rigs.listLifecycleEvents({ id: 'dev-rig' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `sandbox_by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[] \| null` | No | — |
+| `count` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  id?: string | null,
+  run_kind?: string | null,
+  step?: string | null,
+  status?: string | null,
+  detail?: string | null | null,
+  created_at?: string | string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### services.create
+
+`rigs.services.create`
+
+Exposes a port of a rig as a named service with its own http or https URL (a dev server preview).
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.rigs.services.create({
+	id: 'dev-rig',
+	name: 'web',
+	port: 3000,
+	url_scheme: 'https',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `sandbox_by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+| `name` | `string` | Yes | Service name: a single DNS label, unique per sandbox. |
+| `port` | `number` | Yes | Container port the service listens on. |
+| `url_scheme` | `http \| https` | Yes | URL scheme the gateway serves the service over. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null \| null` | No | — |
+| `sandbox_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `port` | `number \| null` | No | — |
+| `url_scheme` | `string \| null \| null` | No | — |
+| `protocol` | `string \| null` | No | — |
+| `url` | `string \| null \| null` | No | — |
+| `host_port` | `number \| null \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `kind` | `string \| null` | No | — |
+| `created_at` | `string \| string \| any \| null \| null` | No | — |
+| `updated_at` | `string \| string \| any \| null \| null` | No | — |
+
+
+
+---
+
+### services.createToken
+
+`rigs.services.createToken`
+
+Mints an access token for a service of a rig that runs on your own host, for calling it from a script.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.rigs.services.createToken({ id: 'dev-rig', ref: 'web' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `ref` | `string` | Yes | Service reference: its name (default) or row id. Use `by` to choose. |
+| `sandbox_by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to interpret the service `{ref}`: name (default), id, or ref/name_or_id (matches either; rejects ambiguity). |
+| `ttl_seconds` | `number` | No | How long the token lives, in seconds: 1 to 86400. Defaults to an hour. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string \| null` | No | The service's address on the rig's host, ending in `/`. It carries no credential. |
+| `header` | `string \| null` | No | The request header the token goes in, as `Bearer <token>`. |
+| `token` | `string \| null` | No | — |
+| `expires_at` | `string \| string \| null` | No | — |
+
+
+
+---
+
+### services.delete
+
+`rigs.services.delete`
+
+Removes a live service from a rig; its URL stops answering.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.amika.api.rigs.services.delete({ id: 'dev-rig', ref: 'web' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `ref` | `string` | Yes | Service reference: its name (default) or row id. Use `by` to choose. |
+| `sandbox_by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to interpret the service `{ref}`: name (default), id, or ref/name_or_id (matches either; rejects ambiguity). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Amika accepted the call; it answers with no body. |
+
+
+
+---
+
+### services.list
+
+`rigs.services.list`
+
+Lists the live services of a rig: name, port and the URL that reaches it. Name the rig by id or name; `sandbox_by` says which (default: either).
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.rigs.services.list({ id: 'dev-rig' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `sandbox_by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null | null,
+  sandbox_id?: string | null,
+  name?: string | null,
+  port?: number | null,
+  url_scheme?: string | null | null,
+  protocol?: string | null,
+  url?: string | null | null,
+  host_port?: number | null | null,
+  source?: string | null,
+  kind?: string | null,
+  created_at?: string | string | any | null | null,
+  updated_at?: string | string | any | null | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### services.replace
+
+`rigs.services.replace`
+
+Replaces a live service on a rig: its name, port and URL scheme.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.rigs.services.replace({
+	id: 'dev-rig',
+	ref: 'web',
+	name: 'web',
+	port: 5173,
+	url_scheme: 'https',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `ref` | `string` | Yes | Service reference: its name (default) or row id. Use `by` to choose. |
+| `sandbox_by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to interpret the service `{ref}`: name (default), id, or ref/name_or_id (matches either; rejects ambiguity). |
+| `name` | `string` | Yes | Service name: a single DNS label, unique per sandbox. |
+| `port` | `number` | Yes | Container port the service listens on. |
+| `url_scheme` | `http \| https` | Yes | URL scheme the gateway serves the service over. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null \| null` | No | — |
+| `sandbox_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `port` | `number \| null` | No | — |
+| `url_scheme` | `string \| null \| null` | No | — |
+| `protocol` | `string \| null` | No | — |
+| `url` | `string \| null \| null` | No | — |
+| `host_port` | `number \| null \| null` | No | — |
+| `source` | `string \| null` | No | — |
+| `kind` | `string \| null` | No | — |
+| `created_at` | `string \| string \| any \| null \| null` | No | — |
+| `updated_at` | `string \| string \| any \| null \| null` | No | — |
+
+
+
+---
+
+### sessions.create
+
+`rigs.sessions.create`
+
+Creates a new, empty agent session on a rig for the named agent (no message is sent). Name the rig by id or name; `sandbox_by` says which (default: either).
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.rigs.sessions.create({ id: 'dev-rig', agent_name: 'claude' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `sandbox_by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+| `agent_name` | `string` | Yes | — |
+| `metadata` | `Record<string, any \| null>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string \| null` | No | — |
+| `sandbox_id` | `string \| null` | No | — |
+| `sandbox_name` | `string \| null \| null` | No | — |
+| `agent` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `preview` | `string \| null \| null` | No | — |
+| `model` | `string \| null \| null` | No | — |
+| `effort` | `string \| null \| null` | No | — |
+| `started_at` | `string \| string \| null` | No | — |
+| `ended_at` | `string \| string \| any \| null \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+| `messages` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role?: string | null,
+  content?: string | null,
+  timestamp?: string | null,
+  is_error?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sessions.get
+
+`rigs.sessions.get`
+
+Reads one agent session on a rig by its session id.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.rigs.sessions.get({ id: 'dev-rig', sessionId: 'ses_01M82A4T5Y7XG1F0Q9W3E8R2KD' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+| `sandbox_by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string \| null` | No | — |
+| `sandbox_id` | `string \| null` | No | — |
+| `sandbox_name` | `string \| null \| null` | No | — |
+| `agent` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `preview` | `string \| null \| null` | No | — |
+| `model` | `string \| null \| null` | No | — |
+| `effort` | `string \| null \| null` | No | — |
+| `started_at` | `string \| string \| null` | No | — |
+| `ended_at` | `string \| string \| any \| null \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+| `messages` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role?: string | null,
+  content?: string | null,
+  timestamp?: string | null,
+  is_error?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sessions.getLatest
+
+`rigs.sessions.getLatest`
+
+Reads the most recent agent session on a rig. Name the rig by id or name; `sandbox_by` says which (default: either).
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.rigs.sessions.getLatest({ id: 'dev-rig' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `sandbox_by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string \| null` | No | — |
+| `sandbox_id` | `string \| null` | No | — |
+| `sandbox_name` | `string \| null \| null` | No | — |
+| `agent` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `preview` | `string \| null \| null` | No | — |
+| `model` | `string \| null \| null` | No | — |
+| `effort` | `string \| null \| null` | No | — |
+| `started_at` | `string \| string \| null` | No | — |
+| `ended_at` | `string \| string \| any \| null \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+| `messages` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role?: string | null,
+  content?: string | null,
+  timestamp?: string | null,
+  is_error?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sessions.list
+
+`rigs.sessions.list`
+
+Lists the agent sessions on one rig. Name the rig by id or name; `sandbox_by` says which (default: either).
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.rigs.sessions.list({ id: 'dev-rig' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `sandbox_by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+| `status` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number \| null` | No | — |
+| `agent_name` | `string` | No | — |
+| `exclude_source` | `string` | No | — |
+| `source` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sessions` | `object[] \| null` | No | — |
+| `total` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="sessions full type">
+
+```ts
+{
+  id?: string | null,
+  sandbox_id?: string | null,
+  org_id?: string | null,
+  agent_name?: string | null,
+  status?: string | null,
+  started_at?: string | string | null,
+  ended_at?: string | string | any | null | null,
+  metadata?: Record<string, any | null> | null,
+  preview?: string | null | null,
+  created_at?: string | string | null,
+  updated_at?: string | string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sessions.update
+
+`rigs.sessions.update`
+
+Updates an agent session on a rig: its status or metadata.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.rigs.sessions.update({
+	id: 'dev-rig',
+	sessionId: 'ses_01M82A4T5Y7XG1F0Q9W3E8R2KD',
+	metadata: { ticket: 'ENG-142' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `sessionId` | `string` | Yes | — |
+| `sandbox_by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+| `status` | `active \| completed \| failed` | No | — |
+| `metadata` | `Record<string, any \| null>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session_id` | `string \| null` | No | — |
+| `sandbox_id` | `string \| null` | No | — |
+| `sandbox_name` | `string \| null \| null` | No | — |
+| `agent` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `preview` | `string \| null \| null` | No | — |
+| `model` | `string \| null \| null` | No | — |
+| `effort` | `string \| null \| null` | No | — |
+| `started_at` | `string \| string \| null` | No | — |
+| `ended_at` | `string \| string \| any \| null \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+| `messages` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role?: string | null,
+  content?: string | null,
+  timestamp?: string | null,
+  is_error?: boolean | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### start
+
+`rigs.start`
+
+Starts a stopped rig. On a VM rig, files in the home folder are kept and /tmp is cleared by the restart; on a bare-metal rig it only starts the SSH bridge again (the machine never stopped). Billing resumes while it runs. Name the rig by id or name; `by` says which (default: either).
+
+**Risk:** `destructive`
+
+```ts
+await corsair.amika.api.rigs.start({ id: 'dev-rig' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+| `skip_start_script` | `true \| false` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean \| null` | No | — |
+
+
+
+---
+
+### stop
+
+`rigs.stop`
+
+Stops a running rig so it stops billing for compute. On a VM rig, files in the home folder are kept and /tmp is cleared when it starts again, so keep work in the home folder. On a bare-metal rig only the SSH bridge stops: the machine keeps running and its files, /tmp included, stay as they are. Name the rig by id or name; `by` says which (default: either).
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.rigs.stop({ id: 'dev-rig' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to interpret the sandbox `{id}` path param: ref/name_or_id (default; matches an id or a name and rejects an ambiguous match with 409 `resource_ref_ambiguous`), name, or id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean \| null` | No | — |
+
+
+
+---
+
+## Secrets
+
+### create
+
+`secrets.create`
+
+Stores a generic secret in the Amika vault (user or organization scope) for injecting into rigs as an env var.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.secrets.create({ name: 'STRIPE_TEST_KEY', value: 'sk_test_123', scope: 'org' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `value` | `string` | Yes | — |
+| `scope` | `user \| org` | No | — |
+| `description` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `org_id` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null \| null` | No | — |
+| `scope` | `string \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`secrets.delete`
+
+Deletes a generic secret from the vault.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.amika.api.secrets.delete({ id: 'sec_01M82F4G6J8L0N2Q4S6U8W0Y2A' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Amika accepted the call; it answers with no body. |
+
+
+
+---
+
+### list
+
+`secrets.list`
+
+Lists the generic secrets the caller can see (names and scopes, never values).
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.secrets.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  org_id?: string | null,
+  user_id?: string | null,
+  name?: string | null,
+  description?: string | null | null,
+  scope?: string | null,
+  created_at?: string | string | null,
+  updated_at?: string | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### sshPublicKeys.delete
+
+`secrets.sshPublicKeys.delete`
+
+Deletes one of the caller's SSH public keys.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.amika.api.secrets.sshPublicKeys.delete({ id: 'sshkey_01M82G5H7K9M1P3R5T7V9X1Z3B' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Amika accepted the call; it answers with no body. |
+
+
+
+---
+
+### sshPublicKeys.list
+
+`secrets.sshPublicKeys.list`
+
+Lists the caller's SSH public keys.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.secrets.sshPublicKeys.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  public_key?: string | null,
+  scope?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### sshPublicKeys.upsert
+
+`secrets.sshPublicKeys.upsert`
+
+Adds or replaces one of the caller's SSH public keys, used for rig SSH and editor access.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.secrets.sshPublicKeys.upsert({ name: 'laptop', public_key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIExampleKeyOnly laptop' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `public_key` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `public_key` | `string \| null` | No | — |
+| `scope` | `string \| null` | No | — |
+
+
+
+---
+
+### update
+
+`secrets.update`
+
+Updates a generic secret: its value, name or scope.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.secrets.update({ id: 'sec_01M82F4G6J8L0N2Q4S6U8W0Y2A', value: 'sk_test_456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `value` | `string` | No | — |
+| `scope` | `user \| org` | No | — |
+| `description` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `org_id` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null \| null` | No | — |
+| `scope` | `string \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+
+
+---
+
+## Service Definitions
+
+### create
+
+`serviceDefinitions.create`
+
+Adds a service definition to a repository: a named set of ports every rig of that repository exposes.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.serviceDefinitions.create({
+	repo_url: 'https://github.com/acme/web-app',
+	name: 'web',
+	ports: [{ port: 3000, url_scheme: 'https' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repo_url` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `ports` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ports full type">
+
+```ts
+{
+  port: number,
+  protocol?: tcp | udp,
+  url_scheme?: http | https | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `ports` | `object[] \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="ports full type">
+
+```ts
+{
+  port?: number | null,
+  protocol?: string | null,
+  url_scheme?: string | null | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`serviceDefinitions.delete`
+
+Deletes a service definition from a repository.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.amika.api.serviceDefinitions.delete({ id: 'svcdef_01M82H6J8L0N2Q4S6U8W0Y2A4C' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Amika accepted the call; it answers with no body. |
+
+
+
+---
+
+### update
+
+`serviceDefinitions.update`
+
+Updates a repository's service definition: its name and ports.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.serviceDefinitions.update({
+	id: 'svcdef_01M82H6J8L0N2Q4S6U8W0Y2A4C',
+	name: 'web',
+	ports: [{ port: 5173, url_scheme: 'https' }],
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `ports` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="ports full type">
+
+```ts
+{
+  port: number,
+  protocol?: tcp | udp,
+  url_scheme?: http | https | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `ports` | `object[] \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="ports full type">
+
+```ts
+{
+  port?: number | null,
+  protocol?: string | null,
+  url_scheme?: string | null | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Services
+
+### list
+
+`services.list`
+
+Lists the live services across the organization's rigs.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.services.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandbox_id` | `string` | No | Only this sandbox's services, by sandbox id. |
+| `sandbox_name` | `string` | No | Only this sandbox's services, by sandbox name. |
+| `sandbox_ref` | `string` | No | Only this sandbox's services, by id or name (rejected if both match). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null | null,
+  sandbox_id?: string | null,
+  name?: string | null,
+  port?: number | null,
+  url_scheme?: string | null | null,
+  protocol?: string | null,
+  url?: string | null | null,
+  host_port?: number | null | null,
+  source?: string | null,
+  kind?: string | null,
+  created_at?: string | string | any | null | null,
+  updated_at?: string | string | any | null | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Slack
+
+### channelSettings.delete
+
+`slack.channelSettings.delete`
+
+Deletes one Slack channel's defaults; it falls back to the workspace defaults.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.amika.api.slack.channelSettings.delete({ slack_team_id: 'T0123456', slack_channel_id: 'C0123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slack_team_id` | `string` | Yes | — |
+| `slack_channel_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Amika accepted the call; it answers with no body. |
+
+
+
+---
+
+### channelSettings.list
+
+`slack.channelSettings.list`
+
+Lists per-channel Slack defaults and the channels the Amika bot has seen recently.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.slack.channelSettings.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `settings` | `object[] \| null` | No | — |
+| `seen_channels` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="settings full type">
+
+```ts
+{
+  org_id?: string | null,
+  slack_team_id?: string | null,
+  slack_channel_id?: string | null,
+  repository_id?: string | null | null,
+  agent_name?: string | null | null,
+  system_prompt?: string | null | null,
+  created_at?: string | string | null,
+  updated_at?: string | string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="seen_channels full type">
+
+```ts
+{
+  slack_team_id?: string | null,
+  slack_team_name?: string | null | null,
+  slack_channel_id?: string | null,
+  slack_channel_name?: string | null | null,
+  last_seen_at?: string | string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### channelSettings.set
+
+`slack.channelSettings.set`
+
+Sets the repository, agent and system prompt one Slack channel uses.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.slack.channelSettings.set({
+	slack_team_id: 'T0123456',
+	slack_channel_id: 'C0123456',
+	repository_id: 'repo_01M82E3F5H7K9M1P3R5T7V9X1Z',
+	agent_name: 'claude',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slack_team_id` | `string` | Yes | — |
+| `slack_channel_id` | `string` | Yes | — |
+| `repository_id` | `string \| null` | No | — |
+| `agent_name` | `claude \| codex \| null` | No | — |
+| `system_prompt` | `string \| null` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string \| null` | No | — |
+| `slack_team_id` | `string \| null` | No | — |
+| `slack_channel_id` | `string \| null` | No | — |
+| `repository_id` | `string \| null \| null` | No | — |
+| `agent_name` | `string \| null \| null` | No | — |
+| `system_prompt` | `string \| null \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+
+
+---
+
+### settings.get
+
+`slack.settings.get`
+
+Reads the organization's Slack defaults: repository, agent and system prompt. 404 when not set.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.slack.settings.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string \| null` | No | — |
+| `repository_id` | `string \| null \| null` | No | — |
+| `agent_name` | `string \| null \| null` | No | — |
+| `system_prompt` | `string \| null \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+
+
+---
+
+### settings.set
+
+`slack.settings.set`
+
+Sets the organization's Slack defaults: the repository and agent a new Slack thread uses, and an optional system prompt.
+
+**Risk:** `write`
+
+```ts
+await corsair.amika.api.slack.settings.set({ repository_id: 'repo_01M82E3F5H7K9M1P3R5T7V9X1Z', agent_name: 'claude', system_prompt: 'Open a pull request for every change.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repository_id` | `string \| null` | Yes | — |
+| `agent_name` | `claude \| codex \| null` | Yes | — |
+| `system_prompt` | `string \| null` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string \| null` | No | — |
+| `repository_id` | `string \| null \| null` | No | — |
+| `agent_name` | `string \| null \| null` | No | — |
+| `system_prompt` | `string \| null \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+
+
+
+---
+
+## Snapshots
+
+### create
+
+`snapshots.create`
+
+Starts capturing a snapshot of a running rig (sandbox_ref names it). mode scrub_and_delete (default) removes injected secrets and deletes the source rig; full keeps both. Answers 202; poll snapshots.get for status.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.amika.api.snapshots.create({
+	name: 'app-base',
+	sandbox_ref: 'dev-rig',
+	mode: 'scrub_and_delete',
+	description: 'web-app with deps installed',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandbox_id` | `string` | No | Source sandbox, by id. |
+| `sandbox_name` | `string` | No | Source sandbox, by name. |
+| `sandbox_ref` | `string` | No | Source sandbox, by id or name; rejected if both match. |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `mode` | `scrub_and_delete \| full` | No | scrub_and_delete (default): remove Amika-injected secrets (credential files + injected env vars) from the sandbox, capture the snapshot from the clean filesystem, then delete the source sandbox. full: capture everything as-is — including secrets — and keep the sandbox running. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `snapshot` | `string \| null` | No | — |
+| `provider` | `string \| null` | No | — |
+| `host_id` | `string \| null \| null` | No | — |
+| `cloud_account_id` | `string \| null \| null` | No | — |
+| `description` | `string \| null \| null` | No | — |
+| `source_sandbox_id` | `string \| null \| null` | No | — |
+| `source_sandbox_name` | `string \| null \| null` | No | — |
+| `repository_id` | `string \| null \| null` | No | — |
+| `repository_url` | `string \| null \| null` | No | — |
+| `base_snapshot` | `string \| null \| null` | No | — |
+| `sandbox_preset` | `string \| null \| null` | No | — |
+| `sandbox_size` | `string \| null \| null` | No | — |
+| `capture_mode` | `string \| null \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `error_message` | `string \| null \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+| `daytona` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="daytona full type">
+
+```ts
+{
+  name?: string | null,
+  state?: string | null,
+  imageName?: string | null,
+  cpu?: number | null,
+  memory?: number | null,
+  disk?: number | null,
+  createdAt?: string | string | null,
+  updatedAt?: string | string | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`snapshots.delete`
+
+Deletes a snapshot by name (default) or id. Rigs can no longer boot from it.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.amika.api.snapshots.delete({ ref: 'app-base' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | Snapshot reference: its fully-qualified name (default) or row id. Use the `by` query param to choose. |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to interpret the reference: name (default), id, or ref/name_or_id (matches either; rejects ambiguity). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Amika accepted the call; it answers with no body. |
+
+
+
+---
+
+### get
+
+`snapshots.get`
+
+Reads one snapshot by name (default) or id: status, source rig and size.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.snapshots.get({ ref: 'app-base' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ref` | `string` | Yes | Snapshot reference: its fully-qualified name (default) or row id. Use the `by` query param to choose. |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to interpret the reference: name (default), id, or ref/name_or_id (matches either; rejects ambiguity). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `snapshot` | `string \| null` | No | — |
+| `provider` | `string \| null` | No | — |
+| `host_id` | `string \| null \| null` | No | — |
+| `cloud_account_id` | `string \| null \| null` | No | — |
+| `description` | `string \| null \| null` | No | — |
+| `source_sandbox_id` | `string \| null \| null` | No | — |
+| `source_sandbox_name` | `string \| null \| null` | No | — |
+| `repository_id` | `string \| null \| null` | No | — |
+| `repository_url` | `string \| null \| null` | No | — |
+| `base_snapshot` | `string \| null \| null` | No | — |
+| `sandbox_preset` | `string \| null \| null` | No | — |
+| `sandbox_size` | `string \| null \| null` | No | — |
+| `capture_mode` | `string \| null \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `error_message` | `string \| null \| null` | No | — |
+| `created_at` | `string \| string \| null` | No | — |
+| `updated_at` | `string \| string \| null` | No | — |
+| `daytona` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="daytona full type">
+
+```ts
+{
+  name?: string | null,
+  state?: string | null,
+  imageName?: string | null,
+  cpu?: number | null,
+  memory?: number | null,
+  disk?: number | null,
+  createdAt?: string | string | null,
+  updatedAt?: string | string | null
+} | null | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`snapshots.list`
+
+Lists snapshots captured from rigs (reusable base images new rigs can boot from).
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.snapshots.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `repository_id` | `string` | No | If set, only return snapshots taken from sandboxes attached to this repository. |
+| `source_sandbox_id` | `string` | No | If set, only return snapshots captured from this sandbox, by sandbox id. An id that names no sandbox returns an empty list. |
+| `source_sandbox_name` | `string` | No | If set, only return snapshots captured from this sandbox, by sandbox name. 404 when no sandbox has the name. |
+| `source_sandbox_ref` | `string` | No | If set, only return snapshots captured from this sandbox, by id or name. 404 when neither matches; 409 `resource_ref_ambiguous` when the value is one sandbox's id and another's name. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string | null,
+  snapshot?: string | null,
+  provider?: string | null,
+  host_id?: string | null | null,
+  cloud_account_id?: string | null | null,
+  description?: string | null | null,
+  source_sandbox_id?: string | null | null,
+  source_sandbox_name?: string | null | null,
+  repository_id?: string | null | null,
+  repository_url?: string | null | null,
+  base_snapshot?: string | null | null,
+  sandbox_preset?: string | null | null,
+  sandbox_size?: string | null | null,
+  capture_mode?: string | null | null,
+  state?: string | null,
+  error_message?: string | null | null,
+  created_at?: string | string | null,
+  updated_at?: string | string | null,
+  daytona?: {
+    name?: string | null,
+    state?: string | null,
+    imageName?: string | null,
+    cpu?: number | null,
+    memory?: number | null,
+    disk?: number | null,
+    createdAt?: string | string | null,
+    updatedAt?: string | string | null
+  } | null | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### previewScrub
+
+`snapshots.previewScrub`
+
+Previews which injected secrets a scrub_and_delete snapshot of a rig would remove.
+
+**Risk:** `read`
+
+```ts
+await corsair.amika.api.snapshots.previewScrub({ sandbox: 'dev-rig' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sandbox` | `string` | No | The sandbox whose injected secrets would be scrubbed. |
+| `by` | `name \| id \| ref \| name_or_id` | No | How to interpret `sandbox`: name (default), id, or ref/name_or_id (matches either; rejects ambiguity). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `files` | `string[] \| null` | No | — |
+| `restored_files` | `string[] \| null` | No | — |
+| `env_vars` | `string[] \| null` | No | — |
+
+
+
+---
+
