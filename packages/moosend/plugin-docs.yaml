@@ -1,0 +1,79 @@
+displayName: Moosend
+description: Email marketing with Moosend - manage mailing lists and subscribers, subscribe and update contacts, and unsubscribe or remove them.
+domain: moosend.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API key in Moosend under account settings and store it on the
+  account. Every call authenticates with the key as the `apikey` query
+  parameter, so it is sent in the URL; the plugin strips the key from any
+  error it reports.
+
+  - **Every answer is HTTP 200.** Success and failure both arrive as
+  `{Code, Error, Context}` envelopes; Code 0 is success and anything else is
+  a failure the plugin throws (for example 104 `API_KEY_NOT_VALID` for a bad
+  key).
+  - **subscribe is an upsert.** Adding a subscriber whose email already exists
+  updates the record. `subscribers.subscribeMany` skips invalid addresses
+  silently, per Moosend's docs, so a success there does not mean every
+  address landed.
+  - **unsubscribe versus remove.** `subscribers.unsubscribe` moves the
+  contact to the suppression list and can be reversed by subscribing again;
+  `subscribers.remove` deletes the record permanently.
+  - **Paging.** The paged list operations take a `page` and a `pageSize` and
+  return the paging info (total results, pages) alongside the items.
+  - **No documented rate limit.** The plugin retries a gateway 429 with
+  exponential backoff and never replays a write after a 5xx or a network
+  failure.
+examples:
+  read:
+    path: lists.list
+    title: List every active mailing list
+    args: {}
+  write:
+    path: subscribers.subscribe
+    title: Add a subscriber to a mailing list
+    args:
+      mailingListId: 8c4f9a52-3f3e-4f29-a497-1f4c30f10be9
+      email: jana.berger@beachy.example
+      name: Jana Berger
+apiExamples:
+  lists.list: {}
+  lists.listPaged:
+    call: "{ page: 1, pageSize: 10 }"
+  lists.get:
+    call: "{ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', withStatistics: false }"
+  lists.create:
+    call: "{ name: 'Newsletter' }"
+  lists.update:
+    call: "{ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', name: 'Newsletter 2026' }"
+  lists.delete:
+    call: "{ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9' }"
+  subscribers.list:
+    call: "{ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', status: 'subscribed', page: 1, pageSize: 10 }"
+  subscribers.getByEmail:
+    call: "{ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', email: 'jana.berger@beachy.example' }"
+  subscribers.getById:
+    call: "{ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', subscriberId: '6c09ba25-8b2e-4d84-9f7c-9f34f6a1c6d0' }"
+  subscribers.subscribe:
+    call: "{ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', email: 'jana.berger@beachy.example', name: 'Jana Berger', customFields: { Country: 'NL' } }"
+  subscribers.subscribeMany:
+    call: "{ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', subscribers: [{ email: 'a@example.com' }, { email: 'b@example.com', name: 'B' }] }"
+  subscribers.update:
+    call: "{ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', subscriberId: '6c09ba25-8b2e-4d84-9f7c-9f34f6a1c6d0', email: 'jana@beachy.example', name: 'Jana B.' }"
+  subscribers.unsubscribe:
+    call: "{ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', email: 'jana.berger@beachy.example' }"
+  subscribers.remove:
+    call: "{ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', email: 'jana.berger@beachy.example' }"
+apiNotes:
+  lists.list: |
+    `GET /lists.json` returns every active list with subscriber counts and the
+    custom field definitions; `lists.listPaged` takes page and pageSize and
+    also returns the paging info.
+  subscribers.subscribe: |
+    `POST /subscribers/{mailingListId}/subscribe.json` with an upsert: an
+    existing email is updated instead of rejected. `customFields` are
+    name-value pairs matched against the list's custom field definitions.
+  subscribers.unsubscribe: |
+    `POST /subscribers/{mailingListId}/unsubscribe.json` moves the email to
+    the suppression list; `subscribers.remove` deletes it permanently without
+    the suppression list.

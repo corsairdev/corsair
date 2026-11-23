@@ -1,0 +1,767 @@
+---
+title: "Moosend API reference"
+sidebarTitle: "API"
+description: "API reference for the Moosend plugin in Corsair: every `moosend.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Lists
+
+### create
+
+`lists.create`
+
+Create an empty mailing list
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.lists.create({ name: 'Newsletter' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The name of the mailing list. |
+| `confirmationPage` | `string` | No | Shown at the end of the subscription process. |
+| `redirectAfterUnsubscribePage` | `string` | No | Where subscribers land after unsubscribing. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingList` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="mailingList full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  created_by?: string | null,
+  updated_by?: string | null,
+  status?: number | null,
+  active_member_count?: number | null,
+  bounced_member_count?: number | null,
+  removed_member_count?: number | null,
+  unsubscribed_member_count?: number | null,
+  custom_fields_definition?: {
+    custom_field_id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    is_required?: boolean | null,
+    options?: string[] | null
+  }[] | null,
+  import_operation?: Record<string, unknown> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`lists.delete`
+
+Delete a mailing list and its subscriber data; cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.lists.delete({ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`lists.get`
+
+Read one mailing list with its custom fields, optionally without subscriber statistics
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.lists.get({ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', withStatistics: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | — |
+| `withStatistics` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingList` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="mailingList full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  created_by?: string | null,
+  updated_by?: string | null,
+  status?: number | null,
+  active_member_count?: number | null,
+  bounced_member_count?: number | null,
+  removed_member_count?: number | null,
+  unsubscribed_member_count?: number | null,
+  custom_fields_definition?: {
+    custom_field_id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    is_required?: boolean | null,
+    options?: string[] | null
+  }[] | null,
+  import_operation?: Record<string, unknown> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`lists.list`
+
+List every active mailing list in the account, with subscriber statistics and custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.lists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `withStatistics` | `boolean` | No | Omit to receive statistics by default. |
+| `shortBy` | `string` | No | The property to sort by; defaults to CreatedOn. |
+| `sortMethod` | `ASC \| DESC` | No | — |
+
+`GET /lists.json` returns every active list with subscriber counts and the
+custom field definitions; `lists.listPaged` takes page and pageSize and
+also returns the paging info.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingLists` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="mailingLists full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  created_by?: string | null,
+  updated_by?: string | null,
+  status?: number | null,
+  active_member_count?: number | null,
+  bounced_member_count?: number | null,
+  removed_member_count?: number | null,
+  unsubscribed_member_count?: number | null,
+  custom_fields_definition?: {
+    custom_field_id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    is_required?: boolean | null,
+    options?: string[] | null
+  }[] | null,
+  import_operation?: Record<string, unknown> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPaged
+
+`lists.listPaged`
+
+List mailing lists one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.lists.listPaged({ page: 1, pageSize: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | Yes | — |
+| `pageSize` | `number` | Yes | Lists per page. |
+| `shortBy` | `string` | No | — |
+| `sortMethod` | `ASC \| DESC` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingLists` | `object[]` | Yes | — |
+| `paging` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="mailingLists full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  created_by?: string | null,
+  updated_by?: string | null,
+  status?: number | null,
+  active_member_count?: number | null,
+  bounced_member_count?: number | null,
+  removed_member_count?: number | null,
+  unsubscribed_member_count?: number | null,
+  custom_fields_definition?: {
+    custom_field_id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    is_required?: boolean | null,
+    options?: string[] | null
+  }[] | null,
+  import_operation?: Record<string, unknown> | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current_page?: number | null,
+  page_size?: number | null,
+  sort_expression?: string | null,
+  sort_is_ascending?: boolean | null,
+  total_page_count?: number | null,
+  total_results?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`lists.update`
+
+Update a mailing list name and confirmation pages
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.lists.update({ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', name: 'Newsletter 2026' });
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  name: string,
+  confirmationPage?: string,
+  redirectAfterUnsubscribePage?: string
+}& {
+  mailingListId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingList` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="mailingList full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  created_by?: string | null,
+  updated_by?: string | null,
+  status?: number | null,
+  active_member_count?: number | null,
+  bounced_member_count?: number | null,
+  removed_member_count?: number | null,
+  unsubscribed_member_count?: number | null,
+  custom_fields_definition?: {
+    custom_field_id?: string | null,
+    name?: string | null,
+    type?: string | null,
+    is_required?: boolean | null,
+    options?: string[] | null
+  }[] | null,
+  import_operation?: Record<string, unknown> | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscribers
+
+### getByEmail
+
+`subscribers.getByEmail`
+
+Find a subscriber by email address in one mailing list
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.subscribers.getByEmail({ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', email: 'jana.berger@beachy.example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | — |
+| `email` | `string` | Yes | The subscriber email address. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriber` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subscriber full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  unsubscribed_on?: string | null,
+  removed_on?: string | null,
+  subscribe_type?: number | null,
+  subscribe_method?: number | null,
+  custom_fields?: {
+    custom_field_id?: string | null,
+    name?: string | null,
+    value?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getById
+
+`subscribers.getById`
+
+Find a subscriber by its unique id in one mailing list
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.subscribers.getById({ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', subscriberId: '6c09ba25-8b2e-4d84-9f7c-9f34f6a1c6d0' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | — |
+| `subscriberId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriber` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subscriber full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  unsubscribed_on?: string | null,
+  removed_on?: string | null,
+  subscribe_type?: number | null,
+  subscribe_method?: number | null,
+  custom_fields?: {
+    custom_field_id?: string | null,
+    name?: string | null,
+    value?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subscribers.list`
+
+List a mailing list by subscriber status (subscribed, unsubscribed or cleaned), one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.subscribers.list({ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', status: 'subscribed', page: 1, pageSize: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | — |
+| `status` | `subscribed \| unsubscribed \| cleaned` | Yes | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscribers` | `object[]` | Yes | — |
+| `paging` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  unsubscribed_on?: string | null,
+  removed_on?: string | null,
+  subscribe_type?: number | null,
+  subscribe_method?: number | null,
+  custom_fields?: {
+    custom_field_id?: string | null,
+    name?: string | null,
+    value?: string | null
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  current_page?: number | null,
+  page_size?: number | null,
+  sort_expression?: string | null,
+  sort_is_ascending?: boolean | null,
+  total_page_count?: number | null,
+  total_results?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`subscribers.remove`
+
+Remove a subscriber from the mailing list permanently, without the suppression list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.subscribers.remove({ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', email: 'jana.berger@beachy.example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | — |
+| `email` | `string` | Yes | The subscriber email address. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### subscribe
+
+`subscribers.subscribe`
+
+Add a subscriber, updating the existing entry when the email is already on the list
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.subscribers.subscribe({ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', email: 'jana.berger@beachy.example', name: 'Jana Berger', customFields: { Country: 'NL' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | — |
+| `email` | `string` | Yes | The subscriber email address. |
+| `name` | `string` | No | — |
+| `customFields` | `Record<string, unknown>` | No | — |
+
+`POST /subscribers/{mailingListId}/subscribe.json` with an upsert: an
+existing email is updated instead of rejected. `customFields` are
+name-value pairs matched against the list's custom field definitions.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriber` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subscriber full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  unsubscribed_on?: string | null,
+  removed_on?: string | null,
+  subscribe_type?: number | null,
+  subscribe_method?: number | null,
+  custom_fields?: {
+    custom_field_id?: string | null,
+    name?: string | null,
+    value?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subscribeMany
+
+`subscribers.subscribeMany`
+
+Add many subscribers in one call; invalid addresses are skipped silently by Moosend
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.subscribers.subscribeMany({ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', subscribers: [{ email: 'a@example.com' }, { email: 'b@example.com', name: 'B' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | — |
+| `subscribers` | `object[]` | Yes | Invalid email addresses are skipped silently by Moosend, per its docs. |
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  email: string,
+  name?: string,
+  customFields?: Record<string, unknown>
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### unsubscribe
+
+`subscribers.unsubscribe`
+
+Unsubscribe an email from one mailing list, moving it to the suppression list; subscribe adds it back
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.subscribers.unsubscribe({ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', email: 'jana.berger@beachy.example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | — |
+| `email` | `string` | Yes | The subscriber email address. |
+
+`POST /subscribers/{mailingListId}/unsubscribe.json` moves the email to
+the suppression list; `subscribers.remove` deletes it permanently without
+the suppression list.
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### update
+
+`subscribers.update`
+
+Update a subscriber's email, name and custom fields
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.subscribers.update({ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', subscriberId: '6c09ba25-8b2e-4d84-9f7c-9f34f6a1c6d0', email: 'jana@beachy.example', name: 'Jana B.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | — |
+| `subscriberId` | `string` | Yes | — |
+| `email` | `string` | Yes | The subscriber email address. |
+| `name` | `string` | No | — |
+| `customFields` | `Record<string, unknown>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriber` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subscriber full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  email?: string | null,
+  created_on?: string | null,
+  updated_on?: string | null,
+  unsubscribed_on?: string | null,
+  removed_on?: string | null,
+  subscribe_type?: number | null,
+  subscribe_method?: number | null,
+  custom_fields?: {
+    custom_field_id?: string | null,
+    name?: string | null,
+    value?: string | null
+  }[] | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

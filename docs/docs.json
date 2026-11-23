@@ -3772,6 +3772,14 @@
                 ]
               },
               {
+                "group": "Moosend",
+                "pages": [
+                  "plugins/moosend/overview",
+                  "plugins/moosend/api",
+                  "plugins/moosend/database"
+                ]
+              },
+              {
                 "group": "Motion",
                 "pages": [
                   "plugins/motion/overview",

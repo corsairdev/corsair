@@ -1,0 +1,149 @@
+---
+title: "Moosend plugin"
+sidebarTitle: "Overview"
+description: "Email marketing with Moosend - manage mailing lists and subscribers, subscribe and update contacts, and unsubscribe or remove them."
+---
+
+Use **Moosend** through Corsair: one client, typed API calls.
+
+Create an API key in Moosend under account settings and store it on the
+account. Every call authenticates with the key as the `apikey` query
+parameter, so it is sent in the URL; the plugin strips the key from any
+error it reports.
+
+- **Every answer is HTTP 200.** Success and failure both arrive as
+`{Code, Error, Context}` envelopes; Code 0 is success and anything else is
+a failure the plugin throws (for example 104 `API_KEY_NOT_VALID` for a bad
+key).
+- **subscribe is an upsert.** Adding a subscriber whose email already exists
+updates the record. `subscribers.subscribeMany` skips invalid addresses
+silently, per Moosend's docs, so a success there does not mean every
+address landed.
+- **unsubscribe versus remove.** `subscribers.unsubscribe` moves the
+contact to the suppression list and can be reversed by subscribing again;
+`subscribers.remove` deletes the record permanently.
+- **Paging.** The paged list operations take a `page` and a `pageSize` and
+return the paging info (total results, pages) alongside the items.
+- **No documented rate limit.** The plugin retries a gateway 429 with
+exponential backoff and never replays a write after a 5xx or a network
+failure.
+
+**What you get:**
+
+- 14 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/moosend better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/moosend better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/moosend better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/moosend better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { moosend } from '@corsair-dev/moosend';
+
+export const corsair = createCorsair({
+	plugins: [
+		moosend(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Moosend API key before the first call: `pnpm corsair setup --plugin=moosend --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+moosend()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'moosend',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List every active mailing list**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.moosend.api.lists.list({});
+```
+
+
+**Add a subscriber to a mailing list**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.moosend.api.subscribers.subscribe({ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', email: 'jana.berger@beachy.example', name: 'Jana Berger' });
+```
+
+
+See the full list on the [API](/plugins/moosend/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/moosend/api">
+    Every `moosend.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
