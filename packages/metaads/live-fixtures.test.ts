@@ -27,11 +27,32 @@ jest.mock('./client', () => {
 
 const mockedRequest = jest.mocked(client.makeMetaAdsRequest);
 const ctx = {
-	key: 'meta-test-token',
-	options: {},
 	endpoints: {},
 	$getAccountId: () => Promise.resolve('test-account'),
-} as unknown as MetaAdsContext;
+	key: 'meta-test-token',
+	options: {},
+	keys: {
+		get_dek: () => Promise.resolve('test-dek'),
+		issue_new_dek: () => Promise.resolve('test-dek'),
+		get_access_token: () => Promise.resolve('meta-test-token'),
+		get_refresh_token: () => Promise.resolve(null),
+		get_expires_at: () => Promise.resolve(null),
+		get_scope: () => Promise.resolve(null),
+		get_integration_credentials: () =>
+			Promise.resolve({
+				client_id: null,
+				client_secret: null,
+				redirect_url: null,
+			}),
+		set_access_token: (_value: string | null) => Promise.resolve(),
+		set_refresh_token: (_value: string | null) => Promise.resolve(),
+		set_expires_at: (_value: string | null) => Promise.resolve(),
+		set_scope: (_value: string | null) => Promise.resolve(),
+		get_webhook_signature: () => Promise.resolve(null),
+		set_webhook_signature: () => Promise.resolve(),
+	},
+	db: {},
+} satisfies MetaAdsContext;
 
 const paging = {
 	cursors: { before: 'cursor-before', after: 'cursor-after' },
@@ -338,6 +359,7 @@ describe('Meta Ads edges that Graph v27 does not have', () => {
 });
 
 describe('Meta Ads live error bodies', () => {
+	// `unknown` because Graph error bodies differ by code and subcode; the handlers only read `error.code`.
 	function graphError(body: Record<string, unknown>) {
 		return new ApiError(
 			{ method: 'GET', url: '/act_100/adsets' },
