@@ -59616,7 +59616,7 @@ await corsair.quickbooks.api.salesReceipt.void({"realmId":"12345678","body":{"Id
 
 QuickBooks Create a taxagency
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.quickbooks.api.taxAgency.create({"realmId":"12345678","body":{"DisplayName":"sample"}});
@@ -60438,7 +60438,7 @@ await corsair.quickbooks.api.taxRate.list({"realmId":"12345678"});
 
 QuickBooks Create a taxservice
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.quickbooks.api.taxService.create({"realmId":"12345678","body":{"TaxCode":"sample","TaxRateDetails":[]}});
