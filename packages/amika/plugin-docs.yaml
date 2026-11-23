@@ -2,6 +2,7 @@
 # example per operation. Generated with the plugin from Amika's OpenAPI
 # spec; docs-examples.test.ts parses every example with its input schema.
 displayName: Amika
+domain: amika.dev
 description: "Give an agent its own coding agents: create rigs (isolated devbox VMs with a repo, its dependencies and agent credentials), send messages to Claude Code or Codex running in them, queue shell commands and read their output, schedule jobs, expose dev servers as preview URLs, snapshot rigs into base images, and manage hosts, secrets, agent credentials and repository MCP integrations (98 operations)."
 overviewNote: "Connect with an Amika API key (app.amika.dev \u2192 Settings \u2192 API Keys, or `amika auth api-key create`). rigs.create answers before the rig has booted: poll rigs.get until status is running and setup_status is ok, and stop if setup_status ends in -failed. commandRuns.create queues a command; read its output with commandRuns.listEvents. agentSessions.send needs a Claude or Codex credential stored in Amika first (agentCredentials.claude.create)."
 examples:
