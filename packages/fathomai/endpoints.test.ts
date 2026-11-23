@@ -169,6 +169,15 @@ describe('Fathom AI endpoints', () => {
 		);
 	});
 
+	it('recordings.getSummary returns a null summary for a recording that has none', async () => {
+		// Live response (11-23) for Fathom's onboarding demo recording, which has no generated summary.
+		fetchMock.mockResolvedValue(json(200, { summary: null }));
+
+		await expect(getSummary(ctx, { recording_id: 42 })).resolves.toEqual({
+			summary: null,
+		});
+	});
+
 	it('recordings.getTranscript with destination_url returns the async acknowledgement', async () => {
 		const destination = 'https://example.com/hooks/transcript';
 		fetchMock.mockResolvedValue(json(200, { destination_url: destination }));

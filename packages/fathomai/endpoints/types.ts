@@ -290,7 +290,8 @@ export const FathomAiEndpointOutputSchemas = {
 	meetingsList: page(MeetingSchema),
 	meetingTypesList: page(MeetingTypeSchema),
 	recordingsGetSummary: z.union([
-		z.object({ summary: MeetingSummarySchema }),
+		// The spec says the summary is always set, but a recording without one (e.g. Fathom's demo call) returns null.
+		z.object({ summary: MeetingSummarySchema.nullable() }),
 		CallbackResponseSchema,
 	]),
 	recordingsGetTranscript: z.union([
