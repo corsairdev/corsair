@@ -70,6 +70,8 @@ export type FathomAiEndpoints = {
 	meetingTypesList: FathomAiEndpoint<'meetingTypesList'>;
 	recordingsGetSummary: FathomAiEndpoint<'recordingsGetSummary'>;
 	recordingsGetTranscript: FathomAiEndpoint<'recordingsGetTranscript'>;
+	recordingsSendSummary: FathomAiEndpoint<'recordingsSendSummary'>;
+	recordingsSendTranscript: FathomAiEndpoint<'recordingsSendTranscript'>;
 	recordingsRequestDownload: FathomAiEndpoint<'recordingsRequestDownload'>;
 	recordingsGetDownload: FathomAiEndpoint<'recordingsGetDownload'>;
 	teamsList: FathomAiEndpoint<'teamsList'>;
@@ -99,6 +101,8 @@ const fathomAiEndpointsNested = {
 	recordings: {
 		getSummary: Recordings.getSummary,
 		getTranscript: Recordings.getTranscript,
+		sendSummary: Recordings.sendSummary,
+		sendTranscript: Recordings.sendTranscript,
 		requestDownload: Recordings.requestDownload,
 		getDownload: Recordings.getDownload,
 	},
@@ -139,6 +143,14 @@ export const fathomAiEndpointSchemas = {
 	'recordings.getTranscript': {
 		input: FathomAiEndpointInputSchemas.recordingsGetTranscript,
 		output: FathomAiEndpointOutputSchemas.recordingsGetTranscript,
+	},
+	'recordings.sendSummary': {
+		input: FathomAiEndpointInputSchemas.recordingsSendSummary,
+		output: FathomAiEndpointOutputSchemas.recordingsSendSummary,
+	},
+	'recordings.sendTranscript': {
+		input: FathomAiEndpointInputSchemas.recordingsSendTranscript,
+		output: FathomAiEndpointOutputSchemas.recordingsSendTranscript,
 	},
 	'recordings.requestDownload': {
 		input: FathomAiEndpointInputSchemas.recordingsRequestDownload,
@@ -195,13 +207,22 @@ const fathomAiEndpointMeta = {
 	},
 	'recordings.getSummary': {
 		riskLevel: 'read',
-		description:
-			'Get the AI summary of a recording, or have Fathom POST it to a destination_url',
+		description: 'Get the AI summary of a recording',
 	},
 	'recordings.getTranscript': {
 		riskLevel: 'read',
+		description: 'Get the speaker-labelled transcript of a recording',
+	},
+	// Sends meeting content to a server the caller picks (R8: a send is destructive).
+	'recordings.sendSummary': {
+		riskLevel: 'destructive',
 		description:
-			'Get the speaker-labelled transcript of a recording, or have Fathom POST it to a destination_url',
+			'Have Fathom POST the AI summary of a recording to a destination_url',
+	},
+	'recordings.sendTranscript': {
+		riskLevel: 'destructive',
+		description:
+			'Have Fathom POST the speaker-labelled transcript of a recording to a destination_url',
 	},
 	'recordings.requestDownload': {
 		riskLevel: 'write',

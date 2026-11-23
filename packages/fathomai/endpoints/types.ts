@@ -239,7 +239,15 @@ const UsersListInputSchema = z.object({
 	settings_access: SettingsAccessLevel.optional(),
 });
 
-const RecordingContentInputSchema = z.object({
+const RecordingInputSchema = z.object({ recording_id: RecordingId });
+
+// Fathom POSTs the summary or transcript to destination_url instead of returning it.
+const RecordingCallbackInputSchema = z.object({
+	recording_id: RecordingId,
+	destination_url: z.url(),
+});
+
+const RecordingsRequestDownloadInputSchema = z.object({
 	recording_id: RecordingId,
 	destination_url: z.url().optional(),
 });
@@ -275,9 +283,11 @@ const WebhooksDeleteInputSchema = z.object({ id: z.string().min(1) });
 export const FathomAiEndpointInputSchemas = {
 	meetingsList: MeetingsListInputSchema,
 	meetingTypesList: CursorInputSchema,
-	recordingsGetSummary: RecordingContentInputSchema,
-	recordingsGetTranscript: RecordingContentInputSchema,
-	recordingsRequestDownload: RecordingContentInputSchema,
+	recordingsGetSummary: RecordingInputSchema,
+	recordingsGetTranscript: RecordingInputSchema,
+	recordingsSendSummary: RecordingCallbackInputSchema,
+	recordingsSendTranscript: RecordingCallbackInputSchema,
+	recordingsRequestDownload: RecordingsRequestDownloadInputSchema,
 	recordingsGetDownload: RecordingsGetDownloadInputSchema,
 	teamsList: CursorInputSchema,
 	teamMembersList: TeamMembersListInputSchema,
@@ -289,15 +299,13 @@ export const FathomAiEndpointInputSchemas = {
 export const FathomAiEndpointOutputSchemas = {
 	meetingsList: page(MeetingSchema),
 	meetingTypesList: page(MeetingTypeSchema),
-	recordingsGetSummary: z.union([
-		// The spec says the summary is always set, but a recording without one (e.g. Fathom's demo call) returns null.
-		z.object({ summary: MeetingSummarySchema.nullable() }),
-		CallbackResponseSchema,
-	]),
-	recordingsGetTranscript: z.union([
-		z.object({ transcript: z.array(TranscriptItemSchema) }),
-		CallbackResponseSchema,
-	]),
+	// The spec says the summary is always set, but a recording without one (e.g. Fathom's demo call) returns null.
+	recordingsGetSummary: z.object({ summary: MeetingSummarySchema.nullable() }),
+	recordingsGetTranscript: z.object({
+		transcript: z.array(TranscriptItemSchema),
+	}),
+	recordingsSendSummary: CallbackResponseSchema,
+	recordingsSendTranscript: CallbackResponseSchema,
 	recordingsRequestDownload: RecordingDownloadSchema,
 	recordingsGetDownload: RecordingDownloadSchema,
 	teamsList: page(TeamSchema),

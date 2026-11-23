@@ -7,6 +7,8 @@ import {
 	getSummary,
 	getTranscript,
 	requestDownload,
+	sendSummary,
+	sendTranscript,
 } from './endpoints/recordings';
 import { listMembers, list as listTeams } from './endpoints/teams';
 import { storableMeeting } from './endpoints/types';
@@ -178,19 +180,70 @@ describe('Fathom AI endpoints', () => {
 		});
 	});
 
-	it('recordings.getTranscript with destination_url returns the async acknowledgement', async () => {
+	it('recordings.sendTranscript has Fathom POST the transcript and logs only the recording id', async () => {
 		const destination = 'https://example.com/hooks/transcript';
 		fetchMock.mockResolvedValue(json(200, { destination_url: destination }));
 
-		const result = await getTranscript(ctx, {
+		const result = await sendTranscript(ctx, {
 			recording_id: 42,
 			destination_url: destination,
 		});
 
 		const call = sent();
+		expect(call.method).toBe('GET');
 		expect(call.path).toBe(`${BASE}/recordings/42/transcript`);
 		expect(call.query).toEqual([['destination_url', destination]]);
 		expect(result).toEqual({ destination_url: destination });
+		expect(logEventFromContext).toHaveBeenCalledWith(
+			ctx,
+			'fathomai.recordings.sendTranscript',
+			{ recording_id: 42 },
+			'completed',
+		);
+	});
+
+	it('recordings.sendSummary has Fathom POST the summary', async () => {
+		const destination = 'https://example.com/hooks/summary';
+		fetchMock.mockResolvedValue(json(200, { destination_url: destination }));
+
+		const result = await sendSummary(ctx, {
+			recording_id: 42,
+			destination_url: destination,
+		});
+
+		const call = sent();
+		expect(call.path).toBe(`${BASE}/recordings/42/summary`);
+		expect(call.query).toEqual([['destination_url', destination]]);
+		expect(result).toEqual({ destination_url: destination });
+	});
+
+	it('recordings.getTranscript drops a destination_url instead of passing it on', async () => {
+		fetchMock.mockResolvedValue(json(200, { transcript: [] }));
+
+		await getTranscript(ctx, {
+			recording_id: 42,
+			// A read-only caller slipping in a callback URL: dropped, so the content comes back inline.
+			...({ destination_url: 'https://example.com/elsewhere' } as object),
+		});
+
+		expect(sent().query).toEqual([]);
+	});
+
+	it('recordings.sendSummary requires a destination_url', async () => {
+		await expect(
+			// `as never`: the missing field is what is under test.
+			sendSummary(ctx, { recording_id: 42 } as never),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('marks the callback operations destructive so read-only callers cannot send content out', () => {
+		const meta = fathomai().endpointMeta;
+
+		expect(meta?.['recordings.getSummary']?.riskLevel).toBe('read');
+		expect(meta?.['recordings.getTranscript']?.riskLevel).toBe('read');
+		expect(meta?.['recordings.sendSummary']?.riskLevel).toBe('destructive');
+		expect(meta?.['recordings.sendTranscript']?.riskLevel).toBe('destructive');
 	});
 
 	it('recordings.getTranscript returns speaker-labelled lines inline', async () => {
@@ -427,7 +480,7 @@ describe('Fathom AI endpoints', () => {
 		expect(apiError.url).toBe(`${BASE}/meetings`);
 
 		fetchMock.mockResolvedValue(json(404, { error: 'Not found' }));
-		const transcriptError = await getTranscript(ctx, {
+		const transcriptError = await sendTranscript(ctx, {
 			recording_id: 42,
 			destination_url: 'https://example.com/hook?token=abc',
 			// `unknown`: a rejection value is untyped until the assertion narrows it.
