@@ -450,6 +450,7 @@ export const BaseProviders = [
 	'missive',
 	'mistralai',
 	'mixmax',
+	'moco',
 	'modelry',
 	'monday',
 	'mondaymcp',
@@ -1221,6 +1222,7 @@ export const ProviderDisplayNames = {
 	missive: 'Missive',
 	mistralai: 'Mistral AI',
 	mixmax: 'Mixmax',
+	moco: 'Moco',
 	modelry: 'Modelry',
 	monday: 'Monday',
 	mondaymcp: 'Monday MCP',
@@ -1999,6 +2001,7 @@ export type AllProviders =
 	| 'missive'
 	| 'mistralai'
 	| 'mixmax'
+	| 'moco'
 	| 'modelry'
 	| 'monday'
 	| 'mondaymcp'
