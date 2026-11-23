@@ -11826,5 +11826,37 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/freeagent",
+    "dir": "packages/freeagent",
+    "name": "FreeAgent",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2610,
+        "title": "Expand the API coverage to 206 operations"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/pipedrive",
+    "dir": "packages/pipedrive",
+    "name": "Pipedrive",
+    "version": "0.1.2",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2608,
+        "title": "Cover the v1 and v2 APIs, 44 to 365 operations"
+      }
+    ]
   }
 ]
