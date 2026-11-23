@@ -2247,6 +2247,15 @@
                 ]
               },
               {
+                "group": "Fathom AI Notetaker",
+                "pages": [
+                  "plugins/fathomai/overview",
+                  "plugins/fathomai/api",
+                  "plugins/fathomai/database",
+                  "plugins/fathomai/webhooks"
+                ]
+              },
+              {
                 "group": "Felt",
                 "pages": [
                   "plugins/felt/overview",

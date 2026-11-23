@@ -269,6 +269,7 @@ export const BaseProviders = [
 	'fal',
 	'faraday',
 	'fathom',
+	'fathomai',
 	'felt',
 	'fibery',
 	'fidel',
@@ -1049,6 +1050,7 @@ export const ProviderDisplayNames = {
 	fal: 'fal',
 	faraday: 'Faraday',
 	fathom: 'Fathom',
+	fathomai: 'Fathom AI Notetaker',
 	felt: 'Felt',
 	fibery: 'Fibery',
 	fidel: 'Fidel',
@@ -1836,6 +1838,7 @@ export type AllProviders =
 	| 'fal'
 	| 'faraday'
 	| 'fathom'
+	| 'fathomai'
 	| 'felt'
 	| 'fibery'
 	| 'fidel'
