@@ -25,6 +25,7 @@ describe('QuickBooks operations against sandbox responses', () => {
 		fetchMock.mockRestore();
 	});
 
+	// unknown because each test queues a different raw provider body; the endpoint under test parses it.
 	function answer(body: unknown): void {
 		fetchMock.mockResolvedValueOnce(
 			new Response(JSON.stringify(body), {
@@ -210,6 +211,7 @@ describe('lenient response parsing', () => {
 					.strict(),
 			})
 			.strict();
+		// unknown because the lenient copy keeps whatever QuickBooks sent; the test checks the list survived.
 		const parsed = responseSchema(documented).parse({
 			Thing: { Extra: [{ Key: 'a' }] },
 		}) as { Thing: { Extra: unknown } };

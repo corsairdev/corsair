@@ -1,7 +1,10 @@
 import { CatalogEndpoints } from './endpoints';
 import { QuickBooksCatalogEndpointSchemas } from './endpoints/catalog';
 import { requestSchema } from './endpoints/schema-mode';
-import { QuickBooksSpecialEndpoints } from './endpoints/special';
+import {
+	QuickBooksSpecialEndpointSchemas,
+	QuickBooksSpecialEndpoints,
+} from './endpoints/special';
 
 // Cases from the 11-23 review of the live-run head.
 const realmId = '12345678';
@@ -213,6 +216,38 @@ describe('QuickBooks review fixes', () => {
 		expect(text).not.toContain('someone@example.com');
 		expect(text).toContain('2210');
 		expect(text).toContain('"bId":"q1"');
+	});
+
+	it('types and accepts a sparse batch update', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				JSON.stringify({
+					BatchItemResponse: [
+						{ bId: 's1', SalesReceipt: { Id: '11', SyncToken: '1' } },
+					],
+					time: '2026-11-23T00:00:00Z',
+				}),
+				{ status: 200, headers: { 'Content-Type': 'application/json' } },
+			),
+		);
+		const input = {
+			realmId,
+			items: [
+				{
+					bId: 's1',
+					operation: 'update' as const,
+					SalesReceipt: {
+						Id: '11',
+						SyncToken: '0',
+						sparse: true as const,
+						PrivateNote: 'sparse',
+					},
+				},
+			],
+		};
+		await QuickBooksSpecialEndpoints.batch.execute(context, input);
+		const published = QuickBooksSpecialEndpointSchemas['batch.execute'];
+		expect(published?.input.safeParse(input).success).toBe(true);
 	});
 
 	it('rejects a void batch item that is not a sparse update with Id and SyncToken', async () => {

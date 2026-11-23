@@ -36,8 +36,71 @@ const BatchFaultSchema = lazySchema(() =>
 		})
 		.strict(),
 );
+// Entities with a batch update; each also takes a sparse update (Id, SyncToken, sparse: true and the changed fields).
+const BATCH_SPARSE_UPDATE_ENTITIES = [
+	'Account',
+	'Attachable',
+	'Bill',
+	'BillPayment',
+	'Budget',
+	'ChangeOrder',
+	'Class',
+	'CompanyCurrency',
+	'CompanyInfo',
+	'CreditCardPayment',
+	'CreditMemo',
+	'Customer',
+	'Department',
+	'Deposit',
+	'Employee',
+	'Estimate',
+	'Exchangerate',
+	'InventoryAdjustment',
+	'Invoice',
+	'Item',
+	'JournalEntry',
+	'Payment',
+	'PaymentMethod',
+	'Preferences',
+	'Purchase',
+	'PurchaseOrder',
+	'RefundReceipt',
+	'SalesReceipt',
+	'Term',
+	'TimeActivity',
+	'Transfer',
+	'Vendor',
+	'VendorCredit',
+] as const;
+type BatchSparseEntity = z.ZodObject<
+	{ Id: z.ZodString; SyncToken: z.ZodString; sparse: z.ZodLiteral<true> },
+	z.core.$loose
+>;
+function batchSparseUpdateItem<E extends string>(entity: E) {
+	const sparseEntity: BatchSparseEntity = z.looseObject({
+		Id: IdSchema,
+		SyncToken: SyncTokenSchema,
+		sparse: z.literal(true),
+	});
+	return z
+		.object({
+			bId: z.string().min(1),
+			operation: z.literal('update'),
+			optionsData: z.literal('void').optional(),
+		})
+		.extend({ [entity]: sparseEntity } as Record<E, BatchSparseEntity>)
+		.strict();
+}
+type BatchSparseUpdateItems<T extends readonly string[]> = {
+	[K in keyof T]: ReturnType<typeof batchSparseUpdateItem<T[K]>>;
+};
 const BatchItemInputSchema = lazySchema(() =>
 	z.union([
+		...(BATCH_SPARSE_UPDATE_ENTITIES.map((entity) =>
+			batchSparseUpdateItem(entity),
+		) as unknown as BatchSparseUpdateItems<
+			typeof BATCH_SPARSE_UPDATE_ENTITIES
+		>),
 		z.object({ bId: z.string().min(1), Query: z.string().min(1) }).strict(),
 		z
 			.object({
