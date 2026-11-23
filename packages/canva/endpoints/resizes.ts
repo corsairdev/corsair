@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaContext, CanvaEndpoints } from '../index';
 import { toDesignEntity } from './mappers';
+import { seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
 
 async function upsertDesignFromJob(
@@ -45,7 +46,7 @@ export const create: CanvaEndpoints['resizesCreate'] = async (ctx, input) => {
 
 export const get: CanvaEndpoints['resizesGet'] = async (ctx, input) => {
 	const result = await makeCanvaRequest<CanvaEndpointOutputs['resizesGet']>(
-		`v1/resizes/${input.jobId}`,
+		`v1/resizes/${seg(input.jobId)}`,
 		ctx.key,
 		{ method: 'GET' },
 	);

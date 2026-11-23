@@ -1,4 +1,9 @@
+import { FileInputSchema, FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
+
+// Shapes follow Canva's REST API spec (canva.dev/sources/connect/api/latest/api.yml,
+// version 2024-06-18, fetched 2026-11-23). Output objects are loose so a field
+// Canva adds later reaches the caller instead of being dropped.
 
 export const ThumbnailSchema = z.object({
 	width: z.number(),
@@ -15,73 +20,133 @@ export const OwnerSchema = z.object({
 
 export type Owner = z.infer<typeof OwnerSchema>;
 
+const TeamUserSchema = z
+	.object({
+		user_id: z.string().optional(),
+		team_id: z.string().optional(),
+		display_name: z.string().optional(),
+	})
+	.passthrough();
+
 export const DesignLinksSchema = z.object({
 	edit_url: z.string(),
 	view_url: z.string(),
 });
 
-export const DesignSchema = z.object({
-	id: z.string(),
-	title: z.string().optional(),
-	owner: OwnerSchema,
-	thumbnail: ThumbnailSchema.optional(),
-	urls: DesignLinksSchema,
-	created_at: z.number(),
-	updated_at: z.number(),
-	page_count: z.number().optional(),
-	design_types: z.array(z.string()).optional(),
-});
+const DesignTypeOutputNameSchema = z
+	.string()
+	.describe(
+		'doc, email, presentation, sheet, whiteboard, custom or unknown (Canva may add more).',
+	);
+
+export const DesignSchema = z
+	.object({
+		id: z.string(),
+		title: z.string().optional(),
+		owner: OwnerSchema,
+		thumbnail: ThumbnailSchema.optional(),
+		urls: DesignLinksSchema,
+		created_at: z.number(),
+		updated_at: z.number(),
+		page_count: z.number().optional(),
+		design_types: z.array(DesignTypeOutputNameSchema).optional(),
+	})
+	.passthrough();
 
 export type Design = z.infer<typeof DesignSchema>;
 
-export const AssetSchema = z.object({
-	type: z.enum(['image', 'video']),
-	id: z.string(),
-	name: z.string(),
-	tags: z.array(z.string()),
-	created_at: z.number(),
-	updated_at: z.number(),
-	owner: OwnerSchema.optional(),
-	thumbnail: ThumbnailSchema.optional(),
-});
+/** The design a job returns: no owner, and both a `url` and `urls`. */
+export const DesignSummarySchema = z
+	.object({
+		id: z.string(),
+		title: z.string().optional(),
+		url: z.string().optional(),
+		thumbnail: ThumbnailSchema.optional(),
+		urls: DesignLinksSchema.optional(),
+		created_at: z.number().optional(),
+		updated_at: z.number().optional(),
+		page_count: z.number().optional(),
+	})
+	.passthrough();
+
+export type DesignSummary = z.infer<typeof DesignSummarySchema>;
+
+const AssetMetadataSchema = z.discriminatedUnion('type', [
+	z
+		.object({
+			type: z.literal('image'),
+			width: z.number().optional(),
+			height: z.number().optional(),
+			smart_tags: z.array(z.string()).optional(),
+		})
+		.passthrough(),
+	z
+		.object({
+			type: z.literal('video'),
+			width: z.number(),
+			height: z.number(),
+			duration: z.number().optional(),
+		})
+		.passthrough(),
+]);
+
+export const AssetSchema = z
+	.object({
+		type: z.enum(['image', 'video']),
+		id: z.string(),
+		name: z.string(),
+		tags: z.array(z.string()),
+		created_at: z.number(),
+		updated_at: z.number(),
+		owner: OwnerSchema.optional(),
+		thumbnail: ThumbnailSchema.optional(),
+		metadata: AssetMetadataSchema.optional(),
+	})
+	.passthrough();
 
 export type Asset = z.infer<typeof AssetSchema>;
 
-export const FolderSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	created_at: z.number(),
-	updated_at: z.number(),
-	thumbnail: ThumbnailSchema.optional(),
-});
+export const FolderSchema = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		created_at: z.number(),
+		updated_at: z.number(),
+		thumbnail: ThumbnailSchema.optional(),
+	})
+	.passthrough();
 
 export type Folder = z.infer<typeof FolderSchema>;
 
-export const BrandTemplateSchema = z.object({
-	id: z.string(),
-	title: z.string().optional(),
-	view_url: z.string().optional(),
-	create_url: z.string().optional(),
-	thumbnail: ThumbnailSchema.optional(),
-	created_at: z.number().optional(),
-	updated_at: z.number().optional(),
-});
+export const BrandTemplateSchema = z
+	.object({
+		id: z.string(),
+		title: z.string().optional(),
+		view_url: z.string().optional(),
+		create_url: z.string().optional(),
+		thumbnail: ThumbnailSchema.optional(),
+		created_at: z.number().optional(),
+		updated_at: z.number().optional(),
+	})
+	.passthrough();
 
 export type BrandTemplate = z.infer<typeof BrandTemplateSchema>;
 
-const DesignPageSchema = z.object({
-	id: z.string().optional(),
-	index: z.number().optional(),
-	page_number: z.number().optional(),
-	design_type: z.string().optional(),
-	dimensions: z
-		.object({
-			width: z.number(),
-			height: z.number(),
-		})
-		.optional(),
-	thumbnail: ThumbnailSchema.optional(),
-});
+const DesignPageSchema = z
+	.object({
+		id: z.string().optional(),
+		index: z.number().optional().describe('Deprecated: use page_number.'),
+		page_number: z.number().optional(),
+		design_type: z.string().optional(),
+		dimensions: z
+			.object({
+				width: z.number(),
+				height: z.number(),
+			})
+			.optional(),
+		thumbnail: ThumbnailSchema.optional(),
+	})
+	.passthrough();
 
 export const PresetDesignTypeSchema = z.object({
 	type: z.literal('preset'),
@@ -90,8 +155,8 @@ export const PresetDesignTypeSchema = z.object({
 
 export const CustomDesignTypeSchema = z.object({
 	type: z.literal('custom'),
-	width: z.number(),
-	height: z.number(),
+	width: z.number().int().min(40).max(8000),
+	height: z.number().int().min(40).max(8000),
 });
 
 export const DesignTypeInputSchema = z.discriminatedUnion('type', [
@@ -99,68 +164,88 @@ export const DesignTypeInputSchema = z.discriminatedUnion('type', [
 	CustomDesignTypeSchema,
 ]);
 
+const PageNumbersSchema = z
+	.array(z.number().int().min(1))
+	.describe('Page numbers, starting at 1. Leave out for every page.');
+
+const ExportQualitySchema = z
+	.enum(['regular', 'pro'])
+	.describe(
+		'pro uses premium elements and may need a paid Canva plan; regular is the default.',
+	);
+
+const ExportSideSchema = z.number().int().min(40).max(25000);
+
 const ExportFormatSchema = z.discriminatedUnion('type', [
 	z.object({
 		type: z.literal('pdf'),
-		size: z.enum(['a4', 'a3', 'letter', 'legal']).optional(),
-		pages: z.array(z.number()).optional(),
-		export_quality: z.enum(['regular', 'pro']).optional(),
+		export_quality: ExportQualitySchema.optional(),
+		size: z
+			.enum(['a4', 'a3', 'letter', 'legal'])
+			.optional()
+			.describe('Paper size; only for Canva docs.'),
+		pages: PageNumbersSchema.optional(),
 	}),
 	z.object({
 		type: z.literal('jpg'),
-		quality: z.number().min(1).max(100),
-		width: z.number().optional(),
-		height: z.number().optional(),
-		pages: z.array(z.number()).optional(),
-		export_quality: z.enum(['regular', 'pro']).optional(),
+		export_quality: ExportQualitySchema.optional(),
+		quality: z.number().int().min(1).max(100),
+		width: ExportSideSchema.optional(),
+		height: ExportSideSchema.optional(),
+		pages: PageNumbersSchema.optional(),
 	}),
 	z.object({
 		type: z.literal('png'),
-		width: z.number().optional(),
-		height: z.number().optional(),
-		pages: z.array(z.number()).optional(),
+		export_quality: ExportQualitySchema.optional(),
+		width: ExportSideSchema.optional(),
+		height: ExportSideSchema.optional(),
 		lossless: z.boolean().optional(),
 		transparent_background: z.boolean().optional(),
-		as_single_image: z.boolean().optional(),
-		export_quality: z.enum(['regular', 'pro']).optional(),
+		as_single_image: z
+			.boolean()
+			.optional()
+			.describe(
+				'Merge every page into one image. Off by default: each page is its own PNG.',
+			),
+		pages: PageNumbersSchema.optional(),
 	}),
 	z.object({
 		type: z.literal('gif'),
-		width: z.number().optional(),
-		height: z.number().optional(),
-		pages: z.array(z.number()).optional(),
-		export_quality: z.enum(['regular', 'pro']).optional(),
+		export_quality: ExportQualitySchema.optional(),
+		width: ExportSideSchema.optional(),
+		height: ExportSideSchema.optional(),
+		pages: PageNumbersSchema.optional(),
 	}),
 	z.object({
 		type: z.literal('pptx'),
-		pages: z.array(z.number()).optional(),
+		pages: PageNumbersSchema.optional(),
 	}),
 	z.object({
 		type: z.literal('mp4'),
-		quality: z
-			.enum([
-				'horizontal_480p',
-				'horizontal_720p',
-				'horizontal_1080p',
-				'horizontal_4k',
-				'vertical_480p',
-				'vertical_720p',
-				'vertical_1080p',
-				'vertical_4k',
-			])
-			.optional(),
+		export_quality: ExportQualitySchema.optional(),
+		quality: z.enum([
+			'horizontal_480p',
+			'horizontal_720p',
+			'horizontal_1080p',
+			'horizontal_4k',
+			'vertical_480p',
+			'vertical_720p',
+			'vertical_1080p',
+			'vertical_4k',
+		]),
+		pages: PageNumbersSchema.optional(),
 	}),
 	z.object({
 		type: z.literal('html_bundle'),
-		pages: z.array(z.number()).optional(),
+		pages: z.array(z.number().int().min(1)).length(1).optional(),
 	}),
 	z.object({
 		type: z.literal('html_standalone'),
-		pages: z.array(z.number()).optional(),
+		pages: z.array(z.number().int().min(1)).length(1).optional(),
 	}),
 	z.object({
 		type: z.literal('csv'),
-		pages: z.array(z.number()).optional(),
+		pages: PageNumbersSchema.optional(),
 	}),
 ]);
 
@@ -177,18 +262,34 @@ const DesignsGetExportFormatsResponseSchema = z.object({
 export const JobStatusSchema = z.enum(['in_progress', 'success', 'failed']);
 export type JobStatus = z.infer<typeof JobStatusSchema>;
 
-export const JobErrorSchema = z.object({
-	code: z.string(),
-	message: z.string(),
-});
+export const JobErrorSchema = z
+	.object({
+		code: z.string(),
+		message: z.string(),
+	})
+	.passthrough();
 export type JobError = z.infer<typeof JobErrorSchema>;
 
-const ExportJobSchema = z.object({
-	id: z.string(),
-	status: JobStatusSchema,
-	urls: z.array(z.string()).optional(),
-	error: JobErrorSchema.optional(),
-});
+const TrialInformationSchema = z
+	.object({
+		uses_remaining: z.number(),
+		upgrade_url: z.string(),
+	})
+	.passthrough();
+
+const ExportJobSchema = z
+	.object({
+		id: z.string(),
+		status: JobStatusSchema,
+		urls: z
+			.array(z.string())
+			.optional()
+			.describe(
+				'Download URLs, valid for 24 hours. A multi-page PNG, JPG or GIF export has one per page, in page order.',
+			),
+		error: JobErrorSchema.optional(),
+	})
+	.passthrough();
 
 const SuccessResponseSchema = z.object({
 	success: z.boolean(),
@@ -201,10 +302,7 @@ const FolderItemSchema = z.discriminatedUnion('type', [
 	}),
 	z.object({
 		type: z.literal('design'),
-		design: DesignSchema.omit({ owner: true }).extend({
-			owner: OwnerSchema.optional(),
-			url: z.string().optional(),
-		}),
+		design: DesignSummarySchema.extend({ owner: OwnerSchema.optional() }),
 	}),
 	z.object({
 		type: z.literal('image'),
@@ -215,6 +313,20 @@ const FolderItemSchema = z.discriminatedUnion('type', [
 		brand_template: BrandTemplateSchema,
 	}),
 ]);
+
+const DataFieldSchema = z
+	.object({
+		type: z.enum(['image', 'text', 'chart', 'sheet']),
+	})
+	.passthrough();
+
+const DatasetSchema = z
+	.record(z.string(), DataFieldSchema)
+	.describe(
+		'Autofill field names and the kind of data each takes (image, text, chart or sheet). Absent when there are none.',
+	);
+
+// ── users ──────────────────────────────────────────────────────────────────
 
 const UsersGetMeInputSchema = z.object({});
 
@@ -235,11 +347,18 @@ const UsersGetProfileResponseSchema = z.object({
 const UsersGetCapabilitiesInputSchema = z.object({});
 
 const UsersGetCapabilitiesResponseSchema = z.object({
-	capabilities: z.array(z.string()),
+	capabilities: z
+		.array(z.string())
+		.optional()
+		.describe(
+			"What the user's plan allows through the API, e.g. autofill, brand_template, resize, design_generation, image_generation, background_removal, analytics.",
+		),
 });
 
+// ── designs ────────────────────────────────────────────────────────────────
+
 const DesignsListInputSchema = z.object({
-	query: z.string().optional(),
+	query: z.string().max(255).optional(),
 	continuation: z.string().optional(),
 	ownership: z.enum(['any', 'owned', 'shared']).optional(),
 	sort_by: z
@@ -251,7 +370,7 @@ const DesignsListInputSchema = z.object({
 			'title_ascending',
 		])
 		.optional(),
-	limit: z.number().optional(),
+	limit: z.number().int().min(1).max(100).optional(),
 });
 
 const DesignsListResponseSchema = z.object({
@@ -269,17 +388,51 @@ const DesignsGetResponseSchema = z.object({
 
 const DesignsCreateInputSchema = z
 	.object({
-		type: z.literal('type_and_asset').optional(),
+		type: z
+			.enum(['type_and_asset', 'design', 'brand_template'])
+			.optional()
+			.describe(
+				'type_and_asset (the default): a new design from design_type and/or asset_id. design: a copy of design_id. brand_template: a design from brand_template_id. The last two are Canva preview features.',
+			),
 		design_type: DesignTypeInputSchema.optional(),
-		asset_id: z.string().optional(),
-		title: z.string().optional(),
+		asset_id: z
+			.string()
+			.optional()
+			.describe('An image asset to put in the new design.'),
+		title: z.string().min(1).max(255).optional(),
+		design_id: z.string().optional().describe('The design to copy.'),
+		brand_template_id: z.string().optional(),
+		page_numbers: z
+			.array(z.number().int().min(1))
+			.min(1)
+			.optional()
+			.describe('Copy only these pages (type design or brand_template).'),
 	})
-	.refine(
-		(value) => value.design_type !== undefined || value.asset_id !== undefined,
-		{
-			message: 'Either design_type or asset_id is required',
-		},
-	);
+	.superRefine((value, issue) => {
+		const type = value.type ?? 'type_and_asset';
+		if (
+			type === 'type_and_asset' &&
+			value.design_type === undefined &&
+			value.asset_id === undefined
+		) {
+			issue.addIssue({
+				code: 'custom',
+				message: 'Either design_type or asset_id is required',
+			});
+		}
+		if (type === 'design' && value.design_id === undefined) {
+			issue.addIssue({
+				code: 'custom',
+				message: 'design_id is required when type is design',
+			});
+		}
+		if (type === 'brand_template' && value.brand_template_id === undefined) {
+			issue.addIssue({
+				code: 'custom',
+				message: 'brand_template_id is required when type is brand_template',
+			});
+		}
+	});
 
 const DesignsCreateResponseSchema = z.object({
 	design: DesignSchema,
@@ -287,8 +440,14 @@ const DesignsCreateResponseSchema = z.object({
 
 const DesignsGetPagesInputSchema = z.object({
 	designId: z.string(),
-	offset: z.number().optional(),
-	limit: z.number().optional(),
+	offset: z
+		.number()
+		.int()
+		.min(1)
+		.max(500)
+		.optional()
+		.describe('First page number to return, starting at 1.'),
+	limit: z.number().int().min(1).max(200).optional(),
 });
 
 const DesignsGetPagesResponseSchema = z.object({
@@ -298,6 +457,154 @@ const DesignsGetPagesResponseSchema = z.object({
 const DesignsGetExportFormatsInputSchema = z.object({
 	designId: z.string(),
 });
+
+const DesignsGetDatasetInputSchema = z.object({
+	designId: z.string(),
+});
+
+const DesignsGetDatasetResponseSchema = z.object({
+	dataset: DatasetSchema.optional(),
+});
+
+// ── analytics (preview, Canva Enterprise) ──────────────────────────────────
+
+const AnalyticsGetInputSchema = z.object({
+	designId: z.string(),
+});
+
+const AnalyticsGetResponseSchema = z
+	.object({
+		total_view_count: z.number(),
+		unique_view_count: z.number(),
+		total_view_duration_seconds: z.number().optional(),
+		average_view_duration_seconds: z.number().optional(),
+	})
+	.passthrough();
+
+const PageInputSchema = {
+	limit: z.number().int().min(1).max(100).optional(),
+	continuation: z.string().optional(),
+};
+
+const AnalyticsListViewersInputSchema = z.object({
+	designId: z.string(),
+	link_id: z
+		.string()
+		.optional()
+		.describe('Only viewers who came through this trackable link.'),
+	first_viewed_after: z
+		.number()
+		.int()
+		.optional()
+		.describe('Unix seconds; only viewers whose first view is after it.'),
+	...PageInputSchema,
+});
+
+const AnalyticsViewerSchema = z
+	.object({
+		viewer_id: z.string(),
+		user: TeamUserSchema.optional(),
+		last_viewed_at: z.number(),
+		viewer_type: z.string().describe('editor, commenter or viewer.'),
+		visibility: z
+			.string()
+			.describe('shown, anonymous, opt_out, another_team or deleted.'),
+		total_view_duration_seconds: z.number().optional(),
+		first_viewed_at: z.number().optional(),
+		pages_viewed: z.number().optional(),
+		form_factor: z.string().optional(),
+		device_operating_system: z.string().optional(),
+		city_country: z.string().optional(),
+		total_view_count: z.number().optional(),
+	})
+	.passthrough();
+
+const AnalyticsListViewersResponseSchema = z.object({
+	items: z.array(AnalyticsViewerSchema),
+	continuation: z.string().optional(),
+});
+
+const AnalyticsListViewsOverTimeInputSchema = z.object({
+	designId: z.string(),
+	start_time: z.number().int().optional().describe('Unix seconds.'),
+	end_time: z.number().int().optional().describe('Unix seconds.'),
+	timezone: z
+		.string()
+		.optional()
+		.describe('IANA time zone for the buckets, e.g. Australia/Sydney.'),
+	...PageInputSchema,
+});
+
+const AnalyticsListViewsOverTimeResponseSchema = z.object({
+	items: z.array(
+		z
+			.object({
+				count: z.number(),
+				bucket_start_at: z.number(),
+			})
+			.passthrough(),
+	),
+	continuation: z.string().optional(),
+});
+
+const PageViewFilterSchema = z.discriminatedUnion('type', [
+	z.object({
+		type: z.literal('by_viewer'),
+		viewer_id: z.string(),
+		link_id: z.string().optional(),
+	}),
+	z.object({ type: z.literal('for_editor') }),
+	z.object({ type: z.literal('by_link'), link_id: z.string() }),
+]);
+
+const AnalyticsListPageViewsInputSchema = z.object({
+	designId: z.string(),
+	page_ids: z
+		.array(z.string())
+		.min(1)
+		.max(100)
+		.describe('Page ids, from designs.getPages.'),
+	filter: PageViewFilterSchema.optional(),
+	...PageInputSchema,
+});
+
+const AnalyticsListPageViewsResponseSchema = z.object({
+	items: z.array(
+		z
+			.object({
+				page_id: z.string().optional(),
+				total_view_duration_seconds: z.number(),
+				average_duration_seconds: z.number().optional(),
+				unique_view_count: z.number().optional(),
+			})
+			.passthrough(),
+	),
+	continuation: z.string().optional(),
+});
+
+const AnalyticsListLinksInputSchema = z.object({
+	designId: z.string(),
+	...PageInputSchema,
+});
+
+const AnalyticsListLinksResponseSchema = z.object({
+	items: z.array(
+		z
+			.object({
+				link_id: z.string(),
+				name: z.string().optional(),
+				total_view_count: z.number().optional(),
+				unique_view_count: z.number().optional(),
+				total_view_duration_seconds: z.number().optional(),
+				average_view_duration_seconds: z.number().optional(),
+				last_viewed_at: z.number().optional(),
+			})
+			.passthrough(),
+	),
+	continuation: z.string().optional(),
+});
+
+// ── assets ─────────────────────────────────────────────────────────────────
 
 const AssetsGetInputSchema = z.object({
 	assetId: z.string(),
@@ -309,8 +616,12 @@ const AssetsGetResponseSchema = z.object({
 
 const AssetsUpdateInputSchema = z.object({
 	assetId: z.string(),
-	name: z.string().optional(),
-	tags: z.array(z.string()).optional(),
+	name: z.string().max(50).optional(),
+	tags: z
+		.array(z.string().max(50))
+		.max(50)
+		.optional()
+		.describe('Replaces every existing tag.'),
 });
 
 const AssetsUpdateResponseSchema = z.object({
@@ -323,9 +634,17 @@ const AssetsDeleteInputSchema = z.object({
 
 const AssetsDeleteResponseSchema = SuccessResponseSchema;
 
+// ── folders ────────────────────────────────────────────────────────────────
+
 const FoldersCreateInputSchema = z.object({
-	name: z.string(),
-	parent_folder_id: z.string(),
+	name: z.string().min(1).max(255),
+	parent_folder_id: z
+		.string()
+		.min(1)
+		.max(50)
+		.describe(
+			'root for the top level of projects, uploads for the Uploads folder, or a folder id.',
+		),
 });
 
 const FoldersCreateResponseSchema = z.object({
@@ -342,7 +661,7 @@ const FoldersGetResponseSchema = z.object({
 
 const FoldersUpdateInputSchema = z.object({
 	folderId: z.string(),
-	name: z.string(),
+	name: z.string().min(1).max(255),
 });
 
 const FoldersUpdateResponseSchema = z.object({
@@ -358,10 +677,11 @@ const FoldersDeleteResponseSchema = SuccessResponseSchema;
 const FoldersListItemsInputSchema = z.object({
 	folderId: z.string(),
 	continuation: z.string().optional(),
-	limit: z.number().optional(),
+	limit: z.number().int().min(1).max(100).optional(),
 	item_types: z
 		.array(z.enum(['design', 'folder', 'image', 'brand_template']))
-		.optional(),
+		.optional()
+		.describe('brand_template items are returned only when listed here.'),
 	sort_by: z
 		.enum([
 			'created_ascending',
@@ -381,11 +701,13 @@ const FoldersListItemsResponseSchema = z.object({
 });
 
 const FoldersMoveItemInputSchema = z.object({
-	to_folder_id: z.string(),
-	item_id: z.string(),
+	to_folder_id: z.string().min(1).max(50),
+	item_id: z.string().min(1).max(50),
 });
 
 const FoldersMoveItemResponseSchema = SuccessResponseSchema;
+
+// ── exports ────────────────────────────────────────────────────────────────
 
 const ExportsCreateInputSchema = z.object({
 	design_id: z.string(),
@@ -404,23 +726,39 @@ const ExportsGetResponseSchema = z.object({
 	job: ExportJobSchema,
 });
 
-export const BrandTemplateDatasetFieldSchema = z
-	.object({
-		type: z.enum(['text', 'image', 'chart']),
-	})
-	.passthrough();
+const ExportsDownloadInputSchema = z.object({
+	exportId: z.string().describe('The id of a finished export job.'),
+	index: z
+		.number()
+		.int()
+		.min(0)
+		.optional()
+		.describe(
+			"Which of the job's download URLs to fetch, from 0 (the default). A multi-page PNG or JPG export has one per page, so index 4 is the fifth exported page.",
+		),
+});
 
-export const BrandTemplateDatasetSchema = z.record(
-	z.string(),
-	BrandTemplateDatasetFieldSchema,
-);
+const ExportsDownloadResponseSchema = FileOutputSchema.extend({
+	exportId: z.string(),
+	index: z.number(),
+	count: z
+		.number()
+		.describe(
+			'How many files the export has; call again with index up to count - 1.',
+		),
+	url: z
+		.string()
+		.describe(
+			'The download URL (valid for 24 hours after the export finished).',
+		),
+});
 
-export type BrandTemplateDataset = z.infer<typeof BrandTemplateDatasetSchema>;
+// ── brand templates ────────────────────────────────────────────────────────
 
 const BrandTemplatesListInputSchema = z.object({
 	query: z.string().optional(),
 	continuation: z.string().optional(),
-	limit: z.number().optional(),
+	limit: z.number().int().min(1).max(100).optional(),
 	ownership: z.enum(['any', 'owned', 'shared']).optional(),
 	sort_by: z
 		.enum([
@@ -431,7 +769,10 @@ const BrandTemplatesListInputSchema = z.object({
 			'title_ascending',
 		])
 		.optional(),
-	dataset: z.enum(['any', 'non_empty']).optional(),
+	dataset: z
+		.enum(['any', 'non_empty'])
+		.optional()
+		.describe('non_empty lists only templates with autofill fields.'),
 });
 
 const BrandTemplatesListResponseSchema = z.object({
@@ -452,22 +793,46 @@ const BrandTemplatesGetDatasetInputSchema = z.object({
 });
 
 const BrandTemplatesGetDatasetResponseSchema = z.object({
-	dataset: BrandTemplateDatasetSchema,
+	dataset: DatasetSchema.optional(),
 });
 
-export const AssetUploadJobSchema = z.object({
-	id: z.string(),
-	status: JobStatusSchema,
-	asset: AssetSchema.optional(),
-	error: JobErrorSchema.optional(),
+const BrandTemplatesPublishInputSchema = z.object({
+	design_id: z.string().describe('The design to publish as a brand template.'),
 });
+
+const BrandTemplatesPublishResponseSchema = z.object({
+	brand_template: BrandTemplateSchema,
+});
+
+// ── asset uploads ──────────────────────────────────────────────────────────
+
+export const AssetUploadJobSchema = z
+	.object({
+		id: z.string(),
+		status: JobStatusSchema,
+		asset: AssetSchema.optional(),
+		error: JobErrorSchema.optional(),
+	})
+	.passthrough();
 
 export type AssetUploadJob = z.infer<typeof AssetUploadJobSchema>;
 
-const AssetUploadsCreateInputSchema = z.object({
-	name: z.string(),
-	contentBase64: z.string(),
-});
+const AssetUploadsCreateInputSchema = z
+	.object({
+		name: z.string().min(1).max(50).describe('The asset name in Canva.'),
+		file: FileInputSchema.optional(),
+		contentBase64: z
+			.string()
+			.optional()
+			.describe(
+				'The file as base64. Prefer file for anything but a small file.',
+			),
+	})
+	.refine(
+		(value) =>
+			(value.file === undefined) !== (value.contentBase64 === undefined),
+		{ message: 'Pass exactly one of file or contentBase64' },
+	);
 
 const AssetUploadsCreateResponseSchema = z.object({
 	job: AssetUploadJobSchema,
@@ -482,8 +847,14 @@ const AssetUploadsGetResponseSchema = z.object({
 });
 
 const AssetUploadsCreateFromUrlInputSchema = z.object({
-	name: z.string(),
-	url: z.string(),
+	name: z.string().min(1).max(255),
+	url: z
+		.string()
+		.min(8)
+		.max(2048)
+		.describe(
+			'A public URL Canva fetches. Videos from a URL are capped at 100 MB.',
+		),
 });
 
 const AssetUploadsCreateFromUrlResponseSchema = z.object({
@@ -498,33 +869,47 @@ const AssetUploadsGetFromUrlResponseSchema = z.object({
 	job: AssetUploadJobSchema,
 });
 
-const ImportDesignSummarySchema = z.object({
-	id: z.string(),
-	title: z.string().optional(),
-	url: z.string().optional(),
-	thumbnail: ThumbnailSchema.optional(),
-});
+// ── design imports ─────────────────────────────────────────────────────────
 
-export type ImportDesignSummary = z.infer<typeof ImportDesignSummarySchema>;
-
-export const ImportJobSchema = z.object({
-	id: z.string(),
-	status: JobStatusSchema,
-	result: z
-		.object({
-			designs: z.array(ImportDesignSummarySchema),
-		})
-		.optional(),
-	error: JobErrorSchema.optional(),
-});
+export const ImportJobSchema = z
+	.object({
+		id: z.string(),
+		status: JobStatusSchema,
+		result: z
+			.object({
+				designs: z.array(DesignSummarySchema),
+			})
+			.passthrough()
+			.optional(),
+		error: JobErrorSchema.optional(),
+	})
+	.passthrough();
 
 export type ImportJob = z.infer<typeof ImportJobSchema>;
 
-const ImportsCreateInputSchema = z.object({
-	title: z.string(),
-	contentBase64: z.string(),
-	mime_type: z.string().optional(),
-});
+const ImportsCreateInputSchema = z
+	.object({
+		title: z.string().min(1).max(255),
+		file: FileInputSchema.optional().describe(
+			'The file to import: PDF, PowerPoint, Keynote, Word, Excel, Illustrator, Photoshop and more (see Canva design imports).',
+		),
+		contentBase64: z
+			.string()
+			.optional()
+			.describe(
+				'The file as base64. Prefer file for anything but a small file.',
+			),
+		mime_type: z
+			.string()
+			.max(100)
+			.optional()
+			.describe('The file type; Canva detects it when left out.'),
+	})
+	.refine(
+		(value) =>
+			(value.file === undefined) !== (value.contentBase64 === undefined),
+		{ message: 'Pass exactly one of file or contentBase64' },
+	);
 
 const ImportsCreateResponseSchema = z.object({
 	job: ImportJobSchema,
@@ -539,9 +924,9 @@ const ImportsGetResponseSchema = z.object({
 });
 
 const ImportsCreateFromUrlInputSchema = z.object({
-	title: z.string(),
-	url: z.string(),
-	mime_type: z.string().optional(),
+	title: z.string().min(1).max(255),
+	url: z.string().min(1).max(2048).describe('A public URL Canva fetches.'),
+	mime_type: z.string().max(100).optional(),
 });
 
 const ImportsCreateFromUrlResponseSchema = z.object({
@@ -556,16 +941,57 @@ const ImportsGetFromUrlResponseSchema = z.object({
 	job: ImportJobSchema,
 });
 
-export const ResizeJobSchema = z.object({
-	id: z.string(),
-	status: JobStatusSchema,
-	result: z
-		.object({
-			design: DesignSchema,
-		})
-		.optional(),
-	error: JobErrorSchema.optional(),
+const ImageToDesignJobSchema = z
+	.object({
+		id: z.string(),
+		status: JobStatusSchema,
+		result: z
+			.object({
+				design: DesignSummarySchema,
+			})
+			.passthrough()
+			.optional(),
+		error: JobErrorSchema.optional(),
+	})
+	.passthrough();
+
+const ImportsCreateFromImageInputSchema = z.object({
+	asset_id: z
+		.string()
+		.describe(
+			"An image asset in the user's library (upload it with assetUploads first).",
+		),
+	title: z.string().min(1).max(255).optional(),
 });
+
+const ImportsCreateFromImageResponseSchema = z.object({
+	job: ImageToDesignJobSchema,
+});
+
+const ImportsGetFromImageInputSchema = z.object({
+	jobId: z.string(),
+});
+
+const ImportsGetFromImageResponseSchema = z.object({
+	job: ImageToDesignJobSchema,
+});
+
+// ── resizes ────────────────────────────────────────────────────────────────
+
+export const ResizeJobSchema = z
+	.object({
+		id: z.string(),
+		status: JobStatusSchema,
+		result: z
+			.object({
+				design: DesignSummarySchema,
+				trial_information: TrialInformationSchema.optional(),
+			})
+			.passthrough()
+			.optional(),
+		error: JobErrorSchema.optional(),
+	})
+	.passthrough();
 
 export type ResizeJob = z.infer<typeof ResizeJobSchema>;
 
@@ -586,22 +1012,24 @@ const ResizesGetResponseSchema = z.object({
 	job: ResizeJobSchema,
 });
 
+// ── autofills ──────────────────────────────────────────────────────────────
+
+const DataTableSchema = z
+	.object({
+		column_configs: z.array(z.record(z.string(), z.unknown())).optional(),
+		rows: z.array(z.record(z.string(), z.unknown())),
+	})
+	.passthrough()
+	.describe(
+		'{ rows: [{ cells: [...] }], column_configs? } as Canva defines a data table.',
+	);
+
 export const AutofillDataFieldSchema = z.discriminatedUnion('type', [
 	z.object({ type: z.literal('text'), text: z.string() }),
 	z.object({ type: z.literal('image'), asset_id: z.string() }),
 	z.object({ type: z.literal('video'), asset_id: z.string() }),
-	z
-		.object({
-			type: z.literal('chart'),
-			chart_data: z.record(z.string(), z.unknown()),
-		})
-		.passthrough(),
-	z
-		.object({
-			type: z.literal('sheet'),
-			sheet_data: z.record(z.string(), z.unknown()),
-		})
-		.passthrough(),
+	z.object({ type: z.literal('chart'), chart_data: DataTableSchema }),
+	z.object({ type: z.literal('sheet'), sheet_data: DataTableSchema }),
 ]);
 
 export type AutofillDataField = z.infer<typeof AutofillDataFieldSchema>;
@@ -609,33 +1037,69 @@ export type AutofillDataField = z.infer<typeof AutofillDataFieldSchema>;
 export const AutofillDataSchema = z.record(z.string(), AutofillDataFieldSchema);
 export type AutofillData = z.infer<typeof AutofillDataSchema>;
 
-const AutofillResultDesignSchema = z.object({
-	id: z.string(),
-	title: z.string().optional(),
-	url: z.string().optional(),
-	thumbnail: ThumbnailSchema.optional(),
-	current_page_index: z.number().optional(),
-});
-
-export const AutofillJobSchema = z.object({
-	id: z.string(),
-	status: JobStatusSchema,
-	result: z
-		.object({
-			type: z.string().optional(),
-			design: AutofillResultDesignSchema.optional(),
-		})
-		.optional(),
-	error: JobErrorSchema.optional(),
-});
+export const AutofillJobSchema = z
+	.object({
+		id: z.string(),
+		status: JobStatusSchema,
+		result: z
+			.object({
+				type: z.string().optional().describe('create_design or update_design.'),
+				design: DesignSummarySchema.optional(),
+				trial_information: TrialInformationSchema.optional(),
+			})
+			.passthrough()
+			.optional(),
+		error: JobErrorSchema.optional(),
+	})
+	.passthrough();
 
 export type AutofillJob = z.infer<typeof AutofillJobSchema>;
 
-const AutofillsCreateInputSchema = z.object({
-	brand_template_id: z.string(),
-	data: AutofillDataSchema,
-	title: z.string().optional(),
-});
+const AutofillsCreateInputSchema = z
+	.object({
+		type: z
+			.enum([
+				'create_from_brand_template',
+				'create_from_design',
+				'update_design',
+			])
+			.optional()
+			.describe(
+				'create_from_brand_template (the default): a new design from brand_template_id. create_from_design: a new design from design_id. update_design: fill design_id in place.',
+			),
+		brand_template_id: z.string().optional(),
+		design_id: z.string().optional(),
+		data: AutofillDataSchema.describe(
+			'Field name to value; get the field names from brandTemplates.getDataset or designs.getDataset.',
+		),
+		title: z
+			.string()
+			.min(1)
+			.max(255)
+			.optional()
+			.describe('Title of the new design; not used by update_design.'),
+	})
+	.superRefine((value, issue) => {
+		const type = value.type ?? 'create_from_brand_template';
+		if (
+			type === 'create_from_brand_template' &&
+			value.brand_template_id === undefined
+		) {
+			issue.addIssue({
+				code: 'custom',
+				message: 'brand_template_id is required for create_from_brand_template',
+			});
+		}
+		if (
+			type !== 'create_from_brand_template' &&
+			value.design_id === undefined
+		) {
+			issue.addIssue({
+				code: 'custom',
+				message: `design_id is required for ${type}`,
+			});
+		}
+	});
 
 const AutofillsCreateResponseSchema = z.object({
 	job: AutofillJobSchema,
@@ -649,6 +1113,356 @@ const AutofillsGetResponseSchema = z.object({
 	job: AutofillJobSchema,
 });
 
+// ── design generation (preview) ────────────────────────────────────────────
+
+const GenerationJobSchema = z
+	.object({
+		id: z.string(),
+		status: JobStatusSchema,
+		result: z
+			.object({
+				design: DesignSummarySchema,
+			})
+			.passthrough()
+			.optional(),
+		error: JobErrorSchema.optional(),
+	})
+	.passthrough();
+
+const GenerationsCreateInputSchema = z.object({
+	brief: z
+		.string()
+		.min(1)
+		.max(5000)
+		.describe('What the design should be about, in plain text.'),
+	design_type: z.enum(['doc', 'presentation']),
+	outline: z
+		.array(
+			z.object({
+				title: z.string().min(1).max(255),
+				description: z.string().min(1).max(2000).optional(),
+				points: z.array(z.string().min(1).max(1000)).max(50).optional(),
+			}),
+		)
+		.min(1)
+		.max(100)
+		.optional()
+		.describe('Sections in order, e.g. one per slide.'),
+});
+
+const GenerationsCreateResponseSchema = z.object({
+	job: GenerationJobSchema,
+});
+
+const GenerationsGetInputSchema = z.object({
+	jobId: z.string(),
+});
+
+const GenerationsGetResponseSchema = z.object({
+	job: GenerationJobSchema,
+});
+
+// ── image generation (preview) ─────────────────────────────────────────────
+
+const AssetSummarySchema = z
+	.object({
+		type: z.enum(['image', 'video']),
+		id: z.string(),
+		name: z.string(),
+		tags: z.array(z.string()),
+		created_at: z.number(),
+		updated_at: z.number(),
+		thumbnail: ThumbnailSchema.optional(),
+	})
+	.passthrough();
+
+const ImageGenerationJobSchema = z
+	.object({
+		id: z.string(),
+		status: JobStatusSchema,
+		result: z
+			.object({
+				image: z
+					.object({
+						url: z
+							.string()
+							.describe('Download URL for the image, valid for 24 hours.'),
+						asset: AssetSummarySchema.optional(),
+						width: z.number(),
+						height: z.number(),
+					})
+					.passthrough(),
+			})
+			.passthrough()
+			.optional(),
+		error: JobErrorSchema.optional(),
+	})
+	.passthrough();
+
+const ImageGenerationsCreateInputSchema = z.object({
+	prompt: z.string().min(1).max(10000),
+	aspect_ratio: z
+		.enum([
+			'square',
+			'landscape',
+			'portrait',
+			'landscape_3_2',
+			'portrait_2_3',
+			'portrait_4_5',
+			'landscape_4_3',
+			'portrait_3_4',
+			'landscape_5_4',
+			'landscape_2_1',
+			'portrait_1_2',
+		])
+		.optional(),
+	model: z.enum(['craft_v1_2k', 'lucid_origin', 'z_image_turbo']).optional(),
+	idempotency_key: z
+		.string()
+		.uuid()
+		.optional()
+		.describe(
+			'A UUID; a retry with the same key returns the same job. One is made when left out.',
+		),
+	save_to_uploads: z
+		.boolean()
+		.optional()
+		.describe("Also save the image to the user's Canva uploads as an asset."),
+	asset_name: z
+		.string()
+		.min(1)
+		.max(255)
+		.optional()
+		.describe('Name of the saved asset, with save_to_uploads.'),
+});
+
+const ImageGenerationsCreateResponseSchema = z.object({
+	job: ImageGenerationJobSchema,
+	model_expiry: z
+		.object({ model: z.string(), expires_at: z.number() })
+		.passthrough()
+		.optional()
+		.describe('Set when the chosen model is being retired.'),
+});
+
+const ImageGenerationsGetInputSchema = z.object({
+	jobId: z.string(),
+});
+
+const ImageGenerationsGetResponseSchema = z.object({
+	job: ImageGenerationJobSchema,
+});
+
+// ── image transformations (preview) ────────────────────────────────────────
+
+const ImageTransformationJobSchema = z
+	.object({
+		id: z.string().optional(),
+		status: JobStatusSchema,
+		result: z
+			.object({
+				asset: AssetSchema,
+				url: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+		error: JobErrorSchema.optional(),
+	})
+	.passthrough();
+
+const ImageTransformationsCreateInputSchema = z.object({
+	asset_id: z
+		.string()
+		.describe('The image asset to transform; it is not changed.'),
+	name: z
+		.string()
+		.min(1)
+		.max(255)
+		.optional()
+		.describe('Name of the new asset.'),
+	transformations: z
+		.array(z.object({ type: z.literal('background_removal') }))
+		.min(1)
+		.max(20)
+		.describe('Applied in order. Canva offers background_removal today.'),
+	idempotency_key: z.string().uuid().optional(),
+});
+
+const ImageTransformationsCreateResponseSchema = z.object({
+	job: ImageTransformationJobSchema,
+});
+
+const ImageTransformationsGetInputSchema = z.object({
+	jobId: z.string(),
+});
+
+const ImageTransformationsGetResponseSchema = z.object({
+	job: ImageTransformationJobSchema,
+});
+
+// ── merges (preview) ───────────────────────────────────────────────────────
+
+const MergeOperationSchema = z.discriminatedUnion('type', [
+	z.object({
+		type: z.literal('insert_pages'),
+		source: z.object({
+			type: z.literal('design'),
+			design_id: z.string(),
+			page_numbers: z.array(z.number().int().min(1)).min(1).optional(),
+		}),
+		after_page_number: z
+			.number()
+			.int()
+			.min(0)
+			.optional()
+			.describe('0 inserts at the start; left out, at the end.'),
+	}),
+	z.object({
+		type: z.literal('move_pages'),
+		from_page_numbers: z.array(z.number().int().min(1)).min(1),
+		to_after_page_number: z.number().int().min(0),
+	}),
+	z.object({
+		type: z.literal('delete_pages'),
+		page_numbers: z.array(z.number().int().min(1)).min(1),
+	}),
+]);
+
+const MergeJobSchema = z
+	.object({
+		id: z.string(),
+		status: JobStatusSchema,
+		result: z
+			.object({
+				design: DesignSummarySchema,
+			})
+			.passthrough()
+			.optional(),
+		error: JobErrorSchema.optional(),
+	})
+	.passthrough();
+
+const MergesCreateInputSchema = z
+	.object({
+		type: z
+			.enum(['create_new_design', 'modify_existing_design'])
+			.describe(
+				'create_new_design builds a new design from the operations; modify_existing_design changes design_id in place.',
+			),
+		design_id: z
+			.string()
+			.optional()
+			.describe('The design to change, for modify_existing_design.'),
+		title: z
+			.string()
+			.min(1)
+			.max(255)
+			.optional()
+			.describe('Required for create_new_design.'),
+		operations: z.array(MergeOperationSchema).min(1).max(500),
+	})
+	.superRefine((value, issue) => {
+		if (value.type === 'create_new_design' && value.title === undefined) {
+			issue.addIssue({
+				code: 'custom',
+				message: 'title is required for create_new_design',
+			});
+		}
+		if (
+			value.type === 'modify_existing_design' &&
+			value.design_id === undefined
+		) {
+			issue.addIssue({
+				code: 'custom',
+				message: 'design_id is required for modify_existing_design',
+			});
+		}
+	});
+
+const MergesCreateResponseSchema = z.object({
+	job: MergeJobSchema,
+});
+
+const MergesGetInputSchema = z.object({
+	jobId: z.string(),
+});
+
+const MergesGetResponseSchema = z.object({
+	job: MergeJobSchema,
+});
+
+// ── print partners (preview, Print Partner apps only) ──────────────────────
+
+const PrintProofingInputSchema = {
+	bleed: z
+		.number()
+		.int()
+		.min(0)
+		.max(150000)
+		.optional()
+		.describe('Bleed in micrometres.'),
+	min_pages: z.number().int().min(1).max(500).optional(),
+	max_pages: z.number().int().min(1).max(500).optional(),
+};
+
+const PrintPartnerCreateDesignInputSchema = z.object({
+	design_source: z.discriminatedUnion('type', [
+		z.object({
+			type: z.literal('dimensions'),
+			dimensions: z.object({
+				width: z.number().min(1),
+				height: z.number().min(1),
+				units: z.enum(['in', 'cm', 'mm']),
+			}),
+			product_type: z.string().optional(),
+		}),
+		z.object({
+			type: z.literal('partner_product_id'),
+			partner_product_id: z.string(),
+		}),
+	]),
+	title: z.string().min(1).max(255).optional(),
+	...PrintProofingInputSchema,
+});
+
+const PrintPartnerDesignResponseSchema = z.object({
+	design: DesignSchema,
+});
+
+const PrintPartnerGetDesignInputSchema = z.object({
+	designId: z.string(),
+	...PrintProofingInputSchema,
+});
+
+const PrintPartnerCreateExportInputSchema = z.object({
+	design_id: z.string(),
+	format: z.discriminatedUnion('type', [
+		z.object({
+			type: z.literal('pdf'),
+			bleed: z.number().int().min(0).max(150000).optional(),
+			crop_marks: z.boolean().optional(),
+			cmyk: z.boolean().optional(),
+			pdfx: z.boolean().optional(),
+		}),
+		z.object({ type: z.literal('jpg') }),
+		z.object({ type: z.literal('png') }),
+	]),
+	dimensions: z
+		.object({
+			width: z.number().min(1).optional(),
+			height: z.number().min(1).optional(),
+			units: z.enum(['px', 'in', 'cm', 'mm']).optional(),
+		})
+		.optional(),
+	pages: z.array(z.number().int().min(1)).optional(),
+});
+
+const PrintPartnerCreateExportResponseSchema = z.object({
+	job: ExportJobSchema,
+});
+
+// ── comments (preview) ─────────────────────────────────────────────────────
+
 const CommentUserSchema = z
 	.object({
 		id: z.string(),
@@ -656,10 +1470,12 @@ const CommentUserSchema = z
 	})
 	.passthrough();
 
-const CommentContentSchema = z.object({
-	plaintext: z.string().optional(),
-	markdown: z.string().optional(),
-});
+const CommentContentSchema = z
+	.object({
+		plaintext: z.string().optional(),
+		markdown: z.string().optional(),
+	})
+	.passthrough();
 
 export const CommentThreadSchema = z
 	.object({
@@ -667,13 +1483,17 @@ export const CommentThreadSchema = z
 		design_id: z.string().optional(),
 		thread_type: z
 			.object({
-				type: z.string().optional(),
+				type: z.string().optional().describe('comment or suggestion.'),
 				content: CommentContentSchema.optional(),
+				mentions: z.record(z.string(), z.unknown()).optional(),
+				assignee: CommentUserSchema.optional(),
+				resolver: CommentUserSchema.optional(),
+				suggested_edits: z.array(z.record(z.string(), z.unknown())).optional(),
+				status: z.string().optional(),
 			})
 			.passthrough()
 			.optional(),
 		author: CommentUserSchema.optional(),
-		assignee: CommentUserSchema.optional(),
 		created_at: z.number().optional(),
 		updated_at: z.number().optional(),
 	})
@@ -688,6 +1508,7 @@ export const CommentReplySchema = z
 		thread_id: z.string().optional(),
 		author: CommentUserSchema.optional(),
 		content: CommentContentSchema.optional(),
+		mentions: z.record(z.string(), z.unknown()).optional(),
 		created_at: z.number().optional(),
 		updated_at: z.number().optional(),
 	})
@@ -697,7 +1518,11 @@ export type CommentReply = z.infer<typeof CommentReplySchema>;
 
 const CommentsCreateThreadInputSchema = z.object({
 	designId: z.string(),
-	message_plaintext: z.string(),
+	message_plaintext: z
+		.string()
+		.min(1)
+		.max(2048)
+		.describe('The comment. Mention a user as [user_id:team_id].'),
 	assignee_id: z.string().optional(),
 });
 
@@ -710,14 +1535,20 @@ const CommentsGetThreadInputSchema = z.object({
 	threadId: z.string(),
 });
 
-const CommentsGetThreadResponseSchema = z.object({
-	thread: CommentThreadSchema,
-});
+const CommentsGetThreadResponseSchema = z
+	.object({
+		thread: CommentThreadSchema.optional(),
+		comment: z
+			.record(z.string(), z.unknown())
+			.optional()
+			.describe('The older comment shape, when Canva sends it.'),
+	})
+	.passthrough();
 
 const CommentsCreateReplyInputSchema = z.object({
 	designId: z.string(),
 	threadId: z.string(),
-	message_plaintext: z.string(),
+	message_plaintext: z.string().min(1).max(2048),
 });
 
 const CommentsCreateReplyResponseSchema = z.object({
@@ -728,7 +1559,7 @@ const CommentsListRepliesInputSchema = z.object({
 	designId: z.string(),
 	threadId: z.string(),
 	continuation: z.string().optional(),
-	limit: z.number().optional(),
+	limit: z.number().int().min(1).max(100).optional(),
 });
 
 const CommentsListRepliesResponseSchema = z.object({
@@ -746,248 +1577,43 @@ const CommentsGetReplyResponseSchema = z.object({
 	reply: CommentReplySchema,
 });
 
-export type UsersGetMeInput = z.infer<typeof UsersGetMeInputSchema>;
-export type UsersGetMeResponse = z.infer<typeof UsersGetMeResponseSchema>;
-export type UsersGetProfileInput = z.infer<typeof UsersGetProfileInputSchema>;
-export type UsersGetProfileResponse = z.infer<
-	typeof UsersGetProfileResponseSchema
->;
-export type UsersGetCapabilitiesInput = z.infer<
-	typeof UsersGetCapabilitiesInputSchema
->;
-export type UsersGetCapabilitiesResponse = z.infer<
-	typeof UsersGetCapabilitiesResponseSchema
->;
+// ── keys ───────────────────────────────────────────────────────────────────
 
-export type DesignsListInput = z.infer<typeof DesignsListInputSchema>;
-export type DesignsListResponse = z.infer<typeof DesignsListResponseSchema>;
-export type DesignsGetInput = z.infer<typeof DesignsGetInputSchema>;
-export type DesignsGetResponse = z.infer<typeof DesignsGetResponseSchema>;
-export type DesignsCreateInput = z.infer<typeof DesignsCreateInputSchema>;
-export type DesignsCreateResponse = z.infer<typeof DesignsCreateResponseSchema>;
-export type DesignsGetPagesInput = z.infer<typeof DesignsGetPagesInputSchema>;
-export type DesignsGetPagesResponse = z.infer<
-	typeof DesignsGetPagesResponseSchema
->;
-export type DesignsGetExportFormatsInput = z.infer<
-	typeof DesignsGetExportFormatsInputSchema
->;
-export type DesignsGetExportFormatsResponse = z.infer<
-	typeof DesignsGetExportFormatsResponseSchema
->;
+const KeysListInputSchema = z.object({});
 
-export type AssetsGetInput = z.infer<typeof AssetsGetInputSchema>;
-export type AssetsGetResponse = z.infer<typeof AssetsGetResponseSchema>;
-export type AssetsUpdateInput = z.infer<typeof AssetsUpdateInputSchema>;
-export type AssetsUpdateResponse = z.infer<typeof AssetsUpdateResponseSchema>;
-export type AssetsDeleteInput = z.infer<typeof AssetsDeleteInputSchema>;
-export type AssetsDeleteResponse = z.infer<typeof AssetsDeleteResponseSchema>;
+const KeysListResponseSchema = z.object({
+	keys: z.array(
+		z
+			.object({
+				kid: z.string(),
+				kty: z.string(),
+				crv: z.string(),
+				x: z.string(),
+			})
+			.passthrough(),
+	),
+});
 
-export type FoldersCreateInput = z.infer<typeof FoldersCreateInputSchema>;
-export type FoldersCreateResponse = z.infer<typeof FoldersCreateResponseSchema>;
-export type FoldersGetInput = z.infer<typeof FoldersGetInputSchema>;
-export type FoldersGetResponse = z.infer<typeof FoldersGetResponseSchema>;
-export type FoldersUpdateInput = z.infer<typeof FoldersUpdateInputSchema>;
-export type FoldersUpdateResponse = z.infer<typeof FoldersUpdateResponseSchema>;
-export type FoldersDeleteInput = z.infer<typeof FoldersDeleteInputSchema>;
-export type FoldersDeleteResponse = z.infer<typeof FoldersDeleteResponseSchema>;
-export type FoldersListItemsInput = z.infer<typeof FoldersListItemsInputSchema>;
-export type FoldersListItemsResponse = z.infer<
-	typeof FoldersListItemsResponseSchema
->;
-export type FoldersMoveItemInput = z.infer<typeof FoldersMoveItemInputSchema>;
-export type FoldersMoveItemResponse = z.infer<
-	typeof FoldersMoveItemResponseSchema
->;
+const AppsGetJwksInputSchema = z.object({
+	appId: z.string(),
+});
 
-export type ExportsCreateInput = z.infer<typeof ExportsCreateInputSchema>;
-export type ExportsCreateResponse = z.infer<typeof ExportsCreateResponseSchema>;
-export type ExportsGetInput = z.infer<typeof ExportsGetInputSchema>;
-export type ExportsGetResponse = z.infer<typeof ExportsGetResponseSchema>;
+const AppsGetJwksResponseSchema = z.object({
+	keys: z.array(
+		z
+			.object({
+				kid: z.string(),
+				kty: z.string(),
+				n: z.string(),
+				e: z.string(),
+				alg: z.string().optional(),
+				use: z.string().optional(),
+			})
+			.passthrough(),
+	),
+});
 
-export type BrandTemplatesListInput = z.infer<
-	typeof BrandTemplatesListInputSchema
->;
-export type BrandTemplatesListResponse = z.infer<
-	typeof BrandTemplatesListResponseSchema
->;
-export type BrandTemplatesGetInput = z.infer<
-	typeof BrandTemplatesGetInputSchema
->;
-export type BrandTemplatesGetResponse = z.infer<
-	typeof BrandTemplatesGetResponseSchema
->;
-export type BrandTemplatesGetDatasetInput = z.infer<
-	typeof BrandTemplatesGetDatasetInputSchema
->;
-export type BrandTemplatesGetDatasetResponse = z.infer<
-	typeof BrandTemplatesGetDatasetResponseSchema
->;
-
-export type AssetUploadsCreateInput = z.infer<
-	typeof AssetUploadsCreateInputSchema
->;
-export type AssetUploadsCreateResponse = z.infer<
-	typeof AssetUploadsCreateResponseSchema
->;
-export type AssetUploadsGetInput = z.infer<typeof AssetUploadsGetInputSchema>;
-export type AssetUploadsGetResponse = z.infer<
-	typeof AssetUploadsGetResponseSchema
->;
-export type AssetUploadsCreateFromUrlInput = z.infer<
-	typeof AssetUploadsCreateFromUrlInputSchema
->;
-export type AssetUploadsCreateFromUrlResponse = z.infer<
-	typeof AssetUploadsCreateFromUrlResponseSchema
->;
-export type AssetUploadsGetFromUrlInput = z.infer<
-	typeof AssetUploadsGetFromUrlInputSchema
->;
-export type AssetUploadsGetFromUrlResponse = z.infer<
-	typeof AssetUploadsGetFromUrlResponseSchema
->;
-
-export type ImportsCreateInput = z.infer<typeof ImportsCreateInputSchema>;
-export type ImportsCreateResponse = z.infer<typeof ImportsCreateResponseSchema>;
-export type ImportsGetInput = z.infer<typeof ImportsGetInputSchema>;
-export type ImportsGetResponse = z.infer<typeof ImportsGetResponseSchema>;
-export type ImportsCreateFromUrlInput = z.infer<
-	typeof ImportsCreateFromUrlInputSchema
->;
-export type ImportsCreateFromUrlResponse = z.infer<
-	typeof ImportsCreateFromUrlResponseSchema
->;
-export type ImportsGetFromUrlInput = z.infer<
-	typeof ImportsGetFromUrlInputSchema
->;
-export type ImportsGetFromUrlResponse = z.infer<
-	typeof ImportsGetFromUrlResponseSchema
->;
-
-export type ResizesCreateInput = z.infer<typeof ResizesCreateInputSchema>;
-export type ResizesCreateResponse = z.infer<typeof ResizesCreateResponseSchema>;
-export type ResizesGetInput = z.infer<typeof ResizesGetInputSchema>;
-export type ResizesGetResponse = z.infer<typeof ResizesGetResponseSchema>;
-
-export type AutofillsCreateInput = z.infer<typeof AutofillsCreateInputSchema>;
-export type AutofillsCreateResponse = z.infer<
-	typeof AutofillsCreateResponseSchema
->;
-export type AutofillsGetInput = z.infer<typeof AutofillsGetInputSchema>;
-export type AutofillsGetResponse = z.infer<typeof AutofillsGetResponseSchema>;
-
-export type CommentsCreateThreadInput = z.infer<
-	typeof CommentsCreateThreadInputSchema
->;
-export type CommentsCreateThreadResponse = z.infer<
-	typeof CommentsCreateThreadResponseSchema
->;
-export type CommentsGetThreadInput = z.infer<
-	typeof CommentsGetThreadInputSchema
->;
-export type CommentsGetThreadResponse = z.infer<
-	typeof CommentsGetThreadResponseSchema
->;
-export type CommentsCreateReplyInput = z.infer<
-	typeof CommentsCreateReplyInputSchema
->;
-export type CommentsCreateReplyResponse = z.infer<
-	typeof CommentsCreateReplyResponseSchema
->;
-export type CommentsListRepliesInput = z.infer<
-	typeof CommentsListRepliesInputSchema
->;
-export type CommentsListRepliesResponse = z.infer<
-	typeof CommentsListRepliesResponseSchema
->;
-export type CommentsGetReplyInput = z.infer<typeof CommentsGetReplyInputSchema>;
-export type CommentsGetReplyResponse = z.infer<
-	typeof CommentsGetReplyResponseSchema
->;
-
-export type CanvaEndpointInputs = {
-	usersGetMe: UsersGetMeInput;
-	usersGetProfile: UsersGetProfileInput;
-	usersGetCapabilities: UsersGetCapabilitiesInput;
-	designsList: DesignsListInput;
-	designsGet: DesignsGetInput;
-	designsCreate: DesignsCreateInput;
-	designsGetPages: DesignsGetPagesInput;
-	designsGetExportFormats: DesignsGetExportFormatsInput;
-	assetsGet: AssetsGetInput;
-	assetsUpdate: AssetsUpdateInput;
-	assetsDelete: AssetsDeleteInput;
-	foldersCreate: FoldersCreateInput;
-	foldersGet: FoldersGetInput;
-	foldersUpdate: FoldersUpdateInput;
-	foldersDelete: FoldersDeleteInput;
-	foldersListItems: FoldersListItemsInput;
-	foldersMoveItem: FoldersMoveItemInput;
-	exportsCreate: ExportsCreateInput;
-	exportsGet: ExportsGetInput;
-	brandTemplatesList: BrandTemplatesListInput;
-	brandTemplatesGet: BrandTemplatesGetInput;
-	brandTemplatesGetDataset: BrandTemplatesGetDatasetInput;
-	assetUploadsCreate: AssetUploadsCreateInput;
-	assetUploadsGet: AssetUploadsGetInput;
-	assetUploadsCreateFromUrl: AssetUploadsCreateFromUrlInput;
-	assetUploadsGetFromUrl: AssetUploadsGetFromUrlInput;
-	importsCreate: ImportsCreateInput;
-	importsGet: ImportsGetInput;
-	importsCreateFromUrl: ImportsCreateFromUrlInput;
-	importsGetFromUrl: ImportsGetFromUrlInput;
-	resizesCreate: ResizesCreateInput;
-	resizesGet: ResizesGetInput;
-	autofillsCreate: AutofillsCreateInput;
-	autofillsGet: AutofillsGetInput;
-	commentsCreateThread: CommentsCreateThreadInput;
-	commentsGetThread: CommentsGetThreadInput;
-	commentsCreateReply: CommentsCreateReplyInput;
-	commentsListReplies: CommentsListRepliesInput;
-	commentsGetReply: CommentsGetReplyInput;
-};
-
-export type CanvaEndpointOutputs = {
-	usersGetMe: UsersGetMeResponse;
-	usersGetProfile: UsersGetProfileResponse;
-	usersGetCapabilities: UsersGetCapabilitiesResponse;
-	designsList: DesignsListResponse;
-	designsGet: DesignsGetResponse;
-	designsCreate: DesignsCreateResponse;
-	designsGetPages: DesignsGetPagesResponse;
-	designsGetExportFormats: DesignsGetExportFormatsResponse;
-	assetsGet: AssetsGetResponse;
-	assetsUpdate: AssetsUpdateResponse;
-	assetsDelete: AssetsDeleteResponse;
-	foldersCreate: FoldersCreateResponse;
-	foldersGet: FoldersGetResponse;
-	foldersUpdate: FoldersUpdateResponse;
-	foldersDelete: FoldersDeleteResponse;
-	foldersListItems: FoldersListItemsResponse;
-	foldersMoveItem: FoldersMoveItemResponse;
-	exportsCreate: ExportsCreateResponse;
-	exportsGet: ExportsGetResponse;
-	brandTemplatesList: BrandTemplatesListResponse;
-	brandTemplatesGet: BrandTemplatesGetResponse;
-	brandTemplatesGetDataset: BrandTemplatesGetDatasetResponse;
-	assetUploadsCreate: AssetUploadsCreateResponse;
-	assetUploadsGet: AssetUploadsGetResponse;
-	assetUploadsCreateFromUrl: AssetUploadsCreateFromUrlResponse;
-	assetUploadsGetFromUrl: AssetUploadsGetFromUrlResponse;
-	importsCreate: ImportsCreateResponse;
-	importsGet: ImportsGetResponse;
-	importsCreateFromUrl: ImportsCreateFromUrlResponse;
-	importsGetFromUrl: ImportsGetFromUrlResponse;
-	resizesCreate: ResizesCreateResponse;
-	resizesGet: ResizesGetResponse;
-	autofillsCreate: AutofillsCreateResponse;
-	autofillsGet: AutofillsGetResponse;
-	commentsCreateThread: CommentsCreateThreadResponse;
-	commentsGetThread: CommentsGetThreadResponse;
-	commentsCreateReply: CommentsCreateReplyResponse;
-	commentsListReplies: CommentsListRepliesResponse;
-	commentsGetReply: CommentsGetReplyResponse;
-};
+// ── registry ───────────────────────────────────────────────────────────────
 
 export const CanvaEndpointInputSchemas = {
 	usersGetMe: UsersGetMeInputSchema,
@@ -998,6 +1624,12 @@ export const CanvaEndpointInputSchemas = {
 	designsCreate: DesignsCreateInputSchema,
 	designsGetPages: DesignsGetPagesInputSchema,
 	designsGetExportFormats: DesignsGetExportFormatsInputSchema,
+	designsGetDataset: DesignsGetDatasetInputSchema,
+	analyticsGet: AnalyticsGetInputSchema,
+	analyticsListViewers: AnalyticsListViewersInputSchema,
+	analyticsListViewsOverTime: AnalyticsListViewsOverTimeInputSchema,
+	analyticsListPageViews: AnalyticsListPageViewsInputSchema,
+	analyticsListLinks: AnalyticsListLinksInputSchema,
 	assetsGet: AssetsGetInputSchema,
 	assetsUpdate: AssetsUpdateInputSchema,
 	assetsDelete: AssetsDeleteInputSchema,
@@ -1009,9 +1641,11 @@ export const CanvaEndpointInputSchemas = {
 	foldersMoveItem: FoldersMoveItemInputSchema,
 	exportsCreate: ExportsCreateInputSchema,
 	exportsGet: ExportsGetInputSchema,
+	exportsDownload: ExportsDownloadInputSchema,
 	brandTemplatesList: BrandTemplatesListInputSchema,
 	brandTemplatesGet: BrandTemplatesGetInputSchema,
 	brandTemplatesGetDataset: BrandTemplatesGetDatasetInputSchema,
+	brandTemplatesPublish: BrandTemplatesPublishInputSchema,
 	assetUploadsCreate: AssetUploadsCreateInputSchema,
 	assetUploadsGet: AssetUploadsGetInputSchema,
 	assetUploadsCreateFromUrl: AssetUploadsCreateFromUrlInputSchema,
@@ -1020,15 +1654,30 @@ export const CanvaEndpointInputSchemas = {
 	importsGet: ImportsGetInputSchema,
 	importsCreateFromUrl: ImportsCreateFromUrlInputSchema,
 	importsGetFromUrl: ImportsGetFromUrlInputSchema,
+	importsCreateFromImage: ImportsCreateFromImageInputSchema,
+	importsGetFromImage: ImportsGetFromImageInputSchema,
 	resizesCreate: ResizesCreateInputSchema,
 	resizesGet: ResizesGetInputSchema,
 	autofillsCreate: AutofillsCreateInputSchema,
 	autofillsGet: AutofillsGetInputSchema,
+	generationsCreate: GenerationsCreateInputSchema,
+	generationsGet: GenerationsGetInputSchema,
+	imageGenerationsCreate: ImageGenerationsCreateInputSchema,
+	imageGenerationsGet: ImageGenerationsGetInputSchema,
+	imageTransformationsCreate: ImageTransformationsCreateInputSchema,
+	imageTransformationsGet: ImageTransformationsGetInputSchema,
+	mergesCreate: MergesCreateInputSchema,
+	mergesGet: MergesGetInputSchema,
+	printPartnerCreateDesign: PrintPartnerCreateDesignInputSchema,
+	printPartnerGetDesign: PrintPartnerGetDesignInputSchema,
+	printPartnerCreateExport: PrintPartnerCreateExportInputSchema,
 	commentsCreateThread: CommentsCreateThreadInputSchema,
 	commentsGetThread: CommentsGetThreadInputSchema,
 	commentsCreateReply: CommentsCreateReplyInputSchema,
 	commentsListReplies: CommentsListRepliesInputSchema,
 	commentsGetReply: CommentsGetReplyInputSchema,
+	keysList: KeysListInputSchema,
+	appsGetJwks: AppsGetJwksInputSchema,
 } as const;
 
 export const CanvaEndpointOutputSchemas = {
@@ -1040,6 +1689,12 @@ export const CanvaEndpointOutputSchemas = {
 	designsCreate: DesignsCreateResponseSchema,
 	designsGetPages: DesignsGetPagesResponseSchema,
 	designsGetExportFormats: DesignsGetExportFormatsResponseSchema,
+	designsGetDataset: DesignsGetDatasetResponseSchema,
+	analyticsGet: AnalyticsGetResponseSchema,
+	analyticsListViewers: AnalyticsListViewersResponseSchema,
+	analyticsListViewsOverTime: AnalyticsListViewsOverTimeResponseSchema,
+	analyticsListPageViews: AnalyticsListPageViewsResponseSchema,
+	analyticsListLinks: AnalyticsListLinksResponseSchema,
 	assetsGet: AssetsGetResponseSchema,
 	assetsUpdate: AssetsUpdateResponseSchema,
 	assetsDelete: AssetsDeleteResponseSchema,
@@ -1051,9 +1706,11 @@ export const CanvaEndpointOutputSchemas = {
 	foldersMoveItem: FoldersMoveItemResponseSchema,
 	exportsCreate: ExportsCreateResponseSchema,
 	exportsGet: ExportsGetResponseSchema,
+	exportsDownload: ExportsDownloadResponseSchema,
 	brandTemplatesList: BrandTemplatesListResponseSchema,
 	brandTemplatesGet: BrandTemplatesGetResponseSchema,
 	brandTemplatesGetDataset: BrandTemplatesGetDatasetResponseSchema,
+	brandTemplatesPublish: BrandTemplatesPublishResponseSchema,
 	assetUploadsCreate: AssetUploadsCreateResponseSchema,
 	assetUploadsGet: AssetUploadsGetResponseSchema,
 	assetUploadsCreateFromUrl: AssetUploadsCreateFromUrlResponseSchema,
@@ -1062,13 +1719,113 @@ export const CanvaEndpointOutputSchemas = {
 	importsGet: ImportsGetResponseSchema,
 	importsCreateFromUrl: ImportsCreateFromUrlResponseSchema,
 	importsGetFromUrl: ImportsGetFromUrlResponseSchema,
+	importsCreateFromImage: ImportsCreateFromImageResponseSchema,
+	importsGetFromImage: ImportsGetFromImageResponseSchema,
 	resizesCreate: ResizesCreateResponseSchema,
 	resizesGet: ResizesGetResponseSchema,
 	autofillsCreate: AutofillsCreateResponseSchema,
 	autofillsGet: AutofillsGetResponseSchema,
+	generationsCreate: GenerationsCreateResponseSchema,
+	generationsGet: GenerationsGetResponseSchema,
+	imageGenerationsCreate: ImageGenerationsCreateResponseSchema,
+	imageGenerationsGet: ImageGenerationsGetResponseSchema,
+	imageTransformationsCreate: ImageTransformationsCreateResponseSchema,
+	imageTransformationsGet: ImageTransformationsGetResponseSchema,
+	mergesCreate: MergesCreateResponseSchema,
+	mergesGet: MergesGetResponseSchema,
+	printPartnerCreateDesign: PrintPartnerDesignResponseSchema,
+	printPartnerGetDesign: PrintPartnerDesignResponseSchema,
+	printPartnerCreateExport: PrintPartnerCreateExportResponseSchema,
 	commentsCreateThread: CommentsCreateThreadResponseSchema,
 	commentsGetThread: CommentsGetThreadResponseSchema,
 	commentsCreateReply: CommentsCreateReplyResponseSchema,
 	commentsListReplies: CommentsListRepliesResponseSchema,
 	commentsGetReply: CommentsGetReplyResponseSchema,
+	keysList: KeysListResponseSchema,
+	appsGetJwks: AppsGetJwksResponseSchema,
 } as const;
+
+export type CanvaEndpointInputs = {
+	[K in keyof typeof CanvaEndpointInputSchemas]: z.input<
+		(typeof CanvaEndpointInputSchemas)[K]
+	>;
+};
+
+export type CanvaEndpointOutputs = {
+	[K in keyof typeof CanvaEndpointOutputSchemas]: z.infer<
+		(typeof CanvaEndpointOutputSchemas)[K]
+	>;
+};
+
+type Outputs = CanvaEndpointOutputs;
+
+export type UsersGetMeResponse = Outputs['usersGetMe'];
+export type UsersGetProfileResponse = Outputs['usersGetProfile'];
+export type UsersGetCapabilitiesResponse = Outputs['usersGetCapabilities'];
+export type DesignsListResponse = Outputs['designsList'];
+export type DesignsGetResponse = Outputs['designsGet'];
+export type DesignsCreateResponse = Outputs['designsCreate'];
+export type DesignsGetPagesResponse = Outputs['designsGetPages'];
+export type DesignsGetExportFormatsResponse =
+	Outputs['designsGetExportFormats'];
+export type DesignsGetDatasetResponse = Outputs['designsGetDataset'];
+export type AnalyticsGetResponse = Outputs['analyticsGet'];
+export type AnalyticsListViewersResponse = Outputs['analyticsListViewers'];
+export type AnalyticsListViewsOverTimeResponse =
+	Outputs['analyticsListViewsOverTime'];
+export type AnalyticsListPageViewsResponse = Outputs['analyticsListPageViews'];
+export type AnalyticsListLinksResponse = Outputs['analyticsListLinks'];
+export type AssetsGetResponse = Outputs['assetsGet'];
+export type AssetsUpdateResponse = Outputs['assetsUpdate'];
+export type AssetsDeleteResponse = Outputs['assetsDelete'];
+export type FoldersCreateResponse = Outputs['foldersCreate'];
+export type FoldersGetResponse = Outputs['foldersGet'];
+export type FoldersUpdateResponse = Outputs['foldersUpdate'];
+export type FoldersDeleteResponse = Outputs['foldersDelete'];
+export type FoldersListItemsResponse = Outputs['foldersListItems'];
+export type FoldersMoveItemResponse = Outputs['foldersMoveItem'];
+export type ExportsCreateResponse = Outputs['exportsCreate'];
+export type ExportsGetResponse = Outputs['exportsGet'];
+export type ExportsDownloadResponse = Outputs['exportsDownload'];
+export type BrandTemplatesListResponse = Outputs['brandTemplatesList'];
+export type BrandTemplatesGetResponse = Outputs['brandTemplatesGet'];
+export type BrandTemplatesGetDatasetResponse =
+	Outputs['brandTemplatesGetDataset'];
+export type BrandTemplatesPublishResponse = Outputs['brandTemplatesPublish'];
+export type AssetUploadsCreateResponse = Outputs['assetUploadsCreate'];
+export type AssetUploadsGetResponse = Outputs['assetUploadsGet'];
+export type AssetUploadsCreateFromUrlResponse =
+	Outputs['assetUploadsCreateFromUrl'];
+export type AssetUploadsGetFromUrlResponse = Outputs['assetUploadsGetFromUrl'];
+export type ImportsCreateResponse = Outputs['importsCreate'];
+export type ImportsGetResponse = Outputs['importsGet'];
+export type ImportsCreateFromUrlResponse = Outputs['importsCreateFromUrl'];
+export type ImportsGetFromUrlResponse = Outputs['importsGetFromUrl'];
+export type ImportsCreateFromImageResponse = Outputs['importsCreateFromImage'];
+export type ImportsGetFromImageResponse = Outputs['importsGetFromImage'];
+export type ResizesCreateResponse = Outputs['resizesCreate'];
+export type ResizesGetResponse = Outputs['resizesGet'];
+export type AutofillsCreateResponse = Outputs['autofillsCreate'];
+export type AutofillsGetResponse = Outputs['autofillsGet'];
+export type GenerationsCreateResponse = Outputs['generationsCreate'];
+export type GenerationsGetResponse = Outputs['generationsGet'];
+export type ImageGenerationsCreateResponse = Outputs['imageGenerationsCreate'];
+export type ImageGenerationsGetResponse = Outputs['imageGenerationsGet'];
+export type ImageTransformationsCreateResponse =
+	Outputs['imageTransformationsCreate'];
+export type ImageTransformationsGetResponse =
+	Outputs['imageTransformationsGet'];
+export type MergesCreateResponse = Outputs['mergesCreate'];
+export type MergesGetResponse = Outputs['mergesGet'];
+export type PrintPartnerCreateDesignResponse =
+	Outputs['printPartnerCreateDesign'];
+export type PrintPartnerGetDesignResponse = Outputs['printPartnerGetDesign'];
+export type PrintPartnerCreateExportResponse =
+	Outputs['printPartnerCreateExport'];
+export type CommentsCreateThreadResponse = Outputs['commentsCreateThread'];
+export type CommentsGetThreadResponse = Outputs['commentsGetThread'];
+export type CommentsCreateReplyResponse = Outputs['commentsCreateReply'];
+export type CommentsListRepliesResponse = Outputs['commentsListReplies'];
+export type CommentsGetReplyResponse = Outputs['commentsGetReply'];
+export type KeysListResponse = Outputs['keysList'];
+export type AppsGetJwksResponse = Outputs['appsGetJwks'];

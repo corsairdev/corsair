@@ -6,6 +6,7 @@ import {
 	toBrandTemplateEntity,
 	toDesignEntity,
 } from './mappers';
+import { seg } from './shared';
 import type { CanvaEndpointOutputs, Folder } from './types';
 
 function toFolderEntity(folder: Folder) {
@@ -52,7 +53,7 @@ export const create: CanvaEndpoints['foldersCreate'] = async (ctx, input) => {
 
 export const get: CanvaEndpoints['foldersGet'] = async (ctx, input) => {
 	const result = await makeCanvaRequest<CanvaEndpointOutputs['foldersGet']>(
-		`v1/folders/${input.folderId}`,
+		`v1/folders/${seg(input.folderId)}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
@@ -80,7 +81,7 @@ export const get: CanvaEndpoints['foldersGet'] = async (ctx, input) => {
 export const update: CanvaEndpoints['foldersUpdate'] = async (ctx, input) => {
 	const { folderId, name } = input;
 	const result = await makeCanvaRequest<CanvaEndpointOutputs['foldersUpdate']>(
-		`v1/folders/${folderId}`,
+		`v1/folders/${seg(folderId)}`,
 		ctx.key,
 		{
 			method: 'PATCH',
@@ -112,7 +113,7 @@ export const deleteFolder: CanvaEndpoints['foldersDelete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeCanvaRequest<void>(`v1/folders/${input.folderId}`, ctx.key, {
+	await makeCanvaRequest<void>(`v1/folders/${seg(input.folderId)}`, ctx.key, {
 		method: 'DELETE',
 	});
 
@@ -141,7 +142,7 @@ export const listItems: CanvaEndpoints['foldersListItems'] = async (
 		input;
 	const result = await makeCanvaRequest<
 		CanvaEndpointOutputs['foldersListItems']
-	>(`v1/folders/${folderId}/items`, ctx.key, {
+	>(`v1/folders/${seg(folderId)}/items`, ctx.key, {
 		method: 'GET',
 		query: {
 			...(continuation !== undefined && { continuation }),

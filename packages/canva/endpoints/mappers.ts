@@ -1,3 +1,6 @@
+import type { FileInput } from 'corsair/http';
+import { resolveFileInput } from 'corsair/http';
+import { decodeBase64ToBytes } from '../base64';
 import type { Asset, BrandTemplate } from './types';
 
 export type DesignLike = {
@@ -52,7 +55,40 @@ export function toBrandTemplateEntity(brandTemplate: BrandTemplate) {
 	};
 }
 
-export function withoutBase64<T extends Record<string, unknown>>(input: T) {
-	const { contentBase64: _contentBase64, ...rest } = input;
-	return rest;
+/** The input as logged: no file bytes, and a file given by URL only as its URL. */
+export function withoutFileContent<T extends Record<string, unknown>>(
+	input: T,
+) {
+	const { contentBase64: _contentBase64, file, ...rest } = input;
+	if (file === undefined) return rest;
+	const url =
+		typeof file === 'string'
+			? file
+			: typeof file === 'object' && file !== null && 'url' in file
+				? (file as { url: unknown }).url
+				: undefined;
+	return { ...rest, file: typeof url === 'string' ? url : '[file]' };
+}
+
+/**
+ * Most bytes read into memory for one upload. Bigger files go through
+ * createFromUrl, where Canva fetches the file itself.
+ */
+export const UPLOAD_MAX_BYTES = 100 * 1024 * 1024;
+
+/** The raw request body for an upload, from a file input or base64. */
+export async function bodyFrom(
+	input: { file?: FileInput; contentBase64?: string },
+	fallbackName: string,
+): Promise<Blob> {
+	if (input.file !== undefined) {
+		const resolved = await resolveFileInput(input.file, {
+			fallbackName,
+			maxBytes: UPLOAD_MAX_BYTES,
+		});
+		return new Blob([resolved.bytes], { type: 'application/octet-stream' });
+	}
+	return new Blob([decodeBase64ToBytes(input.contentBase64 ?? '')], {
+		type: 'application/octet-stream',
+	});
 }
