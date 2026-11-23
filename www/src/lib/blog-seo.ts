@@ -126,14 +126,19 @@ function authorNode(author: string) {
 }
 
 /**
- * When a post last changed, for the sitemap's lastmod and JSON-LD dateModified.
- * Falls back to the publish date for posts never edited after publishing.
+ * When a post last changed, for the sitemap's lastmod and JSON-LD dateModified:
+ * its last edit, or its publish date when that is later (a post written before
+ * the date it was scheduled for).
  */
 export function postLastModified(post: {
 	publishedAt: string;
 	updatedAt?: string;
 }): string {
-	return post.updatedAt ?? post.publishedAt;
+	const { publishedAt, updatedAt } = post;
+	if (!updatedAt) return publishedAt;
+	return Date.parse(updatedAt) > Date.parse(publishedAt)
+		? updatedAt
+		: publishedAt;
 }
 
 export function buildBlogPostJsonLd(post: BlogJsonLdInput) {
