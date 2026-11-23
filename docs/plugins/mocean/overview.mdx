@@ -1,0 +1,155 @@
+---
+title: "Mocean plugin"
+sidebarTitle: "Overview"
+description: "Messaging with Mocean - send SMS, check message status and account balance and pricing, run verify challenges and look up phone numbers."
+---
+
+Use **Mocean** through Corsair: one client, typed API calls.
+
+Create an API token in the Mocean dashboard under API settings and store it
+as the account key. Requests authenticate with `Authorization: Bearer` and
+every call asks Mocean for JSON, since the default response format is XML.
+
+- **sms.send and the verify calls are charged.** A send is billed per
+destination and returns one result per receiver, each with its own `status`
+and `msgid`; a nonzero status on a row means that receiver was not sent.
+`sms.send` fails the whole batch with body status 1 (a bad token) before
+anything is sent. Verify requests and resends are charged per attempt.
+- **Numbers need country codes.** `60123456789` is a valid Malaysian
+destination; a number that is invalid after stripping non-numerics answers
+body status 28.
+- **Errors arrive inside a 2xx body.** Mocean answers most failures with a
+`status` code and `err_msg` instead of an HTTP error, so the plugin throws
+from the body: 1 (or 2 on the verify family) is an auth failure, 2 (18 on
+verify) is insufficient balance, 32 (1 on verify) is throttled and 40 and 45
+mean maintenance or a retryable system error. Delivery reports, inbound SMS
+and number-lookup results that Mocean pushes to a callback URL are not
+received by this plugin.
+- **lookup.request is a metered read** charged against prepaid credit. Give
+`mocean_nl_url` only if you run the receiver of that callback yourself;
+without it the full carrier and porting result comes back synchronously.
+- **Scheduling is Malaysia time.** `mocean_schedule` must be
+`YYYY-MM-DD hh:mm:ss` in GMT+8, with leading zeros.
+- **Retries.** Throttling, maintenance and system errors are retried with
+exponential backoff. A send is never replayed after a network failure or a
+5xx, because the message may already have been delivered and charged.
+
+**What you get:**
+
+- 8 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/mocean better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/mocean better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/mocean better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/mocean better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { mocean } from '@corsair-dev/mocean';
+
+export const corsair = createCorsair({
+	plugins: [
+		mocean(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Mocean API key before the first call: `pnpm corsair setup --plugin=mocean --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+mocean()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'mocean',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read the account balance**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.mocean.api.account.balance({});
+```
+
+
+**Send an SMS**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.mocean.api.sms.send({ mocean_from: 'Acme', mocean_to: '60123456789', mocean_text: 'Your order has shipped.' });
+```
+
+
+See the full list on the [API](/plugins/mocean/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/mocean/api">
+    Every `mocean.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

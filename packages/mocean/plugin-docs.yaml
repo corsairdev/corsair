@@ -1,0 +1,87 @@
+displayName: Mocean
+description: Messaging with Mocean - send SMS, check message status and account balance and pricing, run verify challenges and look up phone numbers.
+domain: moceanapi.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API token in the Mocean dashboard under API settings and store it
+  as the account key. Requests authenticate with `Authorization: Bearer` and
+  every call asks Mocean for JSON, since the default response format is XML.
+
+  - **sms.send and the verify calls are charged.** A send is billed per
+  destination and returns one result per receiver, each with its own `status`
+  and `msgid`; a nonzero status on a row means that receiver was not sent.
+  `sms.send` fails the whole batch with body status 1 (a bad token) before
+  anything is sent. Verify requests and resends are charged per attempt.
+  - **Numbers need country codes.** `60123456789` is a valid Malaysian
+  destination; a number that is invalid after stripping non-numerics answers
+  body status 28.
+  - **Errors arrive inside a 2xx body.** Mocean answers most failures with a
+  `status` code and `err_msg` instead of an HTTP error, so the plugin throws
+  from the body: 1 (or 2 on the verify family) is an auth failure, 2 (18 on
+  verify) is insufficient balance, 32 (1 on verify) is throttled and 40 and 45
+  mean maintenance or a retryable system error. Delivery reports, inbound SMS
+  and number-lookup results that Mocean pushes to a callback URL are not
+  received by this plugin.
+  - **lookup.request is a metered read** charged against prepaid credit. Give
+  `mocean_nl_url` only if you run the receiver of that callback yourself;
+  without it the full carrier and porting result comes back synchronously.
+  - **Scheduling is Malaysia time.** `mocean_schedule` must be
+  `YYYY-MM-DD hh:mm:ss` in GMT+8, with leading zeros.
+  - **Retries.** Throttling, maintenance and system errors are retried with
+  exponential backoff. A send is never replayed after a network failure or a
+  5xx, because the message may already have been delivered and charged.
+examples:
+  read:
+    path: account.balance
+    title: Read the account balance
+    args: {}
+  write:
+    path: sms.send
+    title: Send an SMS
+    args:
+      mocean_from: Acme
+      mocean_to: '60123456789'
+      mocean_text: Your order has shipped.
+apiExamples:
+  sms.send:
+    call: "{ mocean_from: 'Acme', mocean_to: '60123456789 60198765432', mocean_text: 'Your order has shipped.' }"
+  sms.status:
+    call: "{ mocean_msgid: 'cust20013050311050614001' }"
+  account.balance: {}
+  account.pricing:
+    call: "{ mocean_mcc: '502', mocean_mnc: '13', mocean_type: 'sms' }"
+  verify.request:
+    call: "{ mocean_to: '60123456789', mocean_brand: 'Acme', mocean_code_length: 6, mocean_pin_validity: 300 }"
+  verify.resend:
+    call: "{ mocean_reqid: 'moceanq5672285037' }"
+  verify.check:
+    call: "{ mocean_reqid: 'moceanq5672285037', mocean_code: '123456' }"
+  lookup.request:
+    call: "{ mocean_to: '60123456789' }"
+apiNotes:
+  sms.send: |
+    `POST /rest/2/sms` with a form-encoded body. Mocean answers HTTP 202 with
+    `{ messages: [{ status, receiver, msgid }] }`; each row can fail on its own
+    (28 invalid number, 27 over the 500-receiver cap). Delivery reports go to
+    `mocean_dlr_url`, which the plugin requires when `mocean_dlr_mask` is 1,
+    but it does not receive them.
+  sms.status: |
+    `GET /rest/2/report/message?mocean-msgid=...`. `message_status` is 1
+    success, 2 failed, 3 expired, 4 pending, 5 not found; `credit_deducted`
+    comes back as a string.
+  account.balance: |
+    `GET /rest/2/account/balance`. The answer is `{ status: 0, value }`.
+  account.pricing: |
+    `GET /rest/2/account/pricing`. `price`, `mcc` and `mnc` come back as
+    strings in the documented example (`mnc` can be a comma list like
+    "13,19"). `mocean_mnc` needs `mocean_mcc`.
+  verify.request: |
+    `POST /rest/2/verify/req/sms`. The verify family reports auth failures
+    with body status 2 and throttling with 1, unlike the other APIs.
+  verify.check: |
+    `POST /rest/2/verify/check`. Body status 16 means the code did not match
+    and 15 means the three wrong attempts are used up; both are data, not
+    retryable errors.
+  lookup.request: |
+    `POST /rest/2/nl`. Synchronous without `mocean_nl_url`; the callback answer
+    is a form POST to that URL, which the plugin does not receive.

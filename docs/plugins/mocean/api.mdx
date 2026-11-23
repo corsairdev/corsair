@@ -1,0 +1,375 @@
+---
+title: "Mocean API reference"
+sidebarTitle: "API"
+description: "API reference for the Mocean plugin in Corsair: every `mocean.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### balance
+
+`account.balance`
+
+Read the account balance
+
+**Risk:** `read`
+
+```ts
+await corsair.mocean.api.account.balance({});
+```
+
+**Input:** _empty object_
+
+`GET /rest/2/account/balance`. The answer is `{ status: 0, value }`.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | Yes | — |
+| `value` | `number` | Yes | — |
+
+
+
+---
+
+### pricing
+
+`account.pricing`
+
+List the account per-destination pricing, optionally filtered by MCC/MNC or service type
+
+**Risk:** `read`
+
+```ts
+await corsair.mocean.api.account.pricing({ mocean_mcc: '502', mocean_mnc: '13', mocean_type: 'sms' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mocean_mcc` | `string` | No | Only pricing for this Mobile Country Code. |
+| `mocean_mnc` | `string` | No | One Mobile Network Code; needs mocean_mcc. |
+| `mocean_type` | `sms \| number-lookup \| verify` | No | Defaults to 'sms'. |
+
+`GET /rest/2/account/pricing`. `price`, `mcc` and `mnc` come back as
+strings in the documented example (`mnc` can be a comma list like
+"13,19"). `mocean_mnc` needs `mocean_mcc`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| null` | No | — |
+| `destinations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="destinations full type">
+
+```ts
+{
+  country?: string | null,
+  operator?: string | null,
+  mcc?: string | null,
+  mnc?: string | null,
+  price?: string | null,
+  currency?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lookup
+
+### request
+
+`lookup.request`
+
+Look up a number's original and current carrier and porting status, charged against prepaid credit; returns synchronously without a callback URL
+
+**Risk:** `read`
+
+```ts
+await corsair.mocean.api.lookup.request({ mocean_to: '60123456789' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mocean_to` | `string` | Yes | The phone number to look up, with country code. |
+| `mocean_nl_url` | `string` | No | Callback URL for the async result. Omit it to get the full result synchronously. |
+
+`POST /rest/2/nl`. Synchronous without `mocean_nl_url`; the callback answer
+is a form POST to that URL, which the plugin does not receive.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | Yes | — |
+| `msgid` | `string \| null` | No | — |
+| `to` | `string \| null` | No | — |
+| `current_carrier` | `object \| null` | No | — |
+| `original_carrier` | `object \| null` | No | — |
+| `ported` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="current_carrier full type">
+
+```ts
+{
+  country?: string | null,
+  name?: string | null,
+  network_code?: string | number | null,
+  mcc?: string | null,
+  mnc?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="original_carrier full type">
+
+```ts
+{
+  country?: string | null,
+  name?: string | null,
+  network_code?: string | number | null,
+  mcc?: string | null,
+  mnc?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Sms
+
+### send
+
+`sms.send`
+
+Send an SMS to up to 500 receivers, charged per destination; the response carries a status and msgid per receiver
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mocean.api.sms.send({ mocean_from: 'Acme', mocean_to: '60123456789 60198765432', mocean_text: 'Your order has shipped.' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mocean_from` | `string` | Yes | The Sender ID shown on the recipient handset. |
+| `mocean_to` | `string` | Yes | Receiver phone numbers with country code, separated by commas or spaces, up to 500. |
+| `mocean_text` | `string` | Yes | The message content; every receiver gets the same text. |
+| `mocean_udh` | `string` | No | User Data Header, e.g. 0605040B8423F0. |
+| `mocean_coding` | `number` | No | DCS coding scheme: 1 for 7-bit, 2 for 8-bit, 3 for UCS2. |
+| `mocean_dlr_mask` | `number` | No | Set to 1 to request delivery reports. Defaults to 0. |
+| `mocean_dlr_url` | `string` | No | Required when mocean_dlr_mask is 1: the delivery report callback URL. |
+| `mocean_schedule` | `string` | No | Send later, in Malaysia time (GMT+8). A wrong format is rejected by the gateway. |
+| `mocean_mclass` | `number` | No | Set to 1 with mocean_alt_dcs to send a Flash SMS. |
+| `mocean_alt_dcs` | `number` | No | Set to 1 with mocean_mclass to send a Flash SMS. |
+| `mocean_charset` | `ISO-8859-1 \| ISO-8859-7 \| UTF-8 \| Windows-1252` | No | The character set used in mocean_text. |
+| `mocean_validity` | `number` | No | How long the message stays deliverable, in seconds. |
+
+`POST /rest/2/sms` with a form-encoded body. Mocean answers HTTP 202 with
+`{ messages: [{ status, receiver, msgid }] }`; each row can fail on its own
+(28 invalid number, 27 over the 500-receiver cap). Delivery reports go to
+`mocean_dlr_url`, which the plugin requires when `mocean_dlr_mask` is 1,
+but it does not receive them.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  status: number,
+  receiver?: string | null,
+  msgid?: string | null,
+  err_msg?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### status
+
+`sms.status`
+
+Read one sent message's final status (success, failed, expired, pending or not found) and the credit it deducted
+
+**Risk:** `read`
+
+```ts
+await corsair.mocean.api.sms.status({ mocean_msgid: 'cust20013050311050614001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mocean_msgid` | `string` | Yes | The msgid from the send response. |
+
+`GET /rest/2/report/message?mocean-msgid=...`. `message_status` is 1
+success, 2 failed, 3 expired, 4 pending, 5 not found; `credit_deducted`
+comes back as a string.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number` | Yes | — |
+| `message_status` | `number` | Yes | — |
+| `msgid` | `string \| null` | No | — |
+| `credit_deducted` | `string \| null` | No | — |
+
+
+
+---
+
+## Verify
+
+### check
+
+`verify.check`
+
+Check the PIN a user gave you against a verify request; Mocean allows three wrong attempts
+
+**Risk:** `write`
+
+```ts
+await corsair.mocean.api.verify.check({ mocean_reqid: 'moceanq5672285037', mocean_code: '123456' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mocean_reqid` | `string` | Yes | The reqid of the verify request. |
+| `mocean_code` | `string` | Yes | The PIN the user gave you. |
+
+`POST /rest/2/verify/check`. Body status 16 means the code did not match
+and 15 means the three wrong attempts are used up; both are data, not
+retryable errors.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reqid` | `string \| null` | No | — |
+| `status` | `number` | Yes | — |
+
+
+
+---
+
+### request
+
+`verify.request`
+
+Send a verification code over SMS, charged per attempt; keep the reqid for check and resend
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mocean.api.verify.request({ mocean_to: '60123456789', mocean_brand: 'Acme', mocean_code_length: 6, mocean_pin_validity: 300 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mocean_to` | `string` | Yes | Receiver phone number with country code, e.g. 60123456789. |
+| `mocean_brand` | `string` | Yes | The company or application name shown to the user; the gateway rejects a brand it considers too long (body status 9). |
+| `mocean_from` | `string` | No | The SMS Sender ID. |
+| `mocean_code_length` | `4 \| 6` | No | The verification code length. Defaults to 4 or the account setting. |
+| `mocean_pin_validity` | `number` | No | Seconds the code stays valid, 60-3600. Defaults to 300 or the account setting. |
+
+`POST /rest/2/verify/req/sms`. The verify family reports auth failures
+with body status 2 and throttling with 1, unlike the other APIs.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reqid` | `string \| null` | No | — |
+| `status` | `number` | Yes | — |
+| `to` | `string \| null` | No | — |
+| `is_number_reachable` | `string \| null` | No | — |
+| `resend_number` | `string \| null` | No | — |
+
+
+
+---
+
+### resend
+
+`verify.resend`
+
+Resend the code of an existing verify request over SMS, charged per attempt
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mocean.api.verify.resend({ mocean_reqid: 'moceanq5672285037' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mocean_reqid` | `string` | Yes | The reqid of the verify request to resend. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reqid` | `string \| null` | No | — |
+| `status` | `number` | Yes | — |
+| `to` | `string \| null` | No | — |
+| `is_number_reachable` | `string \| null` | No | — |
+| `resend_number` | `string \| null` | No | — |
+
+
+
+---
+
