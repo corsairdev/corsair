@@ -553,6 +553,7 @@ export const BaseProviders = [
 	'pushover',
 	'qdrant',
 	'quaderno',
+	'quickbooks',
 	'radar',
 	'ragic',
 	'raisely',
@@ -1330,6 +1331,7 @@ export const ProviderDisplayNames = {
 	pushover: 'Pushover',
 	qdrant: 'Qdrant',
 	quaderno: 'Quaderno',
+	quickbooks: 'QuickBooks',
 	radar: 'Radar',
 	ragic: 'Ragic',
 	raisely: 'Raisely',
@@ -2114,6 +2116,7 @@ export type AllProviders =
 	| 'pushover'
 	| 'qdrant'
 	| 'quaderno'
+	| 'quickbooks'
 	| 'radar'
 	| 'ragic'
 	| 'raisely'

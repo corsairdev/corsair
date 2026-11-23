@@ -4581,6 +4581,14 @@
                 ]
               },
               {
+                "group": "QuickBooks",
+                "pages": [
+                  "plugins/quickbooks/overview",
+                  "plugins/quickbooks/api",
+                  "plugins/quickbooks/database"
+                ]
+              },
+              {
                 "group": "Radar",
                 "pages": [
                   "plugins/radar/overview",
