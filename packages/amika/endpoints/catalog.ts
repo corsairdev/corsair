@@ -576,7 +576,7 @@ export const amikaEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Deletes a rig and its disk. Anything not pushed or snapshotted is lost. Name the rig by id or name; `by` says which (default: either).',
+			'Deletes a rig and its disk. Anything not pushed or snapshotted is lost. With forget "true", Amika only drops its record when the host or provider can\'t be reached: the machine is left running, so confirm with the host or provider that it is gone. Name the rig by id or name; `by` says which (default: either).',
 	},
 	'rigs.get': {
 		riskLevel: 'read',
@@ -657,12 +657,12 @@ export const amikaEndpointMeta = {
 	'rigs.start': {
 		riskLevel: 'destructive',
 		description:
-			'Starts a stopped rig; its filesystem is kept. Billing resumes while it runs. Name the rig by id or name; `by` says which (default: either).',
+			'Starts a stopped rig. The home folder and other disk files are kept, but /tmp is cleared by the restart. Billing resumes while it runs. Name the rig by id or name; `by` says which (default: either).',
 	},
 	'rigs.stop': {
 		riskLevel: 'write',
 		description:
-			'Stops a running rig, keeping its filesystem, so it stops billing for compute. Name the rig by id or name; `by` says which (default: either).',
+			'Stops a running rig so it stops billing for compute. The home folder and other disk files are kept; /tmp is cleared, so move work out of it first. Name the rig by id or name; `by` says which (default: either).',
 	},
 	'secrets.create': {
 		riskLevel: 'write',
