@@ -5269,6 +5269,14 @@
                 ]
               },
               {
+                "group": "Spondyr",
+                "pages": [
+                  "plugins/spondyr/overview",
+                  "plugins/spondyr/api",
+                  "plugins/spondyr/database"
+                ]
+              },
+              {
                 "group": "Spoki",
                 "pages": [
                   "plugins/spoki/overview",

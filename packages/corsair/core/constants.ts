@@ -637,6 +637,7 @@ export const BaseProviders = [
 	'snowflake',
 	'sourcegraph',
 	'splitwise',
+	'spondyr',
 	'spoki',
 	'spotlightr',
 	'spotify',
@@ -1410,6 +1411,7 @@ export const ProviderDisplayNames = {
 	snowflake: 'Snowflake',
 	sourcegraph: 'Sourcegraph',
 	splitwise: 'Splitwise',
+	spondyr: 'Spondyr',
 	spoki: 'Spoki',
 	spotlightr: 'Spotlightr',
 	spotify: 'Spotify',
@@ -2190,6 +2192,7 @@ export type AllProviders =
 	| 'snowflake'
 	| 'sourcegraph'
 	| 'splitwise'
+	| 'spondyr'
 	| 'spoki'
 	| 'spotlightr'
 	| 'spotify'
