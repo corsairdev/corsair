@@ -205,7 +205,7 @@ Lug also supports [auth.md](https://github.com/workos/auth.md), for clients that
 
 - anonymous and `service_auth` registration at `/api/lug/agent/identity`, with the person's email as `login_hint`
 - a claim flow at `/api/lug/agent/identity/claim`, where your person signs in and approves a `user_code`
-- 15-minute access tokens from a `jwt-bearer` exchange at `/api/mcp-auth/token`
+- One-hour access tokens from a `jwt-bearer` exchange at `/api/mcp-auth/token`
 - token revocation at `/api/mcp-auth/revoke`, following RFC 7009
 
 Both ways in make the same kind of account. The full request sequence is in [auth.md](https://hub.corsair.dev/auth.md).
