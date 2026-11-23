@@ -1,0 +1,155 @@
+---
+title: "More Trees plugin"
+sidebarTitle: "Overview"
+description: "Climate action with More Trees - read the account credit balance, forest stats and planting projects, and plant trees for yourself or as gifts."
+---
+
+Use **More Trees** through Corsair: one client, typed API calls.
+
+Create an API key in More Trees under Settings &gt; Account Settings. The
+account code lives on the same page; the plugin stores it as an account
+field and needs it for `account.get` and `trees.plant`.
+
+- **Planting spends credits.** `trees.plant` defaults to `test: false`,
+  which plants real trees and uses the payment account's credits. Pass
+  `test: true` for a dry run that only evaluates the request. A planting
+  that may have reached More Trees is never replayed after a failure.
+- **One key, three services.** More Trees routes each operation to a
+  different service host (`user-management`, `project-management`,
+  `transaction-management`), all authenticated with the same `X-API-KEY`
+  header. The plugin picks the host per operation.
+- **Projects auth is ambiguous.** The projects section of More Trees' API
+  guide mentions a separate "public validation key" (Integration &gt; API)
+  without naming its header. The plugin sends the standard `X-API-KEY`
+  everywhere; if `projects.list` answers 401 or 406, check that section.
+- **Forest lookup.** `forest.get` accepts either the forest slug or the
+  account code.
+- **Rate limits.** More Trees documents 429 without a window. The plugin
+  retries a 429 up to three times with exponential backoff and honours a
+  `Retry-After` header when one is sent. Reads also retry a 5xx or a
+  transport failure; writes never do.
+
+**What you get:**
+
+- 4 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/moretrees better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/moretrees better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/moretrees better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/moretrees better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { moretrees } from '@corsair-dev/moretrees';
+
+export const corsair = createCorsair({
+	plugins: [
+		moretrees(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the More Trees API key before the first call: `pnpm corsair setup --plugin=moretrees --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+moretrees()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'moretrees',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List planting projects**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.moretrees.api.projects.list({});
+```
+
+
+**Dry-run a planting**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.moretrees.api.trees.plant({
+	payment_account_code: 'A1AB2B',
+	test: true,
+	plant_for_others: false,
+	quantity: 2,
+});
+```
+
+
+See the full list on the [API](/plugins/moretrees/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/moretrees/api">
+    Every `moretrees.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>
