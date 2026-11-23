@@ -12,6 +12,7 @@ import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 } from 'corsair/core';
+import { localPkceVerifier, pkceAuthParams } from 'corsair/oauth';
 import { readJsonBody } from '../router';
 import type { HandlerFn } from '../types';
 
@@ -116,6 +117,7 @@ function exchangeCodeForTokens(
 	clientSecret: string,
 	oauthConfig: OAuthConfig,
 	redirectUri: string,
+	codeVerifier?: string,
 ): Promise<{
 	access_token?: string;
 	refresh_token?: string;
@@ -130,6 +132,7 @@ function exchangeCodeForTokens(
 			redirect_uri: redirectUri,
 			grant_type: 'authorization_code',
 		};
+		if (codeVerifier) params.code_verifier = codeVerifier;
 		if (!useBasicAuth) {
 			params.client_id = clientId;
 			params.client_secret = clientSecret;
@@ -215,6 +218,10 @@ export const startOAuth: HandlerFn = async (ctx) => {
 			`client_id and/or client_secret not set for '${plugin.id}'. Set them in Credentials first.`,
 		);
 	}
+	// Studio sends no state; keyed like the CLI so a pasted code can be exchanged too.
+	const verifier = oauthCfg.pkce
+		? localPkceVerifier(plugin.id, tenantId, internal.kek)
+		: undefined;
 
 	let redirectUri: string;
 	let localhostPort: number;
@@ -230,7 +237,7 @@ export const startOAuth: HandlerFn = async (ctx) => {
 		if (!m?.[1]) {
 			return {
 				status: 'needs_code',
-				authUrl: buildAuthUrl(oauthCfg, clientId, redirectUri),
+				authUrl: buildAuthUrl(oauthCfg, clientId, redirectUri, verifier),
 				redirectUri,
 				note: 'This redirect URI is not a localhost URL — complete the flow manually and paste the code back in.',
 			};
@@ -241,7 +248,7 @@ export const startOAuth: HandlerFn = async (ctx) => {
 		redirectUri = `http://localhost:${localhostPort}`;
 	}
 
-	const authUrl = buildAuthUrl(oauthCfg, clientId, redirectUri);
+	const authUrl = buildAuthUrl(oauthCfg, clientId, redirectUri, verifier);
 
 	const key = `${pluginId}:${tenantId}`;
 	const existing = pendingListeners.get(key);
@@ -261,6 +268,7 @@ export const startOAuth: HandlerFn = async (ctx) => {
 					clientSecret,
 					oauthCfg,
 					redirectUri,
+					verifier,
 				);
 				if (!tokens.access_token) return;
 				const extraAccount = getCustomAccountFields(plugin, 'oauth_2');
@@ -294,6 +302,7 @@ function buildAuthUrl(
 	oauthCfg: OAuthConfig,
 	clientId: string,
 	redirectUri: string,
+	codeVerifier: string | undefined,
 ): string {
 	const params: Record<string, string | null> = {
 		client_id: clientId,
@@ -301,6 +310,7 @@ function buildAuthUrl(
 		response_type: 'code',
 		scope: oauthCfg.scopes.join(' '),
 		...oauthCfg.authParams,
+		...(codeVerifier ? pkceAuthParams(codeVerifier, oauthCfg.authParams) : {}),
 	};
 	return `${oauthCfg.authUrl}?${querystring.stringify(params)}`;
 }
@@ -346,6 +356,9 @@ export const exchangeOAuth: HandlerFn = async (ctx) => {
 		clientSecret,
 		oauthCfg,
 		redirectUri,
+		oauthCfg.pkce
+			? localPkceVerifier(plugin.id, tenantId, internal.kek)
+			: undefined,
 	);
 	if (!tokens.access_token) {
 		throw new Error('No access_token in response from provider.');

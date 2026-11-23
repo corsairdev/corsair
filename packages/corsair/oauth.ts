@@ -11,7 +11,11 @@ export {
 	decodeOAuthState,
 	encodeOAuthState,
 	generateOAuthUrl,
+	localPkceVerifier,
 	OAuthCallbackError,
+	pkceAuthParams,
+	pkceChallenge,
+	pkceVerifier,
 	processOAuthCallback,
 } from './oauth/index';
 export {

@@ -25,6 +25,7 @@ import {
 	generateDEK,
 } from 'corsair/core';
 import type { CorsairDatabase } from 'corsair/db';
+import { localPkceVerifier, pkceAuthParams } from 'corsair/oauth';
 import { createCorsairOrm } from 'corsair/orm';
 import { getCorsairInstance } from './utils/corsair-instance';
 
@@ -281,6 +282,22 @@ async function ensureAccount(
 // OAuth flow
 // ─────────────────────────────────────────────────────────────────────────────
 
+// The CLI sends no state, and a pasted --code runs in a later process, so the
+// PKCE verifier is keyed on plugin and tenant under the KEK (see corsair/oauth).
+function cliPkceParams(
+	oauthCfg: OAuthConfig,
+	pluginId: string,
+	tenantId: string,
+	kek: string,
+): Record<string, string> {
+	return oauthCfg.pkce
+		? pkceAuthParams(
+				localPkceVerifier(pluginId, tenantId, kek),
+				oauthCfg.authParams,
+			)
+		: {};
+}
+
 async function oauthExchangeCode(
 	database: CorsairDatabase,
 	plugin: CorsairPlugin,
@@ -300,6 +317,7 @@ async function oauthExchangeCode(
 			clientSecret,
 			oauthCfg,
 			redirectUri,
+			oauthCfg.pkce ? localPkceVerifier(plugin.id, tenantId, kek) : undefined,
 		);
 	} catch (err) {
 		out({
@@ -451,6 +469,7 @@ async function oauthListen(
 				response_type: 'code',
 				scope: oauthCfg.scopes.join(' '),
 				...oauthCfg.authParams,
+				...cliPkceParams(oauthCfg, plugin.id, tenantId, kek),
 			};
 			const authUrl = `${oauthCfg.authUrl}?${querystring.stringify(authParams)}`;
 			writeAuthState(sessionId, {
@@ -473,6 +492,7 @@ async function oauthListen(
 		response_type: 'code',
 		scope: oauthCfg.scopes.join(' '),
 		...oauthCfg.authParams,
+		...cliPkceParams(oauthCfg, plugin.id, tenantId, kek),
 	};
 	const authUrl = `${oauthCfg.authUrl}?${querystring.stringify(authParams)}`;
 
