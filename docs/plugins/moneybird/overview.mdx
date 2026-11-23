@@ -1,0 +1,167 @@
+---
+title: "Moneybird plugin"
+sidebarTitle: "Overview"
+description: "Accounting with Moneybird - list administrations, manage contacts, create and send sales invoices, track time entries, and manage products and projects."
+---
+
+Use **Moneybird** through Corsair: one client, typed API calls.
+
+The account stores two things: the Moneybird API token (personal API token
+from user &gt; applications, or an OAuth2 access token) and the administration
+id the token should act on. Requests authenticate with
+`Authorization: Bearer` and every path carries the administration id;
+`administrations.list` sits above it and lists what the token can reach, so
+you can read the id from there first.
+
+- **Ids are digit strings.** Moneybird serves large integer ids and its docs
+recommend parsing them as strings, so this plugin accepts and returns them
+as strings.
+- **salesInvoices.send mails the customer.** Without arguments it uses the
+contact and workflow defaults; set `sending_scheduled: true` with an
+`invoice_date` to schedule instead of sending now.
+- **Lists are paginated in a Link response header** the client cannot
+return, so every list takes `page` and `per_page` (up to 100, default 50)
+and derives `next_page` from a full page.
+- **Filtering goes through one string.** Moneybird list filters are
+`key:value` terms separated by commas (e.g. `'state:open|paid'`,
+`'period:this_year'`, `'contact_type:company'`), and any filter you pass
+replaces the defaults entirely.
+- **Rate limits.** About 150 requests per 5 minutes per IP (report
+endpoints are stricter). The plugin retries 429 honouring `Retry-After`
+and never replays a write after a 5xx or a network failure.
+- **Deletes answer 204** with no body; the plugin returns
+`{ success: true, id }` and fails loudly if a body shows up anyway.
+- **Time entries need two scopes** on the token: `time_entries` and
+`sales_invoices`, and Moneybird rounds start and end to full minutes.
+
+**What you get:**
+
+- 27 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/moneybird better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/moneybird better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/moneybird better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/moneybird better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { moneybird } from '@corsair-dev/moneybird';
+
+export const corsair = createCorsair({
+	plugins: [
+		moneybird(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store two things on the account before the first call: the Moneybird API token (a personal API token from user &gt; applications, or an OAuth2 access token) and the administration id. You can read the id with `administrations.list`, which is the one operation that works without it.
+
+```sh
+pnpm corsair setup --plugin=moneybird --tenant=acme api_key=<your-token> administration_id=<id>
+```
+
+Or pass them as plugin options (`key`, `administrationId`). Requests authenticate with `Authorization: Bearer <token>`. See [API key auth](/concepts/api-key).
+
+```ts
+moneybird({ key: '...', administrationId: '107693607045039116' })
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'moneybird',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List administrations the token can access**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.moneybird.api.administrations.list({});
+```
+
+
+**Create a contact**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.moneybird.api.contacts.create({
+	company_name: 'Beachy BV',
+	firstname: 'Jana',
+	lastname: 'Berger',
+	country: 'NL',
+	email: 'info@beachy.example',
+});
+```
+
+
+See the full list on the [API](/plugins/moneybird/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/moneybird/api">
+    Every `moneybird.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -1,0 +1,1511 @@
+---
+title: "Moneybird API reference"
+sidebarTitle: "API"
+description: "API reference for the Moneybird plugin in Corsair: every `moneybird.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Administrations
+
+### list
+
+`administrations.list`
+
+List the administrations the token can access, with id, name, currency and access level
+
+**Risk:** `read`
+
+```ts
+await corsair.moneybird.api.administrations.list({});
+```
+
+**Input:** _empty object_
+
+`GET /api/v2/administrations.json`, the one resource above the
+administration scope. Returns `{ administrations: [{ id, name, language,
+currency, country, time_zone, access, suspended, ... }] }`.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `administrations` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="administrations full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  language?: string | null,
+  currency?: string | null,
+  country?: string | null,
+  time_zone?: string | null,
+  access?: string | null,
+  suspended?: boolean | null,
+  period_locked_until?: string | null,
+  period_start_date?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.moneybird.api.contacts.create({ company_name: 'Beachy BV', firstname: 'Jana', lastname: 'Berger', country: 'NL', email: 'info@beachy.example' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company_name` | `string` | No | — |
+| `firstname` | `string` | No | — |
+| `lastname` | `string` | No | — |
+| `attention` | `string` | No | — |
+| `address1` | `string` | No | — |
+| `address2` | `string` | No | — |
+| `zipcode` | `string` | No | — |
+| `city` | `string` | No | — |
+| `country` | `string` | No | An ISO 3166-1 alpha-2 country code, e.g. NL. |
+| `phone` | `string` | No | — |
+| `email` | `string` | No | — |
+| `delivery_method` | `Email \| Post \| Manual \| Simplerinvoicing \| Peppol` | No | — |
+| `customer_id` | `string` | No | — |
+| `tax_number` | `string` | No | — |
+| `chamber_of_commerce` | `string` | No | — |
+| `bank_account` | `string` | No | — |
+| `invoice_workflow_id` | `string \| number` | No | — |
+| `estimate_workflow_id` | `string \| number` | No | — |
+| `send_invoices_to_attention` | `string` | No | — |
+| `send_invoices_to_email` | `string` | No | — |
+| `send_estimates_to_attention` | `string` | No | — |
+| `send_estimates_to_email` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `administration_id` | `string \| null` | No | — |
+| `company_name` | `string \| null` | No | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `attention` | `string \| null` | No | — |
+| `address1` | `string \| null` | No | — |
+| `address2` | `string \| null` | No | — |
+| `zipcode` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `delivery_method` | `Email \| Post \| Manual \| Simplerinvoicing \| Peppol \| null` | No | — |
+| `customer_id` | `string \| null` | No | — |
+| `tax_number` | `string \| null` | No | — |
+| `chamber_of_commerce` | `string \| null` | No | — |
+| `bank_account` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `send_invoices_to_attention` | `string \| null` | No | — |
+| `send_invoices_to_email` | `string \| null` | No | — |
+| `send_estimates_to_attention` | `string \| null` | No | — |
+| `send_estimates_to_email` | `string \| null` | No | — |
+| `invoice_workflow_id` | `string \| null` | No | — |
+| `estimate_workflow_id` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `version` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Delete a contact and its linked invoices history access
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moneybird.api.contacts.delete({ id: '387172987357643188' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Read one contact
+
+**Risk:** `read`
+
+```ts
+await corsair.moneybird.api.contacts.get({ id: '387172987357643188' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `administration_id` | `string \| null` | No | — |
+| `company_name` | `string \| null` | No | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `attention` | `string \| null` | No | — |
+| `address1` | `string \| null` | No | — |
+| `address2` | `string \| null` | No | — |
+| `zipcode` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `delivery_method` | `Email \| Post \| Manual \| Simplerinvoicing \| Peppol \| null` | No | — |
+| `customer_id` | `string \| null` | No | — |
+| `tax_number` | `string \| null` | No | — |
+| `chamber_of_commerce` | `string \| null` | No | — |
+| `bank_account` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `send_invoices_to_attention` | `string \| null` | No | — |
+| `send_invoices_to_email` | `string \| null` | No | — |
+| `send_estimates_to_attention` | `string \| null` | No | — |
+| `send_estimates_to_email` | `string \| null` | No | — |
+| `invoice_workflow_id` | `string \| null` | No | — |
+| `estimate_workflow_id` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `version` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List contacts, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moneybird.api.contacts.list({ page: 1, per_page: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page. Moco pages with 50 entries per default page. |
+| `per_page` | `number` | No | Up to 100; the default page carries 50 entries. |
+
+`GET /{administration_id}/contacts.json` with page and per_page. For
+filtered search use the plain list plus `contacts` filters, or the
+`filter` passthrough form the other lists use.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  administration_id?: string | null,
+  company_name?: string | null,
+  firstname?: string | null,
+  lastname?: string | null,
+  attention?: string | null,
+  address1?: string | null,
+  address2?: string | null,
+  zipcode?: string | null,
+  city?: string | null,
+  country?: string | null,
+  phone?: string | null,
+  delivery_method?: Email | Post | Manual | Simplerinvoicing | Peppol | null,
+  customer_id?: string | null,
+  tax_number?: string | null,
+  chamber_of_commerce?: string | null,
+  bank_account?: string | null,
+  email?: string | null,
+  send_invoices_to_attention?: string | null,
+  send_invoices_to_email?: string | null,
+  send_estimates_to_attention?: string | null,
+  send_estimates_to_email?: string | null,
+  invoice_workflow_id?: string | null,
+  estimate_workflow_id?: string | null,
+  archived?: boolean | null,
+  version?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.moneybird.api.contacts.update({ id: '387172987357643188', city: 'Amsterdam' });
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  company_name?: string,
+  firstname?: string,
+  lastname?: string,
+  attention?: string,
+  address1?: string,
+  address2?: string,
+  zipcode?: string,
+  city?: string,
+  country?: string,
+  phone?: string,
+  email?: string,
+  delivery_method?: Email | Post | Manual | Simplerinvoicing | Peppol,
+  customer_id?: string,
+  tax_number?: string,
+  chamber_of_commerce?: string,
+  bank_account?: string,
+  invoice_workflow_id?: string | number,
+  estimate_workflow_id?: string | number,
+  send_invoices_to_attention?: string,
+  send_invoices_to_email?: string,
+  send_estimates_to_attention?: string,
+  send_estimates_to_email?: string
+}& {
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `administration_id` | `string \| null` | No | — |
+| `company_name` | `string \| null` | No | — |
+| `firstname` | `string \| null` | No | — |
+| `lastname` | `string \| null` | No | — |
+| `attention` | `string \| null` | No | — |
+| `address1` | `string \| null` | No | — |
+| `address2` | `string \| null` | No | — |
+| `zipcode` | `string \| null` | No | — |
+| `city` | `string \| null` | No | — |
+| `country` | `string \| null` | No | — |
+| `phone` | `string \| null` | No | — |
+| `delivery_method` | `Email \| Post \| Manual \| Simplerinvoicing \| Peppol \| null` | No | — |
+| `customer_id` | `string \| null` | No | — |
+| `tax_number` | `string \| null` | No | — |
+| `chamber_of_commerce` | `string \| null` | No | — |
+| `bank_account` | `string \| null` | No | — |
+| `email` | `string \| null` | No | — |
+| `send_invoices_to_attention` | `string \| null` | No | — |
+| `send_invoices_to_email` | `string \| null` | No | — |
+| `send_estimates_to_attention` | `string \| null` | No | — |
+| `send_estimates_to_email` | `string \| null` | No | — |
+| `invoice_workflow_id` | `string \| null` | No | — |
+| `estimate_workflow_id` | `string \| null` | No | — |
+| `archived` | `boolean \| null` | No | — |
+| `version` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+## Products
+
+### create
+
+`products.create`
+
+Create a product
+
+**Risk:** `write`
+
+```ts
+await corsair.moneybird.api.products.create({ description: 'Consulting hour', price: 120 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `description` | `string` | No | The product name. |
+| `title` | `string` | No | — |
+| `identifier` | `string` | No | — |
+| `price` | `string \| number` | No | — |
+| `currency` | `string` | No | — |
+| `tax_rate_id` | `string \| number` | No | — |
+| `ledger_account_id` | `string \| number` | No | — |
+| `frequency` | `number` | No | — |
+| `frequency_type` | `string` | No | — |
+
+`POST /{administration_id}/products.json` with a `product` hash;
+`description` is the product name.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `identifier` | `string \| null` | No | — |
+| `price` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `frequency` | `number \| null` | No | — |
+| `frequency_type` | `string \| null` | No | — |
+| `tax_rate_id` | `string \| null` | No | — |
+| `ledger_account_id` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`products.delete`
+
+Delete a product
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moneybird.api.products.delete({ id: '440009337465900001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`products.get`
+
+Read one product
+
+**Risk:** `read`
+
+```ts
+await corsair.moneybird.api.products.get({ id: '440009337465900001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `identifier` | `string \| null` | No | — |
+| `price` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `frequency` | `number \| null` | No | — |
+| `frequency_type` | `string \| null` | No | — |
+| `tax_rate_id` | `string \| null` | No | — |
+| `ledger_account_id` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`products.list`
+
+List products, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moneybird.api.products.list({ per_page: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page. Moco pages with 50 entries per default page. |
+| `per_page` | `number` | No | Up to 100; the default page carries 50 entries. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  description?: string | null,
+  title?: string | null,
+  identifier?: string | null,
+  price?: string | null,
+  currency?: string | null,
+  frequency?: number | null,
+  frequency_type?: string | null,
+  tax_rate_id?: string | null,
+  ledger_account_id?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`products.update`
+
+Update a product
+
+**Risk:** `write`
+
+```ts
+await corsair.moneybird.api.products.update({ id: '440009337465900001', price: 130 });
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  description?: string,
+  title?: string,
+  identifier?: string,
+  price?: string | number,
+  currency?: string,
+  tax_rate_id?: string | number,
+  ledger_account_id?: string | number,
+  frequency?: number,
+  frequency_type?: string
+}& {
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `title` | `string \| null` | No | — |
+| `identifier` | `string \| null` | No | — |
+| `price` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `frequency` | `number \| null` | No | — |
+| `frequency_type` | `string \| null` | No | — |
+| `tax_rate_id` | `string \| null` | No | — |
+| `ledger_account_id` | `string \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a project; the name must be unique within the administration
+
+**Risk:** `write`
+
+```ts
+await corsair.moneybird.api.projects.create({ name: 'Website Relaunch', budget: 50000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | Unique within the administration. |
+| `budget` | `number` | No | — |
+
+`POST /{administration_id}/projects.json` with a `project` hash; the name
+must be unique within the administration and the token needs the
+`settings` scope.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `budget` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Delete a project
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moneybird.api.projects.delete({ id: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`projects.get`
+
+Read one project
+
+**Risk:** `read`
+
+```ts
+await corsair.moneybird.api.projects.get({ id: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `budget` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List projects, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moneybird.api.projects.list({ per_page: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | 1-based page. Moco pages with 50 entries per default page. |
+| `per_page` | `number` | No | Up to 100; the default page carries 50 entries. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  state?: string | null,
+  budget?: number | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update a project
+
+**Risk:** `write`
+
+```ts
+await corsair.moneybird.api.projects.update({ id: '1234567890', budget: 60000 });
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  name?: string,
+  budget?: number
+}& {
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `budget` | `number \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+## Sales Invoices
+
+### create
+
+`salesInvoices.create`
+
+Create a sales invoice for a contact, with line items
+
+**Risk:** `write`
+
+```ts
+await corsair.moneybird.api.salesInvoices.create({ contact_id: '387172987357643188', invoice_date: '2026-04-01', details_attributes: [{ description: 'Project management', price_per_unit: 1000, quantity: 1 }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string \| number` | No | — |
+| `invoice_date` | `string` | No | — |
+| `due_date` | `string` | No | — |
+| `workflow_id` | `string \| number` | No | — |
+| `reference` | `string` | No | — |
+| `currency` | `string` | No | — |
+| `prices_are_incl_tax` | `boolean` | No | — |
+| `discount` | `string \| number` | No | A discount percentage. |
+| `details_attributes` | `object[]` | No | The invoice lines; a line needs a price and a description. |
+
+<AccordionGroup>
+<Accordion title="details_attributes full type">
+
+```ts
+{
+  description?: string,
+  price_per_unit?: string | number,
+  quantity?: string | number,
+  tax_rate_id?: string | number,
+  ledger_account_id?: string | number,
+  unit?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `contact_id` | `string \| null` | No | — |
+| `contact` | `object \| null` | No | — |
+| `invoice_id` | `string \| null` | No | The invoice number; null while the invoice is a draft. |
+| `workflow_id` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `invoice_date` | `string \| null` | No | — |
+| `due_date` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `total_price_excl_vat` | `string \| null` | No | — |
+| `total_price_incl_vat` | `string \| null` | No | — |
+| `total_unpaid_amount` | `string \| null` | No | — |
+| `details` | `object[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: string | null,
+  company_name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="details full type">
+
+```ts
+{
+  id?: string | null,
+  description?: string | null,
+  price_per_unit?: string | null,
+  quantity?: string | number | null,
+  amount?: string | null,
+  tax?: string | null,
+  tax_rate_id?: string | null,
+  ledger_account_id?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`salesInvoices.delete`
+
+Delete a sales invoice; only drafts and unsent states allow it
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moneybird.api.salesInvoices.delete({ id: '437485325512000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`salesInvoices.get`
+
+Read one sales invoice with its lines
+
+**Risk:** `read`
+
+```ts
+await corsair.moneybird.api.salesInvoices.get({ id: '437485325512000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `contact_id` | `string \| null` | No | — |
+| `contact` | `object \| null` | No | — |
+| `invoice_id` | `string \| null` | No | The invoice number; null while the invoice is a draft. |
+| `workflow_id` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `invoice_date` | `string \| null` | No | — |
+| `due_date` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `total_price_excl_vat` | `string \| null` | No | — |
+| `total_price_incl_vat` | `string \| null` | No | — |
+| `total_unpaid_amount` | `string \| null` | No | — |
+| `details` | `object[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: string | null,
+  company_name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="details full type">
+
+```ts
+{
+  id?: string | null,
+  description?: string | null,
+  price_per_unit?: string | null,
+  quantity?: string | number | null,
+  amount?: string | null,
+  tax?: string | null,
+  tax_rate_id?: string | null,
+  ledger_account_id?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`salesInvoices.list`
+
+List sales invoices with a filter string such as 'state:open|paid' or 'period:this_year', one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moneybird.api.salesInvoices.list({ filter: 'state:open|paid', per_page: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | key:value terms separated by commas, e.g. 'state:open\|paid' or 'period:this_year'. Passing a filter replaces the defaults entirely. |
+| `page` | `number` | No | 1-based page. Moco pages with 50 entries per default page. |
+| `per_page` | `number` | No | Up to 100; the default page carries 50 entries. |
+
+`GET /{administration_id}/sales_invoices.json`. The `filter` string uses
+`key:value` terms (`state:all|draft|scheduled|open|pending_payment|
+reminded|late|paid|uncollectible|cancelled`, `period:this_year`). The
+`invoice_id` response field is the invoice number, null on drafts.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  contact_id?: string | null,
+  contact?: {
+    id?: string | null,
+    company_name?: string | null
+  } | null,
+  invoice_id?: string | null,
+  workflow_id?: string | null,
+  state?: string | null,
+  invoice_date?: string | null,
+  due_date?: string | null,
+  currency?: string | null,
+  total_price_excl_vat?: string | null,
+  total_price_incl_vat?: string | null,
+  total_unpaid_amount?: string | null,
+  details?: {
+    id?: string | null,
+    description?: string | null,
+    price_per_unit?: string | null,
+    quantity?: string | number | null,
+    amount?: string | null,
+    tax?: string | null,
+    tax_rate_id?: string | null,
+    ledger_account_id?: string | null
+  }[] | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### send
+
+`salesInvoices.send`
+
+Send the invoice to the customer now or schedule it for a date; defaults come from the contact and workflow
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moneybird.api.salesInvoices.send({ id: '437485325512000001', delivery_method: 'Email' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `sending_scheduled` | `boolean` | No | True schedules the sending for invoice_date instead of sending now. |
+| `invoice_date` | `string` | No | Required when sending_scheduled is true. |
+| `delivery_method` | `Email \| Post \| Manual \| Simplerinvoicing \| Peppol` | No | — |
+| `email` | `string` | No | Overrides the contact invoice email for this sending. |
+| `message` | `string` | No | — |
+
+`PATCH /{administration_id}/sales_invoices/{id}/send_invoice.json` with a
+`sales_invoice_sending` hash. Returns the updated invoice. Sending
+requires the `sales_invoices` scope on the token.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `contact_id` | `string \| null` | No | — |
+| `contact` | `object \| null` | No | — |
+| `invoice_id` | `string \| null` | No | The invoice number; null while the invoice is a draft. |
+| `workflow_id` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `invoice_date` | `string \| null` | No | — |
+| `due_date` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `total_price_excl_vat` | `string \| null` | No | — |
+| `total_price_incl_vat` | `string \| null` | No | — |
+| `total_unpaid_amount` | `string \| null` | No | — |
+| `details` | `object[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: string | null,
+  company_name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="details full type">
+
+```ts
+{
+  id?: string | null,
+  description?: string | null,
+  price_per_unit?: string | null,
+  quantity?: string | number | null,
+  amount?: string | null,
+  tax?: string | null,
+  tax_rate_id?: string | null,
+  ledger_account_id?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`salesInvoices.update`
+
+Update a sales invoice; sent invoices may refuse changes
+
+**Risk:** `write`
+
+```ts
+await corsair.moneybird.api.salesInvoices.update({ id: '437485325512000001', reference: 'PO-42' });
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  contact_id?: string | number,
+  invoice_date?: string,
+  due_date?: string,
+  workflow_id?: string | number,
+  reference?: string,
+  currency?: string,
+  prices_are_incl_tax?: boolean,
+  discount?: string | number,
+  details_attributes?: {
+    description?: string,
+    price_per_unit?: string | number,
+    quantity?: string | number,
+    tax_rate_id?: string | number,
+    ledger_account_id?: string | number,
+    unit?: string
+  }[]
+}& {
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `contact_id` | `string \| null` | No | — |
+| `contact` | `object \| null` | No | — |
+| `invoice_id` | `string \| null` | No | The invoice number; null while the invoice is a draft. |
+| `workflow_id` | `string \| null` | No | — |
+| `state` | `string \| null` | No | — |
+| `invoice_date` | `string \| null` | No | — |
+| `due_date` | `string \| null` | No | — |
+| `currency` | `string \| null` | No | — |
+| `total_price_excl_vat` | `string \| null` | No | — |
+| `total_price_incl_vat` | `string \| null` | No | — |
+| `total_unpaid_amount` | `string \| null` | No | — |
+| `details` | `object[] \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="contact full type">
+
+```ts
+{
+  id?: string | null,
+  company_name?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="details full type">
+
+```ts
+{
+  id?: string | null,
+  description?: string | null,
+  price_per_unit?: string | null,
+  quantity?: string | number | null,
+  amount?: string | null,
+  tax?: string | null,
+  tax_rate_id?: string | null,
+  ledger_account_id?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Time Entries
+
+### create
+
+`timeEntries.create`
+
+Create a time entry from started_at to ended_at; Moneybird rounds to full minutes
+
+**Risk:** `write`
+
+```ts
+await corsair.moneybird.api.timeEntries.create({ project_id: '1234567890', started_at: '2026-04-09T09:00:00Z', ended_at: '2026-04-09T10:30:00Z', description: 'Kickoff call', billable: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string \| number` | No | — |
+| `user_id` | `string \| number` | No | — |
+| `started_at` | `string` | No | ISO 8601 start. Moneybird rounds to full minutes with at least one minute between start and end. |
+| `ended_at` | `string` | No | ISO 8601 end. |
+| `description` | `string` | No | — |
+| `billable` | `boolean` | No | — |
+
+`POST /{administration_id}/time_entries.json` with a `time_entry` hash.
+The token needs `time_entries` and `sales_invoices` scopes; started_at and
+ended_at round to full minutes with at least one minute between them.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `contact_id` | `string \| null` | No | — |
+| `project_id` | `string \| null` | No | — |
+| `sales_invoice_id` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `started_at` | `string \| null` | No | — |
+| `ended_at` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `paused_duration` | `number \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`timeEntries.delete`
+
+Delete a time entry
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moneybird.api.timeEntries.delete({ id: '439926855698000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+---
+
+### get
+
+`timeEntries.get`
+
+Read one time entry
+
+**Risk:** `read`
+
+```ts
+await corsair.moneybird.api.timeEntries.get({ id: '439926855698000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `contact_id` | `string \| null` | No | — |
+| `project_id` | `string \| null` | No | — |
+| `sales_invoice_id` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `started_at` | `string \| null` | No | — |
+| `ended_at` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `paused_duration` | `number \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`timeEntries.list`
+
+List time entries, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moneybird.api.timeEntries.list({ filter: 'period:this_year' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | e.g. 'period:this_year'. |
+| `page` | `number` | No | 1-based page. Moco pages with 50 entries per default page. |
+| `per_page` | `number` | No | Up to 100; the default page carries 50 entries. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next_page` | `number \| null` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  contact_id?: string | null,
+  project_id?: string | null,
+  sales_invoice_id?: string | null,
+  user_id?: string | null,
+  started_at?: string | null,
+  ended_at?: string | null,
+  description?: string | null,
+  paused_duration?: number | null,
+  billable?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`timeEntries.update`
+
+Update a time entry
+
+**Risk:** `write`
+
+```ts
+await corsair.moneybird.api.timeEntries.update({ id: '439926855698000001', description: 'Kickoff call with follow-up' });
+```
+
+**Input:** `object`
+
+<AccordionGroup>
+<Accordion title="Input full type">
+
+```ts
+{
+  project_id?: string | number,
+  user_id?: string | number,
+  started_at?: string,
+  ended_at?: string,
+  description?: string,
+  billable?: boolean
+}& {
+  id: string | number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `contact_id` | `string \| null` | No | — |
+| `project_id` | `string \| null` | No | — |
+| `sales_invoice_id` | `string \| null` | No | — |
+| `user_id` | `string \| null` | No | — |
+| `started_at` | `string \| null` | No | — |
+| `ended_at` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `paused_duration` | `number \| null` | No | — |
+| `billable` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+
+
+---
+

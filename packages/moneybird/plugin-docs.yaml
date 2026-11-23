@@ -1,0 +1,129 @@
+displayName: Moneybird
+description: Accounting with Moneybird - list administrations, manage contacts, create and send sales invoices, track time entries, and manage products and projects.
+domain: moneybird.com
+recommendedAuth: api_key
+overviewNote: |
+  The account stores two things: the Moneybird API token (personal API token
+  from user > applications, or an OAuth2 access token) and the administration
+  id the token should act on. Requests authenticate with
+  `Authorization: Bearer` and every path carries the administration id;
+  `administrations.list` sits above it and lists what the token can reach, so
+  you can read the id from there first.
+
+  - **Ids are digit strings.** Moneybird serves large integer ids and its docs
+  recommend parsing them as strings, so this plugin accepts and returns them
+  as strings.
+  - **salesInvoices.send mails the customer.** Without arguments it uses the
+  contact and workflow defaults; set `sending_scheduled: true` with an
+  `invoice_date` to schedule instead of sending now.
+  - **Lists are paginated in a Link response header** the client cannot
+  return, so every list takes `page` and `per_page` (up to 100, default 50)
+  and derives `next_page` from a full page.
+  - **Filtering goes through one string.** Moneybird list filters are
+  `key:value` terms separated by commas (e.g. `'state:open|paid'`,
+  `'period:this_year'`, `'contact_type:company'`), and any filter you pass
+  replaces the defaults entirely.
+  - **Rate limits.** About 150 requests per 5 minutes per IP (report
+  endpoints are stricter). The plugin retries 429 honouring `Retry-After`
+  and never replays a write after a 5xx or a network failure.
+  - **Deletes answer 204** with no body; the plugin returns
+  `{ success: true, id }` and fails loudly if a body shows up anyway.
+  - **Time entries need two scopes** on the token: `time_entries` and
+  `sales_invoices`, and Moneybird rounds start and end to full minutes.
+examples:
+  read:
+    path: administrations.list
+    title: List administrations the token can access
+    args: {}
+  write:
+    path: contacts.create
+    title: Create a contact
+    args:
+      company_name: Beachy BV
+      firstname: Jana
+      lastname: Berger
+      country: NL
+      email: info@beachy.example
+apiExamples:
+  administrations.list: {}
+  contacts.list:
+    call: "{ page: 1, per_page: 100 }"
+  contacts.get:
+    call: "{ id: '387172987357643188' }"
+  contacts.create:
+    call: "{ company_name: 'Beachy BV', firstname: 'Jana', lastname: 'Berger', country: 'NL', email: 'info@beachy.example' }"
+  contacts.update:
+    call: "{ id: '387172987357643188', city: 'Amsterdam' }"
+  contacts.delete:
+    call: "{ id: '387172987357643188' }"
+  salesInvoices.list:
+    call: "{ filter: 'state:open|paid', per_page: 100 }"
+  salesInvoices.get:
+    call: "{ id: '437485325512000001' }"
+  salesInvoices.create:
+    call: "{ contact_id: '387172987357643188', invoice_date: '2026-04-01', details_attributes: [{ description: 'Project management', price_per_unit: 1000, quantity: 1 }] }"
+  salesInvoices.update:
+    call: "{ id: '437485325512000001', reference: 'PO-42' }"
+  salesInvoices.send:
+    call: "{ id: '437485325512000001', delivery_method: 'Email' }"
+  salesInvoices.delete:
+    call: "{ id: '437485325512000001' }"
+  timeEntries.list:
+    call: "{ filter: 'period:this_year' }"
+  timeEntries.get:
+    call: "{ id: '439926855698000001' }"
+  timeEntries.create:
+    call: "{ project_id: '1234567890', started_at: '2026-04-09T09:00:00Z', ended_at: '2026-04-09T10:30:00Z', description: 'Kickoff call', billable: true }"
+  timeEntries.update:
+    call: "{ id: '439926855698000001', description: 'Kickoff call with follow-up' }"
+  timeEntries.delete:
+    call: "{ id: '439926855698000001' }"
+  products.list:
+    call: "{ per_page: 100 }"
+  products.get:
+    call: "{ id: '440009337465900001' }"
+  products.create:
+    call: "{ description: 'Consulting hour', price: 120 }"
+  products.update:
+    call: "{ id: '440009337465900001', price: 130 }"
+  products.delete:
+    call: "{ id: '440009337465900001' }"
+  projects.list:
+    call: "{ per_page: 100 }"
+  projects.get:
+    call: "{ id: '1234567890' }"
+  projects.create:
+    call: "{ name: 'Website Relaunch', budget: 50000 }"
+  projects.update:
+    call: "{ id: '1234567890', budget: 60000 }"
+  projects.delete:
+    call: "{ id: '1234567890' }"
+apiNotes:
+  administrations.list: |
+    `GET /api/v2/administrations.json`, the one resource above the
+    administration scope. Returns `{ administrations: [{ id, name, language,
+    currency, country, time_zone, access, suspended, ... }] }`.
+  contacts.list: |
+    `GET /{administration_id}/contacts.json` with page and per_page. For
+    filtered search use the plain list plus `contacts` filters, or the
+    `filter` passthrough form the other lists use.
+  salesInvoices.list: |
+    `GET /{administration_id}/sales_invoices.json`. The `filter` string uses
+    `key:value` terms (`state:all|draft|scheduled|open|pending_payment|
+    reminded|late|paid|uncollectible|cancelled`, `period:this_year`). The
+    `invoice_id` response field is the invoice number, null on drafts.
+  salesInvoices.send: |
+    `PATCH /{administration_id}/sales_invoices/{id}/send_invoice.json` with a
+    `sales_invoice_sending` hash. Returns the updated invoice. Sending
+    requires the `sales_invoices` scope on the token.
+  timeEntries.create: |
+    `POST /{administration_id}/time_entries.json` with a `time_entry` hash.
+    The token needs `time_entries` and `sales_invoices` scopes; started_at and
+    ended_at round to full minutes with at least one minute between them.
+  products.create: |
+    `POST /{administration_id}/products.json` with a `product` hash;
+    `description` is the product name.
+  projects.create: |
+    `POST /{administration_id}/projects.json` with a `project` hash; the name
+    must be unique within the administration and the token needs the
+    `settings` scope.
