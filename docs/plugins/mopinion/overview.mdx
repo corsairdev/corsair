@@ -1,0 +1,149 @@
+---
+title: "Mopinion plugin"
+sidebarTitle: "Overview"
+description: "Feedback analytics with Mopinion - read account data, datasets, deployments, reports, fields and collected feedback with filters and paging."
+---
+
+Use **Mopinion** through Corsair: one client, typed API calls.
+
+Create a Feedback API credential set in Mopinion under Settings &gt; Feedback
+API (classic interface) or Integrations &gt; Feedback API (Raspberry
+interface); the package must include API access. The account stores the
+public key and the signature token; every request is signed with an
+HMAC-based `x-auth-token` header computed over the resource path and body.
+
+- **Pin to v3.** Mopinion serves an older API by default; the client sends
+a `version: 3.0.0` header to select the documented v3 data API.
+- **Read-only.** The v3 data API only exposes GET endpoints, so every
+operation here is a read; there is nothing to send or delete.
+- **Paging and metadata.** Lists take `page` (default 1) and `limit`
+(default 10, max 1000), with `sort` (created | datetime) and `order`
+(asc | desc). Pagination state arrives in the body's `_meta` block
+(has_more, next, previous, count, total), which every response exposes.
+- **Filters.** Feedback lists accept Mopinion filter expressions as a
+`filters` record, e.g. `{"<<nps": 5}` or `{"date_from": "2026-01-01"}`;
+keys are date, rating, nps, ces, ces_inverse, gcr and tags, with the
+modifiers !, &lt;, &lt;&lt;, &gt; and &gt;&gt;. Ignored filters are reported in
+`_meta.warnings`.
+- **Errors.** Failures are RFC 7807 problem documents
+(`{status, error_code, title, type}`); the thrown error carries the
+`error_code` (18 is invalid credentials) and the `type` URL.
+- **No rate limit documented.** The plugin still retries a gateway 429
+with exponential backoff, honouring Retry-After.
+
+**What you get:**
+
+- 11 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/mopinion better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/mopinion better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/mopinion better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/mopinion better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { mopinion } from '@corsair-dev/mopinion';
+
+export const corsair = createCorsair({
+	plugins: [
+		mopinion(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Mopinion API key before the first call: `pnpm corsair setup --plugin=mopinion --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+mopinion()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'mopinion',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read the account data**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.mopinion.api.account.get({});
+```
+
+
+**Write**
+
+_No write-style endpoint inferred; pick any operation from the [API](/plugins/mopinion/api) reference._
+
+
+See the full list on the [API](/plugins/mopinion/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/mopinion/api">
+    Every `mopinion.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

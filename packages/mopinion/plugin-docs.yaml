@@ -1,0 +1,67 @@
+displayName: Mopinion
+description: Feedback analytics with Mopinion - read account data, datasets, deployments, reports, fields and collected feedback with filters and paging.
+domain: mopinion.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a Feedback API credential set in Mopinion under Settings > Feedback
+  API (classic interface) or Integrations > Feedback API (Raspberry
+  interface); the package must include API access. The account stores the
+  public key and the signature token; every request is signed with an
+  HMAC-based `x-auth-token` header computed over the resource path and body.
+
+  - **Pin to v3.** Mopinion serves an older API by default; the client sends
+  a `version: 3.0.0` header to select the documented v3 data API.
+  - **Read-only.** The v3 data API only exposes GET endpoints, so every
+  operation here is a read; there is nothing to send or delete.
+  - **Paging and metadata.** Lists take `page` (default 1) and `limit`
+  (default 10, max 1000), with `sort` (created | datetime) and `order`
+  (asc | desc). Pagination state arrives in the body's `_meta` block
+  (has_more, next, previous, count, total), which every response exposes.
+  - **Filters.** Feedback lists accept Mopinion filter expressions as a
+  `filters` record, e.g. `{"<<nps": 5}` or `{"date_from": "2026-01-01"}`;
+  keys are date, rating, nps, ces, ces_inverse, gcr and tags, with the
+  modifiers !, <, <<, > and >>. Ignored filters are reported in
+  `_meta.warnings`.
+  - **Errors.** Failures are RFC 7807 problem documents
+  (`{status, error_code, title, type}`); the thrown error carries the
+  `error_code` (18 is invalid credentials) and the `type` URL.
+  - **No rate limit documented.** The plugin still retries a gateway 429
+  with exponential backoff, honouring Retry-After.
+examples:
+  read:
+    path: account.get
+    title: Read the account data
+    args: {}
+apiExamples:
+  account.get: {}
+  datasets.get:
+    call: "{ id: '12345' }"
+  datasets.fields:
+    call: "{ datasetId: '12345' }"
+  datasets.feedback:
+    call: "{ datasetId: '12345', page: 1, limit: 100, filters: { '<<nps': 5, date_from: '2026-01-01' } }"
+  datasets.feedbackItem:
+    call: "{ datasetId: '12345', feedbackId: '987654' }"
+  deployments.list: {}
+  deployments.get:
+    call: "{ id: '5544' }"
+  reports.get:
+    call: "{ id: '42' }"
+  reports.fields:
+    call: "{ reportId: '42' }"
+  reports.feedback:
+    call: "{ reportId: '42', page: 1, limit: 100, sort: 'datetime', order: 'desc' }"
+  reports.feedbackItem:
+    call: "{ reportId: '42', feedbackId: '987654' }"
+apiNotes:
+  account.get: |
+    `GET /account`. Returns the account data behind the signed credentials.
+  datasets.feedback: |
+    `GET /datasets/{datasetId}/feedback` with page, limit (max 1000), sort
+    (created | datetime), order (asc | desc) and `filters`. Pagination state
+    arrives in `_meta` (has_more, next, previous, count, total).
+  reports.feedback: |
+    `GET /reports/{reportId}/feedback`. Same paging and filtering behaviour
+    as the dataset feedback list.
+  deployments.list: |
+    `GET /deployments`. Deployments are the feedback collection forms.
