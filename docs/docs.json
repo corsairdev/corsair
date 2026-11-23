@@ -4517,6 +4517,14 @@
                 ]
               },
               {
+                "group": "Productboard",
+                "pages": [
+                  "plugins/productboard/overview",
+                  "plugins/productboard/api",
+                  "plugins/productboard/database"
+                ]
+              },
+              {
                 "group": "Proofly",
                 "pages": [
                   "plugins/proofly/overview",
