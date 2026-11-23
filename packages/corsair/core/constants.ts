@@ -445,6 +445,7 @@ export const BaseProviders = [
 	'memberspot',
 	'merriamwebsterdict',
 	'metaads',
+	'metabase',
 	'microsoftclarity',
 	'minerstat',
 	'minimax',
@@ -1221,6 +1222,7 @@ export const ProviderDisplayNames = {
 	memberspot: 'MemberSpot',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	metaads: 'Meta Ads',
+	metabase: 'Metabase',
 	microsoftclarity: 'Microsoft Clarity',
 	minerstat: 'Minerstat',
 	minimax: 'MiniMax',
@@ -2004,6 +2006,7 @@ export type AllProviders =
 	| 'memberspot'
 	| 'merriamwebsterdict'
 	| 'metaads'
+	| 'metabase'
 	| 'microsoftclarity'
 	| 'minerstat'
 	| 'minimax'
