@@ -817,6 +817,8 @@ const salesitemlineSchema = lazySchema(() =>
 			LineNum: z.number().optional(),
 			Amount: z.number(),
 			CustomExtensions: customextensionsSchema().optional(),
+			// Change-order lines link their parent estimate; invoice lines can link estimates and charges.
+			LinkedTxn: z.array(linkedtxnSchema()).optional(),
 			Id: z.string().optional(),
 		})
 		.strict(),

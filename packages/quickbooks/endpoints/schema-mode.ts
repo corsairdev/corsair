@@ -193,6 +193,15 @@ export function responseSchema(
 	return cached;
 }
 
+// Object-level refinements (one recurring transaction type per body) survive the loosened copy.
+function keepChecks(def: Def, schema: z.ZodObject): AnySchema {
+	// The check type is erased on the rebuilt object; the checks ran on the same object shape before.
+	const checks = def.checks as
+		| z.core.$ZodCheck<Record<string, unknown>>[]
+		| undefined;
+	return checks?.length ? schema.check(...checks) : schema;
+}
+
 function isRequired(field: AnySchema | undefined): boolean {
 	return field !== undefined && defOf(field).type !== 'optional';
 }
@@ -227,7 +236,7 @@ function looseBody(schema: AnySchema, nested: boolean): AnySchema {
 					(identifiesRecord && !keepsRequired);
 				fields[name] = optional ? inner.optional() : inner;
 			}
-			out = z.looseObject(fields);
+			out = keepChecks(def, z.looseObject(fields));
 			break;
 		}
 		case 'array':

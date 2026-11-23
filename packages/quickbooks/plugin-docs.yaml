@@ -2,7 +2,7 @@
 displayName: "QuickBooks"
 description: "QuickBooks Online Accounting operations for all catalogued resources, including reports, transactions, attachments, batch, and change-data capture."
 overviewNote: >-
-  This plugin registers 236 of the 237 operations in Intuit’s first-party Accounting route catalog, plus item.deleteCategory, which the catalog lacks but QuickBooks requires to remove a category. The remaining Entitlements.READ operation requires an XML response contract that the package cannot validate; details are in the package README. Every resource family was run against a QuickBooks sandbox company on 2026-11-23. Pass the company's realmId to each operation: Intuit sends it on the OAuth redirect, and a company admin can read it in QuickBooks under Settings > Account and settings > Billing & subscription (Company ID). Hub does not save it on connect yet. The default minor version is 75.
+  This plugin registers 236 of the 237 operations in Intuit’s first-party Accounting route catalog, plus item.deleteCategory, which the catalog lacks but QuickBooks requires to remove a category. The remaining Entitlements.READ operation requires an XML response contract that the package cannot validate; details are in the package README. Every resource family was run against a QuickBooks sandbox company on 2026-11-23. Pass the company's realmId to each operation: Intuit sends it on the OAuth redirect, and a company admin can read it in QuickBooks under Settings > Account and settings > Billing & subscription (Company ID). Hub does not save it on connect yet. Operations named update are QuickBooks full updates: QuickBooks clears the writable fields a body leaves out, so read the record with get, change it, and send all of it back (the examples show the minimum shape only), or use sparseUpdate where it exists. The default minor version is 75.
 apiNotes:
   accounts.create: >-
     POST /v3/company/{realmId}/account. Name must be unique, at most 100
@@ -206,7 +206,7 @@ apiExamples:
   companyCurrency.update:
     call: '{"realmId":"12345678","body":{"Code":"sample","Id":"35","SyncToken":"0"}}'
   creditCardPayment.create:
-    call: '{"realmId":"12345678","body":{"TxnDate":"sample","Amount":1,"BankAccountRef":{"value":"sample"},"CreditCardAccountRef":{"value":"sample"}}}'
+    call: '{"realmId":"12345678","body":{"TxnDate":"2026-11-23","Amount":1,"BankAccountRef":{"value":"sample"},"CreditCardAccountRef":{"value":"sample"}}}'
   creditCardPayment.delete:
     call: '{"realmId":"12345678","body":{"CreditCardAccountRef":{"value":"sample"},"Amount":1,"BankAccountRef":{"value":"sample"},"Id":"35","SyncToken":"0"}}'
   creditCardPayment.get:
@@ -214,9 +214,9 @@ apiExamples:
   creditCardPayment.list:
     call: '{"realmId":"12345678"}'
   creditCardPayment.sparseUpdate:
-    call: '{"realmId":"12345678","body":{"TxnDate":"sample","Amount":1,"BankAccountRef":{"value":"sample"},"CreditCardAccountRef":{"value":"sample"},"Id":"35","SyncToken":"0","sparse":true}}'
+    call: '{"realmId":"12345678","body":{"TxnDate":"2026-11-23","Amount":1,"BankAccountRef":{"value":"sample"},"CreditCardAccountRef":{"value":"sample"},"Id":"35","SyncToken":"0","sparse":true}}'
   creditCardPayment.update:
-    call: '{"realmId":"12345678","body":{"TxnDate":"sample","Amount":1,"BankAccountRef":{"value":"sample"},"CreditCardAccountRef":{"value":"sample"},"Id":"35","SyncToken":"0"}}'
+    call: '{"realmId":"12345678","body":{"TxnDate":"2026-11-23","Amount":1,"BankAccountRef":{"value":"sample"},"CreditCardAccountRef":{"value":"sample"},"Id":"35","SyncToken":"0"}}'
   creditMemo.create:
     call: '{"realmId":"12345678","body":{"CustomerRef":{"value":"1"},"Line":[{"DetailType":"SalesItemLineDetail","Amount":100,"SalesItemLineDetail":{"ItemRef":{"value":"1"},"Qty":1,"UnitPrice":100}}]}}'
   creditMemo.delete:
@@ -304,13 +304,13 @@ apiExamples:
   generalLedger.list:
     call: '{"realmId":"12345678","params":{}}'
   inventoryAdjustment.create:
-    call: '{"realmId":"12345678","body":{"DocNumber":"sample","AdjustAccountRef":{"value":"sample"},"Line":[],"TxnDate":"sample"}}'
+    call: '{"realmId":"12345678","body":{"DocNumber":"sample","AdjustAccountRef":{"value":"sample"},"Line":[],"TxnDate":"2026-11-23"}}'
   inventoryAdjustment.delete:
     call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
   inventoryAdjustment.get:
     call: '{"realmId":"12345678","inventoryadjustmentId":"35"}'
   inventoryAdjustment.sparseUpdate:
-    call: '{"realmId":"12345678","body":{"AdjustAccountRef":{"value":"sample"},"Line":[],"TxnDate":"sample","Id":"35","SyncToken":"0","sparse":true}}'
+    call: '{"realmId":"12345678","body":{"AdjustAccountRef":{"value":"sample"},"Line":[],"TxnDate":"2026-11-23","Id":"35","SyncToken":"0","sparse":true}}'
   inventoryValuationDetail.list:
     call: '{"realmId":"12345678","params":{}}'
   inventoryValuationSummary.list:
@@ -382,7 +382,7 @@ apiExamples:
   payment.send:
     call: '{"realmId":"12345678","paymentId":"35","sendTo":"billing@example.test"}'
   payment.update:
-    call: '{"realmId":"12345678","body":{"TotalAmt":1,"CustomerRef":{"value":"sample"},"Id":"35","SyncToken":"0"}}'
+    call: '{"realmId":"12345678","body":{"TotalAmt":100,"CustomerRef":{"value":"1"},"Line":[{"Amount":100,"LinkedTxn":[{"TxnId":"130","TxnType":"Invoice"}]}],"Id":"35","SyncToken":"0"}}'
   payment.void:
     call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0","sparse":true}}'
   paymentMethod.create:
@@ -412,7 +412,7 @@ apiExamples:
   purchase.list:
     call: '{"realmId":"12345678"}'
   purchase.update:
-    call: '{"realmId":"12345678","body":{"Line":[],"PaymentType":"sample","AccountRef":{"value":"sample"},"Id":"35","SyncToken":"0"}}'
+    call: '{"realmId":"12345678","body":{"Line":[],"PaymentType":"Cash","AccountRef":{"value":"sample"},"Id":"35","SyncToken":"0"}}'
   purchaseOrder.create:
     call: '{"realmId":"12345678","body":{"VendorRef":{"value":"56"},"APAccountRef":{"value":"33"},"Line":[{"DetailType":"ItemBasedExpenseLineDetail","Amount":25,"ItemBasedExpenseLineDetail":{"ItemRef":{"value":"11"},"Qty":1,"UnitPrice":25}}]}}'
   purchaseOrder.delete:
@@ -528,7 +528,7 @@ apiExamples:
   timeActivity.list:
     call: '{"realmId":"12345678"}'
   timeActivity.update:
-    call: '{"realmId":"12345678","body":{"NameOf":"sample","Id":"35","SyncToken":"0"}}'
+    call: '{"realmId":"12345678","body":{"NameOf":"Employee","Id":"35","SyncToken":"0"}}'
   transactionList.list:
     call: '{"realmId":"12345678","params":{}}'
   transactionListByCustomer.list:

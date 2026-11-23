@@ -1,7 +1,7 @@
 import type { CorsairContext } from 'corsair/core';
 import { z } from 'zod';
 import type { QuickBooksEnvironment } from '../client';
-import { makeAuthenticatedQuickBooksRequest } from '../client';
+import { makeAuthenticatedQuickBooksRequest, redactEmails } from '../client';
 import { lazySchema, lazySchemaEntry } from './lazy-schema';
 import { QuickBooksModelSchemas } from './models';
 import { responseSchema } from './schema-mode';
@@ -2294,10 +2294,17 @@ const BatchRuntimeInputSchema = lazySchema(() =>
 								valid &&
 								item.optionsData === 'void' &&
 								!(
+									item.operation === 'update' &&
 									entity &&
 									typeof entity === 'object' &&
 									'sparse' in entity &&
-									entity.sparse === true
+									entity.sparse === true &&
+									'Id' in entity &&
+									typeof entity.Id === 'string' &&
+									entity.Id !== '' &&
+									'SyncToken' in entity &&
+									typeof entity.SyncToken === 'string' &&
+									entity.SyncToken !== ''
 								)
 							) {
 								ctx.addIssue({
@@ -2362,7 +2369,15 @@ export async function executeBatch(
 			'QuickBooks answered the batch without BatchItemResponse. Some items may have been applied; check them before retrying.',
 		);
 	}
-	return result;
+	// A per-item fault can quote a submitted email address (fault 2210), like a top-level one.
+	return {
+		...result,
+		BatchItemResponse: result.BatchItemResponse.map((item) =>
+			item && typeof item === 'object' && 'Fault' in item
+				? { ...item, Fault: redactEmails(item.Fault) }
+				: item,
+		),
+	} as typeof result;
 }
 export async function getChangedData(
 	ctx: SpecialContext,

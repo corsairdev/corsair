@@ -1,6 +1,8 @@
+import { Buffer } from 'node:buffer';
 import type {
 	ApiRequestOptions,
 	ApiResult,
+	BinaryResponse,
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
@@ -49,7 +51,7 @@ export type QuickBooksAuthenticatedContext = {
 const EMAIL = /[\w.+-]+@[\w-]+(?:\.[\w-]+)*/g;
 
 // Intuit's fault text can quote a submitted email address (fault 2210); keep the rest of the Fault.
-function redactEmails(value: unknown): unknown {
+export function redactEmails(value: unknown): unknown {
 	if (typeof value === 'string') return value.replace(EMAIL, '[email]');
 	if (Array.isArray(value)) return value.map(redactEmails);
 	if (value && typeof value === 'object') {
@@ -163,22 +165,64 @@ function throwOnTopLevelFault<T>(
 	return result;
 }
 
+/**
+ * The binary routes are the PDF getters. Core hands back any 200 body as bytes,
+ * so a JSON Fault or an empty body would otherwise reach the caller as a file.
+ */
+function requirePdf(
+	result: BinaryResponse,
+	path: string,
+	options: QuickBooksRequestOptions,
+): BinaryResponse {
+	const contentType = result.contentType ?? '';
+	// unknown because a non-PDF answer is untrusted JSON (or not JSON at all) until the Fault check reads it.
+	let body: unknown;
+	if (/json/i.test(contentType)) {
+		try {
+			body = JSON.parse(Buffer.from(result.bytes).toString('utf8'));
+		} catch {
+			body = undefined;
+		}
+		throwOnTopLevelFault(body, path, options);
+	}
+	if (result.bytes.byteLength > 0 && /pdf/i.test(contentType)) return result;
+	throw sanitizeQuickBooksError(
+		new ApiError(
+			{ method: options.method ?? 'GET', url: path },
+			{
+				url: path,
+				ok: false,
+				status: 200,
+				statusText: 'QuickBooks returned no PDF',
+				body,
+			},
+			`QuickBooks returned ${result.bytes.byteLength === 0 ? 'an empty body' : contentType || 'an unknown content type'} instead of a PDF`,
+		),
+		path,
+		options,
+	);
+}
+
 export async function makeAuthenticatedQuickBooksRequest<T>(
 	ctx: QuickBooksAuthenticatedContext,
 	path: string,
 	options: QuickBooksRequestOptions,
 	environment?: QuickBooksEnvironment,
 ): Promise<T> {
-	return throwOnTopLevelFault(
-		await sendAuthenticatedQuickBooksRequest<T>(
-			ctx,
-			path,
-			options,
-			environment,
-		),
+	const result = await sendAuthenticatedQuickBooksRequest<T>(
+		ctx,
 		path,
 		options,
+		environment,
 	);
+	if (options.responseType === 'binary') {
+		return requirePdf(
+			result as unknown as BinaryResponse,
+			path,
+			options,
+		) as unknown as T;
+	}
+	return throwOnTopLevelFault(result, path, options);
 }
 
 /**

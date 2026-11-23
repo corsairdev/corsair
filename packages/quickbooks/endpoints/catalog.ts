@@ -40,6 +40,7 @@ export type QuickBooksCatalogContext = CorsairContext & {
 type CatalogRequest = {
 	path: string;
 	method?: string;
+	timeoutMs?: number;
 	query?: Record<string, string | number | boolean | undefined>;
 	body?: object;
 	formData?: Record<string, string | Blob | Array<string | Blob> | undefined>;
@@ -493,9 +494,11 @@ const attachable_uploadInput = lazySchema(() =>
 				.string()
 				.min(4)
 				.max(132000000)
-				.regex(
-					/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/,
-				),
+				// A per-group regex overflows the stack on multi-MB strings; check characters, padding and length instead.
+				.regex(/^[A-Za-z0-9+/]*={0,2}$/)
+				.refine((value) => value.length % 4 === 0, {
+					message: 'base64 length must be a multiple of 4',
+				}),
 			metadata: QuickBooksModelSchemas['attachablerequest']
 				.partial()
 				.optional(),
@@ -540,6 +543,8 @@ const attachable_uploadDef = {
 	request: (input: z.output<ReturnType<typeof attachable_uploadInput>>) => ({
 		path: `company/${encodeURIComponent(input.realmId)}/upload`,
 		method: 'POST',
+		// Up to 100 MB per request; core's 20 s default can't carry that.
+		timeoutMs: 300_000,
 		formData: {
 			file_metadata_01: new Blob(
 				[
@@ -3691,7 +3696,11 @@ const item_updateCategoryInput = lazySchema(() =>
 		.object({
 			realmId: RealmIdSchema,
 			body: QuickBooksModelSchemas['categoryupdaterequest']
-				.extend({ Id: IdSchema, SyncToken: SyncTokenSchema })
+				.extend({
+					Id: IdSchema,
+					SyncToken: SyncTokenSchema,
+					Type: z.literal('Category'),
+				})
 				.strict(),
 		})
 		.strict(),
@@ -4804,8 +4813,18 @@ const purchaseOrder_updateDef = {
 const purchaseOrder_updateEndpoint = defineEndpoint(purchaseOrder_updateDef);
 
 // A recurring template body names exactly one transaction type ({ Invoice: {...} }).
+const ONE_RECURRING_TYPE = {
+	message: 'A recurring transaction body needs exactly one transaction type.',
+};
+function hasOneRecurringTransactionType(body: object): boolean {
+	return (
+		Object.values(body).filter((value) => value !== undefined).length === 1
+	);
+}
 function oneRecurringTransactionType<T extends object>(body: T): T {
-	const types = Object.keys(body);
+	const types = Object.entries(body)
+		.filter(([, value]) => value !== undefined)
+		.map(([key]) => key);
 	if (types.length !== 1) {
 		throw new Error(
 			`A recurring transaction body needs exactly one transaction type, got ${types.length === 0 ? 'none' : types.join(', ')}.`,
@@ -4818,7 +4837,10 @@ const recurringTransaction_createInput = lazySchema(() =>
 	z
 		.object({
 			realmId: RealmIdSchema,
-			body: QuickBooksModelSchemas['recurringtransactionrequest'],
+			body: QuickBooksModelSchemas['recurringtransactionrequest'].refine(
+				hasOneRecurringTransactionType,
+				ONE_RECURRING_TYPE,
+			),
 		})
 		.strict(),
 );
@@ -4850,7 +4872,10 @@ const recurringTransaction_deleteInput = lazySchema(() =>
 	z
 		.object({
 			realmId: RealmIdSchema,
-			body: QuickBooksModelSchemas['recurringtransactiondeleterequest'],
+			body: QuickBooksModelSchemas['recurringtransactiondeleterequest'].refine(
+				hasOneRecurringTransactionType,
+				ONE_RECURRING_TYPE,
+			),
 		})
 		.strict(),
 );
@@ -6077,7 +6102,10 @@ const taxSummary_listInput = lazySchema(() =>
 	z
 		.object({
 			realmId: RealmIdSchema,
-			params: QuickBooksModelSchemas['taxsummaryquery'].partial().optional(),
+			// Intuit requires agency_id; the other filters are optional.
+			params: QuickBooksModelSchemas['taxsummaryquery']
+				.partial()
+				.extend({ agency_id: z.string().min(1) }),
 		})
 		.strict(),
 );

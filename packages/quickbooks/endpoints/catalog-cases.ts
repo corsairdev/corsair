@@ -3587,7 +3587,12 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		method: 'POST',
 		expectedPath: '/v3/company/12345678/item',
 		expectedQuery: {},
-		expectedBody: { Name: 'sample', Type: 'sample', Id: '35', SyncToken: '0' },
+		expectedBody: {
+			Name: 'sample',
+			Type: 'Category',
+			Id: '35',
+			SyncToken: '0',
+		},
 		requestKind: 'json',
 		response: {
 			kind: 'json',
@@ -3596,14 +3601,14 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		expectedResult: { Item: { Id: '1' }, time: '2026-11-18T12:00:00Z' },
 		input: {
 			realmId: '12345678',
-			body: { Name: 'sample', Type: 'sample', Id: '35', SyncToken: '0' },
+			body: { Name: 'sample', Type: 'Category', Id: '35', SyncToken: '0' },
 		},
 		inputSchema: schemasFor('item.updateCategory').input,
 		outputSchema: schemasFor('item.updateCategory').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['item']['updateCategory'](ctx, {
 				realmId: '12345678',
-				body: { Name: 'sample', Type: 'sample', Id: '35', SyncToken: '0' },
+				body: { Name: 'sample', Type: 'Category', Id: '35', SyncToken: '0' },
 			}),
 	},
 	{
