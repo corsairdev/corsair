@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 import { getAllPosts } from '@/lib/blog';
+import { postLastModified } from '@/lib/blog-seo';
 import { getComboCanonicalUrls } from '@/lib/combined-integrations';
 import { COMPARE_SLUGS } from '@/lib/compare-pages';
 import { USE_CASES } from '@/lib/use-cases';
@@ -70,7 +71,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		})),
 		...posts.map((post) => ({
 			url: `https://corsair.dev/blog/${post.slug}`,
-			lastModified: post.publishedAt,
+			lastModified: postLastModified(post),
 			changeFrequency: 'monthly' as const,
 			priority: 0.6,
 		})),
