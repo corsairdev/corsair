@@ -3738,6 +3738,14 @@
                 ]
               },
               {
+                "group": "Mixpanel",
+                "pages": [
+                  "plugins/mixpanel/overview",
+                  "plugins/mixpanel/api",
+                  "plugins/mixpanel/database"
+                ]
+              },
+              {
                 "group": "Modelry",
                 "pages": [
                   "plugins/modelry/overview",

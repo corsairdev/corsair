@@ -1,0 +1,101 @@
+displayName: Mixpanel
+description: Product analytics with Mixpanel - import server-side event batches, query profiles, cohorts, saved Insights reports, funnels and retention, and export raw events.
+domain: mixpanel.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a service account in Mixpanel under Organization settings, Service
+  Accounts (or Project settings, Service Accounts), with a role that can read
+  the project; importing events needs the Owner or Admin role. The account
+  stores three things: the service account username, the service account
+  secret, and the project id, which every service-account request must carry.
+  The region option switches hosts for EU (`eu`) and India (`in`) data
+  residency projects; it defaults to `us`.
+
+  - **Requests authenticate with HTTP Basic** using the plain `username:secret`
+    pair, exactly as Mixpanel's docs show. A missing project id fails before
+    anything is sent, because the API would answer 401 and read like a bad
+    secret.
+  - **events.import is the server-side ingestion call.** It replaces `/track`,
+    which this plugin does not wrap: `/track` authenticates with the project
+    token meant for untrusted clients, while `/import` takes the service
+    account and accepts events older than five days. Every event needs `time`,
+    `distinct_id` and `$insert_id`; Mixpanel deduplicates on the three plus the
+    event name, so a retried batch cannot double-count. With the default
+    `strict: '1'`, a 400 body lists each rejected event in `failed_records`.
+  - **Profile updates are not wrapped.** The ingestion `/engage` property
+    setters authenticate with the project token, not a service account, so this
+    plugin reads profiles (`profiles.query`) but does not write them.
+  - **profiles.query pages by session.** Take `session_id` and `page` from one
+    response, keep the `where` expression unchanged, and stop when `next_page`
+    comes back null.
+  - **Funnels and Segmentation queries are in maintenance mode** per
+    Mixpanel's docs, so this plugin wraps only `funnels.list` (saved funnels)
+    and the Insights query for report data. Raw events come from
+    `export.events`, one request per date range with an optional `limit`.
+  - **Rate limits.** The query API allows 60 queries per hour and 5 concurrent;
+    the export API allows 60 per hour and 3 per second; ingestion allows about
+    30k events per second or 2 GB per minute. The plugin retries 429, 502 and
+    503 with exponential backoff (honouring Retry-After when sent) and never
+    retries 400 validation failures.
+examples:
+  read:
+    path: cohorts.list
+    title: List saved cohorts
+    args: {}
+  write:
+    path: events.import
+    title: Import a signed-up event
+    args:
+      events:
+        - event: Signed up
+          properties:
+            time: 1618716477000
+            distinct_id: 91304156-cafc-4673-a237-623d1129c801
+            $insert_id: 29fc2962-6d9c-455d-95ad-95b84f09b9e4
+            'Referred by': Friend
+apiExamples:
+  events.import:
+    call: "{ events: [{ event: 'Signed up', properties: { time: 1618716477000, distinct_id: '91304156-cafc-4673-a237-623d1129c801', $insert_id: '29fc2962-6d9c-455d-95ad-95b84f09b9e4', ip: 0 } }] }"
+  profiles.query:
+    call: "{ where: 'properties[\"$email\"] == \"jordan@example.com\"', output_properties: ['$email', '$last_seen'] }"
+  cohorts.list: {}
+  insights.query:
+    call: "{ bookmark_id: 12345 }"
+  funnels.list: {}
+  retention.query:
+    call: "{ from_date: '2026-04-01', to_date: '2026-04-07', born_event: 'Signed up', event: 'Viewed report', unit: 'week' }"
+  export.events:
+    call: "{ from_date: '2026-04-01', to_date: '2026-04-02', event_names: ['Signed up'], limit: 1000 }"
+apiNotes:
+  events.import: |
+    `POST /import` on the ingestion host, authenticating with the service
+    account over HTTP Basic plus `project_id` in the query. Mixpanel answers
+    400 with `failed_records` naming each rejected event when `strict` is on
+    (the default). Every event needs `time`, `distinct_id` and `$insert_id`;
+    Mixpanel deduplicates on the event name plus those three, so retries are
+    safe. `/track` is not wrapped: it authenticates with the project token
+    meant for untrusted clients.
+  profiles.query: |
+    `POST /engage` on the query host with a form-encoded body. Pages run
+    through `session_id` and `page` (0-based); the response's derived
+    `next_page` is null once a page comes back short. This reads profiles;
+    the ingestion `/engage` property setters authenticate with the project
+    token and are not wrapped.
+  cohorts.list: |
+    `POST /cohorts/list` on the query host. Mixpanel answers a bare array; the
+    plugin returns it as `{ cohorts }`.
+  insights.query: |
+    `GET /insights?bookmark_id=...` on the query host. `series` passes through
+    as Mixpanel sends it, since a report with a breakdown nests more than
+    `{ date: count }`.
+  funnels.list: |
+    `GET /funnels/list` on the query host. The saved-funnel query endpoints
+    are in maintenance mode per Mixpanel's docs, so only the list is wrapped.
+  retention.query: |
+    `GET /retention` on the query host. `born_event` is required while
+    `retention_type` is `birth` (the default); `interval` cannot exceed 90
+    when `unit` is `day`.
+  export.events: |
+    `GET /export` on the data host. The body is newline-delimited JSON; the
+    plugin parses each line and fails loudly on one it cannot parse. One
+    request covers one date range, capped by `limit` (at most 100000).

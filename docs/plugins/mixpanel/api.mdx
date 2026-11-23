@@ -1,0 +1,396 @@
+---
+title: "Mixpanel API reference"
+sidebarTitle: "API"
+description: "API reference for the Mixpanel plugin in Corsair: every `mixpanel.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Cohorts
+
+### list
+
+`cohorts.list`
+
+List every saved cohort with its id, member count, visibility and description
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.cohorts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | No | — |
+
+`POST /cohorts/list` on the query host. Mixpanel answers a bare array; the
+plugin returns it as `{ cohorts }`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cohorts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="cohorts full type">
+
+```ts
+{
+  count?: number | null,
+  is_visible?: number | null,
+  description?: string | null,
+  created?: string | null,
+  project_id?: number | null,
+  id?: number | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Events
+
+### import
+
+`events.import`
+
+Import a batch of up to 2000 server-side events, validated per event when strict mode is on (the default)
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.events.import({ events: [{ event: 'Signed up', properties: { time: 1618716477000, distinct_id: '91304156-cafc-4673-a237-623d1129c801', $insert_id: '29fc2962-6d9c-455d-95ad-95b84f09b9e4', ip: 0 } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `strict` | `0 \| 1` | No | Defaults to '1': Mixpanel validates the batch and rejects it with per-event errors instead of ingesting silently. |
+| `events` | `object[]` | Yes | Up to 2000 events and 10 MB uncompressed per request. |
+
+`POST /import` on the ingestion host, authenticating with the service
+account over HTTP Basic plus `project_id` in the query. Mixpanel answers
+400 with `failed_records` naming each rejected event when `strict` is on
+(the default). Every event needs `time`, `distinct_id` and `$insert_id`;
+Mixpanel deduplicates on the event name plus those three, so retries are
+safe. `/track` is not wrapped: it authenticates with the project token
+meant for untrusted clients.
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  event: string,
+  properties: {
+    time: number | string,
+    distinct_id: string,
+    $insert_id: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number \| null` | No | — |
+| `num_records_imported` | `number` | Yes | — |
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+## Export
+
+### events
+
+`export.events`
+
+Export raw events for a date range as parsed objects, with optional event-name filter, expression filter and limit
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.export.events({ from_date: '2026-04-01', to_date: '2026-04-02', event_names: ['Signed up'], limit: 1000 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_date` | `string` | Yes | Inclusive. |
+| `to_date` | `string` | Yes | Inclusive. |
+| `event_names` | `string[]` | No | Only these events; omit for all of them. |
+| `where` | `string` | No | An expression to filter events by. |
+| `limit` | `number` | No | At most 100000. |
+| `time_in_ms` | `boolean` | No | Defaults to false: timestamps come back with second precision. |
+
+`GET /export` on the data host. The body is newline-delimited JSON; the
+plugin parses each line and fails loudly on one it cannot parse. One
+request covers one date range, capped by `limit` (at most 100000).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  event?: string | null,
+  properties?: Record<string, unknown> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Funnels
+
+### list
+
+`funnels.list`
+
+List the saved funnels with their ids and names
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.funnels.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | No | — |
+
+`GET /funnels/list` on the query host. The saved-funnel query endpoints
+are in maintenance mode per Mixpanel's docs, so only the list is wrapped.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `funnels` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="funnels full type">
+
+```ts
+{
+  funnel_id?: number | null,
+  name?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Insights
+
+### query
+
+`insights.query`
+
+Read the data behind one saved Insights report by its bookmark id
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.insights.query({ bookmark_id: 12345 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `bookmark_id` | `number` | Yes | The id of the saved Insights report. |
+| `workspace_id` | `number` | No | — |
+
+`GET /insights?bookmark_id=...` on the query host. `series` passes through
+as Mixpanel sends it, since a report with a breakdown nests more than
+`{ date: count }`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `computed_at` | `string \| null` | No | — |
+| `date_range` | `object \| null` | No | — |
+| `headers` | `string[] \| null` | No | — |
+| `series` | `Record<string, unknown> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="date_range full type">
+
+```ts
+{
+  from_date?: string | null,
+  to_date?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Profiles
+
+### query
+
+`profiles.query`
+
+Query user or group profiles with an expression, a cohort filter or exact distinct_ids, paged via session_id and next_page
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.profiles.query({ where: 'properties["$email"] == "jordan@example.com"', output_properties: ['$email', '$last_seen'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `where` | `string` | No | An expression to filter profiles by, such as properties["$email"] == "...". |
+| `distinct_id` | `string` | No | Retrieve exactly this profile. |
+| `distinct_ids` | `string[]` | No | Retrieve exactly these profiles. |
+| `data_group_id` | `string` | No | The ID of the group key, to query group profiles instead of user profiles. |
+| `output_properties` | `string[]` | No | Only return these properties, which speeds the query up considerably. |
+| `session_id` | `string` | No | The id from a previous response, to keep paging through one query. |
+| `page` | `number` | No | Pages start at 0 and need the session_id from page 0. |
+| `behaviors` | `number` | No | Needed when filtering with an event selector expression. |
+| `as_of_timestamp` | `number` | No | Required with `behaviors` when exporting more than 1000 profiles. |
+| `filter_by_cohort` | `number` | No | Only profiles in this cohort id. |
+| `include_all_users` | `boolean` | No | With `filter_by_cohort`: false keeps only distinct_ids that have a profile. Defaults to true. |
+| `workspace_id` | `number` | No | — |
+
+`POST /engage` on the query host with a form-encoded body. Pages run
+through `session_id` and `page` (0-based); the response's derived
+`next_page` is null once a page comes back short. This reads profiles;
+the ingestion `/engage` property setters authenticate with the project
+token and are not wrapped.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | Yes | — |
+| `page_size` | `number` | Yes | — |
+| `results` | `object[]` | Yes | — |
+| `session_id` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `total` | `number \| null` | No | — |
+| `next_page` | `number \| null` | Yes | Derived: the page to request next while this one came back full, otherwise null. Mixpanel sends session_id and page instead of a cursor. |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  $distinct_id?: string | number | null,
+  $properties?: Record<string, unknown> | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Retention
+
+### query
+
+`retention.query`
+
+Run a birth or compounded retention query for a date range, per day, week or month
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.retention.query({ from_date: '2026-04-01', to_date: '2026-04-07', born_event: 'Signed up', event: 'Viewed report', unit: 'week' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_date` | `string` | Yes | Inclusive. |
+| `to_date` | `string` | Yes | Inclusive. |
+| `retention_type` | `birth \| compounded` | No | Defaults to 'birth' (first time). 'compounded' is recurring retention. |
+| `born_event` | `string` | No | The first event, required when retention_type is 'birth'. |
+| `event` | `string` | No | The returning event. Omit to look across all events. |
+| `born_where` | `string` | No | An expression to filter born_event by. |
+| `where` | `string` | No | An expression to filter the returning event by. |
+| `interval` | `number` | No | Defaults to 1. At most 90 when unit is day. |
+| `interval_count` | `number` | No | How many buckets to return. Defaults to 1. |
+| `unit` | `day \| week \| month` | No | Defaults to day. |
+| `unbounded_retention` | `boolean` | No | Accumulate counts from right to left instead of per interval. |
+| `on` | `string` | No | A property expression to segment the returning event on. |
+| `limit` | `number` | No | Top segmentation values; only used with `on`. |
+| `workspace_id` | `number` | No | — |
+
+`GET /retention` on the query host. `born_event` is required while
+`retention_type` is `birth` (the default); `interval` cannot exceed 90
+when `unit` is `day`.
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+Record<string, {
+  counts?: number[] | null,
+  first?: number | null
+}>
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
