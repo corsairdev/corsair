@@ -33,6 +33,7 @@
               "quick-start",
               "cloud/overview",
               "cloud/mcp",
+              "cloud/agent-signup",
               {
                 "group": "Use cases",
                 "pages": [
@@ -3593,6 +3594,14 @@
                 ]
               },
               {
+                "group": "Mailcoach",
+                "pages": [
+                  "plugins/mailcoach/overview",
+                  "plugins/mailcoach/api",
+                  "plugins/mailcoach/database"
+                ]
+              },
+              {
                 "group": "Mails.so",
                 "pages": [
                   "plugins/mailsso/overview",
@@ -3670,6 +3679,14 @@
                   "plugins/merriamwebsterdict/overview",
                   "plugins/merriamwebsterdict/api",
                   "plugins/merriamwebsterdict/database"
+                ]
+              },
+              {
+                "group": "Meta Ads",
+                "pages": [
+                  "plugins/metaads/overview",
+                  "plugins/metaads/api",
+                  "plugins/metaads/database"
                 ]
               },
               {
@@ -4516,6 +4533,14 @@
                 ]
               },
               {
+                "group": "Productboard",
+                "pages": [
+                  "plugins/productboard/overview",
+                  "plugins/productboard/api",
+                  "plugins/productboard/database"
+                ]
+              },
+              {
                 "group": "Proofly",
                 "pages": [
                   "plugins/proofly/overview",
@@ -5265,6 +5290,14 @@
                   "plugins/splitwise/overview",
                   "plugins/splitwise/api",
                   "plugins/splitwise/database"
+                ]
+              },
+              {
+                "group": "Spondyr",
+                "pages": [
+                  "plugins/spondyr/overview",
+                  "plugins/spondyr/api",
+                  "plugins/spondyr/database"
                 ]
               },
               {
@@ -6225,6 +6258,14 @@
                   "plugins/winstonai/overview",
                   "plugins/winstonai/api",
                   "plugins/winstonai/database"
+                ]
+              },
+              {
+                "group": "Wispr Flow",
+                "pages": [
+                  "plugins/wisprflow/overview",
+                  "plugins/wisprflow/api",
+                  "plugins/wisprflow/database"
                 ]
               },
               {

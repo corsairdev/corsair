@@ -1,0 +1,39 @@
+---
+title: "Wispr Flow database"
+sidebarTitle: "Database"
+description: "Wispr Flow local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
+---
+
+The Wispr Flow plugin syncs data locally. Use `corsair.wisprflow.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Transcription
+
+Path: `wisprflow.db.transcription.search`
+
+```ts
+const rows = await corsair.wisprflow.db.transcription.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `text` | `string` | equals, contains, startsWith, endsWith, in |
+| `detected_language` | `string` | equals, contains, startsWith, endsWith, in |
+| `total_time` | `number` | equals, gt, gte, lt, lte, in |
+| `generated_tokens` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

@@ -433,6 +433,7 @@ export const BaseProviders = [
 	'mailboxlayer',
 	'mailcheck',
 	'mailchimp',
+	'mailcoach',
 	'mailsso',
 	'mailtrap',
 	'make',
@@ -443,6 +444,7 @@ export const BaseProviders = [
 	'memberstack',
 	'memberspot',
 	'merriamwebsterdict',
+	'metaads',
 	'metabase',
 	'microsoftclarity',
 	'minerstat',
@@ -545,6 +547,7 @@ export const BaseProviders = [
 	'posthog',
 	'postman',
 	'prisma',
+	'productboard',
 	'proofly',
 	'pushbullet',
 	'pushover',
@@ -637,6 +640,7 @@ export const BaseProviders = [
 	'snowflake',
 	'sourcegraph',
 	'splitwise',
+	'spondyr',
 	'spoki',
 	'spotlightr',
 	'spotify',
@@ -755,6 +759,7 @@ export const BaseProviders = [
 	'whautomate',
 	'whoisfreaks',
 	'winstonai',
+	'wisprflow',
 	'witai',
 	'wix',
 	'wiza',
@@ -1205,6 +1210,7 @@ export const ProviderDisplayNames = {
 	mailboxlayer: 'MailboxLayer',
 	mailcheck: 'Mailcheck',
 	mailchimp: 'Mailchimp',
+	mailcoach: 'Mailcoach',
 	mailsso: 'Mails.so',
 	mailtrap: 'Mailtrap',
 	make: 'Make',
@@ -1215,6 +1221,7 @@ export const ProviderDisplayNames = {
 	memberstack: 'Memberstack',
 	memberspot: 'MemberSpot',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
+	metaads: 'Meta Ads',
 	metabase: 'Metabase',
 	microsoftclarity: 'Microsoft Clarity',
 	minerstat: 'Minerstat',
@@ -1317,6 +1324,7 @@ export const ProviderDisplayNames = {
 	posthog: 'PostHog',
 	postman: 'Postman',
 	prisma: 'Prisma',
+	productboard: 'Productboard',
 	proofly: 'Proofly',
 	pushbullet: 'Pushbullet',
 	pushover: 'Pushover',
@@ -1409,6 +1417,7 @@ export const ProviderDisplayNames = {
 	snowflake: 'Snowflake',
 	sourcegraph: 'Sourcegraph',
 	splitwise: 'Splitwise',
+	spondyr: 'Spondyr',
 	spoki: 'Spoki',
 	spotlightr: 'Spotlightr',
 	spotify: 'Spotify',
@@ -1527,6 +1536,7 @@ export const ProviderDisplayNames = {
 	whautomate: 'Whautomate',
 	whoisfreaks: 'Whoisfreaks',
 	winstonai: 'Winston AI',
+	wisprflow: 'Wispr Flow',
 	witai: 'WitAi',
 	wix: 'Wix',
 	wiza: 'Wiza',
@@ -1984,6 +1994,7 @@ export type AllProviders =
 	| 'mailboxlayer'
 	| 'mailcheck'
 	| 'mailchimp'
+	| 'mailcoach'
 	| 'mailsso'
 	| 'mailtrap'
 	| 'make'
@@ -1994,6 +2005,7 @@ export type AllProviders =
 	| 'memberstack'
 	| 'memberspot'
 	| 'merriamwebsterdict'
+	| 'metaads'
 	| 'metabase'
 	| 'microsoftclarity'
 	| 'minerstat'
@@ -2096,6 +2108,7 @@ export type AllProviders =
 	| 'posthog'
 	| 'postman'
 	| 'prisma'
+	| 'productboard'
 	| 'proofly'
 	| 'pushbullet'
 	| 'pushover'
@@ -2188,6 +2201,7 @@ export type AllProviders =
 	| 'snowflake'
 	| 'sourcegraph'
 	| 'splitwise'
+	| 'spondyr'
 	| 'spoki'
 	| 'spotlightr'
 	| 'spotify'
@@ -2306,6 +2320,7 @@ export type AllProviders =
 	| 'whautomate'
 	| 'whoisfreaks'
 	| 'winstonai'
+	| 'wisprflow'
 	| 'witai'
 	| 'wix'
 	| 'wiza'

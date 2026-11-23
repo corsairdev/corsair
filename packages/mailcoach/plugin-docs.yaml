@@ -1,0 +1,210 @@
+displayName: Mailcoach
+description: Manage Mailcoach email lists, subscribers, campaigns, transactional mails, imports, tags, segments, and delivery statistics through its team-scoped REST API.
+recommendedAuth: api_key
+overviewNote: |
+  Save the exact team API URL shown in Mailcoach account settings → API Tokens as the account-level `api_url` field alongside the Mailcoach API token (`api_key`). This lets each connected tenant use its own Mailcoach team host. For a single-team setup, `mailcoach({ apiUrl: "https://<team>.mailcoach.app/api" })` is accepted as a fallback. Only HTTPS team subdomains under `mailcoach.app` are accepted; self-hosted instances and custom domains are not enabled because their host contract is not documented by the linked API reference. Use an All API endpoints token for management operations, or a Send only token only when calling the transactional send operation. Tokens inherit the owner's permissions and must remain server-side.
+
+  Collection operations return the provider's page plus `links.next`. Pass that absolute URL as the operation's `next` input to fetch the next page; the client verifies that it stays on the configured team host and same resource. Successful 204 operations return `undefined`. Transactional send returns a top-level `uuid` when stored, and `undefined` when `store: false`.
+
+  Mailcoach Cloud's default authenticated limit is 300 requests per minute per user (shared across that user's tokens). Transactional sends have a separate 3,000/minute per-user limit. Campaign click statistics and individual link lookups also share a 5 requests/second per-team burst limit. On 429, Corsair's transport honors `Retry-After`; writes are not retried on timeouts because Mailcoach may already have accepted them. Errors retain status and retry metadata but redact provider text, request paths, query values, and bodies to prevent email addresses or message content from leaking.
+
+  Sending a campaign, sending test mail, resending confirmations, starting an import, and transactional sends are destructive operations. Set `fake: true` for a transactional dry run. Subscriber imports are drafts until explicitly started; starting one may resubscribe addresses or unsubscribe contacts absent from the CSV. Only import addresses for which you have consent, and use `skip_confirmation: true` only when the subscriber has already consented.
+
+  Mailcoach documents a single automation trigger endpoint, but its successful response body is not specified; it is excluded rather than exposing an unverifiable output schema. Inbound webhooks are not supported.
+references:
+  - title: API overview and response conventions
+    url: https://www.mailcoach.app/docs/api/introduction/about-api/
+  - title: Authentication and rate limits
+    url: https://www.mailcoach.app/docs/api/introduction/authentication/
+  - title: Email lists
+    url: https://www.mailcoach.app/docs/api/endpoints/email-lists/
+  - title: Subscribers
+    url: https://www.mailcoach.app/docs/api/endpoints/subscribers/
+  - title: Subscriber imports
+    url: https://www.mailcoach.app/docs/api/endpoints/subscriber-imports/
+  - title: Tags and segments
+    url: https://www.mailcoach.app/docs/api/endpoints/tags-segments/
+  - title: Campaign templates
+    url: https://www.mailcoach.app/docs/api/endpoints/templates/
+  - title: Campaigns
+    url: https://www.mailcoach.app/docs/api/endpoints/campaigns/
+  - title: Transactional emails
+    url: https://www.mailcoach.app/docs/api/endpoints/transactional-mails/
+  - title: Automations
+    url: https://www.mailcoach.app/docs/api/endpoints/automations/
+  - title: Automation mails
+    url: https://www.mailcoach.app/docs/api/endpoints/automation-mails/
+  - title: Sends
+    url: https://www.mailcoach.app/docs/api/endpoints/sends/
+  - title: Links
+    url: https://www.mailcoach.app/docs/api/endpoints/links/
+  - title: Suppressions
+    url: https://www.mailcoach.app/docs/api/endpoints/suppressions/
+  - title: Uploads
+    url: https://www.mailcoach.app/docs/api/endpoints/uploads/
+apiNotes:
+  subscribers.subscribe: "This can restart an unsubscribed address. Supplied tags replace existing tags; only use skip_confirmation when consent is already established."
+  subscriberImports.create: "Creates a draft only. CSV imports bypass confirmation and can resubscribe or unsubscribe existing contacts depending on the optional flags. Import only consented addresses."
+  subscriberImports.update: "Only draft imports can be updated; resend both required fields."
+  subscriberImports.append: "Append CSV rows without repeating the header, then call start separately."
+  subscriberImports.start: "Starts asynchronous processing and returns 204 with no body. Poll subscriberImports.get until completed or failed; completed imports may still have row errors."
+  tags.update: "Send both name and visible_in_preferences."
+  segments.update: "Send the complete desired positive and negative tag conditions; updates replace existing conditions."
+  templates.create: "structured_html is editor-specific and has no editor-independent schema; omit it unless required by the chosen editor."
+  templates.update: "Include name along with the content to update."
+  campaigns.create: "Creates a draft; nothing is sent. Scheduling is campaigns.schedule and sending is campaigns.send, both destructive. Use either template fields or inline HTML as appropriate."
+  campaigns.update: "This is not a sparse patch: omitted content, segment, or scheduling values can reset. Resend the full intended draft settings. Updating a scheduled campaign through this operation clears its schedule."
+  campaigns.schedule: "Schedules delivery to the campaign audience at schedule_at (UTC, YYYY-MM-DD HH:mm:ss). This is a full PUT: resend every campaign setting."
+  campaigns.sendTest: "Sends a test email to up to ten comma-separated addresses. This sends real mail."
+  campaigns.send: "Sends to the campaign audience. Never blindly retry after a timeout because the first request may already have been accepted."
+  campaigns.clicks: "Has an additional 5 requests/second burst limit per team, in addition to the normal authenticated limit."
+  transactionalMails.send: "Provide either mail_name for a saved transactional template or subject plus at least one of html/text. fake=true logs without delivering. The default store=true returns a top-level uuid; store=false returns 204. Failures can be plain text and are surfaced as sanitized status errors."
+  transactionalMails.listTemplates: "Lists saved transactional email templates, not sent-message log items."
+  automationMails.create: "Creates a reusable automation email and does not start an automation or send to subscribers."
+  automationMails.update: "Include name and only the documented fields you want to update."
+  sends.delete: "Deletes the send record but cannot recall an email already delivered."
+  links.get: "Has an additional 5 requests/second burst limit per team."
+  suppressions.create: "Creates a team-wide manual sending block."
+  suppressions.delete: "Hosted Mailcoach forbids deleting spam-complaint suppressions. Removing an allowed suppression can permit future sends."
+  uploads.create: "Uses the documented JSON base64 form. Upload up to 10 JPEG, PNG, GIF, or WebP images, each no larger than 8 MB; SVG is not accepted. The upload does not alter any email until you reference the returned URL in its HTML."
+apiExamples:
+  user.get:
+    args: {}
+  emailLists.list:
+    args: { query: { filter: { search: "newsletter" }, sort: "-created_at" } }
+  emailLists.get:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f" }
+  emailLists.create:
+    args: { name: "Newsletter", default_from_email: "hello@example.com", default_from_name: "Example team" }
+  emailLists.update:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", body: { name: "Newsletter", default_from_email: "hello@example.com" } }
+  emailLists.delete:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f" }
+  subscribers.list:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", query: { filter: { status: "subscribed" }, sort: "-created_at" } }
+  subscribers.get:
+    args: { subscriberUuid: "2a0c72d9-f91a-4fd2-88a7-589dfd75f464" }
+  subscribers.subscribe:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", body: { email: "person@example.com", first_name: "Sample" } }
+  subscribers.update:
+    args: { subscriberUuid: "2a0c72d9-f91a-4fd2-88a7-589dfd75f464", body: { first_name: "Sample", append_tags: true } }
+  subscribers.delete:
+    args: { subscriberUuid: "2a0c72d9-f91a-4fd2-88a7-589dfd75f464" }
+  subscribers.confirm:
+    args: { subscriberUuid: "2a0c72d9-f91a-4fd2-88a7-589dfd75f464" }
+  subscribers.confirmByEmail:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", email: "person@example.com" }
+  subscribers.unsubscribe:
+    args: { subscriberUuid: "2a0c72d9-f91a-4fd2-88a7-589dfd75f464" }
+  subscribers.unsubscribeByEmail:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", email: "person@example.com" }
+  subscribers.resendConfirmation:
+    args: { subscriberUuid: "2a0c72d9-f91a-4fd2-88a7-589dfd75f464" }
+  subscribers.resendConfirmationByEmail:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", email: "person@example.com" }
+  subscribers.addTags:
+    args: { subscriberUuid: "2a0c72d9-f91a-4fd2-88a7-589dfd75f464", body: { tags: ["reader"] } }
+  subscribers.removeTags:
+    args: { subscriberUuid: "2a0c72d9-f91a-4fd2-88a7-589dfd75f464", body: { tags: ["reader"] } }
+  subscriberImports.list:
+    args: {}
+  subscriberImports.get:
+    args: { importUuid: "2ca0e737-b907-468f-819f-5d16e6bd6852" }
+  subscriberImports.create:
+    args: { subscribers_csv: "email\nperson@example.com", email_list_uuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", subscribe_unsubscribed: false, unsubscribe_others: false, replace_tags: false }
+  subscriberImports.update:
+    args: { importUuid: "2ca0e737-b907-468f-819f-5d16e6bd6852", body: { subscribers_csv: "email\nperson@example.com", email_list_uuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f" } }
+  subscriberImports.delete:
+    args: { importUuid: "2ca0e737-b907-468f-819f-5d16e6bd6852" }
+  subscriberImports.append:
+    args: { importUuid: "2ca0e737-b907-468f-819f-5d16e6bd6852", subscribers_csv: "next@example.com" }
+  subscriberImports.start:
+    args: { importUuid: "2ca0e737-b907-468f-819f-5d16e6bd6852" }
+  tags.list:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f" }
+  tags.get:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", tagUuid: "38b9e5cf-d10f-4463-b74d-bf26495e9f5b" }
+  tags.create:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", body: { name: "reader", visible_in_preferences: false } }
+  tags.update:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", tagUuid: "38b9e5cf-d10f-4463-b74d-bf26495e9f5b", body: { name: "reader", visible_in_preferences: false } }
+  tags.delete:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", tagUuid: "38b9e5cf-d10f-4463-b74d-bf26495e9f5b" }
+  segments.list:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f" }
+  segments.get:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", segmentUuid: "4efdbe3c-25e2-46b0-b799-1e1b6b5c28e6" }
+  segments.create:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", body: { name: "Readers", all_positive_tags_required: false, all_negative_tags_required: false, positive_tags: ["reader"], negative_tags: [] } }
+  segments.update:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", segmentUuid: "4efdbe3c-25e2-46b0-b799-1e1b6b5c28e6", body: { name: "Readers", all_positive_tags_required: false, all_negative_tags_required: false, positive_tags: ["reader"], negative_tags: [] } }
+  segments.delete:
+    args: { emailListUuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", segmentUuid: "4efdbe3c-25e2-46b0-b799-1e1b6b5c28e6" }
+  templates.list:
+    args: { query: { filter: { search: "newsletter" }, sort: "-updated_at" } }
+  templates.get:
+    args: { templateUuid: "11ce123b-57c4-429b-9840-c79f8047d8aa" }
+  templates.create:
+    args: { name: "Newsletter template", html: "<html><body>[[[content]]]</body></html>" }
+  templates.update:
+    args: { templateUuid: "11ce123b-57c4-429b-9840-c79f8047d8aa", body: { name: "Newsletter template", html: "<html><body>[[[content]]]</body></html>" } }
+  templates.delete:
+    args: { templateUuid: "11ce123b-57c4-429b-9840-c79f8047d8aa" }
+  campaigns.list:
+    args: { query: { filter: { status: "draft" }, sort: "-name" } }
+  campaigns.get:
+    args: { campaignUuid: "0762df4d-8516-4eb3-95db-b26492cf221c" }
+  campaigns.create:
+    args: { name: "November newsletter", email_list_uuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", subject: "News from our team", html: "<p>Latest news</p>" }
+  campaigns.update:
+    args: { campaignUuid: "0762df4d-8516-4eb3-95db-b26492cf221c", body: { name: "November newsletter", email_list_uuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", html: "<p>Latest news</p>" } }
+  campaigns.delete:
+    args: { campaignUuid: "0762df4d-8516-4eb3-95db-b26492cf221c" }
+  campaigns.sendTest:
+    args: { campaignUuid: "0762df4d-8516-4eb3-95db-b26492cf221c", email: "test@example.com" }
+  campaigns.schedule:
+    args: { campaignUuid: "0762df4d-8516-4eb3-95db-b26492cf221c", body: { name: "November newsletter", email_list_uuid: "a69075c6-ff5c-4b6a-b217-12026cb72e4f", html: "<p>Latest news</p>", schedule_at: "2026-12-01 09:00:00" } }
+  campaigns.send:
+    args: { campaignUuid: "0762df4d-8516-4eb3-95db-b26492cf221c" }
+  campaigns.opens:
+    args: { campaignUuid: "0762df4d-8516-4eb3-95db-b26492cf221c" }
+  campaigns.clicks:
+    args: { campaignUuid: "0762df4d-8516-4eb3-95db-b26492cf221c" }
+  campaigns.unsubscribes:
+    args: { campaignUuid: "0762df4d-8516-4eb3-95db-b26492cf221c" }
+  campaigns.bounces:
+    args: { campaignUuid: "0762df4d-8516-4eb3-95db-b26492cf221c" }
+  transactionalMails.send:
+    args: { from: "Example team <hello@example.com>", to: "person@example.com", subject: "Welcome", html: "<p>Welcome</p>", fake: true }
+  transactionalMails.listTemplates:
+    args: { query: { filter: { name: "welcome" }, sort: "-created_at" } }
+  transactionalMails.getTemplate:
+    args: { templateUuid: "11ce123b-57c4-429b-9840-c79f8047d8aa" }
+  automationMails.list:
+    args: { query: { filter: { search: "welcome" }, sort: "-created_at" } }
+  automationMails.get:
+    args: { automationMailUuid: "0762df4d-8516-4eb3-95db-b26492cf221c" }
+  automationMails.create:
+    args: { name: "Welcome email", subject: "Welcome aboard", html: "<p>Welcome</p>" }
+  automationMails.update:
+    args: { automationMailUuid: "0762df4d-8516-4eb3-95db-b26492cf221c", body: { name: "Welcome email", html: "<p>Updated</p>" } }
+  automationMails.delete:
+    args: { automationMailUuid: "0762df4d-8516-4eb3-95db-b26492cf221c" }
+  sends.list:
+    args: { query: { filter: { subscriber_uuid: "2051c60c-a9f3-31d0-a58c-7adcc32ea2e3" } } }
+  sends.get:
+    args: { sendUuid: "e2cf1b63-6505-3d7a-9c51-a9eb67d97a48" }
+  sends.delete:
+    args: { sendUuid: "e2cf1b63-6505-3d7a-9c51-a9eb67d97a48" }
+  links.get:
+    args: { linkUuid: "e2cf1b63-6505-3d7a-9c51-a9eb67d97a48" }
+  suppressions.list:
+    args: { query: { filter: { reason: "manual" }, sort: "-created_at" } }
+  suppressions.get:
+    args: { identifier: "info@example.com" }
+  suppressions.create:
+    args: { email: "info@example.com" }
+  suppressions.delete:
+    args: { identifier: "info@example.com" }
+  uploads.create:
+    args: { images: [{ name: "pixel.png", base64: "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/mk0AAAAASUVORK5CYII=" }] }
