@@ -1,0 +1,1379 @@
+---
+title: "Moz API reference"
+sidebarTitle: "API"
+description: "API reference for the Moz plugin in Corsair: every `moz.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Anchor Text
+
+### list
+
+`anchorText.list`
+
+List the anchor texts used to link to a target with unique root domain and page counts
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.anchorText.list({ site_query: { query: 'moz.com', scope: 'domain' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | — |
+| `offset` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
+}
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  token?: string,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | — |
+| `offset` | `object` | Yes | — |
+| `anchor_texts` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url,
+  original_site_query: {
+    query: string,
+    scope: domain | subdomain | subfolder | url
+  },
+  site_query_suggestion?: {
+    query: string,
+    scope: domain | subdomain | subfolder | url,
+    explanation: string,
+    issue: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  provided_token?: string | null,
+  token?: string | null,
+  limit: number
+}
+```
+</Accordion>
+
+<Accordion title="anchor_texts full type">
+
+```ts
+{
+  text: string,
+  external_root_domains: number,
+  external_pages: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Competitors
+
+### fetch
+
+`competitors.fetch`
+
+Start the ranking-competitors lookup for a site; answers with an async_call receipt to follow with jobs.lookup. Spends mozscape quota
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.competitors.fetch({ target_query: { query: 'moz.com', scope: 'domain', locale: 'en-US' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target_query` | `object` | Yes | — |
+
+`data.site.competitor.fetch` is asynchronous: the answer is an
+async_call receipt, and the competitors arrive through jobs.lookup once
+the status is complete. It spends the mozscape quota bucket, so the
+plugin never replays it after a failure.
+
+<AccordionGroup>
+<Accordion title="target_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder,
+  locale: en-US | en-GB | en-CA | en-AU
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `async_call` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="async_call full type">
+
+```ts
+{
+  id: string,
+  action: string,
+  status: pending | processing | complete,
+  ttl: number,
+  result?: Record<string, unknown> | null,
+  error?: {
+    message: string,
+    code: number,
+    status: number,
+    data?: {
+      explanation?: string,
+      issue?: string,
+      key?: string,
+      value?: unknown
+    }
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Jobs
+
+### lookup
+
+`jobs.lookup`
+
+Read an async_call by id: pending or processing means poll again, complete carries the result or the error. Free
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.jobs.lookup({ id: 'c3397e5a-ce31-42fb-8607-ed40487aea18' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The async_call.id returned by the asynchronous action that started the request. |
+
+`async.call.lookup` is free and safe to poll every five seconds. A
+completed call carries exactly one of async_call.result and
+async_call.error, and is only retained for twenty seconds.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `async_call` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="async_call full type">
+
+```ts
+{
+  id: string,
+  action: string,
+  status: pending | processing | complete,
+  ttl: number,
+  result?: Record<string, unknown> | null,
+  error?: {
+    message: string,
+    code: number,
+    status: number,
+    data?: {
+      explanation?: string,
+      issue?: string,
+      key?: string,
+      value?: unknown
+    }
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Linking Domains
+
+### list
+
+`linkingDomains.list`
+
+List the root domains linking to a target with authority, link propensity and per-domain link counts
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.linkingDomains.list({ site_query: { query: 'moz.com', scope: 'domain' }, options: { sort: 'source_domain_authority' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | — |
+| `options` | `object` | No | — |
+| `offset` | `object` | No | — |
+
+`data.site.linking-domain.list`. One row per returned root domain. With
+several filters, `external` must be one of them.
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  sort?: source_domain_authority | source_link_propensity | source_spam_score,
+  filters?: (external | follow | nofollow | deleted | not_deleted)[]
+}
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  token?: string,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | — |
+| `offset` | `object` | Yes | — |
+| `linking_domains` | `object[]` | Yes | — |
+| `options` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url,
+  original_site_query: {
+    query: string,
+    scope: domain | subdomain | subfolder | url
+  },
+  site_query_suggestion?: {
+    query: string,
+    scope: domain | subdomain | subfolder | url,
+    explanation: string,
+    issue: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  provided_token?: string | null,
+  token?: string | null,
+  limit: number
+}
+```
+</Accordion>
+
+<Accordion title="linking_domains full type">
+
+```ts
+{
+  site_metrics: {
+    page: string,
+    subdomain: string,
+    root_domain: string,
+    title: string,
+    last_crawled: string,
+    http_code: number,
+    pages_to_page: number,
+    nofollow_pages_to_page: number,
+    redirect_pages_to_page: number,
+    external_pages_to_page: number,
+    external_nofollow_pages_to_page: number,
+    external_redirect_pages_to_page: number,
+    deleted_pages_to_page: number,
+    root_domains_to_page: number,
+    indirect_root_domains_to_page: number,
+    deleted_root_domains_to_page: number,
+    nofollow_root_domains_to_page: number,
+    pages_to_subdomain: number,
+    nofollow_pages_to_subdomain: number,
+    redirect_pages_to_subdomain: number,
+    external_pages_to_subdomain: number,
+    external_nofollow_pages_to_subdomain: number,
+    external_redirect_pages_to_subdomain: number,
+    deleted_pages_to_subdomain: number,
+    root_domains_to_subdomain: number,
+    deleted_root_domains_to_subdomain: number,
+    nofollow_root_domains_to_subdomain: number,
+    pages_to_root_domain: number,
+    nofollow_pages_to_root_domain: number,
+    redirect_pages_to_root_domain: number,
+    external_pages_to_root_domain: number,
+    external_indirect_pages_to_root_domain: number,
+    external_nofollow_pages_to_root_domain: number,
+    external_redirect_pages_to_root_domain: number,
+    deleted_pages_to_root_domain: number,
+    root_domains_to_root_domain: number,
+    indirect_root_domains_to_root_domain: number,
+    deleted_root_domains_to_root_domain: number,
+    nofollow_root_domains_to_root_domain: number,
+    page_authority: number,
+    domain_authority: number,
+    link_propensity: number,
+    spam_score: number,
+    root_domains_from_page: number,
+    nofollow_root_domains_from_page: number,
+    pages_from_page: number,
+    nofollow_pages_from_page: number,
+    root_domains_from_root_domain: number,
+    nofollow_root_domains_from_root_domain: number,
+    pages_from_root_domain: number,
+    nofollow_pages_from_root_domain: number,
+    pages_crawled_from_root_domain: number
+  },
+  link_propensity: number,
+  targeted_pages: number,
+  targeted_nofollow_pages: number
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  sort?: source_domain_authority | source_link_propensity | source_spam_score,
+  filters?: (external | follow | nofollow | deleted | not_deleted)[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Links
+
+### intersect
+
+`links.intersect`
+
+Find sources that link to some targets but not others, a Venn diagram of link profiles (up to 6 targets)
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.links.intersect({ is_linking_to: [{ query: 'moz.com', scope: 'domain' }], not_linking_to: [{ query: 'ahrefs.com', scope: 'domain' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_linking_to` | `object[]` | Yes | Get sources that link to at least one of these sites, or more if minimum_matching_targets is set. |
+| `not_linking_to` | `object[]` | No | Optionally, ensure that the returned sources do not link to any of these sites. |
+| `options` | `object` | No | — |
+| `offset` | `object` | No | — |
+
+`data.site.link.intersect.fetch`. At least one target in
+is_linking_to, at most six targets across both arrays, and it costs N
+rows per result where N is the number of targets in the request.
+
+<AccordionGroup>
+<Accordion title="is_linking_to full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
+}[]
+```
+</Accordion>
+
+<Accordion title="not_linking_to full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  minimum_matching_targets?: number,
+  scope?: page | domain,
+  sort?: matching_target_count | source_spam_score | source_domain_authority
+}
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  token?: string,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_linking_to` | `object[]` | Yes | — |
+| `not_linking_to` | `object[]` | Yes | — |
+| `options` | `object` | Yes | — |
+| `offset` | `object` | Yes | — |
+| `link_intersects` | `object[]` | Yes | Sources matching the intersect, one entry per source page. |
+
+<AccordionGroup>
+<Accordion title="is_linking_to full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url,
+  original_site_query: {
+    query: string,
+    scope: domain | subdomain | subfolder | url
+  },
+  site_query_suggestion?: {
+    query: string,
+    scope: domain | subdomain | subfolder | url,
+    explanation: string,
+    issue: string
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="not_linking_to full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url,
+  original_site_query: {
+    query: string,
+    scope: domain | subdomain | subfolder | url
+  },
+  site_query_suggestion?: {
+    query: string,
+    scope: domain | subdomain | subfolder | url,
+    explanation: string,
+    issue: string
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  minimum_matching_targets?: number | null,
+  scope?: page | domain,
+  sort?: matching_target_count | source_spam_score | source_domain_authority
+}
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  provided_token?: string | null,
+  token?: string | null,
+  limit: number
+}
+```
+</Accordion>
+
+<Accordion title="link_intersects full type">
+
+```ts
+{
+  page: string,
+  title: string,
+  domain_authority: number,
+  spam_score: number,
+  matching_target_indexes?: number[],
+  matching_source_pages?: {
+    page: string,
+    page_authority: number
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`links.list`
+
+List the links pointing at a target with source and target metrics, filters, sorting and token paging
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.links.list({ site_query: { query: 'moz.com/blog', scope: 'url' }, options: { sort: 'source_link_propensity', filters: ['external', 'nofollow'] }, offset: { limit: 25 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | — |
+| `options` | `object` | No | — |
+| `offset` | `object` | No | — |
+
+`data.site.link.list`. One row per returned link. The offset.token in
+the response is the next page's cursor; it is null when the list is
+exhausted. Setting options.subdomains_limited_to_one requires a sort.
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  scope?: subdomain | domain | page,
+  subdomains_limited_to_one?: string[],
+  sort?: root_domains_to_source_root_domain | root_domains_to_source_page | source_page_authority | source_domain_authority | source_link_propensity | source_spam_score,
+  filters?: (external | follow | nofollow | deleted | not_deleted | redirect | not_redirect | rel_canonical | not_rel_canonical | via_redirect | not_via_redirect | via_rel_canonical | not_via_rel_canonical | gained_last_60_days | lost_last_60_days)[]
+}
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  token?: string,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | — |
+| `offset` | `object` | Yes | — |
+| `links` | `object[]` | Yes | — |
+| `options` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url,
+  original_site_query: {
+    query: string,
+    scope: domain | subdomain | subfolder | url
+  },
+  site_query_suggestion?: {
+    query: string,
+    scope: domain | subdomain | subfolder | url,
+    explanation: string,
+    issue: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  provided_token?: string | null,
+  token?: string | null,
+  limit: number
+}
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  source_site_metrics: {
+    page: string,
+    subdomain: string,
+    root_domain: string,
+    title: string,
+    last_crawled: string,
+    http_code: number,
+    pages_to_page: number,
+    nofollow_pages_to_page: number,
+    redirect_pages_to_page: number,
+    external_pages_to_page: number,
+    external_nofollow_pages_to_page: number,
+    external_redirect_pages_to_page: number,
+    deleted_pages_to_page: number,
+    root_domains_to_page: number,
+    indirect_root_domains_to_page: number,
+    deleted_root_domains_to_page: number,
+    nofollow_root_domains_to_page: number,
+    pages_to_subdomain: number,
+    nofollow_pages_to_subdomain: number,
+    redirect_pages_to_subdomain: number,
+    external_pages_to_subdomain: number,
+    external_nofollow_pages_to_subdomain: number,
+    external_redirect_pages_to_subdomain: number,
+    deleted_pages_to_subdomain: number,
+    root_domains_to_subdomain: number,
+    deleted_root_domains_to_subdomain: number,
+    nofollow_root_domains_to_subdomain: number,
+    pages_to_root_domain: number,
+    nofollow_pages_to_root_domain: number,
+    redirect_pages_to_root_domain: number,
+    external_pages_to_root_domain: number,
+    external_indirect_pages_to_root_domain: number,
+    external_nofollow_pages_to_root_domain: number,
+    external_redirect_pages_to_root_domain: number,
+    deleted_pages_to_root_domain: number,
+    root_domains_to_root_domain: number,
+    indirect_root_domains_to_root_domain: number,
+    deleted_root_domains_to_root_domain: number,
+    nofollow_root_domains_to_root_domain: number,
+    page_authority: number,
+    domain_authority: number,
+    link_propensity: number,
+    spam_score: number,
+    root_domains_from_page: number,
+    nofollow_root_domains_from_page: number,
+    pages_from_page: number,
+    nofollow_pages_from_page: number,
+    root_domains_from_root_domain: number,
+    nofollow_root_domains_from_root_domain: number,
+    pages_from_root_domain: number,
+    nofollow_pages_from_root_domain: number,
+    pages_crawled_from_root_domain: number
+  },
+  target_site_metrics: {
+    page: string,
+    subdomain: string,
+    root_domain: string,
+    title: string,
+    last_crawled: string,
+    http_code: number,
+    pages_to_page: number,
+    nofollow_pages_to_page: number,
+    redirect_pages_to_page: number,
+    external_pages_to_page: number,
+    external_nofollow_pages_to_page: number,
+    external_redirect_pages_to_page: number,
+    deleted_pages_to_page: number,
+    root_domains_to_page: number,
+    indirect_root_domains_to_page: number,
+    deleted_root_domains_to_page: number,
+    nofollow_root_domains_to_page: number,
+    pages_to_subdomain: number,
+    nofollow_pages_to_subdomain: number,
+    redirect_pages_to_subdomain: number,
+    external_pages_to_subdomain: number,
+    external_nofollow_pages_to_subdomain: number,
+    external_redirect_pages_to_subdomain: number,
+    deleted_pages_to_subdomain: number,
+    root_domains_to_subdomain: number,
+    deleted_root_domains_to_subdomain: number,
+    nofollow_root_domains_to_subdomain: number,
+    pages_to_root_domain: number,
+    nofollow_pages_to_root_domain: number,
+    redirect_pages_to_root_domain: number,
+    external_pages_to_root_domain: number,
+    external_indirect_pages_to_root_domain: number,
+    external_nofollow_pages_to_root_domain: number,
+    external_redirect_pages_to_root_domain: number,
+    deleted_pages_to_root_domain: number,
+    root_domains_to_root_domain: number,
+    indirect_root_domains_to_root_domain: number,
+    deleted_root_domains_to_root_domain: number,
+    nofollow_root_domains_to_root_domain: number,
+    page_authority: number,
+    domain_authority: number,
+    link_propensity: number,
+    spam_score: number,
+    root_domains_from_page: number,
+    nofollow_root_domains_from_page: number,
+    pages_from_page: number,
+    nofollow_pages_from_page: number,
+    root_domains_from_root_domain: number,
+    nofollow_root_domains_from_root_domain: number,
+    pages_from_root_domain: number,
+    nofollow_pages_from_root_domain: number,
+    pages_crawled_from_root_domain: number
+  },
+  anchor_text: string,
+  date_first_seen: string,
+  date_last_seen: string,
+  date_disappeared?: string | null,
+  nofollow: boolean,
+  redirect: boolean,
+  rel_canonical: boolean,
+  via_redirect: boolean,
+  via_rel_canonical: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  scope?: subdomain | domain | page,
+  subdomains_limited_to_one?: string[],
+  sort?: root_domains_to_source_root_domain | root_domains_to_source_page | source_page_authority | source_domain_authority | source_link_propensity | source_spam_score,
+  filters?: (external | follow | nofollow | deleted | not_deleted | redirect | not_redirect | rel_canonical | not_rel_canonical | via_redirect | not_via_redirect | via_rel_canonical | not_via_rel_canonical | gained_last_60_days | lost_last_60_days)[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Locales
+
+### list
+
+`locales.list`
+
+List every locale a search engine (google, bing or yahoo) supports; costs no rows
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.locales.list({ engine: 'google' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `engine` | `google \| bing \| yahoo` | Yes | The search engine to list supported locales for; each engine supports a different set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `engine` | `google \| bing \| yahoo` | Yes | — |
+| `locales` | `string[]` | Yes | Every locale the engine supports, e.g. en-US; some have a regional variant such as es-419-AR. |
+
+
+
+---
+
+## Metrics
+
+### fetch
+
+`metrics.fetch`
+
+Read Domain Authority, Page Authority, Spam Score and link counts for one URL, subdomain, subfolder or domain
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.metrics.fetch({ site_query: { query: 'moz.com', scope: 'domain' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | — |
+| `site_metrics` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url,
+  original_site_query: {
+    query: string,
+    scope: domain | subdomain | subfolder | url
+  },
+  site_query_suggestion?: {
+    query: string,
+    scope: domain | subdomain | subfolder | url,
+    explanation: string,
+    issue: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="site_metrics full type">
+
+```ts
+{
+  page: string,
+  subdomain: string,
+  root_domain: string,
+  title: string,
+  last_crawled: string,
+  http_code: number,
+  pages_to_page: number,
+  nofollow_pages_to_page: number,
+  redirect_pages_to_page: number,
+  external_pages_to_page: number,
+  external_nofollow_pages_to_page: number,
+  external_redirect_pages_to_page: number,
+  deleted_pages_to_page: number,
+  root_domains_to_page: number,
+  indirect_root_domains_to_page: number,
+  deleted_root_domains_to_page: number,
+  nofollow_root_domains_to_page: number,
+  pages_to_subdomain: number,
+  nofollow_pages_to_subdomain: number,
+  redirect_pages_to_subdomain: number,
+  external_pages_to_subdomain: number,
+  external_nofollow_pages_to_subdomain: number,
+  external_redirect_pages_to_subdomain: number,
+  deleted_pages_to_subdomain: number,
+  root_domains_to_subdomain: number,
+  deleted_root_domains_to_subdomain: number,
+  nofollow_root_domains_to_subdomain: number,
+  pages_to_root_domain: number,
+  nofollow_pages_to_root_domain: number,
+  redirect_pages_to_root_domain: number,
+  external_pages_to_root_domain: number,
+  external_indirect_pages_to_root_domain: number,
+  external_nofollow_pages_to_root_domain: number,
+  external_redirect_pages_to_root_domain: number,
+  deleted_pages_to_root_domain: number,
+  root_domains_to_root_domain: number,
+  indirect_root_domains_to_root_domain: number,
+  deleted_root_domains_to_root_domain: number,
+  nofollow_root_domains_to_root_domain: number,
+  page_authority: number,
+  domain_authority: number,
+  link_propensity: number,
+  spam_score: number,
+  root_domains_from_page: number,
+  nofollow_root_domains_from_page: number,
+  pages_from_page: number,
+  nofollow_pages_from_page: number,
+  root_domains_from_root_domain: number,
+  nofollow_root_domains_from_root_domain: number,
+  pages_from_root_domain: number,
+  nofollow_pages_from_root_domain: number,
+  pages_crawled_from_root_domain: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fetchMultiple
+
+`metrics.fetchMultiple`
+
+Read the same site metrics for several targets at once, with a per-target success or error split
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.metrics.fetchMultiple({ site_queries: [{ query: 'moz.com', scope: 'domain' }, { query: 'moz.com/blog', scope: 'url' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_queries` | `object[]` | Yes | The targets to fetch metrics for, one or more. |
+
+<AccordionGroup>
+<Accordion title="site_queries full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results_by_site` | `object[]` | Yes | The fetched metrics for the targets that succeeded. |
+| `errors_by_site` | `object[]` | Yes | The targets that failed, each with the reason. |
+
+<AccordionGroup>
+<Accordion title="results_by_site full type">
+
+```ts
+{
+  site_query: {
+    query: string,
+    scope: domain | subdomain | subfolder | url,
+    original_site_query: {
+      query: string,
+      scope: domain | subdomain | subfolder | url
+    },
+    site_query_suggestion?: {
+      query: string,
+      scope: domain | subdomain | subfolder | url,
+      explanation: string,
+      issue: string
+    } | null
+  },
+  site_metrics: {
+    page: string,
+    subdomain: string,
+    root_domain: string,
+    title: string,
+    last_crawled: string,
+    http_code: number,
+    pages_to_page: number,
+    nofollow_pages_to_page: number,
+    redirect_pages_to_page: number,
+    external_pages_to_page: number,
+    external_nofollow_pages_to_page: number,
+    external_redirect_pages_to_page: number,
+    deleted_pages_to_page: number,
+    root_domains_to_page: number,
+    indirect_root_domains_to_page: number,
+    deleted_root_domains_to_page: number,
+    nofollow_root_domains_to_page: number,
+    pages_to_subdomain: number,
+    nofollow_pages_to_subdomain: number,
+    redirect_pages_to_subdomain: number,
+    external_pages_to_subdomain: number,
+    external_nofollow_pages_to_subdomain: number,
+    external_redirect_pages_to_subdomain: number,
+    deleted_pages_to_subdomain: number,
+    root_domains_to_subdomain: number,
+    deleted_root_domains_to_subdomain: number,
+    nofollow_root_domains_to_subdomain: number,
+    pages_to_root_domain: number,
+    nofollow_pages_to_root_domain: number,
+    redirect_pages_to_root_domain: number,
+    external_pages_to_root_domain: number,
+    external_indirect_pages_to_root_domain: number,
+    external_nofollow_pages_to_root_domain: number,
+    external_redirect_pages_to_root_domain: number,
+    deleted_pages_to_root_domain: number,
+    root_domains_to_root_domain: number,
+    indirect_root_domains_to_root_domain: number,
+    deleted_root_domains_to_root_domain: number,
+    nofollow_root_domains_to_root_domain: number,
+    page_authority: number,
+    domain_authority: number,
+    link_propensity: number,
+    spam_score: number,
+    root_domains_from_page: number,
+    nofollow_root_domains_from_page: number,
+    pages_from_page: number,
+    nofollow_pages_from_page: number,
+    root_domains_from_root_domain: number,
+    nofollow_root_domains_from_root_domain: number,
+    pages_from_root_domain: number,
+    nofollow_pages_from_root_domain: number,
+    pages_crawled_from_root_domain: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="errors_by_site full type">
+
+```ts
+{
+  site_query: {
+    query: string,
+    scope: domain | subdomain | subfolder | url,
+    original_site_query: {
+      query: string,
+      scope: domain | subdomain | subfolder | url
+    },
+    site_query_suggestion?: {
+      query: string,
+      scope: domain | subdomain | subfolder | url,
+      explanation: string,
+      issue: string
+    } | null
+  },
+  error: {
+    message: string,
+    name: string,
+    data?: {
+      key?: string,
+      value?: string
+    },
+    httpStatus: number,
+    jsonrpcCode: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Quota
+
+### lookup
+
+`quota.lookup`
+
+Read how much API quota is used and remaining for a billing period, and whether overages are enabled
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.quota.lookup({ path: 'api.limits.data.rows' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `path` | `api.limits.mozscape.rows \| api.limits.data.rows \| api.limits.beta.rows` | Yes | The quota to look up: api.limits.mozscape.rows (competitor fetches), api.limits.data.rows (everything else) or api.limits.beta.rows (beta methods). |
+
+`quota.lookup` is free. The path picks the bucket: api.limits.data.rows
+for everything except competitors, api.limits.mozscape.rows for the
+competitor fetch, api.limits.beta.rows for beta methods.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `quota` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="quota full type">
+
+```ts
+{
+  path: string,
+  account_id: number,
+  allotted: number,
+  used: number,
+  report: month | week | day | hour | minute,
+  reset: never | month | week | day | hour | minute,
+  overage: boolean,
+  period_start?: number | null,
+  period_reset?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Top Pages
+
+### list
+
+`topPages.list`
+
+List a target's top pages sorted by page authority, linking root domains or external linking pages
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.topPages.list({ site_query: { query: 'moz.com', scope: 'domain' }, options: { filter: 'status_200', sort: 'page_authority' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | — |
+| `options` | `object` | No | — |
+| `offset` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  filter?: all | status_200 | status_301 | status_302 | status_4xx | status_5xx,
+  sort?: page_authority | root_domains_to_page | external_pages_to_page
+}
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  token?: string,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | — |
+| `offset` | `object` | Yes | — |
+| `options` | `object` | Yes | — |
+| `top_pages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url,
+  original_site_query: {
+    query: string,
+    scope: domain | subdomain | subfolder | url
+  },
+  site_query_suggestion?: {
+    query: string,
+    scope: domain | subdomain | subfolder | url,
+    explanation: string,
+    issue: string
+  } | null
+}
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  provided_token?: string | null,
+  token?: string | null,
+  limit: number
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  filter?: all | status_200 | status_301 | status_302 | status_4xx | status_5xx,
+  sort?: page_authority | root_domains_to_page | external_pages_to_page
+}
+```
+</Accordion>
+
+<Accordion title="top_pages full type">
+
+```ts
+{
+  page: string,
+  subdomain: string,
+  root_domain: string,
+  title: string,
+  last_crawled: string,
+  http_code: number,
+  pages_to_page: number,
+  nofollow_pages_to_page: number,
+  redirect_pages_to_page: number,
+  external_pages_to_page: number,
+  external_nofollow_pages_to_page: number,
+  external_redirect_pages_to_page: number,
+  deleted_pages_to_page: number,
+  root_domains_to_page: number,
+  indirect_root_domains_to_page: number,
+  deleted_root_domains_to_page: number,
+  nofollow_root_domains_to_page: number,
+  pages_to_subdomain: number,
+  nofollow_pages_to_subdomain: number,
+  redirect_pages_to_subdomain: number,
+  external_pages_to_subdomain: number,
+  external_nofollow_pages_to_subdomain: number,
+  external_redirect_pages_to_subdomain: number,
+  deleted_pages_to_subdomain: number,
+  root_domains_to_subdomain: number,
+  deleted_root_domains_to_subdomain: number,
+  nofollow_root_domains_to_subdomain: number,
+  pages_to_root_domain: number,
+  nofollow_pages_to_root_domain: number,
+  redirect_pages_to_root_domain: number,
+  external_pages_to_root_domain: number,
+  external_indirect_pages_to_root_domain: number,
+  external_nofollow_pages_to_root_domain: number,
+  external_redirect_pages_to_root_domain: number,
+  deleted_pages_to_root_domain: number,
+  root_domains_to_root_domain: number,
+  indirect_root_domains_to_root_domain: number,
+  deleted_root_domains_to_root_domain: number,
+  nofollow_root_domains_to_root_domain: number,
+  page_authority: number,
+  domain_authority: number,
+  link_propensity: number,
+  spam_score: number,
+  root_domains_from_page: number,
+  nofollow_root_domains_from_page: number,
+  pages_from_page: number,
+  nofollow_pages_from_page: number,
+  root_domains_from_root_domain: number,
+  nofollow_root_domains_from_root_domain: number,
+  pages_from_root_domain: number,
+  nofollow_pages_from_root_domain: number,
+  pages_crawled_from_root_domain: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

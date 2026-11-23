@@ -3780,6 +3780,14 @@
                 ]
               },
               {
+                "group": "Moz",
+                "pages": [
+                  "plugins/moz/overview",
+                  "plugins/moz/api",
+                  "plugins/moz/database"
+                ]
+              },
+              {
                 "group": "MrScraper",
                 "pages": [
                   "plugins/mrscraper/overview",
