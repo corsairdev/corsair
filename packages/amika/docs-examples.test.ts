@@ -57,7 +57,15 @@ function unknownKeys(value: unknown, schema: unknown, path: string): string[] {
 	const map = options.find(
 		(o) => typeof o.additionalProperties === 'object' && o.additionalProperties,
 	)?.additionalProperties;
-	if (declared.size === 0) return []; // a map or an untyped value: any key
+	if (declared.size === 0) {
+		// A map takes any key, but its values still follow the map's schema
+		// (a host's capabilities.runtimes.<name> object, say). Untyped: nothing to check.
+		return map
+			? Object.entries(value).flatMap(([key, inner]) =>
+					unknownKeys(inner, map, `${path}.${key}`),
+				)
+			: [];
+	}
 	return Object.entries(value).flatMap(([key, inner]) =>
 		declared.has(key)
 			? unknownKeys(inner, declared.get(key), `${path}.${key}`)
@@ -104,6 +112,19 @@ describe('plugin-docs.yaml', () => {
 			).toEqual([]);
 		},
 	);
+
+	it('catches a misspelt field inside a map value, and allows any map key', () => {
+		const hosts = amikaOperations.find((o) => o.id === 'hosts.create');
+		const args = {
+			hostname: 'studio-mac',
+			capabilities: {
+				runtimes: { 'my-runtime': { kind: 'vm', max_runing: 2 } },
+			},
+		};
+		expect(unknownKeys(args, hosts?.input, 'args')).toEqual([
+			'args.capabilities.runtimes.my-runtime.max_runing',
+		]);
+	});
 
 	it.each(Object.entries(docs.examples ?? {}))(
 		'overview %s example passes its input schema',

@@ -222,6 +222,23 @@ describe('risk levels (PLUGIN_PR_RULES R8)', () => {
 		expect(meta['agentCredentials.claude.check']?.riskLevel).toBe('read');
 	});
 
+	it('names only rig selectors an operation takes (`by` or `sandbox_by`)', () => {
+		for (const operation of amikaOperations) {
+			const description = meta[operation.id]?.description ?? '';
+			const takes = Object.keys(
+				(operation.input.properties as Record<string, unknown>) ?? {},
+			);
+			for (const selector of ['by', 'sandbox_by']) {
+				if (description.includes(`\`${selector}\` says`)) {
+					expect([operation.id, takes]).toEqual([
+						operation.id,
+						expect.arrayContaining([selector]),
+					]);
+				}
+			}
+		}
+	});
+
 	it('gives every operation a description an agent can act on', () => {
 		for (const operation of amikaOperations) {
 			expect(meta[operation.id]?.description?.length ?? 0).toBeGreaterThan(20);

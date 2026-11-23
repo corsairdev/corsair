@@ -582,7 +582,8 @@ liveAgent('Amika live API: Claude Code in a rig', () => {
 			amika_api_key: { mode: 'none' },
 			auto_stop_interval: 10,
 			agent_credentials: [
-				{ kind: 'claude', name: claudeCredential, type: 'api_key' },
+				// No `type`: Amika uses the named credential's own (OAuth or API key).
+				{ kind: 'claude', name: claudeCredential },
 			],
 		});
 		rigId = String(rig.id ?? '');

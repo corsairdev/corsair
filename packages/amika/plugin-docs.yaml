@@ -99,7 +99,7 @@ apiExamples:
   jobRuns.start:
     args: {"job_ref": "nightly-tests"}
   jobs.create:
-    args: {"name": "nightly-tests", "description": "Run the suite every night", "trigger": {"kind": "cron", "schedule": "0 3 * * *", "timezone": "America/New_York"}, "steps": [{"rig_ref": "dev-rig", "command": "pnpm test", "timeout_ms": 1800000}], "rig_status_on_finish": "stopped", "enabled": true}
+    args: {"name": "nightly-tests", "description": "Install and run the suite every night", "trigger": {"kind": "cron", "schedule": "0 3 * * *", "timezone": "America/New_York"}, "steps": [{"rig_ref": "dev-rig", "command": "pnpm install --frozen-lockfile", "timeout_ms": 600000}, {"command": "pnpm test", "timeout_ms": 1800000}], "rig_status_on_finish": "stopped", "enabled": true}
   jobs.delete:
     args: {"job": "nightly-tests"}
   jobs.get:
@@ -107,7 +107,7 @@ apiExamples:
   jobs.list:
     args: {}
   jobs.update:
-    args: {"job": "nightly-tests", "enabled": false}
+    args: {"job": "nightly-tests", "steps": [{"rig_ref": "dev-rig", "command": "pnpm install --frozen-lockfile", "timeout_ms": 600000}, {"command": "pnpm test -- --ci", "timeout_ms": 1800000}], "enabled": false}
   linear.settings.get:
     args: {}
   linear.settings.set:

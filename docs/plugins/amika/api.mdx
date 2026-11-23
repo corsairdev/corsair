@@ -2579,9 +2579,9 @@ Creates a job: a cron trigger and 1 to 20 shell steps. Each time the trigger fir
 ```ts
 await corsair.amika.api.jobs.create({
 	name: 'nightly-tests',
-	description: 'Run the suite every night',
+	description: 'Install and run the suite every night',
 	trigger: { kind: 'cron', schedule: '0 3 * * *', timezone: 'America/New_York' },
-	steps: [{ rig_ref: 'dev-rig', command: 'pnpm test', timeout_ms: 1800000 }],
+	steps: [{ rig_ref: 'dev-rig', command: 'pnpm install --frozen-lockfile', timeout_ms: 600000 }, { command: 'pnpm test', timeout_ms: 1800000 }],
 	rig_status_on_finish: 'stopped',
 	enabled: true,
 });
@@ -3038,7 +3038,11 @@ Updates a job: its trigger, steps or description; enabled false pauses it and tr
 **Risk:** `destructive`
 
 ```ts
-await corsair.amika.api.jobs.update({ job: 'nightly-tests', enabled: false });
+await corsair.amika.api.jobs.update({
+	job: 'nightly-tests',
+	steps: [{ rig_ref: 'dev-rig', command: 'pnpm install --frozen-lockfile', timeout_ms: 600000 }, { command: 'pnpm test -- --ci', timeout_ms: 1800000 }],
+	enabled: false,
+});
 ```
 
 **Input**
