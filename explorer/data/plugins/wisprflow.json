@@ -1,0 +1,257 @@
+{
+  "id": "wisprflow",
+  "displayName": "Wispr Flow",
+  "description": "Voice dictation API that turns speech into formatted text, with endpoints to transcribe audio and to issue and revoke client tokens.",
+  "npmPackageName": "@corsair-dev/wisprflow",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 5,
+    "webhooks": 0,
+    "db": 1
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "wisprflow.api.tokens.generate",
+      "shortPath": "tokens.generate",
+      "description": "Create a short-lived client JWT so a browser or app can call the client-side API without the org key",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string",
+            "description": "Your identifier for the end user or app"
+          },
+          {
+            "key": "duration_secs",
+            "optional": false,
+            "type": "number",
+            "description": "Token lifetime in seconds"
+          },
+          {
+            "key": "metadata",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "Extra data stored with the token"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "access_token",
+            "optional": false,
+            "type": "string",
+            "description": "Client JWT for the client-side API"
+          },
+          {
+            "key": "expires_in",
+            "optional": false,
+            "type": "number",
+            "description": "Seconds until the token expires"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wisprflow.api.tokens.revoke",
+      "shortPath": "tokens.revoke",
+      "description": "Revoke one client JWT so it stops working immediately",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "access_token",
+            "optional": false,
+            "type": "string",
+            "description": "The client JWT to revoke"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wisprflow.api.tokens.revokeClient",
+      "shortPath": "tokens.revokeClient",
+      "description": "Revoke every client JWT issued to a client_id",
+      "riskLevel": "destructive",
+      "irreversible": true,
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "client_id",
+            "optional": false,
+            "type": "string",
+            "description": "Client whose tokens are all revoked"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "message",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wisprflow.api.transcriptions.create",
+      "shortPath": "transcriptions.create",
+      "description": "Transcribe base64 16kHz PCM16 WAV audio into formatted text. Billed per generated token",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "audio",
+            "optional": false,
+            "type": "string",
+            "description": "Base64-encoded 16kHz PCM16 WAV audio, up to 25MB or 6 minutes"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string[]",
+            "description": "ISO 639-1 codes the speaker may use. One code skips detection, empty detects from all languages. Defaults to []."
+          },
+          {
+            "key": "context",
+            "optional": true,
+            "type": "{ app?: { name?: string, type?: ai | email | other }, dictionary_context?: string[], user_identifier?: string, user_first_name?: string, user_last_name?: string, textbox_contents?: { before_text?: string, selected_text?: string, after_text?: string }, screenshot?: string, content_text?: string, content_html?: string, conversation?: { id: string, participants?: string[], messages?: { role: user | human | assistant, content: string }[] } }",
+            "description": "App, user, textbox, screen and conversation context that improves formatting and accuracy. Defaults to {}."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string",
+            "description": "Transcription UUID"
+          },
+          {
+            "key": "text",
+            "optional": false,
+            "type": "string",
+            "description": "Transcribed text with formatting applied"
+          },
+          {
+            "key": "detected_language",
+            "optional": false,
+            "type": "string",
+            "description": "Detected ISO 639-1 language code"
+          },
+          {
+            "key": "total_time",
+            "optional": false,
+            "type": "number",
+            "description": "Processing time in milliseconds"
+          },
+          {
+            "key": "generated_tokens",
+            "optional": false,
+            "type": "number",
+            "description": "Tokens generated, the unit Wispr Flow bills on"
+          }
+        ]
+      }
+    },
+    {
+      "path": "wisprflow.api.transcriptions.warmup",
+      "shortPath": "transcriptions.warmup",
+      "description": "Warm the API connection before a dictation session to cut first-request latency",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": [
+    {
+      "path": "wisprflow.db.transcription.search",
+      "entityName": "transcription",
+      "filters": [
+        {
+          "field": "entity_id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "id",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "text",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "detected_language",
+          "type": "string",
+          "operators": ["equals", "contains", "startsWith", "endsWith", "in"]
+        },
+        {
+          "field": "total_time",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        },
+        {
+          "field": "generated_tokens",
+          "type": "number",
+          "operators": ["equals", "gt", "gte", "lt", "lte", "in"]
+        }
+      ]
+    }
+  ]
+}
