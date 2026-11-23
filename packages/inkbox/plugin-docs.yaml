@@ -3,7 +3,7 @@
 # spec; docs-examples.test.ts parses every example with its input schema.
 displayName: Inkbox
 domain: inkbox.ai
-description: "Give AI agents their own identities: each agent gets an email inbox, and can add a phone number for SMS, MMS and calls, iMessage, WhatsApp and a Slack bot, plus shared contacts with remembered facts, notes, an encrypted credential vault, a public tunnel URL, agent-to-agent (A2A) tasks and hosted agents. Send and read mail, texts and messages, manage numbers, rules and webhooks, and receive signed events for new mail, texts, calls, iMessage, WhatsApp, Slack and A2A (455 operations)."
+description: "Give AI agents their own identities: each agent gets an email inbox, and can add a phone number for SMS, MMS and calls, iMessage, WhatsApp and a Slack bot, plus shared contacts with remembered facts, notes, an encrypted credential vault, a public tunnel URL, agent-to-agent (A2A) tasks and hosted agents. Send and read mail, texts and messages, manage numbers, rules and webhooks, and receive signed events for new mail, texts, calls, iMessage, WhatsApp, Slack and A2A (454 operations)."
 overviewNote: "Connect with an Inkbox API key (inkbox.ai/console → API keys). An organization admin key reaches every identity; a key scoped to one identity reaches only that identity (some routes, such as avatars, need the identity key). Phone numbers, more identities and custom domains need a paid Inkbox plan. For webhook events, give the plugin the identity's signing key (identities.signingKey.createOrRotate returns it once) as webhookSecret, and subscribe a URL with webhooks.subscriptions.create. Vault secrets are encrypted on the client with the vault key: the API stores and returns ciphertext only."
 examples:
   read:
@@ -75,8 +75,6 @@ apiExamples:
     args: {}
   agentSignup.getStatus:
     args: {}
-  agentSignup.register:
-    args: {"human_email": "ada@example.com", "note_to_human": "example"}
   agentSignup.resendVerification:
     args: {}
   agentSignup.verify:
@@ -378,7 +376,7 @@ apiExamples:
   identities.mailContactRules.update:
     args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
   identities.phoneContactRules.create:
-    args: {"agent_handle": "support-agent", "action": "allow", "match_target": "example.com"}
+    args: {"agent_handle": "support-agent", "action": "block", "match_type": "exact_number", "match_target": "+14155550123"}
   identities.phoneContactRules.delete:
     args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
   identities.phoneContactRules.get:
@@ -414,7 +412,7 @@ apiExamples:
   imessage.connect:
     args: {"agent_identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "recipient_number": "+14155550123"}
   imessage.contactRules.create:
-    args: {"agent_handle": "support-agent", "action": "allow", "match_target": "example.com"}
+    args: {"agent_handle": "support-agent", "action": "allow", "match_type": "exact_number", "match_target": "+14155550123"}
   imessage.contactRules.delete:
     args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
   imessage.contactRules.get:
@@ -904,7 +902,7 @@ apiExamples:
   whatsapp.messages.list:
     args: {}
   whatsapp.messages.send:
-    args: {}
+    args: {"agent_identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "to": "+14155550123", "text": "Your order shipped today. Reply here with any questions."}
   whatsapp.numbers.assign:
     args: {"account_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "expected_revision": 1}
   whatsapp.numbers.list:

@@ -12,6 +12,7 @@ type KeyBuilder = (
 ) => Promise<string>;
 
 function keyBuilderOf(plugin: ReturnType<typeof inkbox>): KeyBuilder {
+	// `unknown` because the key builder's real context type is wider than what these cases build.
 	return plugin.keyBuilder as unknown as KeyBuilder;
 }
 
@@ -250,6 +251,22 @@ describe('risk levels (PLUGIN_PR_RULES R8)', () => {
 		}
 		// Releasing a number returns it to the carrier.
 		expect(meta['phone.numbers.release']?.irreversible).toBe(true);
+	});
+
+	it('marks updates with an input that deletes or provisions destructive, the whole operation', () => {
+		for (const id of [
+			// A phone number or a dedicated iMessage line.
+			'identities.create',
+			'identities.update',
+			// status: "deleted"
+			'phone.texts.update',
+			// enabled: false deletes the hosted computer and its files.
+			'hosting.set',
+			// A shorter retention_days deletes older archived messages.
+			'slack.archive.updateSettings',
+		]) {
+			expect([id, meta[id]?.riskLevel]).toEqual([id, 'destructive']);
+		}
 	});
 
 	it('marks rotating a key or secret destructive', () => {

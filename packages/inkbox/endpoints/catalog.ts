@@ -60,7 +60,6 @@ export const inkboxEndpointsNested = {
 	},
 	agentSignup: {
 		getStatus: op('agentSignup.getStatus'),
-		register: op('agentSignup.register'),
 		resendVerification: op('agentSignup.resendVerification'),
 		verify: op('agentSignup.verify'),
 	},
@@ -719,7 +718,6 @@ export const inkboxEndpointSchemas = {
 	'a2a.tasks.reply': inkboxSchemaEntry('a2a.tasks.reply'),
 	'account.whoami': inkboxSchemaEntry('account.whoami'),
 	'agentSignup.getStatus': inkboxSchemaEntry('agentSignup.getStatus'),
-	'agentSignup.register': inkboxSchemaEntry('agentSignup.register'),
 	'agentSignup.resendVerification': inkboxSchemaEntry(
 		'agentSignup.resendVerification',
 	),
@@ -1484,7 +1482,7 @@ export const inkboxEndpointMeta = {
 	'a2a.invitations.decline': {
 		riskLevel: 'write',
 		description:
-			'Declines an A2A invitation by its `invitation_token`. Connections already accepted are not affected.',
+			'Declines an A2A invitation by its `invitation_token`. Connections already accepted are not affected. Inkbox needs no API key for this route; the plugin still sends the connected one.',
 	},
 	'a2a.invitations.get': {
 		riskLevel: 'read',
@@ -1499,7 +1497,7 @@ export const inkboxEndpointMeta = {
 	'a2a.invitations.preview': {
 		riskLevel: 'read',
 		description:
-			"Shows an A2A invitation's inviter, peer agents and expiry from the raw `invitation_token` without accepting it. Needs no API key.",
+			"Shows an A2A invitation's inviter, peer agents and expiry from the raw `invitation_token` without accepting it. Inkbox needs no API key for this route; the plugin still sends the connected one.",
 	},
 	'a2a.invitations.revoke': {
 		riskLevel: 'destructive',
@@ -1581,12 +1579,6 @@ export const inkboxEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			"Returns the calling agent's claim status, its human owner's account state and email, and the restrictions that still apply to it.",
-	},
-	'agentSignup.register': {
-		riskLevel: 'destructive',
-		irreversible: true,
-		description:
-			'Registers a new agent without authentication, returning a provisional identity, mailbox address and API key (shown once), and emails `human_email` a verification code with `note_to_human`.',
 	},
 	'agentSignup.resendVerification': {
 		riskLevel: 'destructive',
@@ -2184,7 +2176,7 @@ export const inkboxEndpointMeta = {
 			"Returns an identity's hosted-agent configuration: harness, compute shape, state, default model, instructions, trigger events and current `generation`.",
 	},
 	'hosting.set': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Configures an identity's hosted agent (harness, `shape_id`, `default_model`, `instructions`, `trigger_events`) at `expected_generation`; admin key only. `enabled: false` deletes the computer and its files.",
 	},
@@ -2264,7 +2256,7 @@ export const inkboxEndpointMeta = {
 			"Updates an identity's legacy permissions for one contact: `emails`/`phones` maps set both directions, `inbound_*`/`outbound_*` maps set one. Requires an admin API key.",
 	},
 	'identities.create': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Creates an agent identity (`agent_handle`) with its mailbox and tunnel, optionally provisioning a phone number, claiming an iMessage line or attaching vault secrets.',
 	},
@@ -2420,7 +2412,7 @@ export const inkboxEndpointMeta = {
 			"Changes a Slack contact rule's `action` or `direction`, or edits one side with `apply_to`. Requires an admin API key.",
 	},
 	'identities.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			"Updates an identity's display name, description, iMessage and WhatsApp reachability, attached iMessage line, and whitelist/blacklist filter modes per channel.",
 	},
@@ -2784,7 +2776,7 @@ export const inkboxEndpointMeta = {
 	'mail.messages.getAttachment': {
 		riskLevel: 'read',
 		description:
-			'Downloads a message attachment by `filename`; redirects to a temporary URL, or returns the URL as JSON with `redirect=false`.',
+			"Returns JSON with a temporary download URL for a message attachment (`filename` as in `attachment_metadata`). Fetch the file from that URL; the plugin never follows Inkbox's redirect, so the API key stays on inkbox.ai.",
 	},
 	'mail.messages.list': {
 		riskLevel: 'read',
@@ -3123,7 +3115,7 @@ export const inkboxEndpointMeta = {
 			'Sends an SMS, or MMS with `media_urls`, from a phone number to `to` (1 to 8 numbers; 2 or more is a group) or into `conversation_id`. Texts real phones and uses SMS allowance.',
 	},
 	'phone.texts.update': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Marks an SMS/MMS message read or unread (`is_read`), or deletes it (`status: deleted`).',
 	},
@@ -3185,7 +3177,7 @@ export const inkboxEndpointMeta = {
 			"Searches retained Slack messages in one connection's archive by keyword (`q`), optionally by conversation, user or time range. Not semantic search.",
 	},
 	'slack.archive.updateSettings': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
 			'Sets how many days a Slack connection keeps retained messages (`retention_days`; null for no limit); shortening it schedules older messages for deletion. Admin API key only.',
 	},

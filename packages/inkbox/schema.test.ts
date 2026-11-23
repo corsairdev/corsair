@@ -34,6 +34,7 @@ function operation(id: string) {
 function properties(id: string): Record<string, Record<string, unknown>> {
 	return operation(id).input.properties as Record<
 		string,
+		// `unknown` because manifest properties are raw JSON Schema documents.
 		Record<string, unknown>
 	>;
 }
@@ -45,11 +46,11 @@ describe('inkbox-manifest.json', () => {
 		).toEqual([]);
 	});
 
-	it('has 455 operations: the 496 spec routes less 21 deprecated, 15 console-only and 5 internal, one per id and route', () => {
-		expect(ids).toHaveLength(455);
-		expect(new Set(ids).size).toBe(455);
+	it('has 454 operations: the 496 spec routes less 21 deprecated, 15 console-only, 5 internal and the keyless self-signup, one per id and route', () => {
+		expect(ids).toHaveLength(454);
+		expect(new Set(ids).size).toBe(454);
 		expect([...INKBOX_OPERATION_IDS].sort()).toEqual([...ids].sort());
-		expect(routes.size).toBe(455);
+		expect(routes.size).toBe(454);
 	});
 
 	it('resolves every schema reference', () => {
@@ -92,6 +93,8 @@ describe('inkbox-manifest.json', () => {
 			// A server-sent event stream.
 			'GET /api/v1/identities/{agent_handle}/hosting/chat/conversations/{conversation_id}/events',
 			'GET /health',
+			// Keyless self-signup: it makes a new organization, before any connection exists.
+			'POST /api/v1/agent-signup/',
 		]) {
 			expect(routes.has(route)).toBe(false);
 		}
@@ -169,6 +172,9 @@ describe('inkbox-manifest.json', () => {
 	});
 
 	it('lists one webhook per channel with the event types it carries', () => {
+		// Checked before the map below, which would keep only the last of two same ids.
+		const webhookIds = inkboxWebhookDefinitions.map((webhook) => webhook.id);
+		expect(new Set(webhookIds).size).toBe(webhookIds.length);
 		const byId = Object.fromEntries(
 			inkboxWebhookDefinitions.map((webhook) => [webhook.id, webhook.events]),
 		);
@@ -328,16 +334,44 @@ describe('zod schemas', () => {
 			brand_new_field: true,
 		});
 		expect(parsed.success).toBe(true);
+		// `unknown` because a parsed response keeps unknown fields of any type.
 		expect((parsed.data as Record<string, unknown>).brand_new_field).toBe(true);
 	});
 
-	it('refuses unknown keys on routes without a body', () => {
+	it('refuses unknown keys on routes without a body, and next to a raw text body', () => {
 		expect(
 			getInkboxInputSchema('identities.get').safeParse({
 				agent_handle: 'support',
 				handle: 'support',
 			}).success,
 		).toBe(false);
+		// An extra key next to `vcard` could otherwise be sent in its place.
+		expect(
+			getInkboxInputSchema('contacts.import').safeParse({
+				vcard: 'BEGIN:VCARD',
+				'0': 'not the card',
+			}).success,
+		).toBe(false);
+	});
+
+	it('takes only its own event types in a webhook payload', () => {
+		const mail = getInkboxWebhookPayloadSchema('mail.messageEvent');
+		const event = {
+			id: 'evt_1',
+			event_type: 'message.received',
+			timestamp: '2026-11-23T12:00:00Z',
+			data: {},
+		};
+		expect(mail.safeParse(event).success).toBe(true);
+		expect(mail.safeParse({ ...event, event_type: 'call.ended' }).success).toBe(
+			false,
+		);
+		expect(
+			getInkboxWebhookPayloadSchema('phone.callEnded').safeParse({
+				...event,
+				event_type: 'call.ended',
+			}).success,
+		).toBe(true);
 	});
 });
 

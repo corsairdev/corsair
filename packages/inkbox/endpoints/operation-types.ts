@@ -45,7 +45,6 @@ export const INKBOX_OPERATION_IDS = [
 	'a2a.tasks.reply',
 	'account.whoami',
 	'agentSignup.getStatus',
-	'agentSignup.register',
 	'agentSignup.resendVerification',
 	'agentSignup.verify',
 	'apiKeys.create',
@@ -1564,18 +1563,6 @@ export type InkboxAgentRestrictions = {
 	allowed_recipients?: Array<string> | null;
 	can_receive?: boolean | null;
 	can_create_mailboxes?: boolean | null;
-};
-
-export type InkboxAgentSignupResponse = {
-	email_address?: string | null;
-	organization_id?: string | null;
-	/** Full API key. Store securely, it will not be shown again. */
-	api_key?: string | null;
-	agent_handle?: string | null;
-	claim_status?: InkboxAgentClaimStatus | null;
-	human_email?: string | null;
-	message?: string | null;
-	invitation?: InkboxA2AInvitationSignupSummary | null;
 };
 
 export type InkboxAgentSignupStatusResponse = {
@@ -6385,22 +6372,6 @@ export type InkboxOperationInputs = {
 	};
 	'account.whoami': Record<string, never>;
 	'agentSignup.getStatus': Record<string, never>;
-	'agentSignup.register': {
-		/** Email address of the human who owns/oversees this agent. */
-		human_email: string;
-		/** Message from the agent to the human, included in the verification email. */
-		note_to_human: string;
-		/** Display name for the agent's mailbox. Defaults to agent_handle when omitted. */
-		display_name?: string | null;
-		/** Optional agent handle. A leading '@' is stripped automatically. Must contain only lowercase letters, numbers, dashes, and underscores. Auto-generated from display_name if omitted. */
-		agent_handle?: string | null;
-		/** Optional email local part to use before the sending domain. If omitted, the server generates a random one. */
-		email_local_part?: string | null;
-		/** Agent runtime/harness the signing-up agent runs on (e.g. 'claude-code', 'codex', 'cursor'). Free-form: unknown values are accepted, never rejected. */
-		harness?: string | null;
-		/** Optional A2A connection invitation credential. Omit when signup is not part of an A2A invitation. */
-		invitation_token?: string | null;
-	};
 	'agentSignup.resendVerification': Record<string, never>;
 	'agentSignup.verify': {
 		/** 6-digit verification code sent to the human's email. */
@@ -9115,7 +9086,6 @@ export type InkboxOperationOutputs = {
 	'a2a.tasks.reply': InkboxA2ATaskResponse;
 	'account.whoami': Record<string, InkboxJsonValue>;
 	'agentSignup.getStatus': InkboxAgentSignupStatusResponse;
-	'agentSignup.register': InkboxAgentSignupResponse;
 	'agentSignup.resendVerification': InkboxAgentClaimResponse;
 	'agentSignup.verify': InkboxAgentClaimResponse;
 	'apiKeys.create': InkboxCreateApiKeyResponse;

@@ -18,10 +18,12 @@ const docs = require('./plugin-docs.yaml') as {
 function resolve(schema: unknown): Record<string, unknown> {
 	let current = schema;
 	for (let depth = 0; depth < 20; depth++) {
+		// `unknown` because the walk covers raw JSON Schema documents.
 		const record = current as Record<string, unknown> | undefined;
 		if (!record || typeof record.$ref !== 'string') break;
 		current = inkboxDefinitions[record.$ref];
 	}
+	// `unknown` because the walk covers raw JSON Schema documents.
 	return (current ?? {}) as Record<string, unknown>;
 }
 
@@ -30,6 +32,7 @@ function resolve(schema: unknown): Record<string, unknown> {
 function branches(schema: unknown): Record<string, unknown>[] {
 	const resolved = resolve(schema);
 	const members = [
+		// `unknown` because union members are raw JSON Schema documents.
 		...((resolved.oneOf as unknown[]) ?? []),
 		...((resolved.anyOf as unknown[]) ?? []),
 		...((resolved.allOf as unknown[]) ?? []),
@@ -46,9 +49,11 @@ function unknownKeys(value: unknown, schema: unknown, path: string): string[] {
 		return value.flatMap((item, i) => unknownKeys(item, items, `${path}.${i}`));
 	}
 	if (typeof value !== 'object' || value === null) return [];
+	// `unknown` because declared property schemas are raw JSON Schema documents.
 	const declared = new Map<string, unknown>();
 	for (const option of options) {
 		for (const [key, inner] of Object.entries(
+			// `unknown` because declared property schemas are raw JSON Schema documents.
 			(option.properties as Record<string, unknown>) ?? {},
 		)) {
 			if (!declared.has(key)) declared.set(key, inner);
@@ -78,7 +83,7 @@ function unknownKeys(value: unknown, schema: unknown, path: string): string[] {
 describe('plugin-docs.yaml', () => {
 	it('names the provider and says what the plugin covers', () => {
 		expect(docs.displayName).toBe('Inkbox');
-		expect(docs.description).toMatch(/455 operations/);
+		expect(docs.description).toMatch(/454 operations/);
 	});
 
 	it('gives every operation an apiExample', () => {

@@ -43,6 +43,7 @@ function sentAt(index: number) {
 
 beforeEach(() => {
 	fetchMock.mockReset();
+	// `unknown` because jest's mock has no fetch overloads, so it is cast through unknown.
 	global.fetch = fetchMock as unknown as typeof fetch;
 });
 
@@ -178,6 +179,7 @@ describe('transport', () => {
 			path: '/api/v1/mail/mailboxes/{email_address}/messages',
 			pathParameters: { email_address: 'agent@inkboxmail.com' },
 			body: { subject: 'Quarterly numbers', body_text: 'Revenue was 1.2M' },
+			// `unknown` because a rejected promise can carry anything until cast to ApiError.
 		}).catch((e: unknown) => e)) as ApiError;
 		expect(error).toBeInstanceOf(ApiError);
 		expect(error.status).toBe(404);
@@ -202,6 +204,7 @@ describe('transport', () => {
 			key: KEY,
 			method: 'GET',
 			path: '/api/v1/identities/',
+			// `unknown` because a rejected promise can carry anything until cast to ApiError.
 		}).catch((e: unknown) => e)) as ApiError;
 		expect(error.status).toBe(401);
 		expect(error.message).toBe('Inkbox 401: Unauthorized');
@@ -293,6 +296,20 @@ describe('errors', () => {
 		expect(error.message).toBe(
 			'Inkbox 403: Recipient [REDACTED] has not opted in; code [REDACTED] invalid, 48210 ok',
 		);
+	});
+
+	it('removes a short customer value too, a name like Ada, as a whole word', () => {
+		const error = withoutRequestData(
+			apiError(
+				{ detail: 'Contact Ada already exists; Adam is fine' },
+				{ body: { given_name: 'Ada', family_name: 'Lovelace' } },
+				409,
+			),
+		);
+		expect(error.message).toBe(
+			'Inkbox 409: Contact [REDACTED] already exists; Adam is fine',
+		);
+		expect(JSON.stringify(error.body)).not.toMatch(/\bAda\b/);
 	});
 
 	it('drops fields a validation error uses to echo the value', () => {

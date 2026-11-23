@@ -54,7 +54,7 @@ the call, which a Corsair webhook handler can't do.
 
 ## How it is built
 
-The 455 operations come from Inkbox's published OpenAPI spec
+The 454 operations come from Inkbox's published OpenAPI spec
 (https://inkbox.ai/api/openapi.json, fetched 2026-11-23). Its operation ids
 are the ones FastAPI generates (`list_mailboxes_mail_mailboxes_get`), so each
 route is named after Inkbox's TypeScript SDK instead (`mail.messages.send`,
@@ -87,11 +87,23 @@ Left out of the spec's 496 routes:
   Registry's callbacks, and the hosted-chat server-sent event stream
   (`hostedChat.conversations.listMessages` and `hostedChat.turns.get` read the
   same turns).
+- `POST /agent-signup/`, Inkbox's keyless self-signup. It creates a new
+  organization and returns that organization's first API key, so it runs
+  before there is anything to connect, and every plugin call carries the
+  connected account's key. Run it with Inkbox's CLI or SDK, then connect the
+  key it returns; `agentSignup.verify`, `resendVerification` and `getStatus`
+  are in the plugin.
 
 Billing, Slack, compliance (10DLC) and hosted-agent routes are all in.
 Operations that send a message, buy something, change the plan, provision or
 release a number, rotate a key or can't be undone are `destructive`, so a
-permission mode can ask before they run.
+permission mode can ask before they run. Risk is set per operation, so an
+update with one input that deletes or provisions is `destructive` as a whole:
+`identities.create` and `identities.update` (a phone number or a dedicated
+iMessage line), `phone.texts.update` (`status: "deleted"`), `hosting.set`
+(`enabled: false` deletes the hosted computer and its files) and
+`slack.archive.updateSettings` (a shorter `retention_days` deletes older
+archived messages).
 
 ## Found by the live tests
 
@@ -136,10 +148,10 @@ The spec says otherwise, or nothing:
 | `a2a.contexts.update` | `inkbox.api.a2a.contexts.update` | `write` | Renames an A2A context (`name`). Either participant can rename it, whoever opened it. |
 | `a2a.invitations.accept` | `inkbox.api.a2a.invitations.accept` | `write` | Accepts an A2A invitation (`invitation_token`) as the agent that owns the calling agent-scoped API key, connecting it to the invitation's peer agents. |
 | `a2a.invitations.create` | `inkbox.api.a2a.invitations.create` | `destructive` | Creates an A2A invitation that lets an outside agent connect to `peer_agent_handles`; Inkbox emails `recipient_email` if set, otherwise returns a link to hand off. Requires an admin API key. |
-| `a2a.invitations.decline` | `inkbox.api.a2a.invitations.decline` | `write` | Declines an A2A invitation by its `invitation_token`. Connections already accepted are not affected. |
+| `a2a.invitations.decline` | `inkbox.api.a2a.invitations.decline` | `write` | Declines an A2A invitation by its `invitation_token`. Connections already accepted are not affected. Inkbox needs no API key for this route; the plugin still sends the connected one. |
 | `a2a.invitations.get` | `inkbox.api.a2a.invitations.get` | `read` | Returns one A2A invitation issued by your organization, with its status, peer agents and email delivery state. |
 | `a2a.invitations.list` | `inkbox.api.a2a.invitations.list` | `read` | Lists A2A invitations issued by your organization, newest first, optionally filtered by `status`. |
-| `a2a.invitations.preview` | `inkbox.api.a2a.invitations.preview` | `read` | Shows an A2A invitation's inviter, peer agents and expiry from the raw `invitation_token` without accepting it. Needs no API key. |
+| `a2a.invitations.preview` | `inkbox.api.a2a.invitations.preview` | `read` | Shows an A2A invitation's inviter, peer agents and expiry from the raw `invitation_token` without accepting it. Inkbox needs no API key for this route; the plugin still sends the connected one. |
 | `a2a.invitations.revoke` | `inkbox.api.a2a.invitations.revoke` | `destructive` | Revokes a pending or awaiting-verification A2A invitation so it can no longer be accepted. Accepted, declined or expired invitations cannot be revoked. |
 | `a2a.listDirectory` | `inkbox.api.a2a.listDirectory` | `read` | Searches the organization's directory of A2A-enabled agent identities, including non-public cards, by text `q` or `verified_domain`. |
 | `a2a.messages.list` | `inkbox.api.a2a.messages.list` | `read` | Lists A2A task messages for an identity, newest first, filterable by `direction`, `task_id`, `context_id`, `role`, peer handles, `since` or full-text `q`. |
@@ -156,7 +168,6 @@ The spec says otherwise, or nothing:
 | `a2a.tasks.reply` | `inkbox.api.a2a.tasks.reply` | `destructive` | Replies to a task this identity received, sending message `parts` to the requesting agent and moving the task by `intent`: progress, ask_caller, complete or fail. |
 | `account.whoami` | `inkbox.api.account.whoami` | `read` | Returns the authenticated caller's identity and auth type, to check which organization, identity or key a request runs as. |
 | `agentSignup.getStatus` | `inkbox.api.agentSignup.getStatus` | `read` | Returns the calling agent's claim status, its human owner's account state and email, and the restrictions that still apply to it. |
-| `agentSignup.register` | `inkbox.api.agentSignup.register` | `destructive` | Registers a new agent without authentication, returning a provisional identity, mailbox address and API key (shown once), and emails `human_email` a verification code with `note_to_human`. |
 | `agentSignup.resendVerification` | `inkbox.api.agentSignup.resendVerification` | `destructive` | Emails the agent's human owner a new 6-digit verification code, invalidating the previous one. Limited to once every 5 minutes. |
 | `agentSignup.verify` | `inkbox.api.agentSignup.verify` | `write` | Submits the 6-digit `verification_code` the human received by email to claim the agent and unlock full sending. |
 | `apiKeys.create` | `inkbox.api.apiKeys.create` | `destructive` | Creates an API key (`label`): set `scoped_identity_id` for an agent-scoped key, or omit it for an admin key with full organization access. The key value is returned only once. |
@@ -274,7 +285,7 @@ The spec says otherwise, or nothing:
 | `hosting.deliveries.list` | `inkbox.api.hosting.deliveries.list` | `read` | Lists up to 100 incoming-event deliveries to an identity's hosted agent, with state, attempts and last error. Page back with `before`. |
 | `hosting.deliveries.retry` | `inkbox.api.hosting.deliveries.retry` | `write` | Re-queues a failed event delivery to the identity's hosted agent. Requires an admin API key. |
 | `hosting.get` | `inkbox.api.hosting.get` | `read` | Returns an identity's hosted-agent configuration: harness, compute shape, state, default model, instructions, trigger events and current `generation`. |
-| `hosting.set` | `inkbox.api.hosting.set` | `write` | Configures an identity's hosted agent (harness, `shape_id`, `default_model`, `instructions`, `trigger_events`) at `expected_generation`; admin key only. `enabled: false` deletes the computer and its files. |
+| `hosting.set` | `inkbox.api.hosting.set` | `destructive` | Configures an identity's hosted agent (harness, `shape_id`, `default_model`, `instructions`, `trigger_events`) at `expected_generation`; admin key only. `enabled: false` deletes the computer and its files. |
 | `identities.avatar.delete` | `inkbox.api.identities.avatar.delete` | `destructive` | Removes an identity's avatar so future contact cards go out without a photo. Succeeds even when no avatar is set. |
 | `identities.avatar.get` | `inkbox.api.identities.avatar.get` | `read` | Downloads an identity's avatar as a 600x600 JPEG image. |
 | `identities.avatar.getMetadata` | `inkbox.api.identities.avatar.getMetadata` | `read` | Returns whether an identity has an avatar, its content type, and a temporary authorized URL to fetch it. |
@@ -290,7 +301,7 @@ The spec says otherwise, or nothing:
 | `identities.contactPermissions.get` | `inkbox.api.identities.contactPermissions.get` | `read` | Returns an identity's legacy per-address email and phone permissions (inbound and outbound) for one contact, plus profile and memories access. Requires an admin API key. |
 | `identities.contactPermissions.list` | `inkbox.api.identities.contactPermissions.list` | `read` | Lists every contact in the organization with an identity's permissions, including contacts hidden from that identity. Requires an admin API key. |
 | `identities.contactPermissions.update` | `inkbox.api.identities.contactPermissions.update` | `write` | Updates an identity's legacy permissions for one contact: `emails`/`phones` maps set both directions, `inbound_*`/`outbound_*` maps set one. Requires an admin API key. |
-| `identities.create` | `inkbox.api.identities.create` | `write` | Creates an agent identity (`agent_handle`) with its mailbox and tunnel, optionally provisioning a phone number, claiming an iMessage line or attaching vault secrets. |
+| `identities.create` | `inkbox.api.identities.create` | `destructive` | Creates an agent identity (`agent_handle`) with its mailbox and tunnel, optionally provisioning a phone number, claiming an iMessage line or attaching vault secrets. |
 | `identities.createTunnel` | `inkbox.api.identities.createTunnel` | `write` | Creates the tunnel for an identity that has none (for example one created with `hosted: true`), named after its handle. Requires an admin API key. |
 | `identities.delete` | `inkbox.api.identities.delete` | `destructive` | Deletes an identity with its mailbox and tunnel, revokes its scoped API keys and releases its phone number to the carrier. Cannot be undone; the handle stays reserved. |
 | `identities.disconnectImessageNumber` | `inkbox.api.identities.disconnectImessageNumber` | `destructive` | Detaches the dedicated iMessage number from an identity. |
@@ -320,7 +331,7 @@ The spec says otherwise, or nothing:
 | `identities.slackContactRules.get` | `inkbox.api.identities.slackContactRules.get` | `read` | Returns one Slack allow or block rule of an identity by `rule_id`. |
 | `identities.slackContactRules.list` | `inkbox.api.identities.slackContactRules.list` | `read` | Lists an identity's Slack allow and block rules, filterable by `action`, `match_type` (exact_user or workspace) and `direction`. |
 | `identities.slackContactRules.update` | `inkbox.api.identities.slackContactRules.update` | `write` | Changes a Slack contact rule's `action` or `direction`, or edits one side with `apply_to`. Requires an admin API key. |
-| `identities.update` | `inkbox.api.identities.update` | `write` | Updates an identity's display name, description, iMessage and WhatsApp reachability, attached iMessage line, and whitelist/blacklist filter modes per channel. |
+| `identities.update` | `inkbox.api.identities.update` | `destructive` | Updates an identity's display name, description, iMessage and WhatsApp reachability, attached iMessage line, and whitelist/blacklist filter modes per channel. |
 | `imessage.assignments.list` | `inkbox.api.imessage.assignments.list` | `read` | Lists active iMessage connections (one per recipient connected to an agent through the router or connect call), newest first, optionally for one `agent_identity_id`. |
 | `imessage.assignments.release` | `inkbox.api.imessage.assignments.release` | `destructive` | Disconnects a recipient from an agent (`assignment_id`): their messages stop reaching the agent and sends into that conversation fail. Requires an admin API key. |
 | `imessage.checkCapability` | `inkbox.api.imessage.checkCapability` | `read` | Checks which messaging service (`iMessage`, `SMS` or `RCS`) is currently available for an E.164 phone `number`. Read-only; sends nothing. |
@@ -391,7 +402,7 @@ The spec says otherwise, or nothing:
 | `mail.messages.delete` | `inkbox.api.mail.messages.delete` | `destructive` | Deletes one message from a mailbox (`email_address`). |
 | `mail.messages.forward` | `inkbox.api.mail.messages.forward` | `destructive` | Forwards a stored message from a mailbox to `recipients` as a new thread, with optional note, extra attachments and original attachments. Sends real email. |
 | `mail.messages.get` | `inkbox.api.mail.messages.get` | `read` | Returns one message from a mailbox (`email_address`) with its full plain-text and HTML body. |
-| `mail.messages.getAttachment` | `inkbox.api.mail.messages.getAttachment` | `read` | Downloads a message attachment by `filename`; redirects to a temporary URL, or returns the URL as JSON with `redirect=false`. |
+| `mail.messages.getAttachment` | `inkbox.api.mail.messages.getAttachment` | `read` | Returns JSON with a temporary download URL for a message attachment (`filename` as in `attachment_metadata`). Fetch the file from that URL; the plugin never follows Inkbox's redirect, so the API key stays on inkbox.ai. |
 | `mail.messages.list` | `inkbox.api.mail.messages.list` | `read` | Lists messages in one mailbox (`email_address`), newest first, filterable by `direction`, `folder` and date range. |
 | `mail.messages.replyAll` | `inkbox.api.mail.messages.replyAll` | `destructive` | Replies to every participant of a stored message from a mailbox; recipients are resolved server-side and the reply stays in the thread. Sends real email. |
 | `mail.messages.search` | `inkbox.api.mail.messages.search` | `read` | Searches messages in one mailbox (`email_address`) with full-text query `q`, ranked by relevance then recency. |
@@ -457,7 +468,7 @@ The spec says otherwise, or nothing:
 | `phone.texts.list` | `inkbox.api.phone.texts.list` | `read` | Lists SMS/MMS messages on a phone number, newest first, filterable by read and blocked state and date range. |
 | `phone.texts.search` | `inkbox.api.phone.texts.search` | `read` | Searches SMS/MMS message bodies on a phone number with full-text query `q`, ranked by relevance. |
 | `phone.texts.send` | `inkbox.api.phone.texts.send` | `destructive` | Sends an SMS, or MMS with `media_urls`, from a phone number to `to` (1 to 8 numbers; 2 or more is a group) or into `conversation_id`. Texts real phones and uses SMS allowance. |
-| `phone.texts.update` | `inkbox.api.phone.texts.update` | `write` | Marks an SMS/MMS message read or unread (`is_read`), or deletes it (`status: deleted`). |
+| `phone.texts.update` | `inkbox.api.phone.texts.update` | `destructive` | Marks an SMS/MMS message read or unread (`is_read`), or deletes it (`status: deleted`). |
 | `slack.actions.get` | `inkbox.api.slack.actions.get` | `read` | Returns the recorded result of a Slack message send (`action_id`): status, conversation, message timestamp or error. Does not contact Slack. |
 | `slack.actions.getByKey` | `inkbox.api.slack.actions.getByKey` | `read` | Looks up a Slack message send by the idempotency key it was sent with, to check whether a timed-out send went through without sending again. |
 | `slack.applications.getRemoval` | `inkbox.api.slack.applications.getRemoval` | `read` | Returns the progress of a Slack app removal (`operation_id`), including whether the app was deleted from Slack. |
@@ -469,7 +480,7 @@ The spec says otherwise, or nothing:
 | `slack.archive.listMessages` | `inkbox.api.slack.archive.listMessages` | `read` | Lists retained Slack messages from a connection's archive, newest first, by conversation, thread or timestamp range, with optional cached sender, reaction and file details. |
 | `slack.archive.purge` | `inkbox.api.slack.archive.purge` | `destructive` | Deletes all retained Slack messages in a connection's archive and cannot be undone; new messages keep being captured. Requires an admin API key. |
 | `slack.archive.search` | `inkbox.api.slack.archive.search` | `read` | Searches retained Slack messages in one connection's archive by keyword (`q`), optionally by conversation, user or time range. Not semantic search. |
-| `slack.archive.updateSettings` | `inkbox.api.slack.archive.updateSettings` | `write` | Sets how many days a Slack connection keeps retained messages (`retention_days`; null for no limit); shortening it schedules older messages for deletion. Admin API key only. |
+| `slack.archive.updateSettings` | `inkbox.api.slack.archive.updateSettings` | `destructive` | Sets how many days a Slack connection keeps retained messages (`retention_days`; null for no limit); shortening it schedules older messages for deletion. Admin API key only. |
 | `slack.connections.disconnect` | `inkbox.api.slack.connections.disconnect` | `destructive` | Disconnects a Slack workspace connection from its identity; live Slack operations stop. Requires an admin API key. |
 | `slack.connections.getCapabilities` | `inkbox.api.slack.connections.getCapabilities` | `read` | Returns a Slack connection's granted and missing scopes, the features they enable, native status and task-streaming support, and the upload size limit. |
 | `slack.connections.importContacts` | `inkbox.api.slack.connections.importContacts` | `write` | Imports Slack users the connection can see (workspace directory, DMs, shared channels, or one `conversation_id`) as Inkbox contacts, one page per call. Requires an admin API key. |

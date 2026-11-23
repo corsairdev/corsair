@@ -89,6 +89,7 @@ async function statusOf(promise: Promise<unknown>): Promise<number | 'ok'> {
 		await promise;
 		return 'ok';
 	} catch (error) {
+		// `unknown` because a rejected call can carry anything; only a numeric status is read.
 		const status = (error as { status?: unknown }).status;
 		if (typeof status === 'number') return status;
 		throw error;
@@ -181,11 +182,29 @@ beforeAll(async () => {
 
 afterAll(async () => {
 	if (!hasKey) return;
+	// Every cleanup step runs even when one before it fails, so a transient
+	// error can't leave the identity or other fixtures behind; failures are
+	// reported together at the end (names only, never values).
+	const failures: string[] = [];
+	// `unknown` because each cleanup call answers its own shape, which is not read.
+	const attempt = async (what: string, call: () => Promise<unknown>) => {
+		try {
+			await call();
+		} catch (error) {
+			// `unknown` because a rejected call can carry anything; only a numeric status is read.
+			const status = (error as { status?: unknown }).status;
+			// Already gone is fine.
+			if (status !== 404)
+				failures.push(`${what}: ${String(status ?? 'error')}`);
+		}
+	};
 	for (const id of made.subscriptionIds) {
-		await statusOf(api.webhooks.subscriptions.delete({ sub_id: id }));
+		await attempt('webhooks.subscriptions.delete', () =>
+			api.webhooks.subscriptions.delete({ sub_id: id }),
+		);
 	}
 	for (const draft of made.draftIds) {
-		await statusOf(
+		await attempt('mail.drafts.delete', () =>
 			api.mail.drafts.delete({
 				email_address: draft.mailbox,
 				draft_id: draft.id,
@@ -194,20 +213,31 @@ afterAll(async () => {
 		);
 	}
 	for (const id of made.invitationIds) {
-		await statusOf(api.a2a.invitations.revoke({ invitation_id: id }));
+		await attempt('a2a.invitations.revoke', () =>
+			api.a2a.invitations.revoke({ invitation_id: id }),
+		);
 	}
 	for (const id of made.noteIds) {
-		await statusOf(api.notes.delete({ note_id: id }));
+		await attempt('notes.delete', () => api.notes.delete({ note_id: id }));
 	}
 	if (made.contactIds.length > 0) {
-		await statusOf(api.contacts.bulkDelete({ contact_ids: made.contactIds }));
+		await attempt('contacts.bulkDelete', () =>
+			api.contacts.bulkDelete({ contact_ids: made.contactIds }),
+		);
 	}
 	if (made.identityCreated) {
-		await statusOf(api.identities.delete({ agent_handle: HANDLE }));
+		await attempt('identities.delete', () =>
+			api.identities.delete({ agent_handle: HANDLE }),
+		);
 	}
 	const out = process.env.INKBOX_LIVE_OPS_FILE;
 	if (out) writeFileSync(out, `${[...ran].sort().join('\n')}\n`);
 	console.log(`[inkbox] live operations run: ${ran.size}`);
+	if (failures.length > 0) {
+		throw new Error(
+			`[inkbox] cleanup left fixtures behind: ${failures.join('; ')}`,
+		);
+	}
 }, 120_000);
 
 live('Inkbox live API: organization reads', () => {

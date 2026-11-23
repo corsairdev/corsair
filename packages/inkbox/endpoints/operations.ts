@@ -55,6 +55,37 @@ export function timeoutFor(id: string): number {
 	return SLOW_OPERATIONS.has(id) ? 120 * SECOND : 30 * SECOND;
 }
 
+/** The most recipients one SMS or group MMS takes (Inkbox's `to` contract). */
+export const INKBOX_MAX_TEXT_RECIPIENTS = 8;
+
+/**
+ * phone.texts.send goes to `to` (one number, or 1 to 8 for a group MMS) or into
+ * an existing `conversation_id`, never both. The spec says so in prose only, so
+ * it is checked here before a text goes out.
+ */
+// `unknown` because the input was validated against an open schema.
+export function textDestinationProblem(
+	input: Record<string, unknown>,
+): string | undefined {
+	const to = input.to;
+	const hasTo = to !== undefined && to !== null;
+	const hasConversation =
+		input.conversation_id !== undefined && input.conversation_id !== null;
+	if (hasTo && hasConversation) {
+		return 'set `to` or `conversation_id`, not both';
+	}
+	if (!hasTo && !hasConversation) {
+		return 'set `to` (1 to 8 numbers) or `conversation_id`';
+	}
+	if (
+		Array.isArray(to) &&
+		(to.length < 1 || to.length > INKBOX_MAX_TEXT_RECIPIENTS)
+	) {
+		return `to: 1 to ${INKBOX_MAX_TEXT_RECIPIENTS} recipients`;
+	}
+	return undefined;
+}
+
 type Issue = {
 	path: readonly PropertyKey[];
 	message: string;
@@ -123,6 +154,7 @@ export function fileFields(operation: InkboxOperationDefinition): Set<string> {
 		if (
 			typeof schema === 'object' &&
 			schema !== null &&
+			// `unknown` because a property schema is raw provider JSON Schema.
 			(schema as Record<string, unknown>).format === 'binary'
 		) {
 			names.add(name);
@@ -168,6 +200,7 @@ export function fileNameFor(
 	input: Record<string, unknown>,
 	contentType?: string | null,
 ): string {
+	// `unknown` because each operation's validated input has its own field types.
 	const text = (value: unknown, fallback: string) =>
 		typeof value === 'string' && value.length > 0 ? value : fallback;
 	const image = (contentType ?? '').toLowerCase().includes('png')
@@ -225,6 +258,11 @@ export function createInkboxOperation<Id extends InkboxOperationId>(
 				`Invalid input for inkbox ${id}: ${describeIssues(id, parsedInput.error.issues, 'input', 5)}`,
 			);
 		}
+		if (id === 'phone.texts.send') {
+			const problem = textDestinationProblem(parsedInput.data);
+			if (problem)
+				throw new Error(`Invalid input for inkbox ${id}: ${problem}`);
+		}
 		// Send what was validated, not the caller's object.
 		// `unknown` is necessary because the fields differ per operation; each was just validated.
 		const valid: Record<string, unknown> = { ...parsedInput.data };
@@ -237,9 +275,12 @@ export function createInkboxOperation<Id extends InkboxOperationId>(
 			if (field.in === 'body') continue;
 			let value = valid[field.name];
 			delete valid[field.name];
-			if (field.generated && (value === undefined || value === '')) {
-				// One key per call: core's 429 retries resend the same headers, so a
-				// retried send can't go out twice.
+			if (
+				field.generated &&
+				(value === undefined || value === null || value === '')
+			) {
+				// One key per call (null and '' count as left out): core's 429
+				// retries resend the same headers, so a retried send can't go out twice.
 				value = crypto.randomUUID();
 			}
 			if (value === undefined || value === null) continue;

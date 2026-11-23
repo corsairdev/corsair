@@ -187,6 +187,7 @@ export function withoutRequestData(error: ApiError): ApiError {
 function issueText(item: unknown): string | undefined {
 	if (typeof item === 'string') return item;
 	if (typeof item !== 'object' || item === null) return undefined;
+	// `unknown` because an error detail item has no fixed shape; each field is narrowed below.
 	const record = item as { loc?: unknown; msg?: unknown; message?: unknown };
 	const text =
 		typeof record.msg === 'string'
@@ -213,15 +214,16 @@ function issueText(item: unknown): string | undefined {
 	return where ? `${where}: ${text}` : text;
 }
 
-// `unknown` because an error body is whatever JSON (or text) Inkbox sent.
 export function inkboxErrorMessage(
 	status: number,
 	statusText: string,
+	// `unknown` because an error body is whatever JSON (or text) Inkbox sent.
 	body: unknown,
 ): string {
 	const fields =
 		typeof body === 'object' && body !== null && !Array.isArray(body)
-			? (body as { detail?: unknown; message?: unknown; error?: unknown })
+			? // `unknown` because an error body's fields are narrowed one by one below.
+				(body as { detail?: unknown; message?: unknown; error?: unknown })
 			: {};
 	let reason: string | undefined;
 	if (typeof fields.detail === 'string' && fields.detail.length > 0) {
@@ -248,9 +250,13 @@ export function inkboxErrorMessage(
 	return text.length > 500 ? `${text.slice(0, 497)}...` : text;
 }
 
-/** Shorter strings are ids, enum values and flags, not secrets worth hiding... */
-const MIN_SCRUBBED_LENGTH = 6;
-/** ...unless they sit under a key like these (a password, a token, a phone number). */
+/** Strings shorter than this are matched as whole words only... */
+const WHOLE_WORD_BELOW = 6;
+/**
+ * ...and one-character strings are left alone, unless they sit under a key
+ * like these (a password, a token, a code, a phone number), where every
+ * length counts.
+ */
 const SECRET_KEY =
 	/pass|secret|token|credential|key$|otp|code$|phone|number|email|address|to$|from$/i;
 
@@ -259,8 +265,9 @@ type SentString = { text: string; wholeWord: boolean };
 /**
  * Every string this call sent (JSON body, query values, path values), longest
  * first, so an Inkbox message that quotes one back loses it while keeping its
- * reason. Values under a secret-looking key count at any length and are
- * matched as whole words, so a short one can't take out digits elsewhere.
+ * reason. Any of them can be customer data (a name like "Ada", a subject), so
+ * length doesn't exempt one; short ones are matched as whole words, so they
+ * can't take out letters or digits inside other words.
  */
 function sentStrings(request: ApiError['request']): SentString[] {
 	const found = new Map<string, boolean>();
@@ -268,11 +275,8 @@ function sentStrings(request: ApiError['request']): SentString[] {
 	const visit = (value: unknown, depth: number, secret: boolean) => {
 		if (depth > 8 || value === undefined || value === null) return;
 		if (typeof value === 'string') {
-			if (secret && value.length > 0) {
-				if (!found.has(value))
-					found.set(value, value.length < MIN_SCRUBBED_LENGTH);
-			} else if (value.length >= MIN_SCRUBBED_LENGTH) {
-				found.set(value, false);
+			if (value.length >= (secret ? 1 : 2) && !found.has(value)) {
+				found.set(value, value.length < WHOLE_WORD_BELOW);
 			}
 			return;
 		}

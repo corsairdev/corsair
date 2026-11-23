@@ -134,6 +134,7 @@ function resolve(value: unknown): unknown {
  * to attach a description to a $ref, or to build one object from its parts). Returns undefined
  * when a member is not a plain object.
  */
+// `unknown` because allOf members are raw provider JSON Schema documents, resolved and checked below.
 function mergeAllOf(members: unknown[]): OpenApiDocument | undefined {
 	// `unknown` is necessary because merged property schemas are provider JSON Schema values.
 	const properties: Record<string, unknown> = {};
@@ -149,7 +150,14 @@ function mergeAllOf(members: unknown[]): OpenApiDocument | undefined {
 		}
 		// A string or number member (allOf used to attach a description to a $ref).
 		if (part.type !== 'object' && !isRecord(part.properties)) return undefined;
-		if (isRecord(part.properties)) Object.assign(properties, part.properties);
+		if (isRecord(part.properties)) {
+			for (const [name, schema] of Object.entries(part.properties)) {
+				// A property two members both declare must satisfy both, so neither
+				// member's constraints (a minimum, an enum) are lost.
+				properties[name] =
+					name in properties ? { allOf: [properties[name], schema] } : schema;
+			}
+		}
 		if (Array.isArray(part.required)) {
 			for (const name of part.required) {
 				if (typeof name === 'string') required.push(name);
@@ -364,8 +372,10 @@ export function inkboxOperationFor(id: string): InkboxOperationDefinition {
 function buildInputSchema(operation: InkboxOperationDefinition): z.ZodType {
 	const schema = schemaFromOpenApi(operation.input, 'request', new Map());
 	// With no body every field is a path, query or header parameter, so an
-	// unknown key can only be a mistake (it would be dropped silently).
-	return operation.request === 'none' && schema instanceof z.ZodObject
+	// unknown key can only be a mistake (it would be dropped silently). A text
+	// body is its one declared field, so an extra key could take its place.
+	return (operation.request === 'none' || operation.request === 'text') &&
+		schema instanceof z.ZodObject
 		? schema.strict()
 		: schema;
 }
@@ -377,6 +387,7 @@ export function getInkboxInputSchema(
 	let schema = inputSchemaCache.get(id);
 	if (!schema) {
 		schema = buildInputSchema(inkboxOperationFor(id)) as z.ZodType<
+			// `unknown` because each cached request schema has its own fields.
 			Record<string, unknown>
 		>;
 		inputSchemaCache.set(id, schema);
@@ -419,11 +430,23 @@ export function inkboxWebhookFor(id: string): InkboxWebhookDefinition {
 export function getInkboxWebhookPayloadSchema(id: string): z.ZodType {
 	let schema = webhookSchemaCache.get(id);
 	if (!schema) {
+		const webhook = inkboxWebhookFor(id);
+		const events = new Set(webhook.events);
 		schema = schemaFromOpenApi(
-			inkboxWebhookFor(id).payload,
+			webhook.payload,
 			'response',
 			definitionCache,
-		);
+		).superRefine((payload, context) => {
+			// Responses take open enums, but a webhook takes only its own event types.
+			const eventType = isRecord(payload) ? payload.event_type : undefined;
+			if (typeof eventType !== 'string' || !events.has(eventType)) {
+				context.addIssue({
+					code: 'custom',
+					path: ['event_type'],
+					message: `not an event type of ${id}`,
+				});
+			}
+		});
 		webhookSchemaCache.set(id, schema);
 	}
 	return schema;

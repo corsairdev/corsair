@@ -30,6 +30,7 @@ const docs = require('./plugin-docs.yaml') as {
 	apiExamples: Record<string, { args: Record<string, unknown> }>;
 };
 
+// `unknown` because options are free-form plugin options; each case sets only what it reads.
 function buildCtx(options: Record<string, unknown> = {}): InkboxContext {
 	return {
 		endpoints: {},
@@ -210,6 +211,56 @@ describe('routing', () => {
 		expect(mockedRequest.mock.calls[2]?.[0].body).toEqual(input);
 	});
 
+	it('treats a null idempotency key as left out, so a send still carries one', async () => {
+		mockedRequest.mockResolvedValue({ id: 'n1' });
+		await endpointFor('notes.create')(buildCtx(), {
+			body: 'x',
+			idempotencyKey: null,
+		});
+		expect(
+			mockedRequest.mock.calls[0]?.[0].headers?.['Idempotency-Key'],
+		).toMatch(/^[0-9a-f-]{36}$/);
+	});
+
+	it('sends a text to `to` or a `conversation_id`, never both or neither, and at most 8 numbers', async () => {
+		const send = endpointFor('phone.texts.send');
+		const number = '7c9e6679-7425-40de-944b-e07fc1f90ae7';
+		await expect(
+			send(buildCtx(), {
+				phone_number_id: number,
+				to: ['+14155550123'],
+				conversation_id: 'conv_1',
+				text: 'hi',
+			}),
+		).rejects.toThrow('set `to` or `conversation_id`, not both');
+		await expect(
+			send(buildCtx(), { phone_number_id: number, text: 'hi' }),
+		).rejects.toThrow('set `to` (1 to 8 numbers) or `conversation_id`');
+		await expect(
+			send(buildCtx(), {
+				phone_number_id: number,
+				to: Array(9).fill('+14155550123'),
+				text: 'hi',
+			}),
+		).rejects.toThrow('to: 1 to 8 recipients');
+		await expect(
+			send(buildCtx(), { phone_number_id: number, to: [], text: 'hi' }),
+		).rejects.toThrow('to: 1 to 8 recipients');
+		expect(mockedRequest).not.toHaveBeenCalled();
+		mockedRequest.mockResolvedValue({ id: 't1' });
+		await send(buildCtx(), {
+			phone_number_id: number,
+			to: '+14155550123',
+			text: 'hi',
+		});
+		await send(buildCtx(), {
+			phone_number_id: number,
+			conversation_id: 'conv_1',
+			text: 'hi',
+		});
+		expect(mockedRequest).toHaveBeenCalledTimes(2);
+	});
+
 	it('looks a send up by the key the caller names, never a made-up one', async () => {
 		mockedRequest.mockResolvedValueOnce({ message_id: 'm1' });
 		await endpointFor('messageSends.lookup')(buildCtx(), {
@@ -326,6 +377,7 @@ describe('routing', () => {
 		const unknown = (await endpointFor('identities.get')(buildCtx(), {
 			agent_handle: 'support',
 			alice_phone: 'x',
+			// `unknown` because a rejected promise can carry anything until cast to Error.
 		}).catch((e: unknown) => e)) as Error;
 		expect(unknown.message).toBe(
 			'Invalid input for inkbox identities.get: input: 1 unknown field (<key>); this operation takes agent_handle',

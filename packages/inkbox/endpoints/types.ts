@@ -28,6 +28,7 @@ export const InkboxEndpointInputSchemas =
 	>;
 
 export const InkboxEndpointOutputSchemas =
+	// `unknown` because TypeScript can't see the getters Object.defineProperty adds (see above).
 	inkboxOutputSchemas as unknown as Readonly<
 		Record<keyof InkboxEndpointOutputs, z.ZodType>
 	>;

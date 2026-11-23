@@ -171,6 +171,7 @@ function inkboxWebhook<Id extends InkboxWebhookId>(id: Id): InkboxWebhook<Id> {
 				`inkbox.webhook.${id}`,
 				// The event type and id only: data holds message bodies, numbers and addresses.
 				{
+					// `unknown` because the parsed event's fields are typed per webhook; only these two are logged.
 					eventType: (event as { event_type?: unknown }).event_type,
 					eventId: (event as { id?: unknown }).id,
 				},
