@@ -21,7 +21,7 @@ describe('plugin-docs.yaml API examples', () => {
 	)('%s example passes the input check the operation runs', (id, entry) => {
 		const schemas = quickbooksEndpointSchemas[id];
 		expect(schemas).toBeDefined();
-		// The calls are JSON object literals.
+		// unknown because the parsed example JSON is untrusted until the operation's input schema checks it.
 		const args: unknown = JSON.parse(entry.call);
 		const result = requestSchema(schemas!.input).safeParse(args);
 		expect(result.error?.issues ?? []).toEqual([]);

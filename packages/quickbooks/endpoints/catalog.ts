@@ -53,12 +53,21 @@ type CatalogDefinition<I extends z.ZodType, O extends z.ZodType> = {
 	request: (input: z.output<I>) => CatalogRequest;
 	kind?: 'json' | 'binary';
 };
+/**
+ * The catalog's request models list only some of each entity's writable
+ * fields, and requestSchema accepts the others at runtime (CustomerRef on a
+ * sales receipt, CompanyName on a customer). The public input type of a
+ * request body allows them too, so callers need no casts.
+ */
+export type QuickBooksOpenBody<T> = {
+	[K in keyof T]: K extends 'body' ? T[K] & Record<string, unknown> : T[K];
+};
 function defineEndpoint<I extends z.ZodType, O extends z.ZodType>(
 	definition: CatalogDefinition<I, O>,
 ) {
 	return async (
 		ctx: QuickBooksCatalogContext,
-		rawInput: z.input<I>,
+		rawInput: QuickBooksOpenBody<z.input<I>>,
 	): Promise<z.output<O>> => {
 		const input = requestSchema(definition.input()).parse(
 			rawInput,
@@ -9196,7 +9205,7 @@ export const QuickBooksCatalogEndpointMeta = {
 	},
 } as const;
 
-export type QuickBooksCatalogEndpointInputs = {
+type QuickBooksCatalogEndpointRawInputs = {
 	apAgingDetailList: z.input<ReturnType<typeof apAgingDetail_listInput>>;
 	apAgingSummaryList: z.input<ReturnType<typeof apAgingSummary_listInput>>;
 	arAgingDetailList: z.input<ReturnType<typeof arAgingDetail_listInput>>;
@@ -9491,6 +9500,11 @@ export type QuickBooksCatalogEndpointInputs = {
 	vendorCreditGet: z.input<ReturnType<typeof vendorCredit_getInput>>;
 	vendorCreditUpdate: z.input<ReturnType<typeof vendorCredit_updateInput>>;
 	vendorExpensesList: z.input<ReturnType<typeof vendorExpenses_listInput>>;
+};
+export type QuickBooksCatalogEndpointInputs = {
+	[K in keyof QuickBooksCatalogEndpointRawInputs]: QuickBooksOpenBody<
+		QuickBooksCatalogEndpointRawInputs[K]
+	>;
 };
 export type QuickBooksCatalogEndpointOutputs = {
 	apAgingDetailList: z.output<ReturnType<typeof apAgingDetail_listOutput>>;

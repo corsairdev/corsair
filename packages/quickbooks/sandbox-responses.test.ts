@@ -139,6 +139,32 @@ describe('QuickBooks operations against sandbox responses', () => {
 		).toBe(true);
 	});
 
+	it('types request bodies with the entity fields the runtime accepts', async () => {
+		answer({
+			SalesReceipt: { Id: '149', SyncToken: '0', Line: [] },
+			time: '2026-11-23T00:11:00.000-08:00',
+		});
+		// CustomerRef and DepositToAccountRef are writable SalesReceipt fields that the catalog's request model omits.
+		await CatalogEndpoints.salesReceipt.create(context, {
+			realmId,
+			body: {
+				CustomerRef: { value: '58' },
+				DepositToAccountRef: { value: '35' },
+				Line: [
+					{
+						DetailType: 'SalesItemLineDetail',
+						Amount: 100,
+						SalesItemLineDetail: { ItemRef: { value: '19' }, Qty: 1 },
+					},
+				],
+			},
+		});
+		expect(sent().body).toMatchObject({
+			CustomerRef: { value: '58' },
+			DepositToAccountRef: { value: '35' },
+		});
+	});
+
 	it('deletes a category item with operation=delete', async () => {
 		answer({
 			Item: { domain: 'QBO', status: 'Deleted', Id: '22' },
