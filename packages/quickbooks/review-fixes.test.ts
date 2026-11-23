@@ -61,6 +61,13 @@ describe('QuickBooks review fixes', () => {
 		).rejects.toThrow(/empty body/);
 	});
 
+	it('does not take a text body named like a PDF for a PDF', async () => {
+		answer('not a pdf', 'text/plain; name=invoice.pdf');
+		await expect(
+			CatalogEndpoints.invoice.getPdf(context, { realmId, invoiceId: '35' }),
+		).rejects.toThrow(/instead of a PDF/);
+	});
+
 	it('still returns PDF bytes', async () => {
 		answer(
 			new TextEncoder().encode('%PDF-1.4'),

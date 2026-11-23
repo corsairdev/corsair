@@ -174,7 +174,7 @@ apiExamples:
   changeDataCapture.changes:
     call: '{"realmId":"12345678","entities":["Customer"],"changedSince":"2026-11-18T12:00:00Z"}'
   changeOrder.create:
-    call: '{"realmId":"12345678","body":{"ProjectRef":{"value":"39298045"},"CustomerRef":{"value":"1"},"Line":[{"DetailType":"SalesItemLineDetail","Amount":100,"SalesItemLineDetail":{"ItemRef":{"value":"1"},"Qty":1,"UnitPrice":100}}]}}'
+    call: '{"realmId":"12345678","body":{"ProjectRef":{"value":"39298045"},"CustomerRef":{"value":"1"},"Line":[{"DetailType":"SalesItemLineDetail","Amount":100,"SalesItemLineDetail":{"ItemRef":{"value":"1"},"Qty":1,"UnitPrice":100},"LinkedTxn":[{"TxnId":"100","TxnType":"Estimate"}]}]}}'
   changeOrder.delete:
     call: '{"realmId":"12345678","body":{"Id":"35","SyncToken":"0"}}'
   changeOrder.get:

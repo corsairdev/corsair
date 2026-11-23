@@ -185,7 +185,11 @@ function requirePdf(
 		}
 		throwOnTopLevelFault(body, path, options);
 	}
-	if (result.bytes.byteLength > 0 && /pdf/i.test(contentType)) return result;
+	// Compare the media type itself; parameters such as charset=UTF-8 are allowed.
+	const mediaType = contentType.split(';')[0]?.trim().toLowerCase();
+	if (result.bytes.byteLength > 0 && mediaType === 'application/pdf') {
+		return result;
+	}
 	throw sanitizeQuickBooksError(
 		new ApiError(
 			{ method: options.method ?? 'GET', url: path },
