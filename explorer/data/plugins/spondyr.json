@@ -1,0 +1,2099 @@
+{
+  "id": "spondyr",
+  "displayName": "Spondyr",
+  "description": "Generate and deliver template-driven correspondence, and manage the templates, recipients, conditions and search filters behind it.",
+  "npmPackageName": "@corsair-dev/spondyr",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 38,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature", "application_token"]
+    }
+  ],
+  "api": [
+    {
+      "path": "spondyr.api.batch.send",
+      "shortPath": "batch.send",
+      "description": "Generate correspondence for a list of data objects in one request, optionally merging shared data into each",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]",
+            "description": "One entry per correspondence to generate"
+          },
+          {
+            "key": "shared_data",
+            "optional": true,
+            "type": "Record<string, JsonValue>",
+            "description": "Merged into every entry of `data` before processing"
+          },
+          {
+            "key": "is_generate_only",
+            "optional": true,
+            "type": "boolean"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.batch.status",
+      "shortPath": "batch.status",
+      "description": "Read a batch progress: items processed, and the reference ID of each item that errored",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reference_id",
+            "optional": false,
+            "type": "string",
+            "description": "The ReferenceID returned by `batch.send`"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "EventType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "IsGenerateOnly",
+            "optional": true,
+            "type": "boolean | null"
+          },
+          {
+            "key": "StatusCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StatusName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CreatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "URI",
+            "optional": true,
+            "type": "string | null",
+            "description": "Valid for 20 minutes"
+          },
+          {
+            "key": "BatchSize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "TotalProcessed",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "BatchErrors",
+            "optional": true,
+            "type": "{ ReferenceID?: string | null, Index?: number | null, Issue?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.conditions.create",
+      "shortPath": "conditions.create",
+      "description": "Create a Condition that decides which template is used",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_name",
+            "optional": false,
+            "type": "string",
+            "description": "The Transaction Type field this condition inspects"
+          },
+          {
+            "key": "possible_values",
+            "optional": true,
+            "type": "string",
+            "description": "Values to match, each on its own line"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.conditions.delete",
+      "shortPath": "conditions.delete",
+      "description": "Delete a Condition; templates that reference it stop matching",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "condition",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.conditions.get",
+      "shortPath": "conditions.get",
+      "description": "Get one Condition and the field it inspects",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "condition",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TransactionType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "FieldName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "PossibleValues",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.conditions.list",
+      "shortPath": "conditions.list",
+      "description": "List the template-selection Conditions of a Transaction Type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Data",
+            "optional": false,
+            "type": "{ TransactionType: string, Name: string, FieldName?: string | null, PossibleValues?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.conditions.update",
+      "shortPath": "conditions.update",
+      "description": "Change a Condition field or its accepted values",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "field_name",
+            "optional": false,
+            "type": "string",
+            "description": "The Transaction Type field this condition inspects"
+          },
+          {
+            "key": "possible_values",
+            "optional": true,
+            "type": "string",
+            "description": "Values to match, each on its own line"
+          },
+          {
+            "key": "condition",
+            "optional": false,
+            "type": "string",
+            "description": "The Condition to update"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.correspondence.deliver",
+      "shortPath": "correspondence.deliver",
+      "description": "Deliver correspondence that was generated with `is_generate_only`, optionally to extra recipients",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reference_id",
+            "optional": false,
+            "type": "string",
+            "description": "The ReferenceID returned by `correspondence.send`"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string",
+            "description": "Template names to deliver, comma separated; default \"All\""
+          },
+          {
+            "key": "original_recipients",
+            "optional": true,
+            "type": "string",
+            "description": "\"All\", \"None\", or Recipient names; default \"All\""
+          },
+          {
+            "key": "new_recipients",
+            "optional": true,
+            "type": "{ Template?: string, RemoteID?: string, FirstName?: string, LastName?: string, Address1?: string, Address2?: string, City?: string, State?: string, Zip?: string, Fax?: string, Email?: string, MobilePhone?: string, TargetedDeliveryMethod?: Email | Fax | Mail | Text }[]",
+            "description": "Extra recipients beyond the ones the correspondence resolved"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.correspondence.retry",
+      "shortPath": "correspondence.retry",
+      "description": "Retry the templates that errored on a previous request",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reference_id",
+            "optional": false,
+            "type": "string",
+            "description": "ReferenceID of the request that errored"
+          },
+          {
+            "key": "template",
+            "optional": true,
+            "type": "string",
+            "description": "Template names to retry, comma separated; default \"All\""
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.correspondence.search",
+      "shortPath": "correspondence.search",
+      "description": "Search past requests by batch, Event Type or Search Filter, with paging up to 250 a page",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "batch_reference_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only correspondence from this batch"
+          },
+          {
+            "key": "event_type",
+            "optional": true,
+            "type": "string",
+            "description": "Only this Event Type; omitted searches every type"
+          },
+          {
+            "key": "search_name",
+            "optional": true,
+            "type": "string",
+            "description": "Search Filter name"
+          },
+          {
+            "key": "search_value",
+            "optional": true,
+            "type": "string",
+            "description": "Search Filter value to match"
+          },
+          {
+            "key": "page",
+            "optional": true,
+            "type": "number",
+            "description": "Default 1"
+          },
+          {
+            "key": "page_size",
+            "optional": true,
+            "type": "number",
+            "description": "Default 10, maximum 250"
+          },
+          {
+            "key": "sort_column",
+            "optional": true,
+            "type": "string",
+            "description": "Default \"CreatedDate\""
+          },
+          {
+            "key": "sort_order",
+            "optional": true,
+            "type": "ASC | DESC"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Data",
+            "optional": false,
+            "type": "{ ReferenceID: string, StatusCode?: string | null, StatusName?: string | null, CreatedDate?: string | null, Correspondence?: { URI?: string | null, Template?: string | null, ContentType?: string | null, StatusCode?: string | null, StatusName?: string | null, CreatedDate?: string | null, Recipients?: { Name?: string | null, DeliveryTo?: string | null, DeliveryStatusCode?: string | null, DeliveryStatusName?: string | null, IsSuccessful?: boolean | null, Details?: string | null, DeliveryDate?: string | null, CoverPageURI?: string | null }[] | null, SearchFilters?: { Name: string, Value?: string | null }[] | null }[] | null }[]"
+          },
+          {
+            "key": "PageCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "RecordCount",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "Page",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "PageSize",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "SortColumn",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "SortOrder",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.correspondence.send",
+      "shortPath": "correspondence.send",
+      "description": "Generate correspondence from a Transaction Type and either deliver it or hold it for `correspondence.deliver`",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "string",
+            "description": "Event Type name; Spondyr resolves the Transaction Type from it"
+          },
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>",
+            "description": "The document data, in the shape of the Transaction Type JSON sample"
+          },
+          {
+            "key": "is_generate_only",
+            "optional": true,
+            "type": "boolean",
+            "description": "When true the correspondence is generated but not delivered until `correspondence.deliver` is called"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.correspondence.status",
+      "shortPath": "correspondence.status",
+      "description": "Read the status of a generated request, one entry per template, with each recipient delivery result",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reference_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "include_data",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also return the Data sent with the original request"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "EventType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "CreatedDate",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StatusCode",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "StatusName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Correspondence",
+            "optional": true,
+            "type": "{ URI?: string | null, Template?: string | null, ContentType?: string | null, StatusCode?: string | null, StatusName?: string | null, CreatedDate?: string | null, Recipients?: { Name?: string | null, DeliveryTo?: string | null, DeliveryStatusCode?: string | null, DeliveryStatusName?: string | null, IsSuccessful?: boolean | null, Details?: string | null, DeliveryDate?: string | null, CoverPageURI?: string | null }[] | null, SearchFilters?: { Name: string, Value?: string | null }[] | null }[] | null"
+          },
+          {
+            "key": "Data",
+            "optional": true,
+            "type": "Record<string, JsonValue> | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.eventTypes.create",
+      "shortPath": "eventTypes.create",
+      "description": "Add an Event Type to a Transaction Type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.eventTypes.delete",
+      "shortPath": "eventTypes.delete",
+      "description": "Delete an Event Type; templates that reference it stop matching",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.eventTypes.get",
+      "shortPath": "eventTypes.get",
+      "description": "Get one Event Type and the Transaction Type it belongs to",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TransactionType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.eventTypes.list",
+      "shortPath": "eventTypes.list",
+      "description": "List the Event Types of one Transaction Type",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string",
+            "description": "Transaction Type whose Event Types to list"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Data",
+            "optional": false,
+            "type": "{ TransactionType: string, Name: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.eventTypes.update",
+      "shortPath": "eventTypes.update",
+      "description": "Rename an Event Type or move it to another Transaction Type",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "string",
+            "description": "The Event Type to update"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.recipients.create",
+      "shortPath": "recipients.create",
+      "description": "Create a Recipient; any address field may hold a `{FieldName}` placeholder",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "remote_id",
+            "optional": true,
+            "type": "string",
+            "description": "The identifier in your own system; `{FieldName}` merges transaction data"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile_phone",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.recipients.delete",
+      "shortPath": "recipients.delete",
+      "description": "Delete a Recipient; templates that name it stop resolving",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recipient",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.recipients.get",
+      "shortPath": "recipients.get",
+      "description": "Get one Recipient and the placeholder fields it resolves",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "recipient",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TransactionType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "RemoteID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "FirstName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "LastName",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Address1",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Address2",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "City",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "State",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Zip",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Fax",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Email",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "MobilePhone",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.recipients.list",
+      "shortPath": "recipients.list",
+      "description": "List a Transaction Type's Recipients with their addresses",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Data",
+            "optional": false,
+            "type": "{ TransactionType: string, Name: string, RemoteID?: string | null, FirstName?: string | null, LastName?: string | null, Address1?: string | null, Address2?: string | null, City?: string | null, State?: string | null, Zip?: string | null, Fax?: string | null, Email?: string | null, MobilePhone?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.recipients.update",
+      "shortPath": "recipients.update",
+      "description": "Change a Recipient name, address or placeholder fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "remote_id",
+            "optional": true,
+            "type": "string",
+            "description": "The identifier in your own system; `{FieldName}` merges transaction data"
+          },
+          {
+            "key": "first_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "last_name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address1",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "address2",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "city",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "state",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "zip",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "fax",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "email",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "mobile_phone",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "recipient",
+            "optional": false,
+            "type": "string",
+            "description": "The Recipient to update"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.searchFilters.create",
+      "shortPath": "searchFilters.create",
+      "description": "Create a Search Filter that tags generated correspondence for later search",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "The value written onto matching correspondence; `{FieldName}` merges data"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.searchFilters.delete",
+      "shortPath": "searchFilters.delete",
+      "description": "Delete a Search Filter; existing tags stay on the documents",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string",
+            "description": "The Transaction Type the Search Filter belongs to"
+          },
+          {
+            "key": "search",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.searchFilters.get",
+      "shortPath": "searchFilters.get",
+      "description": "Get one Search Filter and the tag it writes onto correspondence",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string",
+            "description": "The Transaction Type the Search Filter belongs to"
+          },
+          {
+            "key": "search",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TransactionType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Tag",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.searchFilters.list",
+      "shortPath": "searchFilters.list",
+      "description": "List a Transaction Type's Search Filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Data",
+            "optional": false,
+            "type": "{ TransactionType: string, Name: string, Tag?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.searchFilters.update",
+      "shortPath": "searchFilters.update",
+      "description": "Change a Search Filter tag",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "tag",
+            "optional": true,
+            "type": "string",
+            "description": "The value written onto matching correspondence; `{FieldName}` merges data"
+          },
+          {
+            "key": "search",
+            "optional": false,
+            "type": "string",
+            "description": "The Search Filter to update"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a template from previously uploaded content, with its delivery recipients and conditions",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "PDF | DOC | HTML | TEXT"
+          },
+          {
+            "key": "template_content_reference_id",
+            "optional": false,
+            "type": "string",
+            "description": "The ReferenceID returned by `templates.uploadContent`"
+          },
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "{ name: string, delivery_method: string, email_from_address?: string, email_subject?: string, email_body?: string, mail_from_name?: string, mail_from_address1?: string, mail_from_address2?: string, mail_from_city?: string, mail_from_state?: string, mail_from_zip?: string, text_body?: string, destination_folder?: string, signers?: { name: string, email: string, role: Signer | Agent | CC | Certified Delivery | Editor | In Person Signer | Intermediary }[] }[]"
+          },
+          {
+            "key": "conditions",
+            "optional": true,
+            "type": "({ name: string, logical_operator: AND | OR, compare_operator: = | > | >= | < | <=, compare_value: string })[]"
+          },
+          {
+            "key": "searches",
+            "optional": true,
+            "type": "string[]",
+            "description": "Search Filter names to tag with"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete a template",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Get one template with its content reference, recipients, conditions and search filters",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TransactionType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "EventType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ContentType",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TemplateContentReferenceID",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TemplateContent",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Recipients",
+            "optional": true,
+            "type": "{ Name: string, DeliveryMethod?: string | null, EmailFromAddress?: string | null, EmailSubject?: string | null, EmailBody?: string | null, MailFromName?: string | null, MailFromAddress1?: string | null, MailFromAddress2?: string | null, MailFromCity?: string | null, MailFromState?: string | null, MailFromZip?: string | null, TextBody?: string | null, DestinationFolder?: string | null, Signers?: { Name: string, Email: string, Role: string }[] | null }[] | null"
+          },
+          {
+            "key": "Conditions",
+            "optional": true,
+            "type": "{ Name: string, LogicalOperator?: string | null, CompareOperator?: string | null, CompareValue?: string | null }[] | null"
+          },
+          {
+            "key": "Searches",
+            "optional": true,
+            "type": "string[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List the templates of a Transaction Type with their recipients",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Data",
+            "optional": false,
+            "type": "{ TransactionType: string, Name: string, EventType?: string | null, ContentType?: string | null, TemplateContentReferenceID?: string | null, TemplateContent?: string | null, Recipients?: { Name: string, DeliveryMethod?: string | null, EmailFromAddress?: string | null, EmailSubject?: string | null, EmailBody?: string | null, MailFromName?: string | null, MailFromAddress1?: string | null, MailFromAddress2?: string | null, MailFromCity?: string | null, MailFromState?: string | null, MailFromZip?: string | null, TextBody?: string | null, DestinationFolder?: string | null, Signers?: { Name: string, Email: string, Role: string }[] | null }[] | null, Conditions?: { Name: string, LogicalOperator?: string | null, CompareOperator?: string | null, CompareValue?: string | null }[] | null, Searches?: string[] | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.templates.update",
+      "shortPath": "templates.update",
+      "description": "Change a template content, recipients, conditions or searches",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "event_type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "content_type",
+            "optional": false,
+            "type": "PDF | DOC | HTML | TEXT"
+          },
+          {
+            "key": "template_content_reference_id",
+            "optional": false,
+            "type": "string",
+            "description": "The ReferenceID returned by `templates.uploadContent`"
+          },
+          {
+            "key": "recipients",
+            "optional": false,
+            "type": "{ name: string, delivery_method: string, email_from_address?: string, email_subject?: string, email_body?: string, mail_from_name?: string, mail_from_address1?: string, mail_from_address2?: string, mail_from_city?: string, mail_from_state?: string, mail_from_zip?: string, text_body?: string, destination_folder?: string, signers?: { name: string, email: string, role: Signer | Agent | CC | Certified Delivery | Editor | In Person Signer | Intermediary }[] }[]"
+          },
+          {
+            "key": "conditions",
+            "optional": true,
+            "type": "({ name: string, logical_operator: AND | OR, compare_operator: = | > | >= | < | <=, compare_value: string })[]"
+          },
+          {
+            "key": "searches",
+            "optional": true,
+            "type": "string[]",
+            "description": "Search Filter names to tag with"
+          },
+          {
+            "key": "template",
+            "optional": false,
+            "type": "string",
+            "description": "The Template to update"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.templates.uploadContent",
+      "shortPath": "templates.uploadContent",
+      "description": "Upload a template file as base64 and return the reference ID a template needs; the content can attach to one template only",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "content",
+            "optional": false,
+            "type": "string",
+            "description": "Base64-encoded bytes of the template file"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.transactionTypes.create",
+      "shortPath": "transactionTypes.create",
+      "description": "Create a Transaction Type from a JSON sample that defines the template fields",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template_json",
+            "optional": false,
+            "type": "string",
+            "description": "JSON sample defining the fields available to templates"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.transactionTypes.delete",
+      "shortPath": "transactionTypes.delete",
+      "description": "Delete a Transaction Type; every template, condition and search filter built on it goes with it",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.transactionTypes.get",
+      "shortPath": "transactionTypes.get",
+      "description": "Get one Transaction Type with its JSON and CSV field samples",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TemplateJSON",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "TemplateCSV",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.transactionTypes.list",
+      "shortPath": "transactionTypes.list",
+      "description": "List the Transaction Types on the subscription",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "Data",
+            "optional": false,
+            "type": "{ Name: string, TemplateJSON?: string | null, TemplateCSV?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "spondyr.api.transactionTypes.update",
+      "shortPath": "transactionTypes.update",
+      "description": "Change a Transaction Type name or its JSON sample",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "template_json",
+            "optional": false,
+            "type": "string",
+            "description": "JSON sample defining the fields available to templates"
+          },
+          {
+            "key": "transaction_type",
+            "optional": false,
+            "type": "string",
+            "description": "The Transaction Type to update; goes in the body, not the path"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "APIStatus",
+            "optional": false,
+            "type": "string",
+            "description": "`OK` or `ERROR`; a 200 can still be `ERROR`"
+          },
+          {
+            "key": "ErrorMessage",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "ReferenceID",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
