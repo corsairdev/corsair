@@ -11939,5 +11939,86 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/cli",
+    "dir": "packages/cli",
+    "name": "cli",
+    "version": "0.1.110",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/langchain",
+    "dir": "adapters/langchain",
+    "name": "langchain",
+    "version": "0.1.85",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/llamaindex",
+    "dir": "adapters/llamaindex",
+    "name": "llamaindex",
+    "version": "0.1.85",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/mastra",
+    "dir": "adapters/mastra",
+    "name": "mastra",
+    "version": "0.1.85",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.113",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/studio",
+    "dir": "packages/studio",
+    "name": "studio",
+    "version": "0.1.96",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.90",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": "0.2.29",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/fathomai",
+    "dir": "packages/fathomai",
+    "name": "Fathom AI Notetaker",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
