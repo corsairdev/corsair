@@ -60,7 +60,10 @@ type CatalogDefinition<I extends z.ZodType, O extends z.ZodType> = {
  * request body allows them too, so callers need no casts.
  */
 export type QuickBooksOpenBody<T> = {
-	[K in keyof T]: K extends 'body' ? T[K] & Record<string, unknown> : T[K];
+	// The documented model stays an alternative so interface-typed bodies (no index signature) still fit.
+	[K in keyof T]: K extends 'body'
+		? T[K] | (T[K] & Record<string, unknown>)
+		: T[K];
 };
 function defineEndpoint<I extends z.ZodType, O extends z.ZodType>(
 	definition: CatalogDefinition<I, O>,

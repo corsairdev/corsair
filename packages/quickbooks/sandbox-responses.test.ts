@@ -165,6 +165,24 @@ describe('QuickBooks operations against sandbox responses', () => {
 		});
 	});
 
+	it('still types a body declared with an interface', async () => {
+		answer({
+			Class: { Id: '762035', Name: 'Sample', SyncToken: '0' },
+			time: '2026-11-23T00:10:00.000-08:00',
+		});
+		// An interface has no index signature, so the open body type must still accept the documented model.
+		interface ClassBody {
+			Name: string;
+		}
+		const body: ClassBody = { Name: 'Sample' };
+		const result = await CatalogEndpoints.class.create(context, {
+			realmId,
+			body,
+		});
+		expect(sent().body).toEqual(body);
+		expect(result.Class.Id).toBe('762035');
+	});
+
 	it('deletes a category item with operation=delete', async () => {
 		answer({
 			Item: { domain: 'QBO', status: 'Deleted', Id: '22' },
