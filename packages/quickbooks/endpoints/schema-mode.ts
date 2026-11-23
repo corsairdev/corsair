@@ -35,8 +35,11 @@ function lenient(
 	schema: AnySchema,
 	top: boolean,
 	requireEnvelope = true,
+	// A direct field of the response (`Invoice`, `QueryResponse`) keeps its object/list shape.
+	envelopeField = false,
 ): AnySchema {
-	if (!top) {
+	const cacheable = !top && !envelopeField;
+	if (cacheable) {
 		const cached = lenientCache.get(schema);
 		if (cached) return cached;
 	}
@@ -47,7 +50,7 @@ function lenient(
 			const shape = (schema as z.ZodObject).shape as Record<string, AnySchema>;
 			const fields: Record<string, AnySchema> = {};
 			for (const [name, field] of Object.entries(shape)) {
-				const inner = lenient(field, false);
+				const inner = lenient(field, false, true, top);
 				// The envelope key (`Invoice`, `QueryResponse`) stays required; `time` and everything below may be absent.
 				const required =
 					top &&
@@ -58,7 +61,7 @@ function lenient(
 			}
 			const object = z.looseObject(fields);
 			// A nested object QuickBooks sends as a list (as `CustomExtensions` was) still parses.
-			out = top ? object : z.union([object, z.array(object)]);
+			out = top || envelopeField ? object : z.union([object, z.array(object)]);
 			break;
 		}
 		case 'array': {
@@ -97,7 +100,12 @@ function lenient(
 		case 'prefault':
 		case 'readonly':
 		case 'catch':
-			out = lenient(def.innerType as AnySchema, top, requireEnvelope).nullish();
+			out = lenient(
+				def.innerType as AnySchema,
+				top,
+				requireEnvelope,
+				envelopeField,
+			).nullish();
 			break;
 		case 'record':
 			out = z.record(z.string(), lenient(def.valueType as AnySchema, false));
@@ -113,7 +121,7 @@ function lenient(
 		default:
 			out = schema;
 	}
-	if (!top) lenientCache.set(schema, out);
+	if (cacheable) lenientCache.set(schema, out);
 	return out;
 }
 
