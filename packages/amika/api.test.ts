@@ -479,11 +479,13 @@ liveRigs('Amika live API: one rig, end to end', () => {
 	});
 
 	it('stops the rig and starts it again with its files', async () => {
-		// In the home folder: /tmp is cleared when the VM boots again.
+		// One file in the home folder, one in /tmp: the restart keeps the first
+		// and clears the second (what rigs.stop and rigs.start describe).
 		const marker = `~/corsair-${RUN}.txt`;
+		const tmpMarker = `/tmp/corsair-${RUN}.txt`;
 		const write = await api.commandRuns.create({
 			rig_id: rigId,
-			command: `echo kept > ${marker}`,
+			command: `echo kept > ${marker} && echo gone > ${tmpMarker}`,
 			timeout_ms: 60_000,
 		});
 		let current = await api.commandRuns.get({ id: String(write.id) });
@@ -497,7 +499,7 @@ liveRigs('Amika live API: one rig, end to end', () => {
 		await waitFor('running');
 		const read = await api.commandRuns.create({
 			rig_id: rigId,
-			command: `cat ${marker}`,
+			command: `cat ${marker} && if [ -e ${tmpMarker} ]; then echo tmp-kept; else echo tmp-cleared; fi`,
 			timeout_ms: 60_000,
 		});
 		current = await api.commandRuns.get({ id: String(read.id) });
@@ -507,7 +509,10 @@ liveRigs('Amika live API: one rig, end to end', () => {
 		}
 		expect(current.conclusion).toBe('success');
 		const events = await api.commandRuns.listEvents({ id: String(read.id) });
-		expect(JSON.stringify(events.items).includes('kept')).toBe(true);
+		const output = JSON.stringify(events.items);
+		expect(output.includes('kept')).toBe(true);
+		expect(output.includes('tmp-cleared')).toBe(true);
+		expect(output.includes('tmp-kept')).toBe(false);
 	});
 
 	it('snapshots the rig (keeping it), reads the snapshot and deletes it', async () => {

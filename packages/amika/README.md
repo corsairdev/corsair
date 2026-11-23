@@ -76,7 +76,7 @@ Found by the live tests (the spec says otherwise or nothing):
   empty object.
 - A command run's `status` ends at `completed`; how it ended is in
   `conclusion` (`success`, `failure`, `cancelled`, `timed_out`, …).
-- A rig keeps its home folder across stop and start; `/tmp` is cleared.
+- A rig keeps the files in its home folder across stop and start; `/tmp` is cleared (both checked by the live test).
 - Amika Cloud size names are not listed by the API, and `a0.s` is refused;
   leaving `size` out gives the provider's default.
 
@@ -145,7 +145,7 @@ No incoming webhooks: Amika publishes none. Poll `rigs.get`,
 | `rigs.create` | `amika.api.rigs.create` | `destructive` | Creates a rig: a devbox VM with a repo cloned, dependencies set up and agent credentials injected. Runs on Amika Cloud (billed per second), a connected cloud account, or one of your own hosts (host_id). Answers 202 while it boots; poll rigs.get until status is running and setup_status ok (git-failed, setup-failed or sys-setup-failed means setup failed: stop waiting). By default the rig gets a new organization API key as AMIKA_API_KEY (amika_api_key changes that). |
 | `rigs.createSshSession` | `amika.api.rigs.createSshSession` | `write` | Opens a direct WebSocket SSH session to a rig and returns its connection details. Name the rig by id or name; `sandbox_by` says which (default: either). |
 | `rigs.createTerminalTicket` | `amika.api.rigs.createTerminalTicket` | `write` | Mints a single-use ticket for the web terminal of a rig. Name the rig by id or name; `sandbox_by` says which (default: either). |
-| `rigs.delete` | `amika.api.rigs.delete` | `destructive` | Deletes a rig and its disk. Anything not pushed or snapshotted is lost. Name the rig by id or name; `by` says which (default: either). |
+| `rigs.delete` | `amika.api.rigs.delete` | `destructive` | Deletes a rig and its disk. Anything not pushed or snapshotted is lost. With forget "true", Amika only drops its record when the host or provider can't be reached: the machine is left running, so confirm with the host or provider that it is gone. Name the rig by id or name; `by` says which (default: either). |
 | `rigs.get` | `amika.api.rigs.get` | `read` | Reads one rig: status, setup status, provider, size, branch, services and timestamps. Name the rig by id or name; `by` says which (default: either). |
 | `rigs.getSlackConversation` | `amika.api.rigs.getSlackConversation` | `read` | Reads the Slack thread a Slack-made rig belongs to. |
 | `rigs.getSlackMetadata` | `amika.api.rigs.getSlackMetadata` | `read` | Lists Slack metadata (team, channel, thread) for the organization's Slack-made rigs, keyed by rig. |
@@ -162,8 +162,8 @@ No incoming webhooks: Amika publishes none. Poll `rigs.get`,
 | `rigs.sessions.getLatest` | `amika.api.rigs.sessions.getLatest` | `read` | Reads the most recent agent session on a rig. Name the rig by id or name; `sandbox_by` says which (default: either). |
 | `rigs.sessions.list` | `amika.api.rigs.sessions.list` | `read` | Lists the agent sessions on one rig. Name the rig by id or name; `sandbox_by` says which (default: either). |
 | `rigs.sessions.update` | `amika.api.rigs.sessions.update` | `write` | Updates an agent session on a rig: its status or metadata. |
-| `rigs.start` | `amika.api.rigs.start` | `destructive` | Starts a stopped rig; its filesystem is kept. Billing resumes while it runs. Name the rig by id or name; `by` says which (default: either). |
-| `rigs.stop` | `amika.api.rigs.stop` | `write` | Stops a running rig, keeping its filesystem, so it stops billing for compute. Name the rig by id or name; `by` says which (default: either). |
+| `rigs.start` | `amika.api.rigs.start` | `destructive` | Starts a stopped rig. Files in the home folder are kept; /tmp is cleared by the restart. Billing resumes while it runs. Name the rig by id or name; `by` says which (default: either). |
+| `rigs.stop` | `amika.api.rigs.stop` | `write` | Stops a running rig so it stops billing for compute. Files in the home folder are kept; /tmp is cleared when it starts again, so keep work in the home folder. Name the rig by id or name; `by` says which (default: either). |
 | `secrets.create` | `amika.api.secrets.create` | `write` | Stores a generic secret in the Amika vault (user or organization scope) for injecting into rigs as an env var. |
 | `secrets.delete` | `amika.api.secrets.delete` | `destructive` | Deletes a generic secret from the vault. |
 | `secrets.list` | `amika.api.secrets.list` | `read` | Lists the generic secrets the caller can see (names and scopes, never values). |

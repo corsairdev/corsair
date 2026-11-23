@@ -657,12 +657,12 @@ export const amikaEndpointMeta = {
 	'rigs.start': {
 		riskLevel: 'destructive',
 		description:
-			'Starts a stopped rig. The home folder and other disk files are kept, but /tmp is cleared by the restart. Billing resumes while it runs. Name the rig by id or name; `by` says which (default: either).',
+			'Starts a stopped rig. Files in the home folder are kept; /tmp is cleared by the restart. Billing resumes while it runs. Name the rig by id or name; `by` says which (default: either).',
 	},
 	'rigs.stop': {
 		riskLevel: 'write',
 		description:
-			'Stops a running rig so it stops billing for compute. The home folder and other disk files are kept; /tmp is cleared, so move work out of it first. Name the rig by id or name; `by` says which (default: either).',
+			'Stops a running rig so it stops billing for compute. Files in the home folder are kept; /tmp is cleared when it starts again, so keep work in the home folder. Name the rig by id or name; `by` says which (default: either).',
 	},
 	'secrets.create': {
 		riskLevel: 'write',
