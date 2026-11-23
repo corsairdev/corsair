@@ -493,6 +493,8 @@ liveRigs('Amika live API: one rig, end to end', () => {
 			await sleep(2_000);
 			current = await api.commandRuns.get({ id: String(write.id) });
 		}
+		// Both files were written, so a missing /tmp file after the restart means it was cleared.
+		expect(current.conclusion).toBe('success');
 		await api.rigs.stop({ id: rigId, by: 'id' });
 		await waitFor('stopped', 5 * 60_000);
 		await api.rigs.start({ id: rigId, by: 'id' });

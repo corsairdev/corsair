@@ -576,7 +576,7 @@ export const amikaEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description:
-			'Deletes a rig and its disk. Anything not pushed or snapshotted is lost. With forget "true", Amika only drops its record when the host or provider can\'t be reached: the machine is left running, so confirm with the host or provider that it is gone. Name the rig by id or name; `by` says which (default: either).',
+			'Deletes a rig and its disk. Anything not pushed or snapshotted is lost. A bare-metal rig is your own machine: only the rig and its SSH bridge state go, and the files and settings on the machine stay. With forget "true", Amika only drops its record when the host or provider can\'t be reached: the machine is left running, so confirm with the host or provider that it is gone. Name the rig by id or name; `by` says which (default: either).',
 	},
 	'rigs.get': {
 		riskLevel: 'read',
@@ -657,12 +657,12 @@ export const amikaEndpointMeta = {
 	'rigs.start': {
 		riskLevel: 'destructive',
 		description:
-			'Starts a stopped rig. Files in the home folder are kept; /tmp is cleared by the restart. Billing resumes while it runs. Name the rig by id or name; `by` says which (default: either).',
+			'Starts a stopped rig. On a VM rig, files in the home folder are kept and /tmp is cleared by the restart; on a bare-metal rig it only starts the SSH bridge again (the machine never stopped). Billing resumes while it runs. Name the rig by id or name; `by` says which (default: either).',
 	},
 	'rigs.stop': {
 		riskLevel: 'write',
 		description:
-			'Stops a running rig so it stops billing for compute. Files in the home folder are kept; /tmp is cleared when it starts again, so keep work in the home folder. Name the rig by id or name; `by` says which (default: either).',
+			'Stops a running rig so it stops billing for compute. On a VM rig, files in the home folder are kept and /tmp is cleared when it starts again, so keep work in the home folder. On a bare-metal rig only the SSH bridge stops: the machine keeps running and its files, /tmp included, stay as they are. Name the rig by id or name; `by` says which (default: either).',
 	},
 	'secrets.create': {
 		riskLevel: 'write',
