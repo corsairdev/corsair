@@ -91,11 +91,8 @@ const metaAdsEndpointsNested = {
 		impactingAdStudiesList: Accounts.impactingAdStudiesList,
 		adRulesLibraryList: Accounts.adRulesLibraryList,
 		adRulesLibraryCreate: Accounts.adRulesLibraryCreate,
-		activeAdRulesList: Accounts.activeAdRulesList,
 		generatePreviews: Accounts.generatePreviews,
 		broadTargetingCategoriesList: Accounts.broadTargetingCategoriesList,
-		smartSuggestedAdsList: Accounts.smartSuggestedAdsList,
-		suggestedAdsList: Accounts.suggestedAdsList,
 		placePageSetsCreate: Accounts.placePageSetsCreate,
 		reachEstimate: Accounts.reachEstimate,
 	},
@@ -149,7 +146,6 @@ const metaAdsEndpointsNested = {
 	ads: {
 		list: Ads.list,
 		adCreativesList: Ads.adCreativesList,
-		adStudiesList: Ads.adStudiesList,
 		adRulesGovernedList: Ads.adRulesGovernedList,
 		previewsList: Ads.previewsList,
 		copiesList: Ads.copiesList,
@@ -317,10 +313,6 @@ export const metaAdsEndpointSchemas: RequiredPluginEndpointSchemas<
 		input: MetaAdsEndpointInputSchemas.accountsAdRulesLibraryCreate,
 		output: MetaAdsEndpointOutputSchemas.accountsAdRulesLibraryCreate,
 	},
-	'accounts.activeAdRulesList': {
-		input: MetaAdsEndpointInputSchemas.accountsActiveAdRulesList,
-		output: MetaAdsEndpointOutputSchemas.accountsActiveAdRulesList,
-	},
 	'accounts.generatePreviews': {
 		input: MetaAdsEndpointInputSchemas.accountsGeneratePreviews,
 		output: MetaAdsEndpointOutputSchemas.accountsGeneratePreviews,
@@ -328,14 +320,6 @@ export const metaAdsEndpointSchemas: RequiredPluginEndpointSchemas<
 	'accounts.broadTargetingCategoriesList': {
 		input: MetaAdsEndpointInputSchemas.accountsBroadTargetingCategoriesList,
 		output: MetaAdsEndpointOutputSchemas.accountsBroadTargetingCategoriesList,
-	},
-	'accounts.smartSuggestedAdsList': {
-		input: MetaAdsEndpointInputSchemas.accountsSmartSuggestedAdsList,
-		output: MetaAdsEndpointOutputSchemas.accountsSmartSuggestedAdsList,
-	},
-	'accounts.suggestedAdsList': {
-		input: MetaAdsEndpointInputSchemas.accountsSuggestedAdsList,
-		output: MetaAdsEndpointOutputSchemas.accountsSuggestedAdsList,
 	},
 	'accounts.placePageSetsCreate': {
 		input: MetaAdsEndpointInputSchemas.accountsPlacePageSetsCreate,
@@ -532,10 +516,6 @@ export const metaAdsEndpointSchemas: RequiredPluginEndpointSchemas<
 	'ads.adCreativesList': {
 		input: MetaAdsEndpointInputSchemas.adsAdCreativesList,
 		output: MetaAdsEndpointOutputSchemas.adsAdCreativesList,
-	},
-	'ads.adStudiesList': {
-		input: MetaAdsEndpointInputSchemas.adsAdStudiesList,
-		output: MetaAdsEndpointOutputSchemas.adsAdStudiesList,
 	},
 	'ads.adRulesGovernedList': {
 		input: MetaAdsEndpointInputSchemas.adsAdRulesGovernedList,
@@ -854,10 +834,6 @@ const metaAdsEndpointMeta = {
 		riskLevel: 'destructive',
 		description: 'Create a rule that can change ad delivery, budgets, or bids',
 	},
-	'accounts.activeAdRulesList': {
-		riskLevel: 'read',
-		description: 'List active rules for explicitly selected ad objects',
-	},
 	'accounts.generatePreviews': {
 		riskLevel: 'read',
 		description:
@@ -866,14 +842,6 @@ const metaAdsEndpointMeta = {
 	'accounts.broadTargetingCategoriesList': {
 		riskLevel: 'read',
 		description: 'List documented broad-targeting categories for the account',
-	},
-	'accounts.smartSuggestedAdsList': {
-		riskLevel: 'read',
-		description: 'List smart ad suggestions for an account',
-	},
-	'accounts.suggestedAdsList': {
-		riskLevel: 'read',
-		description: 'List ad suggestions using documented account filters',
 	},
 	'accounts.placePageSetsCreate': {
 		riskLevel: 'destructive',
@@ -1068,10 +1036,6 @@ const metaAdsEndpointMeta = {
 		riskLevel: 'read',
 		description: 'List creatives attached to an ad',
 	},
-	'ads.adStudiesList': {
-		riskLevel: 'read',
-		description: 'List ad studies associated with an ad',
-	},
 	'ads.adRulesGovernedList': {
 		riskLevel: 'read',
 		description: 'List rules that govern an ad',
@@ -1129,7 +1093,8 @@ const metaAdsEndpointMeta = {
 	},
 	'creatives.insightsList': {
 		riskLevel: 'read',
-		description: 'Read the documented quality insight for a creative',
+		description:
+			'Read the documented quality insight for a creative (limited-access edge: Meta answers #100 nonexisting field to apps without access)',
 	},
 	'creatives.previewsList': {
 		riskLevel: 'read',

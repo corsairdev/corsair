@@ -423,20 +423,6 @@ export const accountsAdRulesLibraryCreate = operation({
 		redactBodyOnError: true,
 	}),
 });
-export const accountsActiveAdRulesList = operation({
-	name: 'accounts.activeAdRulesList',
-	method: 'GET',
-	path: (input) => `${accountPath(input.accountId)}/active_adrules`,
-	input: MetaAdsEndpointInputSchemas.accountsActiveAdRulesList,
-	output: MetaAdsEndpointOutputSchemas.accountsActiveAdRulesList,
-	request: (input) => ({
-		query: {
-			selected_ids: JSON.stringify(input.selectedIds),
-			pass_evaluation: input.passEvaluation,
-			...cursorParams(input),
-		},
-	}),
-});
 export const accountsGeneratePreviews = operation({
 	name: 'accounts.generatePreviews',
 	method: 'GET',
@@ -463,44 +449,6 @@ export const accountsBroadTargetingCategoriesList = operation({
 	request: (input) => ({
 		query: {
 			custom_categories_only: input.customCategoriesOnly,
-			...cursorParams(input),
-		},
-	}),
-});
-export const accountsSmartSuggestedAdsList = operation({
-	name: 'accounts.smartSuggestedAdsList',
-	method: 'GET',
-	path: (input) => `${accountPath(input.accountId)}/smart_suggested_ads`,
-	input: MetaAdsEndpointInputSchemas.accountsSmartSuggestedAdsList,
-	output: MetaAdsEndpointOutputSchemas.accountsSmartSuggestedAdsList,
-	request: (input) => ({
-		query: {
-			objective: input.objective,
-			optimization_goal: input.optimizationGoal,
-			pixel_id: input.pixelId,
-			product_set_id: input.productSetId,
-			...cursorParams(input),
-		},
-	}),
-});
-export const accountsSuggestedAdsList = operation({
-	name: 'accounts.suggestedAdsList',
-	method: 'GET',
-	path: (input) => `${accountPath(input.accountId)}/suggested_ads`,
-	input: MetaAdsEndpointInputSchemas.accountsSuggestedAdsList,
-	output: MetaAdsEndpointOutputSchemas.accountsSuggestedAdsList,
-	request: (input) => ({
-		query: {
-			application_id: input.applicationId,
-			cms_id: input.cmsId,
-			countries: input.countries?.join(','),
-			objective: input.objective,
-			optimization_goal: input.optimizationGoal,
-			pixel_id: input.pixelId,
-			promoted_object_page_id: input.promotedObjectPageId,
-			promoted_object_product_set_id: input.promotedObjectProductSetId,
-			rank_by: input.rankBy,
-			use_case: input.useCase,
 			...cursorParams(input),
 		},
 	}),
@@ -1284,14 +1232,6 @@ export const adsAdCreativesList = operation({
 	output: MetaAdsListSchema,
 	request: (input) => ({ query: cursorParams(input) }),
 });
-export const adsAdStudiesList = operation({
-	name: 'ads.adStudiesList',
-	method: 'GET',
-	path: (input) => `${idPath(input.adId)}/ad_studies`,
-	input: MetaAdsEndpointInputSchemas.adsAdStudiesList,
-	output: MetaAdsEndpointOutputSchemas.adsAdStudiesList,
-	request: (input) => ({ query: cursorParams(input) }),
-});
 export const adsAdRulesGovernedList = operation({
 	name: 'ads.adRulesGovernedList',
 	method: 'GET',
@@ -1871,11 +1811,8 @@ export const Accounts = {
 	impactingAdStudiesList: accountsImpactingAdStudiesList,
 	adRulesLibraryList: accountsAdRulesLibraryList,
 	adRulesLibraryCreate: accountsAdRulesLibraryCreate,
-	activeAdRulesList: accountsActiveAdRulesList,
 	generatePreviews: accountsGeneratePreviews,
 	broadTargetingCategoriesList: accountsBroadTargetingCategoriesList,
-	smartSuggestedAdsList: accountsSmartSuggestedAdsList,
-	suggestedAdsList: accountsSuggestedAdsList,
 	placePageSetsCreate: accountsPlacePageSetsCreate,
 	reachEstimate: accountsReachEstimate,
 };
@@ -1943,7 +1880,6 @@ export const AdSets = {
 export const Ads = {
 	list: adsList,
 	adCreativesList: adsAdCreativesList,
-	adStudiesList: adsAdStudiesList,
 	adRulesGovernedList: adsAdRulesGovernedList,
 	previewsList: adsPreviewsList,
 	copiesList: adsCopiesList,

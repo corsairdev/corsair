@@ -22,9 +22,9 @@ describe('Meta Ads schemas and registry', () => {
 				return `${group}${action?.[0]?.toUpperCase()}${action?.slice(1)}`;
 			})
 			.sort();
-		expect(inputKeys).toHaveLength(133);
+		expect(inputKeys).toHaveLength(129);
 		expect(outputKeys).toEqual(inputKeys);
-		expect(registeredKeys).toHaveLength(133);
+		expect(registeredKeys).toHaveLength(129);
 		expect(registeredKeys).toEqual(inputKeys);
 	});
 

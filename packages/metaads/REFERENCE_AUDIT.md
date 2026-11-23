@@ -4,7 +4,7 @@ Audit date: 2026-11-19; disposition reconciliation: 2026-11-21. Source index: [o
 
 ## Counts and units
 
-- **133 implemented operations** are registered with typed input/output schemas, risk metadata, and mocked request/response coverage. The operation count is from the Corsair endpoint registry.
+- **129 implemented operations** are registered with typed input/output schemas, risk metadata, and mocked request/response coverage. The operation count is from the Corsair endpoint registry.
 - **159 core reference pages** were audited across the 18 headings below. At the reference-page level: 73 are fully covered, 11 are partially covered, 62 have verified documented operations or fields still pending, 2 are unverifiable, and 11 are static/type/guide entries without a standalone operation. A page may document multiple HTTP methods; page counts are not route-method counts.
 - **One additional unverified route** is the Ad Set `/{adset_id}/adlabels` association operation. Its route-specific reference could not be retrieved, so it remains pending rather than inferred from the Campaign, Ad, or Creative association contracts.
 - **226 adjacent index links** are outside the 159-page core ad-object table under Ads Pixel, Business, Business Role Request, Business User, Product Catalog, Product Extensions Catalog Suggestion, Integrity Appeals API, and System User headings. The Ads Pixel object reference contributes `GET /{pixel_id}` and `POST /{pixel_id}` operations to this plugin, but its nested creator/business/usage fields and other pixel edges are not complete; the other 225 linked pages are not claimed as covered.

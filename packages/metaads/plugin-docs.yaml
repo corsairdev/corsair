@@ -26,13 +26,10 @@ apiNotes:
   accounts.trackingCreate: "Meta documents tracking_specs only as a generic Object without nested fields; request data is removed from propagated errors."
   accounts.pixelsList: "Lists account pixels with the documented scalar AdsPixel fields and Graph cursor pagination."
   accounts.adRulesLibraryCreate: "Creates a potentially consequential automation rule. New rules default to DISABLED; PING_ENDPOINT and NOTIFICATION execution types are excluded because outbound callback lifecycle is not supported."
-  accounts.smartSuggestedAdsList: "Exposes documented objective, optimizationGoal, pixelId and productSetId filters, plus Graph pagination."
-  accounts.suggestedAdsList: "Exposes a bounded documented filter set; unsupported filters are rejected rather than passed through."
   accounts.placePageSetsCreate: "Creates a place-page set only for a published parent Page; the token must have access to that Page."
   accounts.reachEstimate: "Requires targetingSpec.geo_locations.countries, accepts at most one country, and may return -1 bounds when a custom audience estimate is unavailable."
   accounts.impactingAdStudiesList: "Lists documented ad studies affecting the account or descendant ad objects."
   accounts.adRulesLibraryList: "Lists account ad rules. Use adRulesLibraryCreate for documented rule creation; editing/deleting rules is not exposed."
-  accounts.activeAdRulesList: "Requires selectedIds and accepts an optional passEvaluation filter; it does not execute or change rules."
   accounts.generatePreviews: "Accepts only an object_story_spec with a documented link_data or other supported single content type, plus a bounded placement enum; returns expiring HTML as inert text."
   accounts.broadTargetingCategoriesList: "Lists the documented broad-targeting category fields; this is separate from the unified targeting browse/search edges whose node contract is pending."
   images.upload: "Accepts base64 bytes or copies an image by source account and hash. The adapter removes upload form data from propagated core errors."
@@ -62,12 +59,11 @@ apiNotes:
   adSets.create: "Supply optimizationGoal (REACH) and billingEvent (IMPRESSIONS), a documented Meta v27 ad-set example. This consequential write is destructive and isn't automatically retried. Budgets use integer smallest-currency units; initial status defaults to PAUSED. Meta v27 can enable cross-device expansion for eligible Sales ad sets unless the documented targeting automation setting is set to 0; EU targeting needs beneficiary/payer account defaults or explicit values. Conversion, lead, app-install and page-like goals need promotedObject (for example pixel_id with custom_event_type, or page_id); bid caps and cost caps need bidAmount."
   ads.create: "Use an existing creative ID or an inline creativeSpec; the creative form field carries name and object_story_spec directly, as in Meta's ad-creation examples. Optionally pass a bare conversionDomain for campaigns that share data with a pixel; Meta requires it only for those campaigns. New ads enter review and can deliver after approval; this consequential write isn't automatically retried."
   ads.adCreativesList: "Lists creatives attached to the ad and forwards standard Graph cursors."
-  ads.adStudiesList: "Lists ad studies containing this ad."
   ads.previewsList: "Returns provider HTML in the body field. Only seven common formats are accepted here; treat preview HTML as untrusted text and note Meta says the iframe is valid for 24 hours."
   ads.copiesList: "Lists the documented ad copies edge and supports Graph cursor pagination."
   ads.copy: "Creates a copy with status_option fixed to PAUSED. Creative overrides are not exposed; optionally pass adSetId to choose a parent ad set. The non-idempotent write is not retried."
   creatives.create: "Use either an existing Page post ID or object_story_spec with page_id and exactly one documented content type: link_data, photo_data, video_data, text_data, or template_data. Political issue/election creatives need the documented authorizationCategory."
-  creatives.insightsList: "Reads the documented aesthetics quality metric; it does not expose a generalized performance-report surface."
+  creatives.insightsList: "Reads the documented aesthetics quality metric. Limited access: in a live check on 2026-11-23 Graph answered (#100) Tried accessing nonexisting field (creative_insights) to a standard development-tier app on v22, v25 and v27, although Meta's v27 SDK lists the edge."
   creatives.previewsList: "Returns provider HTML in the body field. Only seven common formats are accepted here; treat preview HTML as untrusted text and note Meta says the iframe is valid for 24 hours."
   audiences.create: "Creates a blank CUSTOM audience. Pass customerFileSource (USER_PROVIDED_ONLY, PARTNER_PROVIDED_ONLY, or BOTH_USER_AND_PARTNER_PROVIDED) for customer-file uploads; the field is optional in the general create reference, though Meta's Customer File guide says to specify it for that workflow. Add or remove members later with usersAdd/usersRemove; only single-key SHA-256 email or phone hashes are accepted, up to 10000 per request. Adds also require upload-session and batch metadata. Raw identifiers and multi-key matching are not exposed. Request payloads are omitted from propagated error metadata and echoed invalid-entry samples are stripped from successful results."
   audiences.acceptTerms: "Accepts the provider's custom-audience terms for the specified ad account; this legal acceptance is marked destructive."
@@ -104,7 +100,7 @@ apiNotes:
   pixels.update: "Updates only documented AdsPixel fields; server_events_business_ids changes access and are marked destructive with the request body removed from propagated errors."
   publisherBlockLists.create: "Creates a named block list but does not apply it to account delivery."
   customConversions.create: "Creates a custom conversion definition from documented event-source fields; this operation does not send Conversions API events."
-  insights.list: "Synchronous metrics with allow-listed fields, breakdowns, filters, attribution windows, sorting, summary, and time increments. Meta may reject unsupported field/breakdown combinations."
+  insights.list: "Synchronous metrics with breakdowns, filters, attribution windows, sorting, summary, and time increments. Common fields are listed and any other snake_case AdsInsights field is passed through. Breakdown columns such as age, country or publisher_platform are not fields (Graph answers \"(#100) age is not valid for fields param\"): request them with breakdowns and they come back on each row."
   insights.listForCampaign: "Reads the same typed synchronous Insights fields directly from a campaign node."
   insights.listForAdSet: "Reads the same typed synchronous Insights fields directly from an ad-set node."
   insights.listForAd: "Reads the same typed synchronous Insights fields directly from an ad node."
@@ -286,9 +282,6 @@ apiExamples:
     accountId: "1234567890"
   accounts.adRulesLibraryList:
     accountId: "1234567890"
-  accounts.activeAdRulesList:
-    accountId: "1234567890"
-    selectedIds: ["120000000000001", "120000000000002"]
   accounts.generatePreviews:
     call: |-
       {
@@ -358,12 +351,6 @@ apiExamples:
         scheduleSpec: { scheduleType: "DAILY" },
         status: "DISABLED",
       }
-  accounts.smartSuggestedAdsList:
-    call: |-
-      { accountId: "1234567890", objective: "OUTCOME_TRAFFIC", optimizationGoal: "LINK_CLICKS" }
-  accounts.suggestedAdsList:
-    call: |-
-      { accountId: "1234567890", countries: ["US"], objective: "OUTCOME_SALES", useCase: "AUTOMATED_SHOPPING_ADS" }
   accounts.placePageSetsCreate:
     call: |-
       { accountId: "1234567890", name: "Store locations", parentPageId: "1234567895", locationTypes: ["recent", "home"] }
@@ -513,8 +500,6 @@ apiExamples:
   adSets.adRulesGovernedList:
     adSetId: "120000000000002"
     passEvaluation: true
-  ads.adStudiesList:
-    adId: "120000000000003"
   ads.adRulesGovernedList:
     adId: "120000000000003"
     passEvaluation: true

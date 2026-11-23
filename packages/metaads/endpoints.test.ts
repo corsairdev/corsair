@@ -384,26 +384,6 @@ const cases: Case[] = [
 		},
 	},
 	{
-		name: 'accounts.activeAdRulesList',
-		path: '/act_123/active_adrules',
-		method: 'GET',
-		query: {
-			selected_ids: '["campaign-1","adset-1"]',
-			pass_evaluation: true,
-			limit: 10,
-			after: 'rule-cursor',
-		},
-		call: async () => {
-			await Accounts.activeAdRulesList(ctx, {
-				accountId: '123',
-				selectedIds: ['campaign-1', 'adset-1'],
-				passEvaluation: true,
-				limit: 10,
-				after: 'rule-cursor',
-			});
-		},
-	},
-	{
 		name: 'accounts.generatePreviews',
 		path: '/act_123/generatepreviews',
 		method: 'GET',
@@ -444,54 +424,6 @@ const cases: Case[] = [
 				customCategoriesOnly: true,
 				limit: 3,
 				after: 'broad-cursor',
-			});
-		},
-	},
-	{
-		name: 'accounts.smartSuggestedAdsList',
-		path: '/act_123/smart_suggested_ads',
-		method: 'GET',
-		query: {
-			objective: 'OUTCOME_TRAFFIC',
-			optimization_goal: 'LINK_CLICKS',
-			pixel_id: 'pixel-1',
-			product_set_id: 'product-set-1',
-			limit: 5,
-			after: 'suggestion-cursor',
-		},
-		call: async () => {
-			await Accounts.smartSuggestedAdsList(ctx, {
-				accountId: '123',
-				objective: 'OUTCOME_TRAFFIC',
-				optimizationGoal: 'LINK_CLICKS',
-				pixelId: 'pixel-1',
-				productSetId: 'product-set-1',
-				limit: 5,
-				after: 'suggestion-cursor',
-			});
-		},
-	},
-	{
-		name: 'accounts.suggestedAdsList',
-		path: '/act_123/suggested_ads',
-		method: 'GET',
-		query: {
-			countries: 'US,CA',
-			objective: 'OUTCOME_SALES',
-			optimization_goal: 'OFFSITE_CONVERSIONS',
-			rank_by: 'ads_revenue',
-			use_case: 'AUTOMATED_SHOPPING_ADS',
-			limit: 20,
-		},
-		call: async () => {
-			await Accounts.suggestedAdsList(ctx, {
-				accountId: '123',
-				countries: ['US', 'CA'],
-				objective: 'OUTCOME_SALES',
-				optimizationGoal: 'OFFSITE_CONVERSIONS',
-				rankBy: 'ads_revenue',
-				useCase: 'AUTOMATED_SHOPPING_ADS',
-				limit: 20,
 			});
 		},
 	},
@@ -1127,19 +1059,6 @@ const cases: Case[] = [
 				adId: 'ad-1',
 				limit: 2,
 				before: 'creative-cursor',
-			});
-		},
-	},
-	{
-		name: 'ads.adStudiesList',
-		path: '/ad-1/ad_studies',
-		method: 'GET',
-		query: { limit: 5, after: 'study-cursor' },
-		call: async () => {
-			await Ads.adStudiesList(ctx, {
-				adId: 'ad-1',
-				limit: 5,
-				after: 'study-cursor',
 			});
 		},
 	},

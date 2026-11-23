@@ -10,81 +10,6 @@ description: "API reference for the Meta Ads plugin in Corsair: every `metaads.a
 
 ## Accounts
 
-### activeAdRulesList
-
-`accounts.activeAdRulesList`
-
-List active rules for explicitly selected ad objects
-
-**Risk:** `read`
-
-```ts
-await corsair.metaads.api.accounts.activeAdRulesList({
-	accountId: '1234567890',
-	selectedIds: ['120000000000001', '120000000000002'],
-});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `accountId` | `string` | Yes | — |
-| `selectedIds` | `string[]` | Yes | — |
-| `passEvaluation` | `boolean` | No | — |
-| `limit` | `number` | No | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
-
-Requires selectedIds and accepts an optional passEvaluation filter; it does not execute or change rules.
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-| `paging` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: string,
-  account_id?: string,
-  created_by?: {
-    id: string,
-    name?: string
-  },
-  created_time?: string,
-  disable_error_code?: number,
-  name?: string,
-  status?: string,
-  updated_time?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="paging full type">
-
-```ts
-{
-  cursors?: {
-    before?: string,
-    after?: string
-  },
-  hasNextPage: boolean
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
 ### activitiesList
 
 `accounts.activitiesList`
@@ -1163,75 +1088,6 @@ Revokes one explicitly identified business or system user assignment; this is ma
 
 ---
 
-### smartSuggestedAdsList
-
-`accounts.smartSuggestedAdsList`
-
-List smart ad suggestions for an account
-
-**Risk:** `read`
-
-```ts
-await corsair.metaads.api.accounts.smartSuggestedAdsList({ accountId: "1234567890", objective: "OUTCOME_TRAFFIC", optimizationGoal: "LINK_CLICKS" });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `accountId` | `string` | Yes | — |
-| `objective` | `APP_INSTALLS \| BRAND_AWARENESS \| CONVERSIONS \| EVENT_RESPONSES \| LEAD_GENERATION \| LINK_CLICKS \| LOCAL_AWARENESS \| MESSAGES \| OFFER_CLAIMS \| OUTCOME_APP_PROMOTION \| OUTCOME_AWARENESS \| OUTCOME_ENGAGEMENT \| OUTCOME_LEADS \| OUTCOME_SALES \| OUTCOME_TRAFFIC \| PAGE_LIKES \| POST_ENGAGEMENT \| PRODUCT_CATALOG_SALES \| REACH \| STORE_VISITS \| VIDEO_VIEWS` | No | — |
-| `optimizationGoal` | `NONE \| APP_INSTALLS \| AD_RECALL_LIFT \| ENGAGED_USERS \| EVENT_RESPONSES \| IMPRESSIONS \| LEAD_GENERATION \| QUALITY_LEAD \| LINK_CLICKS \| OFFSITE_CONVERSIONS \| PAGE_LIKES \| POST_ENGAGEMENT \| QUALITY_CALL \| REACH \| LANDING_PAGE_VIEWS \| VISIT_INSTAGRAM_PROFILE \| ENGAGED_PAGE_VIEWS \| VALUE \| THRUPLAY \| DERIVED_EVENTS \| APP_INSTALLS_AND_OFFSITE_CONVERSIONS \| CONVERSATIONS \| IN_APP_VALUE \| MESSAGING_PURCHASE_CONVERSION \| MESSAGING_DEEP_CONVERSATION_AND_FOLLOW \| SUBSCRIBERS \| REMINDERS_SET \| MEANINGFUL_CALL_ATTEMPT \| PROFILE_VISIT \| PROFILE_AND_PAGE_ENGAGEMENT \| ADVERTISER_SILOED_VALUE \| AUTOMATIC_OBJECTIVE \| MESSAGING_APPOINTMENT_CONVERSION` | No | — |
-| `pixelId` | `string` | No | — |
-| `productSetId` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
-
-Exposes documented objective, optimizationGoal, pixelId and productSetId filters, plus Graph pagination.
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-| `paging` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: string,
-  account_id?: string,
-  name?: string | null,
-  status?: string | null,
-  configured_status?: string | null,
-  effective_status?: string | null
-}[]
-```
-</Accordion>
-
-<Accordion title="paging full type">
-
-```ts
-{
-  cursors?: {
-    before?: string,
-    after?: string
-  },
-  hasNextPage: boolean
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
 ### subscribedAppRemove
 
 `accounts.subscribedAppRemove`
@@ -1293,81 +1149,6 @@ Subscribes an app by optional documented app_id. No callback URL or webhook hand
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `success` | `boolean` | Yes | — |
-
-
-
----
-
-### suggestedAdsList
-
-`accounts.suggestedAdsList`
-
-List ad suggestions using documented account filters
-
-**Risk:** `read`
-
-```ts
-await corsair.metaads.api.accounts.suggestedAdsList({ accountId: "1234567890", countries: ["US"], objective: "OUTCOME_SALES", useCase: "AUTOMATED_SHOPPING_ADS" });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `accountId` | `string` | Yes | — |
-| `applicationId` | `string` | No | — |
-| `cmsId` | `string` | No | — |
-| `countries` | `string[]` | No | — |
-| `objective` | `string` | No | — |
-| `optimizationGoal` | `NONE \| APP_INSTALLS \| AD_RECALL_LIFT \| ENGAGED_USERS \| EVENT_RESPONSES \| IMPRESSIONS \| LEAD_GENERATION \| QUALITY_LEAD \| LINK_CLICKS \| OFFSITE_CONVERSIONS \| PAGE_LIKES \| POST_ENGAGEMENT \| QUALITY_CALL \| REACH \| LANDING_PAGE_VIEWS \| VISIT_INSTAGRAM_PROFILE \| ENGAGED_PAGE_VIEWS \| VALUE \| THRUPLAY \| DERIVED_EVENTS \| APP_INSTALLS_AND_OFFSITE_CONVERSIONS \| CONVERSATIONS \| IN_APP_VALUE \| MESSAGING_PURCHASE_CONVERSION \| MESSAGING_DEEP_CONVERSATION_AND_FOLLOW \| SUBSCRIBERS \| REMINDERS_SET \| MEANINGFUL_CALL_ATTEMPT \| PROFILE_VISIT \| PROFILE_AND_PAGE_ENGAGEMENT \| ADVERTISER_SILOED_VALUE \| AUTOMATIC_OBJECTIVE \| MESSAGING_APPOINTMENT_CONVERSION` | No | — |
-| `pixelId` | `string` | No | — |
-| `promotedObjectPageId` | `string` | No | — |
-| `promotedObjectProductSetId` | `string` | No | — |
-| `rankBy` | `string` | No | — |
-| `useCase` | `AD_STRATEGIES \| AUTOMATED_APP_ADS \| AUTOMATED_SHOPPING_ADS \| AUTOMATED_SHOPPING_ADS_MDSA \| LEAD_GEN_ASC_ADS \| MANUAL_FLOW_APP_ADS \| MANUAL_FLOW_SHOPS_ADS \| MANUAL_FLOW_WEBSITE_ADS \| MANUAL_FLOW_WEBSITE_AND_APP_ADS \| SALES_WEB_APP_ADS` | No | — |
-| `limit` | `number` | No | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
-
-Exposes a bounded documented filter set; unsupported filters are rejected rather than passed through.
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-| `paging` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: string,
-  account_id?: string,
-  name?: string | null,
-  status?: string | null,
-  configured_status?: string | null,
-  effective_status?: string | null
-}[]
-```
-</Accordion>
-
-<Accordion title="paging full type">
-
-```ts
-{
-  cursors?: {
-    before?: string,
-    after?: string
-  },
-  hasNextPage: boolean
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1587,89 +1368,6 @@ Lists rules that govern the ad; passEvaluation is an optional documented filter.
   name?: string,
   status?: string,
   updated_time?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="paging full type">
-
-```ts
-{
-  cursors?: {
-    before?: string,
-    after?: string
-  },
-  hasNextPage: boolean
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
----
-
-### adStudiesList
-
-`ads.adStudiesList`
-
-List ad studies associated with an ad
-
-**Risk:** `read`
-
-```ts
-await corsair.metaads.api.ads.adStudiesList({ adId: '120000000000003' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `adId` | `string` | Yes | — |
-| `limit` | `number` | No | — |
-| `after` | `string` | No | — |
-| `before` | `string` | No | — |
-
-Lists ad studies containing this ad.
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object[]` | Yes | — |
-| `paging` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-  id: string,
-  business?: {
-    id: string,
-    name?: string
-  } | null,
-  canceled_time?: string | null,
-  cooldown_start_time?: string | null,
-  created_by?: {
-    id: string,
-    name?: string
-  } | null,
-  created_time?: string | null,
-  description?: string | null,
-  end_time?: string | null,
-  name?: string | null,
-  observation_end_time?: string | null,
-  results_first_available_date?: string | null,
-  start_time?: string | null,
-  type?: string | null,
-  updated_by?: {
-    id: string,
-    name?: string
-  } | null,
-  updated_time?: string | null
 }[]
 ```
 </Accordion>
@@ -5105,7 +4803,7 @@ await corsair.metaads.api.creatives.get({ creativeId: '120000000000004' });
 
 `creatives.insightsList`
 
-Read the documented quality insight for a creative
+Read the documented quality insight for a creative (limited-access edge: Meta answers #100 nonexisting field to apps without access)
 
 **Risk:** `read`
 
@@ -5122,7 +4820,7 @@ await corsair.metaads.api.creatives.insightsList({ creativeId: '120000000000004'
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
 
-Reads the documented aesthetics quality metric; it does not expose a generalized performance-report surface.
+Reads the documented aesthetics quality metric. Limited access: in a live check on 2026-11-23 Graph answered (#100) Tried accessing nonexisting field (creative_insights) to a standard development-tier app on v22, v25 and v27, although Meta's v27 SDK lists the edge.
 
 
 
@@ -5671,7 +5369,7 @@ await corsair.metaads.api.insights.createAsync({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `accountId` | `string` | Yes | — |
-| `fields` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | Yes | — |
+| `fields` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| cpp \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| actions \| action_values \| conversions \| conversion_values \| cost_per_action_type \| cost_per_conversion \| cost_per_inline_link_click \| cost_per_unique_click \| purchase_roas \| website_ctr \| quality_ranking \| engagement_rate_ranking \| conversion_rate_ranking \| video_p25_watched_actions \| video_p50_watched_actions \| video_p75_watched_actions \| video_p100_watched_actions \| account_currency \| account_name \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| buying_type \| attribution_setting \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id \| string)[]` | Yes | — |
 | `datePreset` | `today \| yesterday \| this_month \| last_month \| this_quarter \| maximum \| data_maximum \| last_3d \| last_7d \| last_14d \| last_28d \| last_30d \| last_90d \| last_week_mon_sun \| last_week_sun_sat \| last_quarter \| last_year \| this_week_mon_today \| this_week_sun_today \| this_year` | No | — |
 | `since` | `string` | No | — |
 | `until` | `string` | No | — |
@@ -5682,7 +5380,7 @@ await corsair.metaads.api.insights.createAsync({
 | `filtering` | `object[]` | No | — |
 | `timeIncrement` | `monthly \| all_days \| number` | No | — |
 | `sort` | `string[]` | No | — |
-| `summary` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | No | — |
+| `summary` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| cpp \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| actions \| action_values \| conversions \| conversion_values \| cost_per_action_type \| cost_per_conversion \| cost_per_inline_link_click \| cost_per_unique_click \| purchase_roas \| website_ctr \| quality_ranking \| engagement_rate_ranking \| conversion_rate_ranking \| video_p25_watched_actions \| video_p50_watched_actions \| video_p75_watched_actions \| video_p100_watched_actions \| account_currency \| account_name \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| buying_type \| attribution_setting \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id \| string)[]` | No | — |
 | `summaryActionBreakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type)[]` | No | — |
 | `defaultSummary` | `boolean` | No | — |
 | `productIdLimit` | `number` | No | — |
@@ -5852,7 +5550,6 @@ Accept numeric or string reportRunId values, including report_run_id returned by
     value?: string
   }[],
   unique_clicks?: string,
-  unique_impressions?: string,
   actions?: {
     action_type?: string,
     value?: string
@@ -5916,7 +5613,7 @@ await corsair.metaads.api.insights.list({
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `accountId` | `string` | Yes | — |
-| `fields` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | Yes | — |
+| `fields` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| cpp \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| actions \| action_values \| conversions \| conversion_values \| cost_per_action_type \| cost_per_conversion \| cost_per_inline_link_click \| cost_per_unique_click \| purchase_roas \| website_ctr \| quality_ranking \| engagement_rate_ranking \| conversion_rate_ranking \| video_p25_watched_actions \| video_p50_watched_actions \| video_p75_watched_actions \| video_p100_watched_actions \| account_currency \| account_name \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| buying_type \| attribution_setting \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id \| string)[]` | Yes | — |
 | `datePreset` | `today \| yesterday \| this_month \| last_month \| this_quarter \| maximum \| data_maximum \| last_3d \| last_7d \| last_14d \| last_28d \| last_30d \| last_90d \| last_week_mon_sun \| last_week_sun_sat \| last_quarter \| last_year \| this_week_mon_today \| this_week_sun_today \| this_year` | No | — |
 | `since` | `string` | No | — |
 | `until` | `string` | No | — |
@@ -5927,7 +5624,7 @@ await corsair.metaads.api.insights.list({
 | `filtering` | `object[]` | No | — |
 | `timeIncrement` | `monthly \| all_days \| number` | No | — |
 | `sort` | `string[]` | No | — |
-| `summary` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | No | — |
+| `summary` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| cpp \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| actions \| action_values \| conversions \| conversion_values \| cost_per_action_type \| cost_per_conversion \| cost_per_inline_link_click \| cost_per_unique_click \| purchase_roas \| website_ctr \| quality_ranking \| engagement_rate_ranking \| conversion_rate_ranking \| video_p25_watched_actions \| video_p50_watched_actions \| video_p75_watched_actions \| video_p100_watched_actions \| account_currency \| account_name \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| buying_type \| attribution_setting \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id \| string)[]` | No | — |
 | `summaryActionBreakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type)[]` | No | — |
 | `defaultSummary` | `boolean` | No | — |
 | `productIdLimit` | `number` | No | — |
@@ -5935,7 +5632,7 @@ await corsair.metaads.api.insights.list({
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
 
-Synchronous metrics with allow-listed fields, breakdowns, filters, attribution windows, sorting, summary, and time increments. Meta may reject unsupported field/breakdown combinations.
+Synchronous metrics with breakdowns, filters, attribution windows, sorting, summary, and time increments. Common fields are listed and any other snake_case AdsInsights field is passed through. Breakdown columns such as age, country or publisher_platform are not fields (Graph answers "(#100) age is not valid for fields param"): request them with breakdowns and they come back on each row.
 
 <AccordionGroup>
 <Accordion title="filtering full type">
@@ -5986,7 +5683,6 @@ Synchronous metrics with allow-listed fields, breakdowns, filters, attribution w
     value?: string
   }[],
   unique_clicks?: string,
-  unique_impressions?: string,
   actions?: {
     action_type?: string,
     value?: string
@@ -6166,7 +5862,7 @@ await corsair.metaads.api.insights.listForAd({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `fields` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | Yes | — |
+| `fields` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| cpp \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| actions \| action_values \| conversions \| conversion_values \| cost_per_action_type \| cost_per_conversion \| cost_per_inline_link_click \| cost_per_unique_click \| purchase_roas \| website_ctr \| quality_ranking \| engagement_rate_ranking \| conversion_rate_ranking \| video_p25_watched_actions \| video_p50_watched_actions \| video_p75_watched_actions \| video_p100_watched_actions \| account_currency \| account_name \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| buying_type \| attribution_setting \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id \| string)[]` | Yes | — |
 | `datePreset` | `today \| yesterday \| this_month \| last_month \| this_quarter \| maximum \| data_maximum \| last_3d \| last_7d \| last_14d \| last_28d \| last_30d \| last_90d \| last_week_mon_sun \| last_week_sun_sat \| last_quarter \| last_year \| this_week_mon_today \| this_week_sun_today \| this_year` | No | — |
 | `since` | `string` | No | — |
 | `until` | `string` | No | — |
@@ -6177,7 +5873,7 @@ await corsair.metaads.api.insights.listForAd({
 | `filtering` | `object[]` | No | — |
 | `timeIncrement` | `monthly \| all_days \| number` | No | — |
 | `sort` | `string[]` | No | — |
-| `summary` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | No | — |
+| `summary` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| cpp \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| actions \| action_values \| conversions \| conversion_values \| cost_per_action_type \| cost_per_conversion \| cost_per_inline_link_click \| cost_per_unique_click \| purchase_roas \| website_ctr \| quality_ranking \| engagement_rate_ranking \| conversion_rate_ranking \| video_p25_watched_actions \| video_p50_watched_actions \| video_p75_watched_actions \| video_p100_watched_actions \| account_currency \| account_name \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| buying_type \| attribution_setting \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id \| string)[]` | No | — |
 | `summaryActionBreakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type)[]` | No | — |
 | `defaultSummary` | `boolean` | No | — |
 | `productIdLimit` | `number` | No | — |
@@ -6237,7 +5933,6 @@ Reads the same typed synchronous Insights fields directly from an ad node.
     value?: string
   }[],
   unique_clicks?: string,
-  unique_impressions?: string,
   actions?: {
     action_type?: string,
     value?: string
@@ -6294,7 +5989,7 @@ await corsair.metaads.api.insights.listForAdSet({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `fields` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | Yes | — |
+| `fields` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| cpp \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| actions \| action_values \| conversions \| conversion_values \| cost_per_action_type \| cost_per_conversion \| cost_per_inline_link_click \| cost_per_unique_click \| purchase_roas \| website_ctr \| quality_ranking \| engagement_rate_ranking \| conversion_rate_ranking \| video_p25_watched_actions \| video_p50_watched_actions \| video_p75_watched_actions \| video_p100_watched_actions \| account_currency \| account_name \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| buying_type \| attribution_setting \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id \| string)[]` | Yes | — |
 | `datePreset` | `today \| yesterday \| this_month \| last_month \| this_quarter \| maximum \| data_maximum \| last_3d \| last_7d \| last_14d \| last_28d \| last_30d \| last_90d \| last_week_mon_sun \| last_week_sun_sat \| last_quarter \| last_year \| this_week_mon_today \| this_week_sun_today \| this_year` | No | — |
 | `since` | `string` | No | — |
 | `until` | `string` | No | — |
@@ -6305,7 +6000,7 @@ await corsair.metaads.api.insights.listForAdSet({
 | `filtering` | `object[]` | No | — |
 | `timeIncrement` | `monthly \| all_days \| number` | No | — |
 | `sort` | `string[]` | No | — |
-| `summary` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | No | — |
+| `summary` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| cpp \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| actions \| action_values \| conversions \| conversion_values \| cost_per_action_type \| cost_per_conversion \| cost_per_inline_link_click \| cost_per_unique_click \| purchase_roas \| website_ctr \| quality_ranking \| engagement_rate_ranking \| conversion_rate_ranking \| video_p25_watched_actions \| video_p50_watched_actions \| video_p75_watched_actions \| video_p100_watched_actions \| account_currency \| account_name \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| buying_type \| attribution_setting \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id \| string)[]` | No | — |
 | `summaryActionBreakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type)[]` | No | — |
 | `defaultSummary` | `boolean` | No | — |
 | `productIdLimit` | `number` | No | — |
@@ -6365,7 +6060,6 @@ Reads the same typed synchronous Insights fields directly from an ad-set node.
     value?: string
   }[],
   unique_clicks?: string,
-  unique_impressions?: string,
   actions?: {
     action_type?: string,
     value?: string
@@ -6422,7 +6116,7 @@ await corsair.metaads.api.insights.listForCampaign({
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `fields` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | Yes | — |
+| `fields` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| cpp \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| actions \| action_values \| conversions \| conversion_values \| cost_per_action_type \| cost_per_conversion \| cost_per_inline_link_click \| cost_per_unique_click \| purchase_roas \| website_ctr \| quality_ranking \| engagement_rate_ranking \| conversion_rate_ranking \| video_p25_watched_actions \| video_p50_watched_actions \| video_p75_watched_actions \| video_p100_watched_actions \| account_currency \| account_name \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| buying_type \| attribution_setting \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id \| string)[]` | Yes | — |
 | `datePreset` | `today \| yesterday \| this_month \| last_month \| this_quarter \| maximum \| data_maximum \| last_3d \| last_7d \| last_14d \| last_28d \| last_30d \| last_90d \| last_week_mon_sun \| last_week_sun_sat \| last_quarter \| last_year \| this_week_mon_today \| this_week_sun_today \| this_year` | No | — |
 | `since` | `string` | No | — |
 | `until` | `string` | No | — |
@@ -6433,7 +6127,7 @@ await corsair.metaads.api.insights.listForCampaign({
 | `filtering` | `object[]` | No | — |
 | `timeIncrement` | `monthly \| all_days \| number` | No | — |
 | `sort` | `string[]` | No | — |
-| `summary` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| unique_impressions \| actions \| action_values \| cost_per_action_type \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| publisher_platform \| platform_position \| device_platform \| age \| gender \| country \| region \| hourly_stats_aggregated_by_advertiser_time_zone \| hourly_stats_aggregated_by_audience_time_zone \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id)[]` | No | — |
+| `summary` | `(impressions \| reach \| frequency \| spend \| clicks \| inline_link_clicks \| cpc \| cpm \| cpp \| ctr \| inline_link_click_ctr \| outbound_clicks \| unique_clicks \| actions \| action_values \| conversions \| conversion_values \| cost_per_action_type \| cost_per_conversion \| cost_per_inline_link_click \| cost_per_unique_click \| purchase_roas \| website_ctr \| quality_ranking \| engagement_rate_ranking \| conversion_rate_ranking \| video_p25_watched_actions \| video_p50_watched_actions \| video_p75_watched_actions \| video_p100_watched_actions \| account_currency \| account_name \| ad_name \| campaign_name \| adset_name \| objective \| optimization_goal \| buying_type \| attribution_setting \| date_start \| date_stop \| account_id \| campaign_id \| adset_id \| ad_id \| string)[]` | No | — |
 | `summaryActionBreakdowns` | `(action_device \| action_canvas_component_name \| action_carousel_card_id \| action_carousel_card_name \| action_destination \| action_reaction \| action_target_id \| action_type \| action_video_sound \| action_video_type)[]` | No | — |
 | `defaultSummary` | `boolean` | No | — |
 | `productIdLimit` | `number` | No | — |
@@ -6493,7 +6187,6 @@ Reads the same typed synchronous Insights fields directly from a campaign node.
     value?: string
   }[],
   unique_clicks?: string,
-  unique_impressions?: string,
   actions?: {
     action_type?: string,
     value?: string
