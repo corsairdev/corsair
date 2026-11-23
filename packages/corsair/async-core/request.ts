@@ -425,7 +425,14 @@ export const request = <T>(
 				resolve(result.body);
 				return;
 			} catch (error) {
-				if (error instanceof ApiError && error.isRateLimitError()) {
+				// Honour `enabled: false`: a 429 thrown by catchErrorCodes must surface
+				// to the caller unchanged, not be retried behind its back.
+				const retryableRateLimit =
+					rateLimitConfig.enabled &&
+					error instanceof ApiError &&
+					error.isRateLimitError();
+
+				if (retryableRateLimit) {
 					if (attempt < maxAttempts) {
 						const retryDelay = error.retryAfter
 							? error.retryAfter
@@ -448,7 +455,7 @@ export const request = <T>(
 					return;
 				}
 
-				if (error instanceof ApiError && error.isRateLimitError()) {
+				if (retryableRateLimit) {
 					continue;
 				}
 
