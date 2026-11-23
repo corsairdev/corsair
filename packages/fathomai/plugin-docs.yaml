@@ -15,6 +15,8 @@ overviewNote: |
 apiNotes:
   "recordings.getSummary": "`summary` is null when the recording has no generated summary (Fathom's onboarding demo call, for one), although the API reference marks it as always set."
   "recordings.requestDownload": "Fathom answers 422 when the recording has no downloadable media."
+  "recordings.sendSummary": "Fathom POSTs `{recording_id, summary}` to destination_url within a second or two, signed like a webhook delivery (the API client's secret and the same frozen `webhook-timestamp`). The meetings.contentReady handler does not claim these callbacks."
+  "recordings.sendTranscript": "Fathom POSTs `{recording_id, transcript}` to destination_url, signed and stamped like the `recordings.sendSummary` callback."
   "webhooks.create": "Set at least one of include_transcript, include_summary, include_action_items or include_crm_matches to true; Fathom rejects a webhook that includes nothing, and the input check does too."
 references:
   - title: Fathom API Reference
