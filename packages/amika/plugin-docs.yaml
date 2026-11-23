@@ -1,0 +1,212 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from Amika's OpenAPI
+# spec; docs-examples.test.ts parses every example with its input schema.
+displayName: Amika
+description: "Give an agent its own coding agents: create rigs (isolated devbox VMs with a repo, its dependencies and agent credentials), send messages to Claude Code or Codex running in them, queue shell commands and read their output, schedule jobs, expose dev servers as preview URLs, snapshot rigs into base images, and manage hosts, secrets, agent credentials and repository MCP integrations (98 operations)."
+overviewNote: "Connect with an Amika API key (app.amika.dev \u2192 Settings \u2192 API Keys, or `amika auth api-key create`). rigs.create answers before the rig has booted: poll rigs.get until status is running and setup_status is ok, and stop if setup_status ends in -failed. commandRuns.create queues a command; read its output with commandRuns.listEvents. agentSessions.send needs a Claude or Codex credential stored in Amika first (agentCredentials.claude.create)."
+examples:
+  read:
+    path: rigs.list
+    title: List the team's rigs
+    args: {}
+  write:
+    path: commandRuns.create
+    title: Run the test suite on a rig
+    args: {"rig_ref": "dev-rig", "command": "pnpm install && pnpm test", "timeout_ms": 600000}
+apiExamples:
+  agentCredentials.claude.check:
+    args: {"id": "cred_01M82A4T5Y7XG1F0Q9W3E8R2KD"}
+  agentCredentials.claude.create:
+    args: {"name": "team-claude", "value": "sk-ant-oat01-example", "type": "oauth", "scope": "org"}
+  agentCredentials.claude.delete:
+    args: {"id": "cred_01M82A4T5Y7XG1F0Q9W3E8R2KD"}
+  agentCredentials.claude.list:
+    args: {}
+  agentCredentials.codex.create:
+    args: {"name": "team-codex", "value": "codex-auth-json", "type": "oauth", "scope": "org"}
+  agentCredentials.codex.delete:
+    args: {"id": "cred_01M82A4T5Y7XG1F0Q9W3E8R2KE"}
+  agentCredentials.codex.list:
+    args: {}
+  agentCredentials.pi.delete:
+    args: {}
+  agentCredentials.pi.get:
+    args: {}
+  agentCredentials.pi.set:
+    args: {}
+  agentSessions.get:
+    args: {"id": "ses_01M82A4T5Y7XG1F0Q9W3E8R2KD"}
+  agentSessions.list:
+    args: {"limit": 20}
+  agentSessions.send:
+    args: {"message": "Run the test suite and fix any failing test, then open a pull request.", "agent": "claude", "model": "opus", "repo_url": "https://github.com/acme/web-app", "new_branch_name": "fix/failing-tests"}
+  apiKeys.create:
+    args: {"name": "ci", "scope": "organization"}
+  apiKeys.delete:
+    args: {"id": "api_key_01M8284RF56T8511SMWAY2SBME"}
+  apiKeys.list:
+    args: {}
+  cloudAccounts.create:
+    args: {"provider": "instabox", "name": "prod-instabox", "api_key": "instabox-api-key"}
+  cloudAccounts.delete:
+    args: {"ref": "prod-instabox"}
+  cloudAccounts.get:
+    args: {"ref": "prod-instabox"}
+  cloudAccounts.list:
+    args: {}
+  cloudAccounts.listSizes:
+    args: {"ref": "prod-instabox"}
+  cloudAccounts.update:
+    args: {"ref": "prod-instabox", "name": "instabox-prod"}
+  commandRuns.cancel:
+    args: {"id": "cr_01M82B7K2N4P6Q8R0S2T4V6X8Z"}
+  commandRuns.create:
+    args: {"rig_ref": "dev-rig", "command": "pnpm install && pnpm test", "timeout_ms": 600000}
+  commandRuns.get:
+    args: {"id": "cr_01M82B7K2N4P6Q8R0S2T4V6X8Z"}
+  commandRuns.list:
+    args: {"rig": "dev-rig"}
+  commandRuns.listEvents:
+    args: {"id": "cr_01M82B7K2N4P6Q8R0S2T4V6X8Z", "after": 0, "limit": 100}
+  gitUserSettings.get:
+    args: {}
+  gitUserSettings.set:
+    args: {"name": "Ada Lovelace", "email": "ada@example.com"}
+  hosts.checkHealth:
+    args: {"id": "host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d"}
+  hosts.create:
+    args: {"hostname": "studio-mac", "secret": "replace-with-output-of-openssl-rand-hex-24"}
+  hosts.delete:
+    args: {"id": "host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d"}
+  hosts.enrol:
+    args: {"id": "host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d"}
+  hosts.get:
+    args: {"id": "host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d"}
+  hosts.list:
+    args: {}
+  hosts.replace:
+    args: {"id": "host_1b2c3d4e-5f60-4a7b-8c9d-0e1f2a3b4c5d", "hostname": "studio-mac"}
+  integrations.disconnect:
+    args: {"provider": "sentry"}
+  integrations.list:
+    args: {}
+  jobRuns.cancel:
+    args: {"id": "jr_01M82D2E4G6J8L0N2Q4S6U8W0Y"}
+  jobRuns.get:
+    args: {"id": "jr_01M82D2E4G6J8L0N2Q4S6U8W0Y"}
+  jobRuns.list:
+    args: {"job_ref": "nightly-tests", "limit": 20}
+  jobRuns.start:
+    args: {"job_ref": "nightly-tests"}
+  jobs.create:
+    args: {"name": "nightly-tests", "description": "Install and run the suite every night", "trigger": {"kind": "cron", "schedule": "0 3 * * *", "timezone": "America/New_York"}, "steps": [{"rig_ref": "dev-rig", "command": "pnpm install --frozen-lockfile", "timeout_ms": 600000}, {"command": "pnpm test", "timeout_ms": 1800000}], "rig_status_on_finish": "stopped", "enabled": true}
+  jobs.delete:
+    args: {"job": "nightly-tests"}
+  jobs.get:
+    args: {"job": "nightly-tests"}
+  jobs.list:
+    args: {}
+  jobs.update:
+    args: {"job": "nightly-tests", "steps": [{"rig_ref": "dev-rig", "command": "pnpm install --frozen-lockfile", "timeout_ms": 600000}, {"command": "pnpm test -- --ci", "timeout_ms": 1800000}], "enabled": false}
+  linear.settings.get:
+    args: {}
+  linear.settings.set:
+    args: {"repository_id": "repo_01M82E3F5H7K9M1P3R5T7V9X1Z", "agent_name": "codex", "system_prompt": "Link the pull request to the issue."}
+  repositories.clearImage:
+    args: {"id": "repo_01M82E3F5H7K9M1P3R5T7V9X1Z"}
+  repositories.get:
+    args: {"id": "repo_01M82E3F5H7K9M1P3R5T7V9X1Z"}
+  repositories.integrations.list:
+    args: {"id": "repo_01M82E3F5H7K9M1P3R5T7V9X1Z"}
+  repositories.integrations.set:
+    args: {"id": "repo_01M82E3F5H7K9M1P3R5T7V9X1Z", "integrations": [{"name": "lug", "mcp_server_type": "http", "mcp_server_url": "https://mcp.example.com/mcp"}]}
+  repositories.list:
+    args: {}
+  repositories.upsert:
+    args: {"repo_url": "https://github.com/acme/web-app", "setup_script": "pnpm install"}
+  rigs.create:
+    args: {"name": "dev-rig", "repo_url": "https://github.com/acme/web-app", "preset": "coder", "size": "a0.m", "agent_credentials": [{"kind": "claude", "name": "team-claude"}], "env_vars": {"NODE_ENV": "development"}, "auto_stop_interval": 30}
+  rigs.createSshSession:
+    args: {"id": "dev-rig"}
+  rigs.createTerminalTicket:
+    args: {"id": "dev-rig"}
+  rigs.delete:
+    args: {"id": "dev-rig"}
+  rigs.get:
+    args: {"id": "dev-rig", "by": "name"}
+  rigs.getSlackConversation:
+    args: {"id": "dev-rig"}
+  rigs.getSlackMetadata:
+    args: {}
+  rigs.list:
+    args: {}
+  rigs.listIntegrations:
+    args: {"id": "dev-rig"}
+  rigs.listLifecycleEvents:
+    args: {"id": "dev-rig"}
+  rigs.services.create:
+    args: {"id": "dev-rig", "name": "web", "port": 3000, "url_scheme": "https"}
+  rigs.services.createToken:
+    args: {"id": "dev-rig", "ref": "web"}
+  rigs.services.delete:
+    args: {"id": "dev-rig", "ref": "web"}
+  rigs.services.list:
+    args: {"id": "dev-rig"}
+  rigs.services.replace:
+    args: {"id": "dev-rig", "ref": "web", "name": "web", "port": 5173, "url_scheme": "https"}
+  rigs.sessions.create:
+    args: {"id": "dev-rig", "agent_name": "claude"}
+  rigs.sessions.get:
+    args: {"id": "dev-rig", "sessionId": "ses_01M82A4T5Y7XG1F0Q9W3E8R2KD"}
+  rigs.sessions.getLatest:
+    args: {"id": "dev-rig"}
+  rigs.sessions.list:
+    args: {"id": "dev-rig"}
+  rigs.sessions.update:
+    args: {"id": "dev-rig", "sessionId": "ses_01M82A4T5Y7XG1F0Q9W3E8R2KD", "metadata": {"ticket": "ENG-142"}}
+  rigs.start:
+    args: {"id": "dev-rig"}
+  rigs.stop:
+    args: {"id": "dev-rig"}
+  secrets.create:
+    args: {"name": "STRIPE_TEST_KEY", "value": "sk_test_123", "scope": "org"}
+  secrets.delete:
+    args: {"id": "sec_01M82F4G6J8L0N2Q4S6U8W0Y2A"}
+  secrets.list:
+    args: {}
+  secrets.sshPublicKeys.delete:
+    args: {"id": "sshkey_01M82G5H7K9M1P3R5T7V9X1Z3B"}
+  secrets.sshPublicKeys.list:
+    args: {}
+  secrets.sshPublicKeys.upsert:
+    args: {"name": "laptop", "public_key": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIExampleKeyOnly laptop"}
+  secrets.update:
+    args: {"id": "sec_01M82F4G6J8L0N2Q4S6U8W0Y2A", "value": "sk_test_456"}
+  serviceDefinitions.create:
+    args: {"repo_url": "https://github.com/acme/web-app", "name": "web", "ports": [{"port": 3000, "url_scheme": "https"}]}
+  serviceDefinitions.delete:
+    args: {"id": "svcdef_01M82H6J8L0N2Q4S6U8W0Y2A4C"}
+  serviceDefinitions.update:
+    args: {"id": "svcdef_01M82H6J8L0N2Q4S6U8W0Y2A4C", "name": "web", "ports": [{"port": 5173, "url_scheme": "https"}]}
+  services.list:
+    args: {}
+  slack.channelSettings.delete:
+    args: {"slack_team_id": "T0123456", "slack_channel_id": "C0123456"}
+  slack.channelSettings.list:
+    args: {}
+  slack.channelSettings.set:
+    args: {"slack_team_id": "T0123456", "slack_channel_id": "C0123456", "repository_id": "repo_01M82E3F5H7K9M1P3R5T7V9X1Z", "agent_name": "claude"}
+  slack.settings.get:
+    args: {}
+  slack.settings.set:
+    args: {"repository_id": "repo_01M82E3F5H7K9M1P3R5T7V9X1Z", "agent_name": "claude", "system_prompt": "Open a pull request for every change."}
+  snapshots.create:
+    args: {"name": "app-base", "sandbox_ref": "dev-rig", "mode": "scrub_and_delete", "description": "web-app with deps installed"}
+  snapshots.delete:
+    args: {"ref": "app-base"}
+  snapshots.get:
+    args: {"ref": "app-base"}
+  snapshots.list:
+    args: {}
+  snapshots.previewScrub:
+    args: {"sandbox": "dev-rig"}
