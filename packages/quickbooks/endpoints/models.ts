@@ -547,13 +547,16 @@ const associatedvaluesSchema = lazySchema(() =>
 		.strict(),
 );
 
+// QuickBooks sends `CustomExtensions` (and its `AssociatedValues`) as arrays, usually empty, on every line.
 const customextensionsSchema = lazySchema(() =>
-	z
-		.object({
-			AssociatedValues: associatedvaluesSchema(),
-			ExtensionType: z.string(),
-		})
-		.strict(),
+	z.array(
+		z
+			.object({
+				AssociatedValues: z.array(associatedvaluesSchema()).optional(),
+				ExtensionType: z.string().optional(),
+			})
+			.strict(),
+	),
 );
 
 const accountbasedexpenselinedetailSchema = lazySchema(() =>
@@ -1743,7 +1746,12 @@ const vendorcreditresponseSchema = lazySchema(() =>
 			DepartmentRef: referencetypeSchema().optional(),
 			TxnDate: z.string().optional(),
 			IncludeInAnnualTPAR: z.boolean().optional(),
-			Line: z.array(itembasedexpenselineSchema()),
+			Line: z.array(
+				z.union([
+					itembasedexpenselineSchema(),
+					accountbasedexpenselineSchema(),
+				]),
+			),
 			Balance: z.number().optional(),
 			Id: z.string(),
 			CurrencyRef: currencyrefSchema().optional(),
@@ -1961,7 +1969,12 @@ const purchaseorderrequestSchema = lazySchema(() =>
 			CurrencyRef: currencyrefSchema().optional(),
 			APAccountRef: referencetypeSchema(),
 			VendorRef: referencetypeSchema(),
-			Line: z.array(itembasedexpenselineSchema()),
+			Line: z.array(
+				z.union([
+					itembasedexpenselineSchema(),
+					accountbasedexpenselineSchema(),
+				]),
+			),
 		})
 		.strict(),
 );
@@ -3810,7 +3823,12 @@ const purchaseorderresponseSchema = lazySchema(() =>
 			VendorRef: referencetypeSchema(),
 			ShipMethodRef: referencetypeSchema().optional(),
 			RecurDataRef: referencetypeSchema().optional(),
-			Line: z.array(itembasedexpenselineSchema()),
+			Line: z.array(
+				z.union([
+					itembasedexpenselineSchema(),
+					accountbasedexpenselineSchema(),
+				]),
+			),
 			TxnTaxDetail: txntaxdetailSchema().optional(),
 			SyncToken: z.string().optional(),
 			ShipTo: referencetypeSchema().optional(),
@@ -4056,29 +4074,34 @@ const taxsummaryquerySchema = lazySchema(() =>
 const taxclassificationSchema = lazySchema(() =>
 	z
 		.object({
+			// A list of item types, e.g. ["Inventory", "NonInventory"].
 			ApplicableTo: z
-				.enum([
-					'Assembly',
-					'Category',
-					'Fixed Asset',
-					'Group',
-					'Inventory',
-					'NonInventory',
-					'Other Charge',
-					'Payment',
-					'Service',
-					'Subtotal',
-					'Discount',
-					'Tax',
-					'Tax Group',
-					'Bundle',
-				])
+				.array(
+					z.enum([
+						'Assembly',
+						'Category',
+						'Fixed Asset',
+						'Group',
+						'Inventory',
+						'NonInventory',
+						'Other Charge',
+						'Payment',
+						'Service',
+						'Subtotal',
+						'Discount',
+						'Tax',
+						'Tax Group',
+						'Bundle',
+					]),
+				)
 				.optional(),
 			Code: z.string().optional(),
 			Name: z.string().optional(),
 			Level: z.string().optional(),
-			ParentRef: referencetypeSchema(),
+			// Top-level (level 1) classifications have no parent.
+			ParentRef: referencetypeSchema().optional(),
 			Description: z.string().optional(),
+			Id: z.string().optional(),
 		})
 		.strict(),
 );

@@ -1,7 +1,7 @@
 import type { ZodType } from 'zod';
 
 /**
- * Builds a schema on first call and caches it. The plugin has 236 operations
+ * Builds a schema on first call and caches it. The plugin has 237 operations
  * over a large generated model set; building them all at import cost ~40 MB
  * of heap in every process that loads the plugin.
  */

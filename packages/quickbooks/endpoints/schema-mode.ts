@@ -56,7 +56,9 @@ function lenient(
 					defOf(field).type !== 'optional';
 				fields[name] = required ? inner : inner.nullish();
 			}
-			out = z.looseObject(fields);
+			const object = z.looseObject(fields);
+			// A nested object QuickBooks sends as a list (as `CustomExtensions` was) still parses.
+			out = top ? object : z.union([object, z.array(object)]);
 			break;
 		}
 		case 'array': {

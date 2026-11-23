@@ -3607,6 +3607,33 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			}),
 	},
 	{
+		id: 'item.deleteCategory',
+		method: 'POST',
+		expectedPath: '/v3/company/12345678/item',
+		expectedQuery: { operation: 'delete' },
+		expectedBody: { Id: '20', SyncToken: '0' },
+		requestKind: 'json',
+		response: {
+			kind: 'json',
+			body: {
+				Item: { domain: 'QBO', status: 'Deleted', Id: '20' },
+				time: '2026-11-23T00:13:01.362-08:00',
+			},
+		},
+		expectedResult: {
+			Item: { domain: 'QBO', status: 'Deleted', Id: '20' },
+			time: '2026-11-23T00:13:01.362-08:00',
+		},
+		input: { realmId: '12345678', body: { Id: '20', SyncToken: '0' } },
+		inputSchema: schemasFor('item.deleteCategory').input,
+		outputSchema: schemasFor('item.deleteCategory').output,
+		invoke: (ctx) =>
+			QuickBooksCatalogEndpoints['item']['deleteCategory'](ctx, {
+				realmId: '12345678',
+				body: { Id: '20', SyncToken: '0' },
+			}),
+	},
+	{
 		id: 'journalEntry.create',
 		method: 'POST',
 		expectedPath: '/v3/company/12345678/journalentry',
@@ -5146,13 +5173,13 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 			},
 			time: '2026-11-18T12:00:00Z',
 		},
-		input: { realmId: '12345678', taxrateId: '35' },
+		input: { realmId: '12345678', reimbursechargeId: '35' },
 		inputSchema: schemasFor('reimburseCharge.get').input,
 		outputSchema: schemasFor('reimburseCharge.get').output,
 		invoke: (ctx) =>
 			QuickBooksCatalogEndpoints['reimburseCharge']['get'](ctx, {
 				realmId: '12345678',
-				taxrateId: '35',
+				reimbursechargeId: '35',
 			}),
 	},
 	{
@@ -5614,12 +5641,16 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: {
 			kind: 'json',
 			body: {
-				TaxClassification: { ParentRef: { value: 'sample' } },
+				QueryResponse: {
+					TaxClassification: [{ Id: '35', Name: 'sample', Level: '1' }],
+				},
 				time: '2026-11-18T12:00:00Z',
 			},
 		},
 		expectedResult: {
-			TaxClassification: { ParentRef: { value: 'sample' } },
+			QueryResponse: {
+				TaxClassification: [{ Id: '35', Name: 'sample', Level: '1' }],
+			},
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', parentId: '35' },
@@ -5640,12 +5671,16 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: {
 			kind: 'json',
 			body: {
-				TaxClassification: { ParentRef: { value: 'sample' } },
+				QueryResponse: {
+					TaxClassification: [{ Id: '35', Name: 'sample', Level: '1' }],
+				},
 				time: '2026-11-18T12:00:00Z',
 			},
 		},
 		expectedResult: {
-			TaxClassification: { ParentRef: { value: 'sample' } },
+			QueryResponse: {
+				TaxClassification: [{ Id: '35', Name: 'sample', Level: '1' }],
+			},
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678' },
@@ -5665,12 +5700,16 @@ export const QuickBooksCatalogTestCases: QuickBooksCatalogTestCase[] = [
 		response: {
 			kind: 'json',
 			body: {
-				TaxClassification: { ParentRef: { value: 'sample' } },
+				QueryResponse: {
+					TaxClassification: [{ Id: '35', Name: 'sample', Level: '1' }],
+				},
 				time: '2026-11-18T12:00:00Z',
 			},
 		},
 		expectedResult: {
-			TaxClassification: { ParentRef: { value: 'sample' } },
+			QueryResponse: {
+				TaxClassification: [{ Id: '35', Name: 'sample', Level: '1' }],
+			},
 			time: '2026-11-18T12:00:00Z',
 		},
 		input: { realmId: '12345678', level: 1 },

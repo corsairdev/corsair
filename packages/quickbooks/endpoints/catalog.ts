@@ -3703,6 +3703,37 @@ const item_updateCategoryDef = {
 } as const;
 const item_updateCategoryEndpoint = defineEndpoint(item_updateCategoryDef);
 
+const item_deleteCategoryInput = lazySchema(() =>
+	z.object({ realmId: RealmIdSchema, body: DeleteBodySchema }).strict(),
+);
+const item_deleteCategoryOutput = lazySchema(() =>
+	z
+		.object({
+			Item: z
+				.object({
+					status: z.literal('Deleted'),
+					Id: IdSchema,
+					domain: z.literal('QBO').optional(),
+				})
+				.strict(),
+			time: z.string().optional(),
+		})
+		.strict(),
+);
+// Categories can't be made inactive (QuickBooks answers fault 1020 and asks for a delete);
+// other item types can't be deleted, only made inactive with item.update.
+const item_deleteCategoryDef = {
+	input: item_deleteCategoryInput,
+	output: item_deleteCategoryOutput,
+	request: (input: z.output<ReturnType<typeof item_deleteCategoryInput>>) => ({
+		path: `company/${encodeURIComponent(input.realmId)}/item`,
+		method: 'POST',
+		query: { operation: 'delete' },
+		body: input.body,
+	}),
+} as const;
+const item_deleteCategoryEndpoint = defineEndpoint(item_deleteCategoryDef);
+
 const journalEntry_createInput = lazySchema(() =>
 	z
 		.object({
@@ -5198,7 +5229,7 @@ const reimburseCharge_listDef = {
 const reimburseCharge_listEndpoint = defineEndpoint(reimburseCharge_listDef);
 
 const reimburseCharge_getInput = lazySchema(() =>
-	z.object({ realmId: RealmIdSchema, taxrateId: IdSchema }).strict(),
+	z.object({ realmId: RealmIdSchema, reimbursechargeId: IdSchema }).strict(),
 );
 const reimburseCharge_getOutput = lazySchema(() =>
 	z
@@ -5212,7 +5243,7 @@ const reimburseCharge_getDef = {
 	input: reimburseCharge_getInput,
 	output: reimburseCharge_getOutput,
 	request: (input: z.output<ReturnType<typeof reimburseCharge_getInput>>) => ({
-		path: `company/${encodeURIComponent(input.realmId)}/reimbursecharge/${encodeURIComponent(input.taxrateId)}`,
+		path: `company/${encodeURIComponent(input.realmId)}/reimbursecharge/${encodeURIComponent(input.reimbursechargeId)}`,
 		method: 'GET',
 	}),
 } as const;
@@ -5730,8 +5761,15 @@ const taxClassification_listChildrenInput = lazySchema(() =>
 const taxClassification_listChildrenOutput = lazySchema(() =>
 	z
 		.object({
-			TaxClassification: QuickBooksModelSchemas['taxclassification'],
-			time: z.string(),
+			QueryResponse: z
+				.object({
+					TaxClassification: z
+						.array(QuickBooksModelSchemas['taxclassification'])
+						.optional(),
+				})
+				.strict(),
+			// The classification lists answer without `time`.
+			time: z.string().optional(),
 		})
 		.strict(),
 );
@@ -5755,8 +5793,15 @@ const taxClassification_listInput = lazySchema(() =>
 const taxClassification_listOutput = lazySchema(() =>
 	z
 		.object({
-			TaxClassification: QuickBooksModelSchemas['taxclassification'],
-			time: z.string(),
+			QueryResponse: z
+				.object({
+					TaxClassification: z
+						.array(QuickBooksModelSchemas['taxclassification'])
+						.optional(),
+				})
+				.strict(),
+			// The classification lists answer without `time`.
+			time: z.string().optional(),
 		})
 		.strict(),
 );
@@ -5782,8 +5827,15 @@ const taxClassification_listByLevelInput = lazySchema(() =>
 const taxClassification_listByLevelOutput = lazySchema(() =>
 	z
 		.object({
-			TaxClassification: QuickBooksModelSchemas['taxclassification'],
-			time: z.string(),
+			QueryResponse: z
+				.object({
+					TaxClassification: z
+						.array(QuickBooksModelSchemas['taxclassification'])
+						.optional(),
+				})
+				.strict(),
+			// The classification lists answer without `time`.
+			time: z.string().optional(),
 		})
 		.strict(),
 );
@@ -7279,6 +7331,7 @@ export const QuickBooksCatalogEndpoints = {
 		getItem: item_getItemEndpoint,
 		update: item_updateEndpoint,
 		updateCategory: item_updateCategoryEndpoint,
+		deleteCategory: item_deleteCategoryEndpoint,
 	},
 	journalEntry: {
 		create: journalEntry_createEndpoint,
@@ -7861,6 +7914,10 @@ export const QuickBooksCatalogEndpointSchemas: Record<
 	'item.updateCategory': runtimeSchemaEntry(
 		item_updateCategoryInput,
 		item_updateCategoryOutput,
+	),
+	'item.deleteCategory': runtimeSchemaEntry(
+		item_deleteCategoryInput,
+		item_deleteCategoryOutput,
 	),
 	'journalEntry.create': runtimeSchemaEntry(
 		journalEntry_createInput,
@@ -8701,6 +8758,11 @@ export const QuickBooksCatalogEndpointMeta = {
 		riskLevel: 'write',
 		description: 'QuickBooks Update a category',
 	},
+	'item.deleteCategory': {
+		riskLevel: 'destructive',
+		description:
+			'QuickBooks Delete a category (categories cannot be made inactive)',
+	},
 	'journalEntry.create': {
 		riskLevel: 'write',
 		description: 'QuickBooks Create a journalentry',
@@ -9284,6 +9346,7 @@ export type QuickBooksCatalogEndpointInputs = {
 	itemGetItem: z.input<ReturnType<typeof item_getItemInput>>;
 	itemUpdate: z.input<ReturnType<typeof item_updateInput>>;
 	itemUpdateCategory: z.input<ReturnType<typeof item_updateCategoryInput>>;
+	itemDeleteCategory: z.input<ReturnType<typeof item_deleteCategoryInput>>;
 	journalEntryCreate: z.input<ReturnType<typeof journalEntry_createInput>>;
 	journalEntryDelete: z.input<ReturnType<typeof journalEntry_deleteInput>>;
 	journalEntryList: z.input<ReturnType<typeof journalEntry_listInput>>;
@@ -9585,6 +9648,7 @@ export type QuickBooksCatalogEndpointOutputs = {
 	itemGetItem: z.output<ReturnType<typeof item_getItemOutput>>;
 	itemUpdate: z.output<ReturnType<typeof item_updateOutput>>;
 	itemUpdateCategory: z.output<ReturnType<typeof item_updateCategoryOutput>>;
+	itemDeleteCategory: z.output<ReturnType<typeof item_deleteCategoryOutput>>;
 	journalEntryCreate: z.output<ReturnType<typeof journalEntry_createOutput>>;
 	journalEntryDelete: z.output<ReturnType<typeof journalEntry_deleteOutput>>;
 	journalEntryList: z.output<ReturnType<typeof journalEntry_listOutput>>;

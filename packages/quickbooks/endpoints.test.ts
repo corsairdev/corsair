@@ -268,9 +268,9 @@ describe('QuickBooks first-party catalog operation requests', () => {
 	});
 
 	it('keeps catalog endpoint schemas and transport tests in sync', () => {
-		expect(Object.keys(QuickBooksCatalogEndpointSchemas)).toHaveLength(229);
+		expect(Object.keys(QuickBooksCatalogEndpointSchemas)).toHaveLength(230);
 		expect(Object.keys(QuickBooksSpecialEndpointSchemas)).toHaveLength(2);
-		expect(quickBooksCatalogTestCases).toHaveLength(231);
+		expect(quickBooksCatalogTestCases).toHaveLength(232);
 		expect([
 			...Object.keys(QuickBooksCatalogEndpointSchemas),
 			...Object.keys(QuickBooksSpecialEndpointSchemas),

@@ -29,7 +29,7 @@ describe('QuickBooks endpoint schemas', () => {
 			...Object.keys(QuickBooksSpecialEndpointSchemas),
 		].sort();
 		expect(Object.keys(quickbooksEndpointSchemas).sort()).toEqual(operations);
-		expect(Object.keys(QuickBooksCatalogEndpointSchemas)).toHaveLength(229);
+		expect(Object.keys(QuickBooksCatalogEndpointSchemas)).toHaveLength(230);
 		expect(Object.keys(QuickBooksEndpointInputSchemas)).toHaveLength(5);
 		expect(Object.keys(QuickBooksEndpointOutputSchemas)).toHaveLength(5);
 		const plugin = quickbooks();
