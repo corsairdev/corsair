@@ -1568,7 +1568,7 @@ export const audiencesUsersReplace = operation({
 export const audiencesAdAccountsShare = operation({
 	name: 'audiences.adAccountsShare',
 	method: 'POST',
-	path: (input) => `${idPath(input.audienceId)}/ad_accounts`,
+	path: (input) => `${idPath(input.audienceId)}/adaccounts`,
 	input: MetaAdsEndpointInputSchemas.audiencesAdAccountsShare,
 	output: MetaAdsEndpointOutputSchemas.audiencesAdAccountsShare,
 	request: (input) => ({
@@ -1582,7 +1582,7 @@ export const audiencesAdAccountsShare = operation({
 export const audiencesAdAccountsUnshare = operation({
 	name: 'audiences.adAccountsUnshare',
 	method: 'DELETE',
-	path: (input) => `${idPath(input.audienceId)}/ad_accounts`,
+	path: (input) => `${idPath(input.audienceId)}/adaccounts`,
 	input: MetaAdsEndpointInputSchemas.audiencesAdAccountsUnshare,
 	output: MetaAdsEndpointOutputSchemas.audiencesAdAccountsUnshare,
 	request: (input) => ({

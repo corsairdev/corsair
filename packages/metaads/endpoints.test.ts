@@ -1547,7 +1547,7 @@ const cases: Case[] = [
 	},
 	{
 		name: 'audiences.adAccountsShare',
-		path: '/audience-1/ad_accounts',
+		path: '/audience-1/adaccounts',
 		method: 'POST',
 		body: {
 			adaccounts: '["456"]',
@@ -1565,7 +1565,7 @@ const cases: Case[] = [
 	},
 	{
 		name: 'audiences.adAccountsUnshare',
-		path: '/audience-1/ad_accounts',
+		path: '/audience-1/adaccounts',
 		method: 'DELETE',
 		encodedBody: 'adaccounts=%5B%22456%22%5D',
 		call: async () => {
