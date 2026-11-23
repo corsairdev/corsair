@@ -48,6 +48,12 @@ const nextConfig: NextConfig = {
 				destination: 'https://docs.corsair.dev/:path*',
 				permanent: true,
 			},
+			// Agents look for auth.md on the company's domain too; hub serves it.
+			{
+				source: '/auth.md',
+				destination: 'https://hub.corsair.dev/auth.md',
+				permanent: false,
+			},
 			// Old slug of this post, still linked from other pages.
 			{
 				source:

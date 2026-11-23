@@ -33,6 +33,7 @@
               "quick-start",
               "cloud/overview",
               "cloud/mcp",
+              "cloud/agent-signup",
               {
                 "group": "Use cases",
                 "pages": [

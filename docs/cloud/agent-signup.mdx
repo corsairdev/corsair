@@ -1,0 +1,236 @@
+---
+title: Agent signup
+description: An agent can make a Lug account for itself in one HTTP call, start working in it, and have its person claim it later.
+---
+
+An AI agent can make a [Lug](https://lug.dev) account for itself, with no browser and no sign-in. One call gives it its own MCP address and API key, and it can start with Corsair's built-in apps straight away. Its person claims the account later, from a link in an email or with a 6-digit code, and then connects their own apps.
+
+Agents read the same steps, written for them, at [hub.corsair.dev/auth.md](https://hub.corsair.dev/auth.md).
+
+## Give your agent this prompt
+
+Paste this into Claude Code, Codex, Cursor or any agent that can make HTTP requests:
+
+```text wrap
+Sign up for Lug by following https://hub.corsair.dev/auth.md. My email is you@example.com.
+```
+
+The agent makes the account, adds it to its MCP client and has Lug email you a link to claim it.
+
+## How it works
+
+<Steps>
+  <Step title="The agent signs up">
+    One `POST` with no credentials returns an MCP address, an API key and a claim link. The address belongs to the new account, for example `https://agent-k3x9q2ab.lug.dev/agent`.
+  </Step>
+  <Step title="It starts working">
+    Before anyone claims it, the account has Corsair's built-in apps: PM, CRM, skills and routines. The agent can't connect your Gmail or Slack yet.
+  </Step>
+  <Step title="You get an email">
+    If the agent gave your address, Lug emails you "*Agent name* set up Lug for you", with a **Claim your Lug** button, the note the agent wrote and a 6-digit code.
+  </Step>
+  <Step title="You claim it">
+    Open the link and sign in, or read the code to your agent. After the claim, the agent can ask you to connect apps.
+  </Step>
+</Steps>
+
+## Before and after the claim
+
+| | Unclaimed | Claimed |
+| --- | --- | --- |
+| Built-in apps: PM, CRM, skills, routines | Yes | Yes |
+| Connect apps such as Gmail, Slack and GitHub | No | Yes. The agent calls `get_connect_link` and gives you the sign-in link |
+| Apps that spend [Corsair credits](/cloud/mcp#corsair-credits) | No | Yes |
+| How long it lasts | Stops working after 7 days | Until you remove it |
+| Who can sign in to it | Nobody | You |
+
+A claimed agent's link starts in Cautious [mode](/cloud/mcp#modes-and-approvals), so actions that delete something wait for your approval.
+
+## Claiming an account
+
+<Tabs>
+  <Tab title="From the email">
+    Open **Claim your Lug** and sign in. If the agent named your address, sign in as that address.
+
+    If you have no Lug account yet, choose **Claim**. The workspace the agent made becomes yours, with everything the agent did in it.
+
+    If you already have Lug, choose **Approve**. The agent gets a new link on your Lug that keeps its API key, and the account it made is closed. Its MCP address moves to your handle, and the agent reads the new address from `GET /status`.
+
+    Signed in at [hub.corsair.dev/me](https://hub.corsair.dev/me), you also see each agent waiting for you as a card with **Approve** and **Not me**. The card shows the code your agent should be showing, such as `R5BS-NHUE`, so you can tell which agent it is.
+  </Tab>
+  <Tab title="With the code">
+    If your agent asks, read it the 6-digit code from the email. The agent sends it to `/verify` and the account becomes yours under the address the email went to.
+
+    A code lasts 48 hours and allows 5 tries. It only works for an address that has no Lug account yet. If you already have one, the agent gets `approval_required` and you approve from the email instead.
+  </Tab>
+</Tabs>
+
+If you don't know the agent, open the link and choose **Not me**, or ignore the email. **Not me** closes the agent's link at once, and an unclaimed account stops working after 7 days anyway.
+
+## For agent builders
+
+### Sign up
+
+```bash
+curl -X POST \
+  https://hub.corsair.dev/api/lug/agent-signup \
+  -H 'content-type: application/json' \
+  -d '{
+    "human_email": "person@example.com",
+    "note_to_human": "I set up Lug to use your apps.",
+    "agent_name": "Research Assistant",
+    "harness": "claude-code"
+  }'
+```
+
+Every field is optional. `harness` names the client the agent runs in, such as `claude-code`, `codex` or `cursor`. Without `human_email`, nobody gets an email. Give your person `claim_url` instead, or send the email later with `/resend`.
+
+The response is `201`:
+
+```json
+{
+  "status": "unclaimed",
+  "mcp_url": "https://agent-k3x9q2ab.lug.dev/agent",
+  "api_key": "mcpk_...",
+  "claim_url": "https://hub.corsair.dev/claim/lugc_...",
+  "user_code": "R5BS-NHUE",
+  "human_email": "person@example.com",
+  "email_sent": true,
+  "restrictions": {
+    "can_connect_apps": false,
+    "metered_apps": false,
+    "built_in_apps": ["pm", "crm", "skills", "loops"],
+    "expires_at": "2026-11-29T12:00:00.000Z"
+  },
+  "setup": {
+    "header": "Authorization: Bearer mcpk_...",
+    "claude_code": "claude mcp add ...",
+    "mcp_json": { "mcpServers": { "lug": "..." } }
+  },
+  "message": "Lug account made. Store api_key now: ..."
+}
+```
+
+Store `api_key` right away. Lug shows it once and keeps only a hash. `message` tells the agent what to do next, and `user_code` is the code your person sees on their `/me` card.
+
+### Connect to the MCP server
+
+Send the key as a Bearer header to `mcp_url`. `setup` in the response has the Claude Code command and an `mcpServers` block with your address and key filled in.
+
+<Tabs>
+  <Tab title="Claude Code">
+    ```bash
+    claude mcp add --transport http lug \
+      https://agent-k3x9q2ab.lug.dev/agent \
+      --header "Authorization: Bearer mcpk_..."
+    ```
+  </Tab>
+  <Tab title="Cursor">
+    Add this to `~/.cursor/mcp.json`, or `.cursor/mcp.json` in a project. Cursor fills in `${env:LUG_API_KEY}` from the environment, so the key stays out of a file you might commit. Set `LUG_API_KEY` to your key in your shell profile, then restart Cursor.
+
+    ```json
+    {
+      "mcpServers": {
+        "lug": {
+          "url": "https://agent-k3x9q2ab.lug.dev/agent",
+          "headers": {
+            "Authorization": "Bearer ${env:LUG_API_KEY}"
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="VS Code">
+    Add this to `.vscode/mcp.json`. VS Code reads a top-level `servers` key, not `mcpServers`, and asks for the key the first time it starts the server, so the key stays out of a file you might commit.
+
+    ```json
+    {
+      "inputs": [
+        {
+          "type": "promptString",
+          "id": "lug-api-key",
+          "description": "Lug API key",
+          "password": true
+        }
+      ],
+      "servers": {
+        "lug": {
+          "type": "http",
+          "url": "https://agent-k3x9q2ab.lug.dev/agent",
+          "headers": {
+            "Authorization": "Bearer ${input:lug-api-key}"
+          }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="HTTP">
+    ```
+    POST https://agent-k3x9q2ab.lug.dev/agent
+    Authorization: Bearer mcpk_...
+    Content-Type: application/json
+    Accept: application/json, text/event-stream
+    ```
+  </Tab>
+</Tabs>
+
+<Note>
+The address can change once. If your person already has a Lug handle and approves the agent, its link moves to their handle and the old address stops working. The key stays the same. Read the new `mcp_url` from `GET /status` and point your client at it: in Claude Code, run `claude mcp remove lug` and add it again with the new address; in Cursor or VS Code, change `url` in `mcp.json`.
+</Note>
+
+The agent gets the same tools as any [Corsair MCP](/cloud/mcp#what-the-agent-can-do) client. `list_integrations` shows the built-in apps from the first call.
+
+### After signup
+
+Each of these takes the key as `Authorization: Bearer <api_key>`.
+
+| Call | Body | What it does |
+| --- | --- | --- |
+| `GET /api/lug/agent-signup/status` | | Claim status, the current `mcp_url`, restrictions and the next step |
+| `POST /api/lug/agent-signup/verify` | `{"verification_code": "123456"}` | Claims the account with the code your person read you |
+| `POST /api/lug/agent-signup/resend` | `{"human_email": "..."}` | Sends the claim email again, or to someone new. One every 5 minutes |
+| `POST /api/lug/agent-signup/revoke` | | Gives the account up. An unclaimed account turns off; for a claimed one, only the agent's link closes |
+
+All paths are on `https://hub.corsair.dev`. Call `/status` after a claim. If your person already had a Lug handle, `mcp_url` now points at it and the old address stops working, so update your client as described in [Connect to the MCP server](#connect-to-the-mcp-server).
+
+### The auth.md protocol
+
+Lug also supports [auth.md](https://github.com/workos/auth.md), for clients that sign agents up through OAuth. The authorization server metadata at `https://hub.corsair.dev/.well-known/oauth-authorization-server/mcp-auth` carries an `agent_auth` block with:
+
+- anonymous and `service_auth` registration at `/api/lug/agent/identity`
+- a claim flow at `/api/lug/agent/identity/claim`, where your person signs in and approves a `user_code`
+- 15-minute access tokens from a `jwt-bearer` exchange at `/api/mcp-auth/token`
+- token revocation at `/api/mcp-auth/revoke`, following RFC 7009
+
+Both ways in make the same kind of account. The full request sequence is in [auth.md](https://hub.corsair.dev/auth.md).
+
+### Limits
+
+- 3 signups per IP address an hour and 10 a day.
+- 3 claim emails to one address a day, and one resend every 5 minutes.
+- An unclaimed account stops working after 7 days. A claimed one has no expiry.
+
+Don't sign up again to get around a limit or an error. Use the account you already made, and call `GET /status` with its key to see where it stands.
+
+### Errors
+
+Errors are JSON with `error`, `error_description` and `agent_support`, which says where to get help.
+
+| `error` | Status | Meaning |
+| --- | --- | --- |
+| `rate_limited` | 429 | Too many signups from this IP, or too many emails to this person today. `retry_after` gives the seconds to wait |
+| `agent_signup_paused` | 503 | Signups are paused for the day. Send your person to [lug.dev](https://lug.dev) |
+| `agent_signup_disabled` | 503 | Agent signup is turned off |
+| `invalid_key` | 401 | The Bearer key is missing or wrong, or the account was declined or given up |
+| `invalid_email` | 422 | `human_email` isn't an address Lug accepts, such as a disposable one |
+| `invalid_code` | 401 | The code is wrong. `attempts_left` says how many tries remain |
+| `code_expired` / `too_many_attempts` | 410 / 429 | Call `/resend` for a new code |
+| `approval_required` | 409 | The address already has a Lug account. Your person approves from the email |
+
+## Removing an agent
+
+An agent gives its account up with `POST /api/lug/agent-signup/revoke` and its key. The key stops working at once.
+
+You can remove a claimed agent yourself. Its link is listed with your other links at [hub.corsair.dev/me](https://hub.corsair.dev/me), and you remove it there like any other link.
