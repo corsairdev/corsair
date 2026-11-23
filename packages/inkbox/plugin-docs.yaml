@@ -1,0 +1,927 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from Inkbox's OpenAPI
+# spec; docs-examples.test.ts parses every example with its input schema.
+displayName: Inkbox
+domain: inkbox.ai
+description: "Give AI agents their own identities: each agent gets an email inbox, and can add a phone number for SMS, MMS and calls, iMessage, WhatsApp and a Slack bot, plus shared contacts with remembered facts, notes, an encrypted credential vault, a public tunnel URL, agent-to-agent (A2A) tasks and hosted agents. Send and read mail, texts and messages, manage numbers, rules and webhooks, and receive signed events for new mail, texts, calls, iMessage, WhatsApp, Slack and A2A (455 operations)."
+overviewNote: "Connect with an Inkbox API key (inkbox.ai/console → API keys). An organization admin key reaches every identity; a key scoped to one identity reaches only that identity (some routes, such as avatars, need the identity key). Phone numbers, more identities and custom domains need a paid Inkbox plan. For webhook events, give the plugin the identity's signing key (identities.signingKey.createOrRotate returns it once) as webhookSecret, and subscribe a URL with webhooks.subscriptions.create. Vault secrets are encrypted on the client with the vault key: the API stores and returns ciphertext only."
+examples:
+  read:
+    path: mail.messages.list
+    title: List the latest emails in an agent's inbox
+    args: {"email_address": "support-agent@inkboxmail.com", "limit": 20}
+  write:
+    path: mail.messages.send
+    title: Send an email from an agent identity
+    args: {"email_address": "support-agent@inkboxmail.com", "recipients": {"to": ["ada@example.com"]}, "subject": "Your order has shipped", "body_text": "Hi Ada, your order shipped today. Tracking: 1Z999AA10123456784."}
+apiExamples:
+  a2a.contactRules.create:
+    args: {"agent_handle": "support-agent", "action": "allow", "match_target": "example.com"}
+  a2a.contactRules.delete:
+    args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  a2a.contactRules.list:
+    args: {"agent_handle": "support-agent"}
+  a2a.contactRules.listForOrg:
+    args: {}
+  a2a.contactRules.update:
+    args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  a2a.contexts.get:
+    args: {"context_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  a2a.contexts.list:
+    args: {"agent_handle": "support-agent"}
+  a2a.contexts.update:
+    args: {"context_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent", "name": "Support inbox"}
+  a2a.invitations.accept:
+    args: {"invitation_token": "inv_tok_example"}
+  a2a.invitations.create:
+    args: {"peer_agent_handles": ["example"]}
+  a2a.invitations.decline:
+    args: {"invitation_token": "inv_tok_example"}
+  a2a.invitations.get:
+    args: {"invitation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  a2a.invitations.list:
+    args: {}
+  a2a.invitations.preview:
+    args: {"invitation_token": "inv_tok_example"}
+  a2a.invitations.revoke:
+    args: {"invitation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  a2a.listDirectory:
+    args: {}
+  a2a.messages.list:
+    args: {"agent_handle": "support-agent"}
+  a2a.previewCard:
+    args: {"agent_handle": "support-agent"}
+  a2a.sentContexts.get:
+    args: {"context_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  a2a.sentContexts.list:
+    args: {"agent_handle": "support-agent"}
+  a2a.sentTasks.get:
+    args: {"task_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  a2a.sentTasks.list:
+    args: {"agent_handle": "support-agent"}
+  a2a.settings.get:
+    args: {"agent_handle": "support-agent"}
+  a2a.settings.listForOrg:
+    args: {}
+  a2a.settings.update:
+    args: {"agent_handle": "support-agent"}
+  a2a.tasks.get:
+    args: {"task_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  a2a.tasks.list:
+    args: {"agent_handle": "support-agent"}
+  a2a.tasks.reply:
+    args: {"task_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent", "intent": "progress", "parts": [{"text": "Thanks, your order ships tomorrow."}]}
+  account.whoami:
+    args: {}
+  agentSignup.getStatus:
+    args: {}
+  agentSignup.register:
+    args: {"human_email": "ada@example.com", "note_to_human": "example"}
+  agentSignup.resendVerification:
+    args: {}
+  agentSignup.verify:
+    args: {"verification_code": "123456"}
+  apiKeys.create:
+    args: {"label": "support-agent key", "scoped_identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  apiKeys.getCurrent:
+    args: {}
+  apiKeys.revokeCurrent:
+    args: {}
+  billing.callingCountries.buy:
+    args: {"quote": "example", "request_key": "example"}
+  billing.callingCountries.cancel:
+    args: {"agreement_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  billing.callingCountries.list:
+    args: {}
+  billing.callingCountries.quote:
+    args: {}
+  billing.callingCountries.resume:
+    args: {"agreement_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  billing.changePlan:
+    args: {"plan": "free"}
+  billing.createCheckoutSession:
+    args: {"plan": "free", "success_url": "https://example.com/inkbox", "cancel_url": "https://example.com/inkbox"}
+  billing.createPortalSession:
+    args: {"return_url": "https://example.com/inkbox"}
+  billing.getPricing:
+    args: {}
+  billing.getSubscription:
+    args: {}
+  billing.getUsage:
+    args: {}
+  billing.identityPacks.buy:
+    args: {"quote": "example", "request_key": "example"}
+  billing.identityPacks.change:
+    args: {"agreement_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "action": "cancel", "request_key": "example"}
+  billing.identityPacks.list:
+    args: {}
+  billing.identityPacks.quote:
+    args: {}
+  billing.lineBundles.buy:
+    args: {"code": "voip_line_bundle", "quote": "example", "request_key": "example"}
+  billing.lineBundles.change:
+    args: {"agreement_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "action": "cancel"}
+  billing.lineBundles.list:
+    args: {}
+  billing.lineBundles.quote:
+    args: {"code": "voip_line_bundle"}
+  billing.setVoicePacks:
+    args: {"pack": "minutes_250", "quantity": 1}
+  billing.settings.get:
+    args: {}
+  billing.settings.update:
+    args: {}
+  billing.usageAlerts.delete:
+    args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  billing.usageAlerts.list:
+    args: {}
+  billing.usageAlerts.save:
+    args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "metric": "identities", "threshold": 100}
+  compliance.brand.delete:
+    args: {}
+  compliance.brand.get:
+    args: {}
+  compliance.brand.register:
+    args: {"entity_type": "PRIVATE_PROFIT", "display_name": "example", "email": "ada@example.com", "vertical": "PROFESSIONAL", "country": "US", "phone": "+14155550123", "website": "example", "street": "example", "city": "example", "state": "example", "postal_code": "example"}
+  compliance.brand.resendTwoFactorEmail:
+    args: {}
+  compliance.brand.sendSmsOtp:
+    args: {}
+  compliance.brand.update:
+    args: {"country": "US", "display_name": "example", "email": "ada@example.com", "entity_type": "PRIVATE_PROFIT", "vertical": "PROFESSIONAL", "phone": "+14155550123", "website": "example", "street": "example", "city": "example", "state": "example", "postal_code": "example"}
+  compliance.brand.verifySmsOtp:
+    args: {"otp_pin": "example"}
+  compliance.campaign.delete:
+    args: {}
+  compliance.campaign.get:
+    args: {}
+  compliance.campaign.getActive:
+    args: {}
+  compliance.campaign.register:
+    args: {"brand_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "usecase": "ACCOUNT_NOTIFICATION", "description": "examplexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "message_flow": "examplexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "help_message": "examplexxxxxxxxxxxxx", "sample1": "examplexxxxxxxxxxxxx", "sample2": "examplexxxxxxxxxxxxx", "sample3": "examplexxxxxxxxxxxxx", "sample4": "examplexxxxxxxxxxxxx", "optin_keywords": "example", "optout_keywords": "example", "help_keywords": "example", "optin_message": "examplexxxxxxxxxxxxx", "optout_message": "examplexxxxxxxxxxxxx", "privacy_policy_link": "example", "terms_and_conditions_link": "example"}
+  compliance.campaign.resubmit:
+    args: {"brand_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "usecase": "ACCOUNT_NOTIFICATION", "description": "examplexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "message_flow": "examplexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", "help_message": "examplexxxxxxxxxxxxx", "sample1": "examplexxxxxxxxxxxxx", "sample2": "examplexxxxxxxxxxxxx", "sample3": "examplexxxxxxxxxxxxx", "sample4": "examplexxxxxxxxxxxxx", "optin_keywords": "example", "optout_keywords": "example", "help_keywords": "example", "optin_message": "examplexxxxxxxxxxxxx", "optout_message": "examplexxxxxxxxxxxxx", "privacy_policy_link": "example", "terms_and_conditions_link": "example"}
+  compliance.campaign.setActive:
+    args: {"active": true}
+  compliance.campaign.update:
+    args: {}
+  compliance.uploadOptInEvidence:
+    args: {"file": {"base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "filename": "avatar.png", "contentType": "image/png"}}
+  contacts.bulkDelete:
+    args: {"contact_ids": ["7c9e6679-7425-40de-944b-e07fc1f90ae7"]}
+  contacts.communicationPolicy.get:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  contacts.communicationPolicy.preview:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  contacts.communicationPolicy.set:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "expected_revision": 1, "identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "addresses": [{"kind": "email", "value": "example", "action": "inherit"}]}
+  contacts.create:
+    args: {"given_name": "Ada", "family_name": "Lovelace", "emails": [{"value": "ada@example.com", "is_primary": true}]}
+  contacts.createWithPermissions:
+    args: {"permissions": {"identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}}
+  contacts.delete:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  contacts.exportVcard:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  contacts.exportVcards:
+    args: {"contact_ids": ["7c9e6679-7425-40de-944b-e07fc1f90ae7"]}
+  contacts.facts.create:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "content": "Prefers email over phone calls.", "kind": "profile"}
+  contacts.facts.delete:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "fact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  contacts.facts.get:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "fact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  contacts.facts.list:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  contacts.facts.resolveCitation:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "fact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "citation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  contacts.facts.update:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "fact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  contacts.get:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  contacts.getCorrespondence:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  contacts.import:
+    args: {"vcard": "BEGIN:VCARD\r\nVERSION:3.0\r\nFN:Ada Lovelace\r\nEMAIL:ada@example.com\r\nEND:VCARD\r\n"}
+  contacts.list:
+    args: {}
+  contacts.lookup:
+    args: {"email": "ada@example.com"}
+  contacts.merge:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "losing_contact_ids": ["7c9e6679-7425-40de-944b-e07fc1f90ae7"]}
+  contacts.previewImport:
+    args: {"vcard": "BEGIN:VCARD\r\nVERSION:3.0\r\nFN:Ada Lovelace\r\nEMAIL:ada@example.com\r\nEND:VCARD\r\n"}
+  contacts.update:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  domains.create:
+    args: {"domain": "mail.example.com"}
+  domains.delete:
+    args: {"domain_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  domains.forceDelete:
+    args: {"domain_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  domains.get:
+    args: {"domain_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  domains.getDnsRecords:
+    args: {"domain_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  domains.getHealth:
+    args: {"domain_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  domains.list:
+    args: {}
+  domains.restore:
+    args: {"domain_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  domains.rotateDkim:
+    args: {"domain_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  domains.setDefault:
+    args: {"domain_name": "mail.example.com"}
+  domains.verify:
+    args: {"domain_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  hostedChat.answerInteraction:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "interaction_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent", "expected_version": 1, "response": {"kind": "approval", "decision": "approve_once"}}
+  hostedChat.conversations.create:
+    args: {"agent_handle": "support-agent"}
+  hostedChat.conversations.get:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  hostedChat.conversations.list:
+    args: {"agent_handle": "support-agent"}
+  hostedChat.conversations.listMessages:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  hostedChat.conversations.rename:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  hostedChat.files.download:
+    args: {"file_id": "F0123456789", "agent_handle": "support-agent"}
+  hostedChat.files.get:
+    args: {"file_id": "F0123456789", "agent_handle": "support-agent"}
+  hostedChat.files.upload:
+    args: {"agent_handle": "support-agent", "name": "Support inbox", "data_base64": "example"}
+  hostedChat.getStatus:
+    args: {"agent_handle": "support-agent"}
+  hostedChat.turns.cancel:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "turn_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  hostedChat.turns.create:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent", "content": [{"text": "Thanks, your order ships tomorrow."}]}
+  hostedChat.turns.get:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "turn_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  hostedWorkspace.environment.get:
+    args: {"agent_handle": "support-agent"}
+  hostedWorkspace.environment.update:
+    args: {"agent_handle": "support-agent", "expected_version": 1}
+  hostedWorkspace.get:
+    args: {"agent_handle": "support-agent"}
+  hostedWorkspace.getOperation:
+    args: {"operation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  hostedWorkspace.getUsage:
+    args: {"agent_handle": "support-agent"}
+  hostedWorkspace.getUsageHistory:
+    args: {"agent_handle": "support-agent"}
+  hostedWorkspace.ports.get:
+    args: {"agent_handle": "support-agent"}
+  hostedWorkspace.ports.rotateToken:
+    args: {"port": 8080, "agent_handle": "support-agent"}
+  hostedWorkspace.ports.update:
+    args: {"agent_handle": "support-agent", "version": 1}
+  hostedWorkspace.resize:
+    args: {"agent_handle": "support-agent", "shape_id": "v1-cpu2-ram4gb", "expected_version": 1}
+  hostedWorkspace.runAction:
+    args: {"action": "start", "agent_handle": "support-agent"}
+  hostedWorkspace.schedules.create:
+    args: {"agent_handle": "support-agent", "expected_revision": 1}
+  hostedWorkspace.schedules.delete:
+    args: {"schedule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent", "expected_revision": 1}
+  hostedWorkspace.schedules.list:
+    args: {"agent_handle": "support-agent"}
+  hostedWorkspace.schedules.listOccurrences:
+    args: {"schedule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  hostedWorkspace.schedules.preview:
+    args: {"agent_handle": "support-agent", "timing": {"kind": "once"}}
+  hostedWorkspace.schedules.update:
+    args: {"schedule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent", "expected_revision": 1}
+  hostedWorkspace.terminals.close:
+    args: {"terminal_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  hostedWorkspace.terminals.create:
+    args: {"agent_handle": "support-agent"}
+  hostedWorkspace.terminals.createTicket:
+    args: {"terminal_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  hostedWorkspace.terminals.list:
+    args: {"agent_handle": "support-agent"}
+  hosting.callTool:
+    args: {"agent_handle": "support-agent", "jsonrpc": "2.0", "method": "example"}
+  hosting.deliveries.list:
+    args: {"agent_handle": "support-agent"}
+  hosting.deliveries.retry:
+    args: {"delivery_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  hosting.get:
+    args: {"agent_handle": "support-agent"}
+  hosting.set:
+    args: {"agent_handle": "support-agent", "expected_generation": 1}
+  identities.avatar.delete:
+    args: {"agent_handle": "support-agent"}
+  identities.avatar.get:
+    args: {"agent_handle": "support-agent"}
+  identities.avatar.getMetadata:
+    args: {"agent_handle": "support-agent"}
+  identities.avatar.setFromStagedMedia:
+    args: {"agent_handle": "support-agent", "staged_media_handle": "examplexxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
+  identities.avatar.upload:
+    args: {"agent_handle": "support-agent", "file": {"base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "filename": "avatar.png", "contentType": "image/png"}}
+  identities.companion.get:
+    args: {"agent_handle": "support-agent"}
+  identities.companion.getHistory:
+    args: {"activation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  identities.companion.listConversations:
+    args: {"agent_handle": "support-agent"}
+  identities.companion.update:
+    args: {"agent_handle": "support-agent"}
+  identities.connectImessageNumber:
+    args: {"agent_handle": "support-agent", "imessage_number_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  identities.contactAccess.get:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  identities.contactAccess.update:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  identities.contactPermissions.get:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  identities.contactPermissions.list:
+    args: {"agent_handle": "support-agent"}
+  identities.contactPermissions.update:
+    args: {"contact_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  identities.create:
+    args: {"agent_handle": "support-agent", "display_name": "Support Agent", "description": "Answers customer email for the support team."}
+  identities.createTunnel:
+    args: {"agent_handle": "support-agent"}
+  identities.delete:
+    args: {"agent_handle": "support-agent"}
+  identities.disconnectImessageNumber:
+    args: {"agent_handle": "support-agent"}
+  identities.domainAffiliation.get:
+    args: {"agent_handle": "support-agent"}
+  identities.domainAffiliation.remove:
+    args: {"agent_handle": "support-agent"}
+  identities.domainAffiliation.set:
+    args: {"agent_handle": "support-agent", "domain_claim_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  identities.get:
+    args: {"agent_handle": "support-agent"}
+  identities.getChannelStatus:
+    args: {"agent_handle": "support-agent"}
+  identities.getCurrent:
+    args: {}
+  identities.list:
+    args: {}
+  identities.listContactCommunicationPolicies:
+    args: {"agent_handle": "support-agent"}
+  identities.mailContactRules.create:
+    args: {"agent_handle": "support-agent", "action": "allow", "match_type": "exact_email", "match_target": "example.com"}
+  identities.mailContactRules.delete:
+    args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  identities.mailContactRules.get:
+    args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  identities.mailContactRules.list:
+    args: {"agent_handle": "support-agent"}
+  identities.mailContactRules.update:
+    args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  identities.phoneContactRules.create:
+    args: {"agent_handle": "support-agent", "action": "allow", "match_target": "example.com"}
+  identities.phoneContactRules.delete:
+    args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  identities.phoneContactRules.get:
+    args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  identities.phoneContactRules.list:
+    args: {"agent_handle": "support-agent"}
+  identities.phoneContactRules.update:
+    args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  identities.releasePhoneNumber:
+    args: {"agent_handle": "support-agent"}
+  identities.signingKey.createOrRotate:
+    args: {"agent_handle": "support-agent"}
+  identities.signingKey.getStatus:
+    args: {"agent_handle": "support-agent"}
+  identities.slackContactRules.create:
+    args: {"agent_handle": "support-agent", "action": "allow", "match_type": "exact_user", "match_target": "example.com"}
+  identities.slackContactRules.delete:
+    args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  identities.slackContactRules.get:
+    args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  identities.slackContactRules.list:
+    args: {"agent_handle": "support-agent"}
+  identities.slackContactRules.update:
+    args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  identities.update:
+    args: {"agent_handle": "support-agent"}
+  imessage.assignments.list:
+    args: {}
+  imessage.assignments.release:
+    args: {"assignment_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  imessage.checkCapability:
+    args: {"number": "+14155550123"}
+  imessage.connect:
+    args: {"agent_identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "recipient_number": "+14155550123"}
+  imessage.contactRules.create:
+    args: {"agent_handle": "support-agent", "action": "allow", "match_target": "example.com"}
+  imessage.contactRules.delete:
+    args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  imessage.contactRules.get:
+    args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  imessage.contactRules.list:
+    args: {"agent_handle": "support-agent"}
+  imessage.contactRules.listForOrg:
+    args: {}
+  imessage.contactRules.update:
+    args: {"rule_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  imessage.conversations.get:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  imessage.conversations.getThread:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "thread_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  imessage.conversations.list:
+    args: {}
+  imessage.disconnect:
+    args: {"agent_identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "recipient_number": "+14155550123"}
+  imessage.getMediaPlayback:
+    args: {"media_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  imessage.getOnboarding:
+    args: {}
+  imessage.getTriageNumber:
+    args: {}
+  imessage.markRead:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  imessage.messages.get:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  imessage.messages.getThread:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  imessage.messages.list:
+    args: {}
+  imessage.messages.send:
+    args: {"agent_identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "to": "+14155550123", "text": "Your table for two is booked for 7pm."}
+  imessage.numbers.claim:
+    args: {}
+  imessage.numbers.list:
+    args: {}
+  imessage.reactions.remove:
+    args: {"reaction_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  imessage.reactions.send:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "reaction": "love"}
+  imessage.router.get:
+    args: {}
+  imessage.router.getAvatar:
+    args: {}
+  imessage.router.getConversation:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  imessage.router.listConversations:
+    args: {}
+  imessage.router.listMessages:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  imessage.router.update:
+    args: {}
+  imessage.router.updateConnectOnboarding:
+    args: {"send_first_contact_onboarding_on_connect": true}
+  imessage.sendTyping:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  imessage.uploadMedia:
+    args: {"file": {"base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "filename": "avatar.png", "contentType": "image/png"}}
+  inbound.checkSignature:
+    args: {"agent_handle": "support-agent", "headers": {}, "body": "Customer prefers email over phone calls."}
+  inbound.events.get:
+    args: {"source_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "event_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  inbound.events.list:
+    args: {"source_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  inbound.events.replay:
+    args: {"source_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "event_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  inbound.events.reportResult:
+    args: {"source_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "event_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent", "status": "failed", "error": "example", "delivery_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  inbound.sources.create:
+    args: {"agent_handle": "support-agent", "name": "Support inbox"}
+  inbound.sources.delete:
+    args: {"source_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  inbound.sources.get:
+    args: {"source_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  inbound.sources.list:
+    args: {"agent_handle": "support-agent"}
+  inbound.sources.rotate:
+    args: {"source_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  inbound.sources.update:
+    args: {"source_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_handle": "support-agent"}
+  mail.drafts.addAttachments:
+    args: {"draft_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com", "generation": 1, "attachments": [{"filename": "invoice.pdf", "content_type": "example", "content_base64": "example"}]}
+  mail.drafts.create:
+    args: {"email_address": "support-agent@inkboxmail.com", "recipients": {"to": ["ada@example.com"]}, "subject": "Quote for 20 seats", "body_text": "Hi Ada, here is the quote you asked for."}
+  mail.drafts.delete:
+    args: {"draft_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com", "generation": 1}
+  mail.drafts.duplicate:
+    args: {"draft_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com", "generation": 1}
+  mail.drafts.get:
+    args: {"draft_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com"}
+  mail.drafts.getAttachment:
+    args: {"draft_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "part_index": 1, "email_address": "support-agent@inkboxmail.com", "generation": 1}
+  mail.drafts.list:
+    args: {"email_address": "support-agent@inkboxmail.com"}
+  mail.drafts.removeAttachment:
+    args: {"draft_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "part_index": 1, "email_address": "support-agent@inkboxmail.com", "generation": 1}
+  mail.drafts.send:
+    args: {"draft_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com", "generation": 1}
+  mail.drafts.update:
+    args: {"draft_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com", "generation": 1}
+  mail.imports.cancel:
+    args: {"job_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com"}
+  mail.imports.create:
+    args: {"email_address": "support-agent@inkboxmail.com"}
+  mail.imports.get:
+    args: {"job_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com"}
+  mail.imports.list:
+    args: {"email_address": "support-agent@inkboxmail.com"}
+  mail.imports.reissueUploadUrl:
+    args: {"job_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com"}
+  mail.imports.start:
+    args: {"job_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com"}
+  mail.listOrgContactRules:
+    args: {}
+  mail.mailboxes.get:
+    args: {"email_address": "support-agent@inkboxmail.com"}
+  mail.mailboxes.getById:
+    args: {"mailbox_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  mail.mailboxes.list:
+    args: {}
+  mail.mailboxes.update:
+    args: {"email_address": "support-agent@inkboxmail.com"}
+  mail.messages.delete:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com"}
+  mail.messages.forward:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com", "recipients": {}}
+  mail.messages.get:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com"}
+  mail.messages.getAttachment:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "filename": "invoice.pdf", "email_address": "support-agent@inkboxmail.com"}
+  mail.messages.list:
+    args: {"email_address": "support-agent@inkboxmail.com", "limit": 20}
+  mail.messages.replyAll:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com"}
+  mail.messages.search:
+    args: {"email_address": "support-agent@inkboxmail.com", "q": "invoice"}
+  mail.messages.send:
+    args: {"email_address": "support-agent@inkboxmail.com", "recipients": {"to": ["ada@example.com"]}, "subject": "Your order has shipped", "body_text": "Hi Ada, your order shipped today. Tracking: 1Z999AA10123456784."}
+  mail.messages.updateFlags:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com"}
+  mail.threads.delete:
+    args: {"thread_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com"}
+  mail.threads.get:
+    args: {"thread_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com"}
+  mail.threads.list:
+    args: {"email_address": "support-agent@inkboxmail.com"}
+  mail.threads.listFolders:
+    args: {"email_address": "support-agent@inkboxmail.com"}
+  mail.threads.update:
+    args: {"thread_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "email_address": "support-agent@inkboxmail.com"}
+  mail.visibleMessages.delete:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  mail.visibleMessages.get:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  mail.visibleMessages.getAttachment:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "attachment_ref": "example"}
+  mail.visibleMessages.list:
+    args: {}
+  mail.visibleMessages.search:
+    args: {"q": "invoice", "limit": 10}
+  mail.visibleMessages.updateFlags:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  mail.visibleThreads.delete:
+    args: {"thread_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  mail.visibleThreads.get:
+    args: {"thread_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  mail.visibleThreads.list:
+    args: {}
+  mail.visibleThreads.update:
+    args: {"thread_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  messageSends.lookup:
+    args: {"sender_kind": "mailbox", "sender_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "operation": "mail.send", "idempotencyKey": "send-2026-11-23-001"}
+  notes.access.grant:
+    args: {"note_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  notes.access.list:
+    args: {"note_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  notes.access.revoke:
+    args: {"note_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  notes.create:
+    args: {"title": "Escalation policy", "body": "Refunds over $500 need a human approval."}
+  notes.delete:
+    args: {"note_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  notes.get:
+    args: {"note_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  notes.list:
+    args: {}
+  notes.update:
+    args: {"note_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  organizationDomains.create:
+    args: {"domain": "mail.example.com"}
+  organizationDomains.delete:
+    args: {"claim_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  organizationDomains.get:
+    args: {"claim_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  organizationDomains.list:
+    args: {}
+  organizationDomains.verify:
+    args: {"claim_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  phone.calls.get:
+    args: {"call_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  phone.calls.getSettings:
+    args: {}
+  phone.calls.hangup:
+    args: {"call_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  phone.calls.list:
+    args: {}
+  phone.calls.listMcpActivity:
+    args: {"call_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  phone.calls.listToolInvocations:
+    args: {"call_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  phone.calls.listTranscripts:
+    args: {"call_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  phone.calls.place:
+    args: {"from_number": "+14155550100", "to_number": "+14155550123"}
+  phone.incomingCallAction.get:
+    args: {}
+  phone.incomingCallAction.set:
+    args: {"incoming_call_action": "auto_accept"}
+  phone.listOrgContactRules:
+    args: {}
+  phone.media.getPlayback:
+    args: {"media_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  phone.numbers.get:
+    args: {"phone_number_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  phone.numbers.list:
+    args: {}
+  phone.numbers.provision:
+    args: {"agent_handle": "support-agent"}
+  phone.numbers.release:
+    args: {"phone_number_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  phone.numbers.searchTranscripts:
+    args: {"phone_number_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "q": "invoice"}
+  phone.numbers.update:
+    args: {"phone_number_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  phone.smsOptIns.get:
+    args: {"receiver_number": "+14155550123"}
+  phone.smsOptIns.list:
+    args: {}
+  phone.smsOptIns.optIn:
+    args: {"receiver_number": "+14155550123"}
+  phone.smsOptIns.optOut:
+    args: {"receiver_number": "+14155550123"}
+  phone.textConversations.get:
+    args: {"phone_number_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "key": "+14155550123"}
+  phone.textConversations.list:
+    args: {"phone_number_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  phone.textConversations.update:
+    args: {"phone_number_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "key": "+14155550123", "is_read": true}
+  phone.textConversations.updateById:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "is_read": true}
+  phone.texts.delete:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  phone.texts.get:
+    args: {"phone_number_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "text_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  phone.texts.list:
+    args: {"phone_number_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  phone.texts.search:
+    args: {"phone_number_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "q": "invoice"}
+  phone.texts.send:
+    args: {"phone_number_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "to": ["+14155550123"], "text": "Your appointment is confirmed for 3pm tomorrow."}
+  phone.texts.update:
+    args: {"phone_number_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "text_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.actions.get:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "action_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.actions.getByKey:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "idempotencyKey": "send-2026-11-23-001"}
+  slack.applications.getRemoval:
+    args: {"operation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.applications.prepare:
+    args: {"identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "provisioning_workspace_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.applications.remove:
+    args: {"identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "expected_application_generation": 1, "request_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.archive.backfill:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789"}
+  slack.archive.getCoverage:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.archive.getSettings:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.archive.listMessages:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.archive.purge:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.archive.search:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "q": "invoice"}
+  slack.archive.updateSettings:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.connections.disconnect:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.connections.getCapabilities:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.connections.importContacts:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.connections.list:
+    args: {"identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.connections.listAvailable:
+    args: {}
+  slack.conversations.get:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789"}
+  slack.conversations.join:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789"}
+  slack.conversations.leave:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789"}
+  slack.conversations.list:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.conversations.listMembers:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789"}
+  slack.conversations.open:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "user_ids": ["U0123456789"]}
+  slack.conversations.setProcessingStatus:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789", "thread_ts": "1732377600.000100", "status": "active"}
+  slack.files.download:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "file_id": "F0123456789"}
+  slack.files.get:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "file_id": "F0123456789"}
+  slack.files.getPreview:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "file_id": "F0123456789"}
+  slack.files.upload:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789", "filename": "invoice.pdf", "content_base64": "example"}
+  slack.getCachedMedia:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "kind": "user", "resource_id": "U0123456789"}
+  slack.installations.start:
+    args: {"identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.listEmoji:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.listOrgContactRules:
+    args: {}
+  slack.messages.delete:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789", "message_ts": "1732377600.000100"}
+  slack.messages.get:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789", "message_ts": "1732377600.000100"}
+  slack.messages.getContext:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789", "message_ts": "1732377600.000100"}
+  slack.messages.getPermalink:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789", "message_ts": "1732377600.000100"}
+  slack.messages.list:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789"}
+  slack.messages.send:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789", "text": "Thanks, your order ships tomorrow."}
+  slack.messages.update:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789", "message_ts": "1732377600.000100", "text": "Thanks, your order ships tomorrow."}
+  slack.operations.get:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "operation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.operations.getByKey:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "idempotencyKey": "send-2026-11-23-001"}
+  slack.pins.add:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789", "message_ts": "1732377600.000100"}
+  slack.pins.list:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789"}
+  slack.pins.remove:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789", "message_ts": "1732377600.000100"}
+  slack.provisioningWorkspaces.list:
+    args: {}
+  slack.provisioningWorkspaces.save:
+    args: {"access_token": "example", "refresh_token": "example"}
+  slack.reactions.add:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789", "message_ts": "1732377600.000100", "name": "white_check_mark"}
+  slack.reactions.list:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789", "message_ts": "1732377600.000100"}
+  slack.reactions.remove:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789", "message_ts": "1732377600.000100", "name": "white_check_mark"}
+  slack.search:
+    args: {"q": "invoice"}
+  slack.streams.append:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789", "stream_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "chunks": [{"type": "task_update", "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "title": "example", "status": "in_progress"}]}
+  slack.streams.start:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789", "thread_ts": "1732377600.000100", "recipient_user_id": "U0123456789", "recipient_team_id": "T0123456789", "chunks": [{"type": "task_update", "id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "title": "example", "status": "in_progress"}]}
+  slack.streams.stop:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "conversation_id": "C0123456789", "stream_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  slack.users.get:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "user_id": "U0123456789"}
+  slack.users.list:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  tunnels.get:
+    args: {"tunnel_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  tunnels.list:
+    args: {}
+  tunnels.signCsr:
+    args: {"tunnel_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "csr_pem": "example"}
+  tunnels.update:
+    args: {"tunnel_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  vault.getInfo:
+    args: {}
+  vault.getUnlockBundle:
+    args: {}
+  vault.initialize:
+    args: {"vault_key": {"id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "wrapped_org_encryption_key": "example", "auth_hash": "0000000000000000000000000000000000000000000000000000000000000000"}, "recovery_keys": [{"id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "wrapped_org_encryption_key": "example", "auth_hash": "0000000000000000000000000000000000000000000000000000000000000000"}, {"id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "wrapped_org_encryption_key": "example", "auth_hash": "0000000000000000000000000000000000000000000000000000000000000000"}, {"id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "wrapped_org_encryption_key": "example", "auth_hash": "0000000000000000000000000000000000000000000000000000000000000000"}, {"id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "wrapped_org_encryption_key": "example", "auth_hash": "0000000000000000000000000000000000000000000000000000000000000000"}]}
+  vault.keys.list:
+    args: {}
+  vault.keys.updatePrimary:
+    args: {"id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "wrapped_org_encryption_key": "example", "auth_hash": "0000000000000000000000000000000000000000000000000000000000000000"}
+  vault.secrets.create:
+    args: {"id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "name": "Support inbox", "secret_type": "api_key", "encrypted_payload": "example"}
+  vault.secrets.get:
+    args: {"secret_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  vault.secrets.grantAccess:
+    args: {"secret_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  vault.secrets.list:
+    args: {}
+  vault.secrets.listAccess:
+    args: {"secret_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  vault.secrets.revokeAccess:
+    args: {"secret_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  vault.secrets.update:
+    args: {"secret_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  voiceAgent.getConfig:
+    args: {}
+  voiceAgent.listVoices:
+    args: {}
+  voiceAgent.mcpServers.cancelAuthorization:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "transaction_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  voiceAgent.mcpServers.create:
+    args: {"label": "support-agent key", "url": "https://example.com/inkbox/webhooks"}
+  voiceAgent.mcpServers.delete:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  voiceAgent.mcpServers.disconnect:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "expected_version": 1}
+  voiceAgent.mcpServers.get:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  voiceAgent.mcpServers.getAuthorization:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "transaction_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  voiceAgent.mcpServers.getCatalog:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  voiceAgent.mcpServers.list:
+    args: {}
+  voiceAgent.mcpServers.refresh:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  voiceAgent.mcpServers.startAuthorization:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "expected_version": 1}
+  voiceAgent.mcpServers.test:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  voiceAgent.mcpServers.update:
+    args: {"connection_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "expected_version": 1}
+  voiceAgent.setAuthorityMode:
+    args: {"agent_identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "authority_mode": "contact_scoped"}
+  voiceAgent.setConfig:
+    args: {}
+  webhooks.deliveries.list:
+    args: {}
+  webhooks.deliveries.replay:
+    args: {"delivery_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  webhooks.getCatalog:
+    args: {}
+  webhooks.subscriptions.create:
+    args: {"agent_identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "url": "https://example.com/inkbox/webhooks", "event_types": ["message.received", "text.received"]}
+  webhooks.subscriptions.delete:
+    args: {"sub_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  webhooks.subscriptions.get:
+    args: {"sub_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  webhooks.subscriptions.list:
+    args: {}
+  webhooks.subscriptions.update:
+    args: {"sub_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  whatsapp.assignments.list:
+    args: {}
+  whatsapp.assignments.release:
+    args: {"assignment_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  whatsapp.connect:
+    args: {"agent_identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "recipient_number": "+14155550123"}
+  whatsapp.conversations.get:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  whatsapp.conversations.getThread:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "thread_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  whatsapp.conversations.list:
+    args: {}
+  whatsapp.disconnect:
+    args: {"agent_identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "recipient_number": "+14155550123"}
+  whatsapp.getLimits:
+    args: {}
+  whatsapp.getOnboarding:
+    args: {}
+  whatsapp.getTriageNumber:
+    args: {}
+  whatsapp.markRead:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  whatsapp.media.get:
+    args: {"media_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  whatsapp.media.getPlayback:
+    args: {"media_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  whatsapp.media.upload:
+    args: {"file": {"base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "filename": "avatar.png", "contentType": "image/png"}}
+  whatsapp.messages.get:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  whatsapp.messages.getThread:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  whatsapp.messages.list:
+    args: {}
+  whatsapp.messages.send:
+    args: {}
+  whatsapp.numbers.assign:
+    args: {"account_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "agent_identity_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "expected_revision": 1}
+  whatsapp.numbers.list:
+    args: {}
+  whatsapp.reactions.delete:
+    args: {"reaction_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  whatsapp.reactions.get:
+    args: {"reaction_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  whatsapp.reactions.send:
+    args: {"message_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
+  whatsapp.router.get:
+    args: {}
+  whatsapp.router.listConversations:
+    args: {}
+  whatsapp.router.listMessages:
+    args: {"remote_number": "+14155550123"}
+  whatsapp.router.update:
+    args: {"expected_router_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7", "expected_revision": 1}
+  whatsapp.sendTyping:
+    args: {"conversation_id": "7c9e6679-7425-40de-944b-e07fc1f90ae7"}
