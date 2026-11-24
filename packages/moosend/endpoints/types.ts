@@ -96,7 +96,7 @@ const Criterion = z.object({
 		.string()
 		.min(1)
 		.describe(
-			'What to filter on: DateAdded, DateUpdated, RecipientName, RecipientEmail, SubscribeMethod, CustomField, MailingListIncluded, CampaignsOpened, LinksClicked, CampaignName, LinkURL, CampaignSent, Platform, OperatingSystems, EmailClient, WebBrowser, MobileBrowser, AddedAnythingToCart, ViewedProduct, PurchasedProduct, ViewedProductCategory, PurchasedProductCategory, ViewedProductBrand, PurchasedProductBrand, Preference, or a custom field name',
+			'What to filter on: DateAdded, DateUpdated, RecipientName, RecipientEmail, SubscribeMethod, CustomField, MailingListIncluded, CampaignsOpened, LinksClicked, CampaignName, LinkURL, CampaignSent, Platform, OperatingSystems, EmailClient, WebBrowser, MobileBrowser, AddedAnythingToCart, ViewedProduct, PurchasedProduct, ViewedProductCategory, PurchasedProductCategory, ViewedProductBrand, PurchasedProductBrand, Preference; or, to filter on a custom field, the ID of that field from lists.get (CustomFieldsDefinition[].ID)',
 		),
 	comparer: z
 		.string()

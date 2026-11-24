@@ -33,7 +33,10 @@ overviewNote: |
   - **Segment criteria are addressed by position.** `segments.addCriteria`
     returns the new criterion's position (1 = first);
     `segments.updateCriteria` takes that number, not the criterion's `ID`.
-    `segments.update` with `criteria` replaces all of them.
+    `segments.update` with `criteria` replaces all of them. To filter on a
+    custom field, set `field` to that field's ID from `lists.get`
+    (`CustomFieldsDefinition[].ID`); the documented `CustomField` +
+    `CustomFieldName` form is rejected by the API.
   - **No campaigns yet.** Moosend answers the campaign list routes with
     `CAMPAIGN_NOT_FOUND` when the account has none; `campaigns.list` returns
     an empty list for that answer.

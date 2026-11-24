@@ -159,6 +159,8 @@ describeIfKey('moosend live', () => {
 						comparer: 'EndsWith',
 						value: 'example.com',
 					},
+					// A custom field is filtered by its ID.
+					{ field: fieldId, comparer: 'Is', value: 'DE' },
 				],
 			})
 		).segmentId;
