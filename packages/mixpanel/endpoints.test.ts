@@ -3,6 +3,8 @@ import { packMixpanelKey } from './client';
 import { mixpanelEndpointsNested } from './endpoints';
 
 // Every request goes through a mocked fetch; an unmocked call throws.
+// unknown in `.catch((e: unknown) => e)`: a rejection can be any value, and
+// each test narrows it with a cast or toBeInstanceOf before reading it.
 const fetchMock = jest.fn();
 const realFetch = global.fetch;
 
@@ -29,6 +31,7 @@ function ctx(region: 'us' | 'eu' | 'in' = 'us', extra = {}) {
 	} as never;
 }
 
+// unknown: a reply body is any JSON value or raw text.
 function reply(status: number, body: unknown, type = 'application/json') {
 	return new Response(typeof body === 'string' ? body : JSON.stringify(body), {
 		status,
@@ -471,5 +474,90 @@ describe('response shapes seen live', () => {
 		expect(sent().url.pathname).toBe(
 			'/api/app/projects/4086621/schemas/event/a%2Fb%20c',
 		);
+	});
+});
+
+describe('round 1 review fixes', () => {
+	it('reads JSONL export served as application/json', async () => {
+		fetchMock.mockResolvedValueOnce(
+			reply(
+				200,
+				'{"event":"a","properties":{}}\n{"event":"b","properties":{}}',
+			),
+		);
+		const result = await api.export.events(ctx(), {
+			from_date: '2026-11-01',
+			to_date: '2026-11-01',
+		});
+		expect(result.events).toHaveLength(2);
+	});
+
+	it('keeps the connected project id on pipelines and refuses reserved settings', async () => {
+		await expect(
+			api.pipelines.create(ctx(), {
+				type: 'gcs-raw',
+				trial: true,
+				settings: { project_id: 99 },
+			}),
+		).rejects.toThrow(/settings cannot set/);
+		fetchMock.mockResolvedValueOnce(reply(200, {}));
+		await api.pipelines.edit(ctx(), {
+			name: 'p1',
+			settings: { gcs_prefix: 'x' },
+		});
+		const form = new URLSearchParams(sent().body);
+		expect(form.get('project_id')).toBe('4086621');
+		expect(form.get('name')).toBe('p1');
+	});
+
+	it.each(['.', '..'])(
+		'refuses %s as a path name before sending',
+		async (name) => {
+			await expect(
+				api.lexicon.delete(ctx(), { entity_type: 'event', name }),
+			).rejects.toThrow(/not a valid Mixpanel id/);
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
+
+	it('fails on a tag list in an unexpected shape instead of reading no tags', async () => {
+		fetchMock.mockResolvedValueOnce(reply(200, { unexpected: true }));
+		await expect(api.annotations.listTags(ctx(), {})).rejects.toThrow();
+	});
+
+	it('drops echoed insert ids and emails from error bodies and messages', async () => {
+		fetchMock.mockResolvedValueOnce(
+			reply(400, {
+				code: 400,
+				error: 'Invalid distinct_id person@example.com',
+				failed_records: [
+					{
+						index: 0,
+						$insert_id: 'alice-order-42',
+						field: 'properties.time',
+						message: 'bad time',
+					},
+				],
+				status: 0,
+			}),
+		);
+		const error = (await api.events
+			.import(ctx(), {
+				events: [
+					{
+						event: 'e',
+						properties: {
+							time: 1,
+							distinct_id: 'u',
+							$insert_id: 'alice-order-42',
+						},
+					},
+				],
+			})
+			.catch((e: unknown) => e)) as ApiError;
+		const text = `${error.message} ${JSON.stringify(error.body)}`;
+		expect(text).not.toContain('person@example.com');
+		expect(text).not.toContain('alice-order-42');
+		expect(JSON.stringify(error.body)).toContain('properties.time');
 	});
 });
