@@ -766,7 +766,8 @@ export const mozInputBuilders = {
 							.nullable()
 							.describe(
 								'The provided token for pagination, if accessing a subsequent page of results. Exclude or provide `null` to start at the beginning of a set of results. Must have a value (provided in the previous request) to access the next page of results.',
-							),
+							)
+							.optional(),
 						limit: z
 							.number()
 							.describe(
@@ -823,7 +824,8 @@ export const mozInputBuilders = {
 							.nullable()
 							.describe(
 								'The provided token for pagination, if accessing a subsequent page of results. Exclude or provide `null` to start at the beginning of a set of results. Must have a value (provided in the previous request) to access the next page of results.',
-							),
+							)
+							.optional(),
 						limit: z
 							.number()
 							.describe(
@@ -858,7 +860,8 @@ export const mozInputBuilders = {
 					.nullable()
 					.describe(
 						'The anchor text provided for filtering in the original request. Pass an explicit `null` to request links with no anchor text.',
-					),
+					)
+					.optional(),
 				options: z
 					.object({
 						scope: z
@@ -1039,6 +1042,10 @@ export const mozInputBuilders = {
 						'Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results.',
 					)
 					.optional(),
+				anchor_text: z
+					.string()
+					.optional()
+					.describe('Used in Moz example requests; not in its schema.'),
 			})
 			.strict(),
 	'links.intersect': () =>
@@ -1396,7 +1403,8 @@ export const mozInputBuilders = {
 					.nullable()
 					.describe(
 						'The id of the local account the location resides in. May be null for legacy inactive locations.',
-					),
+					)
+					.optional(),
 			})
 			.loose(),
 	'local.groups.listLocations': () =>
@@ -1752,6 +1760,10 @@ export const mozInputBuilders = {
 						'Control the number of results returned per call in addition to fetching additional results. The default `limit` is 25 with an `n` value of 0 (indicating the first page of results). Make subsequent calls to the endpoint with incrementing `n` values to fetch additional pages of results. To get all results, you must continue making calls with incrementing `n` values until an empty result set is retur',
 					)
 					.optional(),
+				account_id: z
+					.number()
+					.optional()
+					.describe('Used in Moz example requests; not in its schema.'),
 			})
 			.loose(),
 	'local.locations.listings': () =>
