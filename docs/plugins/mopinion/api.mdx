@@ -128,7 +128,7 @@ arrives in `_meta` (has_more, next, previous, count, total).
 
 ```ts
 {
-  id?: number | null,
+  id?: number | string | null,
   created?: string | null,
   report_id?: number | null,
   dataset_id?: number | null,
@@ -201,7 +201,7 @@ the same `{ data: [item], _meta }` envelope as the list.
 
 ```ts
 {
-  id?: number | null,
+  id?: number | string | null,
   created?: string | null,
   report_id?: number | null,
   dataset_id?: number | null,
@@ -444,18 +444,38 @@ that publishes feedback forms on a website or in an app.
 
 
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `object[] \| null` | No | — |
-| `_meta` | `object \| null` | No | — |
+**Output:** `object \| object[]`
 
 <AccordionGroup>
-<Accordion title="data full type">
+<Accordion title="Output full type">
 
 ```ts
 {
+  data?: {
+    id?: string | null,
+    key?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    org_id?: number | null,
+    datetime?: string | null,
+    published?: boolean | null,
+    revision?: number | null,
+    type?: string | null,
+    rules?: any[] | null
+  }[] | null,
+  _meta?: {
+    code?: number | null,
+    message?: string | null,
+    has_more?: boolean | null,
+    previous?: string | boolean | null,
+    next?: string | boolean | null,
+    count?: number | null,
+    total?: number | null,
+    warnings?: any[] | null,
+    changed?: number | null,
+    previous_attributes?: Record<string, any> | null
+  } | null
+} | {
   id?: string | null,
   key?: string | null,
   name?: string | null,
@@ -466,29 +486,10 @@ that publishes feedback forms on a website or in an app.
   revision?: number | null,
   type?: string | null,
   rules?: any[] | null
-}[] | null
-```
-</Accordion>
-
-<Accordion title="_meta full type">
-
-```ts
-{
-  code?: number | null,
-  message?: string | null,
-  has_more?: boolean | null,
-  previous?: string | boolean | null,
-  next?: string | boolean | null,
-  count?: number | null,
-  total?: number | null,
-  warnings?: any[] | null,
-  changed?: number | null,
-  previous_attributes?: Record<string, any> | null
-} | null
+}[]
 ```
 </Accordion>
 </AccordionGroup>
-
 
 
 ---
@@ -535,7 +536,7 @@ as the dataset feedback list.
 
 ```ts
 {
-  id?: number | null,
+  id?: number | string | null,
   created?: string | null,
   report_id?: number | null,
   dataset_id?: number | null,
@@ -605,7 +606,7 @@ await corsair.mopinion.api.reports.feedbackItem({ reportId: '42', feedbackId: '9
 
 ```ts
 {
-  id?: number | null,
+  id?: number | string | null,
   created?: string | null,
   report_id?: number | null,
   dataset_id?: number | null,
