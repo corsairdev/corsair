@@ -246,7 +246,7 @@ await corsair.hubspot.api.companies.getRecentlyCreated({});
 |------|------|----------|-------------|
 | `count` | `number` | No | Page size, max 200. |
 | `after` | `string` | No | paging.next.after from the previous page. |
-| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created at or after it. |
+| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
 
 
 
@@ -315,7 +315,7 @@ await corsair.hubspot.api.companies.getRecentlyUpdated({});
 |------|------|----------|-------------|
 | `count` | `number` | No | Page size, max 200. |
 | `after` | `string` | No | paging.next.after from the previous page. |
-| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records last modified at or after it. |
+| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
 
 
 
@@ -794,7 +794,7 @@ await corsair.hubspot.api.contacts.getRecentlyCreated({});
 |------|------|----------|-------------|
 | `count` | `number` | No | Page size, max 200. |
 | `after` | `string` | No | paging.next.after from the previous page. |
-| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created at or after it. |
+| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
 
 
 
@@ -863,7 +863,7 @@ await corsair.hubspot.api.contacts.getRecentlyUpdated({});
 |------|------|----------|-------------|
 | `count` | `number` | No | Page size, max 200. |
 | `after` | `string` | No | paging.next.after from the previous page. |
-| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records last modified at or after it. |
+| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
 
 
 
@@ -1301,7 +1301,7 @@ await corsair.hubspot.api.deals.getRecentlyCreated({});
 |------|------|----------|-------------|
 | `count` | `number` | No | Page size, max 200. |
 | `after` | `string` | No | paging.next.after from the previous page. |
-| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created at or after it. |
+| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
 
 
 
@@ -1370,7 +1370,7 @@ await corsair.hubspot.api.deals.getRecentlyUpdated({});
 |------|------|----------|-------------|
 | `count` | `number` | No | Page size, max 200. |
 | `after` | `string` | No | paging.next.after from the previous page. |
-| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records last modified at or after it. |
+| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
 
 
 

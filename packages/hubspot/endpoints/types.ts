@@ -52,34 +52,6 @@ const ContactsDeleteInputSchema = z.object({
 	contactId: z.string(),
 });
 
-const ContactsGetRecentlyCreatedInputSchema = z.object({
-	count: z.number().optional().describe('Page size, max 200.'),
-	after: z
-		.string()
-		.optional()
-		.describe('paging.next.after from the previous page.'),
-	since: z
-		.string()
-		.optional()
-		.describe(
-			'ISO 8601 date-time or epoch milliseconds; keeps records created at or after it.',
-		),
-});
-
-const ContactsGetRecentlyUpdatedInputSchema = z.object({
-	count: z.number().optional().describe('Page size, max 200.'),
-	after: z
-		.string()
-		.optional()
-		.describe('paging.next.after from the previous page.'),
-	since: z
-		.string()
-		.optional()
-		.describe(
-			'ISO 8601 date-time or epoch milliseconds; keeps records last modified at or after it.',
-		),
-});
-
 const FilterOperator = z.enum([
 	'BETWEEN',
 	'CONTAINS_TOKEN',
@@ -128,6 +100,23 @@ const AssociationsSchema = z.record(
 	z.string(),
 	z.union([AssociationResults, z.array(z.string())]),
 );
+
+export const RecentInputSchema = z.object({
+	count: z.number().max(200).optional().describe('Page size, max 200.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	since: z
+		.string()
+		.refine((v) => /^\d+$/.test(v) || !Number.isNaN(Date.parse(v)), {
+			message: 'since must be an ISO 8601 date-time or epoch milliseconds',
+		})
+		.optional()
+		.describe(
+			'ISO 8601 date-time or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it.',
+		),
+});
 
 const ContactsSearchInputSchema = z.object({
 	query: z
@@ -213,34 +202,6 @@ const CompaniesDeleteInputSchema = z.object({
 	companyId: z.string(),
 });
 
-const CompaniesGetRecentlyCreatedInputSchema = z.object({
-	count: z.number().optional().describe('Page size, max 200.'),
-	after: z
-		.string()
-		.optional()
-		.describe('paging.next.after from the previous page.'),
-	since: z
-		.string()
-		.optional()
-		.describe(
-			'ISO 8601 date-time or epoch milliseconds; keeps records created at or after it.',
-		),
-});
-
-const CompaniesGetRecentlyUpdatedInputSchema = z.object({
-	count: z.number().optional().describe('Page size, max 200.'),
-	after: z
-		.string()
-		.optional()
-		.describe('paging.next.after from the previous page.'),
-	since: z
-		.string()
-		.optional()
-		.describe(
-			'ISO 8601 date-time or epoch milliseconds; keeps records last modified at or after it.',
-		),
-});
-
 const CompaniesSearchByDomainInputSchema = z.object({
 	domain: z
 		.string()
@@ -301,34 +262,6 @@ const DealsUpdateInputSchema = z.object({
 
 const DealsDeleteInputSchema = z.object({
 	dealId: z.string(),
-});
-
-const DealsGetRecentlyCreatedInputSchema = z.object({
-	count: z.number().optional().describe('Page size, max 200.'),
-	after: z
-		.string()
-		.optional()
-		.describe('paging.next.after from the previous page.'),
-	since: z
-		.string()
-		.optional()
-		.describe(
-			'ISO 8601 date-time or epoch milliseconds; keeps records created at or after it.',
-		),
-});
-
-const DealsGetRecentlyUpdatedInputSchema = z.object({
-	count: z.number().optional().describe('Page size, max 200.'),
-	after: z
-		.string()
-		.optional()
-		.describe('paging.next.after from the previous page.'),
-	since: z
-		.string()
-		.optional()
-		.describe(
-			'ISO 8601 date-time or epoch milliseconds; keeps records last modified at or after it.',
-		),
 });
 
 const DealsSearchInputSchema = z.object({
@@ -464,24 +397,24 @@ export const HubSpotEndpointInputSchemas = {
 	contactsCreate: ContactsCreateInputSchema,
 	contactsUpdate: ContactsUpdateInputSchema,
 	contactsDelete: ContactsDeleteInputSchema,
-	contactsGetRecentlyCreated: ContactsGetRecentlyCreatedInputSchema,
-	contactsGetRecentlyUpdated: ContactsGetRecentlyUpdatedInputSchema,
+	contactsGetRecentlyCreated: RecentInputSchema,
+	contactsGetRecentlyUpdated: RecentInputSchema,
 	contactsSearch: ContactsSearchInputSchema,
 	companiesGet: CompaniesGetInputSchema,
 	companiesGetMany: CompaniesGetManyInputSchema,
 	companiesCreate: CompaniesCreateInputSchema,
 	companiesUpdate: CompaniesUpdateInputSchema,
 	companiesDelete: CompaniesDeleteInputSchema,
-	companiesGetRecentlyCreated: CompaniesGetRecentlyCreatedInputSchema,
-	companiesGetRecentlyUpdated: CompaniesGetRecentlyUpdatedInputSchema,
+	companiesGetRecentlyCreated: RecentInputSchema,
+	companiesGetRecentlyUpdated: RecentInputSchema,
 	companiesSearchByDomain: CompaniesSearchByDomainInputSchema,
 	dealsGet: DealsGetInputSchema,
 	dealsGetMany: DealsGetManyInputSchema,
 	dealsCreate: DealsCreateInputSchema,
 	dealsUpdate: DealsUpdateInputSchema,
 	dealsDelete: DealsDeleteInputSchema,
-	dealsGetRecentlyCreated: DealsGetRecentlyCreatedInputSchema,
-	dealsGetRecentlyUpdated: DealsGetRecentlyUpdatedInputSchema,
+	dealsGetRecentlyCreated: RecentInputSchema,
+	dealsGetRecentlyUpdated: RecentInputSchema,
 	dealsSearch: DealsSearchInputSchema,
 	ticketsGet: TicketsGetInputSchema,
 	ticketsGetMany: TicketsGetManyInputSchema,

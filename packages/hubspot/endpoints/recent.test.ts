@@ -1,6 +1,7 @@
 import * as Companies from './companies';
 import * as Contacts from './contacts';
 import * as Deals from './deals';
+import { HubSpotEndpointInputSchemas } from './types';
 
 jest.mock('corsair/core', () => ({ logEventFromContext: jest.fn() }));
 
@@ -78,6 +79,36 @@ describe.each(cases)('hubspot %s recent', (object, mod, modified) => {
 			operator: 'GTE',
 			value: '1738281600000',
 		});
+	});
+});
+
+describe('hubspot recent input', () => {
+	const schema = HubSpotEndpointInputSchemas.contactsGetRecentlyCreated;
+
+	it.each(['yesterday', '2025-13-45', '', '12ab'])(
+		'rejects since=%p',
+		(since) => {
+			expect(schema.safeParse({ since }).success).toBe(false);
+		},
+	);
+
+	it.each(['2025-01-31', '2025-01-31T00:00:00Z', '1738281600000'])(
+		'accepts since=%s',
+		(since) => {
+			expect(schema.safeParse({ since }).success).toBe(true);
+		},
+	);
+
+	it('caps count at the search maximum of 200', () => {
+		expect(schema.safeParse({ count: 200 }).success).toBe(true);
+		expect(schema.safeParse({ count: 201 }).success).toBe(false);
+	});
+
+	it('does not send NaN when called directly with a bad since', async () => {
+		await expect(
+			Contacts.getRecentlyCreated(ctx, { since: 'yesterday' }),
+		).rejects.toThrow();
+		expect(calls).toHaveLength(0);
 	});
 });
 
