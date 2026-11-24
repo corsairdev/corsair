@@ -55,19 +55,37 @@ export function toBrandTemplateEntity(brandTemplate: BrandTemplate) {
 	};
 }
 
-/** The input as logged: no file bytes, and a file given by URL only as its URL. */
+/**
+ * A URL as it may go into an event log: origin and path of an http(s) URL, so a
+ * presigned signature in the query never lands there. Anything else (a `data:`
+ * URL, base64, a Blob) carries the file itself and is logged as `[file]`.
+ */
+export function loggableUrl(value: unknown): string {
+	// unknown: a file input arrives as a string, an object or a Blob.
+	if (typeof value !== 'string') return '[file]';
+	try {
+		const url = new URL(value);
+		if (url.protocol === 'http:' || url.protocol === 'https:') {
+			return url.origin + url.pathname;
+		}
+	} catch {
+		// not a URL
+	}
+	return '[file]';
+}
+
+/** The input as logged: no file bytes, and a file given by URL only as its origin and path. */
+// unknown: shared by the upload and import inputs, which differ only around the file.
 export function withoutFileContent<T extends Record<string, unknown>>(
 	input: T,
 ) {
 	const { contentBase64: _contentBase64, file, ...rest } = input;
 	if (file === undefined) return rest;
 	const url =
-		typeof file === 'string'
-			? file
-			: typeof file === 'object' && file !== null && 'url' in file
-				? (file as { url: unknown }).url
-				: undefined;
-	return { ...rest, file: typeof url === 'string' ? url : '[file]' };
+		typeof file === 'object' && file !== null && 'url' in file
+			? (file as { url: unknown }).url
+			: file;
+	return { ...rest, file: loggableUrl(url) };
 }
 
 /**

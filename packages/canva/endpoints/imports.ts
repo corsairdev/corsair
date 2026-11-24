@@ -2,7 +2,12 @@ import { logEventFromContext } from 'corsair/core';
 import { encodeUtf8ToBase64 } from '../base64';
 import { makeCanvaRequest } from '../client';
 import type { CanvaContext, CanvaEndpoints } from '../index';
-import { bodyFrom, toDesignEntity, withoutFileContent } from './mappers';
+import {
+	bodyFrom,
+	loggableUrl,
+	toDesignEntity,
+	withoutFileContent,
+} from './mappers';
 import { callCanva, seg } from './shared';
 import type { CanvaEndpointOutputs, DesignSummary } from './types';
 import { CanvaEndpointInputSchemas } from './types';
@@ -100,7 +105,7 @@ export const createFromUrl: CanvaEndpoints['importsCreateFromUrl'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.imports.createFromUrl',
-		{ ...input },
+		{ ...input, url: loggableUrl(input.url) },
 		'completed',
 	);
 	return result;

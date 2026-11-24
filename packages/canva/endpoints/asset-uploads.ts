@@ -2,7 +2,12 @@ import { logEventFromContext } from 'corsair/core';
 import { encodeUtf8ToBase64 } from '../base64';
 import { makeCanvaRequest } from '../client';
 import type { CanvaContext, CanvaEndpoints } from '../index';
-import { bodyFrom, toAssetEntity, withoutFileContent } from './mappers';
+import {
+	bodyFrom,
+	loggableUrl,
+	toAssetEntity,
+	withoutFileContent,
+} from './mappers';
 import { seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
 import { CanvaEndpointInputSchemas } from './types';
@@ -82,7 +87,7 @@ export const createFromUrl: CanvaEndpoints['assetUploadsCreateFromUrl'] =
 		await logEventFromContext(
 			ctx,
 			'canva.assetUploads.createFromUrl',
-			{ ...input },
+			{ ...input, url: loggableUrl(input.url) },
 			'completed',
 		);
 		return result;

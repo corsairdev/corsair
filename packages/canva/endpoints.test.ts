@@ -2,6 +2,7 @@ import type { DownloadDeps } from 'corsair/http';
 import type { Designs } from './endpoints';
 import { Assets, DesignAnalytics } from './endpoints';
 import { exportDownloadDeps } from './endpoints/exports';
+import { loggableUrl, withoutFileContent } from './endpoints/mappers';
 import { CanvaEndpointInputSchemas } from './endpoints/types';
 import { canva } from './index';
 
@@ -74,6 +75,25 @@ const job = (extra: Record<string, unknown> = {}) => ({
 	job: { id: 'job_1', status: 'in_progress', ...extra },
 });
 
+// Smallest replies that satisfy the output schemas, now that every operation
+// checks its response.
+const design = (id = 'D1') => ({
+	id,
+	owner: { user_id: 'U1', team_id: 'T1' },
+	urls: { edit_url: 'https://canva.test/e', view_url: 'https://canva.test/v' },
+	created_at: 1,
+	updated_at: 2,
+});
+const asset = {
+	type: 'image',
+	id: 'A1',
+	name: 'n',
+	tags: [],
+	created_at: 1,
+	updated_at: 2,
+};
+const folder = { id: 'F1', name: 'f', created_at: 1, updated_at: 2 };
+
 describe('request shapes', () => {
 	it('encodes ids placed in a path', async () => {
 		reply({ design: { id: 'x' } });
@@ -84,7 +104,7 @@ describe('request shapes', () => {
 	});
 
 	it('creates a copy of a design', async () => {
-		reply({ design: { id: 'D2' } });
+		reply({ design: design('D2') });
 		await api.designs.create(ctx, {
 			type: 'design',
 			design_id: 'D1',
@@ -97,7 +117,7 @@ describe('request shapes', () => {
 	});
 
 	it('defaults designs.create to type_and_asset', async () => {
-		reply({ design: { id: 'D2' } });
+		reply({ design: design('D2') });
 		await api.designs.create(ctx, {
 			design_type: { type: 'preset', name: 'presentation' },
 			title: 'Deck',
@@ -410,5 +430,449 @@ describe('plugin metadata', () => {
 	it('keeps exporting a read', () => {
 		expect(meta['exports.create']?.riskLevel).toBe('read');
 		expect(meta['exports.download']?.riskLevel).toBe('read');
+	});
+});
+
+describe('every operation', () => {
+	const J = job();
+	const ok = { success: true };
+	// [operation, input, method, path, reply]
+	const cases: [string, Record<string, unknown>, string, string, unknown][] = [
+		[
+			'users.getMe',
+			{},
+			'GET',
+			'/v1/users/me',
+			{ team_user: { user_id: 'U', team_id: 'T' } },
+		],
+		[
+			'users.getProfile',
+			{},
+			'GET',
+			'/v1/users/me/profile',
+			{ profile: { display_name: 'P' } },
+		],
+		[
+			'users.getCapabilities',
+			{},
+			'GET',
+			'/v1/users/me/capabilities',
+			{ capabilities: ['resize'] },
+		],
+		[
+			'designs.list',
+			{ query: 'deck', limit: 5 },
+			'GET',
+			'/v1/designs',
+			{ items: [design()] },
+		],
+		[
+			'designs.get',
+			{ designId: 'D1' },
+			'GET',
+			'/v1/designs/D1',
+			{ design: design() },
+		],
+		[
+			'designs.create',
+			{ design_type: { type: 'preset', name: 'doc' } },
+			'POST',
+			'/v1/designs',
+			{ design: design() },
+		],
+		[
+			'designs.getPages',
+			{ designId: 'D1', limit: 2 },
+			'GET',
+			'/v1/designs/D1/pages',
+			{ items: [{ page_number: 1 }] },
+		],
+		[
+			'designs.getExportFormats',
+			{ designId: 'D1' },
+			'GET',
+			'/v1/designs/D1/export-formats',
+			{ formats: { pdf: {} } },
+		],
+		[
+			'designs.getDataset',
+			{ designId: 'D1' },
+			'GET',
+			'/v1/designs/D1/dataset',
+			{ dataset: { title: { type: 'text' } } },
+		],
+		[
+			'analytics.get',
+			{ designId: 'D1' },
+			'GET',
+			'/v1/designs/D1/analytics',
+			{ total_view_count: 3, unique_view_count: 2 },
+		],
+		[
+			'analytics.listViewers',
+			{ designId: 'D1' },
+			'GET',
+			'/v1/designs/D1/analytics/viewers',
+			{ items: [] },
+		],
+		[
+			'analytics.listViewsOverTime',
+			{ designId: 'D1' },
+			'GET',
+			'/v1/designs/D1/analytics/views-over-time',
+			{ items: [{ count: 1, bucket_start_at: 0 }] },
+		],
+		[
+			'analytics.listPageViews',
+			{ designId: 'D1', page_ids: ['P1'] },
+			'POST',
+			'/v1/designs/D1/analytics/page-views',
+			{ items: [] },
+		],
+		[
+			'analytics.listLinks',
+			{ designId: 'D1' },
+			'GET',
+			'/v1/designs/D1/analytics/links',
+			{ items: [] },
+		],
+		['assets.get', { assetId: 'A1' }, 'GET', '/v1/assets/A1', { asset }],
+		[
+			'assets.update',
+			{ assetId: 'A1', name: 'n' },
+			'PATCH',
+			'/v1/assets/A1',
+			{ asset },
+		],
+		['assets.delete', { assetId: 'A1' }, 'DELETE', '/v1/assets/A1', {}],
+		[
+			'folders.create',
+			{ name: 'f', parent_folder_id: 'root' },
+			'POST',
+			'/v1/folders',
+			{ folder },
+		],
+		['folders.get', { folderId: 'F1' }, 'GET', '/v1/folders/F1', { folder }],
+		[
+			'folders.update',
+			{ folderId: 'F1', name: 'g' },
+			'PATCH',
+			'/v1/folders/F1',
+			{ folder },
+		],
+		['folders.delete', { folderId: 'F1' }, 'DELETE', '/v1/folders/F1', {}],
+		[
+			'folders.listItems',
+			{ folderId: 'F1' },
+			'GET',
+			'/v1/folders/F1/items',
+			{ items: [{ type: 'folder', folder }] },
+		],
+		[
+			'folders.moveItem',
+			{ to_folder_id: 'F1', item_id: 'D1' },
+			'POST',
+			'/v1/folders/move',
+			{},
+		],
+		[
+			'exports.create',
+			{ design_id: 'D1', format: { type: 'pdf' } },
+			'POST',
+			'/v1/exports',
+			J,
+		],
+		['exports.get', { exportId: 'E1' }, 'GET', '/v1/exports/E1', J],
+		[
+			'brandTemplates.list',
+			{},
+			'GET',
+			'/v1/brand-templates',
+			{ items: [{ id: 'B1' }] },
+		],
+		[
+			'brandTemplates.get',
+			{ brandTemplateId: 'B1' },
+			'GET',
+			'/v1/brand-templates/B1',
+			{ brand_template: { id: 'B1' } },
+		],
+		[
+			'brandTemplates.getDataset',
+			{ brandTemplateId: 'B1' },
+			'GET',
+			'/v1/brand-templates/B1/dataset',
+			{},
+		],
+		[
+			'brandTemplates.publish',
+			{ design_id: 'D1' },
+			'POST',
+			'/v1/brand-templates',
+			{ brand_template: { id: 'B1' } },
+		],
+		[
+			'assetUploads.create',
+			{ name: 'n', contentBase64: 'aGk=' },
+			'POST',
+			'/v1/asset-uploads',
+			J,
+		],
+		['assetUploads.get', { jobId: 'J1' }, 'GET', '/v1/asset-uploads/J1', J],
+		[
+			'assetUploads.createFromUrl',
+			{ name: 'n', url: 'https://files.test/a.png' },
+			'POST',
+			'/v1/url-asset-uploads',
+			J,
+		],
+		[
+			'assetUploads.getFromUrl',
+			{ jobId: 'J1' },
+			'GET',
+			'/v1/url-asset-uploads/J1',
+			J,
+		],
+		[
+			'imports.create',
+			{ title: 't', contentBase64: 'aGk=' },
+			'POST',
+			'/v1/imports',
+			J,
+		],
+		['imports.get', { jobId: 'J1' }, 'GET', '/v1/imports/J1', J],
+		[
+			'imports.createFromUrl',
+			{ title: 't', url: 'https://files.test/a.pdf' },
+			'POST',
+			'/v1/url-imports',
+			J,
+		],
+		['imports.getFromUrl', { jobId: 'J1' }, 'GET', '/v1/url-imports/J1', J],
+		[
+			'imports.createFromImage',
+			{ asset_id: 'A1' },
+			'POST',
+			'/v1/image-to-design-imports',
+			J,
+		],
+		[
+			'imports.getFromImage',
+			{ jobId: 'J1' },
+			'GET',
+			'/v1/image-to-design-imports/J1',
+			J,
+		],
+		[
+			'resizes.create',
+			{
+				design_id: 'D1',
+				design_type: { type: 'custom', width: 100, height: 100 },
+			},
+			'POST',
+			'/v1/resizes',
+			J,
+		],
+		['resizes.get', { jobId: 'J1' }, 'GET', '/v1/resizes/J1', J],
+		[
+			'autofills.create',
+			{ brand_template_id: 'B1', data: { t: { type: 'text', text: 'x' } } },
+			'POST',
+			'/v1/autofills',
+			J,
+		],
+		['autofills.get', { jobId: 'J1' }, 'GET', '/v1/autofills/J1', J],
+		[
+			'generations.create',
+			{ brief: 'A deck', design_type: 'presentation' },
+			'POST',
+			'/v1/generations',
+			J,
+		],
+		['generations.get', { jobId: 'J1' }, 'GET', '/v1/generations/J1', J],
+		[
+			'imageGenerations.create',
+			{ prompt: 'a ship' },
+			'POST',
+			'/v1/image-generations',
+			J,
+		],
+		[
+			'imageGenerations.get',
+			{ jobId: 'J1' },
+			'GET',
+			'/v1/image-generations/J1',
+			J,
+		],
+		[
+			'imageTransformations.create',
+			{ asset_id: 'A1', transformations: [{ type: 'background_removal' }] },
+			'POST',
+			'/v1/image-transformations',
+			J,
+		],
+		[
+			'imageTransformations.get',
+			{ jobId: 'J1' },
+			'GET',
+			'/v1/image-transformations/J1',
+			J,
+		],
+		[
+			'merges.create',
+			{
+				type: 'modify_existing_design',
+				design_id: 'D1',
+				operations: [{ type: 'delete_pages', page_numbers: [2] }],
+			},
+			'POST',
+			'/v1/merges',
+			J,
+		],
+		['merges.get', { jobId: 'J1' }, 'GET', '/v1/merges/J1', J],
+		[
+			'printPartner.createDesign',
+			{
+				design_source: { type: 'partner_product_id', partner_product_id: 'P1' },
+			},
+			'POST',
+			'/v1/print-partner/designs',
+			{ design: design() },
+		],
+		[
+			'printPartner.getDesign',
+			{ designId: 'D1', bleed: 10 },
+			'GET',
+			'/v1/print-partner/designs/D1',
+			{ design: design() },
+		],
+		[
+			'printPartner.createExport',
+			{ design_id: 'D1', format: { type: 'pdf', cmyk: true } },
+			'POST',
+			'/v1/print-partner/exports',
+			J,
+		],
+		[
+			'comments.createThread',
+			{ designId: 'D1', message_plaintext: 'hi' },
+			'POST',
+			'/v1/designs/D1/comments',
+			{ thread: { id: 'T1' } },
+		],
+		[
+			'comments.getThread',
+			{ designId: 'D1', threadId: 'T1' },
+			'GET',
+			'/v1/designs/D1/comments/T1',
+			{ thread: { id: 'T1' } },
+		],
+		[
+			'comments.createReply',
+			{ designId: 'D1', threadId: 'T1', message_plaintext: 'ok' },
+			'POST',
+			'/v1/designs/D1/comments/T1/replies',
+			{ reply: { id: 'R1' } },
+		],
+		[
+			'comments.listReplies',
+			{ designId: 'D1', threadId: 'T1' },
+			'GET',
+			'/v1/designs/D1/comments/T1/replies',
+			{ items: [{ id: 'R1' }] },
+		],
+		[
+			'comments.getReply',
+			{ designId: 'D1', threadId: 'T1', replyId: 'R1' },
+			'GET',
+			'/v1/designs/D1/comments/T1/replies/R1',
+			{ reply: { id: 'R1' } },
+		],
+		[
+			'keys.list',
+			{},
+			'GET',
+			'/v1/connect/keys',
+			{ keys: [{ kid: 'k', kty: 'OKP', crv: 'Ed25519', x: 'x' }] },
+		],
+		[
+			'apps.getJwks',
+			{ appId: 'AP1' },
+			'GET',
+			'/v1/apps/AP1/jwks',
+			{ keys: [{ kid: 'k', kty: 'RSA', n: 'n', e: 'AQAB' }] },
+		],
+	];
+
+	it('covers every operation but exports.download, tested above', () => {
+		const covered = new Set(cases.map(([op]) => op));
+		const all = Object.keys(plugin.endpointMeta ?? {}).filter(
+			(op) => op !== 'exports.download',
+		);
+		expect(all.filter((op) => !covered.has(op))).toEqual([]);
+	});
+
+	it.each(cases)(
+		'%s sends %s and returns a checked reply',
+		async (op, input, method, path, body) => {
+			reply(body);
+			const [group, name] = op.split('.') as [string, string];
+			// unknown: the table drives 61 operations with different input types.
+			const call = (
+				api as unknown as Record<
+					string,
+					Record<string, (c: unknown, i: unknown) => Promise<unknown>>
+				>
+			)[group]?.[name];
+			await expect(call?.(ctx, input)).resolves.toBeDefined();
+			expect(calls).toHaveLength(1);
+			expect(calls[0]?.method).toBe(method);
+			expect(new URL(calls[0]?.url ?? '').pathname).toBe(`/rest${path}`);
+		},
+	);
+
+	it('refuses an input outside its schema before any request', async () => {
+		await expect(
+			api.imageTransformations.create(ctx, {
+				asset_id: 'A1',
+				transformations: [],
+			}),
+		).rejects.toThrow();
+		await expect(api.designs.list(ctx, { limit: 500 })).rejects.toThrow();
+		expect(calls).toHaveLength(0);
+	});
+
+	it('refuses a reply that does not match its schema', async () => {
+		reply({ design: { id: 'D1' } });
+		await expect(api.designs.get(ctx, { designId: 'D1' })).rejects.toThrow();
+	});
+
+	it('logs a file or URL input without its bytes or query', async () => {
+		reply(job());
+		await api.assetUploads.create(ctx, {
+			name: 'n',
+			file: 'data:image/png;base64,aGk=',
+		});
+		reply(job());
+		await api.assetUploads.createFromUrl(ctx, {
+			name: 'n',
+			url: 'https://files.test/a.png?X-Amz-Signature=secret',
+		});
+		expect(loggableUrl('data:image/png;base64,aGk=')).toBe('[file]');
+		expect(loggableUrl('https://files.test/a.png?X-Amz-Signature=secret')).toBe(
+			'https://files.test/a.png',
+		);
+		expect(withoutFileContent({ name: 'n', file: { base64: 'aGk=' } })).toEqual(
+			{
+				name: 'n',
+				file: '[file]',
+			},
+		);
+		expect(
+			withoutFileContent({
+				name: 'n',
+				file: { url: 'https://f.test/x.pdf?sig=1' },
+			}),
+		).toEqual({ name: 'n', file: 'https://f.test/x.pdf' });
 	});
 });
