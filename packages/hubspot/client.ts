@@ -66,3 +66,26 @@ export async function makeHubSpotRequest<T>(
 		);
 	}
 }
+
+export function recentSearchBody(
+	input: { count?: number; after?: string; since?: string } | undefined,
+	property: string,
+) {
+	const { count, after, since } = input ?? {};
+	const sinceMs =
+		since && (/^\d+$/.test(since) ? since : String(Date.parse(since)));
+	return {
+		limit: count,
+		after,
+		sorts: [{ propertyName: property, direction: 'DESCENDING' }],
+		...(sinceMs && {
+			filterGroups: [
+				{
+					filters: [
+						{ propertyName: property, operator: 'GTE', value: sinceMs },
+					],
+				},
+			],
+		}),
+	};
+}
