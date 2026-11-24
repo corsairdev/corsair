@@ -118,10 +118,13 @@ Every action is checked against the link's mode, whatever your client allows:
 
 When a reply says an action needs approval, it includes a link that shows
 exactly what will run. Give your person that link and wait for them to approve
-or deny it. Then call again with **only that action**, in its own `run_script`:
-if the script made other changes before it stopped, running all of it again
-makes them twice. One approval covers that one action once. Don't look for
-another way to make the same change. If a mode blocks you, tell your person
+or deny it.
+
+- **Approved:** call again with **only that action**, in its own `run_script`.
+  If the script made other changes before it stopped, running all of it again
+  makes them twice. One approval covers that one action once.
+- **Denied:** drop that action and tell your person what didn't happen. Don't
+  call it again, and don't look for another way to make the same change. If a mode blocks you, tell your person
 they can change it at https://hub.corsair.dev/me.
 
 ### Replies that need your person
