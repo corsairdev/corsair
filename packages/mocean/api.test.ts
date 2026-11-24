@@ -60,13 +60,14 @@ describeIfKey('mocean live', () => {
 
 	it('account.pricing for verify: a rate, or 400 when the account has none', async () => {
 		// Trial accounts have no verify rate (status 3); paid ones return prices.
-		const result = await api.account
-			.pricing({ mocean_type: 'verify' })
-			.catch((error: { status?: number }) => error);
-		if ('destinations' in result) {
-			expect(Array.isArray(result.destinations)).toBe(true);
+		const outcome = await api.account.pricing({ mocean_type: 'verify' }).then(
+			(value) => ({ ok: true as const, value }),
+			(error: { status?: number }) => ({ ok: false as const, error }),
+		);
+		if (outcome.ok) {
+			expect(Array.isArray(outcome.value.destinations)).toBe(true);
 		} else {
-			expect(result.status).toBe(400);
+			expect(outcome.error.status).toBe(400);
 		}
 	});
 
@@ -102,17 +103,15 @@ describeIfKey('mocean live', () => {
 	});
 
 	it('templates.list: templates, or 401 without a WhatsApp sender', async () => {
-		const result = await api.templates
-			.list({ limit: 2 })
-			.catch((error: { status?: number }) => error);
-		if (
-			'status' in result &&
-			typeof result.status === 'number' &&
-			!('data' in result)
-		) {
-			expect(result.status).toBe(401);
+		const outcome = await api.templates.list({ limit: 2 }).then(
+			(value) => ({ ok: true as const, value }),
+			(error: { status?: number }) => ({ ok: false as const, error }),
+		);
+		if (outcome.ok) {
+			expect(Array.isArray(outcome.value.data)).toBe(true);
 		} else {
-			expect(result).toBeDefined();
+			// Only Mocean's rejection counts; a dropped connection has no status.
+			expect(outcome.error.status).toBe(401);
 		}
 	});
 
