@@ -102,7 +102,7 @@ apiExamples:
   account.taskTemplates.update:
     args: {"id": 1234567}
   account.webHooks.create:
-    args: {"target": "Activity", "event": "example", "hook": "example"}
+    args: {"target": "Activity", "event": "create", "hook": "https://example.com/moco/webhooks"}
   account.webHooks.delete:
     args: {"id": 1234567}
   account.webHooks.disable:
@@ -114,7 +114,7 @@ apiExamples:
   account.webHooks.list:
     args: {}
   account.webHooks.update:
-    args: {"id": 1234567, "hook": "example"}
+    args: {"id": 1234567, "hook": "https://example.com/moco/webhooks"}
   activities.bulkCreate:
     args: {"activities": [{}]}
   activities.create:
@@ -122,7 +122,7 @@ apiExamples:
   activities.delete:
     args: {"id": 654321}
   activities.disregard:
-    args: {"company_id": 889, "reason": "example", "activity_ids": [1]}
+    args: {"company_id": 889, "reason": "Created by mistake", "activity_ids": [1]}
   activities.get:
     args: {"id": 654321}
   activities.list:
@@ -214,7 +214,7 @@ apiExamples:
   invoiceReminders.sendEmail:
     args: {"id": 1234567, "subject": "Your invoice", "text": "Please find the invoice attached."}
   invoices.attachments.create:
-    args: {"invoice_id": 777001, "attachment": {"filename": "example", "base64": "example"}}
+    args: {"invoice_id": 777001, "attachment": {"filename": "receipt.pdf", "base64": "JVBERi0xLjQKJSVFT0YK"}}
   invoices.attachments.delete:
     args: {"invoice_id": 777001, "id": 1234567}
   invoices.attachments.list:
@@ -226,7 +226,7 @@ apiExamples:
   invoices.bookkeepingExports.list:
     args: {}
   invoices.create:
-    args: {"customer_id": 1, "recipient_address": "example", "date": "2026-04-09", "due_date": "example", "title": "Website Relaunch", "currency": "EUR", "items": [{"type": "title"}]}
+    args: {"customer_id": 1, "recipient_address": "Beachy GmbH\nExample Street 1\n10115 Berlin", "date": "2026-04-09", "due_date": "2026-04-09", "title": "Website Relaunch", "currency": "EUR", "items": [{"type": "title"}]}
   invoices.delete:
     args: {"id": 1234567}
   invoices.get:
@@ -276,7 +276,7 @@ apiExamples:
   offers.assign:
     args: {"id": 1234567}
   offers.attachments.create:
-    args: {"offer_id": 456001, "attachment": {"filename": "example", "base64": "example"}}
+    args: {"offer_id": 456001, "attachment": {"filename": "receipt.pdf", "base64": "JVBERi0xLjQKJSVFT0YK"}}
   offers.attachments.delete:
     args: {"offer_id": 456001, "id": 1234567}
   offers.attachments.list:
@@ -354,7 +354,7 @@ apiExamples:
   projects.expenses.delete:
     args: {"project_id": 1234567, "id": 1234567}
   projects.expenses.disregard:
-    args: {"project_id": 1234567, "reason": "example", "expense_ids": [1]}
+    args: {"project_id": 1234567, "reason": "Created by mistake", "expense_ids": [1]}
   projects.expenses.get:
     args: {"project_id": 1234567, "id": 1234567}
   projects.expenses.list:
@@ -554,9 +554,9 @@ apiExamples:
   units.update:
     args: {"id": 1234567}
   users.absenceRequests.create:
-    args: {"approver_user_id": "example", "type": "vacation", "entries": [{"date": "2026-04-09", "am": true, "pm": true}]}
+    args: {"approver_user_id": "933590696", "type": "vacation", "entries": [{"date": "2026-04-09", "am": true, "pm": true}]}
   users.absenceRequests.delete:
-    args: {"id": 1234567, "comment": "example"}
+    args: {"id": 1234567, "comment": "Approved for the April offsite"}
   users.absenceRequests.get:
     args: {"id": 1234567}
   users.absenceRequests.list:

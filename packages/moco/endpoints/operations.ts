@@ -277,7 +277,9 @@ export function createMocoOperation<Id extends MocoOperationId>(
 			// A route that may answer with no body is read as bytes: core turns
 			// both an empty body and JSON it can't decode into `undefined`, and
 			// only the second is an error.
-			...(operation.emptyOk ? { responseType: 'binary' as const } : {}),
+			...(operation.emptyOk || operation.response === 'empty'
+				? { responseType: 'binary' as const }
+				: {}),
 		};
 		// Fields MOCO sets itself never go back, even when the caller passes an object it read.
 		for (const name of operation.serverSetFields ?? []) delete valid[name];
@@ -296,8 +298,11 @@ export function createMocoOperation<Id extends MocoOperationId>(
 				filename: fileNameFor(id, parsedInput.data),
 			});
 		} else if (operation.response === 'empty') {
-			// The spec documents no body: the 2xx status is the answer.
-			await makeMocoRequest(ctx, request);
+			// The spec documents no body, so the 2xx status is the answer. A body
+			// is still read: JSON (MOCO answering anyway) is fine, but bytes that
+			// aren't JSON point at something other than MOCO (a proxy page) and
+			// throw instead of counting as a success.
+			decodeMaybeEmpty(id, await makeMocoRequest(ctx, request));
 			response = { success: true };
 		} else {
 			let body = await makeMocoRequest(ctx, request);

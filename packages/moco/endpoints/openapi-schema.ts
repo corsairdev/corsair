@@ -159,6 +159,9 @@ function mergeAllOf(members: unknown[]): OpenApiDocument | undefined {
 	return { type: 'object', properties, required };
 }
 
+/** References being built right now (conversion is synchronous). */
+const building = new Set<string>();
+
 // `unknown` is necessary because schema conversion starts with untrusted provider JSON.
 function schemaFromOpenApi(
 	value: unknown,
@@ -176,9 +179,19 @@ function schemaFromOpenApi(
 		const cacheKey = `${mode}:${reference}`;
 		let schema = cache.get(cacheKey);
 		if (!schema) {
-			schema = z.lazy(() =>
-				schemaFromOpenApi(mocoDefinitions[reference], mode, cache),
-			);
+			if (building.has(cacheKey)) {
+				// A schema that contains itself: only this inner use is lazy.
+				return z.lazy(() => cache.get(cacheKey) ?? z.unknown());
+			}
+			// Built in place, not behind z.lazy: Studio's form builder doesn't
+			// unwrap ZodLazy, so a referenced object (activities.bulkCreate's
+			// entries) would show as a disabled field.
+			building.add(cacheKey);
+			try {
+				schema = schemaFromOpenApi(mocoDefinitions[reference], mode, cache);
+			} finally {
+				building.delete(cacheKey);
+			}
 			cache.set(cacheKey, schema);
 		}
 		return value.nullable === true ? schema.nullable() : schema;

@@ -372,8 +372,15 @@ describe('every operation', () => {
 				reply(200, output.type === 'array' ? [] : {});
 			}
 			const args = docs.apiExamples[id]?.args ?? {};
-			await endpointFor(id)(ctx(), args);
+			const result = await endpointFor(id)(ctx(), args);
 			expect(calls).toHaveLength(1);
+			if (operation.response === 'empty') {
+				expect(result).toEqual({ success: true });
+			} else if (operation.paginated) {
+				expect(result).toEqual({ items: [], next_page: null });
+			} else if (operation.response === 'json') {
+				expect(result).toEqual(output.type === 'array' ? [] : {});
+			}
 			const url = new URL(String(calls[0]?.url));
 			const route = operation.path.replace(/\{(\w+)\}/g, (_, name: string) =>
 				encodeURIComponent(String(args[name])),
@@ -386,15 +393,155 @@ describe('every operation', () => {
 			expect(calls[0]?.headers.authorization).toBe('Token token=moco_test_key');
 			if (operation.request === 'json') {
 				const body = JSON.parse(String(calls[0]?.body ?? '{}'));
-				for (const name of Object.keys(args)) {
-					if (
-						/\{/.test(operation.path) &&
-						operation.path.includes(`{${name}}`)
-					) {
+				const located = new Map(
+					Object.entries(operation.input.properties ?? {}).map(
+						// `unknown` because property schemas are raw JSON Schema documents.
+						([name, schema]) => [
+							name,
+							(schema as Record<string, unknown>)['x-corsair-in'] ?? 'body',
+						],
+					),
+				);
+				for (const [name, value] of Object.entries(args)) {
+					if (located.get(name) === 'body') {
+						// Every body field of the example goes out as sent.
+						expect([name, body[name]]).toEqual([name, value]);
+					} else {
 						expect(body).not.toHaveProperty(name);
 					}
 				}
 			}
 		},
 	);
+});
+
+// Expectations written by hand from MOCO's API reference, not read from the
+// manifest, so a wrong route or body in the manifest fails here.
+describe('routes checked by hand', () => {
+	it.each([
+		['activities.list', { from: '2026-04-01' }, 'GET', '/activities'],
+		['contacts.get', { id: 9 }, 'GET', '/contacts/people/9'],
+		[
+			'projects.tasks.update',
+			{ project_id: 3, id: 4, name: 'QA' },
+			'PUT',
+			'/projects/3/tasks/4',
+		],
+		[
+			'invoices.sendEmail',
+			{ id: 5, emails_to: 'a@example.com', subject: 's', text: 't' },
+			'POST',
+			'/invoices/5/send_email',
+		],
+		[
+			'offers.customerApproval.activate',
+			{ offer_id: 6 },
+			'POST',
+			'/offers/6/customer_approval/activate',
+		],
+		['users.presences.touch', {}, 'POST', '/users/presences/touch'],
+		[
+			'taggings.add',
+			{ taggable_type: 'Project', taggable_id: 7, tags: ['Lead'] },
+			'PATCH',
+			'/taggings/Project/7',
+		],
+		[
+			'taggings.replace',
+			{ taggable_type: 'Project', taggable_id: 7, tags: ['Lead'] },
+			'PUT',
+			'/taggings/Project/7',
+		],
+		[
+			'projects.tasks.deleteAll',
+			{ project_id: 3 },
+			'DELETE',
+			'/projects/3/tasks/destroy_all',
+		],
+		[
+			'account.webHooks.disable',
+			{ id: 8 },
+			'PUT',
+			'/account/web_hooks/8/disable',
+		],
+		[
+			'reports.plannedVsTracked',
+			{ from: '2026-01-01', to: '2026-01-31' },
+			'GET',
+			'/report/planned_vs_tracked',
+		],
+	] as const)('%s', async (id, args, method, path) => {
+		reply(200, {});
+		await endpointFor(id)(ctx(), args).catch(() => undefined);
+		expect(calls[0]?.method).toBe(method);
+		expect(new URL(String(calls[0]?.url)).pathname).toBe(`/api/v1${path}`);
+	});
+
+	it('sends a bulk activity body as documented', async () => {
+		reply(200, [{ id: 1 }]);
+		const entry = {
+			date: '2026-04-09',
+			project_id: 1,
+			task_id: 2,
+			seconds: 1800,
+			description: 'Review',
+		};
+		await endpointFor('activities.bulkCreate')(ctx(), { activities: [entry] });
+		expect(new URL(String(calls[0]?.url)).pathname).toBe(
+			'/api/v1/activities/bulk',
+		);
+		expect(JSON.parse(String(calls[0]?.body))).toEqual({ activities: [entry] });
+	});
+
+	it('parses a populated invoice with nested items and payments', async () => {
+		reply(200, {
+			id: 77,
+			identifier: 'R2604-001',
+			status: 'created',
+			customer: { id: 1, name: 'Beachy' },
+			items: [
+				{ id: 1, type: 'item', title: 'Design', quantity: 2, net_total: 200 },
+			],
+			payments: [{ id: 3, date: '2026-04-20', paid_total: 238 }],
+			reminders: [],
+			gross_total: 238,
+			unknown_new_field: true,
+		});
+		const invoice = (await endpointFor('invoices.get')(ctx(), { id: 77 })) as {
+			items?: Array<{ title?: string }>;
+			payments?: Array<{ paid_total?: number }>;
+			unknown_new_field?: boolean;
+		};
+		expect(invoice.items?.[0]?.title).toBe('Design');
+		expect(invoice.payments?.[0]?.paid_total).toBe(238);
+		expect(invoice.unknown_new_field).toBe(true);
+	});
+});
+
+describe('error bodies', () => {
+	it('drops the API key if MOCO ever echoes it', async () => {
+		reply(401, { message: 'Invalid API key moco_test_key.' });
+		const error = (await endpointFor('projects.get')(ctx(), { id: 1 }).catch(
+			(e: unknown) => e,
+		)) as ApiError;
+		expect(error.status).toBe(401);
+		expect(error.message).not.toContain('moco_test_key');
+		expect(JSON.stringify(error.body)).not.toContain('moco_test_key');
+	});
+
+	it('refuses a documented-empty route that answers bytes that are not JSON', async () => {
+		replyRaw(200, '<html>proxy login</html>', 'text/html');
+		await expect(
+			endpointFor('invoices.updateStatus')(ctx(), { id: 5, status: 'sent' }),
+		).rejects.toThrow(
+			'MOCO invoices.updateStatus answered with a body that is not JSON',
+		);
+	});
+
+	it('still counts a JSON answer on a documented-empty route as done', async () => {
+		replyRaw(200, '{}', 'application/json');
+		await expect(
+			endpointFor('invoices.updateStatus')(ctx(), { id: 5, status: 'sent' }),
+		).resolves.toEqual({ success: true });
+	});
 });

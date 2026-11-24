@@ -170,7 +170,9 @@ export async function makeMocoRequest(
 		// `unknown` because the provider response is validated by the owning endpoint after transport.
 		return await request<unknown>(config, requestOptions);
 	} catch (error) {
-		if (error instanceof ApiError) throw withoutRequestData(error, subdomain);
+		if (error instanceof ApiError) {
+			throw withoutRequestData(error, subdomain, ctx.key);
+		}
 		throw error;
 	}
 }
@@ -192,8 +194,14 @@ const REDACTED = '[REDACTED]';
 export function withoutRequestData(
 	error: ApiError,
 	subdomain: string,
+	key?: string,
 ): ApiError {
-	const sent = sentStrings(error.request);
+	// The key travels in the transport config, not on error.request: add it,
+	// so a body that echoes it loses it too.
+	const sent = [
+		...(key ? [{ text: key, wholeWord: false }] : []),
+		...sentStrings(error.request),
+	].sort((a, b) => b.text.length - a.text.length);
 	const body = scrubSent(withoutEchoedValues(error.body), sent);
 	const message = mocoErrorMessage(error.status, error.statusText, body);
 	return new ApiError(

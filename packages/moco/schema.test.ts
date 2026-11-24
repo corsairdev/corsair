@@ -146,6 +146,29 @@ describe('schemas', () => {
 		).toBe(false);
 	});
 
+	it('builds referenced objects in place so Studio can render them', () => {
+		const input = getMocoInputSchema('activities.bulkCreate') as unknown as {
+			shape: {
+				activities: { unwrap?: () => unknown; def?: { type?: string } };
+			};
+		};
+		// `unknown` because zod's internals are walked to find the item schema.
+		const list = input.shape.activities as unknown as {
+			def: {
+				type: string;
+				element?: { def: { type: string } };
+				innerType?: unknown;
+			};
+		};
+		const array = (
+			list.def.type === 'optional' ? list.def.innerType : list
+		) as {
+			def: { type: string; element: { def: { type: string } } };
+		};
+		expect(array.def.type).toBe('array');
+		expect(array.def.element.def.type).not.toBe('lazy');
+	});
+
 	it('wraps paginated lists as items and next_page', () => {
 		const out = getMocoOutputSchema('projects.list');
 		expect(out.safeParse({ items: [{ id: 1 }], next_page: null }).success).toBe(
