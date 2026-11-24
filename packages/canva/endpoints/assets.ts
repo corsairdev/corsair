@@ -1,12 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaEndpoints } from '../index';
-import { toAssetEntity } from './mappers';
+import { loggable, toAssetEntity } from './mappers';
+import { seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
 
 export const get: CanvaEndpoints['assetsGet'] = async (ctx, input) => {
 	const result = await makeCanvaRequest<CanvaEndpointOutputs['assetsGet']>(
-		`v1/assets/${input.assetId}`,
+		`v1/assets/${seg(input.assetId)}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
@@ -22,14 +23,19 @@ export const get: CanvaEndpoints['assetsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'canva.assets.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'canva.assets.get',
+		loggable(input),
+		'completed',
+	);
 	return result;
 };
 
 export const update: CanvaEndpoints['assetsUpdate'] = async (ctx, input) => {
 	const { assetId, name, tags } = input;
 	const result = await makeCanvaRequest<CanvaEndpointOutputs['assetsUpdate']>(
-		`v1/assets/${assetId}`,
+		`v1/assets/${seg(assetId)}`,
 		ctx.key,
 		{
 			method: 'PATCH',
@@ -54,7 +60,7 @@ export const update: CanvaEndpoints['assetsUpdate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.assets.update',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -64,7 +70,7 @@ export const deleteAsset: CanvaEndpoints['assetsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeCanvaRequest<void>(`v1/assets/${input.assetId}`, ctx.key, {
+	await makeCanvaRequest<void>(`v1/assets/${seg(input.assetId)}`, ctx.key, {
 		method: 'DELETE',
 	});
 
@@ -79,7 +85,7 @@ export const deleteAsset: CanvaEndpoints['assetsDelete'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.assets.delete',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return { success: true };

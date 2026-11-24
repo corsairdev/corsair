@@ -1,6 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaEndpoints } from '../index';
+import { loggable } from './mappers';
+import { seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
 
 export const createThread: CanvaEndpoints['commentsCreateThread'] = async (
@@ -10,7 +12,7 @@ export const createThread: CanvaEndpoints['commentsCreateThread'] = async (
 	const { designId, message_plaintext, assignee_id } = input;
 	const result = await makeCanvaRequest<
 		CanvaEndpointOutputs['commentsCreateThread']
-	>(`v1/designs/${designId}/comments`, ctx.key, {
+	>(`v1/designs/${seg(designId)}/comments`, ctx.key, {
 		method: 'POST',
 		body: {
 			message_plaintext,
@@ -21,7 +23,7 @@ export const createThread: CanvaEndpoints['commentsCreateThread'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.comments.createThread',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -34,14 +36,14 @@ export const getThread: CanvaEndpoints['commentsGetThread'] = async (
 	const { designId, threadId } = input;
 	const result = await makeCanvaRequest<
 		CanvaEndpointOutputs['commentsGetThread']
-	>(`v1/designs/${designId}/comments/${threadId}`, ctx.key, {
+	>(`v1/designs/${seg(designId)}/comments/${seg(threadId)}`, ctx.key, {
 		method: 'GET',
 	});
 
 	await logEventFromContext(
 		ctx,
 		'canva.comments.getThread',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -54,7 +56,7 @@ export const createReply: CanvaEndpoints['commentsCreateReply'] = async (
 	const { designId, threadId, message_plaintext } = input;
 	const result = await makeCanvaRequest<
 		CanvaEndpointOutputs['commentsCreateReply']
-	>(`v1/designs/${designId}/comments/${threadId}/replies`, ctx.key, {
+	>(`v1/designs/${seg(designId)}/comments/${seg(threadId)}/replies`, ctx.key, {
 		method: 'POST',
 		body: { message_plaintext },
 	});
@@ -62,7 +64,7 @@ export const createReply: CanvaEndpoints['commentsCreateReply'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.comments.createReply',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -75,7 +77,7 @@ export const listReplies: CanvaEndpoints['commentsListReplies'] = async (
 	const { designId, threadId, continuation, limit } = input;
 	const result = await makeCanvaRequest<
 		CanvaEndpointOutputs['commentsListReplies']
-	>(`v1/designs/${designId}/comments/${threadId}/replies`, ctx.key, {
+	>(`v1/designs/${seg(designId)}/comments/${seg(threadId)}/replies`, ctx.key, {
 		method: 'GET',
 		query: {
 			...(continuation !== undefined && { continuation }),
@@ -99,14 +101,18 @@ export const getReply: CanvaEndpoints['commentsGetReply'] = async (
 	const { designId, threadId, replyId } = input;
 	const result = await makeCanvaRequest<
 		CanvaEndpointOutputs['commentsGetReply']
-	>(`v1/designs/${designId}/comments/${threadId}/replies/${replyId}`, ctx.key, {
-		method: 'GET',
-	});
+	>(
+		`v1/designs/${seg(designId)}/comments/${seg(threadId)}/replies/${seg(replyId)}`,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
 		'canva.comments.getReply',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;

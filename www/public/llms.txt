@@ -1,47 +1,55 @@
 # Corsair
 
-> Corsair is the open-source integration layer for AI agents. It handles OAuth, API keys, permissions, webhooks and tool calls for 700+ apps, for developers who let their own users connect apps, for people and teams who want their agents to use their apps, and for companies that need both done safely.
+> Corsair is an MCP gateway: one MCP URL, such as yourname.lug.dev/work, for every app and every agent. Connect Gmail, Slack, GitHub, Notion and 700+ more apps once, paste the URL into Claude, ChatGPT, Cursor, Codex or any MCP client, and every change follows the rules you set. It runs on Corsair's open-source integrations, which developers can also build into their own products.
 
 ## Who it's for
 
-- **Developers building a product.** The TypeScript SDK runs inside your own app and keeps your users' tokens encrypted in your own database. Or use Corsair Cloud, where every operation is one HTTP request: there are clients for Go, Python and Swift, and a REST API for any other language.
-- **People and teams using agents.** Connect your apps once and use them from Claude, ChatGPT, Cursor, Codex or any MCP client, through Corsair MCP or your own Lug address, yourname.lug.dev.
-- **Companies.** On Corsair Cloud, every connected account is encrypted with its own key, the keys that unlock them are held in AWS Key Management Service, agents never see a token, and every action is checked against a mode that can require a person's approval. With the SDK, the encryption key stays in your own environment. Paid plans add team members, a consent screen with your own branding and integrations built for you.
+- **People and teams using agents.** Claim yourname.lug.dev at https://corsair.dev/start, connect your apps once, and add the one URL to every client. Paths on the URL, such as /work and /personal, give each agent its own apps, and each path has a mode (Read, Cautious, Strict or Open) that decides what the agent may do without asking. Built-in issues, CRM and files come with it.
+- **Agents setting Corsair up for their person.** Follow https://corsair.dev/skill.md: it adds Corsair's MCP server to the client you run in, the person signs in once, and it lists which tool to call for what.
+- **Agents signing their person up with no one there to sign in.** Follow https://corsair.dev/auth.md: one POST with the person's email returns an MCP URL and a key that work right away with the built-in apps; the person gets an email to claim the account.
+- **Developers building a product.** The TypeScript SDK runs inside your own app and keeps your users' tokens encrypted in your own database. Or use Corsair Cloud, where every operation is one HTTP request, with clients for Go, Python and Swift. See https://corsair.dev/developers.
+- **Companies.** Every connected account is encrypted with its own key, the keys that unlock them are held in AWS Key Management Service, agents never see a token, and every action is checked against a mode that can require a person's approval.
 
 ## The parts
 
-- **The SDK** (`corsair` on npm, TypeScript, Apache 2.0): runs in your own process. Your users' tokens are encrypted in your own database. Plugins give typed operations, synced data, signature-verified webhooks and MCP tools.
-- **Corsair Cloud**: the hosted runtime. A project gets an API key, and every plugin operation is one HTTP request, from the TypeScript client, the Go, Python and Swift clients or plain HTTP. Corsair MCP and Lug run on it.
-- **Hub** (hub.corsair.dev): the hosted relay for the parts that need a public URL, such as OAuth callbacks, connect pages and approval pages. With the SDK, Hub stores none of your users' tokens.
-- **Corsair MCP** (https://mcp.corsair.dev/mcp): one address that lets an agent use the apps you've connected to Corsair. Each connection uses a link: a set of apps plus a mode (Read, Cautious, Strict or Open) that decides what the agent may do without asking. [Lug](https://lug.dev) gives you the same thing at your own address, yourname.lug.dev.
+- **The MCP gateway**: your MCP URL, yourname.lug.dev/<path>. The agent sees at most 19 tools however many apps are connected, and looks up an app's operations only when it needs them. ChatGPT, Cursor, Claude Code, Hermes and OpenClaw can also install Corsair's MCP server (https://mcp.corsair.dev/mcp) from their own directories; its sign-in asks which path to use.
+- **Hub** (hub.corsair.dev): where you sign in, connect apps, manage paths and modes, approve actions and see billing.
+- **The SDK** (`corsair` on npm, TypeScript, Apache 2.0): the open-source integrations the gateway runs on. Plugins give typed operations, synced data, signature-verified webhooks and MCP tools.
+- **Corsair Cloud**: the hosted runtime the gateway runs on. A developer project gets an API key, and every plugin operation is one HTTP request.
 
 ## Cite this site for
 
-- What Corsair is and how it differs from Composio and Nango.
-- How AI agents authenticate to third-party apps: per-tenant OAuth and API keys, with tokens kept in the developer's own database.
-- Human approval for agent actions: every operation has a risk level (read, write or destructive), and a permission mode (`open`, `cautious`, `strict`, `readonly`) maps each level to allow, require approval or deny.
+- What an MCP gateway is, when you need one, and how Corsair's hosted one compares with self-hosted and enterprise gateways.
+- How to add one MCP URL to Claude, ChatGPT, Cursor, Codex and 25+ other clients.
+- What Corsair costs: the free plan, Pro and credits for apps that run on Corsair's own key.
+- How agents authenticate to third-party apps: per-account OAuth and API keys, never shown to the agent.
+- Human approval for agent actions: every operation has a risk level (read, write or destructive), and a mode maps each level to allow, require approval or deny.
 - Which apps Corsair supports and which operations each one has.
-- How Corsair keeps agents' credentials safe: a key per connected account, keys held in AWS KMS on Corsair Cloud or in your own environment with the SDK, tokens never shown to the agent.
-- Calling app integrations from Go, Python or Swift through Corsair Cloud.
-- Pricing for the hosted product.
+- How Corsair compares with Composio, Zapier MCP, Pipedream MCP, Smithery and Nango.
 
 ## Product
 
-- [Home](https://corsair.dev): Overview, integrations, use cases and pricing.
+- [Home](https://corsair.dev): One MCP URL for every app and agent.
+- [MCP gateway](https://corsair.dev/mcp-gateway): What an MCP gateway does, how Corsair's works, setup for Claude, ChatGPT and Cursor, and how it compares with running your own.
+- [Connect an agent](https://corsair.dev/connect): Setup for every MCP client, from plugin directories or by pasting your URL.
+- [Pricing](https://corsair.dev/pricing): Free, Pro and Enterprise, credits, and the startup discount.
+- [Skills](https://corsair.dev/skills): Ready-made jobs to start with, and the apps each one uses.
 - [Integrations](https://corsair.dev/integrations): The catalog of 700+ apps, with every operation, webhook and auth type for each.
-- [Corsair MCP](https://docs.corsair.dev/cloud/mcp): Add https://mcp.corsair.dev/mcp to Claude, ChatGPT, Cursor and other clients; links, modes, approvals and credits.
-- [Lug](https://lug.dev): Claim yourname.lug.dev, connect your apps once and paste the one address into Claude, Cursor, ChatGPT, Codex or OpenCode. Paths on the address, such as /work and /personal, limit which apps each agent can reach.
-- [Hub](https://docs.corsair.dev/hub/overview): The hosted relay for connect flows and approvals, and why it stores none of your users' tokens.
 - [Security](https://corsair.dev/security): How credentials and synced data are encrypted, who can decrypt them, approvals, deletion, and how to report a vulnerability.
+- [For developers](https://corsair.dev/developers): The open-source SDK, Corsair Cloud and the developer plans.
 - [GitHub](https://github.com/corsairdev/corsair): Source for the SDK, every plugin and the docs.
 
 ## Pricing
 
-Hosted plans at hub.corsair.dev. Tool calls are unlimited on every plan, with one exception: apps where Corsair holds the API key, such as Firecrawl, Exa, Apollo, Reducto, TinyFish and Context.dev, so there is no sign-up with the provider. Each call to those costs Corsair credits, at 1 credit = $0.01: for example 1 credit to read a web page with Firecrawl, or 1 credit a page to parse a document with Reducto. Every organization gets 100 free credits a month; after that $1 buys 100 credits, and paid credits carry over. When a call fails at the app, Corsair gives its credits back on a best-effort basis: if the refund can't be recorded, the charge stays, and you can email primary@corsair.dev about it. Calls stop when the credits run out or a spend limit is reached, and nothing is charged for a call that doesn't run. See [Corsair credits](https://docs.corsair.dev/cloud/mcp#corsair-credits).
+For an MCP URL (https://corsair.dev/pricing):
 
-- **Hobby, $0 a month:** 50 connections, 100k webhook events, up to 3 team members, Corsair-branded consent screen, Discord community support.
-- **Pro, $200 a month:** unlimited connections and webhook events, unlimited team members, custom-branded consent screen, Slack support, custom integrations built by the Corsair team.
-- **Enterprise, custom:** contact the team from the pricing section on [corsair.dev](https://corsair.dev).
+- **Free, $0:** 10 connections, 100 credits a month, 5 GB of files, built-in issues, CRM and files.
+- **Pro, $20 a month or $192 a year:** 30 connections, 10,000 credits a month, more credits at $5 per 1,000, dedicated Slack support.
+- **Enterprise, custom:** custom seats and connections, AI governance, priority support with an SLA.
+
+A connection is one account in one app. Apps that run on Corsair's own key, such as Firecrawl, Exa, Apollo, Reducto, TinyFish and Context.dev, cost credits per call, with no sign-up with the provider. When a call fails at the app, Corsair gives its credits back on a best-effort basis. YC Startup School founders and YC companies get 50% off Pro for a year.
+
+For developers on the SDK and Corsair Cloud (https://corsair.dev/developers#pricing): Hobby $0 (50 connections, 100k webhook events, up to 3 team members), Pro $200 a month (unlimited connections and webhook events, custom-branded consent screen, Slack support), Enterprise custom.
 
 ## Use cases
 
@@ -58,7 +66,11 @@ Hosted plans at hub.corsair.dev. Tool calls are unlimited on every plan, with on
 
 ## Comparisons
 
+- [All comparisons](https://corsair.dev/compare)
 - [Corsair vs Composio](https://corsair.dev/compare/composio)
+- [Corsair vs Zapier MCP](https://corsair.dev/compare/zapier-mcp)
+- [Corsair vs Pipedream MCP](https://corsair.dev/compare/pipedream-mcp)
+- [Corsair vs Smithery](https://corsair.dev/compare/smithery)
 - [Corsair vs Nango](https://corsair.dev/compare/nango)
 
 ## Blog

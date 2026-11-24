@@ -1,0 +1,131 @@
+---
+title: "Metabase plugin"
+sidebarTitle: "Overview"
+description: "Work with Metabase's documented REST API for collections, queries, permissions, people, embedding, and administration."
+---
+
+Use **Metabase** through Corsair: one client, typed API calls.
+
+Metabase's REST API is unversioned. The current latest documentation is for Metabase 65, but available routes depend on the installed instance. This plugin implements JSON-schema-backed OpenAPI routes compatible with Corsair; the custom-viz Server-Sent Events proxy and inbound Slack event receiver are excluded. API keys use the documented X-API-Key header and inherit permissions from their assigned group. The instance comes from the account's stored `base_url` or metabase(&#123; baseUrl &#125;); agent inputs cannot change the host. Cookies are omitted and redirects are not followed. Operations under `ee.` call Pro/Enterprise routes, which an open-source instance answers with 404. Metabase's MCP Apps routes (`/api/embed-mcp/*`) are left out: they need an MCP session header that only Metabase's embed sets.
+
+**What you get:**
+
+- 306 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/metabase better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/metabase better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/metabase better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/metabase better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { metabase } from '@corsair-dev/metabase';
+
+export const corsair = createCorsair({
+	plugins: [
+		metabase(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Metabase API key before the first call: `pnpm corsair setup --plugin=metabase --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+Each account needs its Metabase instance origin before the first call: store it as `base_url` next to the API key (`keys.set_base_url('https://example.metabaseapp.com')`, or the Base URL field when connecting in Hub). For a single-instance setup pass `metabase({ baseUrl })` instead; it overrides the stored value. Use HTTPS, or HTTP only for localhost development. Metabase grants each API key the permissions of its assigned group.
+
+```ts
+metabase()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'metabase',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`action.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.metabase.api.action.get({});
+```
+
+
+**`action.post`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.metabase.api.action.post({});
+```
+
+
+See the full list on the [API](/plugins/metabase/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/metabase/api">
+    Every `metabase.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

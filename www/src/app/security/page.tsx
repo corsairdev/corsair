@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 };
 
 const SECURITY_CONTACT_EMAIL = 'team@corsair.dev';
-const LAST_UPDATED = 'November 3, 2026';
+const LAST_UPDATED = 'November 23, 2026';
 const ENVELOPE_ENCRYPTION_URL =
 	'https://en.wikipedia.org/wiki/Hybrid_cryptosystem#Envelope_encryption';
 const ENCRYPTION_SOURCE_URL = `${GITHUB_URL}/blob/main/packages/corsair/core/auth/encryption.ts`;
@@ -160,9 +160,9 @@ export default function SecurityPage() {
 				</p>
 				<p>
 					The access tokens Corsair issues to MCP clients are signed, name the
-					one person and link they belong to, and expire after 15 minutes. A
-					grant opens one workspace, so a request for one customer can&apos;t
-					reach another customer&apos;s keys.
+					one person and link they belong to, and expire after an hour. A grant
+					opens one workspace, so a request for one customer can&apos;t reach
+					another customer&apos;s keys.
 				</p>
 			</LegalSection>
 

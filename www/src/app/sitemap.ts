@@ -1,15 +1,18 @@
 import type { MetadataRoute } from 'next';
 
 import { getAllPosts } from '@/lib/blog';
+import { postLastModified } from '@/lib/blog-seo';
 import { getComboCanonicalUrls } from '@/lib/combined-integrations';
 import { COMPARE_SLUGS } from '@/lib/compare-pages';
+import { getGatewayContent } from '@/lib/gateway-content';
 import { USE_CASES } from '@/lib/use-cases';
 import { getCatalogIntegrationIds } from '@/server/catalog-integration-cache';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-	const [posts, integrationIds] = await Promise.all([
+	const [posts, integrationIds, gateway] = await Promise.all([
 		getAllPosts(),
 		getCatalogIntegrationIds(),
+		getGatewayContent(),
 	]);
 
 	return [
@@ -18,6 +21,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			changeFrequency: 'weekly',
 			priority: 1.0,
 		},
+		// The MCP gateway pages, moved here from lug.dev.
+		...['/pricing', '/mcp-gateway', '/connect', '/skills', '/compare'].map(
+			(path) => ({
+				url: `https://corsair.dev${path}`,
+				changeFrequency: 'weekly' as const,
+				priority: 0.9,
+			}),
+		),
+		...gateway.skills.map((skill) => ({
+			url: `https://corsair.dev/skills/${skill.slug}`,
+			changeFrequency: 'monthly' as const,
+			priority: 0.7,
+		})),
 		{
 			url: 'https://corsair.dev/blog',
 			changeFrequency: 'weekly',
@@ -42,6 +58,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			url: 'https://corsair.dev/integrations',
 			changeFrequency: 'weekly',
 			priority: 0.9,
+		},
+		{
+			url: 'https://corsair.dev/developers',
+			changeFrequency: 'monthly',
+			priority: 0.7,
 		},
 		{
 			url: 'https://corsair.dev/use-cases',
@@ -70,7 +91,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		})),
 		...posts.map((post) => ({
 			url: `https://corsair.dev/blog/${post.slug}`,
-			lastModified: post.publishedAt,
+			lastModified: postLastModified(post),
 			changeFrequency: 'monthly' as const,
 			priority: 0.6,
 		})),
