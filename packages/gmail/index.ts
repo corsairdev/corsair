@@ -83,6 +83,7 @@ export type GmailEndpoints = {
 	messagesBatchModify: GmailEndpoint<'messagesBatchModify'>;
 	messagesTrash: GmailEndpoint<'messagesTrash'>;
 	messagesUntrash: GmailEndpoint<'messagesUntrash'>;
+	messagesGetAttachment: GmailEndpoint<'messagesGetAttachment'>;
 	labelsList: GmailEndpoint<'labelsList'>;
 	labelsGet: GmailEndpoint<'labelsGet'>;
 	labelsCreate: GmailEndpoint<'labelsCreate'>;
@@ -128,6 +129,7 @@ export const gmailEndpointsNested = {
 		batchModify: MessagesEndpoints.batchModify,
 		trash: MessagesEndpoints.trash,
 		untrash: MessagesEndpoints.untrash,
+		getAttachment: MessagesEndpoints.getAttachment,
 	},
 	labels: {
 		list: LabelsEndpoints.list,
@@ -181,6 +183,10 @@ export const gmailEndpointSchemas = {
 	'messages.untrash': {
 		input: GmailEndpointInputSchemas.messagesUntrash,
 		output: GmailEndpointOutputSchemas.messagesUntrash,
+	},
+	'messages.getAttachment': {
+		input: GmailEndpointInputSchemas.messagesGetAttachment,
+		output: GmailEndpointOutputSchemas.messagesGetAttachment,
 	},
 	'labels.list': {
 		input: GmailEndpointInputSchemas.labelsList,
@@ -299,9 +305,14 @@ const defaultAuthType = 'oauth_2' as const;
 const gmailEndpointMeta = {
 	'messages.list': {
 		riskLevel: 'read',
-		description: 'List messages in a mailbox',
+		description:
+			'Returns only id and threadId per message, no subject or body. Use messages.get to read one',
 	},
-	'messages.get': { riskLevel: 'read', description: 'Get a specific message' },
+	'messages.get': {
+		riskLevel: 'read',
+		description:
+			'Read one message. Default format is full, with body text base64url-encoded in payload.body.data, or for multipart messages in payload.parts[].body.data (parts nest); use format metadata for headers only.',
+	},
 	'messages.send': {
 		riskLevel: 'write',
 		description: 'Send an email to one or more recipients',
@@ -322,6 +333,11 @@ const gmailEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Restore a message from the trash',
 	},
+	'messages.getAttachment': {
+		riskLevel: 'read',
+		description:
+			'Fetch an attachment of a message by partId (from messages.get, format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId',
+	},
 	'labels.list': {
 		riskLevel: 'read',
 		description: 'List all labels in the mailbox',
@@ -338,7 +354,8 @@ const gmailEndpointMeta = {
 	},
 	'drafts.list': {
 		riskLevel: 'read',
-		description: 'List drafts in the mailbox',
+		description:
+			'Returns only draft id and message id/threadId. Use drafts.get to read subject and body',
 	},
 	'drafts.get': { riskLevel: 'read', description: 'Get a specific draft' },
 	'drafts.create': { riskLevel: 'write', description: 'Create a new draft' },
@@ -356,9 +373,14 @@ const gmailEndpointMeta = {
 	},
 	'threads.list': {
 		riskLevel: 'read',
-		description: 'List threads in the mailbox',
+		description:
+			'Returns thread id and snippet only, no messages. Use threads.get for the messages',
 	},
-	'threads.get': { riskLevel: 'read', description: 'Get a specific thread' },
+	'threads.get': {
+		riskLevel: 'read',
+		description:
+			'Get every message in a thread. format works as in messages.get',
+	},
 	'threads.modify': {
 		riskLevel: 'write',
 		description: 'Add or remove labels from a thread',

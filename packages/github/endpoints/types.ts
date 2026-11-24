@@ -4,15 +4,29 @@ const IssuesListInputSchema = z.object({
 	owner: z.string(),
 	repo: z.string(),
 	milestone: z.string().optional(),
-	state: z.enum(['open', 'closed', 'all']).optional(),
-	assignee: z.string().optional(),
+	state: z
+		.enum(['open', 'closed', 'all'])
+		.optional()
+		.describe('Defaults to open.'),
+	assignee: z
+		.string()
+		.optional()
+		.describe('A login, "none" for unassigned, or "*" for any assignee.'),
 	creator: z.string().optional(),
 	mentioned: z.string().optional(),
-	labels: z.string().optional(),
+	labels: z
+		.string()
+		.optional()
+		.describe('Comma-separated label names, e.g. "bug,ui".'),
 	sort: z.enum(['created', 'updated', 'comments']).optional(),
 	direction: z.enum(['asc', 'desc']).optional(),
-	since: z.string().optional(),
-	perPage: z.number().optional(),
+	since: z
+		.string()
+		.optional()
+		.describe(
+			'Only issues updated after this time, ISO 8601 such as 2025-01-31T00:00:00Z.',
+		),
+	perPage: z.number().optional().describe('Default 30, at most 100.'),
 	page: z.number().optional(),
 });
 
@@ -84,12 +98,18 @@ const IssuesCreateCommentInputSchema = z.object({
 const PullRequestsListInputSchema = z.object({
 	owner: z.string(),
 	repo: z.string(),
-	state: z.enum(['open', 'closed', 'all']).optional(),
-	head: z.string().optional(),
+	state: z
+		.enum(['open', 'closed', 'all'])
+		.optional()
+		.describe('Defaults to open.'),
+	head: z
+		.string()
+		.optional()
+		.describe('Head branch as "user:branch" or "organization:branch".'),
 	base: z.string().optional(),
 	sort: z.enum(['created', 'updated', 'popularity', 'long-running']).optional(),
 	direction: z.enum(['asc', 'desc']).optional(),
-	perPage: z.number().optional(),
+	perPage: z.number().optional().describe('Default 30, at most 100.'),
 	page: z.number().optional(),
 });
 
@@ -130,11 +150,21 @@ const PullRequestsCreateReviewInputSchema = z.object({
 });
 
 const RepositoriesListInputSchema = z.object({
-	owner: z.string().optional(),
-	type: z.enum(['all', 'owner', 'public', 'private', 'member']).optional(),
+	owner: z
+		.string()
+		.optional()
+		.describe(
+			"A user or org login. Leave empty for your own repos; set, it returns only that account's public repos.",
+		),
+	type: z
+		.enum(['all', 'owner', 'public', 'private', 'member'])
+		.optional()
+		.describe(
+			'With owner set GitHub accepts only all, owner and member; public and private need owner empty.',
+		),
 	sort: z.enum(['created', 'updated', 'pushed', 'full_name']).optional(),
 	direction: z.enum(['asc', 'desc']).optional(),
-	perPage: z.number().optional(),
+	perPage: z.number().optional().describe('Default 30, at most 100.'),
 	page: z.number().optional(),
 });
 
@@ -225,8 +255,11 @@ const EventsListPublicReceivedForUserInputSchema = z.object({
 const RepositoriesGetContentInputSchema = z.object({
 	owner: z.string(),
 	repo: z.string(),
-	path: z.string(),
-	ref: z.string().optional(),
+	path: z.string().describe('File or directory path; "" is the repo root.'),
+	ref: z
+		.string()
+		.optional()
+		.describe('Branch, tag or commit sha. Defaults to the default branch.'),
 });
 
 /** PUT /user/starred/{owner}/{repo} — see GitHub REST "Star a repository for the authenticated user" */
@@ -347,7 +380,7 @@ const CommentsListInputSchema = z.object({
 	sort: z.enum(['created', 'updated']).optional(),
 	direction: z.enum(['asc', 'desc']).optional(),
 	since: z.string().optional(),
-	perPage: z.number().optional(),
+	perPage: z.number().optional().describe('Default 30, at most 100.'),
 	page: z.number().optional(),
 });
 
@@ -409,7 +442,10 @@ const ForksCreateInputSchema = z.object({
 });
 
 const UsersListInputSchema = z.object({
-	since: z.number().optional(),
+	since: z
+		.number()
+		.optional()
+		.describe('A user id; returns accounts with a higher id.'),
 	perPage: z.number().optional(),
 });
 
@@ -443,7 +479,11 @@ const UsersGetHovercardInputSchema = z.object({
 });
 
 const SearchIssuesInputSchema = z.object({
-	q: z.string(),
+	q: z
+		.string()
+		.describe(
+			'Keywords then qualifiers: is:issue or is:pr (GitHub App user tokens get a 422 without one), repo:owner/name, author:, assignee:, label:, state:, updated:>=2025-01-31. Max 256 characters excluding operators and qualifiers, five AND/OR/NOT at most.',
+		),
 	sort: z
 		.enum([
 			'comments',

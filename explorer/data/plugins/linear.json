@@ -130,7 +130,7 @@
     {
       "path": "linear.api.comments.list",
       "shortPath": "comments.list",
-      "description": "List comments on an issue",
+      "description": "Comments on one issue; issueId is the UUID or an identifier such as \"ENG-123\".",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -138,7 +138,8 @@
           {
             "key": "issueId",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Issue UUID or identifier such as \"ENG-123\"."
           },
           {
             "key": "first",
@@ -419,7 +420,7 @@
     {
       "path": "linear.api.issues.get",
       "shortPath": "issues.get",
-      "description": "Get a specific issue",
+      "description": "Reads one issue; id is the UUID or an identifier such as \"ENG-123\".",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -575,7 +576,7 @@
     {
       "path": "linear.api.issues.list",
       "shortPath": "issues.list",
-      "description": "List issues in a team",
+      "description": "Lists issues, newest created first, across the workspace or one team; filter by assignee, state, labels or project.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -583,7 +584,8 @@
           {
             "key": "teamId",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Team UUID from teams.list, not the short key like \"ENG\"."
           },
           {
             "key": "first",
@@ -593,12 +595,14 @@
           {
             "key": "after",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "pageInfo.endCursor from the previous page."
           },
           {
             "key": "filter",
             "optional": true,
-            "type": "{ createdAt?: { eq?: string, neq?: string, lt?: string, lte?: string, gt?: string, gte?: string }, updatedAt?: { eq?: string, neq?: string, lt?: string, lte?: string, gt?: string, gte?: string }, title?: { eq?: string, neq?: string, in?: string[], nin?: string[], contains?: string, containsIgnoreCase?: string, notContains?: string, notContainsIgnoreCase?: string, startsWith?: string, endsWith?: string }, description?: { eq?: string, neq?: string, in?: string[], nin?: string[], contains?: string, containsIgnoreCase?: string, notContains?: string, notContainsIgnoreCase?: string, startsWith?: string, endsWith?: string }, team?: { id?: { eq?: string, neq?: string, in?: string[], nin?: string[] } }, and?: (recursive)[], or?: (recursive)[] }"
+            "type": "{ createdAt?: { eq?: string, neq?: string, lt?: string, lte?: string, gt?: string, gte?: string }, updatedAt?: { eq?: string, neq?: string, lt?: string, lte?: string, gt?: string, gte?: string }, title?: { eq?: string, neq?: string, in?: string[], nin?: string[], contains?: string, containsIgnoreCase?: string, notContains?: string, notContainsIgnoreCase?: string, startsWith?: string, endsWith?: string }, description?: { eq?: string, neq?: string, in?: string[], nin?: string[], contains?: string, containsIgnoreCase?: string, notContains?: string, notContainsIgnoreCase?: string, startsWith?: string, endsWith?: string }, team?: { id?: { eq?: string, neq?: string, in?: string[], nin?: string[] } }, assignee?: { id?: { eq?: string, neq?: string, in?: string[], nin?: string[] }, isMe?: { eq?: boolean, neq?: boolean }, name?: { eq?: string, neq?: string, in?: string[], nin?: string[], contains?: string, containsIgnoreCase?: string, notContains?: string, notContainsIgnoreCase?: string, startsWith?: string, endsWith?: string }, displayName?: { eq?: string, neq?: string, in?: string[], nin?: string[], contains?: string, containsIgnoreCase?: string, notContains?: string, notContainsIgnoreCase?: string, startsWith?: string, endsWith?: string }, email?: { eq?: string, neq?: string, in?: string[], nin?: string[], contains?: string, containsIgnoreCase?: string, notContains?: string, notContainsIgnoreCase?: string, startsWith?: string, endsWith?: string }, null?: boolean }, state?: { id?: { eq?: string, neq?: string, in?: string[], nin?: string[] }, name?: { eq?: string, neq?: string, in?: string[], nin?: string[], contains?: string, containsIgnoreCase?: string, notContains?: string, notContainsIgnoreCase?: string, startsWith?: string, endsWith?: string }, type?: { eq?: string, neq?: string, in?: string[], nin?: string[], contains?: string, containsIgnoreCase?: string, notContains?: string, notContainsIgnoreCase?: string, startsWith?: string, endsWith?: string } }, labels?: { some?: { id?: { eq?: string, neq?: string, in?: string[], nin?: string[] }, name?: { eq?: string, neq?: string, in?: string[], nin?: string[], contains?: string, containsIgnoreCase?: string, notContains?: string, notContainsIgnoreCase?: string, startsWith?: string, endsWith?: string } }, every?: { id?: { eq?: string, neq?: string, in?: string[], nin?: string[] }, name?: { eq?: string, neq?: string, in?: string[], nin?: string[], contains?: string, containsIgnoreCase?: string, notContains?: string, notContainsIgnoreCase?: string, startsWith?: string, endsWith?: string } } }, project?: { id?: { eq?: string, neq?: string, in?: string[], nin?: string[] }, name?: { eq?: string, neq?: string, in?: string[], nin?: string[], contains?: string, containsIgnoreCase?: string, notContains?: string, notContainsIgnoreCase?: string, startsWith?: string, endsWith?: string }, null?: boolean }, and?: (recursive)[], or?: (recursive)[] }",
+            "description": "Server-side filter on assignee (isMe or id), state (type or name), labels.some (name), project (id), plus createdAt, updatedAt, title, description, team, and/or."
           },
           {
             "key": "orderBy",
@@ -1000,7 +1004,7 @@
     {
       "path": "linear.api.projects.list",
       "shortPath": "projects.list",
-      "description": "List projects in a team",
+      "description": "Lists every project in the workspace; there is no team filter, so check each project's teams. Page with after.",
       "riskLevel": "read",
       "input": {
         "kind": "object",

@@ -3789,6 +3789,14 @@
                 ]
               },
               {
+                "group": "Mocean",
+                "pages": [
+                  "plugins/mocean/overview",
+                  "plugins/mocean/api",
+                  "plugins/mocean/database"
+                ]
+              },
+              {
                 "group": "Modelry",
                 "pages": [
                   "plugins/modelry/overview",
@@ -3828,6 +3836,14 @@
                   "plugins/moosend/overview",
                   "plugins/moosend/api",
                   "plugins/moosend/database"
+                ]
+              },
+              {
+                "group": "Mopinion",
+                "pages": [
+                  "plugins/mopinion/overview",
+                  "plugins/mopinion/api",
+                  "plugins/mopinion/database"
                 ]
               },
               {

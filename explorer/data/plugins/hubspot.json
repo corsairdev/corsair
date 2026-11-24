@@ -186,7 +186,7 @@
     {
       "path": "hubspot.api.companies.getMany",
       "shortPath": "companies.getMany",
-      "description": "Get multiple companies",
+      "description": "Pages through companies in id order, default properties only unless properties is set. To find a company by domain use companies.searchByDomain.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -194,17 +194,20 @@
           {
             "key": "limit",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size, max 100."
           },
           {
             "key": "after",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "paging.next.after from the previous page."
           },
           {
             "key": "properties",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Internal property names such as \"hs_lead_status\", not labels. Only default properties come back if omitted."
           },
           {
             "key": "propertiesWithHistory",
@@ -247,7 +250,7 @@
     {
       "path": "hubspot.api.companies.getRecentlyCreated",
       "shortPath": "companies.getRecentlyCreated",
-      "description": "List recently created companies",
+      "description": "Newest companies first by creation date; since keeps only those created at or after it. Page with paging.next.after.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -255,17 +258,20 @@
           {
             "key": "count",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size, max 200."
           },
           {
             "key": "after",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "paging.next.after from the previous page."
           },
           {
             "key": "since",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "ISO 8601 date-time (UTC when it has no offset) or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it."
           }
         ]
       },
@@ -293,7 +299,7 @@
     {
       "path": "hubspot.api.companies.getRecentlyUpdated",
       "shortPath": "companies.getRecentlyUpdated",
-      "description": "List recently updated companies",
+      "description": "Most recently modified companies first; since keeps only those modified at or after it. Page with paging.next.after.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -301,17 +307,20 @@
           {
             "key": "count",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size, max 200."
           },
           {
             "key": "after",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "paging.next.after from the previous page."
           },
           {
             "key": "since",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "ISO 8601 date-time (UTC when it has no offset) or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it."
           }
         ]
       },
@@ -339,7 +348,7 @@
     {
       "path": "hubspot.api.companies.searchByDomain",
       "shortPath": "companies.searchByDomain",
-      "description": "Search companies by domain name",
+      "description": "Finds companies whose domain equals domain exactly (a search, not a prefix match).",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -347,12 +356,20 @@
           {
             "key": "domain",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Company domain such as \"example.com\", matched exactly."
           },
           {
             "key": "properties",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Internal property names to return, not labels."
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "paging.next.after from the previous page."
           }
         ]
       },
@@ -691,7 +708,7 @@
     {
       "path": "hubspot.api.contacts.getMany",
       "shortPath": "contacts.getMany",
-      "description": "Get multiple contacts",
+      "description": "Pages through contacts in id order, default properties only unless properties is set. To find contacts by field or date use contacts.search.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -699,17 +716,20 @@
           {
             "key": "limit",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size, max 100."
           },
           {
             "key": "after",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "paging.next.after from the previous page."
           },
           {
             "key": "properties",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Internal property names such as \"hs_lead_status\", not labels. Only default properties come back if omitted."
           },
           {
             "key": "propertiesWithHistory",
@@ -752,7 +772,7 @@
     {
       "path": "hubspot.api.contacts.getRecentlyCreated",
       "shortPath": "contacts.getRecentlyCreated",
-      "description": "List recently created contacts",
+      "description": "Newest contacts first by creation date; since keeps only those created at or after it. Page with paging.next.after.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -760,17 +780,20 @@
           {
             "key": "count",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size, max 200."
           },
           {
             "key": "after",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "paging.next.after from the previous page."
           },
           {
             "key": "since",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "ISO 8601 date-time (UTC when it has no offset) or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it."
           }
         ]
       },
@@ -798,7 +821,7 @@
     {
       "path": "hubspot.api.contacts.getRecentlyUpdated",
       "shortPath": "contacts.getRecentlyUpdated",
-      "description": "List recently updated contacts",
+      "description": "Most recently modified contacts first; since keeps only those modified at or after it. Page with paging.next.after.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -806,17 +829,20 @@
           {
             "key": "count",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size, max 200."
           },
           {
             "key": "after",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "paging.next.after from the previous page."
           },
           {
             "key": "since",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "ISO 8601 date-time (UTC when it has no offset) or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it."
           }
         ]
       },
@@ -844,7 +870,7 @@
     {
       "path": "hubspot.api.contacts.search",
       "shortPath": "contacts.search",
-      "description": "Search contacts",
+      "description": "Search with query text and/or filterGroups; only default properties come back unless properties is set. Up to 200 per page and 10,000 results; follow paging.next.after.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -852,32 +878,38 @@
           {
             "key": "query",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Free text matched against the default searchable text properties."
           },
           {
             "key": "limit",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size, max 200."
           },
           {
             "key": "after",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "paging.next.after from the previous page."
           },
           {
             "key": "sorts",
             "optional": true,
-            "type": "{ propertyName: string, direction: ASCENDING | DESCENDING }[]"
+            "type": "{ propertyName: string, direction: ASCENDING | DESCENDING }[]",
+            "description": "One sort only, e.g. [{\"propertyName\":\"createdate\",\"direction\":\"DESCENDING\"}]."
           },
           {
             "key": "properties",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Internal property names to return, not labels. Only default properties come back if omitted."
           },
           {
             "key": "filterGroups",
             "optional": true,
-            "type": "{ filters: { operator: BETWEEN | CONTAINS_TOKEN | EQ | GT | GTE | HAS_PROPERTY | IN | LT | LTE | NEQ | NOT_CONTAINS_TOKEN | NOT_HAS_PROPERTY | NOT_IN, propertyName: string, highValue?: string, value?: string, values?: string[] }[] }[]"
+            "type": "{ filters: { operator: BETWEEN | CONTAINS_TOKEN | EQ | GT | GTE | HAS_PROPERTY | IN | LT | LTE | NEQ | NOT_CONTAINS_TOKEN | NOT_HAS_PROPERTY | NOT_IN, propertyName: string, highValue?: string, value?: string, values?: string[] }[] }[]",
+            "description": "Groups are ORed, filters inside a group are ANDed (max 5 groups, 6 filters each). Dates as epoch milliseconds in a string. e.g. [{\"filters\":[{\"propertyName\":\"email\",\"operator\":\"EQ\",\"value\":\"a@b.com\"}]}]."
           }
         ]
       },
@@ -1114,7 +1146,7 @@
     {
       "path": "hubspot.api.deals.getMany",
       "shortPath": "deals.getMany",
-      "description": "Get multiple deals",
+      "description": "Pages through deals in id order, default properties only unless properties is set. To find deals by field or date use deals.search.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1122,17 +1154,20 @@
           {
             "key": "limit",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size, max 100."
           },
           {
             "key": "after",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "paging.next.after from the previous page."
           },
           {
             "key": "properties",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Internal property names such as \"hs_lead_status\", not labels. Only default properties come back if omitted."
           },
           {
             "key": "propertiesWithHistory",
@@ -1175,7 +1210,7 @@
     {
       "path": "hubspot.api.deals.getRecentlyCreated",
       "shortPath": "deals.getRecentlyCreated",
-      "description": "List recently created deals",
+      "description": "Newest deals first by creation date; since keeps only those created at or after it. Page with paging.next.after.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1183,17 +1218,20 @@
           {
             "key": "count",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size, max 200."
           },
           {
             "key": "after",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "paging.next.after from the previous page."
           },
           {
             "key": "since",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "ISO 8601 date-time (UTC when it has no offset) or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it."
           }
         ]
       },
@@ -1221,7 +1259,7 @@
     {
       "path": "hubspot.api.deals.getRecentlyUpdated",
       "shortPath": "deals.getRecentlyUpdated",
-      "description": "List recently updated deals",
+      "description": "Most recently modified deals first; since keeps only those modified at or after it. Page with paging.next.after.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1229,17 +1267,20 @@
           {
             "key": "count",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size, max 200."
           },
           {
             "key": "after",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "paging.next.after from the previous page."
           },
           {
             "key": "since",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "ISO 8601 date-time (UTC when it has no offset) or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it."
           }
         ]
       },
@@ -1267,7 +1308,7 @@
     {
       "path": "hubspot.api.deals.search",
       "shortPath": "deals.search",
-      "description": "Search deals",
+      "description": "Search with query text and/or filterGroups; only default properties come back unless properties is set. Up to 200 per page and 10,000 results; follow paging.next.after.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1275,32 +1316,38 @@
           {
             "key": "query",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Free text matched against the default searchable text properties."
           },
           {
             "key": "limit",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size, max 200."
           },
           {
             "key": "after",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "paging.next.after from the previous page."
           },
           {
             "key": "sorts",
             "optional": true,
-            "type": "{ propertyName: string, direction: ASCENDING | DESCENDING }[]"
+            "type": "{ propertyName: string, direction: ASCENDING | DESCENDING }[]",
+            "description": "One sort only, e.g. [{\"propertyName\":\"createdate\",\"direction\":\"DESCENDING\"}]."
           },
           {
             "key": "properties",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Internal property names to return, not labels. Only default properties come back if omitted."
           },
           {
             "key": "filterGroups",
             "optional": true,
-            "type": "{ filters: { operator: BETWEEN | CONTAINS_TOKEN | EQ | GT | GTE | HAS_PROPERTY | IN | LT | LTE | NEQ | NOT_CONTAINS_TOKEN | NOT_HAS_PROPERTY | NOT_IN, propertyName: string, highValue?: string, value?: string, values?: string[] }[] }[]"
+            "type": "{ filters: { operator: BETWEEN | CONTAINS_TOKEN | EQ | GT | GTE | HAS_PROPERTY | IN | LT | LTE | NEQ | NOT_CONTAINS_TOKEN | NOT_HAS_PROPERTY | NOT_IN, propertyName: string, highValue?: string, value?: string, values?: string[] }[] }[]",
+            "description": "Groups are ORed, filters inside a group are ANDed (max 5 groups, 6 filters each). Dates as epoch milliseconds in a string. e.g. [{\"filters\":[{\"propertyName\":\"dealname\",\"operator\":\"EQ\",\"value\":\"Acme renewal\"}]}]."
           }
         ]
       },
@@ -1686,7 +1733,7 @@
     {
       "path": "hubspot.api.tickets.getMany",
       "shortPath": "tickets.getMany",
-      "description": "Get multiple tickets",
+      "description": "Pages through tickets in id order, default properties only unless properties is set.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1694,17 +1741,20 @@
           {
             "key": "limit",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size, max 100."
           },
           {
             "key": "after",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "paging.next.after from the previous page."
           },
           {
             "key": "properties",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Internal property names such as \"hs_lead_status\", not labels. Only default properties come back if omitted."
           },
           {
             "key": "propertiesWithHistory",

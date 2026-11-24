@@ -1,3 +1,5 @@
+import type { FileOutput } from 'corsair/http';
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 import type {
 	Draft,
@@ -20,20 +22,46 @@ const GmailRawMessageFieldsSchema = z.object({
 	threadId: z.string().optional(),
 });
 
+const GMAIL_QUERY_DESCRIPTION =
+	'Same syntax as the Gmail search box, e.g. "from:alice newer_than:7d" or "after:2025/01/31 has:attachment".';
+const GMAIL_LABEL_IDS_DESCRIPTION =
+	'Label ids such as INBOX, UNREAD or Label_123, not label names; all of them must match. labels.list returns the ids.';
+const GMAIL_INCLUDE_SPAM_TRASH_DESCRIPTION =
+	'Spam and trash are left out unless this is true.';
+
 const MessagesListInputSchema = z.object({
 	userId: z.string().optional(),
-	q: z.string().optional(),
-	maxResults: z.number().optional(),
+	q: z.string().optional().describe(GMAIL_QUERY_DESCRIPTION),
+	maxResults: z
+		.number()
+		.optional()
+		.describe('Defaults to 100, at most 500. Follow nextPageToken for more.'),
 	pageToken: z.string().optional(),
-	labelIds: z.array(z.string()).optional(),
-	includeSpamTrash: z.boolean().optional(),
+	labelIds: z
+		.array(z.string())
+		.optional()
+		.describe(GMAIL_LABEL_IDS_DESCRIPTION),
+	includeSpamTrash: z
+		.boolean()
+		.optional()
+		.describe(GMAIL_INCLUDE_SPAM_TRASH_DESCRIPTION),
 });
 
 const MessagesGetInputSchema = z.object({
 	userId: z.string().optional(),
 	id: z.string(),
-	format: z.enum(['minimal', 'full', 'raw', 'metadata']).optional(),
-	metadataHeaders: z.array(z.string()).optional(),
+	format: z
+		.enum(['minimal', 'full', 'raw', 'metadata'])
+		.optional()
+		.describe(
+			'Defaults to full: parsed payload. metadata: headers only (pick them with metadataHeaders). minimal: ids and labels. raw: whole RFC 2822 message, base64url-encoded.',
+		),
+	metadataHeaders: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Header names to return, e.g. ["From","Subject"]; format must be metadata.',
+		),
 });
 
 const MessagesSendInputSchema = z.object({
@@ -64,6 +92,23 @@ const MessagesTrashInputSchema = z.object({
 const MessagesUntrashInputSchema = z.object({
 	userId: z.string().optional(),
 	id: z.string(),
+});
+
+const MessagesGetAttachmentInputSchema = z.object({
+	userId: z.string().optional(),
+	messageId: z.string(),
+	partId: z
+		.string()
+		.optional()
+		.describe(
+			'partId of a part from messages.get with format full, e.g. "1.2". Give partId or attachmentId',
+		),
+	attachmentId: z
+		.string()
+		.optional()
+		.describe(
+			"Gmail attachmentId, if already known. Give partId or attachmentId; with partId, the part's own attachment is read.",
+		),
 });
 
 const LabelsListInputSchema = z.object({
@@ -168,18 +213,37 @@ const DraftsSendInputSchema = z.object({
 
 const ThreadsListInputSchema = z.object({
 	userId: z.string().optional(),
-	q: z.string().optional(),
-	maxResults: z.number().optional(),
+	q: z.string().optional().describe(GMAIL_QUERY_DESCRIPTION),
+	maxResults: z
+		.number()
+		.optional()
+		.describe('Defaults to 100, at most 500. Follow nextPageToken for more.'),
 	pageToken: z.string().optional(),
-	labelIds: z.array(z.string()).optional(),
-	includeSpamTrash: z.boolean().optional(),
+	labelIds: z
+		.array(z.string())
+		.optional()
+		.describe(GMAIL_LABEL_IDS_DESCRIPTION),
+	includeSpamTrash: z
+		.boolean()
+		.optional()
+		.describe(GMAIL_INCLUDE_SPAM_TRASH_DESCRIPTION),
 });
 
 const ThreadsGetInputSchema = z.object({
 	userId: z.string().optional(),
 	id: z.string(),
-	format: z.enum(['minimal', 'full', 'metadata']).optional(),
-	metadataHeaders: z.array(z.string()).optional(),
+	format: z
+		.enum(['minimal', 'full', 'metadata'])
+		.optional()
+		.describe(
+			'Defaults to full: parsed payload for every message. metadata: headers only. minimal: ids and labels.',
+		),
+	metadataHeaders: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Header names to return, e.g. ["From","Subject"]; format must be metadata.',
+		),
 });
 
 const ThreadsModifyInputSchema = z.object({
@@ -211,6 +275,7 @@ export const GmailEndpointInputSchemas = {
 	messagesBatchModify: MessagesBatchModifyInputSchema,
 	messagesTrash: MessagesTrashInputSchema,
 	messagesUntrash: MessagesUntrashInputSchema,
+	messagesGetAttachment: MessagesGetAttachmentInputSchema,
 	labelsList: LabelsListInputSchema,
 	labelsGet: LabelsGetInputSchema,
 	labelsCreate: LabelsCreateInputSchema,
@@ -370,6 +435,7 @@ export const GmailEndpointOutputSchemas = {
 	messagesBatchModify: z.void(),
 	messagesTrash: MessageSchema,
 	messagesUntrash: MessageSchema,
+	messagesGetAttachment: FileOutputSchema,
 	labelsList: LabelListResponseSchema,
 	labelsGet: LabelSchema,
 	labelsCreate: LabelSchema,
@@ -397,6 +463,7 @@ export type GmailEndpointOutputs = {
 	messagesBatchModify: void;
 	messagesTrash: Message;
 	messagesUntrash: Message;
+	messagesGetAttachment: FileOutput;
 	labelsList: LabelListResponse;
 	labelsGet: Label;
 	labelsCreate: Label;

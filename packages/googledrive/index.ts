@@ -281,11 +281,13 @@ const defaultAuthType = 'oauth_2' as const;
 const googleDriveEndpointMeta = {
 	'files.list': {
 		riskLevel: 'read',
-		description: 'List files in Google Drive',
+		description:
+			'Lists files, returning only id, name and mimeType unless fields is set. Includes trashed files unless q has "trashed = false". Page with nextPageToken.',
 	},
 	'files.get': {
 		riskLevel: 'read',
-		description: 'Get metadata for a specific file',
+		description:
+			'Metadata of one file; set fields to choose which, e.g. "id,name,modifiedTime,owners,webViewLink,size". For content use files.download, files.export or files.exportText.',
 	},
 	'files.createFromText': {
 		riskLevel: 'write',
@@ -329,7 +331,7 @@ const googleDriveEndpointMeta = {
 	'files.exportText': {
 		riskLevel: 'read',
 		description:
-			'Get the plain text of a Google Doc across all of its tabs and store it',
+			'Google Docs only; returns the plain text of all tabs, cut at 500,000 characters. For other files use files.export or files.download.',
 	},
 	'folders.create': { riskLevel: 'write', description: 'Create a new folder' },
 	'folders.get': {
@@ -338,7 +340,8 @@ const googleDriveEndpointMeta = {
 	},
 	'folders.list': {
 		riskLevel: 'read',
-		description: 'List folders in Google Drive',
+		description:
+			'Lists folders only. For what is inside a folder use files.list with q "\'FOLDER_ID\' in parents and trashed = false".',
 	},
 	'folders.delete': {
 		riskLevel: 'destructive',
@@ -371,7 +374,8 @@ const googleDriveEndpointMeta = {
 	},
 	'search.filesAndFolders': {
 		riskLevel: 'read',
-		description: 'Search for files and folders in Google Drive',
+		description:
+			'Files and folders matching a Drive q, returning only id, name and mimeType unless fields is set. Includes trashed files unless q has "trashed = false".',
 	},
 	'storage.getQuota': {
 		riskLevel: 'read',

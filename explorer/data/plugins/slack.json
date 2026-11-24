@@ -537,7 +537,7 @@
     {
       "path": "slack.api.channels.getHistory",
       "shortPath": "channels.getHistory",
-      "description": "Fetch message history for a channel",
+      "description": "Top-level messages of one conversation. Thread replies are not included; use channels.getReplies.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -545,22 +545,26 @@
           {
             "key": "channel",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Conversation id such as C0123ABCD, not the name. channels.list and channels.listMine return ids."
           },
           {
             "key": "latest",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Unix timestamp such as \"1700000000.000000\", not an ISO date. Only messages before it."
           },
           {
             "key": "oldest",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Unix timestamp such as \"1700000000.000000\", not an ISO date. Only messages after it."
           },
           {
             "key": "inclusive",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Also return messages at exactly oldest or latest. Ignored unless one is set."
           },
           {
             "key": "include_all_metadata",
@@ -575,7 +579,8 @@
           {
             "key": "limit",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Default 100, at most 999. A page can be shorter; follow the cursor."
           }
         ]
       },
@@ -699,7 +704,7 @@
     {
       "path": "slack.api.channels.getReplies",
       "shortPath": "channels.getReplies",
-      "description": "Fetch replies for a thread",
+      "description": "Messages of one thread. ts is the parent message's ts, from channels.getHistory or messages.search.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -707,27 +712,32 @@
           {
             "key": "channel",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Conversation id such as C0123ABCD, not the name."
           },
           {
             "key": "ts",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "ts of the thread parent, or of a message in the thread, e.g. \"1700000000.000100\". With no replies only that message comes back."
           },
           {
             "key": "latest",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Unix timestamp such as \"1700000000.000000\". Only messages before it."
           },
           {
             "key": "oldest",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Unix timestamp such as \"1700000000.000000\". Only messages after it."
           },
           {
             "key": "inclusive",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Also return messages at exactly oldest or latest. Ignored unless one is set."
           },
           {
             "key": "include_all_metadata",
@@ -742,7 +752,8 @@
           {
             "key": "limit",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Default 1000."
           }
         ]
       },
@@ -1009,7 +1020,7 @@
     {
       "path": "slack.api.channels.list",
       "shortPath": "channels.list",
-      "description": "List all channels in the workspace",
+      "description": "List channels the app can see. Public only unless types includes private_channel, which adds private ones the app was added to. channels.listMine lists a user's own conversations",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1022,7 +1033,8 @@
           {
             "key": "types",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Comma-separated: public_channel, private_channel, mpim, im. Slack returns only public_channel when omitted, so pass \"public_channel,private_channel\" to include private ones."
           },
           {
             "key": "team_id",
@@ -1080,7 +1092,7 @@
     {
       "path": "slack.api.channels.listMine",
       "shortPath": "channels.listMine",
-      "description": "List the connected user's own conversations (needs a user token)",
+      "description": "List the conversations the connected user is in. Public only unless types includes private_channel, mpim or im. Needs a user token; with only a bot token it lists the bot's conversations",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1093,7 +1105,8 @@
           {
             "key": "types",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Comma-separated: public_channel, private_channel, mpim, im. Slack returns only public_channel when omitted, so pass \"public_channel,private_channel\" to include private ones."
           },
           {
             "key": "exclude_archived",
@@ -1456,7 +1469,7 @@
     {
       "path": "slack.api.files.get",
       "shortPath": "files.get",
-      "description": "Get info about a file",
+      "description": "Get metadata of one file by id, not its content.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1464,7 +1477,8 @@
           {
             "key": "file",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "File id such as F2147483862."
           },
           {
             "key": "cursor",
@@ -1537,7 +1551,7 @@
     {
       "path": "slack.api.files.list",
       "shortPath": "files.list",
-      "description": "List files in the workspace",
+      "description": "List file metadata, not file content. Filter by channel, user, types or ts_from/ts_to.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1555,17 +1569,20 @@
           {
             "key": "types",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Comma-separated: all, spaces, snippets, images, gdocs, zips, pdfs. Default all."
           },
           {
             "key": "ts_from",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Unix timestamp. Files created at or after it."
           },
           {
             "key": "ts_to",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Unix timestamp. Files created at or before it."
           },
           {
             "key": "show_files_hidden_by_limit",
@@ -1580,12 +1597,14 @@
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Default 1."
           },
           {
             "key": "count",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Files per page, default 100."
           }
         ]
       },
@@ -1982,7 +2001,7 @@
     {
       "path": "slack.api.messages.search",
       "shortPath": "messages.search",
-      "description": "Search messages in the workspace",
+      "description": "Search messages with Slack search syntax, e.g. \"deploy in:#channel from:@user\". Needs a user token.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1990,17 +2009,20 @@
           {
             "key": "query",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Slack search string; modifiers such as in:#channel, from:@user and has: narrow it."
           },
           {
             "key": "sort",
             "optional": true,
-            "type": "score | timestamp"
+            "type": "score | timestamp",
+            "description": "Default score (relevance). Use timestamp to sort by time."
           },
           {
             "key": "sort_dir",
             "optional": true,
-            "type": "asc | desc"
+            "type": "asc | desc",
+            "description": "Default desc."
           },
           {
             "key": "highlight",
@@ -2025,12 +2047,14 @@
           {
             "key": "page",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Default 1."
           },
           {
             "key": "count",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Results per page, default 20, at most 100."
           }
         ]
       },
@@ -3138,7 +3162,7 @@
     {
       "path": "slack.api.users.list",
       "shortPath": "users.list",
-      "description": "List all users in the workspace",
+      "description": "List workspace members, including invited, deactivated and deleted users. profile.email needs the users:read.email scope. Use users.get for a known id.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -3161,7 +3185,8 @@
           {
             "key": "limit",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Set it. With no limit Slack tries to return every user, which can fail with limit_required or HTTP 500 on a large workspace. Follow the cursor."
           }
         ]
       },

@@ -148,7 +148,7 @@ await corsair.jira.api.comments.get({});
 
 `comments.list`
 
-List all comments on a Jira issue
+Comments on one issue, 100 per page by default; page with start_at until startAt plus the count reaches total. Bodies are ADF JSON
 
 **Risk:** `read`
 
@@ -162,8 +162,8 @@ await corsair.jira.api.comments.list({});
 |------|------|----------|-------------|
 | `issue_id_or_key` | `string` | Yes | — |
 | `start_at` | `number` | No | — |
-| `max_results` | `number` | No | — |
-| `order_by` | `string` | No | — |
+| `max_results` | `number` | No | Page size, default 100. |
+| `order_by` | `string` | No | "created" or "-created". |
 
 
 
@@ -510,7 +510,7 @@ await corsair.jira.api.issues.bulkCreate({});
 
 `issues.bulkFetch`
 
-Bulk fetch multiple Jira issues by ID or key
+Fetch up to 100 issues by id or key per call. fields is an array here, a comma-separated string in issues.search
 
 **Risk:** `read`
 
@@ -522,8 +522,8 @@ await corsair.jira.api.issues.bulkFetch({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `issue_ids_or_keys` | `string[]` | Yes | — |
-| `fields` | `string[]` | No | — |
+| `issue_ids_or_keys` | `string[]` | Yes | Up to 100 per call. |
+| `fields` | `string[]` | No | Array of field ids, unlike the comma-separated string in issues.search. |
 | `expand` | `string` | No | — |
 
 
@@ -716,7 +716,7 @@ await corsair.jira.api.issues.edit({});
 
 `issues.get`
 
-Get a Jira issue by ID or key
+Get one issue with all fields unless fields limits them. description is ADF JSON, not plain text
 
 **Risk:** `read`
 
@@ -729,8 +729,8 @@ await corsair.jira.api.issues.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `issue_id_or_key` | `string` | Yes | — |
-| `fields` | `string` | No | — |
-| `expand` | `string` | No | — |
+| `fields` | `string` | No | Comma-separated field ids, e.g. "summary,status". All fields by default. |
+| `expand` | `string` | No | Comma-separated; "renderedFields" returns HTML versions of rich-text fields. |
 
 
 
@@ -924,7 +924,7 @@ await corsair.jira.api.issues.removeWatcher({});
 
 `issues.search`
 
-Search issues using JQL
+JQL search. Returns only the issue id unless fields is set. No total: page with next_page_token until isLast is true. JQL must be bounded, e.g. project = ABC AND ...
 
 **Risk:** `read`
 
@@ -936,10 +936,10 @@ await corsair.jira.api.issues.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `jql` | `string` | Yes | — |
-| `next_page_token` | `string` | No | — |
-| `max_results` | `number` | No | — |
-| `fields` | `string` | No | — |
+| `jql` | `string` | Yes | Must be bounded by a search restriction, e.g. assignee = currentUser() ORDER BY updated DESC; "ORDER BY key DESC" alone is rejected. |
+| `next_page_token` | `string` | No | nextPageToken from the previous response; omit for the first page. |
+| `max_results` | `number` | No | Page size, default 50. Jira may return fewer when many fields are requested. |
+| `fields` | `string` | No | Comma-separated field ids, e.g. "summary,status,assignee". "*all" returns every field. Without it only the id comes back. |
 | `expand` | `string` | No | — |
 
 
@@ -1174,7 +1174,7 @@ await corsair.jira.api.projects.getRoles({});
 
 `projects.list`
 
-List Jira projects
+Projects the user can browse, 50 per page (max 100). query matches key or name
 
 **Risk:** `read`
 
@@ -1186,7 +1186,7 @@ await corsair.jira.api.projects.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | No | — |
+| `query` | `string` | No | Case-insensitive match on project key or name. |
 | `order_by` | `string` | No | — |
 | `start_at` | `number` | No | — |
 | `max_results` | `number` | No | — |
@@ -1280,7 +1280,7 @@ await corsair.jira.api.sprints.create({});
 
 `sprints.list`
 
-List sprints for a Jira board
+Sprints of one board; get board_id from sprints.listBoards. state is comma-separated future, active, closed: set active for the current sprint
 
 **Risk:** `read`
 
@@ -1292,8 +1292,8 @@ await corsair.jira.api.sprints.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `board_id` | `number` | Yes | — |
-| `state` | `string` | No | — |
+| `board_id` | `number` | Yes | Board id from sprints.listBoards. |
+| `state` | `string` | No | Comma-separated: future, active, closed. Use "active" for the current sprint. |
 | `start_at` | `number` | No | — |
 | `max_results` | `number` | No | — |
 
@@ -1469,7 +1469,7 @@ await corsair.jira.api.users.find({});
 
 `users.getAll`
 
-Get all Jira users
+Jira accounts 50 per page, inactive and deleted users included; page with start_at
 
 **Risk:** `read`
 

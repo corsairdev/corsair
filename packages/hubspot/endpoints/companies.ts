@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeHubSpotRequest } from '../client';
+import { makeHubSpotRequest, recentSearchBody } from '../client';
 import type { HubSpotEndpoints } from '../index';
 import type {
 	CreateCompanyResponse,
@@ -166,12 +166,11 @@ export const deleteCompany: HubSpotEndpoints['companiesDelete'] = async (
 
 export const getRecentlyCreated: HubSpotEndpoints['companiesGetRecentlyCreated'] =
 	async (ctx, input) => {
-		const { ...queryParams } = input || {};
-		const endpoint = '/crm/v3/objects/companies';
+		const endpoint = '/crm/v3/objects/companies/search';
 		const result = await makeHubSpotRequest<GetManyCompaniesResponse>(
 			endpoint,
 			ctx.key,
-			{ query: queryParams },
+			{ method: 'POST', body: recentSearchBody(input, 'createdate') },
 		);
 
 		if (result.results && ctx.db.companies) {
@@ -195,12 +194,11 @@ export const getRecentlyCreated: HubSpotEndpoints['companiesGetRecentlyCreated']
 
 export const getRecentlyUpdated: HubSpotEndpoints['companiesGetRecentlyUpdated'] =
 	async (ctx, input) => {
-		const { ...queryParams } = input || {};
-		const endpoint = '/crm/v3/objects/companies';
+		const endpoint = '/crm/v3/objects/companies/search';
 		const result = await makeHubSpotRequest<GetManyCompaniesResponse>(
 			endpoint,
 			ctx.key,
-			{ query: queryParams },
+			{ method: 'POST', body: recentSearchBody(input, 'hs_lastmodifieddate') },
 		);
 
 		if (result.results && ctx.db.companies) {
@@ -224,16 +222,23 @@ export const getRecentlyUpdated: HubSpotEndpoints['companiesGetRecentlyUpdated']
 
 export const searchByDomain: HubSpotEndpoints['companiesSearchByDomain'] =
 	async (ctx, input) => {
-		const { domain, ...queryParams } = input;
+		const { domain, properties, after } = input;
 		const endpoint = '/crm/v3/objects/companies/search';
 		const result = await makeHubSpotRequest<SearchCompanyByDomainResponse>(
 			endpoint,
 			ctx.key,
 			{
-				query: {
-					...queryParams,
-					domain,
-					properties: queryParams.properties?.join(','),
+				method: 'POST',
+				body: {
+					filterGroups: [
+						{
+							filters: [
+								{ propertyName: 'domain', operator: 'EQ', value: domain },
+							],
+						},
+					],
+					properties,
+					after,
 				},
 			},
 		);
