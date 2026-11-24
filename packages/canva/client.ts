@@ -3,19 +3,7 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
-
-export class CanvaAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly status?: number,
-		public readonly retryAfter?: number,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'CanvaAPIError';
-	}
-}
+import { request } from 'corsair/http';
 
 const CANVA_API_BASE = 'https://api.canva.com/rest';
 
@@ -78,33 +66,10 @@ export async function makeCanvaRequest<T>(
 		query: method === 'GET' || method === 'DELETE' ? query : undefined,
 	};
 
-	try {
-		return await request<T>(config, requestOptions, {
-			rateLimitConfig: CANVA_RATE_LIMIT_CONFIG,
-		});
-	} catch (error) {
-		if (error instanceof ApiError) {
-			const body =
-				typeof error.body === 'object' && error.body !== null
-					? (error.body as { code?: unknown; message?: unknown })
-					: {};
-			const code = typeof body.code === 'string' ? body.code : undefined;
-			// Canva says why it refused (a missing plan capability, an upgrade
-			// link); keep that, since "Forbidden" alone tells the caller nothing.
-			const detail =
-				typeof body.message === 'string' && body.message.trim()
-					? `${code ? `${code}: ` : ''}${body.message.trim()}`
-					: code;
-			throw new CanvaAPIError(
-				detail ? `${error.message} (${detail})` : error.message,
-				error.status,
-				error.retryAfter,
-				code,
-			);
-		}
-		if (error instanceof Error) {
-			throw new CanvaAPIError(error.message);
-		}
-		throw new CanvaAPIError('Unknown error');
-	}
+	// Core's ApiError goes through as it is: the error handlers and core's
+	// OAuth refresh after a 401 read its status and retryAfter, and Canva's own
+	// code and message stay on error.body.
+	return request<T>(config, requestOptions, {
+		rateLimitConfig: CANVA_RATE_LIMIT_CONFIG,
+	});
 }

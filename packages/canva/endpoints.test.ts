@@ -1,9 +1,11 @@
 import type { DownloadDeps } from 'corsair/http';
+import { ApiError } from 'corsair/http';
 import type { Designs } from './endpoints';
 import { Assets, DesignAnalytics } from './endpoints';
 import { exportDownloadDeps } from './endpoints/exports';
 import { loggableUrl, withoutFileContent } from './endpoints/mappers';
 import { CanvaEndpointInputSchemas } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { canva } from './index';
 
 type Call = { method: string; url: string; body?: unknown; headers: Headers };
@@ -286,16 +288,19 @@ describe('request shapes', () => {
 		expect(calls[1]?.headers.get('authorization')).toBeNull();
 	});
 
-	it("passes on Canva's reason for a refusal", async () => {
+	it("lets core's ApiError through with Canva's reason on its body", async () => {
 		replyStatus = 403;
-		reply({
+		const reason = {
 			code: 'permission_denied',
 			message:
 				'Not allowed to access getDesignAnalytics, requires one of capabilities [analytics].',
-		});
-		await expect(api.analytics.get(ctx, { designId: 'D1' })).rejects.toThrow(
-			'permission_denied: Not allowed to access getDesignAnalytics, requires one of capabilities [analytics].',
-		);
+		};
+		reply(reason);
+		const error = await api.analytics
+			.get(ctx, { designId: 'D1' })
+			.catch((e: unknown) => e);
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).toMatchObject({ status: 403, body: reason });
 	});
 
 	it('still deletes assets the old way', async () => {
@@ -874,5 +879,53 @@ describe('every operation', () => {
 				file: { url: 'https://f.test/x.pdf?sig=1' },
 			}),
 		).toEqual({ name: 'n', file: 'https://f.test/x.pdf' });
+	});
+});
+
+describe('error handlers', () => {
+	const apiError = (status: number, method = 'POST', body: unknown = {}) =>
+		new ApiError(
+			{ method, url: '/v1/x' } as ConstructorParameters<typeof ApiError>[0],
+			{
+				url: 'https://api.canva.com/rest/v1/x',
+				ok: false,
+				status,
+				statusText: '',
+				body,
+			},
+			'x',
+		);
+	const handle = async (error: Error, operation: string) => {
+		const entry = Object.values(errorHandlers).find((h) => h.match(error));
+		return entry?.handler(error, { operation, pluginId: 'canva' } as never);
+	};
+
+	it('leaves 429 retries to core', async () => {
+		expect(await handle(apiError(429), 'designs.list')).toMatchObject({
+			maxRetries: 0,
+		});
+	});
+
+	it('retries a 5xx or a network error only for reads', async () => {
+		expect(await handle(apiError(502, 'GET'), 'designs.list')).toMatchObject({
+			maxRetries: 2,
+		});
+		expect(await handle(apiError(502), 'designs.create')).toEqual({
+			maxRetries: 0,
+		});
+		expect(await handle(new Error('fetch failed'), 'designs.get')).toEqual({
+			maxRetries: 3,
+		});
+		expect(
+			await handle(new Error('fetch failed'), 'assetUploads.create'),
+		).toEqual({ maxRetries: 0 });
+	});
+
+	it("doesn't retry a refusal, a missing item or a dead token", async () => {
+		for (const status of [401, 403, 404]) {
+			expect(await handle(apiError(status, 'GET'), 'designs.get')).toEqual({
+				maxRetries: 0,
+			});
+		}
 	});
 });
