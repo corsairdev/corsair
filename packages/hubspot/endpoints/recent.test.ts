@@ -1,7 +1,7 @@
 import * as Companies from './companies';
 import * as Contacts from './contacts';
 import * as Deals from './deals';
-import { HubSpotEndpointInputSchemas } from './types';
+import { HubSpotEndpointInputSchemas, parseSince } from './types';
 
 jest.mock('corsair/core', () => ({ logEventFromContext: jest.fn() }));
 
@@ -91,12 +91,16 @@ describe.each(cases)('hubspot %s recent', (object, mod, modified) => {
 describe('hubspot recent input', () => {
 	const schema = HubSpotEndpointInputSchemas.contactsGetRecentlyCreated;
 
-	it.each(['yesterday', '2025-13-45', '', '12ab'])(
-		'rejects since=%p',
-		(since) => {
-			expect(schema.safeParse({ since }).success).toBe(false);
-		},
-	);
+	it.each([
+		'yesterday',
+		'2025-13-45',
+		'2025-02-30',
+		'2025-01-31T24:00:00Z',
+		'',
+		'12ab',
+	])('rejects since=%p', (since) => {
+		expect(schema.safeParse({ since }).success).toBe(false);
+	});
 
 	it.each(['2025-01-31', '2025-01-31T00:00:00Z', '1738281600000'])(
 		'accepts since=%s',
@@ -104,6 +108,16 @@ describe('hubspot recent input', () => {
 			expect(schema.safeParse({ since }).success).toBe(true);
 		},
 	);
+
+	it('reads a since with no offset as UTC whatever the server zone', () => {
+		expect(parseSince('2025-01-31T00:00:00')).toBe(Date.UTC(2025, 0, 31));
+		expect(parseSince('2025-01-31')).toBe(Date.UTC(2025, 0, 31));
+		expect(parseSince('2025-01-31T05:30:00+05:30')).toBe(Date.UTC(2025, 0, 31));
+	});
+
+	it('requires a whole-number count', () => {
+		expect(schema.safeParse({ count: 1.5 }).success).toBe(false);
+	});
 
 	it('caps count at the search maximum of 200', () => {
 		expect(schema.safeParse({ count: 200 }).success).toBe(true);

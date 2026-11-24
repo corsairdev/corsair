@@ -246,7 +246,7 @@ await corsair.hubspot.api.companies.getRecentlyCreated({});
 |------|------|----------|-------------|
 | `count` | `number` | No | Page size, max 200. |
 | `after` | `string` | No | paging.next.after from the previous page. |
-| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
+| `since` | `string` | No | ISO 8601 date-time (UTC when it has no offset) or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
 
 
 
@@ -315,7 +315,7 @@ await corsair.hubspot.api.companies.getRecentlyUpdated({});
 |------|------|----------|-------------|
 | `count` | `number` | No | Page size, max 200. |
 | `after` | `string` | No | paging.next.after from the previous page. |
-| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
+| `since` | `string` | No | ISO 8601 date-time (UTC when it has no offset) or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
 
 
 
@@ -795,7 +795,7 @@ await corsair.hubspot.api.contacts.getRecentlyCreated({});
 |------|------|----------|-------------|
 | `count` | `number` | No | Page size, max 200. |
 | `after` | `string` | No | paging.next.after from the previous page. |
-| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
+| `since` | `string` | No | ISO 8601 date-time (UTC when it has no offset) or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
 
 
 
@@ -864,7 +864,7 @@ await corsair.hubspot.api.contacts.getRecentlyUpdated({});
 |------|------|----------|-------------|
 | `count` | `number` | No | Page size, max 200. |
 | `after` | `string` | No | paging.next.after from the previous page. |
-| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
+| `since` | `string` | No | ISO 8601 date-time (UTC when it has no offset) or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
 
 
 
@@ -1302,7 +1302,7 @@ await corsair.hubspot.api.deals.getRecentlyCreated({});
 |------|------|----------|-------------|
 | `count` | `number` | No | Page size, max 200. |
 | `after` | `string` | No | paging.next.after from the previous page. |
-| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
+| `since` | `string` | No | ISO 8601 date-time (UTC when it has no offset) or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
 
 
 
@@ -1371,7 +1371,7 @@ await corsair.hubspot.api.deals.getRecentlyUpdated({});
 |------|------|----------|-------------|
 | `count` | `number` | No | Page size, max 200. |
 | `after` | `string` | No | paging.next.after from the previous page. |
-| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
+| `since` | `string` | No | ISO 8601 date-time (UTC when it has no offset) or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it. |
 
 
 
@@ -1443,7 +1443,7 @@ await corsair.hubspot.api.deals.search({});
 | `after` | `string` | No | paging.next.after from the previous page. |
 | `sorts` | `object[]` | No | One sort only, e.g. [&#123;"propertyName":"createdate","direction":"DESCENDING"&#125;]. |
 | `properties` | `string[]` | No | Internal property names to return, not labels. Only default properties come back if omitted. |
-| `filterGroups` | `object[]` | No | Groups are ORed, filters inside a group are ANDed (max 5 groups, 6 filters each). Dates as epoch milliseconds in a string. e.g. [&#123;"filters":[&#123;"propertyName":"email","operator":"EQ","value":"a@b.com"&#125;]&#125;]. |
+| `filterGroups` | `object[]` | No | Groups are ORed, filters inside a group are ANDed (max 5 groups, 6 filters each). Dates as epoch milliseconds in a string. e.g. [&#123;"filters":[&#123;"propertyName":"dealname","operator":"EQ","value":"Acme renewal"&#125;]&#125;]. |
 
 <AccordionGroup>
 <Accordion title="sorts full type">

@@ -101,20 +101,40 @@ const AssociationsSchema = z.record(
 	z.union([AssociationResults, z.array(z.string())]),
 );
 
+const ISO_SINCE =
+	/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?(Z|[+-]\d{2}:\d{2})?)?$/;
+
+// Epoch milliseconds for an ISO 8601 date or date-time, or for epoch
+// milliseconds; undefined when it is neither or the date does not exist.
+// A value with no offset is UTC, so the bound never depends on the server's zone.
+export function parseSince(since: string): number | undefined {
+	if (/^\d+$/.test(since)) return Number(since);
+	const m = ISO_SINCE.exec(since);
+	if (!m) return undefined;
+	const [y = 0, mo = 0, d = 0, h = 0, mi = 0] = m
+		.slice(1, 6)
+		.map((v) => Number(v ?? 0));
+	const day = new Date(Date.UTC(y, mo - 1, d));
+	if (day.getUTCMonth() !== mo - 1 || day.getUTCDate() !== d) return undefined;
+	if (h > 23 || mi > 59 || Number(m[6] ?? 0) > 59) return undefined;
+	const ms = Date.parse(m[4] && !m[7] ? `${since}Z` : since);
+	return Number.isNaN(ms) ? undefined : ms;
+}
+
 export const RecentInputSchema = z.object({
-	count: z.number().max(200).optional().describe('Page size, max 200.'),
+	count: z.number().int().max(200).optional().describe('Page size, max 200.'),
 	after: z
 		.string()
 		.optional()
 		.describe('paging.next.after from the previous page.'),
 	since: z
 		.string()
-		.refine((v) => /^\d+$/.test(v) || !Number.isNaN(Date.parse(v)), {
+		.refine((v) => parseSince(v) !== undefined, {
 			message: 'since must be an ISO 8601 date-time or epoch milliseconds',
 		})
 		.optional()
 		.describe(
-			'ISO 8601 date-time or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it.',
+			'ISO 8601 date-time (UTC when it has no offset) or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it.',
 		),
 });
 
@@ -296,7 +316,7 @@ const DealsSearchInputSchema = z.object({
 		.array(FilterGroupSchema)
 		.optional()
 		.describe(
-			'Groups are ORed, filters inside a group are ANDed (max 5 groups, 6 filters each). Dates as epoch milliseconds in a string. e.g. [{"filters":[{"propertyName":"email","operator":"EQ","value":"a@b.com"}]}].',
+			'Groups are ORed, filters inside a group are ANDed (max 5 groups, 6 filters each). Dates as epoch milliseconds in a string. e.g. [{"filters":[{"propertyName":"dealname","operator":"EQ","value":"Acme renewal"}]}].',
 		),
 });
 
