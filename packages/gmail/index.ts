@@ -83,6 +83,7 @@ export type GmailEndpoints = {
 	messagesBatchModify: GmailEndpoint<'messagesBatchModify'>;
 	messagesTrash: GmailEndpoint<'messagesTrash'>;
 	messagesUntrash: GmailEndpoint<'messagesUntrash'>;
+	messagesGetAttachment: GmailEndpoint<'messagesGetAttachment'>;
 	labelsList: GmailEndpoint<'labelsList'>;
 	labelsGet: GmailEndpoint<'labelsGet'>;
 	labelsCreate: GmailEndpoint<'labelsCreate'>;
@@ -128,6 +129,7 @@ export const gmailEndpointsNested = {
 		batchModify: MessagesEndpoints.batchModify,
 		trash: MessagesEndpoints.trash,
 		untrash: MessagesEndpoints.untrash,
+		getAttachment: MessagesEndpoints.getAttachment,
 	},
 	labels: {
 		list: LabelsEndpoints.list,
@@ -181,6 +183,10 @@ export const gmailEndpointSchemas = {
 	'messages.untrash': {
 		input: GmailEndpointInputSchemas.messagesUntrash,
 		output: GmailEndpointOutputSchemas.messagesUntrash,
+	},
+	'messages.getAttachment': {
+		input: GmailEndpointInputSchemas.messagesGetAttachment,
+		output: GmailEndpointOutputSchemas.messagesGetAttachment,
 	},
 	'labels.list': {
 		input: GmailEndpointInputSchemas.labelsList,
@@ -321,6 +327,11 @@ const gmailEndpointMeta = {
 	'messages.untrash': {
 		riskLevel: 'write',
 		description: 'Restore a message from the trash',
+	},
+	'messages.getAttachment': {
+		riskLevel: 'read',
+		description:
+			'Fetch an attachment of a message by partId (as shown in search results) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId.',
 	},
 	'labels.list': {
 		riskLevel: 'read',
