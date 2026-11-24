@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeOutlookRequest } from '../client';
 import type { OutlookEndpoints } from '../index';
 import type { OutlookEndpointOutputs } from './types';
+import { OutlookEndpointInputSchemas } from './types';
 
 const userPath = (userId?: string) => (userId ? `/users/${userId}` : '/me');
 
@@ -129,32 +130,25 @@ export const getEvent: OutlookEndpoints['eventsGet'] = async (ctx, input) => {
 
 export const listEvents: OutlookEndpoints['eventsList'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	// Core doesn't apply input schemas to direct calls; the timezone goes into a header.
+	const input = OutlookEndpointInputSchemas.eventsList.parse(rawInput);
 	const base = userPath(input.user_id);
 	const calendarPath = input.calendar_id
 		? `/calendars/${input.calendar_id}`
 		: '';
 
-	if (
-		input.expand_recurring_events &&
-		!(input.start_datetime && input.end_datetime)
-	) {
-		throw new Error(
-			'expand_recurring_events needs start_datetime and end_datetime',
-		);
-	}
-
-	const view = input.expand_recurring_events;
+	const expandOccurrences = input.expand_recurring_events;
 	const result = await makeOutlookRequest<OutlookEndpointOutputs['eventsList']>(
-		`${base}${calendarPath}/${view ? 'calendarView' : 'events'}`,
+		`${base}${calendarPath}/${expandOccurrences ? 'calendarView' : 'events'}`,
 		ctx.key,
 		{
 			headers: input.timezone
 				? { Prefer: `outlook.timezone="${input.timezone}"` }
 				: undefined,
 			query: {
-				...(view && {
+				...(expandOccurrences && {
 					startDateTime: input.start_datetime,
 					endDateTime: input.end_datetime,
 				}),
