@@ -24,6 +24,7 @@ export type EndpointSpec<K extends Key> = {
 		// checks it.
 		context: unknown,
 		envelope: MoosendEnvelope,
+		// unknown: the output schema validates the shaped value right after.
 	) => unknown;
 	/**
 	 * Safe fields for the event log. Inputs are not logged, because emails,
@@ -80,6 +81,8 @@ export function customFieldPairs(
 }
 
 /** Drops undefined keys so optional inputs are not sent as nulls. */
+// unknown: request bodies mix strings, numbers, booleans, arrays and nested
+// objects; compact only drops undefined values and keeps each type as is.
 export function compact<T extends Record<string, unknown>>(value: T): T {
 	return Object.fromEntries(
 		Object.entries(value).filter(([, v]) => v !== undefined),

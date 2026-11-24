@@ -37,6 +37,8 @@ const ctx = { key: API_KEY, options: {}, keys: {} };
 
 // never parameters: every concrete endpoint is assignable to this because
 // parameters are contravariant; each returns its own output type.
+// unknown: each endpoint resolves to its own output type; the cases compare
+// results with toEqual, so the shared return type stays open.
 type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
 
 // unknown: negative cases pass values no schema accepts.

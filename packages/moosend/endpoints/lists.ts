@@ -29,6 +29,8 @@ function listBody(input: ListSettingsInput) {
 	});
 }
 
+// unknown: the log helper ignores the parsed input and only counts the
+// already-validated lists, so their exact types do not matter here.
 const listCount = (_: unknown, result: { MailingLists: unknown[] }) => ({
 	lists: result.MailingLists.length,
 });

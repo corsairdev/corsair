@@ -555,6 +555,8 @@ export const SubscriberSchema = z
 		CustomFields: z
 			.array(
 				z
+					// unknown: a custom field value is text, a number, a date string,
+					// a boolean or null depending on the field's type.
 					.object({ CustomFieldID: str, Name: str, Value: z.unknown() })
 					.passthrough(),
 			)
