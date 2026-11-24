@@ -20,27 +20,27 @@ pnpm add @corsair-dev/slack
 | `channels.close` | `slack.api.channels.close` | `write` | Close a direct message or multi-party DM |
 | `channels.create` | `slack.api.channels.create` | `write` | Create a new Slack channel |
 | `channels.get` | `slack.api.channels.get` | `read` | Get info about a channel |
-| `channels.getHistory` | `slack.api.channels.getHistory` | `read` | Fetch message history for a channel |
+| `channels.getHistory` | `slack.api.channels.getHistory` | `read` | Top-level messages of one conversation. Thread replies are not included; use channels.getReplies. |
 | `channels.getMembers` | `slack.api.channels.getMembers` | `read` | List members of a channel |
-| `channels.listMine` | `slack.api.channels.listMine` | `read` | List the connected user's own conversations (user token) |
-| `channels.getReplies` | `slack.api.channels.getReplies` | `read` | Fetch replies for a thread |
+| `channels.getReplies` | `slack.api.channels.getReplies` | `read` | Messages of one thread. ts is the parent message's ts, from channels.getHistory or messages.search. |
 | `channels.invite` | `slack.api.channels.invite` | `write` | Invite users to a channel |
 | `channels.join` | `slack.api.channels.join` | `write` | Join a channel |
 | `channels.kick` | `slack.api.channels.kick` | `write` | Remove a user from a channel |
 | `channels.leave` | `slack.api.channels.leave` | `write` | Leave a channel |
-| `channels.list` | `slack.api.channels.list` | `read` | List all channels in the workspace |
+| `channels.list` | `slack.api.channels.list` | `read` | List channels the app can see. Public only unless types includes private_channel, which adds private ones the app was added to. channels.listMine lists a user's own conversations |
+| `channels.listMine` | `slack.api.channels.listMine` | `read` | List the conversations the connected user is in. Public only unless types includes private_channel, mpim or im. Needs a user token; with only a bot token it lists the bot's conversations |
 | `channels.open` | `slack.api.channels.open` | `write` | Open a direct message or multi-party DM |
 | `channels.rename` | `slack.api.channels.rename` | `write` | Rename a channel |
 | `channels.setPurpose` | `slack.api.channels.setPurpose` | `write` | Set the purpose of a channel |
 | `channels.setTopic` | `slack.api.channels.setTopic` | `write` | Set the topic of a channel |
 | `channels.unarchive` | `slack.api.channels.unarchive` | `write` | Unarchive a channel |
-| `files.get` | `slack.api.files.get` | `read` | Get info about a file |
-| `files.list` | `slack.api.files.list` | `read` | List files in the workspace |
+| `files.get` | `slack.api.files.get` | `read` | Get metadata of one file by id, not its content. |
+| `files.list` | `slack.api.files.list` | `read` | List file metadata, not file content. Filter by channel, user, types or ts_from/ts_to. |
 | `files.upload` | `slack.api.files.upload` | `write` | Upload a file to Slack |
 | `messages.delete` | `slack.api.messages.delete` | `destructive` | Delete a message [DESTRUCTIVE] |
 | `messages.getPermalink` | `slack.api.messages.getPermalink` | `read` | Get a permalink for a message |
 | `messages.post` | `slack.api.messages.post` | `write` | Post a message to a channel |
-| `messages.search` | `slack.api.messages.search` | `read` | Search messages in the workspace |
+| `messages.search` | `slack.api.messages.search` | `read` | Search messages with Slack search syntax, e.g. "deploy in:#channel from:@user". Needs a user token. |
 | `messages.update` | `slack.api.messages.update` | `write` | Update an existing message |
 | `reactions.add` | `slack.api.reactions.add` | `write` | Add a reaction emoji to a message |
 | `reactions.get` | `slack.api.reactions.get` | `read` | Get reactions for a message |
@@ -56,7 +56,7 @@ pnpm add @corsair-dev/slack
 | `users.get` | `slack.api.users.get` | `read` | Get info about a user |
 | `users.getPresence` | `slack.api.users.getPresence` | `read` | Get the presence status of a user |
 | `users.getProfile` | `slack.api.users.getProfile` | `read` | Get a user profile |
-| `users.list` | `slack.api.users.list` | `read` | List all users in the workspace |
+| `users.list` | `slack.api.users.list` | `read` | List workspace members, including invited, deactivated and deleted users. profile.email needs the users:read.email scope. Use users.get for a known id. |
 | `users.updateProfile` | `slack.api.users.updateProfile` | `write` | Update the authenticated user's profile |
 
 ## Auth
