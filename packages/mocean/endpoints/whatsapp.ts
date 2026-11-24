@@ -47,6 +47,10 @@ export const listTemplates = endpoint('templatesList', {
 		path: '/template/whatsapp/message_templates',
 		query: {
 			limit: p.limit,
+			// Mocean passes Meta's Graph paging through: the cursors it returns
+			// in paging.cursors go back as after / before.
+			after: p.after,
+			before: p.before,
 			category: p.category,
 			content: p.content,
 			language: p.language,

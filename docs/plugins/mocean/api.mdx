@@ -478,6 +478,8 @@ await corsair.mocean.api.templates.list({ limit: 20, status: 'APPROVED' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | — |
+| `after` | `string` | No | paging.cursors.after from the previous page, for the next page. |
+| `before` | `string` | No | paging.cursors.before from a page, for the page before it. |
 | `category` | `AUTHENTICATION \| MARKETING \| UTILITY` | No | — |
 | `content` | `string` | No | Search the template text. |
 | `language` | `string` | No | — |

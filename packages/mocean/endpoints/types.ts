@@ -543,6 +543,16 @@ const TemplateSchema = z
 
 const TemplatesListInputSchema = z.object({
 	limit: z.number().int().min(1).max(100).optional(),
+	after: z
+		.string()
+		.optional()
+		.describe(
+			'paging.cursors.after from the previous page, for the next page.',
+		),
+	before: z
+		.string()
+		.optional()
+		.describe('paging.cursors.before from a page, for the page before it.'),
 	category: TemplateCategory.optional(),
 	content: z.string().optional().describe('Search the template text.'),
 	language: z.string().optional(),

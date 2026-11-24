@@ -393,6 +393,21 @@ describe('every JSON operation', () => {
 	);
 });
 
+describe('templates.list paging', () => {
+	it('sends the after cursor from the previous page', async () => {
+		respond({ data: [template], paging: { cursors: { after: 'QVFIUk' } } });
+		const first = (await invoke(WhatsApp.listTemplates, { limit: 1 })) as {
+			paging: { cursors: { after: string } };
+		};
+		respond({ data: [], paging: {} });
+		await invoke(WhatsApp.listTemplates, {
+			limit: 1,
+			after: first.paging.cursors.after,
+		});
+		expect(lastRequest().query).toEqual({ limit: '1', after: 'QVFIUk' });
+	});
+});
+
 describe('downloads', () => {
 	it('voice.recording returns the audio as a file', async () => {
 		respondBytes(new Uint8Array([73, 68, 51, 4]), 'audio/mpeg');
