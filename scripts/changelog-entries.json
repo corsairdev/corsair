@@ -12420,5 +12420,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/moosend",
+    "dir": "packages/moosend",
+    "name": "Moosend",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
