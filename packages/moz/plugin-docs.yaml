@@ -1,0 +1,127 @@
+displayName: Moz
+description: SEO data with Moz - site metrics (Domain Authority, Page Authority, Spam Score, Brand Authority, histories), backlinks, linking domains, anchor texts, top pages, ranking keywords, keyword metrics, SERPs and suggestions, competitors, global top lists, and Moz Local accounts, groups, locations, listings and insights.
+domain: moz.com
+recommendedAuth: api_key
+overviewNote: |
+  Generate an API token on the Moz API dashboard
+  (https://api.moz.com) and Corsair sends it in the x-moz-token header on
+  every call. The Moz API is JSON-RPC 2.0: one endpoint
+  (https://api.moz.com/jsonrpc), one POST per operation, with the method
+  name in the request body.
+
+  - **Quota is per row.** Responses carry no row count; quota.lookup
+  reports the usage and allowance of a bucket for free. Metrics, link and
+  keyword methods charge api.limits.data.rows (one row per call, per
+  returned result or per returned metric value); the competitor fetch
+  draws on the separate api.limits.mozscape.rows bucket. Lists default to
+  25 results, so pass a limit to control the cost.
+  - **Errors are JSON-RPC envelopes** with a stable `code`: -32651 is a bad
+  token (401), -32670 is exhausted quota (403), -32658 and -32650 are the
+  two 429 rate limits (a per-method one with Retry-After and an edge one
+  without). Errors come back as core ApiErrors carrying that code; core
+  retries an HTTP 429 and nothing else is retried.
+  - **The competitor lookup is asynchronous.** competitors.fetch answers
+  with an async_call receipt; follow it with jobs.lookup until the status
+  is complete, then read async_call.result (or .error). Poll no more than
+  once every five seconds; lookups are free.
+  - **Two paging styles.** Link, linking-domain, anchor-text and top-page
+  lists take offset.limit (1-50) and an optional offset.token; pass the
+  response's offset.token for the next page (null when there is none).
+  global.topDomains, global.topPages, keywords.suggestions and
+  rankingKeywords.list take page.n (0 for the first page) and page.limit;
+  raise page.n by one for each next page.
+  - **Keywords.** keywords.metrics returns difficulty, volume, organic CTR
+  and priority at once (four rows); search intent is opt-in with
+  options.include_intent until December 1, 2026 and returned by default
+  from that date, for one more row when available. The single-metric
+  fetches cost one row each. keywords.suggestions, keywords.generateMetrics and
+  keywords.generateSerp are asynchronous; the two generate methods start a
+  fresh SERP collection billed per call, so they are destructive.
+  - **Moz Local** (local.*) manages business listings for Moz Local
+  customers; most of it is Enterprise only. Creating a location adds a
+  billed listing; cancelling, closing and changing a location's level
+  change billing or unpublish it, so those are destructive.
+  - **Webhooks.** Moz sends Moz Local location events (created, updated,
+  canceled, closed) with the Standard Webhooks signature. Moz's team sets
+  them up per account; save the `whsec_` secret as the account's
+  webhook_signature (or the webhookSecret option).
+  - **Schemas come from Moz's method reference.** Inputs follow each
+  method's payload definition and reject unknown fields; Moz Local inputs
+  stay open because Moz's own examples use fields its schema leaves out.
+  Responses are parsed leniently.
+examples:
+  read:
+    path: metrics.fetch
+    title: Read site metrics for moz.com
+    args:
+      site_query:
+        query: moz.com
+        scope: domain
+apiExamples:
+  quota.lookup:
+    call: "{ path: 'api.limits.data.rows' }"
+  locales.list:
+    call: "{ engine: 'google' }"
+  metrics.fetch:
+    call: "{ site_query: { query: 'moz.com', scope: 'domain' } }"
+  metrics.fetchMultiple:
+    call: "{ site_queries: [{ query: 'moz.com', scope: 'domain' }, { query: 'moz.com/blog', scope: 'url' }] }"
+  links.list:
+    call: "{ site_query: { query: 'moz.com/blog', scope: 'url' }, options: { sort: 'source_link_propensity', filters: ['external', 'nofollow'] }, offset: { limit: 25 } }"
+  links.intersect:
+    call: "{ is_linking_to: [{ query: 'moz.com', scope: 'domain' }], not_linking_to: [{ query: 'ahrefs.com', scope: 'domain' }] }"
+  linkingDomains.list:
+    call: "{ site_query: { query: 'moz.com', scope: 'domain' }, options: { sort: 'source_domain_authority' } }"
+  anchorText.list:
+    call: "{ site_query: { query: 'moz.com', scope: 'domain' } }"
+  topPages.list:
+    call: "{ site_query: { query: 'moz.com', scope: 'domain' }, options: { filter: 'status_200', sort: 'page_authority' } }"
+  competitors.fetch:
+    call: "{ target_query: { query: 'moz.com', scope: 'domain', locale: 'en-US' } }"
+  jobs.lookup:
+    call: "{ id: (await corsair.moz.api.test.pingAsync({ message: 'hi' })).async_call?.id ?? '' }"
+apiNotes:
+  quota.lookup: |
+    `quota.lookup` is free. The path picks the bucket: api.limits.data.rows
+    for everything except competitors, api.limits.mozscape.rows for the
+    competitor fetch, api.limits.beta.rows for beta methods.
+  links.list: |
+    `data.site.link.list`. One row per returned link. The offset.token in
+    the response is the next page's cursor; it is null when the list is
+    exhausted. Setting options.subdomains_limited_to_one requires a sort.
+  links.intersect: |
+    `data.site.link.intersect.fetch`. At least one target in
+    is_linking_to, at most six targets across both arrays, and it costs N
+    rows per result where N is the number of targets in the request.
+  linkingDomains.list: |
+    `data.site.linking-domain.list`. One row per returned root domain. With
+    several filters, `external` must be one of them.
+  keywords.metrics: |
+    `data.keyword.metrics.fetch` returns difficulty, volume, organic CTR and
+    priority for one `serp_query` (four rows). Search intent is opt-in with
+    `options.include_intent` until December 1, 2026 and on by default from
+    that date; it adds one row when Moz has intent for the SERP.
+  metrics.histories: |
+    `data.site.metrics.histories.fetch`. Each of the four selector arrays
+    (get_daily_history_deltas_for, get_daily_history_values_for,
+    get_monthly_history_deltas_for, get_monthly_history_values_for) is
+    optional, but together they must name at least one metric. It costs one
+    row per metric returned across the four arrays.
+  rankingKeywords.list: |
+    `data.site.ranking-keyword.list`: keywords a site ranks for in the top 50,
+    one row per result. rankingKeywords.count is one row.
+  local.locations.create: |
+    `local.location.create` adds a billed Moz Local location at the given
+    `level`; check levels with local.locations.levels first.
+  competitors.fetch: |
+    `data.site.competitor.fetch` is asynchronous: the answer is an
+    async_call receipt, and the competitors arrive through jobs.lookup once
+    the status is complete. It spends the mozscape quota bucket.
+  jobs.lookup: |
+    `async.call.lookup` is free and safe to poll every five seconds. Pass
+    the `async_call.id` from the async method's response (above, a
+    test.pingAsync call). A
+    completed call carries exactly one of async_call.result and
+    async_call.error. Poll within the current `ttl`: once a completed call
+    is first retrieved, Moz keeps it for twenty more seconds, so use the
+    result or error from that first completed response.

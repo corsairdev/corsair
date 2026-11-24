@@ -456,11 +456,16 @@ export const BaseProviders = [
 	'missive',
 	'mistralai',
 	'mixmax',
+	'mixpanel',
+	'mocean',
 	'moco',
 	'modelry',
 	'monday',
 	'mondaymcp',
 	'moonclerk',
+	'moosend',
+	'mopinion',
+	'moz',
 	'motion',
 	'mrscraper',
 	'nango',
@@ -1239,11 +1244,16 @@ export const ProviderDisplayNames = {
 	missive: 'Missive',
 	mistralai: 'Mistral AI',
 	mixmax: 'Mixmax',
+	mixpanel: 'Mixpanel',
+	mocean: 'Mocean',
 	moco: 'Moco',
 	modelry: 'Modelry',
 	monday: 'Monday',
 	mondaymcp: 'Monday MCP',
 	moonclerk: 'MoonClerk',
+	moosend: 'Moosend',
+	mopinion: 'Mopinion',
+	moz: 'Moz',
 	motion: 'Motion',
 	mrscraper: 'MrScraper',
 	nango: 'Nango',
@@ -2029,11 +2039,16 @@ export type AllProviders =
 	| 'missive'
 	| 'mistralai'
 	| 'mixmax'
+	| 'mixpanel'
+	| 'mocean'
 	| 'moco'
 	| 'modelry'
 	| 'monday'
 	| 'mondaymcp'
 	| 'moonclerk'
+	| 'moosend'
+	| 'mopinion'
+	| 'moz'
 	| 'motion'
 	| 'mrscraper'
 	| 'nango'

@@ -282,14 +282,32 @@ const MessagesGetInputSchema = z.object({
 
 const MessagesListInputSchema = z.object({
 	user_id: z.string().optional(),
-	folder: z.string().optional(),
-	top: z.number().optional(),
+	folder: z
+		.string()
+		.optional()
+		.describe(
+			'Folder id or well-known name such as "inbox", "sentitems", "drafts" or "deleteditems". Unset covers the whole mailbox.',
+		),
+	top: z
+		.number()
+		.optional()
+		.describe('Page size. Graph returns 10 if omitted; max 1000.'),
 	skip: z.number().optional(),
 	select: z.array(z.string()).optional(),
 	orderby: z.array(z.string()).optional(),
 	is_read: z.boolean().optional(),
-	subject: z.string().optional(),
-	subject_contains: z.string().optional(),
+	subject: z
+		.string()
+		.optional()
+		.describe(
+			'Exact match. An apostrophe in the value breaks the query; use messages.search for free text.',
+		),
+	subject_contains: z
+		.string()
+		.optional()
+		.describe(
+			'An apostrophe in the value breaks the query; use messages.search for free text.',
+		),
 	subject_startswith: z.string().optional(),
 	subject_endswith: z.string().optional(),
 	from_address: z.string().optional(),
@@ -297,26 +315,62 @@ const MessagesListInputSchema = z.object({
 	importance: z.string().optional(),
 	categories: z.array(z.string()).optional(),
 	conversationId: z.string().optional(),
-	sent_date_time_gt: z.string().optional(),
-	sent_date_time_lt: z.string().optional(),
-	received_date_time_ge: z.string().optional(),
-	received_date_time_gt: z.string().optional(),
-	received_date_time_le: z.string().optional(),
-	received_date_time_lt: z.string().optional(),
+	sent_date_time_gt: z
+		.string()
+		.optional()
+		.describe('ISO 8601 UTC such as 2025-01-31T00:00:00Z.'),
+	sent_date_time_lt: z
+		.string()
+		.optional()
+		.describe('ISO 8601 UTC such as 2025-01-31T00:00:00Z.'),
+	received_date_time_ge: z
+		.string()
+		.optional()
+		.describe('ISO 8601 UTC such as 2025-01-31T00:00:00Z.'),
+	received_date_time_gt: z
+		.string()
+		.optional()
+		.describe('ISO 8601 UTC such as 2025-01-31T00:00:00Z.'),
+	received_date_time_le: z
+		.string()
+		.optional()
+		.describe('ISO 8601 UTC such as 2025-01-31T00:00:00Z.'),
+	received_date_time_lt: z
+		.string()
+		.optional()
+		.describe('ISO 8601 UTC such as 2025-01-31T00:00:00Z.'),
 });
 
 const MessagesQueryInputSchema = z.object({
 	user_id: z.string().optional(),
 	folder: z.string().optional(),
-	filter: z.string().optional(),
+	filter: z
+		.string()
+		.optional()
+		.describe(
+			'OData $filter, e.g. "receivedDateTime ge 2025-01-31T00:00:00Z and isRead eq false". With orderby, filter on the ordered properties first.',
+		),
 	select: z.array(z.string()).optional(),
-	orderby: z.string().optional(),
-	top: z.number().optional(),
+	orderby: z
+		.string()
+		.optional()
+		.describe(
+			'e.g. "receivedDateTime desc". Each property must also appear in filter, first and in the same order, or Graph returns InefficientFilter.',
+		),
+	top: z
+		.number()
+		.optional()
+		.describe('Page size. Graph returns 10 if omitted; max 1000.'),
 	skip: z.number().optional(),
 });
 
 const MessagesSearchInputSchema = z.object({
-	query: z.string().optional(),
+	query: z
+		.string()
+		.optional()
+		.describe(
+			'Words, or KQL such as from:alice@example.com or subject:invoice. Not OData.',
+		),
 	subject: z.string().optional(),
 	fromEmail: z.string().optional(),
 	hasAttachments: z.boolean().optional(),
@@ -444,17 +498,48 @@ const EventsGetInputSchema = z.object({
 	calendar_id: z.string().optional(),
 });
 
-const EventsListInputSchema = z.object({
-	user_id: z.string().optional(),
-	calendar_id: z.string().optional(),
-	filter: z.string().optional(),
-	select: z.array(z.string()).optional(),
-	orderby: z.array(z.string()).optional(),
-	top: z.number().optional(),
-	skip: z.number().optional(),
-	timezone: z.string().optional(),
-	expand_recurring_events: z.boolean().optional(),
-});
+const EventsListInputSchema = z
+	.object({
+		user_id: z.string().optional(),
+		calendar_id: z.string().optional(),
+		filter: z.string().optional(),
+		select: z.array(z.string()).optional(),
+		orderby: z.array(z.string()).optional(),
+		top: z.number().optional(),
+		skip: z.number().optional(),
+		timezone: z
+			.string()
+			.regex(/^[\w ./+()-]+$/)
+			.optional()
+			.describe(
+				'Windows time zone name such as "Pacific Standard Time", sent as the Prefer header. Times are UTC if omitted.',
+			),
+		expand_recurring_events: z
+			.boolean()
+			.optional()
+			.describe(
+				'Lists each occurrence of a recurring event (calendarView). Needs start_datetime and end_datetime.',
+			),
+		start_datetime: z
+			.string()
+			.optional()
+			.describe(
+				'ISO 8601 with offset, e.g. 2025-06-01T00:00:00Z. Window start; goes with expand_recurring_events.',
+			),
+		end_datetime: z
+			.string()
+			.optional()
+			.describe(
+				'ISO 8601 with offset, e.g. 2025-06-30T00:00:00Z. Window end; goes with expand_recurring_events.',
+			),
+	})
+	.refine(
+		(i) => !i.expand_recurring_events || (i.start_datetime && i.end_datetime),
+		{
+			message: 'expand_recurring_events needs start_datetime and end_datetime',
+			path: ['expand_recurring_events'],
+		},
+	);
 
 const EventsUpdateInputSchema = z.object({
 	event_id: z.string(),
@@ -509,9 +594,17 @@ const EventsFindMeetingTimesInputSchema = z.object({
 
 const EventsGetScheduleInputSchema = z.object({
 	calendar_id: z.string(),
-	schedules: z.array(z.string()),
-	startTime: z.object({ dateTime: z.string(), timeZone: z.string() }),
-	endTime: z.object({ dateTime: z.string(), timeZone: z.string() }),
+	schedules: z.array(z.string()).describe('Email addresses to check.'),
+	startTime: z
+		.object({ dateTime: z.string(), timeZone: z.string() })
+		.describe(
+			'{"dateTime":"2025-06-03T09:00:00","timeZone":"Pacific Standard Time"}',
+		),
+	endTime: z
+		.object({ dateTime: z.string(), timeZone: z.string() })
+		.describe(
+			'{"dateTime":"2025-06-03T18:00:00","timeZone":"Pacific Standard Time"}',
+		),
 	availabilityViewInterval: z.number().optional(),
 });
 
@@ -617,7 +710,10 @@ const FoldersListInputSchema = z.object({
 	top: z.number().optional(),
 	skip: z.number().optional(),
 	count: z.boolean().optional(),
-	include_hidden_folders: z.boolean().optional(),
+	include_hidden_folders: z
+		.boolean()
+		.optional()
+		.describe('Hidden folders are left out unless true.'),
 });
 
 const FoldersUpdateInputSchema = z.object({

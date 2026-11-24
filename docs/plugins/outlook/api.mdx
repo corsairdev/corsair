@@ -1026,7 +1026,7 @@ await corsair.outlook.api.events.get({});
 
 `events.getSchedule`
 
-Get free/busy schedule for a calendar
+Free/busy for the listed schedules (email addresses), not event details. startTime and endTime are &#123;dateTime, timeZone&#125; objects.
 
 **Risk:** `read`
 
@@ -1039,9 +1039,9 @@ await corsair.outlook.api.events.getSchedule({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `calendar_id` | `string` | Yes | — |
-| `schedules` | `string[]` | Yes | — |
-| `startTime` | `object` | Yes | — |
-| `endTime` | `object` | Yes | — |
+| `schedules` | `string[]` | Yes | Email addresses to check. |
+| `startTime` | `object` | Yes | &#123;"dateTime":"2025-06-03T09:00:00","timeZone":"Pacific Standard Time"&#125; |
+| `endTime` | `object` | Yes | &#123;"dateTime":"2025-06-03T18:00:00","timeZone":"Pacific Standard Time"&#125; |
 | `availabilityViewInterval` | `number` | No | — |
 
 <AccordionGroup>
@@ -1083,7 +1083,7 @@ await corsair.outlook.api.events.getSchedule({});
 
 `events.list`
 
-List calendar events
+Single events and series masters; with expand_recurring_events it lists the occurrences between start_datetime and end_datetime, one page at a time (next skip is in @odata.nextLink). Times are UTC unless timezone is set.
 
 **Risk:** `read`
 
@@ -1102,8 +1102,10 @@ await corsair.outlook.api.events.list({});
 | `orderby` | `string[]` | No | — |
 | `top` | `number` | No | — |
 | `skip` | `number` | No | — |
-| `timezone` | `string` | No | — |
-| `expand_recurring_events` | `boolean` | No | — |
+| `timezone` | `string` | No | Windows time zone name such as "Pacific Standard Time", sent as the Prefer header. Times are UTC if omitted. |
+| `expand_recurring_events` | `boolean` | No | Lists each occurrence of a recurring event (calendarView). Needs start_datetime and end_datetime. |
+| `start_datetime` | `string` | No | ISO 8601 with offset, e.g. 2025-06-01T00:00:00Z. Window start; goes with expand_recurring_events. |
+| `end_datetime` | `string` | No | ISO 8601 with offset, e.g. 2025-06-30T00:00:00Z. Window end; goes with expand_recurring_events. |
 
 
 
@@ -1476,7 +1478,7 @@ await corsair.outlook.api.folders.get({});
 
 `folders.list`
 
-List mail folders
+Top-level mail folders only; nested folders are not listed. Use a folder id or a name like "inbox" as folder in messages.list.
 
 **Risk:** `read`
 
@@ -1495,7 +1497,7 @@ await corsair.outlook.api.folders.list({});
 | `top` | `number` | No | — |
 | `skip` | `number` | No | — |
 | `count` | `boolean` | No | — |
-| `include_hidden_folders` | `boolean` | No | — |
+| `include_hidden_folders` | `boolean` | No | Hidden folders are left out unless true. |
 
 
 
@@ -1947,7 +1949,7 @@ await corsair.outlook.api.messages.forward({});
 
 `messages.get`
 
-Get an email message by ID
+Reads one message by id. Body is HTML. Attachments are not included and this plugin cannot download them; hasAttachments only says whether any non-inline attachment exists, so it is false for a message with only inline ones.
 
 **Risk:** `read`
 
@@ -2079,7 +2081,7 @@ await corsair.outlook.api.messages.get({});
 
 `messages.list`
 
-List email messages in a folder
+Lists messages from one folder, or the whole mailbox including Deleted Items when folder is unset. 10 per page unless top is set (max 1000). Take the next skip from @odata.nextLink; it can exceed top, so do not add top to skip.
 
 **Risk:** `read`
 
@@ -2092,14 +2094,14 @@ await corsair.outlook.api.messages.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user_id` | `string` | No | — |
-| `folder` | `string` | No | — |
-| `top` | `number` | No | — |
+| `folder` | `string` | No | Folder id or well-known name such as "inbox", "sentitems", "drafts" or "deleteditems". Unset covers the whole mailbox. |
+| `top` | `number` | No | Page size. Graph returns 10 if omitted; max 1000. |
 | `skip` | `number` | No | — |
 | `select` | `string[]` | No | — |
 | `orderby` | `string[]` | No | — |
 | `is_read` | `boolean` | No | — |
-| `subject` | `string` | No | — |
-| `subject_contains` | `string` | No | — |
+| `subject` | `string` | No | Exact match. An apostrophe in the value breaks the query; use messages.search for free text. |
+| `subject_contains` | `string` | No | An apostrophe in the value breaks the query; use messages.search for free text. |
 | `subject_startswith` | `string` | No | — |
 | `subject_endswith` | `string` | No | — |
 | `from_address` | `string` | No | — |
@@ -2107,12 +2109,12 @@ await corsair.outlook.api.messages.list({});
 | `importance` | `string` | No | — |
 | `categories` | `string[]` | No | — |
 | `conversationId` | `string` | No | — |
-| `sent_date_time_gt` | `string` | No | — |
-| `sent_date_time_lt` | `string` | No | — |
-| `received_date_time_ge` | `string` | No | — |
-| `received_date_time_gt` | `string` | No | — |
-| `received_date_time_le` | `string` | No | — |
-| `received_date_time_lt` | `string` | No | — |
+| `sent_date_time_gt` | `string` | No | ISO 8601 UTC such as 2025-01-31T00:00:00Z. |
+| `sent_date_time_lt` | `string` | No | ISO 8601 UTC such as 2025-01-31T00:00:00Z. |
+| `received_date_time_ge` | `string` | No | ISO 8601 UTC such as 2025-01-31T00:00:00Z. |
+| `received_date_time_gt` | `string` | No | ISO 8601 UTC such as 2025-01-31T00:00:00Z. |
+| `received_date_time_le` | `string` | No | ISO 8601 UTC such as 2025-01-31T00:00:00Z. |
+| `received_date_time_lt` | `string` | No | ISO 8601 UTC such as 2025-01-31T00:00:00Z. |
 
 
 
@@ -2324,7 +2326,7 @@ await corsair.outlook.api.messages.move({});
 
 `messages.query`
 
-Query email messages with OData filters
+Raw OData filter over one folder or the whole mailbox. 10 per page unless top is set. Properties in orderby must also be in filter, first and in the same order, or Graph returns InefficientFilter.
 
 **Risk:** `read`
 
@@ -2338,10 +2340,10 @@ await corsair.outlook.api.messages.query({});
 |------|------|----------|-------------|
 | `user_id` | `string` | No | — |
 | `folder` | `string` | No | — |
-| `filter` | `string` | No | — |
+| `filter` | `string` | No | OData $filter, e.g. "receivedDateTime ge 2025-01-31T00:00:00Z and isRead eq false". With orderby, filter on the ordered properties first. |
 | `select` | `string[]` | No | — |
-| `orderby` | `string` | No | — |
-| `top` | `number` | No | — |
+| `orderby` | `string` | No | e.g. "receivedDateTime desc". Each property must also appear in filter, first and in the same order, or Graph returns InefficientFilter. |
+| `top` | `number` | No | Page size. Graph returns 10 if omitted; max 1000. |
 | `skip` | `number` | No | — |
 
 
@@ -2458,7 +2460,7 @@ await corsair.outlook.api.messages.reply({});
 
 `messages.search`
 
-Search email messages
+KQL search over the signed-in user's whole mailbox, newest sent first, at most 1,000 results. For a folder or date range use messages.list or messages.query.
 
 **Risk:** `read`
 
@@ -2470,7 +2472,7 @@ await corsair.outlook.api.messages.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | No | — |
+| `query` | `string` | No | Words, or KQL such as from:alice@example.com or subject:invoice. Not OData. |
 | `subject` | `string` | No | — |
 | `fromEmail` | `string` | No | — |
 | `hasAttachments` | `boolean` | No | — |

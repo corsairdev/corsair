@@ -85,9 +85,16 @@ const BlocksAppendBlockInputSchema = z.object({
 });
 
 const BlocksGetManyChildBlocksInputSchema = z.object({
-	block_id: z.string(),
-	start_cursor: z.string().optional(),
-	page_size: z.number().optional(),
+	block_id: z
+		.string()
+		.describe('Block id, or a page id for the top level of that page.'),
+	start_cursor: z
+		.string()
+		.optional()
+		.describe(
+			'next_cursor from the previous response; omit for the first page.',
+		),
+	page_size: z.number().optional().describe('Default and maximum 100.'),
 });
 
 const DatabasesGetDatabaseInputSchema = z.object({
@@ -100,13 +107,24 @@ const DatabasesGetManyDatabasesInputSchema = z.object({
 });
 
 const DatabasesSearchDatabaseInputSchema = z.object({
-	query: z.string().optional(),
+	query: z
+		.string()
+		.optional()
+		.describe('Text matched against database titles only.'),
 	// NOTE: Sort structure varies by use case and can include property-based sorting,
 	// timestamp sorting, etc. The exact structure depends on the database schema.
-	sort: z.unknown().optional(),
+	sort: z
+		.unknown()
+		.optional()
+		.describe('{"timestamp":"last_edited_time","direction":"descending"}'),
 	// NOTE: Filter structure is highly dynamic and depends on the database properties.
 	// Filters can be property-based, compound, or use various operators (equals, contains, etc.).
-	filter: z.unknown().optional(),
+	filter: z
+		.unknown()
+		.optional()
+		.describe(
+			'Defaults to databases only, {"property":"object","value":"database"}.',
+		),
 	start_cursor: z.string().optional(),
 	page_size: z.number().optional(),
 });
@@ -127,10 +145,18 @@ const DatabasePagesGetManyDatabasePagesInputSchema = z.object({
 	database_id: z.string(),
 	// NOTE: Filter structure is dynamic and depends on database properties.
 	// Can include property filters, compound filters, and various operators.
-	filter: z.unknown().optional(),
+	filter: z
+		.unknown()
+		.optional()
+		.describe(
+			'{"property":"Status","select":{"equals":"Done"}}: the inner key is the property type. Combine with {"and":[...]} or {"or":[...]}.',
+		),
 	// NOTE: Sorts array contains sort objects that vary by property type.
 	// Each sort can be ascending/descending and property-based.
-	sorts: z.array(z.unknown()).optional(),
+	sorts: z
+		.array(z.unknown())
+		.optional()
+		.describe('[{"property":"Due","direction":"ascending"}]'),
 	start_cursor: z.string().optional(),
 	page_size: z.number().optional(),
 });
@@ -163,11 +189,22 @@ const PagesCreatePageInputSchema = z.object({
 });
 
 const PagesSearchPageInputSchema = z.object({
-	query: z.string().optional(),
+	query: z
+		.string()
+		.optional()
+		.describe('Text matched against page and database titles only.'),
 	// NOTE: Sort structure varies and can include property-based or timestamp sorting.
-	sort: z.unknown().optional(),
+	sort: z
+		.unknown()
+		.optional()
+		.describe('{"timestamp":"last_edited_time","direction":"descending"}'),
 	// NOTE: Filter structure is dynamic and can filter by object type, property values, etc.
-	filter: z.unknown().optional(),
+	filter: z
+		.unknown()
+		.optional()
+		.describe(
+			'Results include pages and databases unless this is {"property":"object","value":"page"}.',
+		),
 	start_cursor: z.string().optional(),
 	page_size: z.number().optional(),
 });

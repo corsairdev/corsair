@@ -3789,6 +3789,22 @@
                 ]
               },
               {
+                "group": "Mixpanel",
+                "pages": [
+                  "plugins/mixpanel/overview",
+                  "plugins/mixpanel/api",
+                  "plugins/mixpanel/database"
+                ]
+              },
+              {
+                "group": "Mocean",
+                "pages": [
+                  "plugins/mocean/overview",
+                  "plugins/mocean/api",
+                  "plugins/mocean/database"
+                ]
+              },
+              {
                 "group": "Moco",
                 "pages": [
                   "plugins/moco/overview",
@@ -3831,11 +3847,36 @@
                 ]
               },
               {
+                "group": "Moosend",
+                "pages": [
+                  "plugins/moosend/overview",
+                  "plugins/moosend/api",
+                  "plugins/moosend/database"
+                ]
+              },
+              {
+                "group": "Mopinion",
+                "pages": [
+                  "plugins/mopinion/overview",
+                  "plugins/mopinion/api",
+                  "plugins/mopinion/database"
+                ]
+              },
+              {
                 "group": "Motion",
                 "pages": [
                   "plugins/motion/overview",
                   "plugins/motion/api",
                   "plugins/motion/database"
+                ]
+              },
+              {
+                "group": "Moz",
+                "pages": [
+                  "plugins/moz/overview",
+                  "plugins/moz/api",
+                  "plugins/moz/database",
+                  "plugins/moz/webhooks"
                 ]
               },
               {

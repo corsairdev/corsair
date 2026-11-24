@@ -138,7 +138,7 @@
     {
       "path": "gmail.api.drafts.list",
       "shortPath": "drafts.list",
-      "description": "List drafts in the mailbox",
+      "description": "Returns only draft id and message id/threadId. Use drafts.get to read subject and body",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -628,7 +628,7 @@
     {
       "path": "gmail.api.messages.get",
       "shortPath": "messages.get",
-      "description": "Get a specific message",
+      "description": "Read one message. Default format is full, with body text base64url-encoded in payload.body.data, or for multipart messages in payload.parts[].body.data (parts nest); use format metadata for headers only.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -646,12 +646,14 @@
           {
             "key": "format",
             "optional": true,
-            "type": "minimal | full | raw | metadata"
+            "type": "minimal | full | raw | metadata",
+            "description": "Defaults to full: parsed payload. metadata: headers only (pick them with metadataHeaders). minimal: ids and labels. raw: whole RFC 2822 message, base64url-encoded."
           },
           {
             "key": "metadataHeaders",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Header names to return, e.g. [\"From\",\"Subject\"]; format must be metadata."
           }
         ]
       },
@@ -710,7 +712,7 @@
     {
       "path": "gmail.api.messages.getAttachment",
       "shortPath": "messages.getAttachment",
-      "description": "Fetch an attachment of a message by partId (as shown in search results) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId.",
+      "description": "Fetch an attachment of a message by partId (from messages.get, format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -729,7 +731,7 @@
             "key": "partId",
             "optional": true,
             "type": "string",
-            "description": "Part id of the attachment, as shown in search results (message <id>, part <partId>). Give partId or attachmentId."
+            "description": "partId of a part from messages.get with format full, e.g. \"1.2\". Give partId or attachmentId"
           },
           {
             "key": "attachmentId",
@@ -790,7 +792,7 @@
     {
       "path": "gmail.api.messages.list",
       "shortPath": "messages.list",
-      "description": "List messages in a mailbox",
+      "description": "Returns only id and threadId per message, no subject or body. Use messages.get to read one",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -803,12 +805,14 @@
           {
             "key": "q",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Same syntax as the Gmail search box, e.g. \"from:alice newer_than:7d\" or \"after:2025/01/31 has:attachment\"."
           },
           {
             "key": "maxResults",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Defaults to 100, at most 500. Follow nextPageToken for more."
           },
           {
             "key": "pageToken",
@@ -818,12 +822,14 @@
           {
             "key": "labelIds",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Label ids such as INBOX, UNREAD or Label_123, not label names; all of them must match. labels.list returns the ids."
           },
           {
             "key": "includeSpamTrash",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Spam and trash are left out unless this is true."
           }
         ]
       },
@@ -1155,7 +1161,7 @@
     {
       "path": "gmail.api.threads.get",
       "shortPath": "threads.get",
-      "description": "Get a specific thread",
+      "description": "Get every message in a thread. format works as in messages.get",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1173,12 +1179,14 @@
           {
             "key": "format",
             "optional": true,
-            "type": "minimal | full | metadata"
+            "type": "minimal | full | metadata",
+            "description": "Defaults to full: parsed payload for every message. metadata: headers only. minimal: ids and labels."
           },
           {
             "key": "metadataHeaders",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Header names to return, e.g. [\"From\",\"Subject\"]; format must be metadata."
           }
         ]
       },
@@ -1211,7 +1219,7 @@
     {
       "path": "gmail.api.threads.list",
       "shortPath": "threads.list",
-      "description": "List threads in the mailbox",
+      "description": "Returns thread id and snippet only, no messages. Use threads.get for the messages",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1224,12 +1232,14 @@
           {
             "key": "q",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Same syntax as the Gmail search box, e.g. \"from:alice newer_than:7d\" or \"after:2025/01/31 has:attachment\"."
           },
           {
             "key": "maxResults",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Defaults to 100, at most 500. Follow nextPageToken for more."
           },
           {
             "key": "pageToken",
@@ -1239,12 +1249,14 @@
           {
             "key": "labelIds",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Label ids such as INBOX, UNREAD or Label_123, not label names; all of them must match. labels.list returns the ids."
           },
           {
             "key": "includeSpamTrash",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Spam and trash are left out unless this is true."
           }
         ]
       },
