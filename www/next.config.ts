@@ -70,6 +70,11 @@ const nextConfig: NextConfig = {
 	// catch-all — first match wins.
 	async rewrites() {
 		return [
+			// Agents are told to read SKILL.md as often as skill.md.
+			{
+				source: '/SKILL.md',
+				destination: '/skill.md',
+			},
 			// The agent skills index (`npx skills add https://corsair.dev`) is served by
 			// the gateway app on lug.dev, so there is one copy of it. lug.dev keeps
 			// serving /.well-known after its pages move here.

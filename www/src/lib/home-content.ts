@@ -1,7 +1,7 @@
 // What the homepage says, in one place, so the page and its markdown copy
 // at /index.md (the "machine" view) can't drift apart.
 
-import { AGENT_SIGNUP_URL } from './site-links';
+import { SKILL_URL } from './site-links';
 
 export const HERO_TITLE_LEAD = 'One MCP URL';
 export const HERO_TITLE_REST = 'for every app and agent';
@@ -9,7 +9,9 @@ export const HERO_TITLE = `${HERO_TITLE_LEAD} ${HERO_TITLE_REST}`;
 export const HERO_SUBTITLE =
 	'Connect Gmail, Slack, GitHub, Notion and 700+ more apps once. Paste one URL into Claude, ChatGPT, Cursor or Codex, and every change follows the rules you set.';
 
-export const AGENT_SETUP_PROMPT = `Read ${AGENT_SIGNUP_URL} and set up Corsair for me`;
+// skill.md adds Corsair to the client the agent runs in, with the person signing
+// in once. auth.md (an account with no one signed in) is for agents on their own.
+export const AGENT_SETUP_PROMPT = `Read ${SKILL_URL} and set up Corsair for me`;
 
 export const HERO_CLIENTS = [
 	'Claude',

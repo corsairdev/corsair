@@ -11,14 +11,15 @@ import {
 } from '@/lib/home-content';
 import { FAQ_ITEMS } from '@/lib/home-faq';
 import { MANAGED_TOOLS } from '@/lib/managed-tools';
-import { AGENT_SIGNUP_URL, MCP_URL } from '@/lib/site-links';
+import { AGENT_SIGNUP_URL, MCP_URL, SKILL_URL } from '@/lib/site-links';
 import { buildHomeMarkdown } from './home-markdown';
 
 describe('buildHomeMarkdown', () => {
 	const markdown = buildHomeMarkdown();
 
-	it('opens with frontmatter that points agents at signup', () => {
+	it('opens with frontmatter that points agents at skill.md and signup', () => {
 		assert.ok(markdown.startsWith('---\ntitle: Corsair\n'));
+		assert.ok(markdown.includes(`agent_skill: ${SKILL_URL}`));
 		assert.ok(markdown.includes(`agent_signup: ${AGENT_SIGNUP_URL}`));
 		assert.ok(markdown.includes(`# ${HERO_TITLE}`));
 		assert.ok(markdown.includes(HERO_SUBTITLE));
@@ -26,6 +27,7 @@ describe('buildHomeMarkdown', () => {
 
 	it('gives agents the setup line and the MCP address', () => {
 		assert.ok(markdown.includes(AGENT_SETUP_PROMPT));
+		assert.ok(AGENT_SETUP_PROMPT.includes(SKILL_URL));
 		assert.ok(markdown.includes(MCP_URL));
 	});
 
