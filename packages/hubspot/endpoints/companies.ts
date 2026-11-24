@@ -222,7 +222,7 @@ export const getRecentlyUpdated: HubSpotEndpoints['companiesGetRecentlyUpdated']
 
 export const searchByDomain: HubSpotEndpoints['companiesSearchByDomain'] =
 	async (ctx, input) => {
-		const { domain, properties } = input;
+		const { domain, properties, after } = input;
 		const endpoint = '/crm/v3/objects/companies/search';
 		const result = await makeHubSpotRequest<SearchCompanyByDomainResponse>(
 			endpoint,
@@ -238,6 +238,7 @@ export const searchByDomain: HubSpotEndpoints['companiesSearchByDomain'] =
 						},
 					],
 					properties,
+					after,
 				},
 			},
 		);

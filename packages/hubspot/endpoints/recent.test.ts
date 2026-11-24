@@ -5,7 +5,11 @@ import { HubSpotEndpointInputSchemas } from './types';
 
 jest.mock('corsair/core', () => ({ logEventFromContext: jest.fn() }));
 
-type Call = { method: string; path: string; body: any };
+type Call = {
+	method: string;
+	path: string;
+	body?: { filterGroups?: { filters: Record<string, string>[] }[] };
+};
 const calls: Call[] = [];
 const originalFetch = global.fetch;
 
@@ -26,8 +30,10 @@ afterEach(() => {
 	calls.length = 0;
 });
 
-// unknown: the endpoints read only ctx.key and ctx.db here.
-const ctx = { key: 'test-token', db: {} } as any;
+// the endpoints read only ctx.key and ctx.db here
+const ctx = { key: 'test-token', db: {} } as unknown as Parameters<
+	typeof Companies.searchByDomain
+>[0];
 
 const cases = [
 	['contacts', Contacts, 'lastmodifieddate'],
@@ -74,7 +80,7 @@ describe.each(cases)('hubspot %s recent', (object, mod, modified) => {
 
 	it('getRecentlyCreated filters since on createdate', async () => {
 		await mod.getRecentlyCreated(ctx, { since: '1738281600000' });
-		expect(calls[0]?.body.filterGroups[0].filters[0]).toEqual({
+		expect(calls[0]?.body?.filterGroups?.[0]?.filters[0]).toEqual({
 			propertyName: 'createdate',
 			operator: 'GTE',
 			value: '1738281600000',
@@ -132,5 +138,10 @@ describe('hubspot companies.searchByDomain', () => {
 				properties: ['name', 'domain'],
 			},
 		});
+	});
+
+	it('passes after so later matches can be fetched', async () => {
+		await Companies.searchByDomain(ctx, { domain: 'example.com', after: '10' });
+		expect(calls[0]?.body).toMatchObject({ after: '10' });
 	});
 });

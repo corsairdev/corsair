@@ -210,6 +210,10 @@ const CompaniesSearchByDomainInputSchema = z.object({
 		.array(z.string())
 		.optional()
 		.describe('Internal property names to return, not labels.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
 });
 
 const DealsGetInputSchema = z.object({
