@@ -1302,9 +1302,11 @@ describeIfKey('moco live', () => {
 	});
 
 	it('users.update / employments create + update / absenceRequests / presences.touch', async () => {
+		// The profile's own note is put back as it was.
+		const original = (await api().users.get({ id: need('me') })).info ?? '';
 		await api().users.update({ id: need('me'), info: `${NAME}` });
 		cleanup('user info', (c) =>
-			c.moco.api.users.update({ id: need('me'), info: '' }),
+			c.moco.api.users.update({ id: need('me'), info: original }),
 		);
 
 		const employment = await api().users.employments.create({
@@ -1344,7 +1346,14 @@ describeIfKey('moco live', () => {
 		});
 
 		// One touch clocks in (an open presence); a second touch in the same
-		// minute drops it again, so the open one is deleted instead.
+		// minute drops it again, so the open one is deleted instead. If the user
+		// is already clocked in, touch would clock them out: skip it then.
+		const all = await api().users.presences.list({});
+		const open = all.items.some((presence) => presence.to === null);
+		if (open) {
+			console.warn('users.presences.touch not run: the user is clocked in');
+			return;
+		}
 		const before = idsIn(
 			await api().users.presences.list({ from: TODAY, to: TODAY }),
 		);
