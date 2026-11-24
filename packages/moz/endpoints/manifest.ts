@@ -154,7 +154,7 @@ export const mozEndpointMetaMap = {
 	'keywords.metrics': {
 		riskLevel: 'read',
 		description:
-			'Retrieve the most recent difficulty, volume, organic CTR, priority, and/or search intent metrics for any keyword that exists in our database. Costs rows per value requested.',
+			'Retrieve the most recent difficulty, volume, organic CTR, priority, and/or search intent metrics for any keyword that exists in our database. Costs one row per returned metric value: 4, plus 1 for search intent, which is opt-in with options.include_intent until 2026-12-01 and returned by default from then.',
 	},
 	'keywords.metricsMultiple': {
 		riskLevel: 'read',
