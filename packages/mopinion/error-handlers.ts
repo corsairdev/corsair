@@ -1,45 +1,31 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { MopinionAPIError } from './client';
-
-function asMopinionError(error: Error): MopinionAPIError | undefined {
-	return error instanceof MopinionAPIError ? error : undefined;
-}
+import { ApiError } from 'corsair/http';
+import { mopinionErrorCode } from './client';
 
 function statusOf(error: Error): number | undefined {
-	return asMopinionError(error)?.status;
-}
-
-function errorCodeOf(error: Error): number | undefined {
-	return asMopinionError(error)?.errorCode;
+	return error instanceof ApiError ? error.status : undefined;
 }
 
 /**
  * Mopinion errors are RFC 7807 problem documents; the docs advise handling
  * on `error_code`/`type` rather than the HTTP status. Error code 18 is
- * invalid credentials (probed on unsigned requests).
+ * invalid credentials. Every data API route is a GET, so a 5xx can be
+ * retried.
  */
 export const errorHandlers = {
-	// Mopinion documents no rate limit; a gateway 429 is still worth a
-	// backoff, honouring Retry-After.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs: asMopinionError(error)?.retryAfter ?? undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		// Core's request() has already retried this 429 three times, honouring
+		// Retry-After, before it reaches a handler.
+		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 401: the signature did not verify (error_code 18 is the docs' invalid
-	// credentials example). 403: forbidden.
 	AUTH_ERROR: {
 		match: (error: Error) =>
 			statusOf(error) === 401 ||
 			statusOf(error) === 403 ||
-			errorCodeOf(error) === 18,
+			mopinionErrorCode(error) === 18,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 400 malformed parameters, 404 unknown resource, 406 unsupported Accept,
-	// 422 validation. The same request fails the same way.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			const status = statusOf(error);
@@ -53,22 +39,8 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// 5xx: the whole v3 data API is reads, so a replay is safe.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			asMopinionError(error)?.replayable === true &&
-			(statusOf(error) ?? 0) >= 500,
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
-	},
-	// A transport failure (reset, DNS, abort) never reached Mopinion, so a
-	// read can be replayed without a status to gate on.
-	TRANSPORT_ERROR: {
-		match: (error: Error) =>
-			asMopinionError(error)?.replayable === true &&
-			asMopinionError(error)?.status === undefined,
+		match: (error: Error) => (statusOf(error) ?? 0) >= 500,
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,

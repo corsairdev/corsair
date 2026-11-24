@@ -18,7 +18,7 @@ pnpm add @corsair-dev/mopinion
 | `datasets.fields` | `mopinion.api.datasets.fields` | `read` | Read the field definitions of a dataset |
 | `datasets.get` | `mopinion.api.datasets.get` | `read` | Read basic info on one feedback dataset |
 | `deployments.get` | `mopinion.api.deployments.get` | `read` | Read one deployment |
-| `deployments.list` | `mopinion.api.deployments.list` | `read` | List the deployments (feedback collection forms) |
+| `deployments.list` | `mopinion.api.deployments.list` | `read` | List the deployments (the containers that publish feedback forms on a website or app), one page at a time |
 | `reports.feedback` | `mopinion.api.reports.feedback` | `read` | List the feedback items behind a report, one page at a time, with Mopinion filter expressions for date, rating, NPS, CES, GCR and tags |
 | `reports.feedbackItem` | `mopinion.api.reports.feedbackItem` | `read` | Read one feedback item of a report |
 | `reports.fields` | `mopinion.api.reports.fields` | `read` | Read the field definitions of a report |

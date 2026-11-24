@@ -18,7 +18,6 @@ export const get: MopinionEndpoints['datasetsGet'] = async (ctx, input) =>
 		},
 		input,
 		({ datasetId }) => ({
-			replayable: true,
 			method: 'GET',
 			path: `/datasets/${segment(datasetId)}`,
 		}),
@@ -41,7 +40,6 @@ export const feedback: MopinionEndpoints['datasetsFeedback'] = async (
 		},
 		input,
 		({ datasetId, page, limit, sort, order, filters }) => ({
-			replayable: true,
 			method: 'GET',
 			path: `/datasets/${segment(datasetId)}/feedback`,
 			query: {
@@ -71,7 +69,6 @@ export const feedbackItem: MopinionEndpoints['datasetsFeedbackItem'] = async (
 		},
 		input,
 		({ datasetId, feedbackId }) => ({
-			replayable: true,
 			method: 'GET',
 			path: `/datasets/${segment(datasetId)}/feedback/${segment(feedbackId)}`,
 		}),
@@ -91,7 +88,6 @@ export const fields: MopinionEndpoints['datasetsFields'] = async (ctx, input) =>
 		},
 		input,
 		({ datasetId }) => ({
-			replayable: true,
 			method: 'GET',
 			path: `/datasets/${segment(datasetId)}/fields`,
 		}),

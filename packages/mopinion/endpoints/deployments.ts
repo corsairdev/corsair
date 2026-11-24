@@ -16,10 +16,10 @@ export const list: MopinionEndpoints['deploymentsList'] = async (ctx, input) =>
 			output: Outputs.deploymentsList,
 		},
 		input,
-		() => ({
-			replayable: true,
+		({ page, limit }) => ({
 			method: 'GET',
 			path: '/deployments',
+			query: { page, limit },
 		}),
 	);
 
@@ -34,7 +34,6 @@ export const get: MopinionEndpoints['deploymentsGet'] = async (ctx, input) =>
 		},
 		input,
 		({ deploymentId }) => ({
-			replayable: true,
 			method: 'GET',
 			path: `/deployments/${segment(deploymentId)}`,
 		}),

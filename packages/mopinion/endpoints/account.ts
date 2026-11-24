@@ -16,7 +16,6 @@ export const get: MopinionEndpoints['accountGet'] = async (ctx, input) =>
 		},
 		input,
 		() => ({
-			replayable: true,
 			method: 'GET',
 			path: '/account',
 		}),

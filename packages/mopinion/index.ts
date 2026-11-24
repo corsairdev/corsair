@@ -26,9 +26,9 @@ import { MopinionSchema } from './schema';
 
 export type MopinionPluginOptions = {
 	authType?: PickAuth<'api_key'>;
-	/** The public key identifying the API application. */
+	/** The public key identifying the API application (single-account setups). */
 	publicKey?: string;
-	/** The signature token used to sign each request. */
+	/** The signature token that signs each request (single-account setups). */
 	signatureToken?: string;
 	hooks?: InternalMopinionPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -169,7 +169,8 @@ const mopinionEndpointMeta = {
 	},
 	'deployments.list': {
 		riskLevel: 'read',
-		description: 'List the deployments (feedback collection forms)',
+		description:
+			'List the deployments (the containers that publish feedback forms on a website or app), one page at a time',
 	},
 	'deployments.get': {
 		riskLevel: 'read',
@@ -196,12 +197,13 @@ const mopinionEndpointMeta = {
 
 /**
  * Mopinion signs every request with an HMAC over the request path and body,
- * so the account stores the public key and the signature token. The private
- * key used to mint signature tokens via GET /token is not wrapped.
+ * keyed with the signature token. The account stores the signature token as
+ * its API key (the secret) and the public key as an account field. The
+ * private key used to mint signature tokens via GET /token is not wrapped.
  */
 export const mopinionAuthConfig = {
 	api_key: {
-		account: ['public_key', 'signature_token'] as const,
+		account: ['public_key'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -246,23 +248,33 @@ export function mopinion<const T extends MopinionPluginOptions>(
 
 			const publicKey = options.publicKey ?? (await ctx.keys.get_public_key());
 			const signatureToken =
-				options.signatureToken ?? (await ctx.keys.get_signature_token());
+				options.signatureToken ?? (await ctx.keys.get_api_key());
 			if (!publicKey || !signatureToken) {
 				throw new AuthMissingError('mopinion', ctx.authType ?? 'api_key');
 			}
 
-			// The client splits this composite back apart on the first colon;
-			// Mopinion public keys contain no colon.
+			// The client splits this pair back apart on the first colon
+			// (splitCredentials); Mopinion public keys contain no colon.
 			return `${publicKey}:${signatureToken}`;
 		},
 	} satisfies InternalMopinionPlugin;
 }
 
-export { MopinionAPIError } from './client';
+export {
+	MOPINION_API_VERSION,
+	mopinionAuthToken,
+	splitCredentials,
+} from './client';
 
 export type {
+	MopinionAccount,
+	MopinionDataset,
+	MopinionDeployment,
+	MopinionDeploymentList,
 	MopinionEndpointInputs,
 	MopinionEndpointOutputs,
+	MopinionFeedbackList,
+	MopinionFieldList,
 	MopinionMeta,
-	MopinionResponse,
+	MopinionReport,
 } from './endpoints/types';

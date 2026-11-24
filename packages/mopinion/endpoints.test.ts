@@ -1,6 +1,5 @@
 import { createHmac } from 'node:crypto';
 import { logEventFromContext } from 'corsair/core';
-import { makeMopinionRequest } from './client';
 import { Account, Datasets, Deployments, Reports } from './endpoints';
 import {
 	account,
@@ -9,7 +8,8 @@ import {
 	feedbackItem,
 	invalidCredentialsProblem,
 	meta,
-	validationProblem,
+	report,
+	serverProblem,
 } from './test-fixtures';
 
 jest.mock('corsair/core', () => ({
@@ -18,14 +18,8 @@ jest.mock('corsair/core', () => ({
 }));
 
 const mockLog = jest.mocked(logEventFromContext);
-const ctx = {
-	key: 'pub-1:sig-1',
-	options: { publicKey: 'pub-1', signatureToken: 'sig-1' },
-	keys: {
-		get_public_key: jest.fn().mockResolvedValue('pub-1'),
-		get_signature_token: jest.fn().mockResolvedValue('sig-1'),
-	},
-};
+// The keyBuilder resolves `<public key>:<signature token>`; the client reads only ctx.key.
+const ctx = { key: 'pub-1:sig-1' };
 
 // never parameters: every concrete endpoint is assignable to this because
 // parameters are contravariant. Each endpoint returns its own output type,
@@ -77,7 +71,7 @@ afterEach(() => {
 
 describe('account.get', () => {
 	it('GETs /account signed and passes the body through', async () => {
-		respond({ ...account, _meta: { code: 200 } });
+		respond(account);
 
 		const result = await invoke(Account.get, {});
 
@@ -96,8 +90,8 @@ describe('account.get', () => {
 			.update('/account|')
 			.digest('hex');
 		expect(token.split(':')[1]).toBe(expected);
-		expect(sent.headers.get('version')).toBe('3.0.0');
-		expect(result).toEqual({ ...account, _meta: { code: 200 } });
+		expect(sent.headers.get('version')).toBe('2.5.0');
+		expect(result).toEqual(account);
 	});
 
 	it('surfaces the RFC 7807 problem on a 401', async () => {
@@ -109,7 +103,11 @@ describe('account.get', () => {
 			(caught: unknown) => caught,
 		);
 
-		expect(error).toMatchObject({ status: 401, errorCode: 18 });
+		expect(error).toMatchObject({
+			name: 'ApiError',
+			status: 401,
+			message: 'Mopinion 401 18: The credentials you provided are not valid',
+		});
 	});
 });
 
@@ -142,7 +140,7 @@ describe('datasets', () => {
 	});
 
 	it('reads one feedback item and the fields', async () => {
-		respond({ ...feedbackItem, _meta: { code: 200 } });
+		respond({ data: [feedbackItem], _meta: { code: 200 } });
 
 		const result = await invoke(Datasets.feedbackItem, {
 			datasetId: '123456',
@@ -150,7 +148,7 @@ describe('datasets', () => {
 		});
 
 		expect(lastRequest().path).toBe('/datasets/123456/feedback/987654');
-		expect(result).toEqual({ ...feedbackItem, _meta: { code: 200 } });
+		expect(result).toEqual({ data: [feedbackItem], _meta: { code: 200 } });
 
 		respond({ data: [], _meta: { code: 200 } });
 		await invoke(Datasets.fields, { datasetId: '123456' });
@@ -198,7 +196,7 @@ describe('reports', () => {
 	});
 
 	it('reads one report feedback item and the fields', async () => {
-		respond({ ...feedbackItem, _meta: { code: 200 } });
+		respond({ data: [feedbackItem], _meta: { code: 200 } });
 
 		const result = await invoke(Reports.feedbackItem, {
 			reportId: '42',
@@ -206,7 +204,7 @@ describe('reports', () => {
 		});
 
 		expect(lastRequest().path).toBe('/reports/42/feedback/987654');
-		expect(result).toEqual({ ...feedbackItem, _meta: { code: 200 } });
+		expect(result).toEqual({ data: [feedbackItem], _meta: { code: 200 } });
 
 		respond({ data: [], _meta: { code: 200 } });
 		await invoke(Reports.fields, { reportId: '42' });
@@ -214,16 +212,12 @@ describe('reports', () => {
 	});
 
 	it('reads basic info on a report', async () => {
-		respond({ id: 42, name: 'Monthly report', _meta: { code: 200 } });
+		respond({ ...report, _meta: { code: 200 } });
 
-		const result = await invoke(Reports.get, { reportId: '42' });
+		const result = await invoke(Reports.get, { reportId: 1 });
 
-		expect(lastRequest().path).toBe('/reports/42');
-		expect(result).toEqual({
-			id: 42,
-			name: 'Monthly report',
-			_meta: { code: 200 },
-		});
+		expect(lastRequest().path).toBe('/reports/1');
+		expect(result).toEqual({ ...report, _meta: { code: 200 } });
 	});
 });
 
@@ -244,49 +238,34 @@ describe('deployments', () => {
 		expect(lastRequest().path).toBe('/deployments/441');
 	});
 
-	it('surfaces 422 details on the error', async () => {
-		respond(validationProblem, 422, 'application/problem+json');
+	it('passes paging to the deployments list and surfaces the live 500', async () => {
+		respond(serverProblem, 500, 'application/problem+json');
 
-		const error = await invoke(Deployments.list, {}).catch(
+		const error = await invoke(Deployments.list, { page: 2, limit: 5 }).catch(
 			(caught: unknown) => caught,
 		);
 
-		expect(error).toMatchObject({ status: 422, errorCode: 30 });
-		expect((error as { details?: unknown }).details).toBeDefined();
+		expect(lastRequest().query).toEqual({ page: '2', limit: '5' });
+		expect(error).toMatchObject({
+			status: 500,
+			message: 'Mopinion 500 2: Server error',
+		});
 		expect(mockLog).not.toHaveBeenCalled();
 	});
 });
 
-describe('debug', () => {
-	it('debug 401', async () => {
-		respond(invalidCredentialsProblem, 401, 'application/problem+json');
-		let caught: unknown;
-		try {
-			await makeMopinionRequest(ctx as never, {
-				method: 'GET',
-				path: '/account',
-			});
-		} catch (error) {
-			caught = error;
-		}
-		const e = caught as {
-			name: string;
-			message: string;
-			body?: unknown;
-			cause?: { name?: string; body?: unknown };
-		};
-		// eslint-disable-next-line no-console
-		console.log('NAME:', e.name);
-		// eslint-disable-next-line no-console
-		console.log('MSG:', e.message.slice(0, 70));
-		// eslint-disable-next-line no-console
-		console.log(
-			'CAUSE:',
-			e.cause?.name ?? 'none',
-			'CAUSEBODY:',
-			JSON.stringify(e.cause?.body ?? 'MISSING').slice(0, 90),
-		);
-		// eslint-disable-next-line no-console
-		console.log('BODY:', JSON.stringify(e.body ?? 'MISSING').slice(0, 90));
+describe('ids', () => {
+	it('takes numeric ids', async () => {
+		respond({ data: [], _meta: meta });
+		await invoke(Datasets.feedback, { datasetId: 123, limit: 2 });
+		expect(lastRequest().path).toBe('/datasets/123/feedback');
 	});
+
+	it.each(['..', '.', '1/../account', ''])(
+		'refuses %p before signing anything',
+		async (id) => {
+			await expect(invoke(Datasets.get, { datasetId: id })).rejects.toThrow();
+			expect(fetchMock).not.toHaveBeenCalled();
+		},
+	);
 });

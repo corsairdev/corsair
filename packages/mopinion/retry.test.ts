@@ -1,11 +1,15 @@
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { mopinion } from './index';
-import { account, invalidCredentialsProblem } from './test-fixtures';
+import {
+	account,
+	invalidCredentialsProblem,
+	serverProblem,
+} from './test-fixtures';
 
 /**
- * The endpoints call the HTTP client, which is configured with `maxRetries: 0`;
- * only the bound client retries, using this plugin's error handlers. This file
+ * Core's request() retries a 429 itself; the bound client then applies this
+ * plugin's error handlers (a 5xx read is retried, a 401 is not). This file
  * goes through `createCorsair` so that retry layer actually runs. It is not
  * named `integration.test.ts`, because CI skips that name.
  */
@@ -52,11 +56,11 @@ describe('retries through the bound client', () => {
 		const { corsair, testDb } = await createClient();
 		try {
 			respond({ title: 'throttled' }, 429, { 'Retry-After': '1' });
-			respond({ data: [account], _meta: { code: 200 } });
+			respond(account);
 
 			const result = await corsair.mopinion.api.account.get({});
 
-			expect(result.data).toEqual([account]);
+			expect(result.name).toBe(account.name);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();
@@ -73,7 +77,7 @@ describe('retries through the bound client', () => {
 			await expect(
 				corsair.mopinion.api.deployments.list({}),
 			).rejects.toMatchObject({ status: 429 });
-			// One attempt plus the three retries RATE_LIMIT_ERROR allows.
+			// One attempt plus core's three 429 retries; the handler adds none.
 			expect(fetchMock).toHaveBeenCalledTimes(4);
 		} finally {
 			testDb.cleanup();
@@ -89,7 +93,7 @@ describe('retries through the bound client', () => {
 
 			await expect(corsair.mopinion.api.account.get({})).rejects.toMatchObject({
 				status: 401,
-				errorCode: 18,
+				message: 'Mopinion 401 18: The credentials you provided are not valid',
 			});
 			expect(fetchMock).toHaveBeenCalledTimes(1);
 		} finally {
@@ -97,10 +101,12 @@ describe('retries through the bound client', () => {
 		}
 	});
 
-	it('replays a read after a transport failure and succeeds', async () => {
+	it('retries a read after a 5xx and succeeds', async () => {
 		const { corsair, testDb } = await createClient();
 		try {
-			fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+			respond(serverProblem, 500, {
+				'Content-Type': 'application/problem+json',
+			});
 			respond({ data: [], _meta: { code: 200 } });
 
 			const result = await corsair.mopinion.api.deployments.list({});

@@ -29,19 +29,130 @@ export const MetaSchema = z
 
 export type MopinionMeta = z.infer<typeof MetaSchema>;
 
-/**
- * Every response body passes through loose; only the documented `_meta`
- * block is typed.
- */
-const ResponseSchema = z
+// Response shapes from the 2.5 API (live calls on a trial account, 11-24,
+// and the 2.x spec at developer.mopinion.com/specs/2_latest.json). Single
+// resources come back as the resource's fields next to `_meta`; lists (fields,
+// feedback, deployments) and a feedback item come back as `{ data: [...],
+// _meta }`. Every field is nullish and unknown fields pass through.
+
+const ResponseMeta = { _meta: MetaSchema.nullish() };
+
+const DatasetSchema = z
 	.object({
-		_meta: MetaSchema.nullish(),
+		id: z.number().nullish(),
+		name: z.string().nullish(),
+		report_id: z.number().nullish(),
+		description: z.string().nullish(),
+		data_source: z.string().nullish(),
 	})
 	.loose();
 
-export type MopinionResponse = z.infer<typeof ResponseSchema>;
+const ReportSchema = z
+	.object({
+		id: z.number().nullish(),
+		name: z.string().nullish(),
+		description: z.string().nullish(),
+		language: z.string().nullish(),
+		created: z.string().nullish(),
+		dataSets: z.array(DatasetSchema).nullish(),
+	})
+	.loose();
+
+const AccountSchema = z
+	.object({
+		name: z.string().nullish(),
+		package: z.string().nullish(),
+		enddate: z.string().nullish(),
+		number_users: z.number().nullish(),
+		number_charts: z.number().nullish(),
+		number_forms: z.number().nullish(),
+		number_reports: z.number().nullish(),
+		reports: z.array(ReportSchema).nullish(),
+		...ResponseMeta,
+	})
+	.loose();
+
+const FieldSchema = z
+	.object({
+		key: z.string().nullish(),
+		label: z.string().nullish(),
+		short_label: z.string().nullish(),
+		type: z.string().nullish(),
+		report_id: z.number().nullish(),
+		dataset_id: z.number().nullish(),
+	})
+	.loose();
+
+const FeedbackValueSchema = z
+	.object({
+		key: z.string().nullish(),
+		label: z.string().nullish(),
+		// unknown: an answer is a string for text and score fields, but a
+		// field type can carry a number, a list or an object.
+		value: z.unknown(),
+	})
+	.loose();
+
+const FeedbackSchema = z
+	.object({
+		id: z.number().nullish(),
+		created: z.string().nullish(),
+		report_id: z.number().nullish(),
+		dataset_id: z.number().nullish(),
+		fields: z.array(FeedbackValueSchema).nullish(),
+		tags: z.array(z.string()).nullish(),
+	})
+	.loose();
+
+const DeploymentSchema = z
+	.object({
+		id: z.string().nullish(),
+		key: z.string().nullish(),
+		name: z.string().nullish(),
+		domain: z.string().nullish(),
+		org_id: z.number().nullish(),
+		datetime: z.string().nullish(),
+		published: z.boolean().nullish(),
+		revision: z.number().nullish(),
+		type: z.string().nullish(),
+		// unknown: targeting rules are `{ id, if: [...], then: [...] }` trees whose
+		// conditions Mopinion defines per trigger type.
+		rules: z.array(z.unknown()).nullish(),
+	})
+	.loose();
+
+function listOf<T extends z.ZodType>(item: T) {
+	return z.object({ data: z.array(item).nullish(), ...ResponseMeta }).loose();
+}
+
+const DatasetResponseSchema = DatasetSchema.extend(ResponseMeta);
+const ReportResponseSchema = ReportSchema.extend(ResponseMeta);
+const DeploymentResponseSchema = DeploymentSchema.extend(ResponseMeta);
+const FieldListSchema = listOf(FieldSchema);
+const FeedbackListSchema = listOf(FeedbackSchema);
+const DeploymentListSchema = listOf(DeploymentSchema);
+
+export type MopinionAccount = z.infer<typeof AccountSchema>;
+export type MopinionDataset = z.infer<typeof DatasetResponseSchema>;
+export type MopinionReport = z.infer<typeof ReportResponseSchema>;
+export type MopinionDeployment = z.infer<typeof DeploymentResponseSchema>;
+export type MopinionFieldList = z.infer<typeof FieldListSchema>;
+export type MopinionFeedbackList = z.infer<typeof FeedbackListSchema>;
+export type MopinionDeploymentList = z.infer<typeof DeploymentListSchema>;
 
 // ── list query parameters ─────────────────────────────────────────────────
+
+/**
+ * A resource id: a number (datasets, reports, feedback) or a deployment key.
+ * Letters, digits, `_` and `-` only, so `.`, `..` or a slash can't turn the
+ * signed path into another route.
+ */
+const IdSchema = z.union([
+	z.number().int().nonnegative(),
+	z
+		.string()
+		.regex(/^[A-Za-z0-9_-]+$/, 'Must be an id: letters, digits, _ or -'),
+]);
 
 const ListQuerySchema = z.object({
 	page: z.number().int().positive().optional().describe('Defaults to 1.'),
@@ -83,74 +194,83 @@ export function mopinionFilterQuery(
 
 export type MopinionEndpointInputs = {
 	accountGet: Record<string, never>;
-	datasetsGet: { datasetId: string };
-	datasetsFields: { datasetId: string };
+	datasetsGet: { datasetId: string | number };
+	datasetsFields: { datasetId: string | number };
 	datasetsFeedback: z.input<typeof ListQuerySchema> & {
-		datasetId: string;
+		datasetId: string | number;
 		filters?: Record<string, string | number>;
 	};
-	datasetsFeedbackItem: { datasetId: string; feedbackId: string };
-	reportsGet: { reportId: string };
-	reportsFields: { reportId: string };
+	datasetsFeedbackItem: {
+		datasetId: string | number;
+		feedbackId: string | number;
+	};
+	reportsGet: { reportId: string | number };
+	reportsFields: { reportId: string | number };
 	reportsFeedback: z.input<typeof ListQuerySchema> & {
-		reportId: string;
+		reportId: string | number;
 		filters?: Record<string, string | number>;
 	};
-	reportsFeedbackItem: { reportId: string; feedbackId: string };
-	deploymentsList: Record<string, never>;
-	deploymentsGet: { deploymentId: string };
+	reportsFeedbackItem: {
+		reportId: string | number;
+		feedbackId: string | number;
+	};
+	deploymentsList: { page?: number; limit?: number };
+	deploymentsGet: { deploymentId: string | number };
 };
 
 export type MopinionEndpointOutputs = {
-	accountGet: MopinionResponse;
-	datasetsGet: MopinionResponse;
-	datasetsFields: MopinionResponse;
-	datasetsFeedback: MopinionResponse;
-	datasetsFeedbackItem: MopinionResponse;
-	reportsGet: MopinionResponse;
-	reportsFields: MopinionResponse;
-	reportsFeedback: MopinionResponse;
-	reportsFeedbackItem: MopinionResponse;
-	deploymentsList: MopinionResponse;
-	deploymentsGet: MopinionResponse;
+	accountGet: MopinionAccount;
+	datasetsGet: MopinionDataset;
+	datasetsFields: MopinionFieldList;
+	datasetsFeedback: MopinionFeedbackList;
+	datasetsFeedbackItem: MopinionFeedbackList;
+	reportsGet: MopinionReport;
+	reportsFields: MopinionFieldList;
+	reportsFeedback: MopinionFeedbackList;
+	reportsFeedbackItem: MopinionFeedbackList;
+	deploymentsList: MopinionDeploymentList;
+	deploymentsGet: MopinionDeployment;
 };
 
 export const MopinionEndpointInputSchemas = {
-	accountGet: z.object({}).loose(),
-	datasetsGet: z.object({ datasetId: z.string().min(1) }),
-	datasetsFields: z.object({ datasetId: z.string().min(1) }),
+	accountGet: z.object({}),
+	datasetsGet: z.object({ datasetId: IdSchema }),
+	datasetsFields: z.object({ datasetId: IdSchema }),
 	datasetsFeedback: ListQuerySchema.extend({
-		datasetId: z.string().min(1),
+		datasetId: IdSchema,
 		filters: FiltersSchema.optional(),
 	}),
 	datasetsFeedbackItem: z.object({
-		datasetId: z.string().min(1),
-		feedbackId: z.string().min(1),
+		datasetId: IdSchema,
+		feedbackId: IdSchema,
 	}),
-	reportsGet: z.object({ reportId: z.string().min(1) }),
-	reportsFields: z.object({ reportId: z.string().min(1) }),
+	reportsGet: z.object({ reportId: IdSchema }),
+	reportsFields: z.object({ reportId: IdSchema }),
 	reportsFeedback: ListQuerySchema.extend({
-		reportId: z.string().min(1),
+		reportId: IdSchema,
 		filters: FiltersSchema.optional(),
 	}),
 	reportsFeedbackItem: z.object({
-		reportId: z.string().min(1),
-		feedbackId: z.string().min(1),
+		reportId: IdSchema,
+		feedbackId: IdSchema,
 	}),
-	deploymentsList: z.object({}).loose(),
-	deploymentsGet: z.object({ deploymentId: z.string().min(1) }),
+	deploymentsList: z.object({
+		page: ListQuerySchema.shape.page,
+		limit: ListQuerySchema.shape.limit,
+	}),
+	deploymentsGet: z.object({ deploymentId: IdSchema }),
 } as const;
 
 export const MopinionEndpointOutputSchemas = {
-	accountGet: ResponseSchema,
-	datasetsGet: ResponseSchema,
-	datasetsFields: ResponseSchema,
-	datasetsFeedback: ResponseSchema,
-	datasetsFeedbackItem: ResponseSchema,
-	reportsGet: ResponseSchema,
-	reportsFields: ResponseSchema,
-	reportsFeedback: ResponseSchema,
-	reportsFeedbackItem: ResponseSchema,
-	deploymentsList: ResponseSchema,
-	deploymentsGet: ResponseSchema,
+	accountGet: AccountSchema,
+	datasetsGet: DatasetResponseSchema,
+	datasetsFields: FieldListSchema,
+	datasetsFeedback: FeedbackListSchema,
+	datasetsFeedbackItem: FeedbackListSchema,
+	reportsGet: ReportResponseSchema,
+	reportsFields: FieldListSchema,
+	reportsFeedback: FeedbackListSchema,
+	reportsFeedbackItem: FeedbackListSchema,
+	deploymentsList: DeploymentListSchema,
+	deploymentsGet: DeploymentResponseSchema,
 } as const;

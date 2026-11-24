@@ -18,7 +18,6 @@ export const get: MopinionEndpoints['reportsGet'] = async (ctx, input) =>
 		},
 		input,
 		({ reportId }) => ({
-			replayable: true,
 			method: 'GET',
 			path: `/reports/${segment(reportId)}`,
 		}),
@@ -41,7 +40,6 @@ export const feedback: MopinionEndpoints['reportsFeedback'] = async (
 		},
 		input,
 		({ reportId, page, limit, sort, order, filters }) => ({
-			replayable: true,
 			method: 'GET',
 			path: `/reports/${segment(reportId)}/feedback`,
 			query: {
@@ -71,7 +69,6 @@ export const feedbackItem: MopinionEndpoints['reportsFeedbackItem'] = async (
 		},
 		input,
 		({ reportId, feedbackId }) => ({
-			replayable: true,
 			method: 'GET',
 			path: `/reports/${segment(reportId)}/feedback/${segment(feedbackId)}`,
 		}),
@@ -91,7 +88,6 @@ export const fields: MopinionEndpoints['reportsFields'] = async (ctx, input) =>
 		},
 		input,
 		({ reportId }) => ({
-			replayable: true,
 			method: 'GET',
 			path: `/reports/${segment(reportId)}/fields`,
 		}),

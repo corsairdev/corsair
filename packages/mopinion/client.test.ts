@@ -1,27 +1,16 @@
+import { ApiError } from 'corsair/http';
 import {
-	describeMopinionError,
-	MopinionAPIError,
+	MOPINION_API_VERSION,
 	makeMopinionRequest,
 	mopinionAuthToken,
-	resolveSigningCredentials,
+	mopinionErrorCode,
+	splitCredentials,
 } from './client';
-import { invalidCredentialsProblem, validationProblem } from './test-fixtures';
-
-const callContext = (
-	overrides: Partial<Parameters<typeof makeMopinionRequest>[0]> = {},
-) => ({
-	key: 'pk:st',
-	options: { publicKey: 'pk', signatureToken: 'st' },
-	keys: {
-		get_public_key: jest.fn().mockResolvedValue('stored-public'),
-		get_signature_token: jest.fn().mockResolvedValue('stored-signature'),
-	},
-	...overrides,
-});
+import { invalidCredentialsProblem, serverProblem } from './test-fixtures';
 
 let fetchMock: jest.SpyInstance;
 
-// unknown: response bodies are arbitrary JSON.
+// unknown: response bodies are arbitrary JSON or text.
 function respond(
 	body: unknown,
 	status = 200,
@@ -33,6 +22,11 @@ function respond(
 	);
 }
 
+function lastRequest() {
+	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
+	return { url: new URL(url), headers: new Headers(init.headers) };
+}
+
 beforeEach(() => {
 	fetchMock = jest.spyOn(globalThis, 'fetch');
 });
@@ -42,7 +36,7 @@ afterEach(() => {
 });
 
 describe('mopinionAuthToken', () => {
-	// The worked example from https://developer.mopinion.com (Authentication):
+	// The worked example from https://developer.mopinion.com/api/ (Authentication):
 	// public key 123abc, signature token $1gn47ur3T0k3n, POST /reports with
 	// that exact JSON body.
 	it('reproduces the docs worked example byte for byte', () => {
@@ -64,159 +58,82 @@ describe('mopinionAuthToken', () => {
 	});
 });
 
-describe('resolveSigningCredentials', () => {
-	it('prefers the inline options without touching the stored fields', async () => {
-		const ctx = callContext({
-			key: '',
-			options: {
-				publicKey: 'inline-public',
-				signatureToken: 'inline-signature',
-			},
-		});
-		const resolved = await resolveSigningCredentials(ctx);
-		expect(resolved).toEqual({
-			publicKey: 'inline-public',
-			signatureToken: 'inline-signature',
-		});
-		expect(ctx.keys.get_public_key).not.toHaveBeenCalled();
-		expect(ctx.keys.get_signature_token).not.toHaveBeenCalled();
-	});
-
-	it('reads the stored account fields when the options are empty', async () => {
-		const ctx = callContext({ options: {} });
-		const resolved = await resolveSigningCredentials(ctx);
-		expect(resolved).toEqual({
-			publicKey: 'stored-public',
-			signatureToken: 'stored-signature',
+describe('splitCredentials', () => {
+	it('splits on the first colon so a colon in the token survives', () => {
+		expect(splitCredentials('pub:tok:en')).toEqual({
+			publicKey: 'pub',
+			signatureToken: 'tok:en',
 		});
 	});
 
-	it('throws when a credential is missing', async () => {
-		const ctx = callContext({
-			key: '',
-			options: { publicKey: 'inline-public' },
-			keys: {
-				get_public_key: jest.fn().mockResolvedValue('stored-public'),
-				get_signature_token: jest.fn().mockResolvedValue(null),
-			},
-		});
-		await expect(resolveSigningCredentials(ctx)).rejects.toThrow(
-			'public_key and signature_token are both required',
-		);
-	});
+	it.each(['', 'nocolon', ':token', 'pub:'])(
+		'treats %p as missing credentials',
+		(key) => {
+			expect(() => splitCredentials(key)).toThrow(/mopinion/i);
+		},
+	);
 });
 
 describe('makeMopinionRequest', () => {
-	it('sends the signed token and the version header', async () => {
-		respond({ _meta: { code: 200 } });
-
-		await makeMopinionRequest(callContext({ key: 'pk:st' }), {
-			method: 'GET',
-			path: '/account',
-			query: { page: 2 },
-			replayable: true,
-		});
-
-		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
-		expect(url).toBe('https://api.mopinion.com/account?page=2');
-		const headers = new Headers(init.headers);
-		// The signature covers the path without the query.
+	it('signs the path without the query, pins 2.5 and keeps the query', async () => {
+		respond({ data: [], _meta: { code: 200 } });
+		await makeMopinionRequest(
+			{ key: 'pub-1:sig-1' },
+			{ method: 'GET', path: '/reports/7/feedback', query: { limit: 5 } },
+		);
+		const { url, headers } = lastRequest();
+		expect(url.origin).toBe('https://api.mopinion.com');
+		expect(url.pathname).toBe('/reports/7/feedback');
+		expect(url.searchParams.get('limit')).toBe('5');
+		expect(headers.get('version')).toBe(MOPINION_API_VERSION);
+		expect(MOPINION_API_VERSION).toBe('2.5.0');
 		expect(headers.get('x-auth-token')).toBe(
-			mopinionAuthToken('pk', 'st', '/account', ''),
-		);
-		expect(headers.get('version')).toBe('3.0.0');
-	});
-
-	it('signs a POST body exactly as serialized', async () => {
-		respond({ _meta: { code: 201 } });
-
-		await makeMopinionRequest(callContext({ key: 'pk:st' }), {
-			method: 'POST',
-			path: '/reports',
-			body: { name: 'My new report', language: 'en' },
-		});
-
-		const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
-		expect(init.body).toBe('{"name":"My new report","language":"en"}');
-		expect(new Headers(init.headers).get('x-auth-token')).toBe(
-			mopinionAuthToken(
-				'pk',
-				'st',
-				'/reports',
-				'{"name":"My new report","language":"en"}',
-			),
+			mopinionAuthToken('pub-1', 'sig-1', '/reports/7/feedback', ''),
 		);
 	});
 
-	it('wraps an RFC 7807 401 with its error_code and type', async () => {
+	it('throws a core ApiError with the problem title and no request headers', async () => {
 		respond(invalidCredentialsProblem, 401, 'application/problem+json');
-
-		const error = await makeMopinionRequest(callContext(), {
-			method: 'GET',
-			path: '/account',
-			replayable: true,
-		}).catch((caught: unknown) => caught);
-
-		expect(error).toBeInstanceOf(MopinionAPIError);
-		expect(error).toMatchObject({
-			status: 401,
-			errorCode: 18,
-			replayable: true,
-		});
-		expect((error as MopinionAPIError).message).toContain(
-			'The credentials you provided are not valid',
+		const error = (await makeMopinionRequest(
+			{ key: 'pub-1:sig-1' },
+			{ method: 'GET', path: '/account', query: { 'filter[tags]': 'vip' } },
+		).catch((e: unknown) => e)) as ApiError;
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(401);
+		expect(error.message).toBe(
+			'Mopinion 401 18: The credentials you provided are not valid',
 		);
+		expect(mopinionErrorCode(error)).toBe(18);
+		expect(error.request.headers).toBeUndefined();
+		expect(JSON.stringify(error.request)).not.toContain('vip');
+		expect(error.url).toBe('https://api.mopinion.com/account?[REDACTED]');
 	});
 
-	it('carries 422 details on the error', async () => {
-		respond(validationProblem, 422, 'application/problem+json');
-
-		const error = await makeMopinionRequest(callContext(), {
-			method: 'GET',
-			path: '/reports/1/feedback',
-		}).catch((caught: unknown) => caught);
-
-		expect(error).toMatchObject({ status: 422, errorCode: 30 });
-		expect((error as MopinionAPIError).details).toBeDefined();
+	it('keeps the problem fields but drops the details text on a 500', async () => {
+		respond(serverProblem, 500, 'application/problem+json');
+		const error = (await makeMopinionRequest(
+			{ key: 'pub-1:sig-1' },
+			{ method: 'GET', path: '/deployments' },
+		).catch((e: unknown) => e)) as ApiError;
+		expect(error.status).toBe(500);
+		expect(error.message).toBe('Mopinion 500 2: Server error');
+		expect(error.body).toEqual({
+			status: 500,
+			error_code: 2,
+			title: 'Server error',
+			type: serverProblem.type,
+		});
 	});
 
-	it('never prints a credential in the error message or JSON', async () => {
-		respond(invalidCredentialsProblem, 401, 'application/problem+json');
-
-		const error = await makeMopinionRequest(
-			callContext({ key: 'topsecret:signature' }),
+	it('survives a gateway error page that is not JSON', async () => {
+		respond('<html>Bad gateway</html>', 502, 'text/html');
+		const error = (await makeMopinionRequest(
+			{ key: 'pub-1:sig-1' },
 			{ method: 'GET', path: '/account' },
-		).catch((caught: unknown) => caught);
-
-		const printed = `${(error as Error).message} ${JSON.stringify(error)}`;
-		expect(printed).not.toContain('topsecret');
-		expect(printed).not.toContain('signature');
-	});
-
-	it('wraps a transport failure with the replay flag', async () => {
-		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
-
-		const error = await makeMopinionRequest(callContext(), {
-			method: 'GET',
-			path: '/deployments',
-			replayable: true,
-		}).catch((caught: unknown) => caught);
-
-		expect(error).toBeInstanceOf(MopinionAPIError);
-		expect(error).toMatchObject({ replayable: true, status: undefined });
-	});
-});
-
-describe('describeMopinionError', () => {
-	it('uses the RFC 7807 title with the status and code', () => {
-		expect(
-			describeMopinionError(401, invalidCredentialsProblem, 'fallback'),
-		).toBe('Mopinion 401 18: The credentials you provided are not valid');
-	});
-
-	it('falls back when nothing is readable', () => {
-		expect(describeMopinionError(500, { unexpected: true }, 'boom')).toBe(
-			'Mopinion 500: boom',
-		);
+		).catch((e: unknown) => e)) as ApiError;
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(502);
+		expect(error.message).toMatch(/^Mopinion 502: /);
+		expect(error.body).toEqual({});
 	});
 });

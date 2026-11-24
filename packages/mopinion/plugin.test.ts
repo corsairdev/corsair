@@ -12,7 +12,8 @@ function keyContext(creds: {
 		tenantId: 'default',
 		keys: {
 			get_public_key: jest.fn().mockResolvedValue(creds.publicKey),
-			get_signature_token: jest.fn().mockResolvedValue(creds.signatureToken),
+			// The signature token is the stored API key.
+			get_api_key: jest.fn().mockResolvedValue(creds.signatureToken),
 		},
 	};
 }
@@ -56,13 +57,10 @@ const riskLevels: Record<string, string> = {
 describe('mopinion plugin definition', () => {
 	const plugin = mopinion();
 
-	it('registers as mopinion with api_key auth, the credential account fields and no webhooks', () => {
+	it('registers as mopinion with the signature token as API key, the public key as account field and no webhooks', () => {
 		expect(plugin.id).toBe('mopinion');
 		expect(plugin.options?.authType).toBe('api_key');
-		expect(mopinionAuthConfig.api_key?.account).toEqual([
-			'public_key',
-			'signature_token',
-		]);
+		expect(mopinionAuthConfig.api_key?.account).toEqual(['public_key']);
 		expect(plugin.webhooks).toEqual({});
 		expect(
 			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
