@@ -1,0 +1,1175 @@
+{
+  "id": "mocean",
+  "displayName": "Mocean",
+  "description": "Messaging with Mocean - SMS and delivery status, verify codes over SMS and Telegram, voice calls, WhatsApp messages and templates, number lookup, and account balance and pricing.",
+  "npmPackageName": "@corsair-dev/mocean",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 20,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "mocean.api.account.balance",
+      "shortPath": "account.balance",
+      "description": "Read the account credit balance",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "value",
+            "optional": false,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.account.pricing",
+      "shortPath": "account.pricing",
+      "description": "List per-destination prices for SMS, number lookup or verify, optionally for one MCC/MNC pair",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mocean_mcc",
+            "optional": true,
+            "type": "string",
+            "description": "Only pricing for this Mobile Country Code; needs mocean_mnc."
+          },
+          {
+            "key": "mocean_mnc",
+            "optional": true,
+            "type": "string",
+            "description": "One Mobile Network Code; sent together with mocean_mcc."
+          },
+          {
+            "key": "mocean_type",
+            "optional": true,
+            "type": "sms | number-lookup | verify",
+            "description": "Defaults to 'sms'."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "destinations",
+            "optional": false,
+            "type": "{ country?: string | null, operator?: string | null, mcc?: string | null, mnc?: string | null, price?: number | string | null, currency?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.lookup.request",
+      "shortPath": "lookup.request",
+      "description": "Look up a number's original and current carrier and porting status, paid from prepaid credit; synchronous without a callback URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mocean_to",
+            "optional": false,
+            "type": "string",
+            "description": "The phone number to look up, with country code."
+          },
+          {
+            "key": "mocean_nl_url",
+            "optional": true,
+            "type": "string",
+            "description": "Callback URL for the async result. Omit it to get the full result synchronously."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "msgid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "current_carrier",
+            "optional": true,
+            "type": "{ country?: string | null, name?: string | null, network_code?: string | number | null, mcc?: string | null, mnc?: string | null } | null"
+          },
+          {
+            "key": "original_carrier",
+            "optional": true,
+            "type": "{ country?: string | null, name?: string | null, network_code?: string | number | null, mcc?: string | null, mnc?: string | null } | null"
+          },
+          {
+            "key": "ported",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.sms.reportConversion",
+      "shortPath": "sms.reportConversion",
+      "description": "Tell Mocean whether a sent SMS reached the user (conversion tracking for OTP routes)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mocean_msgid",
+            "optional": false,
+            "type": "string",
+            "description": "The msgid from the send response."
+          },
+          {
+            "key": "mocean_delivered",
+            "optional": false,
+            "type": "boolean",
+            "description": "true when the user received the message (for example, used the OTP)."
+          },
+          {
+            "key": "mocean_timestamp",
+            "optional": true,
+            "type": "string",
+            "description": "When it happened; defaults to the submission time."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "err_msg",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.sms.send",
+      "shortPath": "sms.send",
+      "description": "Send an SMS to up to 500 receivers, charged per destination; the response has a status and msgid per receiver",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mocean_from",
+            "optional": false,
+            "type": "string",
+            "description": "The Sender ID shown on the recipient handset."
+          },
+          {
+            "key": "mocean_to",
+            "optional": false,
+            "type": "string",
+            "description": "Receiver phone numbers with country code, separated by commas or spaces, up to 500."
+          },
+          {
+            "key": "mocean_text",
+            "optional": false,
+            "type": "string",
+            "description": "The message content; every receiver gets the same text."
+          },
+          {
+            "key": "mocean_udh",
+            "optional": true,
+            "type": "string",
+            "description": "User Data Header, e.g. 0605040B8423F0."
+          },
+          {
+            "key": "mocean_coding",
+            "optional": true,
+            "type": "number",
+            "description": "DCS coding scheme: 1 for 7-bit, 2 for 8-bit, 3 for UCS2."
+          },
+          {
+            "key": "mocean_dlr_mask",
+            "optional": true,
+            "type": "number",
+            "description": "Set to 1 to request delivery reports. Defaults to 0."
+          },
+          {
+            "key": "mocean_dlr_url",
+            "optional": true,
+            "type": "string",
+            "description": "Required when mocean_dlr_mask is 1: the delivery report callback URL."
+          },
+          {
+            "key": "mocean_schedule",
+            "optional": true,
+            "type": "string",
+            "description": "Send later, in Malaysia time (GMT+8). A wrong format is rejected by the gateway."
+          },
+          {
+            "key": "mocean_mclass",
+            "optional": true,
+            "type": "number",
+            "description": "Set to 1 with mocean_alt_dcs to send a Flash SMS."
+          },
+          {
+            "key": "mocean_alt_dcs",
+            "optional": true,
+            "type": "number",
+            "description": "Set to 1 with mocean_mclass to send a Flash SMS."
+          },
+          {
+            "key": "mocean_charset",
+            "optional": true,
+            "type": "ISO-8859-1 | ISO-8859-7 | UTF-8 | Windows-1252",
+            "description": "The character set used in mocean_text."
+          },
+          {
+            "key": "mocean_validity",
+            "optional": true,
+            "type": "number",
+            "description": "How long the message stays deliverable, in seconds."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "messages",
+            "optional": false,
+            "type": "{ status: number | string, receiver?: string | null, msgid?: string | null, err_msg?: string | null }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.sms.status",
+      "shortPath": "sms.status",
+      "description": "Read a sent message's final status (success, failed, expired, pending or not found) and the credit it took",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mocean_msgid",
+            "optional": false,
+            "type": "string",
+            "description": "The msgid from the send response."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "message_status",
+            "optional": true,
+            "type": "number | null"
+          },
+          {
+            "key": "msgid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "credit_deducted",
+            "optional": true,
+            "type": "number | string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.templates.create",
+      "shortPath": "templates.create",
+      "description": "Create a WhatsApp message template and submit it to Meta for review",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Template name."
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string",
+            "description": "Language code, e.g. en_US."
+          },
+          {
+            "key": "category",
+            "optional": false,
+            "type": "AUTHENTICATION | MARKETING | UTILITY"
+          },
+          {
+            "key": "allowCategoryChange",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let Meta pick the category under its guidelines."
+          },
+          {
+            "key": "message_send_ttl_seconds",
+            "optional": true,
+            "type": "number",
+            "description": "Time to live of an authentication message, in seconds."
+          },
+          {
+            "key": "parameter_format",
+            "optional": true,
+            "type": "POSITIONAL | NAMED"
+          },
+          {
+            "key": "components",
+            "optional": false,
+            "type": "{ type: string }[]",
+            "description": "Header, body, footer and buttons, as in the Meta template API."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "components",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.templates.delete",
+      "shortPath": "templates.delete",
+      "description": "Delete a WhatsApp message template, every language of it or one by ID; cannot be undone",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Template name; deletes every language of it."
+          },
+          {
+            "key": "hsm_id",
+            "optional": true,
+            "type": "string",
+            "description": "Template ID, to delete only that one language."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "success",
+            "optional": true,
+            "type": "string | boolean | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.templates.edit",
+      "shortPath": "templates.edit",
+      "description": "Edit a WhatsApp message template; Meta reviews it again",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "The WhatsApp template ID."
+          },
+          {
+            "key": "name",
+            "optional": false,
+            "type": "string",
+            "description": "Template name."
+          },
+          {
+            "key": "language",
+            "optional": false,
+            "type": "string",
+            "description": "Language code, e.g. en_US."
+          },
+          {
+            "key": "category",
+            "optional": false,
+            "type": "AUTHENTICATION | MARKETING | UTILITY"
+          },
+          {
+            "key": "allowCategoryChange",
+            "optional": true,
+            "type": "boolean",
+            "description": "Let Meta pick the category under its guidelines."
+          },
+          {
+            "key": "message_send_ttl_seconds",
+            "optional": true,
+            "type": "number",
+            "description": "Time to live of an authentication message, in seconds."
+          },
+          {
+            "key": "parameter_format",
+            "optional": true,
+            "type": "POSITIONAL | NAMED"
+          },
+          {
+            "key": "components",
+            "optional": false,
+            "type": "{ type: string }[]",
+            "description": "Header, body, footer and buttons, as in the Meta template API."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "components",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.templates.get",
+      "shortPath": "templates.get",
+      "description": "Read one WhatsApp message template",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "templateId",
+            "optional": false,
+            "type": "string",
+            "description": "The WhatsApp template ID."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": true,
+            "type": "string | number | null"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "components",
+            "optional": true,
+            "type": "any[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.templates.list",
+      "shortPath": "templates.list",
+      "description": "List WhatsApp message templates, filtered by name, status, category or language",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "after",
+            "optional": true,
+            "type": "string",
+            "description": "paging.cursors.after from the previous page, for the next page."
+          },
+          {
+            "key": "before",
+            "optional": true,
+            "type": "string",
+            "description": "paging.cursors.before from a page, for the page before it."
+          },
+          {
+            "key": "category",
+            "optional": true,
+            "type": "AUTHENTICATION | MARKETING | UTILITY"
+          },
+          {
+            "key": "content",
+            "optional": true,
+            "type": "string",
+            "description": "Search the template text."
+          },
+          {
+            "key": "language",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "name_or_content",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "quality_score",
+            "optional": true,
+            "type": "string",
+            "description": "GREEN, YELLOW, RED or UNKNOWN"
+          },
+          {
+            "key": "status",
+            "optional": true,
+            "type": "string",
+            "description": "Review status: APPROVED, PENDING, REJECTED, ..."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": true,
+            "type": "{ id?: string | number | null, name?: string | null, language?: string | null, category?: string | null, status?: string | null, components?: any[] | null }[] | null"
+          },
+          {
+            "key": "paging",
+            "optional": true,
+            "type": "{ cursors?: { before?: string | null, after?: string | null } | null, next?: string | null } | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.verify.check",
+      "shortPath": "verify.check",
+      "description": "Check the code a user gave you against a verify request; Mocean allows three wrong attempts",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mocean_reqid",
+            "optional": false,
+            "type": "string",
+            "description": "The reqid of the verify request."
+          },
+          {
+            "key": "mocean_code",
+            "optional": false,
+            "type": "string",
+            "description": "The PIN the user gave you."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reqid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number | string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.verify.request",
+      "shortPath": "verify.request",
+      "description": "Send a verification code by SMS, charged per attempt; keep the reqid for check and resend",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mocean_to",
+            "optional": false,
+            "type": "string",
+            "description": "Receiver phone number with country code, e.g. 60123456789."
+          },
+          {
+            "key": "mocean_brand",
+            "optional": false,
+            "type": "string",
+            "description": "The company or application name shown to the user; the gateway rejects a brand it considers too long (body status 9)."
+          },
+          {
+            "key": "mocean_from",
+            "optional": true,
+            "type": "string",
+            "description": "The SMS Sender ID."
+          },
+          {
+            "key": "mocean_code_length",
+            "optional": true,
+            "type": "4 | 6",
+            "description": "The verification code length. Defaults to 4 or the account setting."
+          },
+          {
+            "key": "mocean_pin_validity",
+            "optional": true,
+            "type": "number",
+            "description": "Seconds the code stays valid, 60-3600. Defaults to 300 or the account setting."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reqid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_number_reachable",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "resend_number",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.verify.requestTelegram",
+      "shortPath": "verify.requestTelegram",
+      "description": "Send a verification code to a Telegram chat through your bot; keep the reqid for check",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mocean_to",
+            "optional": false,
+            "type": "string",
+            "description": "The Telegram chat ID that gets the code."
+          },
+          {
+            "key": "mocean_from",
+            "optional": false,
+            "type": "string",
+            "description": "Your Telegram bot username that sends the code."
+          },
+          {
+            "key": "mocean_brand",
+            "optional": false,
+            "type": "string",
+            "description": "The company or application name shown to the user."
+          },
+          {
+            "key": "mocean_code_length",
+            "optional": true,
+            "type": "4 | 6"
+          },
+          {
+            "key": "mocean_pin_validity",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reqid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_number_reachable",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "resend_number",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.verify.resend",
+      "shortPath": "verify.resend",
+      "description": "Resend the code of a verify request by SMS, charged per attempt",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mocean_reqid",
+            "optional": false,
+            "type": "string",
+            "description": "The reqid of the verify request to resend."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "reqid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "to",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "is_number_reachable",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "resend_number",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.voice.dial",
+      "shortPath": "voice.dial",
+      "description": "Call one or more numbers and run a Mocean Command flow (say, play, collect, record, dial), charged per call",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mocean_to",
+            "optional": false,
+            "type": "string",
+            "description": "Number(s) to call with country code, separated by commas or spaces."
+          },
+          {
+            "key": "mocean_command",
+            "optional": false,
+            "type": "{ action: string }[]",
+            "description": "Mocean Command (MC) objects run in order, e.g. [{ action: \"say\", language: \"en-US\", text: \"Hello\" }]."
+          },
+          {
+            "key": "mocean_from",
+            "optional": true,
+            "type": "string",
+            "description": "Caller ID (number of origin)."
+          },
+          {
+            "key": "mocean_event_url",
+            "optional": true,
+            "type": "string",
+            "description": "Webhook that receives call status events."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": true,
+            "type": "number | string | null"
+          },
+          {
+            "key": "calls",
+            "optional": true,
+            "type": "{ status: number | string, receiver?: string | number | null, session_uuid?: string | null, call_uuid?: string | null, err_msg?: string | null }[] | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.voice.hangup",
+      "shortPath": "voice.hangup",
+      "description": "Hang up a call in progress",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mocean_call_uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The call_uuid from voice.dial."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "session_uuid",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "call_uuid",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.voice.recording",
+      "shortPath": "voice.recording",
+      "description": "Download the audio recording of a call",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mocean_call_uuid",
+            "optional": false,
+            "type": "string",
+            "description": "The call_uuid from voice.dial."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.whatsapp.downloadMedia",
+      "shortPath": "whatsapp.downloadMedia",
+      "description": "Download media a WhatsApp user sent to your business number",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mocean_from",
+            "optional": false,
+            "type": "string",
+            "description": "Your WhatsApp Business sender number that received the media."
+          },
+          {
+            "key": "mocean_media_id",
+            "optional": false,
+            "type": "string",
+            "description": "The media ID from the inbound message."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+          }
+        ]
+      }
+    },
+    {
+      "path": "mocean.api.whatsapp.send",
+      "shortPath": "whatsapp.send",
+      "description": "Send a WhatsApp message (text, media, template, interactive, location or contacts) from your business number",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "mocean_from",
+            "optional": false,
+            "type": "string",
+            "description": "Your registered WhatsApp Business sender number."
+          },
+          {
+            "key": "mocean_to",
+            "optional": false,
+            "type": "string",
+            "description": "Receiver number with country code, or a Business Scoped User ID."
+          },
+          {
+            "key": "mocean_event_url",
+            "optional": true,
+            "type": "string",
+            "description": "Webhook that receives delivery events."
+          },
+          {
+            "key": "mocean_content",
+            "optional": false,
+            "type": "{ type: string }",
+            "description": "The message, e.g. { type: \"text\", text: \"Hello\" }."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "status",
+            "optional": false,
+            "type": "number | string"
+          },
+          {
+            "key": "message_id",
+            "optional": true,
+            "type": "string | null"
+          },
+          {
+            "key": "err_msg",
+            "optional": true,
+            "type": "string | null"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}
