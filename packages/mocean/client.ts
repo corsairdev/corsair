@@ -61,6 +61,11 @@ export function cleanMessage(text: string): string {
 /** Reads a body status that Mocean sends as a number or, on voice, a string. */
 // unknown: any parsed response body; only `status` is read.
 export function readBodyStatus(body: unknown): number | undefined {
+	// Mocean's default format is XML: <result><status>1</status>...
+	if (typeof body === 'string') {
+		const match = /<status>\s*(\d+)\s*<\/status>/.exec(body);
+		return match ? Number(match[1]) : undefined;
+	}
 	const value = asRecord(body)?.status;
 	if (typeof value === 'number') return value;
 	if (typeof value === 'string' && /^\d+$/.test(value)) return Number(value);
@@ -75,6 +80,10 @@ export function statusForBody(family: MoceanFamily, code: number): number {
 		if (code === 3 || code === 21 || code === 40) return 503;
 		if (code === 18) return 402;
 		return 400;
+	}
+	if (family === 'voice') {
+		if (code === 10 || code === 14) return 500;
+		if (code === 15) return 503;
 	}
 	if (code === 1) return 401;
 	if (code === 2) return 402;
@@ -120,9 +129,16 @@ function safeBody(
 			...(hint === undefined ? {} : { hint }),
 		};
 	}
-	return typeof body === 'string'
-		? cleanMessage(body.replace(/<[^>]+>/g, ' ').trim()).slice(0, 300)
-		: '';
+	if (typeof body !== 'string') return '';
+	const xmlMessage = /<err_msg>([^<]*)<\/err_msg>/.exec(body)?.[1];
+	if (xmlMessage !== undefined) {
+		const status = readBodyStatus(body);
+		return {
+			...(status === undefined ? {} : { status }),
+			err_msg: cleanMessage(xmlMessage),
+		};
+	}
+	return cleanMessage(body.replace(/<[^>]+>/g, ' ').trim()).slice(0, 300);
 }
 
 function strippedRequest(options: ApiRequestOptions): ApiRequestOptions {
@@ -209,8 +225,17 @@ export async function makeMoceanRequest<T = unknown>(
 	// A download that failed answers JSON (or XML) instead of the file.
 	if (responseType === 'binary') {
 		const binary = raw as BinaryResponse;
-		const type = binary.contentType ?? '';
-		if (/json|xml/i.test(type)) {
+		const type =
+			(binary.contentType ?? '').split(';')[0]?.trim().toLowerCase() ?? '';
+		// A status answer, not a file. OpenXML documents (DOCX, XLSX) are
+		// files: match the JSON and XML media types exactly.
+		if (
+			type === 'application/json' ||
+			type === 'text/json' ||
+			type === 'application/xml' ||
+			type === 'text/xml' ||
+			type.endsWith('+json')
+		) {
 			const text = new TextDecoder().decode(binary.bytes);
 			// unknown: the error body is parsed only to read status and err_msg.
 			let parsed: unknown = text;

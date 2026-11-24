@@ -432,6 +432,33 @@ describe('downloads', () => {
 		).rejects.toMatchObject({ status: 401 });
 	});
 
+	it('voice.recording reads the status of an XML answer', async () => {
+		fetchMock.mockResolvedValueOnce(
+			new Response(
+				'<?xml version="1.0"?><result><status>1</status><err_msg>Authorization+failed</err_msg></result>',
+				{ status: 202, headers: { 'Content-Type': 'text/xml' } },
+			),
+		);
+		await expect(
+			invoke(Voice.recording, { mocean_call_uuid: 'c1' }),
+		).rejects.toMatchObject({
+			status: 401,
+			body: { status: 1, err_msg: 'Authorization failed' },
+		});
+	});
+
+	it('whatsapp.downloadMedia returns an OpenXML document as a file', async () => {
+		const docx =
+			'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+		respondBytes(new Uint8Array([80, 75, 3, 4]), docx);
+		await expect(
+			invoke(WhatsApp.downloadMedia, {
+				mocean_from: '60111111111',
+				mocean_media_id: 'm2',
+			}),
+		).resolves.toMatchObject({ contentType: docx, byteLength: 4 });
+	});
+
 	it('whatsapp.downloadMedia returns the media as a file', async () => {
 		respondBytes(new Uint8Array([255, 216, 255]), 'image/jpeg');
 		const result = await invoke(WhatsApp.downloadMedia, {
@@ -490,6 +517,18 @@ describe('input validation', () => {
 });
 
 describe('outputs', () => {
+	it('accepts a numeric receiver in voice.dial (the voice example shows one)', async () => {
+		respond({
+			calls: [{ status: 0, receiver: 60123456789, call_uuid: 'c1' }],
+		});
+		await expect(
+			invoke(Voice.dial, {
+				mocean_to: '60123456789',
+				mocean_command: [{ action: 'say', text: 'x' }],
+			}),
+		).resolves.toMatchObject({ calls: [{ receiver: 60123456789 }] });
+	});
+
 	it('keeps a failed receiver in a send without failing the others', async () => {
 		respond(smsSent);
 		const result = (await invoke(Sms.send, {

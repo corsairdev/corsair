@@ -80,6 +80,10 @@ describe('makeMoceanRequest', () => {
 		['verify', 18, 402],
 		['verify', 3, 503],
 		['verify', 17, 400],
+		['voice', 10, 500],
+		['voice', 14, 500],
+		['voice', 15, 503],
+		['voice', 7, 400],
 	] as const)(
 		'maps a %s body status %i to ApiError %i',
 		async (family, code, status) => {

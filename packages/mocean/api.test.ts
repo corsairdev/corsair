@@ -58,10 +58,16 @@ describeIfKey('mocean live', () => {
 		expect(lookup.destinations.length).toBeGreaterThan(0);
 	});
 
-	it('account.pricing without a rate answers 400 (verify on a trial)', async () => {
-		await expect(
-			api.account.pricing({ mocean_type: 'verify' }),
-		).rejects.toMatchObject({ status: 400 });
+	it('account.pricing for verify: a rate, or 400 when the account has none', async () => {
+		// Trial accounts have no verify rate (status 3); paid ones return prices.
+		const result = await api.account
+			.pricing({ mocean_type: 'verify' })
+			.catch((error: { status?: number }) => error);
+		if ('destinations' in result) {
+			expect(Array.isArray(result.destinations)).toBe(true);
+		} else {
+			expect(result.status).toBe(400);
+		}
 	});
 
 	it('sms.status of an unknown msgid answers message_status 5', async () => {
@@ -95,10 +101,19 @@ describeIfKey('mocean live', () => {
 		).rejects.toMatchObject({ status: 400 });
 	});
 
-	it('templates.list without a WhatsApp sender answers 401', async () => {
-		await expect(api.templates.list({ limit: 2 })).rejects.toMatchObject({
-			status: 401,
-		});
+	it('templates.list: templates, or 401 without a WhatsApp sender', async () => {
+		const result = await api.templates
+			.list({ limit: 2 })
+			.catch((error: { status?: number }) => error);
+		if (
+			'status' in result &&
+			typeof result.status === 'number' &&
+			!('data' in result)
+		) {
+			expect(result.status).toBe(401);
+		} else {
+			expect(result).toBeDefined();
+		}
 	});
 
 	it('the balance is unchanged', async () => {

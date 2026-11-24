@@ -417,7 +417,8 @@ const VoiceDialResponseSchema = z
 				z
 					.object({
 						status: BodyStatus,
-						receiver: z.string().nullish(),
+						// The voice example shows a number, the SMS one a string.
+						receiver: z.union([z.string(), z.number()]).nullish(),
 						session_uuid: z.string().nullish(),
 						call_uuid: z.string().nullish(),
 						err_msg: z.string().nullish(),
