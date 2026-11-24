@@ -1,5 +1,6 @@
 import type {
 	ApiRequestOptions,
+	BinaryResponse,
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
@@ -229,4 +230,36 @@ export function createWebhookHandler(
 	options?: SlackWebhookHandlerOptions,
 ): SlackWebhookHandler {
 	return new SlackWebhookHandler(options);
+}
+
+// A private file URL answers only to a token that can see the file; for any
+// other it serves a sign-in HTML page with a 200, which is refused here.
+export async function downloadSlackFile(
+	fileUrl: string,
+	token: string,
+	file: { id: string; mimetype?: string },
+): Promise<BinaryResponse> {
+	const { origin, pathname, search } = new URL(fileUrl);
+	const config: OpenAPIConfig = {
+		BASE: origin,
+		VERSION: '1.0.0',
+		WITH_CREDENTIALS: false,
+		CREDENTIALS: 'omit',
+		TOKEN: token,
+	};
+	const response = await request<BinaryResponse>(
+		config,
+		{ method: 'GET', url: pathname + search, responseType: 'binary' },
+		{ rateLimitConfig: SLACK_RATE_LIMIT_CONFIG },
+	);
+	if (
+		response.contentType?.toLowerCase().startsWith('text/html') &&
+		!file.mimetype?.toLowerCase().startsWith('text/html')
+	) {
+		throw new SlackAPIError(
+			`Slack served a sign-in page instead of file ${file.id}: this token cannot see it. Files in private channels and DMs need the user token with files:read.`,
+			'file_not_accessible',
+		);
+	}
+	return response;
 }

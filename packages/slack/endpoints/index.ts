@@ -18,7 +18,12 @@ import {
 	setTopic,
 	unarchive,
 } from './channels';
-import { get as filesGet, list as filesList, upload } from './files';
+import {
+	download as filesDownload,
+	get as filesGet,
+	list as filesList,
+	upload,
+} from './files';
 import {
 	deleteMessage,
 	getPermalink,
@@ -73,6 +78,7 @@ export const Channels = {
 };
 
 export const Files = {
+	download: filesDownload,
 	get: filesGet,
 	list: filesList,
 	upload,
