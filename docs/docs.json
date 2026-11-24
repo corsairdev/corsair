@@ -3823,6 +3823,14 @@
                 ]
               },
               {
+                "group": "Mopinion",
+                "pages": [
+                  "plugins/mopinion/overview",
+                  "plugins/mopinion/api",
+                  "plugins/mopinion/database"
+                ]
+              },
+              {
                 "group": "Motion",
                 "pages": [
                   "plugins/motion/overview",
