@@ -14,9 +14,10 @@ import {
 	GoogleDriveEndpointOutputSchemas,
 } from './types';
 
-// A fields mask returns part of a file. Upsert replaces the stored row, so a
-// partial response is laid over what is already saved instead of erasing it.
-export async function saveFile<T extends { id: string }>(
+// Drive returns only the fields a mask names, or a short default set without
+// one. Upsert replaces the stored row, so the response is laid over what is
+// already saved instead of erasing it.
+async function saveFile<T extends { id: string }>(
 	table:
 		| {
 				findByEntityId(id: string): Promise<{ data: T } | null | undefined>;
@@ -25,13 +26,23 @@ export async function saveFile<T extends { id: string }>(
 		  }
 		| undefined,
 	data: T,
-	partial: boolean,
 ): Promise<void> {
 	if (!table) return;
-	const prior = partial
-		? (await table.findByEntityId(data.id))?.data
-		: undefined;
+	const prior = (await table.findByEntityId(data.id))?.data;
 	await table.upsertByEntityId(data.id, { ...prior, ...data });
+}
+
+// A mask without mimeType cannot say folder or file, so a saved folder row decides.
+export async function saveDriveFile(
+	ctx: Parameters<GoogleDriveEndpoints['filesGet']>[0],
+	file: File,
+): Promise<void> {
+	if (!file.id) return;
+	const row = { ...file, id: file.id, createdAt: new Date() };
+	const isFolder = file.mimeType
+		? file.mimeType === 'application/vnd.google-apps.folder'
+		: Boolean(await ctx.db.folders?.findByEntityId(file.id));
+	await saveFile(isFolder ? ctx.db.folders : ctx.db.files, row);
 }
 
 // A fields mask without nextPageToken silently ends pagination.
@@ -53,18 +64,7 @@ export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
 
 	if (result.files && ctx.db.files) {
 		try {
-			for (const file of result.files) {
-				if (file.id) {
-					const isFolder =
-						file.mimeType === 'application/vnd.google-apps.folder';
-					const row = { ...file, id: file.id, createdAt: new Date() };
-					await saveFile(
-						isFolder ? ctx.db.folders : ctx.db.files,
-						row,
-						Boolean(input.fields),
-					);
-				}
-			}
+			for (const file of result.files) await saveDriveFile(ctx, file);
 		} catch (error) {
 			console.warn('Failed to save files to database:', error);
 		}
@@ -87,18 +87,10 @@ export const get: GoogleDriveEndpoints['filesGet'] = async (ctx, input) => {
 		query: input,
 	});
 
-	if (result.id) {
-		const isFolder = result.mimeType === 'application/vnd.google-apps.folder';
-		try {
-			const row = { ...result, id: result.id, createdAt: new Date() };
-			await saveFile(
-				isFolder ? ctx.db.folders : ctx.db.files,
-				row,
-				Boolean(input.fields),
-			);
-		} catch (error) {
-			console.warn('Failed to save file to database:', error);
-		}
+	try {
+		await saveDriveFile(ctx, result);
+	} catch (error) {
+		console.warn('Failed to save file to database:', error);
 	}
 
 	await logEventFromContext(

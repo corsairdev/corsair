@@ -19,18 +19,32 @@ const full = {
 	webViewLink: 'https://drive.google.com/file/d/file-1/view',
 };
 
-function ctx() {
-	const stored: Record<string, Record<string, unknown>> = {};
-	const files = {
+type Rows = Record<string, Record<string, unknown>>;
+
+function table(rows: Rows) {
+	return {
 		findByEntityId: jest.fn(async (id: string) =>
-			stored[id] ? { data: stored[id] } : null,
+			rows[id] ? { data: rows[id] } : null,
 		),
+		// unknown: the mock stores whatever the schema parses; the test reads it back as a plain row.
 		upsertByEntityId: jest.fn(async (id: string, data: unknown) => {
-			stored[id] = GoogleDriveFile.parse(data);
+			rows[id] = GoogleDriveFile.parse(data);
 		}),
 	};
+}
+
+function ctx() {
+	const stored: Rows = {};
+	const folders: Rows = {};
 	// The endpoint reads only key and db here.
-	return { stored, ctx: { key: 'test-token', db: { files } } as never };
+	return {
+		stored,
+		folders,
+		ctx: {
+			key: 'test-token',
+			db: { files: table(stored), folders: table(folders) },
+		} as never,
+	};
 }
 
 beforeEach(() => mockRequest.mockReset());
@@ -70,5 +84,43 @@ describe('googledrive search.filesAndFolders fields', () => {
 			owners: full.owners,
 			webViewLink: full.webViewLink,
 		});
+	});
+
+	it('keeps saved details when a search returns only Drive default fields', async () => {
+		const { ctx: c, stored } = ctx();
+		mockRequest.mockResolvedValue({ files: [full] });
+		await filesAndFolders(c, { q: 'x', fields: 'files(*)' });
+
+		mockRequest.mockResolvedValue({
+			files: [{ id: 'file-1', name: 'Budget', mimeType: 'application/pdf' }],
+		});
+		await filesAndFolders(c, { q: 'x' });
+
+		expect(stored['file-1']).toMatchObject({
+			owners: full.owners,
+			webViewLink: full.webViewLink,
+		});
+	});
+
+	it('saves a folder to the folders table when the mask has no mimeType', async () => {
+		const { ctx: c, stored, folders } = ctx();
+		mockRequest.mockResolvedValue({
+			files: [
+				{
+					id: 'dir-1',
+					name: 'Plans',
+					mimeType: 'application/vnd.google-apps.folder',
+				},
+			],
+		});
+		await filesAndFolders(c, { q: 'x' });
+
+		mockRequest.mockResolvedValue({
+			files: [{ id: 'dir-1', name: 'Plans 2' }],
+		});
+		await filesAndFolders(c, { q: 'x', fields: 'files(id,name)' });
+
+		expect(folders['dir-1']).toMatchObject({ name: 'Plans 2' });
+		expect(stored['dir-1']).toBeUndefined();
 	});
 });

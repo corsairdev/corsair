@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAuthenticatedGoogleDriveRequest } from '../client';
 import type { GoogleDriveEndpoints } from '../index';
-import { saveFile, withNextPageToken } from './files';
+import { saveDriveFile, withNextPageToken } from './files';
 import type { GoogleDriveEndpointOutputs } from './types';
 
 export const filesAndFolders: GoogleDriveEndpoints['searchFilesAndFolders'] =
@@ -29,17 +29,7 @@ export const filesAndFolders: GoogleDriveEndpoints['searchFilesAndFolders'] =
 
 		if (result.files) {
 			try {
-				for (const item of result.files) {
-					if (item.id) {
-						const isFolder =
-							item.mimeType === 'application/vnd.google-apps.folder';
-						await saveFile(
-							isFolder ? ctx.db.folders : ctx.db.files,
-							{ ...item, id: item.id, createdAt: new Date() },
-							Boolean(input.fields),
-						);
-					}
-				}
+				for (const item of result.files) await saveDriveFile(ctx, item);
 			} catch (error) {
 				console.warn('Failed to save search results to database:', error);
 			}
