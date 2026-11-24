@@ -12194,5 +12194,11 @@
         "title": "PKCE for plugin OAuth, for providers that require it"
       }
     ]
+  },
+  {
+    "date": "2026-11-24",
+    "package": "cloud",
+    "version": "0.2.30",
+    "changes": []
   }
 ]
