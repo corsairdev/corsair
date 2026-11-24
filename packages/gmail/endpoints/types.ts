@@ -81,7 +81,7 @@ const MessagesGetAttachmentInputSchema = z.object({
 		.string()
 		.optional()
 		.describe(
-			'Gmail attachmentId, if already known. Give partId or attachmentId.',
+			"Gmail attachmentId, if already known. Give partId or attachmentId; with partId, the part's own attachment is read.",
 		),
 });
 

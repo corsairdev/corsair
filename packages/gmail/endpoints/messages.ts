@@ -331,13 +331,13 @@ export const getAttachment: GmailEndpoints['messagesGetAttachment'] = async (
 	input,
 ) => {
 	const base = `/users/${input.userId || 'me'}/messages/${input.messageId}`;
-	if (!input.partId && !input.attachmentId) {
+	if (input.partId === undefined && input.attachmentId === undefined) {
 		throw attachmentError(base, 'Give partId or attachmentId.');
 	}
 
 	let attachmentId = input.attachmentId;
 	let part: MessagePart | undefined;
-	if (input.partId) {
+	if (input.partId !== undefined) {
 		// Attachment ids change between reads, so the part is resolved fresh.
 		const message = await makeAuthenticatedGmailRequest<Message>(base, ctx, {
 			method: 'GET',
@@ -350,8 +350,8 @@ export const getAttachment: GmailEndpoints['messagesGetAttachment'] = async (
 				`Message ${input.messageId} has no part ${input.partId}.`,
 			);
 		}
-		attachmentId ??= part.body?.attachmentId;
-		if (!attachmentId && !part.body?.data) {
+		attachmentId = part.body?.attachmentId;
+		if (!attachmentId && part.body?.data === undefined) {
 			throw attachmentError(
 				base,
 				`Part ${input.partId} of message ${input.messageId} has no attachment.`,

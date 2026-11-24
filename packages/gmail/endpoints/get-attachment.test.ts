@@ -29,6 +29,12 @@ const message = {
 				filename: 'tiny.bin',
 				body: { data: b64url(BYTES), size: BYTES.length },
 			},
+			{
+				partId: '3',
+				mimeType: 'text/plain',
+				filename: 'empty.txt',
+				body: { data: '', size: 0 },
+			},
 		],
 	},
 };
@@ -96,6 +102,38 @@ describe('gmail messages.getAttachment', () => {
 		await expect(
 			getAttachment(ctx, { messageId: 'm1', partId: '0' }),
 		).rejects.toThrow('Part 0 of message m1 has no attachment');
+	});
+
+	it('reads the root part of a single-part message, whose partId is empty', async () => {
+		const single = {
+			id: 'm2',
+			payload: {
+				partId: '',
+				mimeType: 'application/pdf',
+				filename: 'scan.pdf',
+				body: { data: b64url(BYTES), size: BYTES.length },
+			},
+		};
+		global.fetch = (async () => Response.json(single)) as typeof fetch;
+		const out = await getAttachment(ctx, { messageId: 'm2', partId: '' });
+		expect(out).toMatchObject({ filename: 'scan.pdf', contentBase64: b64 });
+	});
+
+	it('returns an empty inline file as an empty file', async () => {
+		const out = await getAttachment(ctx, { messageId: 'm1', partId: '3' });
+		expect(out).toMatchObject({ filename: 'empty.txt', byteLength: 0 });
+	});
+
+	it('takes the bytes from the named part even when another attachmentId is given', async () => {
+		const out = await getAttachment(ctx, {
+			messageId: 'm1',
+			partId: '1',
+			attachmentId: 'att-other',
+		});
+		expect(out).toMatchObject({ filename: 'invoice.pdf', contentBase64: b64 });
+		expect(asked.map((u) => u.pathname)).not.toContain(
+			'/gmail/v1/users/me/messages/m1/attachments/att-other',
+		);
 	});
 
 	it('returns the sink reference when a host keeps the file', async () => {

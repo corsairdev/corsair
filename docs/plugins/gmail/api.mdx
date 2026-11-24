@@ -876,7 +876,7 @@ await corsair.gmail.api.messages.getAttachment({});
 | `userId` | `string` | No | — |
 | `messageId` | `string` | Yes | — |
 | `partId` | `string` | No | Part id of the attachment, as shown in search results (message &lt;id&gt;, part &lt;partId&gt;). Give partId or attachmentId. |
-| `attachmentId` | `string` | No | Gmail attachmentId, if already known. Give partId or attachmentId. |
+| `attachmentId` | `string` | No | Gmail attachmentId, if already known. Give partId or attachmentId; with partId, the part's own attachment is read. |
 
 
 
