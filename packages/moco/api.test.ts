@@ -1348,8 +1348,12 @@ describeIfKey('moco live', () => {
 		// One touch clocks in (an open presence); a second touch in the same
 		// minute drops it again, so the open one is deleted instead. If the user
 		// is already clocked in, touch would clock them out: skip it then.
-		const all = await api().users.presences.list({});
-		const open = all.items.some((presence) => presence.to === null);
+		let open = false;
+		for (let page: number | null = 1; page !== null && !open; ) {
+			const result = await api().users.presences.list({ page });
+			open = result.items.some((presence) => presence.to === null);
+			page = result.next_page;
+		}
 		if (open) {
 			console.warn('users.presences.touch not run: the user is clocked in');
 			return;
