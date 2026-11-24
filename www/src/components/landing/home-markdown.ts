@@ -27,6 +27,7 @@ import {
 	DOCS_URL,
 	GITHUB_URL,
 	MCP_URL,
+	SKILL_URL,
 } from '@/lib/site-links';
 
 const SITE = 'https://corsair.dev';
@@ -61,6 +62,7 @@ export function buildHomeMarkdown(): string {
 		'title: Corsair',
 		`description: ${HERO_SUBTITLE}`,
 		`canonical: ${SITE}/`,
+		`agent_skill: ${SKILL_URL}`,
 		`agent_signup: ${AGENT_SIGNUP_URL}`,
 		'---',
 		'',
@@ -72,7 +74,7 @@ export function buildHomeMarkdown(): string {
 		'',
 		'## For agents',
 		'',
-		`Read ${AGENT_SIGNUP_URL} and follow it: one POST with your person's email returns an MCP URL and a key that work right away with the built-in apps, and your person gets an email to claim the account. Or add Corsair's MCP server (${MCP_URL}) to your client and have your person sign in. A user can hand you this line: "${AGENT_SETUP_PROMPT}".`,
+		`Read ${SKILL_URL} and follow it: it adds Corsair's MCP server (your person's own yourname.lug.dev URL, or ${MCP_URL}) to the client you run in, and your person signs in once in the browser. With no person there to sign in, follow ${AGENT_SIGNUP_URL} instead: one POST with your person's email returns an MCP URL and a key that work right away with the built-in apps, and they get an email to claim the account. A user can hand you this line: "${AGENT_SETUP_PROMPT}".`,
 		'',
 		'## For people',
 		'',
@@ -166,6 +168,7 @@ export function buildHomeMarkdown(): string {
 	lines.push(
 		'## Links',
 		'',
+		`- Agent skill: ${SKILL_URL}`,
 		`- Agent signup: ${AGENT_SIGNUP_URL}`,
 		`- Agent index: ${SITE}/llms.txt`,
 		`- MCP gateway: ${SITE}/mcp-gateway`,

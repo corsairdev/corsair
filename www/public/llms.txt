@@ -5,7 +5,8 @@
 ## Who it's for
 
 - **People and teams using agents.** Claim yourname.lug.dev at https://corsair.dev/start, connect your apps once, and add the one URL to every client. Paths on the URL, such as /work and /personal, give each agent its own apps, and each path has a mode (Read, Cautious, Strict or Open) that decides what the agent may do without asking. Built-in issues, CRM and files come with it.
-- **Agents signing their person up.** Follow https://corsair.dev/auth.md: one POST with the person's email returns an MCP URL and a key that work right away with the built-in apps; the person gets an email to claim the account.
+- **Agents setting Corsair up for their person.** Follow https://corsair.dev/skill.md: it adds Corsair's MCP server to the client you run in, the person signs in once, and it lists which tool to call for what.
+- **Agents signing their person up with no one there to sign in.** Follow https://corsair.dev/auth.md: one POST with the person's email returns an MCP URL and a key that work right away with the built-in apps; the person gets an email to claim the account.
 - **Developers building a product.** The TypeScript SDK runs inside your own app and keeps your users' tokens encrypted in your own database. Or use Corsair Cloud, where every operation is one HTTP request, with clients for Go, Python and Swift. See https://corsair.dev/developers.
 - **Companies.** Every connected account is encrypted with its own key, the keys that unlock them are held in AWS Key Management Service, agents never see a token, and every action is checked against a mode that can require a person's approval.
 
