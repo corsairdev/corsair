@@ -10,9 +10,17 @@ const ContactsGetInputSchema = z.object({
 });
 
 const ContactsGetManyInputSchema = z.object({
-	limit: z.number().optional(),
-	after: z.string().optional(),
-	properties: z.array(z.string()).optional(),
+	limit: z.number().optional().describe('Page size, max 100.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	properties: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Internal property names such as "hs_lead_status", not labels. Only default properties come back if omitted.',
+		),
 	propertiesWithHistory: z.array(z.string()).optional(),
 	associations: z.array(z.string()).optional(),
 	archived: z.boolean().optional(),
@@ -45,15 +53,31 @@ const ContactsDeleteInputSchema = z.object({
 });
 
 const ContactsGetRecentlyCreatedInputSchema = z.object({
-	count: z.number().optional(),
-	after: z.string().optional(),
-	since: z.string().optional(),
+	count: z.number().optional().describe('Page size, max 200.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	since: z
+		.string()
+		.optional()
+		.describe(
+			'ISO 8601 date-time or epoch milliseconds; keeps records created at or after it.',
+		),
 });
 
 const ContactsGetRecentlyUpdatedInputSchema = z.object({
-	count: z.number().optional(),
-	after: z.string().optional(),
-	since: z.string().optional(),
+	count: z.number().optional().describe('Page size, max 200.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	since: z
+		.string()
+		.optional()
+		.describe(
+			'ISO 8601 date-time or epoch milliseconds; keeps records last modified at or after it.',
+		),
 });
 
 const FilterOperator = z.enum([
@@ -106,12 +130,35 @@ const AssociationsSchema = z.record(
 );
 
 const ContactsSearchInputSchema = z.object({
-	query: z.string().optional(),
-	limit: z.number().optional(),
-	after: z.string().optional(),
-	sorts: z.array(SearchSortSchema).optional(),
-	properties: z.array(z.string()).optional(),
-	filterGroups: z.array(FilterGroupSchema).optional(),
+	query: z
+		.string()
+		.optional()
+		.describe(
+			'Free text matched against the default searchable text properties.',
+		),
+	limit: z.number().optional().describe('Page size, max 200.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	sorts: z
+		.array(SearchSortSchema)
+		.optional()
+		.describe(
+			'One sort only, e.g. [{"propertyName":"createdate","direction":"DESCENDING"}].',
+		),
+	properties: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Internal property names to return, not labels. Only default properties come back if omitted.',
+		),
+	filterGroups: z
+		.array(FilterGroupSchema)
+		.optional()
+		.describe(
+			'Groups are ORed, filters inside a group are ANDed (max 5 groups, 6 filters each). Dates as epoch milliseconds in a string. e.g. [{"filters":[{"propertyName":"email","operator":"EQ","value":"a@b.com"}]}].',
+		),
 });
 
 const CompaniesGetInputSchema = z.object({
@@ -124,9 +171,17 @@ const CompaniesGetInputSchema = z.object({
 });
 
 const CompaniesGetManyInputSchema = z.object({
-	limit: z.number().optional(),
-	after: z.string().optional(),
-	properties: z.array(z.string()).optional(),
+	limit: z.number().optional().describe('Page size, max 100.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	properties: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Internal property names such as "hs_lead_status", not labels. Only default properties come back if omitted.',
+		),
 	propertiesWithHistory: z.array(z.string()).optional(),
 	associations: z.array(z.string()).optional(),
 	archived: z.boolean().optional(),
@@ -159,20 +214,41 @@ const CompaniesDeleteInputSchema = z.object({
 });
 
 const CompaniesGetRecentlyCreatedInputSchema = z.object({
-	count: z.number().optional(),
-	after: z.string().optional(),
-	since: z.string().optional(),
+	count: z.number().optional().describe('Page size, max 200.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	since: z
+		.string()
+		.optional()
+		.describe(
+			'ISO 8601 date-time or epoch milliseconds; keeps records created at or after it.',
+		),
 });
 
 const CompaniesGetRecentlyUpdatedInputSchema = z.object({
-	count: z.number().optional(),
-	after: z.string().optional(),
-	since: z.string().optional(),
+	count: z.number().optional().describe('Page size, max 200.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	since: z
+		.string()
+		.optional()
+		.describe(
+			'ISO 8601 date-time or epoch milliseconds; keeps records last modified at or after it.',
+		),
 });
 
 const CompaniesSearchByDomainInputSchema = z.object({
-	domain: z.string(),
-	properties: z.array(z.string()).optional(),
+	domain: z
+		.string()
+		.describe('Company domain such as "example.com", matched exactly.'),
+	properties: z
+		.array(z.string())
+		.optional()
+		.describe('Internal property names to return, not labels.'),
 });
 
 const DealsGetInputSchema = z.object({
@@ -185,9 +261,17 @@ const DealsGetInputSchema = z.object({
 });
 
 const DealsGetManyInputSchema = z.object({
-	limit: z.number().optional(),
-	after: z.string().optional(),
-	properties: z.array(z.string()).optional(),
+	limit: z.number().optional().describe('Page size, max 100.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	properties: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Internal property names such as "hs_lead_status", not labels. Only default properties come back if omitted.',
+		),
 	propertiesWithHistory: z.array(z.string()).optional(),
 	associations: z.array(z.string()).optional(),
 	archived: z.boolean().optional(),
@@ -220,24 +304,63 @@ const DealsDeleteInputSchema = z.object({
 });
 
 const DealsGetRecentlyCreatedInputSchema = z.object({
-	count: z.number().optional(),
-	after: z.string().optional(),
-	since: z.string().optional(),
+	count: z.number().optional().describe('Page size, max 200.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	since: z
+		.string()
+		.optional()
+		.describe(
+			'ISO 8601 date-time or epoch milliseconds; keeps records created at or after it.',
+		),
 });
 
 const DealsGetRecentlyUpdatedInputSchema = z.object({
-	count: z.number().optional(),
-	after: z.string().optional(),
-	since: z.string().optional(),
+	count: z.number().optional().describe('Page size, max 200.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	since: z
+		.string()
+		.optional()
+		.describe(
+			'ISO 8601 date-time or epoch milliseconds; keeps records last modified at or after it.',
+		),
 });
 
 const DealsSearchInputSchema = z.object({
-	query: z.string().optional(),
-	limit: z.number().optional(),
-	after: z.string().optional(),
-	sorts: z.array(SearchSortSchema).optional(),
-	properties: z.array(z.string()).optional(),
-	filterGroups: z.array(FilterGroupSchema).optional(),
+	query: z
+		.string()
+		.optional()
+		.describe(
+			'Free text matched against the default searchable text properties.',
+		),
+	limit: z.number().optional().describe('Page size, max 200.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	sorts: z
+		.array(SearchSortSchema)
+		.optional()
+		.describe(
+			'One sort only, e.g. [{"propertyName":"createdate","direction":"DESCENDING"}].',
+		),
+	properties: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Internal property names to return, not labels. Only default properties come back if omitted.',
+		),
+	filterGroups: z
+		.array(FilterGroupSchema)
+		.optional()
+		.describe(
+			'Groups are ORed, filters inside a group are ANDed (max 5 groups, 6 filters each). Dates as epoch milliseconds in a string. e.g. [{"filters":[{"propertyName":"email","operator":"EQ","value":"a@b.com"}]}].',
+		),
 });
 
 const TicketsGetInputSchema = z.object({
@@ -250,9 +373,17 @@ const TicketsGetInputSchema = z.object({
 });
 
 const TicketsGetManyInputSchema = z.object({
-	limit: z.number().optional(),
-	after: z.string().optional(),
-	properties: z.array(z.string()).optional(),
+	limit: z.number().optional().describe('Page size, max 100.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	properties: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Internal property names such as "hs_lead_status", not labels. Only default properties come back if omitted.',
+		),
 	propertiesWithHistory: z.array(z.string()).optional(),
 	associations: z.array(z.string()).optional(),
 	archived: z.boolean().optional(),

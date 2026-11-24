@@ -160,7 +160,7 @@ Record<string, {
 
 `companies.getMany`
 
-Get multiple companies
+Pages through companies in id order, default properties only unless properties is set. To find a company by domain use companies.searchByDomain.
 
 **Risk:** `read`
 
@@ -172,9 +172,9 @@ await corsair.hubspot.api.companies.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `limit` | `number` | No | — |
-| `after` | `string` | No | — |
-| `properties` | `string[]` | No | — |
+| `limit` | `number` | No | Page size, max 100. |
+| `after` | `string` | No | paging.next.after from the previous page. |
+| `properties` | `string[]` | No | Internal property names such as "hs_lead_status", not labels. Only default properties come back if omitted. |
 | `propertiesWithHistory` | `string[]` | No | — |
 | `associations` | `string[]` | No | — |
 | `archived` | `boolean` | No | — |
@@ -232,7 +232,7 @@ await corsair.hubspot.api.companies.getMany({});
 
 `companies.getRecentlyCreated`
 
-List recently created companies
+Newest companies first by creation date; since keeps only those created at or after it. Page with paging.next.after.
 
 **Risk:** `read`
 
@@ -244,9 +244,9 @@ await corsair.hubspot.api.companies.getRecentlyCreated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `count` | `number` | No | — |
-| `after` | `string` | No | — |
-| `since` | `string` | No | — |
+| `count` | `number` | No | Page size, max 200. |
+| `after` | `string` | No | paging.next.after from the previous page. |
+| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created at or after it. |
 
 
 
@@ -301,7 +301,7 @@ await corsair.hubspot.api.companies.getRecentlyCreated({});
 
 `companies.getRecentlyUpdated`
 
-List recently updated companies
+Most recently modified companies first; since keeps only those modified at or after it. Page with paging.next.after.
 
 **Risk:** `read`
 
@@ -313,9 +313,9 @@ await corsair.hubspot.api.companies.getRecentlyUpdated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `count` | `number` | No | — |
-| `after` | `string` | No | — |
-| `since` | `string` | No | — |
+| `count` | `number` | No | Page size, max 200. |
+| `after` | `string` | No | paging.next.after from the previous page. |
+| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records last modified at or after it. |
 
 
 
@@ -370,7 +370,7 @@ await corsair.hubspot.api.companies.getRecentlyUpdated({});
 
 `companies.searchByDomain`
 
-Search companies by domain name
+Finds companies whose domain equals domain exactly (a search, not a prefix match).
 
 **Risk:** `read`
 
@@ -382,8 +382,8 @@ await corsair.hubspot.api.companies.searchByDomain({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `domain` | `string` | Yes | — |
-| `properties` | `string[]` | No | — |
+| `domain` | `string` | Yes | Company domain such as "example.com", matched exactly. |
+| `properties` | `string[]` | No | Internal property names to return, not labels. |
 
 
 
@@ -708,7 +708,7 @@ Record<string, {
 
 `contacts.getMany`
 
-Get multiple contacts
+Pages through contacts in id order, default properties only unless properties is set. To find contacts by field or date use contacts.search.
 
 **Risk:** `read`
 
@@ -720,9 +720,9 @@ await corsair.hubspot.api.contacts.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `limit` | `number` | No | — |
-| `after` | `string` | No | — |
-| `properties` | `string[]` | No | — |
+| `limit` | `number` | No | Page size, max 100. |
+| `after` | `string` | No | paging.next.after from the previous page. |
+| `properties` | `string[]` | No | Internal property names such as "hs_lead_status", not labels. Only default properties come back if omitted. |
 | `propertiesWithHistory` | `string[]` | No | — |
 | `associations` | `string[]` | No | — |
 | `archived` | `boolean` | No | — |
@@ -780,7 +780,7 @@ await corsair.hubspot.api.contacts.getMany({});
 
 `contacts.getRecentlyCreated`
 
-List recently created contacts
+Newest contacts first by creation date; since keeps only those created at or after it. Page with paging.next.after.
 
 **Risk:** `read`
 
@@ -792,9 +792,9 @@ await corsair.hubspot.api.contacts.getRecentlyCreated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `count` | `number` | No | — |
-| `after` | `string` | No | — |
-| `since` | `string` | No | — |
+| `count` | `number` | No | Page size, max 200. |
+| `after` | `string` | No | paging.next.after from the previous page. |
+| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created at or after it. |
 
 
 
@@ -849,7 +849,7 @@ await corsair.hubspot.api.contacts.getRecentlyCreated({});
 
 `contacts.getRecentlyUpdated`
 
-List recently updated contacts
+Most recently modified contacts first; since keeps only those modified at or after it. Page with paging.next.after.
 
 **Risk:** `read`
 
@@ -861,9 +861,9 @@ await corsair.hubspot.api.contacts.getRecentlyUpdated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `count` | `number` | No | — |
-| `after` | `string` | No | — |
-| `since` | `string` | No | — |
+| `count` | `number` | No | Page size, max 200. |
+| `after` | `string` | No | paging.next.after from the previous page. |
+| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records last modified at or after it. |
 
 
 
@@ -918,7 +918,7 @@ await corsair.hubspot.api.contacts.getRecentlyUpdated({});
 
 `contacts.search`
 
-Search contacts
+Search with query text and/or filterGroups; only default properties come back unless properties is set. Up to 200 per page and 10,000 results; follow paging.next.after.
 
 **Risk:** `read`
 
@@ -930,12 +930,12 @@ await corsair.hubspot.api.contacts.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `after` | `string` | No | — |
-| `sorts` | `object[]` | No | — |
-| `properties` | `string[]` | No | — |
-| `filterGroups` | `object[]` | No | — |
+| `query` | `string` | No | Free text matched against the default searchable text properties. |
+| `limit` | `number` | No | Page size, max 200. |
+| `after` | `string` | No | paging.next.after from the previous page. |
+| `sorts` | `object[]` | No | One sort only, e.g. [&#123;"propertyName":"createdate","direction":"DESCENDING"&#125;]. |
+| `properties` | `string[]` | No | Internal property names to return, not labels. Only default properties come back if omitted. |
+| `filterGroups` | `object[]` | No | Groups are ORed, filters inside a group are ANDed (max 5 groups, 6 filters each). Dates as epoch milliseconds in a string. e.g. [&#123;"filters":[&#123;"propertyName":"email","operator":"EQ","value":"a@b.com"&#125;]&#125;]. |
 
 <AccordionGroup>
 <Accordion title="sorts full type">
@@ -1215,7 +1215,7 @@ Record<string, {
 
 `deals.getMany`
 
-Get multiple deals
+Pages through deals in id order, default properties only unless properties is set. To find deals by field or date use deals.search.
 
 **Risk:** `read`
 
@@ -1227,9 +1227,9 @@ await corsair.hubspot.api.deals.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `limit` | `number` | No | — |
-| `after` | `string` | No | — |
-| `properties` | `string[]` | No | — |
+| `limit` | `number` | No | Page size, max 100. |
+| `after` | `string` | No | paging.next.after from the previous page. |
+| `properties` | `string[]` | No | Internal property names such as "hs_lead_status", not labels. Only default properties come back if omitted. |
 | `propertiesWithHistory` | `string[]` | No | — |
 | `associations` | `string[]` | No | — |
 | `archived` | `boolean` | No | — |
@@ -1287,7 +1287,7 @@ await corsair.hubspot.api.deals.getMany({});
 
 `deals.getRecentlyCreated`
 
-List recently created deals
+Newest deals first by creation date; since keeps only those created at or after it. Page with paging.next.after.
 
 **Risk:** `read`
 
@@ -1299,9 +1299,9 @@ await corsair.hubspot.api.deals.getRecentlyCreated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `count` | `number` | No | — |
-| `after` | `string` | No | — |
-| `since` | `string` | No | — |
+| `count` | `number` | No | Page size, max 200. |
+| `after` | `string` | No | paging.next.after from the previous page. |
+| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records created at or after it. |
 
 
 
@@ -1356,7 +1356,7 @@ await corsair.hubspot.api.deals.getRecentlyCreated({});
 
 `deals.getRecentlyUpdated`
 
-List recently updated deals
+Most recently modified deals first; since keeps only those modified at or after it. Page with paging.next.after.
 
 **Risk:** `read`
 
@@ -1368,9 +1368,9 @@ await corsair.hubspot.api.deals.getRecentlyUpdated({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `count` | `number` | No | — |
-| `after` | `string` | No | — |
-| `since` | `string` | No | — |
+| `count` | `number` | No | Page size, max 200. |
+| `after` | `string` | No | paging.next.after from the previous page. |
+| `since` | `string` | No | ISO 8601 date-time or epoch milliseconds; keeps records last modified at or after it. |
 
 
 
@@ -1425,7 +1425,7 @@ await corsair.hubspot.api.deals.getRecentlyUpdated({});
 
 `deals.search`
 
-Search deals
+Search with query text and/or filterGroups; only default properties come back unless properties is set. Up to 200 per page and 10,000 results; follow paging.next.after.
 
 **Risk:** `read`
 
@@ -1437,12 +1437,12 @@ await corsair.hubspot.api.deals.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | No | — |
-| `limit` | `number` | No | — |
-| `after` | `string` | No | — |
-| `sorts` | `object[]` | No | — |
-| `properties` | `string[]` | No | — |
-| `filterGroups` | `object[]` | No | — |
+| `query` | `string` | No | Free text matched against the default searchable text properties. |
+| `limit` | `number` | No | Page size, max 200. |
+| `after` | `string` | No | paging.next.after from the previous page. |
+| `sorts` | `object[]` | No | One sort only, e.g. [&#123;"propertyName":"createdate","direction":"DESCENDING"&#125;]. |
+| `properties` | `string[]` | No | Internal property names to return, not labels. Only default properties come back if omitted. |
+| `filterGroups` | `object[]` | No | Groups are ORed, filters inside a group are ANDed (max 5 groups, 6 filters each). Dates as epoch milliseconds in a string. e.g. [&#123;"filters":[&#123;"propertyName":"email","operator":"EQ","value":"a@b.com"&#125;]&#125;]. |
 
 <AccordionGroup>
 <Accordion title="sorts full type">
@@ -1982,7 +1982,7 @@ Record<string, {
 
 `tickets.getMany`
 
-Get multiple tickets
+Pages through tickets in id order, default properties only unless properties is set.
 
 **Risk:** `read`
 
@@ -1994,9 +1994,9 @@ await corsair.hubspot.api.tickets.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `limit` | `number` | No | — |
-| `after` | `string` | No | — |
-| `properties` | `string[]` | No | — |
+| `limit` | `number` | No | Page size, max 100. |
+| `after` | `string` | No | paging.next.after from the previous page. |
+| `properties` | `string[]` | No | Internal property names such as "hs_lead_status", not labels. Only default properties come back if omitted. |
 | `propertiesWithHistory` | `string[]` | No | — |
 | `associations` | `string[]` | No | — |
 | `archived` | `boolean` | No | — |
