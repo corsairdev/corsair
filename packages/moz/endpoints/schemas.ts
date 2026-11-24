@@ -2,6 +2,9 @@
 // method page embeds its payload and result definitions. Inputs follow the
 // payload strictly; outputs are lenient (every field nullish, objects loose) so
 // a field Moz adds or drops cannot fail a call that already ran.
+// unknown (z.unknown() and records of it): fields Moz documents without a
+// type (free-form maps), and Moz Local values whose documented type Moz's own
+// examples contradict, so the plugin passes them through for Moz to validate.
 import { z } from 'zod';
 
 export const mozInputBuilders = {
@@ -346,7 +349,38 @@ export const mozInputBuilders = {
 			})
 			.strict(),
 	'keywords.metricsMultiple': () =>
-		z.object({ serp_queries: z.array(z.unknown()) }).strict(),
+		z
+			.object({
+				serp_queries: z.array(
+					z
+						.object({
+							keyword: z
+								.string()
+								.describe(
+									'The keyword to query. Must be between 1 and 255 characters.',
+								),
+							locale: z
+								.string()
+								.describe(
+									'The locale to search in, provided as an `hl-gl` pair - a valid Google `hl` (host language) value and a valid `gl` (country) value, joined by a hyphen, e.g. `en-US`.',
+								),
+							device: z
+								.enum(['desktop', 'mobile_android', 'mobile_ios'])
+								.describe('The device to perform the query for.'),
+							engine: z
+								.enum(['google', 'bing', 'yahoo'])
+								.describe('The engine for the query.'),
+							vicinity: z
+								.string()
+								.describe(
+									'The location to perform the search from - e.g. `New York, NY`. This field is optional and defaults to a blank string, which is interpreted as national.',
+								)
+								.optional(),
+						})
+						.strict(),
+				),
+			})
+			.strict(),
 	'keywords.opportunity': () =>
 		z
 			.object({
@@ -1011,12 +1045,40 @@ export const mozInputBuilders = {
 		z
 			.object({
 				is_linking_to: z
-					.array(z.unknown())
+					.array(
+						z
+							.object({
+								query: z.string().describe('A URL to query for.'),
+								scope: z
+									.enum(['domain', 'subdomain', 'subfolder', 'url'])
+									.describe(
+										'The scope to parse the query with. Providing a less detailed scope than the provided URL will alter the input. e.g. `moz.com/foo/bar` with a scope of `domain` will ultimately resolve to `moz.com`',
+									),
+							})
+							.strict()
+							.describe(
+								'Get sources that link to at least one of the provided sites, or more if `minimum_matching_targets` is set (see description of `minimum_matching_targets` below). Up to 6 total targets may be specified in the `is_linking_to` and `not_linking_to` fields combined, and at least one target must be specified in `is_linking_to`.',
+							),
+					)
 					.describe(
 						'Get sources that link to at least one of the provided sites, or more if `minimum_matching_targets` is set (see description of `minimum_matching_targets` below). Up to 6 total targets may be specified in the `is_linking_to` and `not_linking_to` fields combined, and at least one target must be specified in `is_linking_to`.',
 					),
 				not_linking_to: z
-					.array(z.unknown())
+					.array(
+						z
+							.object({
+								query: z.string().describe('A URL to query for.'),
+								scope: z
+									.enum(['domain', 'subdomain', 'subfolder', 'url'])
+									.describe(
+										'The scope to parse the query with. Providing a less detailed scope than the provided URL will alter the input. e.g. `moz.com/foo/bar` with a scope of `domain` will ultimately resolve to `moz.com`',
+									),
+							})
+							.strict()
+							.describe(
+								'Optionally, ensure that the returned sources that do not link to any of the provided sites.',
+							),
+					)
 					.describe(
 						'Optionally, ensure that the returned sources that do not link to any of the provided sites.',
 					)
@@ -1200,7 +1262,42 @@ export const mozInputBuilders = {
 			.describe('The data for the data.site.link.status.fetch action.'),
 	'links.statusMultiple': () =>
 		z
-			.object({ queries: z.array(z.unknown()) })
+			.object({
+				queries: z.array(
+					z
+						.object({
+							target_site_query: z
+								.object({
+									query: z.string().describe('A URL to query for.'),
+									scope: z
+										.enum(['domain', 'subdomain', 'subfolder', 'url'])
+										.describe(
+											'The scope to parse the query with. Providing a less detailed scope than the provided URL will alter the input. e.g. `moz.com/foo/bar` with a scope of `domain` will ultimately resolve to `moz.com`',
+										),
+								})
+								.strict()
+								.describe(
+									'A SiteQuery provides a target URL along with a scope to define how the query is parsed.',
+								)
+								.optional(),
+							source_site_query: z
+								.object({
+									query: z.string().describe('A URL to query for.'),
+									scope: z
+										.enum(['domain', 'subdomain', 'subfolder', 'url'])
+										.describe(
+											'The scope to parse the query with. Providing a less detailed scope than the provided URL will alter the input. e.g. `moz.com/foo/bar` with a scope of `domain` will ultimately resolve to `moz.com`',
+										),
+								})
+								.strict()
+								.describe(
+									'A SiteQuery provides a target URL along with a scope to define how the query is parsed.',
+								)
+								.optional(),
+						})
+						.strict(),
+				),
+			})
 			.strict()
 			.describe(
 				'The payload for the `data.site.link.status.fetch.multiple` action.',
@@ -1955,7 +2052,22 @@ export const mozInputBuilders = {
 			})
 			.strict(),
 	'metrics.fetchMultiple': () =>
-		z.object({ site_queries: z.array(z.unknown()) }).strict(),
+		z
+			.object({
+				site_queries: z.array(
+					z
+						.object({
+							query: z.string().describe('A URL to query for.'),
+							scope: z
+								.enum(['domain', 'subdomain', 'subfolder', 'url'])
+								.describe(
+									'The scope to parse the query with. Providing a less detailed scope than the provided URL will alter the input. e.g. `moz.com/foo/bar` with a scope of `domain` will ultimately resolve to `moz.com`',
+								),
+						})
+						.strict(),
+				),
+			})
+			.strict(),
 	'metrics.histories': () =>
 		z
 			.object({
@@ -2391,7 +2503,18 @@ export const mozOutputBuilders = {
 					})
 					.loose()
 					.nullish(),
-				anchor_texts: z.array(z.unknown()).nullish(),
+				anchor_texts: z
+					.array(
+						z
+							.object({
+								text: z.string().nullish(),
+								external_root_domains: z.number().nullish(),
+								external_pages: z.number().nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -2432,7 +2555,22 @@ export const mozOutputBuilders = {
 									})
 									.loose()
 									.nullish(),
-								competitors: z.array(z.unknown()).nullish(),
+								competitors: z
+									.array(
+										z
+											.object({
+												domain: z.string().nullish(),
+												domain_authority: z.number().nullish(),
+												proximity: z.number().nullish(),
+												overlap: z.number().nullish(),
+												relevance: z.number().nullish(),
+												rivalry: z.number().nullish(),
+												keywords: z.array(z.string().nullish()).nullish(),
+											})
+											.loose()
+											.nullish(),
+									)
+									.nullish(),
 							})
 							.loose()
 							.nullish(),
@@ -2466,7 +2604,67 @@ export const mozOutputBuilders = {
 					.object({ n: z.number().nullish(), limit: z.number().nullish() })
 					.loose()
 					.nullish(),
-				top_domains: z.array(z.unknown()).nullish(),
+				top_domains: z
+					.array(
+						z
+							.object({
+								page: z.string().nullish(),
+								subdomain: z.string().nullish(),
+								root_domain: z.string().nullish(),
+								title: z.string().nullish(),
+								last_crawled: z.string().nullish(),
+								http_code: z.number().nullish(),
+								pages_to_page: z.number().nullish(),
+								nofollow_pages_to_page: z.number().nullish(),
+								redirect_pages_to_page: z.number().nullish(),
+								external_pages_to_page: z.number().nullish(),
+								external_nofollow_pages_to_page: z.number().nullish(),
+								external_redirect_pages_to_page: z.number().nullish(),
+								deleted_pages_to_page: z.number().nullish(),
+								root_domains_to_page: z.number().nullish(),
+								indirect_root_domains_to_page: z.number().nullish(),
+								deleted_root_domains_to_page: z.number().nullish(),
+								nofollow_root_domains_to_page: z.number().nullish(),
+								pages_to_subdomain: z.number().nullish(),
+								nofollow_pages_to_subdomain: z.number().nullish(),
+								redirect_pages_to_subdomain: z.number().nullish(),
+								external_pages_to_subdomain: z.number().nullish(),
+								external_nofollow_pages_to_subdomain: z.number().nullish(),
+								external_redirect_pages_to_subdomain: z.number().nullish(),
+								deleted_pages_to_subdomain: z.number().nullish(),
+								root_domains_to_subdomain: z.number().nullish(),
+								deleted_root_domains_to_subdomain: z.number().nullish(),
+								nofollow_root_domains_to_subdomain: z.number().nullish(),
+								pages_to_root_domain: z.number().nullish(),
+								nofollow_pages_to_root_domain: z.number().nullish(),
+								redirect_pages_to_root_domain: z.number().nullish(),
+								external_pages_to_root_domain: z.number().nullish(),
+								external_indirect_pages_to_root_domain: z.number().nullish(),
+								external_nofollow_pages_to_root_domain: z.number().nullish(),
+								external_redirect_pages_to_root_domain: z.number().nullish(),
+								deleted_pages_to_root_domain: z.number().nullish(),
+								root_domains_to_root_domain: z.number().nullish(),
+								indirect_root_domains_to_root_domain: z.number().nullish(),
+								deleted_root_domains_to_root_domain: z.number().nullish(),
+								nofollow_root_domains_to_root_domain: z.number().nullish(),
+								page_authority: z.number().nullish(),
+								domain_authority: z.number().nullish(),
+								link_propensity: z.number().nullish(),
+								spam_score: z.number().nullish(),
+								root_domains_from_page: z.number().nullish(),
+								nofollow_root_domains_from_page: z.number().nullish(),
+								pages_from_page: z.number().nullish(),
+								nofollow_pages_from_page: z.number().nullish(),
+								root_domains_from_root_domain: z.number().nullish(),
+								nofollow_root_domains_from_root_domain: z.number().nullish(),
+								pages_from_root_domain: z.number().nullish(),
+								nofollow_pages_from_root_domain: z.number().nullish(),
+								pages_crawled_from_root_domain: z.number().nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -2477,7 +2675,67 @@ export const mozOutputBuilders = {
 					.object({ n: z.number().nullish(), limit: z.number().nullish() })
 					.loose()
 					.nullish(),
-				top_pages: z.array(z.unknown()).nullish(),
+				top_pages: z
+					.array(
+						z
+							.object({
+								page: z.string().nullish(),
+								subdomain: z.string().nullish(),
+								root_domain: z.string().nullish(),
+								title: z.string().nullish(),
+								last_crawled: z.string().nullish(),
+								http_code: z.number().nullish(),
+								pages_to_page: z.number().nullish(),
+								nofollow_pages_to_page: z.number().nullish(),
+								redirect_pages_to_page: z.number().nullish(),
+								external_pages_to_page: z.number().nullish(),
+								external_nofollow_pages_to_page: z.number().nullish(),
+								external_redirect_pages_to_page: z.number().nullish(),
+								deleted_pages_to_page: z.number().nullish(),
+								root_domains_to_page: z.number().nullish(),
+								indirect_root_domains_to_page: z.number().nullish(),
+								deleted_root_domains_to_page: z.number().nullish(),
+								nofollow_root_domains_to_page: z.number().nullish(),
+								pages_to_subdomain: z.number().nullish(),
+								nofollow_pages_to_subdomain: z.number().nullish(),
+								redirect_pages_to_subdomain: z.number().nullish(),
+								external_pages_to_subdomain: z.number().nullish(),
+								external_nofollow_pages_to_subdomain: z.number().nullish(),
+								external_redirect_pages_to_subdomain: z.number().nullish(),
+								deleted_pages_to_subdomain: z.number().nullish(),
+								root_domains_to_subdomain: z.number().nullish(),
+								deleted_root_domains_to_subdomain: z.number().nullish(),
+								nofollow_root_domains_to_subdomain: z.number().nullish(),
+								pages_to_root_domain: z.number().nullish(),
+								nofollow_pages_to_root_domain: z.number().nullish(),
+								redirect_pages_to_root_domain: z.number().nullish(),
+								external_pages_to_root_domain: z.number().nullish(),
+								external_indirect_pages_to_root_domain: z.number().nullish(),
+								external_nofollow_pages_to_root_domain: z.number().nullish(),
+								external_redirect_pages_to_root_domain: z.number().nullish(),
+								deleted_pages_to_root_domain: z.number().nullish(),
+								root_domains_to_root_domain: z.number().nullish(),
+								indirect_root_domains_to_root_domain: z.number().nullish(),
+								deleted_root_domains_to_root_domain: z.number().nullish(),
+								nofollow_root_domains_to_root_domain: z.number().nullish(),
+								page_authority: z.number().nullish(),
+								domain_authority: z.number().nullish(),
+								link_propensity: z.number().nullish(),
+								spam_score: z.number().nullish(),
+								root_domains_from_page: z.number().nullish(),
+								nofollow_root_domains_from_page: z.number().nullish(),
+								pages_from_page: z.number().nullish(),
+								nofollow_pages_from_page: z.number().nullish(),
+								root_domains_from_root_domain: z.number().nullish(),
+								nofollow_root_domains_from_root_domain: z.number().nullish(),
+								pages_from_root_domain: z.number().nullish(),
+								nofollow_pages_from_root_domain: z.number().nullish(),
+								pages_crawled_from_root_domain: z.number().nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -2575,7 +2833,17 @@ export const mozOutputBuilders = {
 												primary_intents: z
 													.array(z.string().nullish())
 													.nullish(),
-												all_intents: z.array(z.unknown()).nullish(),
+												all_intents: z
+													.array(
+														z
+															.object({
+																label: z.string().nullish(),
+																score: z.number().nullish(),
+															})
+															.loose()
+															.nullish(),
+													)
+													.nullish(),
 											})
 											.loose()
 											.nullish(),
@@ -2656,14 +2924,187 @@ export const mozOutputBuilders = {
 														primary_intents: z
 															.array(z.string().nullish())
 															.nullish(),
-														all_intents: z.array(z.unknown()).nullish(),
+														all_intents: z
+															.array(
+																z
+																	.object({
+																		label: z.string().nullish(),
+																		score: z.number().nullish(),
+																	})
+																	.loose()
+																	.nullish(),
+															)
+															.nullish(),
 													})
 													.loose()
 													.nullish(),
 											})
 											.loose()
 											.nullish(),
-										results: z.array(z.unknown()).nullish(),
+										results: z
+											.array(
+												z
+													.object({
+														type: z.string().nullish(),
+														description: z.string().nullish(),
+														position: z.string().nullish(),
+														title: z.string().nullish(),
+														traits: z.array(z.string().nullish()).nullish(),
+														url: z.string().nullish(),
+														price: z.string().nullish(),
+														rating: z.string().nullish(),
+														reviews: z.string().nullish(),
+														question: z.string().nullish(),
+														displayed_path: z.string().nullish(),
+														job_title: z.string().nullish(),
+														job_employer: z.string().nullish(),
+														job_location: z.string().nullish(),
+														job_source: z.string().nullish(),
+														job_posted_on: z.string().nullish(),
+														job_travel_time: z.string().nullish(),
+														job_details: z.string().nullish(),
+														business_name: z.string().nullish(),
+														related_searches: z
+															.array(z.string().nullish())
+															.nullish(),
+														results: z
+															.array(
+																z.record(z.string(), z.unknown()).nullish(),
+															)
+															.nullish(),
+														sitelinks: z
+															.array(
+																z.record(z.string(), z.unknown()).nullish(),
+															)
+															.nullish(),
+														one_line_sitelinks: z
+															.array(
+																z.record(z.string(), z.unknown()).nullish(),
+															)
+															.nullish(),
+														position_index: z.number().nullish(),
+														rank: z.number().nullish(),
+														brand_authority: z.number().nullish(),
+														url_metrics: z
+															.object({
+																page: z.string().nullish(),
+																subdomain: z.string().nullish(),
+																root_domain: z.string().nullish(),
+																title: z.string().nullish(),
+																last_crawled: z.string().nullish(),
+																http_code: z.number().nullish(),
+																pages_to_page: z.number().nullish(),
+																nofollow_pages_to_page: z.number().nullish(),
+																redirect_pages_to_page: z.number().nullish(),
+																external_pages_to_page: z.number().nullish(),
+																external_nofollow_pages_to_page: z
+																	.number()
+																	.nullish(),
+																external_redirect_pages_to_page: z
+																	.number()
+																	.nullish(),
+																deleted_pages_to_page: z.number().nullish(),
+																root_domains_to_page: z.number().nullish(),
+																indirect_root_domains_to_page: z
+																	.number()
+																	.nullish(),
+																deleted_root_domains_to_page: z
+																	.number()
+																	.nullish(),
+																nofollow_root_domains_to_page: z
+																	.number()
+																	.nullish(),
+																pages_to_subdomain: z.number().nullish(),
+																nofollow_pages_to_subdomain: z
+																	.number()
+																	.nullish(),
+																redirect_pages_to_subdomain: z
+																	.number()
+																	.nullish(),
+																external_pages_to_subdomain: z
+																	.number()
+																	.nullish(),
+																external_nofollow_pages_to_subdomain: z
+																	.number()
+																	.nullish(),
+																external_redirect_pages_to_subdomain: z
+																	.number()
+																	.nullish(),
+																deleted_pages_to_subdomain: z
+																	.number()
+																	.nullish(),
+																root_domains_to_subdomain: z.number().nullish(),
+																deleted_root_domains_to_subdomain: z
+																	.number()
+																	.nullish(),
+																nofollow_root_domains_to_subdomain: z
+																	.number()
+																	.nullish(),
+																pages_to_root_domain: z.number().nullish(),
+																nofollow_pages_to_root_domain: z
+																	.number()
+																	.nullish(),
+																redirect_pages_to_root_domain: z
+																	.number()
+																	.nullish(),
+																external_pages_to_root_domain: z
+																	.number()
+																	.nullish(),
+																external_indirect_pages_to_root_domain: z
+																	.number()
+																	.nullish(),
+																external_nofollow_pages_to_root_domain: z
+																	.number()
+																	.nullish(),
+																external_redirect_pages_to_root_domain: z
+																	.number()
+																	.nullish(),
+																deleted_pages_to_root_domain: z
+																	.number()
+																	.nullish(),
+																root_domains_to_root_domain: z
+																	.number()
+																	.nullish(),
+																indirect_root_domains_to_root_domain: z
+																	.number()
+																	.nullish(),
+																deleted_root_domains_to_root_domain: z
+																	.number()
+																	.nullish(),
+																nofollow_root_domains_to_root_domain: z
+																	.number()
+																	.nullish(),
+																page_authority: z.number().nullish(),
+																domain_authority: z.number().nullish(),
+																link_propensity: z.number().nullish(),
+																spam_score: z.number().nullish(),
+																root_domains_from_page: z.number().nullish(),
+																nofollow_root_domains_from_page: z
+																	.number()
+																	.nullish(),
+																pages_from_page: z.number().nullish(),
+																nofollow_pages_from_page: z.number().nullish(),
+																root_domains_from_root_domain: z
+																	.number()
+																	.nullish(),
+																nofollow_root_domains_from_root_domain: z
+																	.number()
+																	.nullish(),
+																pages_from_root_domain: z.number().nullish(),
+																nofollow_pages_from_root_domain: z
+																	.number()
+																	.nullish(),
+																pages_crawled_from_root_domain: z
+																	.number()
+																	.nullish(),
+															})
+															.loose()
+															.nullish(),
+													})
+													.loose()
+													.nullish(),
+											)
+											.nullish(),
 									})
 									.loose()
 									.nullish(),
@@ -2709,7 +3150,17 @@ export const mozOutputBuilders = {
 						intent: z
 							.object({
 								primary_intents: z.array(z.string().nullish()).nullish(),
-								all_intents: z.array(z.unknown()).nullish(),
+								all_intents: z
+									.array(
+										z
+											.object({
+												label: z.string().nullish(),
+												score: z.number().nullish(),
+											})
+											.loose()
+											.nullish(),
+									)
+									.nullish(),
 							})
 							.loose()
 							.nullish(),
@@ -2748,7 +3199,17 @@ export const mozOutputBuilders = {
 						intent: z
 							.object({
 								primary_intents: z.array(z.string().nullish()).nullish(),
-								all_intents: z.array(z.unknown()).nullish(),
+								all_intents: z
+									.array(
+										z
+											.object({
+												label: z.string().nullish(),
+												score: z.number().nullish(),
+											})
+											.loose()
+											.nullish(),
+									)
+									.nullish(),
 							})
 							.loose()
 							.nullish(),
@@ -2782,8 +3243,88 @@ export const mozOutputBuilders = {
 	'keywords.metricsMultiple': () =>
 		z
 			.object({
-				results_by_serp_query: z.array(z.unknown()).nullish(),
-				errors_by_serp_query: z.array(z.unknown()).nullish(),
+				results_by_serp_query: z
+					.array(
+						z
+							.object({
+								serp_query: z
+									.object({
+										keyword: z.string().nullish(),
+										locale: z.string().nullish(),
+										device: z.string().nullish(),
+										engine: z.string().nullish(),
+										vicinity: z.string().nullish(),
+									})
+									.loose()
+									.nullish(),
+								keyword_metrics: z
+									.object({
+										volume: z.number().nullish(),
+										difficulty: z.number().nullish(),
+										organic_ctr: z.number().nullish(),
+										priority: z.number().nullish(),
+										intent: z
+											.object({
+												primary_intents: z
+													.array(z.string().nullish())
+													.nullish(),
+												all_intents: z
+													.array(
+														z
+															.object({
+																label: z.string().nullish(),
+																score: z.number().nullish(),
+															})
+															.loose()
+															.nullish(),
+													)
+													.nullish(),
+											})
+											.loose()
+											.nullish(),
+									})
+									.loose()
+									.nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
+				errors_by_serp_query: z
+					.array(
+						z
+							.object({
+								serp_query: z
+									.object({
+										keyword: z.string().nullish(),
+										locale: z.string().nullish(),
+										device: z.string().nullish(),
+										engine: z.string().nullish(),
+										vicinity: z.string().nullish(),
+									})
+									.loose()
+									.nullish(),
+								error: z
+									.object({
+										message: z.string().nullish(),
+										name: z.string().nullish(),
+										data: z
+											.object({
+												key: z.string().nullish(),
+												value: z.string().nullish(),
+											})
+											.loose()
+											.nullish(),
+										httpStatus: z.number().nullish(),
+										jsonrpcCode: z.number().nullish(),
+									})
+									.loose()
+									.nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -2890,14 +3431,141 @@ export const mozOutputBuilders = {
 								intent: z
 									.object({
 										primary_intents: z.array(z.string().nullish()).nullish(),
-										all_intents: z.array(z.unknown()).nullish(),
+										all_intents: z
+											.array(
+												z
+													.object({
+														label: z.string().nullish(),
+														score: z.number().nullish(),
+													})
+													.loose()
+													.nullish(),
+											)
+											.nullish(),
 									})
 									.loose()
 									.nullish(),
 							})
 							.loose()
 							.nullish(),
-						results: z.array(z.unknown()).nullish(),
+						results: z
+							.array(
+								z
+									.object({
+										type: z.string().nullish(),
+										description: z.string().nullish(),
+										position: z.string().nullish(),
+										title: z.string().nullish(),
+										traits: z.array(z.string().nullish()).nullish(),
+										url: z.string().nullish(),
+										price: z.string().nullish(),
+										rating: z.string().nullish(),
+										reviews: z.string().nullish(),
+										question: z.string().nullish(),
+										displayed_path: z.string().nullish(),
+										job_title: z.string().nullish(),
+										job_employer: z.string().nullish(),
+										job_location: z.string().nullish(),
+										job_source: z.string().nullish(),
+										job_posted_on: z.string().nullish(),
+										job_travel_time: z.string().nullish(),
+										job_details: z.string().nullish(),
+										business_name: z.string().nullish(),
+										related_searches: z.array(z.string().nullish()).nullish(),
+										results: z
+											.array(z.record(z.string(), z.unknown()).nullish())
+											.nullish(),
+										sitelinks: z
+											.array(z.record(z.string(), z.unknown()).nullish())
+											.nullish(),
+										one_line_sitelinks: z
+											.array(z.record(z.string(), z.unknown()).nullish())
+											.nullish(),
+										position_index: z.number().nullish(),
+										rank: z.number().nullish(),
+										brand_authority: z.number().nullish(),
+										url_metrics: z
+											.object({
+												page: z.string().nullish(),
+												subdomain: z.string().nullish(),
+												root_domain: z.string().nullish(),
+												title: z.string().nullish(),
+												last_crawled: z.string().nullish(),
+												http_code: z.number().nullish(),
+												pages_to_page: z.number().nullish(),
+												nofollow_pages_to_page: z.number().nullish(),
+												redirect_pages_to_page: z.number().nullish(),
+												external_pages_to_page: z.number().nullish(),
+												external_nofollow_pages_to_page: z.number().nullish(),
+												external_redirect_pages_to_page: z.number().nullish(),
+												deleted_pages_to_page: z.number().nullish(),
+												root_domains_to_page: z.number().nullish(),
+												indirect_root_domains_to_page: z.number().nullish(),
+												deleted_root_domains_to_page: z.number().nullish(),
+												nofollow_root_domains_to_page: z.number().nullish(),
+												pages_to_subdomain: z.number().nullish(),
+												nofollow_pages_to_subdomain: z.number().nullish(),
+												redirect_pages_to_subdomain: z.number().nullish(),
+												external_pages_to_subdomain: z.number().nullish(),
+												external_nofollow_pages_to_subdomain: z
+													.number()
+													.nullish(),
+												external_redirect_pages_to_subdomain: z
+													.number()
+													.nullish(),
+												deleted_pages_to_subdomain: z.number().nullish(),
+												root_domains_to_subdomain: z.number().nullish(),
+												deleted_root_domains_to_subdomain: z.number().nullish(),
+												nofollow_root_domains_to_subdomain: z
+													.number()
+													.nullish(),
+												pages_to_root_domain: z.number().nullish(),
+												nofollow_pages_to_root_domain: z.number().nullish(),
+												redirect_pages_to_root_domain: z.number().nullish(),
+												external_pages_to_root_domain: z.number().nullish(),
+												external_indirect_pages_to_root_domain: z
+													.number()
+													.nullish(),
+												external_nofollow_pages_to_root_domain: z
+													.number()
+													.nullish(),
+												external_redirect_pages_to_root_domain: z
+													.number()
+													.nullish(),
+												deleted_pages_to_root_domain: z.number().nullish(),
+												root_domains_to_root_domain: z.number().nullish(),
+												indirect_root_domains_to_root_domain: z
+													.number()
+													.nullish(),
+												deleted_root_domains_to_root_domain: z
+													.number()
+													.nullish(),
+												nofollow_root_domains_to_root_domain: z
+													.number()
+													.nullish(),
+												page_authority: z.number().nullish(),
+												domain_authority: z.number().nullish(),
+												link_propensity: z.number().nullish(),
+												spam_score: z.number().nullish(),
+												root_domains_from_page: z.number().nullish(),
+												nofollow_root_domains_from_page: z.number().nullish(),
+												pages_from_page: z.number().nullish(),
+												nofollow_pages_from_page: z.number().nullish(),
+												root_domains_from_root_domain: z.number().nullish(),
+												nofollow_root_domains_from_root_domain: z
+													.number()
+													.nullish(),
+												pages_from_root_domain: z.number().nullish(),
+												nofollow_pages_from_root_domain: z.number().nullish(),
+												pages_crawled_from_root_domain: z.number().nullish(),
+											})
+											.loose()
+											.nullish(),
+									})
+									.loose()
+									.nullish(),
+							)
+							.nullish(),
 					})
 					.loose()
 					.nullish(),
@@ -2915,7 +3583,17 @@ export const mozOutputBuilders = {
 						ttl: z.number().nullish(),
 						result: z
 							.object({
-								suggestions: z.array(z.unknown()).nullish(),
+								suggestions: z
+									.array(
+										z
+											.object({
+												keyword: z.string().nullish(),
+												relevance: z.number().nullish(),
+											})
+											.loose()
+											.nullish(),
+									)
+									.nullish(),
 								serp_query: z
 									.object({
 										keyword: z.string().nullish(),
@@ -3034,7 +3712,85 @@ export const mozOutputBuilders = {
 					})
 					.loose()
 					.nullish(),
-				linking_domains: z.array(z.unknown()).nullish(),
+				linking_domains: z
+					.array(
+						z
+							.object({
+								site_metrics: z
+									.object({
+										page: z.string().nullish(),
+										subdomain: z.string().nullish(),
+										root_domain: z.string().nullish(),
+										title: z.string().nullish(),
+										last_crawled: z.string().nullish(),
+										http_code: z.number().nullish(),
+										pages_to_page: z.number().nullish(),
+										nofollow_pages_to_page: z.number().nullish(),
+										redirect_pages_to_page: z.number().nullish(),
+										external_pages_to_page: z.number().nullish(),
+										external_nofollow_pages_to_page: z.number().nullish(),
+										external_redirect_pages_to_page: z.number().nullish(),
+										deleted_pages_to_page: z.number().nullish(),
+										root_domains_to_page: z.number().nullish(),
+										indirect_root_domains_to_page: z.number().nullish(),
+										deleted_root_domains_to_page: z.number().nullish(),
+										nofollow_root_domains_to_page: z.number().nullish(),
+										pages_to_subdomain: z.number().nullish(),
+										nofollow_pages_to_subdomain: z.number().nullish(),
+										redirect_pages_to_subdomain: z.number().nullish(),
+										external_pages_to_subdomain: z.number().nullish(),
+										external_nofollow_pages_to_subdomain: z.number().nullish(),
+										external_redirect_pages_to_subdomain: z.number().nullish(),
+										deleted_pages_to_subdomain: z.number().nullish(),
+										root_domains_to_subdomain: z.number().nullish(),
+										deleted_root_domains_to_subdomain: z.number().nullish(),
+										nofollow_root_domains_to_subdomain: z.number().nullish(),
+										pages_to_root_domain: z.number().nullish(),
+										nofollow_pages_to_root_domain: z.number().nullish(),
+										redirect_pages_to_root_domain: z.number().nullish(),
+										external_pages_to_root_domain: z.number().nullish(),
+										external_indirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_nofollow_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_redirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										deleted_pages_to_root_domain: z.number().nullish(),
+										root_domains_to_root_domain: z.number().nullish(),
+										indirect_root_domains_to_root_domain: z.number().nullish(),
+										deleted_root_domains_to_root_domain: z.number().nullish(),
+										nofollow_root_domains_to_root_domain: z.number().nullish(),
+										page_authority: z.number().nullish(),
+										domain_authority: z.number().nullish(),
+										link_propensity: z.number().nullish(),
+										spam_score: z.number().nullish(),
+										root_domains_from_page: z.number().nullish(),
+										nofollow_root_domains_from_page: z.number().nullish(),
+										pages_from_page: z.number().nullish(),
+										nofollow_pages_from_page: z.number().nullish(),
+										root_domains_from_root_domain: z.number().nullish(),
+										nofollow_root_domains_from_root_domain: z
+											.number()
+											.nullish(),
+										pages_from_root_domain: z.number().nullish(),
+										nofollow_pages_from_root_domain: z.number().nullish(),
+										pages_crawled_from_root_domain: z.number().nullish(),
+									})
+									.loose()
+									.nullish(),
+								link_propensity: z.number().nullish(),
+								targeted_pages: z.number().nullish(),
+								targeted_nofollow_pages: z.number().nullish(),
+								targeted_redirect_pages: z.number().nullish(),
+								targeted_deleted_pages: z.number().nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
 				options: z
 					.object({
 						sort: z.string().nullish(),
@@ -3079,7 +3835,86 @@ export const mozOutputBuilders = {
 					})
 					.loose()
 					.nullish(),
-				gained_linking_domains: z.array(z.unknown()).nullish(),
+				gained_linking_domains: z
+					.array(
+						z
+							.object({
+								site_metrics: z
+									.object({
+										page: z.string().nullish(),
+										subdomain: z.string().nullish(),
+										root_domain: z.string().nullish(),
+										title: z.string().nullish(),
+										last_crawled: z.string().nullish(),
+										http_code: z.number().nullish(),
+										pages_to_page: z.number().nullish(),
+										nofollow_pages_to_page: z.number().nullish(),
+										redirect_pages_to_page: z.number().nullish(),
+										external_pages_to_page: z.number().nullish(),
+										external_nofollow_pages_to_page: z.number().nullish(),
+										external_redirect_pages_to_page: z.number().nullish(),
+										deleted_pages_to_page: z.number().nullish(),
+										root_domains_to_page: z.number().nullish(),
+										indirect_root_domains_to_page: z.number().nullish(),
+										deleted_root_domains_to_page: z.number().nullish(),
+										nofollow_root_domains_to_page: z.number().nullish(),
+										pages_to_subdomain: z.number().nullish(),
+										nofollow_pages_to_subdomain: z.number().nullish(),
+										redirect_pages_to_subdomain: z.number().nullish(),
+										external_pages_to_subdomain: z.number().nullish(),
+										external_nofollow_pages_to_subdomain: z.number().nullish(),
+										external_redirect_pages_to_subdomain: z.number().nullish(),
+										deleted_pages_to_subdomain: z.number().nullish(),
+										root_domains_to_subdomain: z.number().nullish(),
+										deleted_root_domains_to_subdomain: z.number().nullish(),
+										nofollow_root_domains_to_subdomain: z.number().nullish(),
+										pages_to_root_domain: z.number().nullish(),
+										nofollow_pages_to_root_domain: z.number().nullish(),
+										redirect_pages_to_root_domain: z.number().nullish(),
+										external_pages_to_root_domain: z.number().nullish(),
+										external_indirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_nofollow_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_redirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										deleted_pages_to_root_domain: z.number().nullish(),
+										root_domains_to_root_domain: z.number().nullish(),
+										indirect_root_domains_to_root_domain: z.number().nullish(),
+										deleted_root_domains_to_root_domain: z.number().nullish(),
+										nofollow_root_domains_to_root_domain: z.number().nullish(),
+										page_authority: z.number().nullish(),
+										domain_authority: z.number().nullish(),
+										link_propensity: z.number().nullish(),
+										spam_score: z.number().nullish(),
+										root_domains_from_page: z.number().nullish(),
+										nofollow_root_domains_from_page: z.number().nullish(),
+										pages_from_page: z.number().nullish(),
+										nofollow_pages_from_page: z.number().nullish(),
+										root_domains_from_root_domain: z.number().nullish(),
+										nofollow_root_domains_from_root_domain: z
+											.number()
+											.nullish(),
+										pages_from_root_domain: z.number().nullish(),
+										nofollow_pages_from_root_domain: z.number().nullish(),
+										pages_crawled_from_root_domain: z.number().nullish(),
+									})
+									.loose()
+									.nullish(),
+								link_propensity: z.number().nullish(),
+								targeted_pages: z.number().nullish(),
+								targeted_nofollow_pages: z.number().nullish(),
+								targeted_redirect_pages: z.number().nullish(),
+								targeted_deleted_pages: z.number().nullish(),
+								date_gained: z.string().nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
 				options: z
 					.object({
 						begin_date: z.string().nullish(),
@@ -3124,7 +3959,86 @@ export const mozOutputBuilders = {
 					})
 					.loose()
 					.nullish(),
-				lost_linking_domains: z.array(z.unknown()).nullish(),
+				lost_linking_domains: z
+					.array(
+						z
+							.object({
+								site_metrics: z
+									.object({
+										page: z.string().nullish(),
+										subdomain: z.string().nullish(),
+										root_domain: z.string().nullish(),
+										title: z.string().nullish(),
+										last_crawled: z.string().nullish(),
+										http_code: z.number().nullish(),
+										pages_to_page: z.number().nullish(),
+										nofollow_pages_to_page: z.number().nullish(),
+										redirect_pages_to_page: z.number().nullish(),
+										external_pages_to_page: z.number().nullish(),
+										external_nofollow_pages_to_page: z.number().nullish(),
+										external_redirect_pages_to_page: z.number().nullish(),
+										deleted_pages_to_page: z.number().nullish(),
+										root_domains_to_page: z.number().nullish(),
+										indirect_root_domains_to_page: z.number().nullish(),
+										deleted_root_domains_to_page: z.number().nullish(),
+										nofollow_root_domains_to_page: z.number().nullish(),
+										pages_to_subdomain: z.number().nullish(),
+										nofollow_pages_to_subdomain: z.number().nullish(),
+										redirect_pages_to_subdomain: z.number().nullish(),
+										external_pages_to_subdomain: z.number().nullish(),
+										external_nofollow_pages_to_subdomain: z.number().nullish(),
+										external_redirect_pages_to_subdomain: z.number().nullish(),
+										deleted_pages_to_subdomain: z.number().nullish(),
+										root_domains_to_subdomain: z.number().nullish(),
+										deleted_root_domains_to_subdomain: z.number().nullish(),
+										nofollow_root_domains_to_subdomain: z.number().nullish(),
+										pages_to_root_domain: z.number().nullish(),
+										nofollow_pages_to_root_domain: z.number().nullish(),
+										redirect_pages_to_root_domain: z.number().nullish(),
+										external_pages_to_root_domain: z.number().nullish(),
+										external_indirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_nofollow_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_redirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										deleted_pages_to_root_domain: z.number().nullish(),
+										root_domains_to_root_domain: z.number().nullish(),
+										indirect_root_domains_to_root_domain: z.number().nullish(),
+										deleted_root_domains_to_root_domain: z.number().nullish(),
+										nofollow_root_domains_to_root_domain: z.number().nullish(),
+										page_authority: z.number().nullish(),
+										domain_authority: z.number().nullish(),
+										link_propensity: z.number().nullish(),
+										spam_score: z.number().nullish(),
+										root_domains_from_page: z.number().nullish(),
+										nofollow_root_domains_from_page: z.number().nullish(),
+										pages_from_page: z.number().nullish(),
+										nofollow_pages_from_page: z.number().nullish(),
+										root_domains_from_root_domain: z.number().nullish(),
+										nofollow_root_domains_from_root_domain: z
+											.number()
+											.nullish(),
+										pages_from_root_domain: z.number().nullish(),
+										nofollow_pages_from_root_domain: z.number().nullish(),
+										pages_crawled_from_root_domain: z.number().nullish(),
+									})
+									.loose()
+									.nullish(),
+								link_propensity: z.number().nullish(),
+								targeted_pages: z.number().nullish(),
+								targeted_nofollow_pages: z.number().nullish(),
+								targeted_redirect_pages: z.number().nullish(),
+								targeted_deleted_pages: z.number().nullish(),
+								date_lost: z.string().nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
 				options: z
 					.object({
 						begin_date: z.string().nullish(),
@@ -3169,7 +4083,154 @@ export const mozOutputBuilders = {
 					})
 					.loose()
 					.nullish(),
-				links: z.array(z.unknown()).nullish(),
+				links: z
+					.array(
+						z
+							.object({
+								source_site_metrics: z
+									.object({
+										page: z.string().nullish(),
+										subdomain: z.string().nullish(),
+										root_domain: z.string().nullish(),
+										title: z.string().nullish(),
+										last_crawled: z.string().nullish(),
+										http_code: z.number().nullish(),
+										pages_to_page: z.number().nullish(),
+										nofollow_pages_to_page: z.number().nullish(),
+										redirect_pages_to_page: z.number().nullish(),
+										external_pages_to_page: z.number().nullish(),
+										external_nofollow_pages_to_page: z.number().nullish(),
+										external_redirect_pages_to_page: z.number().nullish(),
+										deleted_pages_to_page: z.number().nullish(),
+										root_domains_to_page: z.number().nullish(),
+										indirect_root_domains_to_page: z.number().nullish(),
+										deleted_root_domains_to_page: z.number().nullish(),
+										nofollow_root_domains_to_page: z.number().nullish(),
+										pages_to_subdomain: z.number().nullish(),
+										nofollow_pages_to_subdomain: z.number().nullish(),
+										redirect_pages_to_subdomain: z.number().nullish(),
+										external_pages_to_subdomain: z.number().nullish(),
+										external_nofollow_pages_to_subdomain: z.number().nullish(),
+										external_redirect_pages_to_subdomain: z.number().nullish(),
+										deleted_pages_to_subdomain: z.number().nullish(),
+										root_domains_to_subdomain: z.number().nullish(),
+										deleted_root_domains_to_subdomain: z.number().nullish(),
+										nofollow_root_domains_to_subdomain: z.number().nullish(),
+										pages_to_root_domain: z.number().nullish(),
+										nofollow_pages_to_root_domain: z.number().nullish(),
+										redirect_pages_to_root_domain: z.number().nullish(),
+										external_pages_to_root_domain: z.number().nullish(),
+										external_indirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_nofollow_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_redirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										deleted_pages_to_root_domain: z.number().nullish(),
+										root_domains_to_root_domain: z.number().nullish(),
+										indirect_root_domains_to_root_domain: z.number().nullish(),
+										deleted_root_domains_to_root_domain: z.number().nullish(),
+										nofollow_root_domains_to_root_domain: z.number().nullish(),
+										page_authority: z.number().nullish(),
+										domain_authority: z.number().nullish(),
+										link_propensity: z.number().nullish(),
+										spam_score: z.number().nullish(),
+										root_domains_from_page: z.number().nullish(),
+										nofollow_root_domains_from_page: z.number().nullish(),
+										pages_from_page: z.number().nullish(),
+										nofollow_pages_from_page: z.number().nullish(),
+										root_domains_from_root_domain: z.number().nullish(),
+										nofollow_root_domains_from_root_domain: z
+											.number()
+											.nullish(),
+										pages_from_root_domain: z.number().nullish(),
+										nofollow_pages_from_root_domain: z.number().nullish(),
+										pages_crawled_from_root_domain: z.number().nullish(),
+									})
+									.loose()
+									.nullish(),
+								target_site_metrics: z
+									.object({
+										page: z.string().nullish(),
+										subdomain: z.string().nullish(),
+										root_domain: z.string().nullish(),
+										title: z.string().nullish(),
+										last_crawled: z.string().nullish(),
+										http_code: z.number().nullish(),
+										pages_to_page: z.number().nullish(),
+										nofollow_pages_to_page: z.number().nullish(),
+										redirect_pages_to_page: z.number().nullish(),
+										external_pages_to_page: z.number().nullish(),
+										external_nofollow_pages_to_page: z.number().nullish(),
+										external_redirect_pages_to_page: z.number().nullish(),
+										deleted_pages_to_page: z.number().nullish(),
+										root_domains_to_page: z.number().nullish(),
+										indirect_root_domains_to_page: z.number().nullish(),
+										deleted_root_domains_to_page: z.number().nullish(),
+										nofollow_root_domains_to_page: z.number().nullish(),
+										pages_to_subdomain: z.number().nullish(),
+										nofollow_pages_to_subdomain: z.number().nullish(),
+										redirect_pages_to_subdomain: z.number().nullish(),
+										external_pages_to_subdomain: z.number().nullish(),
+										external_nofollow_pages_to_subdomain: z.number().nullish(),
+										external_redirect_pages_to_subdomain: z.number().nullish(),
+										deleted_pages_to_subdomain: z.number().nullish(),
+										root_domains_to_subdomain: z.number().nullish(),
+										deleted_root_domains_to_subdomain: z.number().nullish(),
+										nofollow_root_domains_to_subdomain: z.number().nullish(),
+										pages_to_root_domain: z.number().nullish(),
+										nofollow_pages_to_root_domain: z.number().nullish(),
+										redirect_pages_to_root_domain: z.number().nullish(),
+										external_pages_to_root_domain: z.number().nullish(),
+										external_indirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_nofollow_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_redirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										deleted_pages_to_root_domain: z.number().nullish(),
+										root_domains_to_root_domain: z.number().nullish(),
+										indirect_root_domains_to_root_domain: z.number().nullish(),
+										deleted_root_domains_to_root_domain: z.number().nullish(),
+										nofollow_root_domains_to_root_domain: z.number().nullish(),
+										page_authority: z.number().nullish(),
+										domain_authority: z.number().nullish(),
+										link_propensity: z.number().nullish(),
+										spam_score: z.number().nullish(),
+										root_domains_from_page: z.number().nullish(),
+										nofollow_root_domains_from_page: z.number().nullish(),
+										pages_from_page: z.number().nullish(),
+										nofollow_pages_from_page: z.number().nullish(),
+										root_domains_from_root_domain: z.number().nullish(),
+										nofollow_root_domains_from_root_domain: z
+											.number()
+											.nullish(),
+										pages_from_root_domain: z.number().nullish(),
+										nofollow_pages_from_root_domain: z.number().nullish(),
+										pages_crawled_from_root_domain: z.number().nullish(),
+									})
+									.loose()
+									.nullish(),
+								anchor_text: z.string().nullish(),
+								date_first_seen: z.string().nullish(),
+								date_last_seen: z.string().nullish(),
+								date_disappeared: z.string().nullish(),
+								nofollow: z.union([z.boolean(), z.number()]).nullish(),
+								redirect: z.union([z.boolean(), z.number()]).nullish(),
+								rel_canonical: z.union([z.boolean(), z.number()]).nullish(),
+								via_redirect: z.union([z.boolean(), z.number()]).nullish(),
+								via_rel_canonical: z.union([z.boolean(), z.number()]).nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
 				options: z
 					.object({
 						scope: z.string().nullish(),
@@ -3240,7 +4301,154 @@ export const mozOutputBuilders = {
 					})
 					.loose()
 					.nullish(),
-				links: z.array(z.unknown()).nullish(),
+				links: z
+					.array(
+						z
+							.object({
+								source_site_metrics: z
+									.object({
+										page: z.string().nullish(),
+										subdomain: z.string().nullish(),
+										root_domain: z.string().nullish(),
+										title: z.string().nullish(),
+										last_crawled: z.string().nullish(),
+										http_code: z.number().nullish(),
+										pages_to_page: z.number().nullish(),
+										nofollow_pages_to_page: z.number().nullish(),
+										redirect_pages_to_page: z.number().nullish(),
+										external_pages_to_page: z.number().nullish(),
+										external_nofollow_pages_to_page: z.number().nullish(),
+										external_redirect_pages_to_page: z.number().nullish(),
+										deleted_pages_to_page: z.number().nullish(),
+										root_domains_to_page: z.number().nullish(),
+										indirect_root_domains_to_page: z.number().nullish(),
+										deleted_root_domains_to_page: z.number().nullish(),
+										nofollow_root_domains_to_page: z.number().nullish(),
+										pages_to_subdomain: z.number().nullish(),
+										nofollow_pages_to_subdomain: z.number().nullish(),
+										redirect_pages_to_subdomain: z.number().nullish(),
+										external_pages_to_subdomain: z.number().nullish(),
+										external_nofollow_pages_to_subdomain: z.number().nullish(),
+										external_redirect_pages_to_subdomain: z.number().nullish(),
+										deleted_pages_to_subdomain: z.number().nullish(),
+										root_domains_to_subdomain: z.number().nullish(),
+										deleted_root_domains_to_subdomain: z.number().nullish(),
+										nofollow_root_domains_to_subdomain: z.number().nullish(),
+										pages_to_root_domain: z.number().nullish(),
+										nofollow_pages_to_root_domain: z.number().nullish(),
+										redirect_pages_to_root_domain: z.number().nullish(),
+										external_pages_to_root_domain: z.number().nullish(),
+										external_indirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_nofollow_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_redirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										deleted_pages_to_root_domain: z.number().nullish(),
+										root_domains_to_root_domain: z.number().nullish(),
+										indirect_root_domains_to_root_domain: z.number().nullish(),
+										deleted_root_domains_to_root_domain: z.number().nullish(),
+										nofollow_root_domains_to_root_domain: z.number().nullish(),
+										page_authority: z.number().nullish(),
+										domain_authority: z.number().nullish(),
+										link_propensity: z.number().nullish(),
+										spam_score: z.number().nullish(),
+										root_domains_from_page: z.number().nullish(),
+										nofollow_root_domains_from_page: z.number().nullish(),
+										pages_from_page: z.number().nullish(),
+										nofollow_pages_from_page: z.number().nullish(),
+										root_domains_from_root_domain: z.number().nullish(),
+										nofollow_root_domains_from_root_domain: z
+											.number()
+											.nullish(),
+										pages_from_root_domain: z.number().nullish(),
+										nofollow_pages_from_root_domain: z.number().nullish(),
+										pages_crawled_from_root_domain: z.number().nullish(),
+									})
+									.loose()
+									.nullish(),
+								target_site_metrics: z
+									.object({
+										page: z.string().nullish(),
+										subdomain: z.string().nullish(),
+										root_domain: z.string().nullish(),
+										title: z.string().nullish(),
+										last_crawled: z.string().nullish(),
+										http_code: z.number().nullish(),
+										pages_to_page: z.number().nullish(),
+										nofollow_pages_to_page: z.number().nullish(),
+										redirect_pages_to_page: z.number().nullish(),
+										external_pages_to_page: z.number().nullish(),
+										external_nofollow_pages_to_page: z.number().nullish(),
+										external_redirect_pages_to_page: z.number().nullish(),
+										deleted_pages_to_page: z.number().nullish(),
+										root_domains_to_page: z.number().nullish(),
+										indirect_root_domains_to_page: z.number().nullish(),
+										deleted_root_domains_to_page: z.number().nullish(),
+										nofollow_root_domains_to_page: z.number().nullish(),
+										pages_to_subdomain: z.number().nullish(),
+										nofollow_pages_to_subdomain: z.number().nullish(),
+										redirect_pages_to_subdomain: z.number().nullish(),
+										external_pages_to_subdomain: z.number().nullish(),
+										external_nofollow_pages_to_subdomain: z.number().nullish(),
+										external_redirect_pages_to_subdomain: z.number().nullish(),
+										deleted_pages_to_subdomain: z.number().nullish(),
+										root_domains_to_subdomain: z.number().nullish(),
+										deleted_root_domains_to_subdomain: z.number().nullish(),
+										nofollow_root_domains_to_subdomain: z.number().nullish(),
+										pages_to_root_domain: z.number().nullish(),
+										nofollow_pages_to_root_domain: z.number().nullish(),
+										redirect_pages_to_root_domain: z.number().nullish(),
+										external_pages_to_root_domain: z.number().nullish(),
+										external_indirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_nofollow_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_redirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										deleted_pages_to_root_domain: z.number().nullish(),
+										root_domains_to_root_domain: z.number().nullish(),
+										indirect_root_domains_to_root_domain: z.number().nullish(),
+										deleted_root_domains_to_root_domain: z.number().nullish(),
+										nofollow_root_domains_to_root_domain: z.number().nullish(),
+										page_authority: z.number().nullish(),
+										domain_authority: z.number().nullish(),
+										link_propensity: z.number().nullish(),
+										spam_score: z.number().nullish(),
+										root_domains_from_page: z.number().nullish(),
+										nofollow_root_domains_from_page: z.number().nullish(),
+										pages_from_page: z.number().nullish(),
+										nofollow_pages_from_page: z.number().nullish(),
+										root_domains_from_root_domain: z.number().nullish(),
+										nofollow_root_domains_from_root_domain: z
+											.number()
+											.nullish(),
+										pages_from_root_domain: z.number().nullish(),
+										nofollow_pages_from_root_domain: z.number().nullish(),
+										pages_crawled_from_root_domain: z.number().nullish(),
+									})
+									.loose()
+									.nullish(),
+								anchor_text: z.string().nullish(),
+								date_first_seen: z.string().nullish(),
+								date_last_seen: z.string().nullish(),
+								date_disappeared: z.string().nullish(),
+								nofollow: z.union([z.boolean(), z.number()]).nullish(),
+								redirect: z.union([z.boolean(), z.number()]).nullish(),
+								rel_canonical: z.union([z.boolean(), z.number()]).nullish(),
+								via_redirect: z.union([z.boolean(), z.number()]).nullish(),
+								via_rel_canonical: z.union([z.boolean(), z.number()]).nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
 				options: z
 					.object({
 						scope: z.string().nullish(),
@@ -3256,8 +4464,60 @@ export const mozOutputBuilders = {
 	'links.intersect': () =>
 		z
 			.object({
-				is_linking_to: z.array(z.unknown()).nullish(),
-				not_linking_to: z.array(z.unknown()).nullish(),
+				is_linking_to: z
+					.array(
+						z
+							.object({
+								query: z.string().nullish(),
+								scope: z.string().nullish(),
+								original_site_query: z
+									.object({
+										query: z.string().nullish(),
+										scope: z.string().nullish(),
+									})
+									.loose()
+									.nullish(),
+								site_query_suggestion: z
+									.object({
+										query: z.string().nullish(),
+										scope: z.string().nullish(),
+										explanation: z.string().nullish(),
+										issue: z.string().nullish(),
+									})
+									.loose()
+									.nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
+				not_linking_to: z
+					.array(
+						z
+							.object({
+								query: z.string().nullish(),
+								scope: z.string().nullish(),
+								original_site_query: z
+									.object({
+										query: z.string().nullish(),
+										scope: z.string().nullish(),
+									})
+									.loose()
+									.nullish(),
+								site_query_suggestion: z
+									.object({
+										query: z.string().nullish(),
+										scope: z.string().nullish(),
+										explanation: z.string().nullish(),
+										issue: z.string().nullish(),
+									})
+									.loose()
+									.nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
 				options: z
 					.object({
 						minimum_matching_targets: z.number().nullish(),
@@ -3274,7 +4534,33 @@ export const mozOutputBuilders = {
 					})
 					.loose()
 					.nullish(),
-				link_intersects: z.array(z.unknown()).nullish(),
+				link_intersects: z
+					.array(
+						z
+							.object({
+								page: z.string().nullish(),
+								title: z.string().nullish(),
+								domain_authority: z.number().nullish(),
+								spam_score: z.number().nullish(),
+								matching_target_indexes: z
+									.array(z.number().nullish())
+									.nullish(),
+								matching_source_pages: z
+									.array(
+										z
+											.object({
+												page: z.string().nullish(),
+												page_authority: z.number().nullish(),
+											})
+											.loose()
+											.nullish(),
+									)
+									.nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -3312,7 +4598,154 @@ export const mozOutputBuilders = {
 					})
 					.loose()
 					.nullish(),
-				links: z.array(z.unknown()).nullish(),
+				links: z
+					.array(
+						z
+							.object({
+								source_site_metrics: z
+									.object({
+										page: z.string().nullish(),
+										subdomain: z.string().nullish(),
+										root_domain: z.string().nullish(),
+										title: z.string().nullish(),
+										last_crawled: z.string().nullish(),
+										http_code: z.number().nullish(),
+										pages_to_page: z.number().nullish(),
+										nofollow_pages_to_page: z.number().nullish(),
+										redirect_pages_to_page: z.number().nullish(),
+										external_pages_to_page: z.number().nullish(),
+										external_nofollow_pages_to_page: z.number().nullish(),
+										external_redirect_pages_to_page: z.number().nullish(),
+										deleted_pages_to_page: z.number().nullish(),
+										root_domains_to_page: z.number().nullish(),
+										indirect_root_domains_to_page: z.number().nullish(),
+										deleted_root_domains_to_page: z.number().nullish(),
+										nofollow_root_domains_to_page: z.number().nullish(),
+										pages_to_subdomain: z.number().nullish(),
+										nofollow_pages_to_subdomain: z.number().nullish(),
+										redirect_pages_to_subdomain: z.number().nullish(),
+										external_pages_to_subdomain: z.number().nullish(),
+										external_nofollow_pages_to_subdomain: z.number().nullish(),
+										external_redirect_pages_to_subdomain: z.number().nullish(),
+										deleted_pages_to_subdomain: z.number().nullish(),
+										root_domains_to_subdomain: z.number().nullish(),
+										deleted_root_domains_to_subdomain: z.number().nullish(),
+										nofollow_root_domains_to_subdomain: z.number().nullish(),
+										pages_to_root_domain: z.number().nullish(),
+										nofollow_pages_to_root_domain: z.number().nullish(),
+										redirect_pages_to_root_domain: z.number().nullish(),
+										external_pages_to_root_domain: z.number().nullish(),
+										external_indirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_nofollow_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_redirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										deleted_pages_to_root_domain: z.number().nullish(),
+										root_domains_to_root_domain: z.number().nullish(),
+										indirect_root_domains_to_root_domain: z.number().nullish(),
+										deleted_root_domains_to_root_domain: z.number().nullish(),
+										nofollow_root_domains_to_root_domain: z.number().nullish(),
+										page_authority: z.number().nullish(),
+										domain_authority: z.number().nullish(),
+										link_propensity: z.number().nullish(),
+										spam_score: z.number().nullish(),
+										root_domains_from_page: z.number().nullish(),
+										nofollow_root_domains_from_page: z.number().nullish(),
+										pages_from_page: z.number().nullish(),
+										nofollow_pages_from_page: z.number().nullish(),
+										root_domains_from_root_domain: z.number().nullish(),
+										nofollow_root_domains_from_root_domain: z
+											.number()
+											.nullish(),
+										pages_from_root_domain: z.number().nullish(),
+										nofollow_pages_from_root_domain: z.number().nullish(),
+										pages_crawled_from_root_domain: z.number().nullish(),
+									})
+									.loose()
+									.nullish(),
+								target_site_metrics: z
+									.object({
+										page: z.string().nullish(),
+										subdomain: z.string().nullish(),
+										root_domain: z.string().nullish(),
+										title: z.string().nullish(),
+										last_crawled: z.string().nullish(),
+										http_code: z.number().nullish(),
+										pages_to_page: z.number().nullish(),
+										nofollow_pages_to_page: z.number().nullish(),
+										redirect_pages_to_page: z.number().nullish(),
+										external_pages_to_page: z.number().nullish(),
+										external_nofollow_pages_to_page: z.number().nullish(),
+										external_redirect_pages_to_page: z.number().nullish(),
+										deleted_pages_to_page: z.number().nullish(),
+										root_domains_to_page: z.number().nullish(),
+										indirect_root_domains_to_page: z.number().nullish(),
+										deleted_root_domains_to_page: z.number().nullish(),
+										nofollow_root_domains_to_page: z.number().nullish(),
+										pages_to_subdomain: z.number().nullish(),
+										nofollow_pages_to_subdomain: z.number().nullish(),
+										redirect_pages_to_subdomain: z.number().nullish(),
+										external_pages_to_subdomain: z.number().nullish(),
+										external_nofollow_pages_to_subdomain: z.number().nullish(),
+										external_redirect_pages_to_subdomain: z.number().nullish(),
+										deleted_pages_to_subdomain: z.number().nullish(),
+										root_domains_to_subdomain: z.number().nullish(),
+										deleted_root_domains_to_subdomain: z.number().nullish(),
+										nofollow_root_domains_to_subdomain: z.number().nullish(),
+										pages_to_root_domain: z.number().nullish(),
+										nofollow_pages_to_root_domain: z.number().nullish(),
+										redirect_pages_to_root_domain: z.number().nullish(),
+										external_pages_to_root_domain: z.number().nullish(),
+										external_indirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_nofollow_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_redirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										deleted_pages_to_root_domain: z.number().nullish(),
+										root_domains_to_root_domain: z.number().nullish(),
+										indirect_root_domains_to_root_domain: z.number().nullish(),
+										deleted_root_domains_to_root_domain: z.number().nullish(),
+										nofollow_root_domains_to_root_domain: z.number().nullish(),
+										page_authority: z.number().nullish(),
+										domain_authority: z.number().nullish(),
+										link_propensity: z.number().nullish(),
+										spam_score: z.number().nullish(),
+										root_domains_from_page: z.number().nullish(),
+										nofollow_root_domains_from_page: z.number().nullish(),
+										pages_from_page: z.number().nullish(),
+										nofollow_pages_from_page: z.number().nullish(),
+										root_domains_from_root_domain: z.number().nullish(),
+										nofollow_root_domains_from_root_domain: z
+											.number()
+											.nullish(),
+										pages_from_root_domain: z.number().nullish(),
+										nofollow_pages_from_root_domain: z.number().nullish(),
+										pages_crawled_from_root_domain: z.number().nullish(),
+									})
+									.loose()
+									.nullish(),
+								anchor_text: z.string().nullish(),
+								date_first_seen: z.string().nullish(),
+								date_last_seen: z.string().nullish(),
+								date_disappeared: z.string().nullish(),
+								nofollow: z.union([z.boolean(), z.number()]).nullish(),
+								redirect: z.union([z.boolean(), z.number()]).nullish(),
+								rel_canonical: z.union([z.boolean(), z.number()]).nullish(),
+								via_redirect: z.union([z.boolean(), z.number()]).nullish(),
+								via_rel_canonical: z.union([z.boolean(), z.number()]).nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
 				options: z
 					.object({
 						scope: z.string().nullish(),
@@ -3381,8 +4814,133 @@ export const mozOutputBuilders = {
 	'links.statusMultiple': () =>
 		z
 			.object({
-				results_by_query: z.array(z.unknown()).nullish(),
-				errors_by_query: z.array(z.unknown()).nullish(),
+				results_by_query: z
+					.array(
+						z
+							.object({
+								target_site_query: z
+									.object({
+										query: z.string().nullish(),
+										scope: z.string().nullish(),
+										original_site_query: z
+											.object({
+												query: z.string().nullish(),
+												scope: z.string().nullish(),
+											})
+											.loose()
+											.nullish(),
+										site_query_suggestion: z
+											.object({
+												query: z.string().nullish(),
+												scope: z.string().nullish(),
+												explanation: z.string().nullish(),
+												issue: z.string().nullish(),
+											})
+											.loose()
+											.nullish(),
+									})
+									.loose()
+									.nullish(),
+								source_site_query: z
+									.object({
+										query: z.string().nullish(),
+										scope: z.string().nullish(),
+										original_site_query: z
+											.object({
+												query: z.string().nullish(),
+												scope: z.string().nullish(),
+											})
+											.loose()
+											.nullish(),
+										site_query_suggestion: z
+											.object({
+												query: z.string().nullish(),
+												scope: z.string().nullish(),
+												explanation: z.string().nullish(),
+												issue: z.string().nullish(),
+											})
+											.loose()
+											.nullish(),
+									})
+									.loose()
+									.nullish(),
+								exists: z.union([z.boolean(), z.number()]).nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
+				errors_by_query: z
+					.array(
+						z
+							.object({
+								target_site_query: z
+									.object({
+										query: z.string().nullish(),
+										scope: z.string().nullish(),
+										original_site_query: z
+											.object({
+												query: z.string().nullish(),
+												scope: z.string().nullish(),
+											})
+											.loose()
+											.nullish(),
+										site_query_suggestion: z
+											.object({
+												query: z.string().nullish(),
+												scope: z.string().nullish(),
+												explanation: z.string().nullish(),
+												issue: z.string().nullish(),
+											})
+											.loose()
+											.nullish(),
+									})
+									.loose()
+									.nullish(),
+								source_site_query: z
+									.object({
+										query: z.string().nullish(),
+										scope: z.string().nullish(),
+										original_site_query: z
+											.object({
+												query: z.string().nullish(),
+												scope: z.string().nullish(),
+											})
+											.loose()
+											.nullish(),
+										site_query_suggestion: z
+											.object({
+												query: z.string().nullish(),
+												scope: z.string().nullish(),
+												explanation: z.string().nullish(),
+												issue: z.string().nullish(),
+											})
+											.loose()
+											.nullish(),
+									})
+									.loose()
+									.nullish(),
+								error: z
+									.object({
+										message: z.string().nullish(),
+										name: z.string().nullish(),
+										data: z
+											.object({
+												key: z.string().nullish(),
+												value: z.string().nullish(),
+											})
+											.loose()
+											.nullish(),
+										httpStatus: z.number().nullish(),
+										jsonrpcCode: z.number().nullish(),
+									})
+									.loose()
+									.nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -3399,7 +4957,20 @@ export const mozOutputBuilders = {
 	'local.accounts.list': () =>
 		z
 			.object({
-				accounts: z.union([z.array(z.unknown()), z.string()]).nullish(),
+				accounts: z
+					.union([
+						z.array(
+							z
+								.object({
+									id: z.number().nullish(),
+									name: z.string().nullish(),
+								})
+								.loose()
+								.nullish(),
+						),
+						z.string(),
+					])
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -3430,7 +5001,21 @@ export const mozOutputBuilders = {
 	'local.customFields.listForAccount': () =>
 		z
 			.object({
-				custom_fields: z.union([z.array(z.unknown()), z.string()]).nullish(),
+				custom_fields: z
+					.union([
+						z.array(
+							z
+								.object({
+									id: z.number().nullish(),
+									account_id: z.number().nullish(),
+									name: z.string().nullish(),
+								})
+								.loose()
+								.nullish(),
+						),
+						z.string(),
+					])
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -3465,18 +5050,55 @@ export const mozOutputBuilders = {
 			.nullish(),
 	'local.groups.list': () =>
 		z
-			.object({ groups: z.union([z.array(z.unknown()), z.string()]).nullish() })
+			.object({
+				groups: z
+					.union([
+						z.array(
+							z
+								.object({
+									id: z.number().nullish(),
+									name: z.string().nullish(),
+									account_id: z.number().nullish(),
+								})
+								.loose()
+								.nullish(),
+						),
+						z.string(),
+					])
+					.nullish(),
+			})
 			.loose()
 			.nullish(),
 	'local.groups.listForAccount': () =>
 		z
-			.object({ groups: z.union([z.array(z.unknown()), z.string()]).nullish() })
+			.object({
+				groups: z
+					.union([
+						z.array(
+							z
+								.object({
+									id: z.number().nullish(),
+									name: z.string().nullish(),
+									account_id: z.number().nullish(),
+								})
+								.loose()
+								.nullish(),
+						),
+						z.string(),
+					])
+					.nullish(),
+			})
 			.loose()
 			.nullish(),
 	'local.groups.listLocations': () =>
 		z
 			.object({
-				locations: z.union([z.array(z.unknown()), z.string()]).nullish(),
+				locations: z
+					.union([
+						z.array(z.object({ id: z.number().nullish() }).loose().nullish()),
+						z.string(),
+					])
+					.nullish(),
 				page: z
 					.object({
 						n: z.number().nullish(),
@@ -3538,7 +5160,18 @@ export const mozOutputBuilders = {
 							.nullish(),
 						price_range: z.string().nullish(),
 						service_areas: z
-							.union([z.array(z.unknown()), z.string()])
+							.union([
+								z.array(
+									z
+										.object({
+											text: z.string().nullish(),
+											id: z.string().nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
 							.nullish(),
 						service_area_only: z.union([z.boolean(), z.number()]).nullish(),
 						services: z
@@ -3548,7 +5181,20 @@ export const mozOutputBuilders = {
 						additional_categories: z
 							.union([z.array(z.string().nullish()), z.string()])
 							.nullish(),
-						attributes: z.union([z.array(z.unknown()), z.string()]).nullish(),
+						attributes: z
+							.union([
+								z.array(
+									z
+										.object({
+											id: z.string().nullish(),
+											value: z.string().nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
+							.nullish(),
 						address: z
 							.object({
 								address_line_1: z.string().nullish(),
@@ -3607,7 +5253,20 @@ export const mozOutputBuilders = {
 	'local.locations.categories': () =>
 		z
 			.object({
-				categories: z.union([z.array(z.unknown()), z.string()]).nullish(),
+				categories: z
+					.union([
+						z.array(
+							z
+								.object({
+									id: z.string().nullish(),
+									name: z.string().nullish(),
+								})
+								.loose()
+								.nullish(),
+						),
+						z.string(),
+					])
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -3645,7 +5304,18 @@ export const mozOutputBuilders = {
 							.nullish(),
 						price_range: z.string().nullish(),
 						service_areas: z
-							.union([z.array(z.unknown()), z.string()])
+							.union([
+								z.array(
+									z
+										.object({
+											text: z.string().nullish(),
+											id: z.string().nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
 							.nullish(),
 						service_area_only: z.union([z.boolean(), z.number()]).nullish(),
 						services: z
@@ -3655,7 +5325,20 @@ export const mozOutputBuilders = {
 						additional_categories: z
 							.union([z.array(z.string().nullish()), z.string()])
 							.nullish(),
-						attributes: z.union([z.array(z.unknown()), z.string()]).nullish(),
+						attributes: z
+							.union([
+								z.array(
+									z
+										.object({
+											id: z.string().nullish(),
+											value: z.string().nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
+							.nullish(),
 						address: z
 							.object({
 								address_line_1: z.string().nullish(),
@@ -3745,7 +5428,18 @@ export const mozOutputBuilders = {
 							.nullish(),
 						price_range: z.string().nullish(),
 						service_areas: z
-							.union([z.array(z.unknown()), z.string()])
+							.union([
+								z.array(
+									z
+										.object({
+											text: z.string().nullish(),
+											id: z.string().nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
 							.nullish(),
 						service_area_only: z.union([z.boolean(), z.number()]).nullish(),
 						services: z
@@ -3755,7 +5449,20 @@ export const mozOutputBuilders = {
 						additional_categories: z
 							.union([z.array(z.string().nullish()), z.string()])
 							.nullish(),
-						attributes: z.union([z.array(z.unknown()), z.string()]).nullish(),
+						attributes: z
+							.union([
+								z.array(
+									z
+										.object({
+											id: z.string().nullish(),
+											value: z.string().nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
+							.nullish(),
 						address: z
 							.object({
 								address_line_1: z.string().nullish(),
@@ -3814,14 +5521,46 @@ export const mozOutputBuilders = {
 	'local.locations.fieldIssues': () =>
 		z
 			.object({
-				field_issues: z.union([z.array(z.unknown()), z.string()]).nullish(),
+				field_issues: z
+					.union([
+						z.array(
+							z
+								.object({
+									location_id: z.number().nullish(),
+									network_type: z.string().nullish(),
+									network_name: z.string().nullish(),
+									field_name: z.string().nullish(),
+								})
+								.loose()
+								.nullish(),
+						),
+						z.string(),
+					])
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
 	'local.locations.fieldStatuses': () =>
 		z
 			.object({
-				field_statuses: z.union([z.array(z.unknown()), z.string()]).nullish(),
+				field_statuses: z
+					.union([
+						z.array(
+							z
+								.object({
+									field_name: z.string().nullish(),
+									networks_with_field: z.number().nullish(),
+									healthy_networks: z.number().nullish(),
+									pending_issues: z.number().nullish(),
+									solved_issues: z.number().nullish(),
+									dismissed_issues: z.number().nullish(),
+								})
+								.loose()
+								.nullish(),
+						),
+						z.string(),
+					])
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -3835,7 +5574,31 @@ export const mozOutputBuilders = {
 						date_end: z.string().nullish(),
 						keyword_limit: z.number().nullish(),
 						gbp_impression_history_reports: z
-							.union([z.array(z.unknown()), z.string()])
+							.union([
+								z.array(
+									z
+										.object({
+											date: z.string().nullish(),
+											impressions: z
+												.union([
+													z.array(
+														z
+															.object({
+																keyword: z.string().nullish(),
+																value: z.number().nullish(),
+															})
+															.loose()
+															.nullish(),
+													),
+													z.string(),
+												])
+												.nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
 							.nullish(),
 					})
 					.loose()
@@ -3852,7 +5615,18 @@ export const mozOutputBuilders = {
 						date_start: z.string().nullish(),
 						date_end: z.string().nullish(),
 						gbp_impression_keyword_totals: z
-							.union([z.array(z.unknown()), z.string()])
+							.union([
+								z.array(
+									z
+										.object({
+											keyword: z.string().nullish(),
+											value: z.number().nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
 							.nullish(),
 					})
 					.loose()
@@ -3874,7 +5648,23 @@ export const mozOutputBuilders = {
 						date_end: z.string().nullish(),
 						date_aggregation: z.string().nullish(),
 						gbp_lead_history_reports: z
-							.union([z.array(z.unknown()), z.string()])
+							.union([
+								z.array(
+									z
+										.object({
+											date: z.string().nullish(),
+											total_leads: z.number().nullish(),
+											actions_website: z.number().nullish(),
+											actions_phone: z.number().nullish(),
+											actions_driving_directions: z.number().nullish(),
+											total_impressions: z.number().nullish(),
+											ctr: z.number().nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
 							.nullish(),
 					})
 					.loose()
@@ -3892,7 +5682,135 @@ export const mozOutputBuilders = {
 	'local.locations.list': () =>
 		z
 			.object({
-				locations: z.union([z.array(z.unknown()), z.string()]).nullish(),
+				locations: z
+					.union([
+						z.array(
+							z
+								.object({
+									id: z.number().nullish(),
+									level: z.string().nullish(),
+									status: z.string().nullish(),
+									account_id: z.number().nullish(),
+									auto_sync_enabled: z
+										.union([z.boolean(), z.number()])
+										.nullish(),
+									custom_fields: z.record(z.string(), z.unknown()).nullish(),
+									remote_id: z.string().nullish(),
+									listings_name: z.string().nullish(),
+									location_name: z.string().nullish(),
+									website_url: z.string().nullish(),
+									email_address: z.string().nullish(),
+									timezone: z.string().nullish(),
+									store_code: z.string().nullish(),
+									short_description: z.string().nullish(),
+									long_description: z.string().nullish(),
+									languages: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									keywords: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									brands: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									payment_forms: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									price_range: z.string().nullish(),
+									service_areas: z
+										.union([
+											z.array(
+												z
+													.object({
+														text: z.string().nullish(),
+														id: z.string().nullish(),
+													})
+													.loose()
+													.nullish(),
+											),
+											z.string(),
+										])
+										.nullish(),
+									service_area_only: z
+										.union([z.boolean(), z.number()])
+										.nullish(),
+									services: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									primary_category: z.string().nullish(),
+									additional_categories: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									attributes: z
+										.union([
+											z.array(
+												z
+													.object({
+														id: z.string().nullish(),
+														value: z.string().nullish(),
+													})
+													.loose()
+													.nullish(),
+											),
+											z.string(),
+										])
+										.nullish(),
+									address: z
+										.object({
+											address_line_1: z.string().nullish(),
+											address_line_2: z.string().nullish(),
+											sublocality: z.string().nullish(),
+											county: z.string().nullish(),
+											city: z.string().nullish(),
+											state_province: z.string().nullish(),
+											postal_code: z.string().nullish(),
+											country: z.string().nullish(),
+										})
+										.loose()
+										.nullish(),
+									lat: z.number().nullish(),
+									long: z.number().nullish(),
+									opening_status: z.string().nullish(),
+									reopen_date: z.string().nullish(),
+									hours: z
+										.object({
+											monday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											tuesday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											wednesday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											thursday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											friday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											saturday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											sunday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+										})
+										.loose()
+										.nullish(),
+									more_hours: z.record(z.string(), z.unknown()).nullish(),
+									opening_hours_notes: z.string().nullish(),
+									opening_date: z.string().nullish(),
+									special_hours: z.record(z.string(), z.unknown()).nullish(),
+									phone: z.string().nullish(),
+									fax: z.string().nullish(),
+								})
+								.loose()
+								.nullish(),
+						),
+						z.string(),
+					])
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -3900,14 +5818,270 @@ export const mozOutputBuilders = {
 		z
 			.object({
 				status: z.string().nullish(),
-				locations: z.union([z.array(z.unknown()), z.string()]).nullish(),
+				locations: z
+					.union([
+						z.array(
+							z
+								.object({
+									id: z.number().nullish(),
+									level: z.string().nullish(),
+									status: z.string().nullish(),
+									account_id: z.number().nullish(),
+									auto_sync_enabled: z
+										.union([z.boolean(), z.number()])
+										.nullish(),
+									custom_fields: z.record(z.string(), z.unknown()).nullish(),
+									remote_id: z.string().nullish(),
+									listings_name: z.string().nullish(),
+									location_name: z.string().nullish(),
+									website_url: z.string().nullish(),
+									email_address: z.string().nullish(),
+									timezone: z.string().nullish(),
+									store_code: z.string().nullish(),
+									short_description: z.string().nullish(),
+									long_description: z.string().nullish(),
+									languages: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									keywords: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									brands: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									payment_forms: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									price_range: z.string().nullish(),
+									service_areas: z
+										.union([
+											z.array(
+												z
+													.object({
+														text: z.string().nullish(),
+														id: z.string().nullish(),
+													})
+													.loose()
+													.nullish(),
+											),
+											z.string(),
+										])
+										.nullish(),
+									service_area_only: z
+										.union([z.boolean(), z.number()])
+										.nullish(),
+									services: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									primary_category: z.string().nullish(),
+									additional_categories: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									attributes: z
+										.union([
+											z.array(
+												z
+													.object({
+														id: z.string().nullish(),
+														value: z.string().nullish(),
+													})
+													.loose()
+													.nullish(),
+											),
+											z.string(),
+										])
+										.nullish(),
+									address: z
+										.object({
+											address_line_1: z.string().nullish(),
+											address_line_2: z.string().nullish(),
+											sublocality: z.string().nullish(),
+											county: z.string().nullish(),
+											city: z.string().nullish(),
+											state_province: z.string().nullish(),
+											postal_code: z.string().nullish(),
+											country: z.string().nullish(),
+										})
+										.loose()
+										.nullish(),
+									lat: z.number().nullish(),
+									long: z.number().nullish(),
+									opening_status: z.string().nullish(),
+									reopen_date: z.string().nullish(),
+									hours: z
+										.object({
+											monday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											tuesday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											wednesday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											thursday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											friday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											saturday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											sunday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+										})
+										.loose()
+										.nullish(),
+									more_hours: z.record(z.string(), z.unknown()).nullish(),
+									opening_hours_notes: z.string().nullish(),
+									opening_date: z.string().nullish(),
+									special_hours: z.record(z.string(), z.unknown()).nullish(),
+									phone: z.string().nullish(),
+									fax: z.string().nullish(),
+								})
+								.loose()
+								.nullish(),
+						),
+						z.string(),
+					])
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
 	'local.locations.listForAccount': () =>
 		z
 			.object({
-				locations: z.union([z.array(z.unknown()), z.string()]).nullish(),
+				locations: z
+					.union([
+						z.array(
+							z
+								.object({
+									id: z.number().nullish(),
+									level: z.string().nullish(),
+									status: z.string().nullish(),
+									account_id: z.number().nullish(),
+									auto_sync_enabled: z
+										.union([z.boolean(), z.number()])
+										.nullish(),
+									custom_fields: z.record(z.string(), z.unknown()).nullish(),
+									remote_id: z.string().nullish(),
+									listings_name: z.string().nullish(),
+									location_name: z.string().nullish(),
+									website_url: z.string().nullish(),
+									email_address: z.string().nullish(),
+									timezone: z.string().nullish(),
+									store_code: z.string().nullish(),
+									short_description: z.string().nullish(),
+									long_description: z.string().nullish(),
+									languages: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									keywords: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									brands: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									payment_forms: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									price_range: z.string().nullish(),
+									service_areas: z
+										.union([
+											z.array(
+												z
+													.object({
+														text: z.string().nullish(),
+														id: z.string().nullish(),
+													})
+													.loose()
+													.nullish(),
+											),
+											z.string(),
+										])
+										.nullish(),
+									service_area_only: z
+										.union([z.boolean(), z.number()])
+										.nullish(),
+									services: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									primary_category: z.string().nullish(),
+									additional_categories: z
+										.union([z.array(z.string().nullish()), z.string()])
+										.nullish(),
+									attributes: z
+										.union([
+											z.array(
+												z
+													.object({
+														id: z.string().nullish(),
+														value: z.string().nullish(),
+													})
+													.loose()
+													.nullish(),
+											),
+											z.string(),
+										])
+										.nullish(),
+									address: z
+										.object({
+											address_line_1: z.string().nullish(),
+											address_line_2: z.string().nullish(),
+											sublocality: z.string().nullish(),
+											county: z.string().nullish(),
+											city: z.string().nullish(),
+											state_province: z.string().nullish(),
+											postal_code: z.string().nullish(),
+											country: z.string().nullish(),
+										})
+										.loose()
+										.nullish(),
+									lat: z.number().nullish(),
+									long: z.number().nullish(),
+									opening_status: z.string().nullish(),
+									reopen_date: z.string().nullish(),
+									hours: z
+										.object({
+											monday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											tuesday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											wednesday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											thursday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											friday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											saturday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+											sunday: z
+												.union([z.array(z.string().nullish()), z.string()])
+												.nullish(),
+										})
+										.loose()
+										.nullish(),
+									more_hours: z.record(z.string(), z.unknown()).nullish(),
+									opening_hours_notes: z.string().nullish(),
+									opening_date: z.string().nullish(),
+									special_hours: z.record(z.string(), z.unknown()).nullish(),
+									phone: z.string().nullish(),
+									fax: z.string().nullish(),
+								})
+								.loose()
+								.nullish(),
+						),
+						z.string(),
+					])
+					.nullish(),
 				account_id: z.unknown().nullish(),
 				page: z
 					.object({ n: z.number().nullish(), limit: z.number().nullish() })
@@ -3919,7 +6093,21 @@ export const mozOutputBuilders = {
 	'local.locations.listings': () =>
 		z
 			.object({
-				listings: z.union([z.array(z.unknown()), z.string()]).nullish(),
+				listings: z
+					.union([
+						z.array(
+							z
+								.object({
+									name: z.string().nullish(),
+									status: z.string().nullish(),
+									url: z.string().nullish(),
+								})
+								.loose()
+								.nullish(),
+						),
+						z.string(),
+					])
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -3934,7 +6122,42 @@ export const mozOutputBuilders = {
 						keyword: z.string().nullish(),
 						device: z.string().nullish(),
 						engine: z.string().nullish(),
-						grids: z.union([z.array(z.unknown()), z.string()]).nullish(),
+						grids: z
+							.union([
+								z.array(
+									z
+										.object({
+											grid_size: z.number().nullish(),
+											grid_distance: z.number().nullish(),
+											grid_distance_unit: z.string().nullish(),
+											formatted_grid_distance: z.string().nullish(),
+											date: z.string().nullish(),
+											dots: z
+												.union([
+													z.array(
+														z
+															.object({
+																row: z.number().nullish(),
+																column: z.number().nullish(),
+																lat: z.number().nullish(),
+																long: z.number().nullish(),
+																rank: z.number().nullish(),
+																rating: z.number().nullish(),
+																votes_count: z.number().nullish(),
+															})
+															.loose()
+															.nullish(),
+													),
+													z.string(),
+												])
+												.nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
+							.nullish(),
 					})
 					.loose()
 					.nullish(),
@@ -3984,7 +6207,18 @@ export const mozOutputBuilders = {
 							.nullish(),
 						price_range: z.string().nullish(),
 						service_areas: z
-							.union([z.array(z.unknown()), z.string()])
+							.union([
+								z.array(
+									z
+										.object({
+											text: z.string().nullish(),
+											id: z.string().nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
 							.nullish(),
 						service_area_only: z.union([z.boolean(), z.number()]).nullish(),
 						services: z
@@ -3994,7 +6228,20 @@ export const mozOutputBuilders = {
 						additional_categories: z
 							.union([z.array(z.string().nullish()), z.string()])
 							.nullish(),
-						attributes: z.union([z.array(z.unknown()), z.string()]).nullish(),
+						attributes: z
+							.union([
+								z.array(
+									z
+										.object({
+											id: z.string().nullish(),
+											value: z.string().nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
+							.nullish(),
 						address: z
 							.object({
 								address_line_1: z.string().nullish(),
@@ -4053,14 +6300,47 @@ export const mozOutputBuilders = {
 	'local.locations.networkStatuses': () =>
 		z
 			.object({
-				network_statuses: z.union([z.array(z.unknown()), z.string()]).nullish(),
+				network_statuses: z
+					.union([
+						z.array(
+							z
+								.object({
+									network_name: z.string().nullish(),
+									network_type: z.string().nullish(),
+									monitored_fields: z.number().nullish(),
+									healthy_fields: z.number().nullish(),
+								})
+								.loose()
+								.nullish(),
+						),
+						z.string(),
+					])
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
 	'local.locations.networks': () =>
 		z
 			.object({
-				networks: z.union([z.array(z.unknown()), z.string()]).nullish(),
+				networks: z
+					.union([
+						z.array(
+							z
+								.object({
+									type: z.string().nullish(),
+									id: z.number().nullish(),
+									name: z.string().nullish(),
+									remote_network_id: z.string().nullish(),
+									picture: z.string().nullish(),
+									profile_url: z.string().nullish(),
+									error: z.string().nullish(),
+								})
+								.loose()
+								.nullish(),
+						),
+						z.string(),
+					])
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -4075,7 +6355,31 @@ export const mozOutputBuilders = {
 						engine: z.string().nullish(),
 						device: z.string().nullish(),
 						ranking_history_reports: z
-							.union([z.array(z.unknown()), z.string()])
+							.union([
+								z.array(
+									z
+										.object({
+											date: z.string().nullish(),
+											ranks: z
+												.union([
+													z.array(
+														z
+															.object({
+																keyword: z.string().nullish(),
+																rank: z.number().nullish(),
+															})
+															.loose()
+															.nullish(),
+													),
+													z.string(),
+												])
+												.nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
 							.nullish(),
 					})
 					.loose()
@@ -4117,7 +6421,18 @@ export const mozOutputBuilders = {
 							.nullish(),
 						price_range: z.string().nullish(),
 						service_areas: z
-							.union([z.array(z.unknown()), z.string()])
+							.union([
+								z.array(
+									z
+										.object({
+											text: z.string().nullish(),
+											id: z.string().nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
 							.nullish(),
 						service_area_only: z.union([z.boolean(), z.number()]).nullish(),
 						services: z
@@ -4127,7 +6442,20 @@ export const mozOutputBuilders = {
 						additional_categories: z
 							.union([z.array(z.string().nullish()), z.string()])
 							.nullish(),
-						attributes: z.union([z.array(z.unknown()), z.string()]).nullish(),
+						attributes: z
+							.union([
+								z.array(
+									z
+										.object({
+											id: z.string().nullish(),
+											value: z.string().nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
+							.nullish(),
 						address: z
 							.object({
 								address_line_1: z.string().nullish(),
@@ -4217,7 +6545,18 @@ export const mozOutputBuilders = {
 							.nullish(),
 						price_range: z.string().nullish(),
 						service_areas: z
-							.union([z.array(z.unknown()), z.string()])
+							.union([
+								z.array(
+									z
+										.object({
+											text: z.string().nullish(),
+											id: z.string().nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
 							.nullish(),
 						service_area_only: z.union([z.boolean(), z.number()]).nullish(),
 						services: z
@@ -4227,7 +6566,20 @@ export const mozOutputBuilders = {
 						additional_categories: z
 							.union([z.array(z.string().nullish()), z.string()])
 							.nullish(),
-						attributes: z.union([z.array(z.unknown()), z.string()]).nullish(),
+						attributes: z
+							.union([
+								z.array(
+									z
+										.object({
+											id: z.string().nullish(),
+											value: z.string().nullish(),
+										})
+										.loose()
+										.nullish(),
+								),
+								z.string(),
+							])
+							.nullish(),
 						address: z
 							.object({
 								address_line_1: z.string().nullish(),
@@ -4486,8 +6838,151 @@ export const mozOutputBuilders = {
 	'metrics.fetchMultiple': () =>
 		z
 			.object({
-				results_by_site: z.array(z.unknown()).nullish(),
-				errors_by_site: z.array(z.unknown()).nullish(),
+				results_by_site: z
+					.array(
+						z
+							.object({
+								site_query: z
+									.object({
+										query: z.string().nullish(),
+										scope: z.string().nullish(),
+										original_site_query: z
+											.object({
+												query: z.string().nullish(),
+												scope: z.string().nullish(),
+											})
+											.loose()
+											.nullish(),
+										site_query_suggestion: z
+											.object({
+												query: z.string().nullish(),
+												scope: z.string().nullish(),
+												explanation: z.string().nullish(),
+												issue: z.string().nullish(),
+											})
+											.loose()
+											.nullish(),
+									})
+									.loose()
+									.nullish(),
+								site_metrics: z
+									.object({
+										page: z.string().nullish(),
+										subdomain: z.string().nullish(),
+										root_domain: z.string().nullish(),
+										title: z.string().nullish(),
+										last_crawled: z.string().nullish(),
+										http_code: z.number().nullish(),
+										pages_to_page: z.number().nullish(),
+										nofollow_pages_to_page: z.number().nullish(),
+										redirect_pages_to_page: z.number().nullish(),
+										external_pages_to_page: z.number().nullish(),
+										external_nofollow_pages_to_page: z.number().nullish(),
+										external_redirect_pages_to_page: z.number().nullish(),
+										deleted_pages_to_page: z.number().nullish(),
+										root_domains_to_page: z.number().nullish(),
+										indirect_root_domains_to_page: z.number().nullish(),
+										deleted_root_domains_to_page: z.number().nullish(),
+										nofollow_root_domains_to_page: z.number().nullish(),
+										pages_to_subdomain: z.number().nullish(),
+										nofollow_pages_to_subdomain: z.number().nullish(),
+										redirect_pages_to_subdomain: z.number().nullish(),
+										external_pages_to_subdomain: z.number().nullish(),
+										external_nofollow_pages_to_subdomain: z.number().nullish(),
+										external_redirect_pages_to_subdomain: z.number().nullish(),
+										deleted_pages_to_subdomain: z.number().nullish(),
+										root_domains_to_subdomain: z.number().nullish(),
+										deleted_root_domains_to_subdomain: z.number().nullish(),
+										nofollow_root_domains_to_subdomain: z.number().nullish(),
+										pages_to_root_domain: z.number().nullish(),
+										nofollow_pages_to_root_domain: z.number().nullish(),
+										redirect_pages_to_root_domain: z.number().nullish(),
+										external_pages_to_root_domain: z.number().nullish(),
+										external_indirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_nofollow_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										external_redirect_pages_to_root_domain: z
+											.number()
+											.nullish(),
+										deleted_pages_to_root_domain: z.number().nullish(),
+										root_domains_to_root_domain: z.number().nullish(),
+										indirect_root_domains_to_root_domain: z.number().nullish(),
+										deleted_root_domains_to_root_domain: z.number().nullish(),
+										nofollow_root_domains_to_root_domain: z.number().nullish(),
+										page_authority: z.number().nullish(),
+										domain_authority: z.number().nullish(),
+										link_propensity: z.number().nullish(),
+										spam_score: z.number().nullish(),
+										root_domains_from_page: z.number().nullish(),
+										nofollow_root_domains_from_page: z.number().nullish(),
+										pages_from_page: z.number().nullish(),
+										nofollow_pages_from_page: z.number().nullish(),
+										root_domains_from_root_domain: z.number().nullish(),
+										nofollow_root_domains_from_root_domain: z
+											.number()
+											.nullish(),
+										pages_from_root_domain: z.number().nullish(),
+										nofollow_pages_from_root_domain: z.number().nullish(),
+										pages_crawled_from_root_domain: z.number().nullish(),
+									})
+									.loose()
+									.nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
+				errors_by_site: z
+					.array(
+						z
+							.object({
+								site_query: z
+									.object({
+										query: z.string().nullish(),
+										scope: z.string().nullish(),
+										original_site_query: z
+											.object({
+												query: z.string().nullish(),
+												scope: z.string().nullish(),
+											})
+											.loose()
+											.nullish(),
+										site_query_suggestion: z
+											.object({
+												query: z.string().nullish(),
+												scope: z.string().nullish(),
+												explanation: z.string().nullish(),
+												issue: z.string().nullish(),
+											})
+											.loose()
+											.nullish(),
+									})
+									.loose()
+									.nullish(),
+								error: z
+									.object({
+										message: z.string().nullish(),
+										name: z.string().nullish(),
+										data: z
+											.object({
+												key: z.string().nullish(),
+												value: z.string().nullish(),
+											})
+											.loose()
+											.nullish(),
+										httpStatus: z.number().nullish(),
+										jsonrpcCode: z.number().nullish(),
+									})
+									.loose()
+									.nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
 			})
 			.loose()
 			.nullish(),
@@ -4519,10 +7014,122 @@ export const mozOutputBuilders = {
 					.nullish(),
 				site_metrics_histories: z
 					.object({
-						daily_history_deltas: z.array(z.unknown()).nullish(),
-						daily_history_values: z.array(z.unknown()).nullish(),
-						monthly_history_deltas: z.array(z.unknown()).nullish(),
-						monthly_history_values: z.array(z.unknown()).nullish(),
+						daily_history_deltas: z
+							.array(
+								z
+									.object({
+										metric_name: z.string().nullish(),
+										metric_deltas: z
+											.object({
+												gained: z
+													.array(
+														z
+															.object({
+																date: z.string().nullish(),
+																count: z.number().nullish(),
+															})
+															.loose()
+															.nullish(),
+													)
+													.nullish(),
+												lost: z
+													.array(
+														z
+															.object({
+																date: z.string().nullish(),
+																count: z.number().nullish(),
+															})
+															.loose()
+															.nullish(),
+													)
+													.nullish(),
+											})
+											.loose()
+											.nullish(),
+									})
+									.loose()
+									.nullish(),
+							)
+							.nullish(),
+						daily_history_values: z
+							.array(
+								z
+									.object({
+										metric_name: z.string().nullish(),
+										metric_values: z
+											.array(
+												z
+													.object({
+														date: z.string().nullish(),
+														value: z.number().nullish(),
+													})
+													.loose()
+													.nullish(),
+											)
+											.nullish(),
+									})
+									.loose()
+									.nullish(),
+							)
+							.nullish(),
+						monthly_history_deltas: z
+							.array(
+								z
+									.object({
+										metric_name: z.string().nullish(),
+										metric_deltas: z
+											.object({
+												gained: z
+													.array(
+														z
+															.object({
+																date: z.string().nullish(),
+																count: z.number().nullish(),
+															})
+															.loose()
+															.nullish(),
+													)
+													.nullish(),
+												lost: z
+													.array(
+														z
+															.object({
+																date: z.string().nullish(),
+																count: z.number().nullish(),
+															})
+															.loose()
+															.nullish(),
+													)
+													.nullish(),
+											})
+											.loose()
+											.nullish(),
+									})
+									.loose()
+									.nullish(),
+							)
+							.nullish(),
+						monthly_history_values: z
+							.array(
+								z
+									.object({
+										metric_name: z.string().nullish(),
+										metric_values: z
+											.array(
+												z
+													.object({
+														date: z.string().nullish(),
+														value: z.number().nullish(),
+													})
+													.loose()
+													.nullish(),
+											)
+											.nullish(),
+									})
+									.loose()
+									.nullish(),
+							)
+							.nullish(),
 					})
 					.loose()
 					.nullish(),
@@ -4645,7 +7252,20 @@ export const mozOutputBuilders = {
 	'rankingKeywords.list': () =>
 		z
 			.object({
-				ranking_keywords: z.array(z.unknown()).nullish(),
+				ranking_keywords: z
+					.array(
+						z
+							.object({
+								keyword: z.string().nullish(),
+								ranking_page: z.string().nullish(),
+								rank_position: z.number().nullish(),
+								difficulty: z.number().nullish(),
+								volume: z.number().nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
 				target_query: z
 					.object({
 						query: z.string().nullish(),
@@ -4786,7 +7406,67 @@ export const mozOutputBuilders = {
 					.object({ filter: z.string().nullish(), sort: z.string().nullish() })
 					.loose()
 					.nullish(),
-				top_pages: z.array(z.unknown()).nullish(),
+				top_pages: z
+					.array(
+						z
+							.object({
+								page: z.string().nullish(),
+								subdomain: z.string().nullish(),
+								root_domain: z.string().nullish(),
+								title: z.string().nullish(),
+								last_crawled: z.string().nullish(),
+								http_code: z.number().nullish(),
+								pages_to_page: z.number().nullish(),
+								nofollow_pages_to_page: z.number().nullish(),
+								redirect_pages_to_page: z.number().nullish(),
+								external_pages_to_page: z.number().nullish(),
+								external_nofollow_pages_to_page: z.number().nullish(),
+								external_redirect_pages_to_page: z.number().nullish(),
+								deleted_pages_to_page: z.number().nullish(),
+								root_domains_to_page: z.number().nullish(),
+								indirect_root_domains_to_page: z.number().nullish(),
+								deleted_root_domains_to_page: z.number().nullish(),
+								nofollow_root_domains_to_page: z.number().nullish(),
+								pages_to_subdomain: z.number().nullish(),
+								nofollow_pages_to_subdomain: z.number().nullish(),
+								redirect_pages_to_subdomain: z.number().nullish(),
+								external_pages_to_subdomain: z.number().nullish(),
+								external_nofollow_pages_to_subdomain: z.number().nullish(),
+								external_redirect_pages_to_subdomain: z.number().nullish(),
+								deleted_pages_to_subdomain: z.number().nullish(),
+								root_domains_to_subdomain: z.number().nullish(),
+								deleted_root_domains_to_subdomain: z.number().nullish(),
+								nofollow_root_domains_to_subdomain: z.number().nullish(),
+								pages_to_root_domain: z.number().nullish(),
+								nofollow_pages_to_root_domain: z.number().nullish(),
+								redirect_pages_to_root_domain: z.number().nullish(),
+								external_pages_to_root_domain: z.number().nullish(),
+								external_indirect_pages_to_root_domain: z.number().nullish(),
+								external_nofollow_pages_to_root_domain: z.number().nullish(),
+								external_redirect_pages_to_root_domain: z.number().nullish(),
+								deleted_pages_to_root_domain: z.number().nullish(),
+								root_domains_to_root_domain: z.number().nullish(),
+								indirect_root_domains_to_root_domain: z.number().nullish(),
+								deleted_root_domains_to_root_domain: z.number().nullish(),
+								nofollow_root_domains_to_root_domain: z.number().nullish(),
+								page_authority: z.number().nullish(),
+								domain_authority: z.number().nullish(),
+								link_propensity: z.number().nullish(),
+								spam_score: z.number().nullish(),
+								root_domains_from_page: z.number().nullish(),
+								nofollow_root_domains_from_page: z.number().nullish(),
+								pages_from_page: z.number().nullish(),
+								nofollow_pages_from_page: z.number().nullish(),
+								root_domains_from_root_domain: z.number().nullish(),
+								nofollow_root_domains_from_root_domain: z.number().nullish(),
+								pages_from_root_domain: z.number().nullish(),
+								nofollow_pages_from_root_domain: z.number().nullish(),
+								pages_crawled_from_root_domain: z.number().nullish(),
+							})
+							.loose()
+							.nullish(),
+					)
+					.nullish(),
 			})
 			.loose()
 			.nullish(),

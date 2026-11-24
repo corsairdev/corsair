@@ -17,7 +17,10 @@ export function mozRequestId(): string {
 	return crypto.randomUUID();
 }
 
-/** The JSON-RPC error member (https://moz.com/api/docs/guides/error-handling). */
+/**
+ * The JSON-RPC error member (https://moz.com/api/docs/guides/error-handling).
+ * unknown: each field is read from untrusted JSON and narrowed before use.
+ */
 type MozErrorMember = {
 	code?: unknown;
 	status?: unknown;
