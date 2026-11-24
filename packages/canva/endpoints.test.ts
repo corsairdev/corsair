@@ -1,12 +1,21 @@
+import { logEventFromContext } from 'corsair/core';
 import type { DownloadDeps } from 'corsair/http';
 import { ApiError } from 'corsair/http';
 import type { Designs } from './endpoints';
 import { Assets, DesignAnalytics } from './endpoints';
 import { exportDownloadDeps } from './endpoints/exports';
-import { loggableUrl, withoutFileContent } from './endpoints/mappers';
-import { CanvaEndpointInputSchemas } from './endpoints/types';
+import {
+	CanvaEndpointInputSchemas,
+	CanvaEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { canva } from './index';
+
+// The event logger is captured so tests can check what reaches event payloads.
+jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
+	logEventFromContext: jest.fn(async () => null),
+}));
 
 type Call = { method: string; url: string; body?: unknown; headers: Headers };
 
@@ -852,33 +861,133 @@ describe('every operation', () => {
 		await expect(api.designs.get(ctx, { designId: 'D1' })).rejects.toThrow();
 	});
 
-	it('logs a file or URL input without its bytes or query', async () => {
+	it('logs ids and options, never customer text, files or URLs', async () => {
+		jest.mocked(logEventFromContext).mockClear();
 		reply(job());
 		await api.assetUploads.create(ctx, {
-			name: 'n',
+			name: 'Q3 salaries',
 			file: 'data:image/png;base64,aGk=',
 		});
 		reply(job());
 		await api.assetUploads.createFromUrl(ctx, {
 			name: 'n',
-			url: 'https://files.test/a.png?X-Amz-Signature=secret',
+			url: 'https://files.test/acme/payroll.png?X-Amz-Signature=secret',
 		});
-		expect(loggableUrl('data:image/png;base64,aGk=')).toBe('[file]');
-		expect(loggableUrl('https://files.test/a.png?X-Amz-Signature=secret')).toBe(
-			'https://files.test/a.png',
+		reply(job());
+		await api.imports.createFromImage(ctx, {
+			asset_id: 'A1',
+			title: 'Acme board deck',
+		});
+		reply({ thread: { id: 'T1' } });
+		await api.comments.createThread(ctx, {
+			designId: 'D1',
+			message_plaintext: 'Move the launch to May',
+		});
+		const payloads = jest
+			.mocked(logEventFromContext)
+			.mock.calls.map((c) => c[2]);
+		const logged = JSON.stringify(payloads);
+		for (const leak of [
+			'Q3 salaries',
+			'aGk=',
+			'acme',
+			'Signature',
+			'Acme board deck',
+			'May',
+		]) {
+			expect(logged).not.toContain(leak);
+		}
+		expect(payloads).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({ file: '[file]', name: '[omitted]' }),
+				expect.objectContaining({ url: '[url]' }),
+				expect.objectContaining({ asset_id: 'A1', title: '[omitted]' }),
+				expect.objectContaining({
+					designId: 'D1',
+					message_plaintext: '[omitted]',
+				}),
+			]),
 		);
-		expect(withoutFileContent({ name: 'n', file: { base64: 'aGk=' } })).toEqual(
-			{
-				name: 'n',
-				file: '[file]',
-			},
-		);
+		// Canva itself still gets the real values.
+		expect(calls[1]?.body).toMatchObject({
+			url: 'https://files.test/acme/payroll.png?X-Amz-Signature=secret',
+		});
+		expect(calls[2]?.body).toMatchObject({ title: 'Acme board deck' });
+	});
+
+	it("follows Canva's documented shapes", () => {
 		expect(
-			withoutFileContent({
-				name: 'n',
-				file: { url: 'https://f.test/x.pdf?sig=1' },
+			CanvaEndpointOutputSchemas.brandTemplatesPublish.parse({
+				brand_template: { id: 'B1', thumbnail: null },
+			}).brand_template.thumbnail,
+		).toBeNull();
+		const resize = (width: number, height: number) =>
+			CanvaEndpointInputSchemas.resizesCreate.safeParse({
+				design_id: 'D1',
+				design_type: { type: 'custom', width, height },
+			}).success;
+		expect(resize(8000, 3125)).toBe(true);
+		expect(resize(8000, 3126)).toBe(false);
+		expect(
+			CanvaEndpointOutputSchemas.analyticsListViewers.parse({
+				items: [],
+				next_field: 1,
 			}),
-		).toEqual({ name: 'n', file: 'https://f.test/x.pdf' });
+		).toEqual({ items: [], next_field: 1 });
+		const fill = (rows: unknown[]) =>
+			CanvaEndpointInputSchemas.autofillsCreate.safeParse({
+				brand_template_id: 'B1',
+				data: { chart: { type: 'chart', chart_data: { rows } } },
+			}).success;
+		expect(fill([{}])).toBe(false);
+		expect(
+			fill([
+				{
+					cells: [
+						{ type: 'string', value: 'EU' },
+						{ type: 'number', value: 3 },
+					],
+				},
+			]),
+		).toBe(true);
+	});
+
+	it('refuses an empty base64 upload before any request', async () => {
+		await expect(
+			api.assetUploads.create(ctx, { name: 'n', contentBase64: '' }),
+		).rejects.toThrow();
+		expect(calls).toHaveLength(0);
+	});
+
+	it("fills in a stored design from a job's summary without wiping known fields", async () => {
+		const upsertByEntityId = jest.fn(async () => undefined);
+		const stored = {
+			...ctx,
+			db: {
+				designs: {
+					findByEntityId: async () => ({
+						data: { id: 'D9', title: 'Kept', owner_user_id: 'U1' },
+					}),
+					upsertByEntityId,
+				},
+			},
+		} as unknown as typeof ctx; // unknown: only the designs table matters to this test
+		reply(
+			job({
+				status: 'success',
+				result: { design: { id: 'D9', page_count: 4 } },
+			}),
+		);
+		await api.merges.get(stored, { jobId: 'J1' });
+		expect(upsertByEntityId).toHaveBeenCalledWith(
+			'D9',
+			expect.objectContaining({
+				id: 'D9',
+				title: 'Kept',
+				owner_user_id: 'U1',
+				page_count: 4,
+			}),
+		);
 	});
 });
 

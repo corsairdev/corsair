@@ -1,4 +1,5 @@
 import type { CanvaEndpoints } from '../index';
+import { loggable } from './mappers';
 import { callCanva, defined, seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
 
@@ -36,6 +37,6 @@ export const get: CanvaEndpoints['imageGenerationsGet'] = async (ctx, input) =>
 	callCanva<CanvaEndpointOutputs['imageGenerationsGet']>(
 		ctx,
 		'imageGenerations.get',
-		{ ...input },
+		loggable(input),
 		`v1/image-generations/${seg(input.jobId)}`,
 	);

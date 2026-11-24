@@ -3,6 +3,7 @@ import type { DownloadDeps } from 'corsair/http';
 import { downloadPublicFile, toFileOutput } from 'corsair/http';
 import { makeCanvaRequest } from '../client';
 import type { CanvaEndpoints } from '../index';
+import { loggable } from './mappers';
 import { callCanva, seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
 
@@ -13,7 +14,7 @@ export const create: CanvaEndpoints['exportsCreate'] = async (ctx, input) =>
 	callCanva<CanvaEndpointOutputs['exportsCreate']>(
 		ctx,
 		'exports.create',
-		{ ...input },
+		loggable(input),
 		'v1/exports',
 		{
 			method: 'POST',
@@ -28,7 +29,7 @@ export const get: CanvaEndpoints['exportsGet'] = async (ctx, input) =>
 	callCanva<CanvaEndpointOutputs['exportsGet']>(
 		ctx,
 		'exports.get',
-		{ ...input },
+		loggable(input),
 		`v1/exports/${seg(input.exportId)}`,
 	);
 

@@ -1,6 +1,6 @@
 import type { FileInput } from 'corsair/http';
 import { resolveFileInput } from 'corsair/http';
-import { decodeBase64ToBytes } from '../base64';
+import type { CanvaContext } from '../index';
 import type { Asset, BrandTemplate } from './types';
 
 export type DesignLike = {
@@ -55,42 +55,71 @@ export function toBrandTemplateEntity(brandTemplate: BrandTemplate) {
 	};
 }
 
+// Input fields that carry the customer's own words or files. Event payloads
+// keep ids, types and options, which is what a log needs to explain a call.
+const CUSTOMER_FIELDS = new Set([
+	'title',
+	'name',
+	'message_plaintext',
+	'brief',
+	'prompt',
+	'outline',
+	'tags',
+	'query',
+	'asset_name',
+	'data',
+]);
+
 /**
- * A URL as it may go into an event log: origin and path of an http(s) URL, so a
- * presigned signature in the query never lands there. Anything else (a `data:`
- * URL, base64, a Blob) carries the file itself and is logged as `[file]`.
+ * An operation's input as it may go into an event log: customer text becomes
+ * `[omitted]`, a file `[file]` and a URL `[url]` (its path and query can name
+ * a customer or carry a presigned signature).
  */
-export function loggableUrl(value: unknown): string {
-	// unknown: a file input arrives as a string, an object or a Blob.
-	if (typeof value !== 'string') return '[file]';
-	try {
-		const url = new URL(value);
-		if (url.protocol === 'http:' || url.protocol === 'https:') {
-			return url.origin + url.pathname;
-		}
-	} catch {
-		// not a URL
+// unknown: one helper for every operation's input, whatever its fields.
+export function loggable(
+	input: Record<string, unknown>,
+): Record<string, unknown> {
+	const out: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(input)) {
+		if (value === undefined) continue;
+		if (key === 'file' || key === 'contentBase64') out[key] = '[file]';
+		else if (key === 'url') out[key] = '[url]';
+		else if (CUSTOMER_FIELDS.has(key)) out[key] = '[omitted]';
+		else out[key] = value;
 	}
-	return '[file]';
+	return out;
 }
 
-/** The input as logged: no file bytes, and a file given by URL only as its origin and path. */
-// unknown: shared by the upload and import inputs, which differ only around the file.
-export function withoutFileContent<T extends Record<string, unknown>>(
-	input: T,
-) {
-	const { contentBase64: _contentBase64, file, ...rest } = input;
-	if (file === undefined) return rest;
-	const url =
-		typeof file === 'object' && file !== null && 'url' in file
-			? (file as { url: unknown }).url
-			: file;
-	return { ...rest, file: loggableUrl(url) };
+/**
+ * Stores a design a job returned. A job's design summary leaves fields out
+ * (owner, sometimes timestamps), so it fills in the stored record instead of
+ * replacing it.
+ */
+export async function saveDesign(
+	ctx: CanvaContext,
+	design: DesignLike | undefined,
+): Promise<void> {
+	if (!design || !ctx.db.designs) return;
+	try {
+		const fresh = Object.fromEntries(
+			Object.entries(toDesignEntity(design)).filter(
+				([, value]) => value !== undefined && value !== null,
+			),
+		);
+		const existing = await ctx.db.designs.findByEntityId(design.id);
+		await ctx.db.designs.upsertByEntityId(design.id, {
+			...(existing?.data ?? {}),
+			...fresh,
+		} as ReturnType<typeof toDesignEntity>);
+	} catch (error) {
+		console.warn('Failed to save design to database:', error);
+	}
 }
 
 /**
  * Most bytes read into memory for one upload. Bigger files go through
- * createFromUrl, where Canva fetches the file itself.
+ * createFromUrl, where Canva fetches the file itself (videos only up to the
+ * 100 MB Canva allows from a URL).
  */
 export const UPLOAD_MAX_BYTES = 100 * 1024 * 1024;
 
@@ -106,7 +135,10 @@ export async function bodyFrom(
 		});
 		return new Blob([resolved.bytes], { type: 'application/octet-stream' });
 	}
-	return new Blob([decodeBase64ToBytes(input.contentBase64 ?? '')], {
-		type: 'application/octet-stream',
-	});
+	// The same capped decoder as a file input, so base64 can't bypass the limit.
+	const resolved = await resolveFileInput(
+		{ base64: input.contentBase64 ?? '' },
+		{ fallbackName, maxBytes: UPLOAD_MAX_BYTES },
+	);
+	return new Blob([resolved.bytes], { type: 'application/octet-stream' });
 }

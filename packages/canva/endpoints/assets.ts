@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaEndpoints } from '../index';
-import { toAssetEntity } from './mappers';
+import { loggable, toAssetEntity } from './mappers';
 import { seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
 
@@ -23,7 +23,12 @@ export const get: CanvaEndpoints['assetsGet'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'canva.assets.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'canva.assets.get',
+		loggable(input),
+		'completed',
+	);
 	return result;
 };
 
@@ -55,7 +60,7 @@ export const update: CanvaEndpoints['assetsUpdate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.assets.update',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -80,7 +85,7 @@ export const deleteAsset: CanvaEndpoints['assetsDelete'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.assets.delete',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return { success: true };

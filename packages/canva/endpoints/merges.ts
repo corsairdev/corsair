@@ -1,16 +1,11 @@
 import type { CanvaContext, CanvaEndpoints } from '../index';
-import { toDesignEntity } from './mappers';
+import { loggable, saveDesign } from './mappers';
 import { callCanva, seg } from './shared';
 import type { CanvaEndpointOutputs, DesignSummary } from './types';
 import { CanvaEndpointInputSchemas } from './types';
 
 async function upsertDesign(ctx: CanvaContext, design?: DesignSummary) {
-	if (!design || !ctx.db.designs) return;
-	try {
-		await ctx.db.designs.upsertByEntityId(design.id, toDesignEntity(design));
-	} catch (error) {
-		console.warn('Failed to save merged design to database:', error);
-	}
+	await saveDesign(ctx, design);
 }
 
 export const create: CanvaEndpoints['mergesCreate'] = async (ctx, input) => {
@@ -47,7 +42,7 @@ export const get: CanvaEndpoints['mergesGet'] = async (ctx, input) => {
 	const result = await callCanva<CanvaEndpointOutputs['mergesGet']>(
 		ctx,
 		'merges.get',
-		{ ...input },
+		loggable(input),
 		`v1/merges/${seg(input.jobId)}`,
 	);
 	await upsertDesign(ctx, result.job.result?.design);

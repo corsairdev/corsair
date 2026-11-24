@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaContext, CanvaEndpoints } from '../index';
+import { loggable } from './mappers';
 import { CanvaEndpointInputSchemas, CanvaEndpointOutputSchemas } from './types';
 
 /** An id placed in a URL path; encoded so a stray `/` or `?` can't reach another route. */
@@ -20,7 +21,12 @@ export async function callCanva<T>(
 	options: RequestOptions = { method: 'GET' },
 ): Promise<T> {
 	const result = await makeCanvaRequest<T>(path, ctx.key, options);
-	await logEventFromContext(ctx, `canva.${event}`, logged, 'completed');
+	await logEventFromContext(
+		ctx,
+		`canva.${event}`,
+		loggable(logged),
+		'completed',
+	);
 	return result;
 }
 

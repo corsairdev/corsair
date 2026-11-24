@@ -1,4 +1,5 @@
 import type { CanvaEndpoints } from '../index';
+import { loggable } from './mappers';
 import { callCanva, defined, seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
 
@@ -9,7 +10,7 @@ export const create: CanvaEndpoints['imageTransformationsCreate'] = async (
 	callCanva<CanvaEndpointOutputs['imageTransformationsCreate']>(
 		ctx,
 		'imageTransformations.create',
-		{ ...input },
+		loggable(input),
 		'v1/image-transformations',
 		{ method: 'POST', body: defined({ ...input }) },
 	);
@@ -21,6 +22,6 @@ export const get: CanvaEndpoints['imageTransformationsGet'] = async (
 	callCanva<CanvaEndpointOutputs['imageTransformationsGet']>(
 		ctx,
 		'imageTransformations.get',
-		{ ...input },
+		loggable(input),
 		`v1/image-transformations/${seg(input.jobId)}`,
 	);

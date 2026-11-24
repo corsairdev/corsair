@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaEndpoints } from '../index';
-import { toBrandTemplateEntity } from './mappers';
+import { loggable, toBrandTemplateEntity } from './mappers';
 import { callCanva, seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
 
@@ -40,7 +40,7 @@ export const list: CanvaEndpoints['brandTemplatesList'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.brandTemplates.list',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -67,7 +67,7 @@ export const get: CanvaEndpoints['brandTemplatesGet'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.brandTemplates.get',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -86,7 +86,7 @@ export const getDataset: CanvaEndpoints['brandTemplatesGetDataset'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.brandTemplates.getDataset',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -99,7 +99,7 @@ export const publish: CanvaEndpoints['brandTemplatesPublish'] = async (
 	const result = await callCanva<CanvaEndpointOutputs['brandTemplatesPublish']>(
 		ctx,
 		'brandTemplates.publish',
-		{ ...input },
+		loggable(input),
 		'v1/brand-templates',
 		{ method: 'POST', body: { design_id: input.design_id } },
 	);

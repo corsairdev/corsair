@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaEndpoints } from '../index';
-import { toDesignEntity } from './mappers';
+import { loggable, toDesignEntity } from './mappers';
 import { callCanva, defined, seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
 import { CanvaEndpointInputSchemas } from './types';
@@ -39,7 +39,7 @@ export const list: CanvaEndpoints['designsList'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.designs.list',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -66,7 +66,7 @@ export const get: CanvaEndpoints['designsGet'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.designs.get',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -114,7 +114,7 @@ export const create: CanvaEndpoints['designsCreate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.designs.create',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -138,7 +138,7 @@ export const getPages: CanvaEndpoints['designsGetPages'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.designs.getPages',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -155,7 +155,7 @@ export const getExportFormats: CanvaEndpoints['designsGetExportFormats'] =
 		await logEventFromContext(
 			ctx,
 			'canva.designs.getExportFormats',
-			{ ...input },
+			loggable(input),
 			'completed',
 		);
 		return result;
@@ -168,6 +168,6 @@ export const getDataset: CanvaEndpoints['designsGetDataset'] = async (
 	callCanva<CanvaEndpointOutputs['designsGetDataset']>(
 		ctx,
 		'designs.getDataset',
-		{ ...input },
+		loggable(input),
 		`v1/designs/${seg(input.designId)}/dataset`,
 	);

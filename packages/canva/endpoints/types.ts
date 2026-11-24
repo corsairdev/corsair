@@ -124,7 +124,8 @@ export const BrandTemplateSchema = z
 		title: z.string().optional(),
 		view_url: z.string().optional(),
 		create_url: z.string().optional(),
-		thumbnail: ThumbnailSchema.optional(),
+		// Canva documents null while it is still rendering the thumbnail.
+		thumbnail: ThumbnailSchema.nullable().optional(),
 		created_at: z.number().optional(),
 		updated_at: z.number().optional(),
 	})
@@ -153,11 +154,15 @@ export const PresetDesignTypeSchema = z.object({
 	name: z.enum(['doc', 'email', 'presentation', 'whiteboard']),
 });
 
-export const CustomDesignTypeSchema = z.object({
-	type: z.literal('custom'),
-	width: z.number().int().min(40).max(8000),
-	height: z.number().int().min(40).max(8000),
-});
+export const CustomDesignTypeSchema = z
+	.object({
+		type: z.literal('custom'),
+		width: z.number().int().min(40).max(8000),
+		height: z.number().int().min(40).max(8000),
+	})
+	.refine((size) => size.width * size.height <= 25_000_000, {
+		message: 'Canva allows at most 25,000,000 pixels (e.g. 5000 x 5000)',
+	});
 
 export const DesignTypeInputSchema = z.discriminatedUnion('type', [
 	PresetDesignTypeSchema,
@@ -255,9 +260,11 @@ const ExportFormatOptionSchema = z
 	})
 	.passthrough();
 
-const DesignsGetExportFormatsResponseSchema = z.object({
-	formats: z.record(z.string(), ExportFormatOptionSchema),
-});
+const DesignsGetExportFormatsResponseSchema = z
+	.object({
+		formats: z.record(z.string(), ExportFormatOptionSchema),
+	})
+	.passthrough();
 
 export const JobStatusSchema = z.enum(['in_progress', 'success', 'failed']);
 export type JobStatus = z.infer<typeof JobStatusSchema>;
@@ -291,9 +298,11 @@ const ExportJobSchema = z
 	})
 	.passthrough();
 
-const SuccessResponseSchema = z.object({
-	success: z.boolean(),
-});
+const SuccessResponseSchema = z
+	.object({
+		success: z.boolean(),
+	})
+	.passthrough();
 
 const FolderItemSchema = z.discriminatedUnion('type', [
 	z.object({
@@ -330,30 +339,36 @@ const DatasetSchema = z
 
 const UsersGetMeInputSchema = z.object({});
 
-const UsersGetMeResponseSchema = z.object({
-	team_user: OwnerSchema,
-});
+const UsersGetMeResponseSchema = z
+	.object({
+		team_user: OwnerSchema,
+	})
+	.passthrough();
 
 const UsersGetProfileInputSchema = z.object({});
 
-const UsersGetProfileResponseSchema = z.object({
-	profile: z
-		.object({
-			display_name: z.string().optional(),
-		})
-		.passthrough(),
-});
+const UsersGetProfileResponseSchema = z
+	.object({
+		profile: z
+			.object({
+				display_name: z.string().optional(),
+			})
+			.passthrough(),
+	})
+	.passthrough();
 
 const UsersGetCapabilitiesInputSchema = z.object({});
 
-const UsersGetCapabilitiesResponseSchema = z.object({
-	capabilities: z
-		.array(z.string())
-		.optional()
-		.describe(
-			"What the user's plan allows through the API, e.g. autofill, brand_template, resize, design_generation, image_generation, background_removal, analytics.",
-		),
-});
+const UsersGetCapabilitiesResponseSchema = z
+	.object({
+		capabilities: z
+			.array(z.string())
+			.optional()
+			.describe(
+				"What the user's plan allows through the API, e.g. autofill, brand_template, resize, design_generation, image_generation, background_removal, analytics.",
+			),
+	})
+	.passthrough();
 
 // ── designs ────────────────────────────────────────────────────────────────
 
@@ -373,18 +388,22 @@ const DesignsListInputSchema = z.object({
 	limit: z.number().int().min(1).max(100).optional(),
 });
 
-const DesignsListResponseSchema = z.object({
-	items: z.array(DesignSchema),
-	continuation: z.string().optional(),
-});
+const DesignsListResponseSchema = z
+	.object({
+		items: z.array(DesignSchema),
+		continuation: z.string().optional(),
+	})
+	.passthrough();
 
 const DesignsGetInputSchema = z.object({
 	designId: z.string(),
 });
 
-const DesignsGetResponseSchema = z.object({
-	design: DesignSchema,
-});
+const DesignsGetResponseSchema = z
+	.object({
+		design: DesignSchema,
+	})
+	.passthrough();
 
 const DesignsCreateInputSchema = z
 	.object({
@@ -434,9 +453,11 @@ const DesignsCreateInputSchema = z
 		}
 	});
 
-const DesignsCreateResponseSchema = z.object({
-	design: DesignSchema,
-});
+const DesignsCreateResponseSchema = z
+	.object({
+		design: DesignSchema,
+	})
+	.passthrough();
 
 const DesignsGetPagesInputSchema = z.object({
 	designId: z.string(),
@@ -450,9 +471,11 @@ const DesignsGetPagesInputSchema = z.object({
 	limit: z.number().int().min(1).max(200).optional(),
 });
 
-const DesignsGetPagesResponseSchema = z.object({
-	items: z.array(DesignPageSchema),
-});
+const DesignsGetPagesResponseSchema = z
+	.object({
+		items: z.array(DesignPageSchema),
+	})
+	.passthrough();
 
 const DesignsGetExportFormatsInputSchema = z.object({
 	designId: z.string(),
@@ -462,9 +485,11 @@ const DesignsGetDatasetInputSchema = z.object({
 	designId: z.string(),
 });
 
-const DesignsGetDatasetResponseSchema = z.object({
-	dataset: DatasetSchema.optional(),
-});
+const DesignsGetDatasetResponseSchema = z
+	.object({
+		dataset: DatasetSchema.optional(),
+	})
+	.passthrough();
 
 // ── analytics (preview, Canva Enterprise) ──────────────────────────────────
 
@@ -519,10 +544,12 @@ const AnalyticsViewerSchema = z
 	})
 	.passthrough();
 
-const AnalyticsListViewersResponseSchema = z.object({
-	items: z.array(AnalyticsViewerSchema),
-	continuation: z.string().optional(),
-});
+const AnalyticsListViewersResponseSchema = z
+	.object({
+		items: z.array(AnalyticsViewerSchema),
+		continuation: z.string().optional(),
+	})
+	.passthrough();
 
 const AnalyticsListViewsOverTimeInputSchema = z.object({
 	designId: z.string(),
@@ -535,17 +562,19 @@ const AnalyticsListViewsOverTimeInputSchema = z.object({
 	...PageInputSchema,
 });
 
-const AnalyticsListViewsOverTimeResponseSchema = z.object({
-	items: z.array(
-		z
-			.object({
-				count: z.number(),
-				bucket_start_at: z.number(),
-			})
-			.passthrough(),
-	),
-	continuation: z.string().optional(),
-});
+const AnalyticsListViewsOverTimeResponseSchema = z
+	.object({
+		items: z.array(
+			z
+				.object({
+					count: z.number(),
+					bucket_start_at: z.number(),
+				})
+				.passthrough(),
+		),
+		continuation: z.string().optional(),
+	})
+	.passthrough();
 
 const PageViewFilterSchema = z.discriminatedUnion('type', [
 	z.object({
@@ -568,41 +597,45 @@ const AnalyticsListPageViewsInputSchema = z.object({
 	...PageInputSchema,
 });
 
-const AnalyticsListPageViewsResponseSchema = z.object({
-	items: z.array(
-		z
-			.object({
-				page_id: z.string().optional(),
-				total_view_duration_seconds: z.number(),
-				average_duration_seconds: z.number().optional(),
-				unique_view_count: z.number().optional(),
-			})
-			.passthrough(),
-	),
-	continuation: z.string().optional(),
-});
+const AnalyticsListPageViewsResponseSchema = z
+	.object({
+		items: z.array(
+			z
+				.object({
+					page_id: z.string().optional(),
+					total_view_duration_seconds: z.number(),
+					average_duration_seconds: z.number().optional(),
+					unique_view_count: z.number().optional(),
+				})
+				.passthrough(),
+		),
+		continuation: z.string().optional(),
+	})
+	.passthrough();
 
 const AnalyticsListLinksInputSchema = z.object({
 	designId: z.string(),
 	...PageInputSchema,
 });
 
-const AnalyticsListLinksResponseSchema = z.object({
-	items: z.array(
-		z
-			.object({
-				link_id: z.string(),
-				name: z.string().optional(),
-				total_view_count: z.number().optional(),
-				unique_view_count: z.number().optional(),
-				total_view_duration_seconds: z.number().optional(),
-				average_view_duration_seconds: z.number().optional(),
-				last_viewed_at: z.number().optional(),
-			})
-			.passthrough(),
-	),
-	continuation: z.string().optional(),
-});
+const AnalyticsListLinksResponseSchema = z
+	.object({
+		items: z.array(
+			z
+				.object({
+					link_id: z.string(),
+					name: z.string().optional(),
+					total_view_count: z.number().optional(),
+					unique_view_count: z.number().optional(),
+					total_view_duration_seconds: z.number().optional(),
+					average_view_duration_seconds: z.number().optional(),
+					last_viewed_at: z.number().optional(),
+				})
+				.passthrough(),
+		),
+		continuation: z.string().optional(),
+	})
+	.passthrough();
 
 // ── assets ─────────────────────────────────────────────────────────────────
 
@@ -610,9 +643,11 @@ const AssetsGetInputSchema = z.object({
 	assetId: z.string(),
 });
 
-const AssetsGetResponseSchema = z.object({
-	asset: AssetSchema,
-});
+const AssetsGetResponseSchema = z
+	.object({
+		asset: AssetSchema,
+	})
+	.passthrough();
 
 const AssetsUpdateInputSchema = z.object({
 	assetId: z.string(),
@@ -624,9 +659,11 @@ const AssetsUpdateInputSchema = z.object({
 		.describe('Replaces every existing tag.'),
 });
 
-const AssetsUpdateResponseSchema = z.object({
-	asset: AssetSchema,
-});
+const AssetsUpdateResponseSchema = z
+	.object({
+		asset: AssetSchema,
+	})
+	.passthrough();
 
 const AssetsDeleteInputSchema = z.object({
 	assetId: z.string(),
@@ -647,26 +684,32 @@ const FoldersCreateInputSchema = z.object({
 		),
 });
 
-const FoldersCreateResponseSchema = z.object({
-	folder: FolderSchema,
-});
+const FoldersCreateResponseSchema = z
+	.object({
+		folder: FolderSchema,
+	})
+	.passthrough();
 
 const FoldersGetInputSchema = z.object({
 	folderId: z.string(),
 });
 
-const FoldersGetResponseSchema = z.object({
-	folder: FolderSchema,
-});
+const FoldersGetResponseSchema = z
+	.object({
+		folder: FolderSchema,
+	})
+	.passthrough();
 
 const FoldersUpdateInputSchema = z.object({
 	folderId: z.string(),
 	name: z.string().min(1).max(255),
 });
 
-const FoldersUpdateResponseSchema = z.object({
-	folder: FolderSchema,
-});
+const FoldersUpdateResponseSchema = z
+	.object({
+		folder: FolderSchema,
+	})
+	.passthrough();
 
 const FoldersDeleteInputSchema = z.object({
 	folderId: z.string(),
@@ -695,10 +738,12 @@ const FoldersListItemsInputSchema = z.object({
 	pin_status: z.enum(['any', 'pinned']).optional(),
 });
 
-const FoldersListItemsResponseSchema = z.object({
-	items: z.array(FolderItemSchema),
-	continuation: z.string().optional(),
-});
+const FoldersListItemsResponseSchema = z
+	.object({
+		items: z.array(FolderItemSchema),
+		continuation: z.string().optional(),
+	})
+	.passthrough();
 
 const FoldersMoveItemInputSchema = z.object({
 	to_folder_id: z.string().min(1).max(50),
@@ -714,17 +759,21 @@ const ExportsCreateInputSchema = z.object({
 	format: ExportFormatSchema,
 });
 
-const ExportsCreateResponseSchema = z.object({
-	job: ExportJobSchema,
-});
+const ExportsCreateResponseSchema = z
+	.object({
+		job: ExportJobSchema,
+	})
+	.passthrough();
 
 const ExportsGetInputSchema = z.object({
 	exportId: z.string(),
 });
 
-const ExportsGetResponseSchema = z.object({
-	job: ExportJobSchema,
-});
+const ExportsGetResponseSchema = z
+	.object({
+		job: ExportJobSchema,
+	})
+	.passthrough();
 
 const ExportsDownloadInputSchema = z.object({
 	exportId: z.string().describe('The id of a finished export job.'),
@@ -775,34 +824,42 @@ const BrandTemplatesListInputSchema = z.object({
 		.describe('non_empty lists only templates with autofill fields.'),
 });
 
-const BrandTemplatesListResponseSchema = z.object({
-	items: z.array(BrandTemplateSchema),
-	continuation: z.string().optional(),
-});
+const BrandTemplatesListResponseSchema = z
+	.object({
+		items: z.array(BrandTemplateSchema),
+		continuation: z.string().optional(),
+	})
+	.passthrough();
 
 const BrandTemplatesGetInputSchema = z.object({
 	brandTemplateId: z.string(),
 });
 
-const BrandTemplatesGetResponseSchema = z.object({
-	brand_template: BrandTemplateSchema,
-});
+const BrandTemplatesGetResponseSchema = z
+	.object({
+		brand_template: BrandTemplateSchema,
+	})
+	.passthrough();
 
 const BrandTemplatesGetDatasetInputSchema = z.object({
 	brandTemplateId: z.string(),
 });
 
-const BrandTemplatesGetDatasetResponseSchema = z.object({
-	dataset: DatasetSchema.optional(),
-});
+const BrandTemplatesGetDatasetResponseSchema = z
+	.object({
+		dataset: DatasetSchema.optional(),
+	})
+	.passthrough();
 
 const BrandTemplatesPublishInputSchema = z.object({
 	design_id: z.string().describe('The design to publish as a brand template.'),
 });
 
-const BrandTemplatesPublishResponseSchema = z.object({
-	brand_template: BrandTemplateSchema,
-});
+const BrandTemplatesPublishResponseSchema = z
+	.object({
+		brand_template: BrandTemplateSchema,
+	})
+	.passthrough();
 
 // ── asset uploads ──────────────────────────────────────────────────────────
 
@@ -834,17 +891,21 @@ const AssetUploadsCreateInputSchema = z
 		{ message: 'Pass exactly one of file or contentBase64' },
 	);
 
-const AssetUploadsCreateResponseSchema = z.object({
-	job: AssetUploadJobSchema,
-});
+const AssetUploadsCreateResponseSchema = z
+	.object({
+		job: AssetUploadJobSchema,
+	})
+	.passthrough();
 
 const AssetUploadsGetInputSchema = z.object({
 	jobId: z.string(),
 });
 
-const AssetUploadsGetResponseSchema = z.object({
-	job: AssetUploadJobSchema,
-});
+const AssetUploadsGetResponseSchema = z
+	.object({
+		job: AssetUploadJobSchema,
+	})
+	.passthrough();
 
 const AssetUploadsCreateFromUrlInputSchema = z.object({
 	name: z.string().min(1).max(255),
@@ -857,17 +918,21 @@ const AssetUploadsCreateFromUrlInputSchema = z.object({
 		),
 });
 
-const AssetUploadsCreateFromUrlResponseSchema = z.object({
-	job: AssetUploadJobSchema,
-});
+const AssetUploadsCreateFromUrlResponseSchema = z
+	.object({
+		job: AssetUploadJobSchema,
+	})
+	.passthrough();
 
 const AssetUploadsGetFromUrlInputSchema = z.object({
 	jobId: z.string(),
 });
 
-const AssetUploadsGetFromUrlResponseSchema = z.object({
-	job: AssetUploadJobSchema,
-});
+const AssetUploadsGetFromUrlResponseSchema = z
+	.object({
+		job: AssetUploadJobSchema,
+	})
+	.passthrough();
 
 // ── design imports ─────────────────────────────────────────────────────────
 
@@ -911,17 +976,21 @@ const ImportsCreateInputSchema = z
 		{ message: 'Pass exactly one of file or contentBase64' },
 	);
 
-const ImportsCreateResponseSchema = z.object({
-	job: ImportJobSchema,
-});
+const ImportsCreateResponseSchema = z
+	.object({
+		job: ImportJobSchema,
+	})
+	.passthrough();
 
 const ImportsGetInputSchema = z.object({
 	jobId: z.string(),
 });
 
-const ImportsGetResponseSchema = z.object({
-	job: ImportJobSchema,
-});
+const ImportsGetResponseSchema = z
+	.object({
+		job: ImportJobSchema,
+	})
+	.passthrough();
 
 const ImportsCreateFromUrlInputSchema = z.object({
 	title: z.string().min(1).max(255),
@@ -929,17 +998,21 @@ const ImportsCreateFromUrlInputSchema = z.object({
 	mime_type: z.string().max(100).optional(),
 });
 
-const ImportsCreateFromUrlResponseSchema = z.object({
-	job: ImportJobSchema,
-});
+const ImportsCreateFromUrlResponseSchema = z
+	.object({
+		job: ImportJobSchema,
+	})
+	.passthrough();
 
 const ImportsGetFromUrlInputSchema = z.object({
 	jobId: z.string(),
 });
 
-const ImportsGetFromUrlResponseSchema = z.object({
-	job: ImportJobSchema,
-});
+const ImportsGetFromUrlResponseSchema = z
+	.object({
+		job: ImportJobSchema,
+	})
+	.passthrough();
 
 const ImageToDesignJobSchema = z
 	.object({
@@ -964,17 +1037,21 @@ const ImportsCreateFromImageInputSchema = z.object({
 	title: z.string().min(1).max(255).optional(),
 });
 
-const ImportsCreateFromImageResponseSchema = z.object({
-	job: ImageToDesignJobSchema,
-});
+const ImportsCreateFromImageResponseSchema = z
+	.object({
+		job: ImageToDesignJobSchema,
+	})
+	.passthrough();
 
 const ImportsGetFromImageInputSchema = z.object({
 	jobId: z.string(),
 });
 
-const ImportsGetFromImageResponseSchema = z.object({
-	job: ImageToDesignJobSchema,
-});
+const ImportsGetFromImageResponseSchema = z
+	.object({
+		job: ImageToDesignJobSchema,
+	})
+	.passthrough();
 
 // ── resizes ────────────────────────────────────────────────────────────────
 
@@ -1000,28 +1077,60 @@ const ResizesCreateInputSchema = z.object({
 	design_type: DesignTypeInputSchema,
 });
 
-const ResizesCreateResponseSchema = z.object({
-	job: ResizeJobSchema,
-});
+const ResizesCreateResponseSchema = z
+	.object({
+		job: ResizeJobSchema,
+	})
+	.passthrough();
 
 const ResizesGetInputSchema = z.object({
 	jobId: z.string(),
 });
 
-const ResizesGetResponseSchema = z.object({
-	job: ResizeJobSchema,
-});
+const ResizesGetResponseSchema = z
+	.object({
+		job: ResizeJobSchema,
+	})
+	.passthrough();
 
 // ── autofills ──────────────────────────────────────────────────────────────
 
+const DataTableCellSchema = z.discriminatedUnion('type', [
+	z.object({
+		type: z.literal('string'),
+		value: z.string().max(10000).optional(),
+	}),
+	z.object({
+		type: z.literal('number'),
+		value: z.number().optional(),
+		// unknown: Canva's number-format metadata, passed through as given.
+		metadata: z.record(z.string(), z.unknown()).optional(),
+	}),
+	z.object({ type: z.literal('boolean'), value: z.boolean().optional() }),
+	z.object({
+		type: z.literal('date'),
+		value: z.number().int().optional().describe('Unix seconds.'),
+	}),
+	// A media cell's value is a list of image or video uploads Canva defines.
+	z
+		.object({ type: z.literal('media') })
+		.passthrough(),
+]);
+
 const DataTableSchema = z
 	.object({
-		column_configs: z.array(z.record(z.string(), z.unknown())).optional(),
-		rows: z.array(z.record(z.string(), z.unknown())),
+		column_configs: z
+			.array(
+				z.object({
+					name: z.string().optional(),
+					type: z.enum(['string', 'number', 'boolean', 'date', 'media']),
+				}),
+			)
+			.optional(),
+		rows: z.array(z.object({ cells: z.array(DataTableCellSchema) })),
 	})
-	.passthrough()
 	.describe(
-		'{ rows: [{ cells: [...] }], column_configs? } as Canva defines a data table.',
+		'{ rows: [{ cells: [{ type, value }] }], column_configs? }; every row has the same number of cells.',
 	);
 
 export const AutofillDataFieldSchema = z.discriminatedUnion('type', [
@@ -1101,17 +1210,21 @@ const AutofillsCreateInputSchema = z
 		}
 	});
 
-const AutofillsCreateResponseSchema = z.object({
-	job: AutofillJobSchema,
-});
+const AutofillsCreateResponseSchema = z
+	.object({
+		job: AutofillJobSchema,
+	})
+	.passthrough();
 
 const AutofillsGetInputSchema = z.object({
 	jobId: z.string(),
 });
 
-const AutofillsGetResponseSchema = z.object({
-	job: AutofillJobSchema,
-});
+const AutofillsGetResponseSchema = z
+	.object({
+		job: AutofillJobSchema,
+	})
+	.passthrough();
 
 // ── design generation (preview) ────────────────────────────────────────────
 
@@ -1150,17 +1263,21 @@ const GenerationsCreateInputSchema = z.object({
 		.describe('Sections in order, e.g. one per slide.'),
 });
 
-const GenerationsCreateResponseSchema = z.object({
-	job: GenerationJobSchema,
-});
+const GenerationsCreateResponseSchema = z
+	.object({
+		job: GenerationJobSchema,
+	})
+	.passthrough();
 
 const GenerationsGetInputSchema = z.object({
 	jobId: z.string(),
 });
 
-const GenerationsGetResponseSchema = z.object({
-	job: GenerationJobSchema,
-});
+const GenerationsGetResponseSchema = z
+	.object({
+		job: GenerationJobSchema,
+	})
+	.passthrough();
 
 // ── image generation (preview) ─────────────────────────────────────────────
 
@@ -1236,22 +1353,26 @@ const ImageGenerationsCreateInputSchema = z.object({
 		.describe('Name of the saved asset, with save_to_uploads.'),
 });
 
-const ImageGenerationsCreateResponseSchema = z.object({
-	job: ImageGenerationJobSchema,
-	model_expiry: z
-		.object({ model: z.string(), expires_at: z.number() })
-		.passthrough()
-		.optional()
-		.describe('Set when the chosen model is being retired.'),
-});
+const ImageGenerationsCreateResponseSchema = z
+	.object({
+		job: ImageGenerationJobSchema,
+		model_expiry: z
+			.object({ model: z.string(), expires_at: z.number() })
+			.passthrough()
+			.optional()
+			.describe('Set when the chosen model is being retired.'),
+	})
+	.passthrough();
 
 const ImageGenerationsGetInputSchema = z.object({
 	jobId: z.string(),
 });
 
-const ImageGenerationsGetResponseSchema = z.object({
-	job: ImageGenerationJobSchema,
-});
+const ImageGenerationsGetResponseSchema = z
+	.object({
+		job: ImageGenerationJobSchema,
+	})
+	.passthrough();
 
 // ── image transformations (preview) ────────────────────────────────────────
 
@@ -1288,17 +1409,21 @@ const ImageTransformationsCreateInputSchema = z.object({
 	idempotency_key: z.string().uuid().optional(),
 });
 
-const ImageTransformationsCreateResponseSchema = z.object({
-	job: ImageTransformationJobSchema,
-});
+const ImageTransformationsCreateResponseSchema = z
+	.object({
+		job: ImageTransformationJobSchema,
+	})
+	.passthrough();
 
 const ImageTransformationsGetInputSchema = z.object({
 	jobId: z.string(),
 });
 
-const ImageTransformationsGetResponseSchema = z.object({
-	job: ImageTransformationJobSchema,
-});
+const ImageTransformationsGetResponseSchema = z
+	.object({
+		job: ImageTransformationJobSchema,
+	})
+	.passthrough();
 
 // ── merges (preview) ───────────────────────────────────────────────────────
 
@@ -1379,17 +1504,21 @@ const MergesCreateInputSchema = z
 		}
 	});
 
-const MergesCreateResponseSchema = z.object({
-	job: MergeJobSchema,
-});
+const MergesCreateResponseSchema = z
+	.object({
+		job: MergeJobSchema,
+	})
+	.passthrough();
 
 const MergesGetInputSchema = z.object({
 	jobId: z.string(),
 });
 
-const MergesGetResponseSchema = z.object({
-	job: MergeJobSchema,
-});
+const MergesGetResponseSchema = z
+	.object({
+		job: MergeJobSchema,
+	})
+	.passthrough();
 
 // ── print partners (preview, Print Partner apps only) ──────────────────────
 
@@ -1425,9 +1554,11 @@ const PrintPartnerCreateDesignInputSchema = z.object({
 	...PrintProofingInputSchema,
 });
 
-const PrintPartnerDesignResponseSchema = z.object({
-	design: DesignSchema,
-});
+const PrintPartnerDesignResponseSchema = z
+	.object({
+		design: DesignSchema,
+	})
+	.passthrough();
 
 const PrintPartnerGetDesignInputSchema = z.object({
 	designId: z.string(),
@@ -1457,9 +1588,11 @@ const PrintPartnerCreateExportInputSchema = z.object({
 	pages: z.array(z.number().int().min(1)).optional(),
 });
 
-const PrintPartnerCreateExportResponseSchema = z.object({
-	job: ExportJobSchema,
-});
+const PrintPartnerCreateExportResponseSchema = z
+	.object({
+		job: ExportJobSchema,
+	})
+	.passthrough();
 
 // ── comments (preview) ─────────────────────────────────────────────────────
 
@@ -1526,9 +1659,11 @@ const CommentsCreateThreadInputSchema = z.object({
 	assignee_id: z.string().optional(),
 });
 
-const CommentsCreateThreadResponseSchema = z.object({
-	thread: CommentThreadSchema,
-});
+const CommentsCreateThreadResponseSchema = z
+	.object({
+		thread: CommentThreadSchema,
+	})
+	.passthrough();
 
 const CommentsGetThreadInputSchema = z.object({
 	designId: z.string(),
@@ -1551,9 +1686,11 @@ const CommentsCreateReplyInputSchema = z.object({
 	message_plaintext: z.string().min(1).max(2048),
 });
 
-const CommentsCreateReplyResponseSchema = z.object({
-	reply: CommentReplySchema,
-});
+const CommentsCreateReplyResponseSchema = z
+	.object({
+		reply: CommentReplySchema,
+	})
+	.passthrough();
 
 const CommentsListRepliesInputSchema = z.object({
 	designId: z.string(),
@@ -1562,10 +1699,12 @@ const CommentsListRepliesInputSchema = z.object({
 	limit: z.number().int().min(1).max(100).optional(),
 });
 
-const CommentsListRepliesResponseSchema = z.object({
-	items: z.array(CommentReplySchema),
-	continuation: z.string().optional(),
-});
+const CommentsListRepliesResponseSchema = z
+	.object({
+		items: z.array(CommentReplySchema),
+		continuation: z.string().optional(),
+	})
+	.passthrough();
 
 const CommentsGetReplyInputSchema = z.object({
 	designId: z.string(),
@@ -1573,45 +1712,51 @@ const CommentsGetReplyInputSchema = z.object({
 	replyId: z.string(),
 });
 
-const CommentsGetReplyResponseSchema = z.object({
-	reply: CommentReplySchema,
-});
+const CommentsGetReplyResponseSchema = z
+	.object({
+		reply: CommentReplySchema,
+	})
+	.passthrough();
 
 // ── keys ───────────────────────────────────────────────────────────────────
 
 const KeysListInputSchema = z.object({});
 
-const KeysListResponseSchema = z.object({
-	keys: z.array(
-		z
-			.object({
-				kid: z.string(),
-				kty: z.string(),
-				crv: z.string(),
-				x: z.string(),
-			})
-			.passthrough(),
-	),
-});
+const KeysListResponseSchema = z
+	.object({
+		keys: z.array(
+			z
+				.object({
+					kid: z.string(),
+					kty: z.string(),
+					crv: z.string(),
+					x: z.string(),
+				})
+				.passthrough(),
+		),
+	})
+	.passthrough();
 
 const AppsGetJwksInputSchema = z.object({
 	appId: z.string(),
 });
 
-const AppsGetJwksResponseSchema = z.object({
-	keys: z.array(
-		z
-			.object({
-				kid: z.string(),
-				kty: z.string(),
-				n: z.string(),
-				e: z.string(),
-				alg: z.string().optional(),
-				use: z.string().optional(),
-			})
-			.passthrough(),
-	),
-});
+const AppsGetJwksResponseSchema = z
+	.object({
+		keys: z.array(
+			z
+				.object({
+					kid: z.string(),
+					kty: z.string(),
+					n: z.string(),
+					e: z.string(),
+					alg: z.string().optional(),
+					use: z.string().optional(),
+				})
+				.passthrough(),
+		),
+	})
+	.passthrough();
 
 // ── registry ───────────────────────────────────────────────────────────────
 

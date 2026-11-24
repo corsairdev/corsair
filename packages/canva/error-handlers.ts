@@ -13,14 +13,14 @@ function canvaCodeOf(error: Error): string | undefined {
 	return typeof body?.code === 'string' ? body.code : undefined;
 }
 
-/** Canva's own explanation, which core's ApiError message ("Forbidden") leaves out. */
+/**
+ * What a log line may say about a refusal: the status and Canva's error code.
+ * Canva's free-text message can echo request data (a file name, a URL), so it
+ * stays on error.body for the caller and out of the logs.
+ */
 function canvaReasonOf(error: Error): string {
-	if (!(error instanceof ApiError)) return error.message;
-	// unknown: as above, only a string `message` is used.
-	const body = error.body as { message?: unknown } | undefined;
-	const code = canvaCodeOf(error);
-	const message = typeof body?.message === 'string' ? body.message : '';
-	return [error.message, code, message].filter(Boolean).join(': ');
+	if (!(error instanceof ApiError)) return error.name;
+	return [error.status, canvaCodeOf(error)].filter(Boolean).join(' ');
 }
 
 // Reads are safe to send again. A write that failed on the network or with a
@@ -89,9 +89,7 @@ export const errorHandlers = {
 		match: (error) =>
 			!(error instanceof ApiError) && NETWORK_ERROR.test(error.message),
 		handler: async (error, context) => {
-			console.warn(
-				`[CANVA:${context.operation}] Network error: ${error.message}`,
-			);
+			console.warn(`[CANVA:${context.operation}] Network error`);
 			return isReplayable(error, context.operation)
 				? { maxRetries: 3 }
 				: { maxRetries: 0 };

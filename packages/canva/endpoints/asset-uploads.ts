@@ -2,12 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { encodeUtf8ToBase64 } from '../base64';
 import { makeCanvaRequest } from '../client';
 import type { CanvaContext, CanvaEndpoints } from '../index';
-import {
-	bodyFrom,
-	loggableUrl,
-	toAssetEntity,
-	withoutFileContent,
-} from './mappers';
+import { bodyFrom, loggable, toAssetEntity } from './mappers';
 import { seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
 import { CanvaEndpointInputSchemas } from './types';
@@ -51,7 +46,7 @@ export const create: CanvaEndpoints['assetUploadsCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.assetUploads.create',
-		withoutFileContent(input),
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -67,7 +62,7 @@ export const get: CanvaEndpoints['assetUploadsGet'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.assetUploads.get',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -87,7 +82,7 @@ export const createFromUrl: CanvaEndpoints['assetUploadsCreateFromUrl'] =
 		await logEventFromContext(
 			ctx,
 			'canva.assetUploads.createFromUrl',
-			{ ...input, url: loggableUrl(input.url) },
+			loggable(input),
 			'completed',
 		);
 		return result;
@@ -106,7 +101,7 @@ export const getFromUrl: CanvaEndpoints['assetUploadsGetFromUrl'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.assetUploads.getFromUrl',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;

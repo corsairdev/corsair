@@ -2,12 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { encodeUtf8ToBase64 } from '../base64';
 import { makeCanvaRequest } from '../client';
 import type { CanvaContext, CanvaEndpoints } from '../index';
-import {
-	bodyFrom,
-	loggableUrl,
-	toDesignEntity,
-	withoutFileContent,
-} from './mappers';
+import { bodyFrom, loggable, saveDesign } from './mappers';
 import { callCanva, seg } from './shared';
 import type { CanvaEndpointOutputs, DesignSummary } from './types';
 import { CanvaEndpointInputSchemas } from './types';
@@ -16,23 +11,11 @@ async function upsertDesignsFromJob(
 	ctx: CanvaContext,
 	job: CanvaEndpointOutputs['importsGet']['job'],
 ) {
-	if (!job.result?.designs?.length || !ctx.db.designs) return;
-	try {
-		for (const design of job.result.designs) {
-			await ctx.db.designs.upsertByEntityId(design.id, toDesignEntity(design));
-		}
-	} catch (error) {
-		console.warn('Failed to save imported designs to database:', error);
-	}
+	for (const design of job.result?.designs ?? []) await saveDesign(ctx, design);
 }
 
 async function upsertDesign(ctx: CanvaContext, design?: DesignSummary) {
-	if (!design || !ctx.db.designs) return;
-	try {
-		await ctx.db.designs.upsertByEntityId(design.id, toDesignEntity(design));
-	} catch (error) {
-		console.warn('Failed to save imported design to database:', error);
-	}
+	await saveDesign(ctx, design);
 }
 
 export const create: CanvaEndpoints['importsCreate'] = async (ctx, input) => {
@@ -61,7 +44,7 @@ export const create: CanvaEndpoints['importsCreate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.imports.create',
-		withoutFileContent(input),
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -79,7 +62,7 @@ export const get: CanvaEndpoints['importsGet'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.imports.get',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -105,7 +88,7 @@ export const createFromUrl: CanvaEndpoints['importsCreateFromUrl'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.imports.createFromUrl',
-		{ ...input, url: loggableUrl(input.url) },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -124,7 +107,7 @@ export const getFromUrl: CanvaEndpoints['importsGetFromUrl'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.imports.getFromUrl',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -139,7 +122,7 @@ export const createFromImage: CanvaEndpoints['importsCreateFromImage'] = async (
 	>(
 		ctx,
 		'imports.createFromImage',
-		{ ...input },
+		loggable(input),
 		'v1/image-to-design-imports',
 		{
 			method: 'POST',
@@ -160,7 +143,7 @@ export const getFromImage: CanvaEndpoints['importsGetFromImage'] = async (
 	const result = await callCanva<CanvaEndpointOutputs['importsGetFromImage']>(
 		ctx,
 		'imports.getFromImage',
-		{ ...input },
+		loggable(input),
 		`v1/image-to-design-imports/${seg(input.jobId)}`,
 	);
 	await upsertDesign(ctx, result.job.result?.design);

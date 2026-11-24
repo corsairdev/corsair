@@ -1,4 +1,5 @@
 import type { CanvaEndpoints } from '../index';
+import { loggable } from './mappers';
 import { callCanva, defined, seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
 
@@ -11,7 +12,7 @@ export const createDesign: CanvaEndpoints['printPartnerCreateDesign'] = async (
 	callCanva<CanvaEndpointOutputs['printPartnerCreateDesign']>(
 		ctx,
 		'printPartner.createDesign',
-		{ ...input },
+		loggable(input),
 		'v1/print-partner/designs',
 		{ method: 'POST', body: defined({ ...input }) },
 	);
@@ -24,7 +25,7 @@ export const getDesign: CanvaEndpoints['printPartnerGetDesign'] = async (
 	return callCanva<CanvaEndpointOutputs['printPartnerGetDesign']>(
 		ctx,
 		'printPartner.getDesign',
-		{ ...input },
+		loggable(input),
 		`v1/print-partner/designs/${seg(designId)}`,
 		{ method: 'GET', query: defined(query) },
 	);
@@ -37,7 +38,7 @@ export const createExport: CanvaEndpoints['printPartnerCreateExport'] = async (
 	callCanva<CanvaEndpointOutputs['printPartnerCreateExport']>(
 		ctx,
 		'printPartner.createExport',
-		{ ...input },
+		loggable(input),
 		'v1/print-partner/exports',
 		{ method: 'POST', body: defined({ ...input }) },
 	);

@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaEndpoints } from '../index';
+import { loggable } from './mappers';
 import { seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
 
@@ -22,7 +23,7 @@ export const createThread: CanvaEndpoints['commentsCreateThread'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.comments.createThread',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -42,7 +43,7 @@ export const getThread: CanvaEndpoints['commentsGetThread'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.comments.getThread',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -63,7 +64,7 @@ export const createReply: CanvaEndpoints['commentsCreateReply'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.comments.createReply',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -111,7 +112,7 @@ export const getReply: CanvaEndpoints['commentsGetReply'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.comments.getReply',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;

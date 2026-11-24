@@ -1,15 +1,10 @@
 import type { CanvaContext, CanvaEndpoints } from '../index';
-import { toDesignEntity } from './mappers';
+import { loggable, saveDesign } from './mappers';
 import { callCanva, seg } from './shared';
 import type { CanvaEndpointOutputs, DesignSummary } from './types';
 
 async function upsertDesign(ctx: CanvaContext, design?: DesignSummary) {
-	if (!design || !ctx.db.designs) return;
-	try {
-		await ctx.db.designs.upsertByEntityId(design.id, toDesignEntity(design));
-	} catch (error) {
-		console.warn('Failed to save generated design to database:', error);
-	}
+	await saveDesign(ctx, design);
 }
 
 export const create: CanvaEndpoints['generationsCreate'] = async (
@@ -40,7 +35,7 @@ export const get: CanvaEndpoints['generationsGet'] = async (ctx, input) => {
 	const result = await callCanva<CanvaEndpointOutputs['generationsGet']>(
 		ctx,
 		'generations.get',
-		{ ...input },
+		loggable(input),
 		`v1/generations/${seg(input.jobId)}`,
 	);
 	await upsertDesign(ctx, result.job.result?.design);

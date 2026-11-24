@@ -1,4 +1,5 @@
 import type { CanvaEndpoints } from '../index';
+import { loggable } from './mappers';
 import { callCanva, defined, seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
 
@@ -8,7 +9,7 @@ export const get: CanvaEndpoints['analyticsGet'] = async (ctx, input) =>
 	callCanva<CanvaEndpointOutputs['analyticsGet']>(
 		ctx,
 		'analytics.get',
-		{ ...input },
+		loggable(input),
 		`v1/designs/${seg(input.designId)}/analytics`,
 	);
 
@@ -20,7 +21,7 @@ export const listViewers: CanvaEndpoints['analyticsListViewers'] = async (
 	return callCanva<CanvaEndpointOutputs['analyticsListViewers']>(
 		ctx,
 		'analytics.listViewers',
-		{ ...input },
+		loggable(input),
 		`v1/designs/${seg(designId)}/analytics/viewers`,
 		{ method: 'GET', query: defined(query) },
 	);
@@ -32,7 +33,7 @@ export const listViewsOverTime: CanvaEndpoints['analyticsListViewsOverTime'] =
 		return callCanva<CanvaEndpointOutputs['analyticsListViewsOverTime']>(
 			ctx,
 			'analytics.listViewsOverTime',
-			{ ...input },
+			loggable(input),
 			`v1/designs/${seg(designId)}/analytics/views-over-time`,
 			{ method: 'GET', query: defined(query) },
 		);
@@ -61,7 +62,7 @@ export const listLinks: CanvaEndpoints['analyticsListLinks'] = async (
 	return callCanva<CanvaEndpointOutputs['analyticsListLinks']>(
 		ctx,
 		'analytics.listLinks',
-		{ ...input },
+		loggable(input),
 		`v1/designs/${seg(designId)}/analytics/links`,
 		{ method: 'GET', query: defined(query) },
 	);
