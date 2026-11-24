@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-23T12:04:11.642Z",
-  "corsairVersion": "0.2.28",
+  "generatedAt": "2026-11-23T19:33:33.807Z",
+  "corsairVersion": "0.2.29",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -5522,6 +5522,21 @@
         "api": 181,
         "webhooks": 4,
         "db": 3
+      }
+    },
+    {
+      "id": "inkbox",
+      "displayName": "Inkbox",
+      "description": "Give AI agents their own identities: each agent gets an email inbox, and can add a phone number for SMS, MMS and calls, iMessage, WhatsApp and a Slack bot, plus shared contacts with remembered facts, notes, an encrypted credential vault, a public tunnel URL, agent-to-agent (A2A) tasks and hosted agents. Send and read mail, texts and messages, manage numbers, rules and webhooks, and receive signed events for new mail, texts, calls, iMessage, WhatsApp, Slack and A2A (454 operations).",
+      "npmPackageName": "@corsair-dev/inkbox",
+      "authTypes": [
+        "api_key"
+      ],
+      "defaultAuthType": "api_key",
+      "counts": {
+        "api": 454,
+        "webhooks": 8,
+        "db": 0
       }
     },
     {
@@ -111823,6 +111838,2778 @@
       "kind": "webhook",
       "shortPath": "mailboxes.statusChanged",
       "haystack": "mailboxes.statuschanged inboxkit.webhooks.mailboxes.statuschanged a mailbox's status changed. unless the team has turned it off, inboxkit sends the mailbox's passwords in this delivery; the plugin removes them before a handler returns. use mailboxes.showcredentials if you need them."
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.contactRules.create",
+      "haystack": "a2a.contactrules.create inkbox.api.a2a.contactrules.create creates an allow or block rule (`action`) controlling which agent (`match_target`) can exchange a2a tasks with this identity, optionally per `direction`. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.contactRules.delete",
+      "haystack": "a2a.contactrules.delete inkbox.api.a2a.contactrules.delete deletes one a2a contact rule (`rule_id`) from an identity. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.contactRules.list",
+      "haystack": "a2a.contactrules.list inkbox.api.a2a.contactrules.list lists the a2a allow and block rules for one identity (`agent_handle`). read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.contactRules.listForOrg",
+      "haystack": "a2a.contactrules.listfororg inkbox.api.a2a.contactrules.listfororg lists active a2a contact rules across every identity in the organization, filterable by `agent_identity_id`, `action` and `direction`. requires an admin api key. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.contactRules.update",
+      "haystack": "a2a.contactrules.update inkbox.api.a2a.contactrules.update changes an a2a contact rule's `action` and/or `direction`; to change the match target, delete and recreate the rule. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.contexts.get",
+      "haystack": "a2a.contexts.get inkbox.api.a2a.contexts.get returns one a2a context (a conversation session) that another agent opened toward this identity, with its tasks in both directions. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.contexts.list",
+      "haystack": "a2a.contexts.list inkbox.api.a2a.contexts.list lists a2a contexts visible to an identity, most recently active first, optionally filtered by `direction`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.contexts.update",
+      "haystack": "a2a.contexts.update inkbox.api.a2a.contexts.update renames an a2a context (`name`). either participant can rename it, whoever opened it. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.invitations.accept",
+      "haystack": "a2a.invitations.accept inkbox.api.a2a.invitations.accept accepts an a2a invitation (`invitation_token`) as the agent that owns the calling agent-scoped api key, connecting it to the invitation's peer agents. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.invitations.create",
+      "haystack": "a2a.invitations.create inkbox.api.a2a.invitations.create creates an a2a invitation that lets an outside agent connect to `peer_agent_handles`; inkbox emails `recipient_email` if set, otherwise returns a link to hand off. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.invitations.decline",
+      "haystack": "a2a.invitations.decline inkbox.api.a2a.invitations.decline declines an a2a invitation by its `invitation_token`. connections already accepted are not affected. inkbox needs no api key for this route; the plugin still sends the connected one. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.invitations.get",
+      "haystack": "a2a.invitations.get inkbox.api.a2a.invitations.get returns one a2a invitation issued by your organization, with its status, peer agents and email delivery state. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.invitations.list",
+      "haystack": "a2a.invitations.list inkbox.api.a2a.invitations.list lists a2a invitations issued by your organization, newest first, optionally filtered by `status`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.invitations.preview",
+      "haystack": "a2a.invitations.preview inkbox.api.a2a.invitations.preview shows an a2a invitation's inviter, peer agents and expiry from the raw `invitation_token` without accepting it. inkbox needs no api key for this route; the plugin still sends the connected one. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.invitations.revoke",
+      "haystack": "a2a.invitations.revoke inkbox.api.a2a.invitations.revoke revokes a pending or awaiting-verification a2a invitation so it can no longer be accepted. accepted, declined or expired invitations cannot be revoked. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.listDirectory",
+      "haystack": "a2a.listdirectory inkbox.api.a2a.listdirectory searches the organization's directory of a2a-enabled agent identities, including non-public cards, by text `q` or `verified_domain`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.messages.list",
+      "haystack": "a2a.messages.list inkbox.api.a2a.messages.list lists a2a task messages for an identity, newest first, filterable by `direction`, `task_id`, `context_id`, `role`, peer handles, `since` or full-text `q`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.previewCard",
+      "haystack": "a2a.previewcard inkbox.api.a2a.previewcard returns the agent card inkbox would publish for one of your identities, even while a2a is disabled, to review its description and skills. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.sentContexts.get",
+      "haystack": "a2a.sentcontexts.get inkbox.api.a2a.sentcontexts.get returns one a2a context this identity opened toward another agent, with its tasks in both directions. returns 404 for contexts opened toward it. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.sentContexts.list",
+      "haystack": "a2a.sentcontexts.list inkbox.api.a2a.sentcontexts.list lists a2a contexts this identity opened toward other agents. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.sentTasks.get",
+      "haystack": "a2a.senttasks.get inkbox.api.a2a.senttasks.get returns one a2a task this identity sent to another agent, with its message history. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.sentTasks.list",
+      "haystack": "a2a.senttasks.list inkbox.api.a2a.senttasks.list lists a2a tasks this identity sent to other agents, newest first, filterable by `state`, `context_id`, peer handles, `since` or full-text `q`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.settings.get",
+      "haystack": "a2a.settings.get inkbox.api.a2a.settings.get returns an identity's a2a settings (enabled, public discoverability, filter mode, skills, card url) and lifetime inbound and outbound task counts. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.settings.listForOrg",
+      "haystack": "a2a.settings.listfororg inkbox.api.a2a.settings.listfororg lists every identity's effective a2a settings across the organization, optionally filtered by `enabled`. requires an admin api key. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.settings.update",
+      "haystack": "a2a.settings.update inkbox.api.a2a.settings.update updates an identity's a2a settings: `enabled`, `skills`, `allow_public_egress`, and (admin key only) `publicly_discoverable` and `filter_mode`. omitted fields are kept. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.tasks.get",
+      "haystack": "a2a.tasks.get inkbox.api.a2a.tasks.get returns one a2a task this identity received as the worker, with its message history. use `a2a.senttasks.get` for tasks it sent. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.tasks.list",
+      "haystack": "a2a.tasks.list inkbox.api.a2a.tasks.list lists a2a tasks visible to an identity, newest first; received tasks by default, or set `direction`. filterable by `state`, `context_id`, peer handles and `q`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "a2a.tasks.reply",
+      "haystack": "a2a.tasks.reply inkbox.api.a2a.tasks.reply replies to a task this identity received, sending message `parts` to the requesting agent and moving the task by `intent`: progress, ask_caller, complete or fail. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "account.whoami",
+      "haystack": "account.whoami inkbox.api.account.whoami returns the authenticated caller's identity and auth type, to check which organization, identity or key a request runs as. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "agentSignup.getStatus",
+      "haystack": "agentsignup.getstatus inkbox.api.agentsignup.getstatus returns the calling agent's claim status, its human owner's account state and email, and the restrictions that still apply to it. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "agentSignup.resendVerification",
+      "haystack": "agentsignup.resendverification inkbox.api.agentsignup.resendverification emails the agent's human owner a new 6-digit verification code, invalidating the previous one. limited to once every 5 minutes. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "agentSignup.verify",
+      "haystack": "agentsignup.verify inkbox.api.agentsignup.verify submits the 6-digit `verification_code` the human received by email to claim the agent and unlock full sending. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "apiKeys.create",
+      "haystack": "apikeys.create inkbox.api.apikeys.create creates an api key (`label`): set `scoped_identity_id` for an agent-scoped key, or omit it for an admin key with full organization access. the key value is returned only once. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "apiKeys.getCurrent",
+      "haystack": "apikeys.getcurrent inkbox.api.apikeys.getcurrent returns metadata for the api key making the call (scope, label, status, last four characters, expiry). the key value itself is never returned. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "apiKeys.revokeCurrent",
+      "haystack": "apikeys.revokecurrent inkbox.api.apikeys.revokecurrent revokes the api key making the call, permanently, so later requests with it fail. create a replacement key before revoking. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.callingCountries.buy",
+      "haystack": "billing.callingcountries.buy inkbox.api.billing.callingcountries.buy buys outbound calling access to countries (`country_code` or `country_codes`) with an accepted `quote` and a new `request_key`, charging the organization. reuse the key on retry; admin key only. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.callingCountries.cancel",
+      "haystack": "billing.callingcountries.cancel inkbox.api.billing.callingcountries.cancel cancels renewal of a calling-country agreement (`agreement_id`). access lasts through the paid period; no prorated refund. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.callingCountries.list",
+      "haystack": "billing.callingcountries.list inkbox.api.billing.callingcountries.list lists calling destinations with monthly prices, the organization's calling-country agreements, and the countries already included. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.callingCountries.quote",
+      "haystack": "billing.callingcountries.quote inkbox.api.billing.callingcountries.quote quotes the prorated charge for adding calling countries (`country_code` or `country_codes`) and returns a `quote` token to confirm the purchase. does not charge. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.callingCountries.resume",
+      "haystack": "billing.callingcountries.resume inkbox.api.billing.callingcountries.resume resumes renewal of a canceled calling-country agreement (`agreement_id`) before its coverage ends, at the existing price. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.changePlan",
+      "haystack": "billing.changeplan inkbox.api.billing.changeplan changes the organization's subscription `plan` (`free` cancels) and optionally its billing `interval`; requires an admin key. upgrades and moves to yearly are charged and prorated immediately. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.createCheckoutSession",
+      "haystack": "billing.createcheckoutsession inkbox.api.billing.createcheckoutsession creates a stripe checkout url for subscribing to a `plan`, returning to `success_url` or `cancel_url`. the user pays in the browser. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.createPortalSession",
+      "haystack": "billing.createportalsession inkbox.api.billing.createportalsession creates a stripe billing portal url where a person manages the organization's billing, returning to `return_url` afterwards. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.getPricing",
+      "haystack": "billing.getpricing inkbox.api.billing.getpricing returns usage rates and recurring add-on prices, with the organization's contracted price where one applies. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.getSubscription",
+      "haystack": "billing.getsubscription inkbox.api.billing.getsubscription returns the organization's plan, status, billing interval, pending changes and entitlements, including whether custom email signatures are available. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.getUsage",
+      "haystack": "billing.getusage inkbox.api.billing.getusage returns organization usage for the current billing cycle (sms/mms, call seconds, imessage, storage, identities) by channel and identity, with remaining allowances and overage. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.identityPacks.buy",
+      "haystack": "billing.identitypacks.buy inkbox.api.billing.identitypacks.buy buys an identity pack (extra agent identity slots) with an accepted `quote` and a new `request_key`, charging the organization; may return a `payment_url`. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.identityPacks.change",
+      "haystack": "billing.identitypacks.change inkbox.api.billing.identitypacks.change cancels or resumes renewal of an identity-pack agreement (`action`: cancel or resume), with a unique `request_key`. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.identityPacks.list",
+      "haystack": "billing.identitypacks.list inkbox.api.billing.identitypacks.list lists the identity-pack offer, the organization's identity-pack agreements, identity capacity and whether it is eligible to buy. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.identityPacks.quote",
+      "haystack": "billing.identitypacks.quote inkbox.api.billing.identitypacks.quote quotes the price of an identity pack (extra identity slots) and returns a `quote` token for buying it. does not charge. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.lineBundles.buy",
+      "haystack": "billing.linebundles.buy inkbox.api.billing.linebundles.buy buys a line bundle (`code`: a voip or personal imessage line slot plus voice and sms credits) with an accepted `quote` and `request_key`, charging the organization. assigns no number; admin key only. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.lineBundles.change",
+      "haystack": "billing.linebundles.change inkbox.api.billing.linebundles.change cancels or resumes a line-bundle agreement (`action`). canceling removes an unused line slot immediately with no refund. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.lineBundles.list",
+      "haystack": "billing.linebundles.list inkbox.api.billing.linebundles.list lists line-bundle offers, the organization's bundle agreements, and remaining bundle voice seconds and messages. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.lineBundles.quote",
+      "haystack": "billing.linebundles.quote inkbox.api.billing.linebundles.quote quotes the prorated price and credits of a line bundle (`code`) and returns a `quote` token for buying it. does not charge. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.settings.get",
+      "haystack": "billing.settings.get inkbox.api.billing.settings.get returns the organization's monthly sms and voice overage spending cap and whether the 'sent via inkbox' email footer is removed. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.settings.update",
+      "haystack": "billing.settings.update inkbox.api.billing.settings.update sets the monthly sms/voice overage cap (`overage_cap_cents`; null clears it, 0 blocks overage) and/or `remove_branding_footer` (paid plans only). write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.setVoicePacks",
+      "haystack": "billing.setvoicepacks inkbox.api.billing.setvoicepacks sets how many call-minute packs of one size the organization holds (`pack`, `quantity`; 0 removes them); increases are invoiced immediately. paid plans and admin key only. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.usageAlerts.delete",
+      "haystack": "billing.usagealerts.delete inkbox.api.billing.usagealerts.delete deletes a usage alert override (`rule_id`), restoring the default 90% alert for that quota when no other overrides remain. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.usageAlerts.list",
+      "haystack": "billing.usagealerts.list inkbox.api.billing.usagealerts.list lists the organization's usage email alerts (identities, storage, sms, voice, overage) with thresholds and whether each is a default. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "billing.usageAlerts.save",
+      "haystack": "billing.usagealerts.save inkbox.api.billing.usagealerts.save creates or updates a usage email alert (`rule_id`; a new uuid adds one) for a `metric` at a percentage `threshold`, optionally for one `mailbox_id` (storage). write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "compliance.brand.delete",
+      "haystack": "compliance.brand.delete inkbox.api.compliance.brand.delete deletes the organization's 10dlc brand registration. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "compliance.brand.get",
+      "haystack": "compliance.brand.get inkbox.api.compliance.brand.get returns the organization's 10dlc brand registration and its current verification status. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "compliance.brand.register",
+      "haystack": "compliance.brand.register inkbox.api.compliance.brand.register registers the organization's 10dlc brand (business details for us sms) for verification. one brand per organization; asynchronous, so check its status afterwards. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "compliance.brand.resendTwoFactorEmail",
+      "haystack": "compliance.brand.resendtwofactoremail inkbox.api.compliance.brand.resendtwofactoremail resends the verification (2fa) email for the organization's 10dlc brand. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "compliance.brand.sendSmsOtp",
+      "haystack": "compliance.brand.sendsmsotp inkbox.api.compliance.brand.sendsmsotp texts a one-time pin to the brand's phone to verify a sole-proprietor 10dlc brand; confirm it with `compliance.brand.verifysmsotp`. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "compliance.brand.update",
+      "haystack": "compliance.brand.update inkbox.api.compliance.brand.update replaces the organization's 10dlc brand details; all required business fields must be sent again. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "compliance.brand.verifySmsOtp",
+      "haystack": "compliance.brand.verifysmsotp inkbox.api.compliance.brand.verifysmsotp verifies the 10dlc brand with the one-time pin (`otp_pin`) received by sms. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "compliance.campaign.delete",
+      "haystack": "compliance.campaign.delete inkbox.api.compliance.campaign.delete deletes the organization's 10dlc campaign, which also stops its monthly fee. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "compliance.campaign.get",
+      "haystack": "compliance.campaign.get inkbox.api.compliance.campaign.get returns the organization's 10dlc campaign and its carrier review status (`campaignstatus`). read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "compliance.campaign.getActive",
+      "haystack": "compliance.campaign.getactive inkbox.api.compliance.campaign.getactive returns whether the organization has selected its own 10dlc campaign (`active: true`) or inkbox's default campaign. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "compliance.campaign.register",
+      "haystack": "compliance.campaign.register inkbox.api.compliance.campaign.register submits the organization's 10dlc campaign (use case, sample messages, opt-in/opt-out keywords, policy links) for carrier review. costs $20/month once approved. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "compliance.campaign.resubmit",
+      "haystack": "compliance.campaign.resubmit inkbox.api.compliance.campaign.resubmit replaces the 10dlc campaign with a complete new registration and a new campaign id; local numbers return to inkbox's default campaign during review. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "compliance.campaign.setActive",
+      "haystack": "compliance.campaign.setactive inkbox.api.compliance.campaign.setactive switches the organization's local us numbers to its own approved 10dlc campaign (`active: true`) or back to inkbox's default. runs asynchronously. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "compliance.campaign.update",
+      "haystack": "compliance.campaign.update inkbox.api.compliance.campaign.update updates the 10dlc campaign's `help_message`, `message_flow` and sample messages. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "compliance.uploadOptInEvidence",
+      "haystack": "compliance.uploadoptinevidence inkbox.api.compliance.uploadoptinevidence uploads an image (`file`, max 5 mib) of your sms opt-in flow and returns a public url to cite in the campaign's `message_flow`. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.bulkDelete",
+      "haystack": "contacts.bulkdelete inkbox.api.contacts.bulkdelete deletes 1 to 1,000 contacts by `contact_ids` and returns a result for each. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.communicationPolicy.get",
+      "haystack": "contacts.communicationpolicy.get inkbox.api.contacts.communicationpolicy.get returns a contact's communication policy for an agent identity (`identity_id`): per-address inbound/outbound allow or block and field visibility. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.communicationPolicy.preview",
+      "haystack": "contacts.communicationpolicy.preview inkbox.api.contacts.communicationpolicy.preview previews what one agent identity (`identity_id`) can see of a contact and whether it may email or phone it in each direction. requires an admin api key. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.communicationPolicy.set",
+      "haystack": "contacts.communicationpolicy.set inkbox.api.contacts.communicationpolicy.set sets which of a contact's `addresses` an agent identity (`identity_id`) may use inbound and outbound, and its `visibility`, given the current `expected_revision`. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.create",
+      "haystack": "contacts.create inkbox.api.contacts.create creates a contact with names, company, emails, phones, addresses and custom fields. at least one name field or `company_name` is required. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.createWithPermissions",
+      "haystack": "contacts.createwithpermissions inkbox.api.contacts.createwithpermissions creates a contact and sets one agent's access `permissions` in a single transaction. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.delete",
+      "haystack": "contacts.delete inkbox.api.contacts.delete deletes one contact by `contact_id`. use `contacts.bulkdelete` to delete up to 1,000 at once. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.exportVcard",
+      "haystack": "contacts.exportvcard inkbox.api.contacts.exportvcard downloads one contact (`contact_id`) as a vcard (.vcf) file. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.exportVcards",
+      "haystack": "contacts.exportvcards inkbox.api.contacts.exportvcards exports 1 to 25 contacts (`contact_ids`) as a single vcard document. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.facts.create",
+      "haystack": "contacts.facts.create inkbox.api.contacts.facts.create adds a memory (`content`, `kind`) to a contact. requires an admin api key; agent-scoped keys cannot write memories. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.facts.delete",
+      "haystack": "contacts.facts.delete inkbox.api.contacts.facts.delete deletes one memory from a contact. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.facts.get",
+      "haystack": "contacts.facts.get inkbox.api.contacts.facts.get returns one contact memory with its citations, including a memory whose deadline has passed. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.facts.list",
+      "haystack": "contacts.facts.list inkbox.api.contacts.facts.list lists a contact's memories, most recently updated first. set `include_expired` to include memories past their deadline. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.facts.resolveCitation",
+      "haystack": "contacts.facts.resolvecitation inkbox.api.contacts.facts.resolvecitation resolves a memory's citation to its source id, locator and url, after rechecking that the caller can still access that correspondence. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.facts.update",
+      "haystack": "contacts.facts.update inkbox.api.contacts.facts.update edits a contact memory's `content` or moves it to another `kind`. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.get",
+      "haystack": "contacts.get inkbox.api.contacts.get returns one contact by `contact_id`, limited to the fields the caller is permitted to see. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.getCorrespondence",
+      "haystack": "contacts.getcorrespondence inkbox.api.contacts.getcorrespondence returns email, sms, imessage, whatsapp and call history between one contact and an agent identity, filterable by `channels`, `after`/`before` and per-channel limits. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.import",
+      "haystack": "contacts.import inkbox.api.contacts.import imports up to 2,500 contacts from a vcard body (max 10 mib). pass `x-vcard-preview-hash` from a preview to fail if the data or conflicts changed. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.list",
+      "haystack": "contacts.list inkbox.api.contacts.list lists contacts visible to the caller, with name search `q`, `order` and `review_status` filters. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.lookup",
+      "haystack": "contacts.lookup inkbox.api.contacts.lookup finds contacts by one field: exact `email` or `phone`, or partial match with `email_contains`, `email_domain` or `phone_contains`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.merge",
+      "haystack": "contacts.merge inkbox.api.contacts.merge merges duplicate contacts (`losing_contact_ids`) into this contact, combining identifiers, correspondence and memories. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.previewImport",
+      "haystack": "contacts.previewimport inkbox.api.contacts.previewimport validates a vcard batch (`vcard`) and reports conflicts with existing contacts, without creating any. returns a `preview_hash` for the import. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "contacts.update",
+      "haystack": "contacts.update inkbox.api.contacts.update updates a contact with json merge-patch: sent fields replace, null clears, omitted fields are kept. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "domains.create",
+      "haystack": "domains.create inkbox.api.domains.create registers a custom email sending domain (`domain`) and returns the dns records to publish. an apex with existing mx records needs `apex_mx_acknowledged` to displace that mail provider. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "domains.delete",
+      "haystack": "domains.delete inkbox.api.domains.delete deletes a custom sending domain: sending and receiving stop at once, and it can be restored for 24 hours before deletion is permanent. fails while mailboxes still use it. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "domains.forceDelete",
+      "haystack": "domains.forcedelete inkbox.api.domains.forcedelete deletes a custom sending domain (`domain_id`) by force, bypassing the normal delete flow and its restore window; treat it as permanent. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "domains.get",
+      "haystack": "domains.get inkbox.api.domains.get returns one custom sending domain with its status and required dns records. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "domains.getDnsRecords",
+      "haystack": "domains.getdnsrecords inkbox.api.domains.getdnsrecords returns the dns records (ownership txt, mail routing, dkim and others) to publish at the registrar for a custom sending domain. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "domains.getHealth",
+      "haystack": "domains.gethealth inkbox.api.domains.gethealth returns a custom sending domain's health: its status and the current check result for each required dns record. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "domains.list",
+      "haystack": "domains.list inkbox.api.domains.list lists the organization's custom email sending domains, optionally filtered by lifecycle `status`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "domains.restore",
+      "haystack": "domains.restore inkbox.api.domains.restore restores a custom sending domain that is still in its 24-hour deletion grace period. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "domains.rotateDkim",
+      "haystack": "domains.rotatedkim inkbox.api.domains.rotatedkim starts a dkim key rotation for a custom sending domain and returns the new selector and txt value to publish; the old key stays active until the new one verifies. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "domains.setDefault",
+      "haystack": "domains.setdefault inkbox.api.domains.setdefault makes a verified custom domain (`domain_name`) the organization's default for new mailboxes; pass `inkboxmail.com` to revert. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "domains.verify",
+      "haystack": "domains.verify inkbox.api.domains.verify re-checks a custom sending domain's dns records now and returns its updated status. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedChat.answerInteraction",
+      "haystack": "hostedchat.answerinteraction inkbox.api.hostedchat.answerinteraction answers a pending tool approval or question in a hosted-agent conversation with `response` (for example approve_once or deny) at `expected_version`; only the first valid answer counts. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedChat.conversations.create",
+      "haystack": "hostedchat.conversations.create inkbox.api.hostedchat.conversations.create starts a new chat conversation with an identity's hosted agent, with an optional `title`. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedChat.conversations.get",
+      "haystack": "hostedchat.conversations.get inkbox.api.hostedchat.conversations.get returns a snapshot of a hosted-agent conversation: recent items, pending approvals, the current turn, and cursors for paging and events. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedChat.conversations.list",
+      "haystack": "hostedchat.conversations.list inkbox.api.hostedchat.conversations.list lists chat conversations with an identity's hosted agent, optionally filtered by `origin` (`chat`, `communication` or `schedule`). read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedChat.conversations.listMessages",
+      "haystack": "hostedchat.conversations.listmessages inkbox.api.hostedchat.conversations.listmessages lists older items of a hosted-agent conversation, paging with `after` and a `snapshot` token from the conversation snapshot. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedChat.conversations.rename",
+      "haystack": "hostedchat.conversations.rename inkbox.api.hostedchat.conversations.rename updates a hosted-agent conversation's `title` and/or tool `permission_mode` (ask or yolo, which auto-approves tool requests in future turns). write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedChat.files.download",
+      "haystack": "hostedchat.files.download inkbox.api.hostedchat.files.download downloads a hosted-agent chat file (uploaded or produced by the agent) as base64 (`data_base64`). read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedChat.files.get",
+      "haystack": "hostedchat.files.get inkbox.api.hostedchat.files.get returns metadata for a hosted-agent chat file: name, media type, size and availability. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedChat.files.upload",
+      "haystack": "hostedchat.files.upload inkbox.api.hostedchat.files.upload uploads a file (`name`, `data_base64`, max 5 mb) for use as an attachment in a hosted-agent chat turn. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedChat.getStatus",
+      "haystack": "hostedchat.getstatus inkbox.api.hostedchat.getstatus returns the hosted agent's workspace status for chat: computer state, agent readiness, capabilities, funding and allowed actions. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedChat.turns.cancel",
+      "haystack": "hostedchat.turns.cancel inkbox.api.hostedchat.turns.cancel requests cancellation of a running turn in a hosted-agent conversation. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedChat.turns.create",
+      "haystack": "hostedchat.turns.create inkbox.api.hostedchat.turns.create sends a message (`content`: text and file parts) to an identity's hosted agent, starting a turn with an optional `model`; wakes a stopped computer, one turn at a time. admin api key only. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedChat.turns.get",
+      "haystack": "hostedchat.turns.get inkbox.api.hostedchat.turns.get returns the status of one turn in a hosted-agent conversation (queued, running, waiting_for_input, completed, failed and so on) and any blocker. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.environment.get",
+      "haystack": "hostedworkspace.environment.get inkbox.api.hostedworkspace.environment.get lists environment variables set on the hosted agent's computer; secret values are masked. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.environment.update",
+      "haystack": "hostedworkspace.environment.update inkbox.api.hostedworkspace.environment.update sets (`set`) or removes (`remove`) environment variables on the hosted agent's computer at `expected_version`. changes apply to new processes. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.get",
+      "haystack": "hostedworkspace.get inkbox.api.hostedworkspace.get returns the hosted agent's computer state, agent readiness, capabilities, funding and allowed actions. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.getOperation",
+      "haystack": "hostedworkspace.getoperation inkbox.api.hostedworkspace.getoperation returns the progress and result of a workspace operation (start, stop, pause, resume, resize, terminal) by `operation_id`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.getUsage",
+      "haystack": "hostedworkspace.getusage inkbox.api.hostedworkspace.getusage returns current cpu, memory and disk usage of the hosted agent's computer. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.getUsageHistory",
+      "haystack": "hostedworkspace.getusagehistory inkbox.api.hostedworkspace.getusagehistory returns cpu, memory and disk usage history of the hosted agent's computer over a `window` (1h, 24h, 7d or 30d). read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.ports.get",
+      "haystack": "hostedworkspace.ports.get inkbox.api.hostedworkspace.ports.get returns the hosted agent's public url, default port and exposed ports. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.ports.rotateToken",
+      "haystack": "hostedworkspace.ports.rotatetoken inkbox.api.hostedworkspace.ports.rotatetoken issues a new access token url for an exposed port on the hosted agent; the old token stops working immediately. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.ports.update",
+      "haystack": "hostedworkspace.ports.update inkbox.api.hostedworkspace.ports.update sets which ports the hosted agent exposes (`ports`, public or token-protected) and the `default_port`, given the current `version`. removing a port deletes its token. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.resize",
+      "haystack": "hostedworkspace.resize inkbox.api.hostedworkspace.resize changes a stopped hosted computer's cpu and memory (`shape_id`) and optionally `disk_bytes`, given `expected_version`. runs asynchronously; larger shapes need a paid plan. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.runAction",
+      "haystack": "hostedworkspace.runaction inkbox.api.hostedworkspace.runaction starts, stops, pauses or resumes the hosted agent's computer (`action`) and returns an `operation_id` to poll; stop ends running programs but keeps files. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.schedules.create",
+      "haystack": "hostedworkspace.schedules.create inkbox.api.hostedworkspace.schedules.create creates a scheduled run for the hosted agent (cron, interval or once, in `fields`) with `expected_revision` 0. needs a running agent; scheduled runs auto-approve tool requests. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.schedules.delete",
+      "haystack": "hostedworkspace.schedules.delete inkbox.api.hostedworkspace.schedules.delete deletes a hosted-agent schedule, given its current `expected_revision`. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.schedules.list",
+      "haystack": "hostedworkspace.schedules.list inkbox.api.hostedworkspace.schedules.list lists the hosted agent's schedules with their registration status. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.schedules.listOccurrences",
+      "haystack": "hostedworkspace.schedules.listoccurrences inkbox.api.hostedworkspace.schedules.listoccurrences lists past runs of one hosted-agent schedule and the conversation that holds their output. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.schedules.preview",
+      "haystack": "hostedworkspace.schedules.preview inkbox.api.hostedworkspace.schedules.preview previews the next run times for a schedule `timing` (cron, interval or once) without saving anything. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.schedules.update",
+      "haystack": "hostedworkspace.schedules.update inkbox.api.hostedworkspace.schedules.update edits, pauses (`enabled: false`) or resumes a hosted-agent schedule via `fields`, given its current `expected_revision`. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.terminals.close",
+      "haystack": "hostedworkspace.terminals.close inkbox.api.hostedworkspace.terminals.close closes a terminal session on the hosted agent's computer. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.terminals.create",
+      "haystack": "hostedworkspace.terminals.create inkbox.api.hostedworkspace.terminals.create opens a terminal or runs a command (`argv`, `cwd`, `env`, optional `pty`, `timeout_ms`) on the hosted agent's computer, which must be started. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.terminals.createTicket",
+      "haystack": "hostedworkspace.terminals.createticket inkbox.api.hostedworkspace.terminals.createticket returns a short-lived ticket and url to attach to a terminal session on the hosted agent's computer. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hostedWorkspace.terminals.list",
+      "haystack": "hostedworkspace.terminals.list inkbox.api.hostedworkspace.terminals.list lists terminal sessions on the hosted agent's computer. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hosting.callTool",
+      "haystack": "hosting.calltool inkbox.api.hosting.calltool sends a json-rpc mcp request (`method`, `params`) to the identity's hosted tools endpoint, for example to list or call the tools its hosted agent uses. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hosting.deliveries.list",
+      "haystack": "hosting.deliveries.list inkbox.api.hosting.deliveries.list lists up to 100 incoming-event deliveries to an identity's hosted agent, with state, attempts and last error. page back with `before`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hosting.deliveries.retry",
+      "haystack": "hosting.deliveries.retry inkbox.api.hosting.deliveries.retry re-queues a failed event delivery to the identity's hosted agent. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hosting.get",
+      "haystack": "hosting.get inkbox.api.hosting.get returns an identity's hosted-agent configuration: harness, compute shape, state, default model, instructions, trigger events and current `generation`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "hosting.set",
+      "haystack": "hosting.set inkbox.api.hosting.set configures an identity's hosted agent (harness, `shape_id`, `default_model`, `instructions`, `trigger_events`) at `expected_generation`; admin key only. `enabled: false` deletes the computer and its files. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.avatar.delete",
+      "haystack": "identities.avatar.delete inkbox.api.identities.avatar.delete removes an identity's avatar so future contact cards go out without a photo. succeeds even when no avatar is set. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.avatar.get",
+      "haystack": "identities.avatar.get inkbox.api.identities.avatar.get downloads an identity's avatar as a 600x600 jpeg image. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.avatar.getMetadata",
+      "haystack": "identities.avatar.getmetadata inkbox.api.identities.avatar.getmetadata returns whether an identity has an avatar, its content type, and a temporary authorized url to fetch it. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.avatar.setFromStagedMedia",
+      "haystack": "identities.avatar.setfromstagedmedia inkbox.api.identities.avatar.setfromstagedmedia sets an identity's avatar from a previously uploaded staged media file (`staged_media_handle`) instead of a direct upload. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.avatar.upload",
+      "haystack": "identities.avatar.upload inkbox.api.identities.avatar.upload uploads or replaces an identity's avatar image (`file`, multipart), used as the photo on the contact cards it shares. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.companion.get",
+      "haystack": "identities.companion.get inkbox.api.identities.companion.get returns an identity's companion mode setting (whether it can join group conversations when an allowed sender brings it in) and per-channel readiness. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.companion.getHistory",
+      "haystack": "identities.companion.gethistory inkbox.api.identities.companion.gethistory returns the authorized message history for one companion mode activation (`activation_id`), including the sponsor's triggering message, page by page. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.companion.listConversations",
+      "haystack": "identities.companion.listconversations inkbox.api.identities.companion.listconversations lists an identity's companion mode conversation scopes (pending or active sponsorship), optionally filtered by `channel`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.companion.update",
+      "haystack": "identities.companion.update inkbox.api.identities.companion.update turns companion mode on or off (`enabled`) for an identity. requires an admin api key; it never creates contact rules or channels. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.connectImessageNumber",
+      "haystack": "identities.connectimessagenumber inkbox.api.identities.connectimessagenumber attaches an existing dedicated imessage number (`imessage_number_id`) to an identity. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.contactAccess.get",
+      "haystack": "identities.contactaccess.get inkbox.api.identities.contactaccess.get returns what an identity can see and contact for one contact: email and phone visibility, addresses it may send to or receive from, profile and memories. requires an admin api key. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.contactAccess.update",
+      "haystack": "identities.contactaccess.update inkbox.api.identities.contactaccess.update sets an identity's access to one contact by group: `email` and `phone` visibility and inbound/outbound contactable lists (replacing that side), `profile` and `memories`. admin api key only. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.contactPermissions.get",
+      "haystack": "identities.contactpermissions.get inkbox.api.identities.contactpermissions.get returns an identity's legacy per-address email and phone permissions (inbound and outbound) for one contact, plus profile and memories access. requires an admin api key. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.contactPermissions.list",
+      "haystack": "identities.contactpermissions.list inkbox.api.identities.contactpermissions.list lists every contact in the organization with an identity's permissions, including contacts hidden from that identity. requires an admin api key. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.contactPermissions.update",
+      "haystack": "identities.contactpermissions.update inkbox.api.identities.contactpermissions.update updates an identity's legacy permissions for one contact: `emails`/`phones` maps set both directions, `inbound_*`/`outbound_*` maps set one. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.create",
+      "haystack": "identities.create inkbox.api.identities.create creates an agent identity (`agent_handle`) with its mailbox and tunnel, optionally provisioning a phone number, claiming an imessage line or attaching vault secrets. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.createTunnel",
+      "haystack": "identities.createtunnel inkbox.api.identities.createtunnel creates the tunnel for an identity that has none (for example one created with `hosted: true`), named after its handle. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.delete",
+      "haystack": "identities.delete inkbox.api.identities.delete deletes an identity with its mailbox and tunnel, revokes its scoped api keys and releases its phone number to the carrier. cannot be undone; the handle stays reserved. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.disconnectImessageNumber",
+      "haystack": "identities.disconnectimessagenumber inkbox.api.identities.disconnectimessagenumber detaches the dedicated imessage number from an identity. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.domainAffiliation.get",
+      "haystack": "identities.domainaffiliation.get inkbox.api.identities.domainaffiliation.get returns the verified organization domain an identity is affiliated with, as shown to a2a peers, and the affiliation's validity. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.domainAffiliation.remove",
+      "haystack": "identities.domainaffiliation.remove inkbox.api.identities.domainaffiliation.remove removes an identity's affiliation with a verified organization domain. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.domainAffiliation.set",
+      "haystack": "identities.domainaffiliation.set inkbox.api.identities.domainaffiliation.set affiliates an identity with a verified organization domain claim (`domain_claim_id`) so a2a peers see it belongs to that domain's owner. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.get",
+      "haystack": "identities.get inkbox.api.identities.get returns one identity with its linked mailbox, tunnel, phone number and imessage line, plus its channel and filter settings. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.getChannelStatus",
+      "haystack": "identities.getchannelstatus inkbox.api.identities.getchannelstatus returns which channels an identity can use right now: email and sending domain, phone, sms and calling availability, imessage and whatsapp status. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.getCurrent",
+      "haystack": "identities.getcurrent inkbox.api.identities.getcurrent returns the identity the calling agent-scoped api key belongs to. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.list",
+      "haystack": "identities.list inkbox.api.identities.list lists all identities in the organization, newest first, each with its mailbox, tunnel, phone number and imessage line. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.listContactCommunicationPolicies",
+      "haystack": "identities.listcontactcommunicationpolicies inkbox.api.identities.listcontactcommunicationpolicies lists an identity's per-contact communication policies (which contact addresses it may use) with paging. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.mailContactRules.create",
+      "haystack": "identities.mailcontactrules.create inkbox.api.identities.mailcontactrules.create creates an email allow or block rule (`action`) for an identity matching an exact address or domain (`match_type`, `match_target`), optionally per `direction`. admin api key only. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.mailContactRules.delete",
+      "haystack": "identities.mailcontactrules.delete inkbox.api.identities.mailcontactrules.delete deletes an email contact rule from an identity. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.mailContactRules.get",
+      "haystack": "identities.mailcontactrules.get inkbox.api.identities.mailcontactrules.get returns one email allow or block rule of an identity by `rule_id`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.mailContactRules.list",
+      "haystack": "identities.mailcontactrules.list inkbox.api.identities.mailcontactrules.list lists an identity's email allow and block rules, newest first, filterable by `action`, `match_type` and `direction`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.mailContactRules.update",
+      "haystack": "identities.mailcontactrules.update inkbox.api.identities.mailcontactrules.update changes an email contact rule's `action` or `direction`, or edits one side with `apply_to`. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.phoneContactRules.create",
+      "haystack": "identities.phonecontactrules.create inkbox.api.identities.phonecontactrules.create creates a phone allow or block rule for an e.164 number (`match_target`) covering an identity's sms, calls, imessage and whatsapp, optionally per `direction`. admin api key only. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.phoneContactRules.delete",
+      "haystack": "identities.phonecontactrules.delete inkbox.api.identities.phonecontactrules.delete deletes a phone contact rule from an identity. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.phoneContactRules.get",
+      "haystack": "identities.phonecontactrules.get inkbox.api.identities.phonecontactrules.get returns one phone allow or block rule of an identity by `rule_id`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.phoneContactRules.list",
+      "haystack": "identities.phonecontactrules.list inkbox.api.identities.phonecontactrules.list lists an identity's phone allow and block rules, newest first, filterable by `action`, `match_type` and `direction`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.phoneContactRules.update",
+      "haystack": "identities.phonecontactrules.update inkbox.api.identities.phonecontactrules.update changes a phone contact rule's `action` or `direction`, or edits one side with `apply_to`; the number cannot change. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.releasePhoneNumber",
+      "haystack": "identities.releasephonenumber inkbox.api.identities.releasephonenumber releases an identity's phone number back to the carrier; it is removed from your account and cannot be reassigned. the identity stays active. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.signingKey.createOrRotate",
+      "haystack": "identities.signingkey.createorrotate inkbox.api.identities.signingkey.createorrotate creates the identity's webhook signing key, or replaces the existing one so payloads are signed with the new key. the key is returned only once. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.signingKey.getStatus",
+      "haystack": "identities.signingkey.getstatus inkbox.api.identities.signingkey.getstatus reports whether an identity has a webhook signing key configured and when it was created, without returning the secret. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.slackContactRules.create",
+      "haystack": "identities.slackcontactrules.create inkbox.api.identities.slackcontactrules.create creates a slack allow or block rule for an identity matching one slack user or a whole workspace (`match_type`, `match_target`), optionally per `direction`. admin api key only. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.slackContactRules.delete",
+      "haystack": "identities.slackcontactrules.delete inkbox.api.identities.slackcontactrules.delete deletes a slack contact rule from an identity. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.slackContactRules.get",
+      "haystack": "identities.slackcontactrules.get inkbox.api.identities.slackcontactrules.get returns one slack allow or block rule of an identity by `rule_id`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.slackContactRules.list",
+      "haystack": "identities.slackcontactrules.list inkbox.api.identities.slackcontactrules.list lists an identity's slack allow and block rules, filterable by `action`, `match_type` (exact_user or workspace) and `direction`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.slackContactRules.update",
+      "haystack": "identities.slackcontactrules.update inkbox.api.identities.slackcontactrules.update changes a slack contact rule's `action` or `direction`, or edits one side with `apply_to`. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "identities.update",
+      "haystack": "identities.update inkbox.api.identities.update updates an identity's display name, description, imessage and whatsapp reachability, attached imessage line, and whitelist/blacklist filter modes per channel. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.assignments.list",
+      "haystack": "imessage.assignments.list inkbox.api.imessage.assignments.list lists active imessage connections (one per recipient connected to an agent through the router or connect call), newest first, optionally for one `agent_identity_id`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.assignments.release",
+      "haystack": "imessage.assignments.release inkbox.api.imessage.assignments.release disconnects a recipient from an agent (`assignment_id`): their messages stop reaching the agent and sends into that conversation fail. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.checkCapability",
+      "haystack": "imessage.checkcapability inkbox.api.imessage.checkcapability checks which messaging service (`imessage`, `sms` or `rcs`) is currently available for an e.164 phone `number`. read-only; sends nothing. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.connect",
+      "haystack": "imessage.connect inkbox.api.imessage.connect connects a recipient (`recipient_number`) to an agent identity over a shared imessage line, and texts them `first_message` if given. phone contact rules must allow them. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.contactRules.create",
+      "haystack": "imessage.contactrules.create inkbox.api.imessage.contactrules.create creates an allow or block rule for an e.164 number (`match_target`) on an identity's shared phone list (imessage, sms, calls, whatsapp), optionally per `direction`. admin api key only. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.contactRules.delete",
+      "haystack": "imessage.contactrules.delete inkbox.api.imessage.contactrules.delete deletes a phone-list contact rule (used for imessage, sms, calls and whatsapp) from an identity. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.contactRules.get",
+      "haystack": "imessage.contactrules.get inkbox.api.imessage.contactrules.get returns one imessage/phone-list contact rule of an identity. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.contactRules.list",
+      "haystack": "imessage.contactrules.list inkbox.api.imessage.contactrules.list lists an identity's imessage/phone-list allow and block rules, newest first, filterable by `action`, `match_type` and `direction`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.contactRules.listForOrg",
+      "haystack": "imessage.contactrules.listfororg inkbox.api.imessage.contactrules.listfororg lists imessage/phone-list contact rules across every identity the key can see, optionally narrowed to one `agent_identity_id`. requires an admin api key. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.contactRules.update",
+      "haystack": "imessage.contactrules.update inkbox.api.imessage.contactrules.update changes an imessage/phone-list contact rule's `action` or `direction`, or edits one side with `apply_to`; the number cannot change. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.conversations.get",
+      "haystack": "imessage.conversations.get inkbox.api.imessage.conversations.get returns one imessage 1:1 or group conversation by `conversation_id`, with participants and connection status. read its messages with `imessage.messages.list`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.conversations.getThread",
+      "haystack": "imessage.conversations.getthread inkbox.api.imessage.conversations.getthread returns the messages of one reply thread (`thread_id`) inside an imessage conversation, paged with `cursor`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.conversations.list",
+      "haystack": "imessage.conversations.list inkbox.api.imessage.conversations.list lists imessage conversations by most recent message, with latest-message preview and unread count, filterable by identity, participants, contact, date range and groups. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.disconnect",
+      "haystack": "imessage.disconnect inkbox.api.imessage.disconnect disconnects the active imessage connection between an agent identity (`agent_identity_id`) and a recipient (`recipient_number`). write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.getMediaPlayback",
+      "haystack": "imessage.getmediaplayback inkbox.api.imessage.getmediaplayback returns an imessage audio attachment (`media_id`) converted to wav for browser playback. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.getOnboarding",
+      "haystack": "imessage.getonboarding inkbox.api.imessage.getonboarding returns instructions a person follows to connect to an agent over imessage through the router (the `connect @handle` message and links). sends nothing. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.getTriageNumber",
+      "haystack": "imessage.gettriagenumber inkbox.api.imessage.gettriagenumber returns the imessage router number and the `connect @handle` command, with a tap-to-text link and qr code, for people to reach an agent. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.markRead",
+      "haystack": "imessage.markread inkbox.api.imessage.markread marks a conversation's inbound imessages as read and sends a read receipt the person sees under their latest message. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.messages.get",
+      "haystack": "imessage.messages.get inkbox.api.imessage.messages.get returns one imessage message by `message_id`, with its content, sender, direction, service and thread. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.messages.getThread",
+      "haystack": "imessage.messages.getthread inkbox.api.imessage.messages.getthread returns the reply thread containing a message (root and replies), using any message in the thread. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.messages.list",
+      "haystack": "imessage.messages.list inkbox.api.imessage.messages.list lists imessage messages, filterable by identity, `conversation_id`, `thread_id`, read and blocked state, groups and date range. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.messages.send",
+      "haystack": "imessage.messages.send inkbox.api.imessage.messages.send sends an imessage from an identity to `to` (1 to 8 e.164 numbers; 2 or more is a group) or into `conversation_id`, with `text`, media, optional reply target, send style or voice note. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.numbers.claim",
+      "haystack": "imessage.numbers.claim inkbox.api.imessage.numbers.claim claims one unattached dedicated imessage line for the organization. requires an admin api key; the plugin sends a fresh `idempotencykey` unless you pass one. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.numbers.list",
+      "haystack": "imessage.numbers.list inkbox.api.imessage.numbers.list lists the organization's dedicated imessage lines, attached or not, with the identity each is attached to. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.reactions.remove",
+      "haystack": "imessage.reactions.remove inkbox.api.imessage.reactions.remove removes a tapback the agent sent (`reaction_id`) from the person's message. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.reactions.send",
+      "haystack": "imessage.reactions.send inkbox.api.imessage.reactions.send sends a tapback (`reaction`) on a message a person sent the agent (`message_id`). the agent cannot react to its own messages. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.router.get",
+      "haystack": "imessage.router.get inkbox.api.imessage.router.get returns the organization's own imessage router line and its settings. returns 404 when the organization has no router line. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.router.getAvatar",
+      "haystack": "imessage.router.getavatar inkbox.api.imessage.router.getavatar downloads the avatar image of the organization's imessage router. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.router.getConversation",
+      "haystack": "imessage.router.getconversation inkbox.api.imessage.router.getconversation returns one conversation on the organization's imessage router line. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.router.listConversations",
+      "haystack": "imessage.router.listconversations inkbox.api.imessage.router.listconversations lists conversations people have had with the organization's imessage router line. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.router.listMessages",
+      "haystack": "imessage.router.listmessages inkbox.api.imessage.router.listmessages lists the messages of one conversation on the organization's imessage router line. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.router.update",
+      "haystack": "imessage.router.update inkbox.api.imessage.router.update updates the organization's imessage router settings: contact card fields, `contact_sharing_enabled`, welcome and help messages, and connect/reconnect reply templates. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.router.updateConnectOnboarding",
+      "haystack": "imessage.router.updateconnectonboarding inkbox.api.imessage.router.updateconnectonboarding sets whether the organization's imessage router sends first-contact onboarding when someone connects (`send_first_contact_onboarding_on_connect`). write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.sendTyping",
+      "haystack": "imessage.sendtyping inkbox.api.imessage.sendtyping shows a typing indicator to the person in a 1:1 imessage conversation (`conversation_id`). groups are not supported. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "imessage.uploadMedia",
+      "haystack": "imessage.uploadmedia inkbox.api.imessage.uploadmedia uploads a file (`file`, multipart) and returns a `media_url` to pass in `media_urls` when sending an imessage. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "inbound.checkSignature",
+      "haystack": "inbound.checksignature inkbox.api.inbound.checksignature tests whether a sample request (`headers`, `body`) passes signature settings (`signature`) or a saved source's settings (`source_id`). stores nothing. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "inbound.events.get",
+      "haystack": "inbound.events.get inkbox.api.inbound.events.get returns one inbound event received by a source, with delivery status, attempts, signature result and the request as received. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "inbound.events.list",
+      "haystack": "inbound.events.list inkbox.api.inbound.events.list lists events received by one inbound source, newest first, with delivery status. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "inbound.events.replay",
+      "haystack": "inbound.events.replay inkbox.api.inbound.events.replay delivers an inbound event to the hosted agent again with a new delivery id and resets its status to pending. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "inbound.events.reportResult",
+      "haystack": "inbound.events.reportresult inkbox.api.inbound.events.reportresult reports that the agent could not handle an inbound event delivery (`status` failed, `error`, `delivery_id`) so it can be found and replayed. needs the identity's own key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "inbound.sources.create",
+      "haystack": "inbound.sources.create inkbox.api.inbound.sources.create creates an inbound webhook source (`name`) for a hosted agent and returns the url third parties post events to, with optional `signature` checking and `handler` (agent or script). write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "inbound.sources.delete",
+      "haystack": "inbound.sources.delete inkbox.api.inbound.sources.delete deletes an inbound source and all its events; its url stops working. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "inbound.sources.get",
+      "haystack": "inbound.sources.get inkbox.api.inbound.sources.get returns one inbound source with its url, signature settings (without the secret) and handler. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "inbound.sources.list",
+      "haystack": "inbound.sources.list inkbox.api.inbound.sources.list lists an identity's inbound webhook sources, oldest first. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "inbound.sources.rotate",
+      "haystack": "inbound.sources.rotate inkbox.api.inbound.sources.rotate issues a new url for an inbound source; the old url stops working immediately, so senders must be updated. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "inbound.sources.update",
+      "haystack": "inbound.sources.update inkbox.api.inbound.sources.update updates an inbound source's `name`, `signature` settings (null removes verification) or `handler`. the url does not change. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.drafts.addAttachments",
+      "haystack": "mail.drafts.addattachments inkbox.api.mail.drafts.addattachments adds `attachments` to a draft in a mailbox at its current `generation`, returning the updated draft and a new generation. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.drafts.create",
+      "haystack": "mail.drafts.create inkbox.api.mail.drafts.create creates an email draft in a mailbox (`email_address`) with optional `recipients`, subject, text/html body, attachments, or reply/forward fields. does not send. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.drafts.delete",
+      "haystack": "mail.drafts.delete inkbox.api.mail.drafts.delete deletes a draft at the given `generation` permanently and frees its storage. a draft that is being sent cannot be deleted. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.drafts.duplicate",
+      "haystack": "mail.drafts.duplicate inkbox.api.mail.drafts.duplicate copies a draft revision (`generation`) into a new editable draft with a new id and message-id. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.drafts.get",
+      "haystack": "mail.drafts.get inkbox.api.mail.drafts.get returns one draft with its recipients, bodies, attachment descriptors, `generation` and send state. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.drafts.getAttachment",
+      "haystack": "mail.drafts.getattachment inkbox.api.mail.drafts.getattachment downloads one attachment of a draft by `part_index` at a given `generation`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.drafts.list",
+      "haystack": "mail.drafts.list inkbox.api.mail.drafts.list lists a mailbox's drafts, most recently updated first. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.drafts.removeAttachment",
+      "haystack": "mail.drafts.removeattachment inkbox.api.mail.drafts.removeattachment removes one attachment (`part_index`) from a draft at the given `generation`, returning the updated draft. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.drafts.send",
+      "haystack": "mail.drafts.send inkbox.api.mail.drafts.send sends a draft revision (`generation`) as an email to its recipients, applying the mailbox signature at send time. delivers to outside recipients and cannot be undone. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.drafts.update",
+      "haystack": "mail.drafts.update inkbox.api.mail.drafts.update updates fields of a draft at its current `generation` (recipients, subject, bodies, reply fields); omitted fields are kept and null clears one. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.imports.cancel",
+      "haystack": "mail.imports.cancel inkbox.api.mail.imports.cancel cancels a pending, queued or running mail import job; messages already imported stay in the mailbox. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.imports.create",
+      "haystack": "mail.imports.create inkbox.api.mail.imports.create creates an email import job for a mailbox (mbox, eml or zip via `source_format`) and returns an upload target for the file. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.imports.get",
+      "haystack": "mail.imports.get inkbox.api.mail.imports.get returns a mail import job's status and counters (processed, imported, duplicates, failed). read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.imports.list",
+      "haystack": "mail.imports.list inkbox.api.mail.imports.list lists a mailbox's email import jobs, newest first. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.imports.reissueUploadUrl",
+      "haystack": "mail.imports.reissueuploadurl inkbox.api.mail.imports.reissueuploadurl issues a fresh upload target for a mail import job whose previous upload url expired before the file was uploaded. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.imports.start",
+      "haystack": "mail.imports.start inkbox.api.mail.imports.start validates the uploaded file and queues a mail import job to run. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.listOrgContactRules",
+      "haystack": "mail.listorgcontactrules inkbox.api.mail.listorgcontactrules lists email contact rules across every identity in the organization, optionally for one `agent_identity_id`, filterable by `action`, `match_type` and `direction`. admin api key only. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.mailboxes.get",
+      "haystack": "mail.mailboxes.get inkbox.api.mail.mailboxes.get returns one mailbox by `email_address`: status, sending domain, filter modes, storage use and signature, optionally with its unread count. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.mailboxes.getById",
+      "haystack": "mail.mailboxes.getbyid inkbox.api.mail.mailboxes.getbyid returns one mailbox by its uuid (`mailbox_id`), optionally with its unread count. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.mailboxes.list",
+      "haystack": "mail.mailboxes.list inkbox.api.mail.mailboxes.list lists the organization's active mailboxes, newest first, optionally with unread counts. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.mailboxes.update",
+      "haystack": "mail.mailboxes.update inkbox.api.mail.mailboxes.update updates a mailbox's contact-rule `filter_mode` and email signature (`signature_html`, `signature_text`, `signature_enabled`). the address cannot change. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.messages.delete",
+      "haystack": "mail.messages.delete inkbox.api.mail.messages.delete deletes one message from a mailbox (`email_address`). destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.messages.forward",
+      "haystack": "mail.messages.forward inkbox.api.mail.messages.forward forwards a stored message from a mailbox to `recipients` as a new thread, with optional note, extra attachments and original attachments. sends real email. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.messages.get",
+      "haystack": "mail.messages.get inkbox.api.mail.messages.get returns one message from a mailbox (`email_address`) with its full plain-text and html body. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.messages.getAttachment",
+      "haystack": "mail.messages.getattachment inkbox.api.mail.messages.getattachment returns json with a temporary download url for a message attachment (`filename` as in `attachment_metadata`). fetch the file from that url; the plugin never follows inkbox's redirect, so the api key stays on inkbox.ai. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.messages.list",
+      "haystack": "mail.messages.list inkbox.api.mail.messages.list lists messages in one mailbox (`email_address`), newest first, filterable by `direction`, `folder` and date range. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.messages.replyAll",
+      "haystack": "mail.messages.replyall inkbox.api.mail.messages.replyall replies to every participant of a stored message from a mailbox; recipients are resolved server-side and the reply stays in the thread. sends real email. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.messages.search",
+      "haystack": "mail.messages.search inkbox.api.mail.messages.search searches messages in one mailbox (`email_address`) with full-text query `q`, ranked by relevance then recency. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.messages.send",
+      "haystack": "mail.messages.send inkbox.api.mail.messages.send sends an email from a mailbox (`email_address`) to `recipients` (to/cc/bcc) with `subject`, text or html body, optional attachments, `reply_to` and threading. delivers real mail. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.messages.updateFlags",
+      "haystack": "mail.messages.updateflags inkbox.api.mail.messages.updateflags marks a message in a mailbox as read/unread (`is_read`) or starred (`is_starred`). write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.threads.delete",
+      "haystack": "mail.threads.delete inkbox.api.mail.threads.delete deletes an email thread and its messages from a mailbox (`email_address`). destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.threads.get",
+      "haystack": "mail.threads.get inkbox.api.mail.threads.get returns one email thread from a mailbox with its messages' metadata (no bodies). read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.threads.list",
+      "haystack": "mail.threads.list inkbox.api.mail.threads.list lists email threads in one mailbox (`email_address`) by latest activity, filterable by `folder`, `participants` or `contact_id`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.threads.listFolders",
+      "haystack": "mail.threads.listfolders inkbox.api.mail.threads.listfolders lists the folder names that contain at least one thread in a mailbox. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.threads.update",
+      "haystack": "mail.threads.update inkbox.api.mail.threads.update moves an email thread in a mailbox to the `inbox`, `spam` or `archive` `folder`. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.visibleMessages.delete",
+      "haystack": "mail.visiblemessages.delete inkbox.api.mail.visiblemessages.delete deletes a message by uuid from whichever mailbox visible to the api key holds it. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.visibleMessages.get",
+      "haystack": "mail.visiblemessages.get inkbox.api.mail.visiblemessages.get returns a message by uuid from any mailbox the api key can see, with its delivery status; `max_body_chars` limits body length. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.visibleMessages.getAttachment",
+      "haystack": "mail.visiblemessages.getattachment inkbox.api.mail.visiblemessages.getattachment returns a temporary download url and metadata for a message attachment (`attachment_ref`), across every mailbox the api key can see. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.visibleMessages.list",
+      "haystack": "mail.visiblemessages.list inkbox.api.mail.visiblemessages.list lists email messages across every mailbox the api key can see, newest first, filterable by `mailbox_id`, `direction`, `folder` and `unread_only`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.visibleMessages.search",
+      "haystack": "mail.visiblemessages.search inkbox.api.mail.visiblemessages.search searches messages across every mailbox the api key can see with full-text query `q`, optionally narrowed to one `mailbox_id`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.visibleMessages.updateFlags",
+      "haystack": "mail.visiblemessages.updateflags inkbox.api.mail.visiblemessages.updateflags marks a message read/unread or starred by uuid, across every mailbox the api key can see. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.visibleThreads.delete",
+      "haystack": "mail.visiblethreads.delete inkbox.api.mail.visiblethreads.delete deletes an email thread by uuid from whichever mailbox visible to the api key holds it. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.visibleThreads.get",
+      "haystack": "mail.visiblethreads.get inkbox.api.mail.visiblethreads.get returns an email thread by uuid from any mailbox the api key can see, with its messages. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.visibleThreads.list",
+      "haystack": "mail.visiblethreads.list inkbox.api.mail.visiblethreads.list lists email threads across every mailbox the api key can see, filterable by `mailbox_id`, `folder`, `participants` or `contact_id`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "mail.visibleThreads.update",
+      "haystack": "mail.visiblethreads.update inkbox.api.mail.visiblethreads.update moves an email thread (by uuid, in any mailbox the key can see) to another `folder`. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "messageSends.lookup",
+      "haystack": "messagesends.lookup inkbox.api.messagesends.lookup recovers the message id of an earlier send (email, sms, imessage or whatsapp) from its idempotency key, `sender_kind`, `sender_id` and `operation`. read-only; sends nothing. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "notes.access.grant",
+      "haystack": "notes.access.grant inkbox.api.notes.access.grant grants an agent identity (`identity_id`) read and edit access to a note. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "notes.access.list",
+      "haystack": "notes.access.list inkbox.api.notes.access.list lists the agent identities that have been granted access to a note. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "notes.access.revoke",
+      "haystack": "notes.access.revoke inkbox.api.notes.access.revoke revokes an agent identity's access to a note. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "notes.create",
+      "haystack": "notes.create inkbox.api.notes.create creates a note with a `body` and optional `title`; the creator is recorded from the api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "notes.delete",
+      "haystack": "notes.delete inkbox.api.notes.delete deletes a note. any caller who can see the note can delete it. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "notes.get",
+      "haystack": "notes.get inkbox.api.notes.get returns one note by `note_id`, with its body and access grants. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "notes.list",
+      "haystack": "notes.list inkbox.api.notes.list lists notes visible to the caller, with full-text search `q` over title and body, an `identity_id` filter and ordering. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "notes.update",
+      "haystack": "notes.update inkbox.api.notes.update updates a note's `title` and/or `body`. any caller who can see the note can edit it. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "organizationDomains.create",
+      "haystack": "organizationdomains.create inkbox.api.organizationdomains.create starts a dns ownership claim for a `domain` your organization controls (separate from email sending domains) and returns the txt record to publish. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "organizationDomains.delete",
+      "haystack": "organizationdomains.delete inkbox.api.organizationdomains.delete releases an organization domain claim (`claim_id`), freeing a slot in the 10-domain limit. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "organizationDomains.get",
+      "haystack": "organizationdomains.get inkbox.api.organizationdomains.get returns one organization domain claim with its verification state, dns record and validity dates. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "organizationDomains.list",
+      "haystack": "organizationdomains.list inkbox.api.organizationdomains.list lists the organization's domain ownership claims (verified domains shown to a2a peers). requires an admin api key. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "organizationDomains.verify",
+      "haystack": "organizationdomains.verify inkbox.api.organizationdomains.verify checks the dns record for an organization domain claim now and returns the resulting state, which may still be pending. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.calls.get",
+      "haystack": "phone.calls.get inkbox.api.phone.calls.get returns one phone call by `call_id` (dedicated number or imessage line), with status, direction, mode, voicemail handling and post-call action items. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.calls.getSettings",
+      "haystack": "phone.calls.getsettings inkbox.api.phone.calls.getsettings returns an identity's effective call settings: incoming call action, whether a websocket or webhook is configured, forwarding target and voice ai setup. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.calls.hangup",
+      "haystack": "phone.calls.hangup inkbox.api.phone.calls.hangup ends a live phone call by `call_id` from outside the call, including inkbox voice ai calls. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.calls.list",
+      "haystack": "phone.calls.list inkbox.api.phone.calls.list lists phone calls for an agent identity, newest first, across its dedicated number and imessage lines, filterable by blocked state and date range. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.calls.listMcpActivity",
+      "haystack": "phone.calls.listmcpactivity inkbox.api.phone.calls.listmcpactivity lists the remote mcp tool calls an inkbox voice ai agent made during a call. `phone.calls.listtoolinvocations` also covers built-in tools. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.calls.listToolInvocations",
+      "haystack": "phone.calls.listtoolinvocations inkbox.api.phone.calls.listtoolinvocations lists a call's built-in and remote mcp tool activity by the inkbox voice ai agent, in execution order. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.calls.listTranscripts",
+      "haystack": "phone.calls.listtranscripts inkbox.api.phone.calls.listtranscripts lists the transcript segments of a call in order, with speaker (`party`) and timestamps. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.calls.place",
+      "haystack": "phone.calls.place inkbox.api.phone.calls.place places an outbound phone call to `to_number`, bridged to your `client_websocket_url` or run by inkbox voice ai (`mode`). rings a real phone and uses call minutes. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.incomingCallAction.get",
+      "haystack": "phone.incomingcallaction.get inkbox.api.phone.incomingcallaction.get returns how an identity handles incoming calls (auto-accept to a websocket, reject, webhook, voice ai or forward) and the related urls or forwarding target. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.incomingCallAction.set",
+      "haystack": "phone.incomingcallaction.set inkbox.api.phone.incomingcallaction.set sets how an identity handles incoming calls (`incoming_call_action`) with its `client_websocket_url`, `incoming_call_webhook_url` or forwarding target. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.listOrgContactRules",
+      "haystack": "phone.listorgcontactrules inkbox.api.phone.listorgcontactrules lists phone contact rules across every identity in the organization, optionally for one `agent_identity_id`, filterable by `action` and `direction`. requires an admin api key. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.media.getPlayback",
+      "haystack": "phone.media.getplayback inkbox.api.phone.media.getplayback returns an audio attachment from a text message (`media_id`) converted for browser playback. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.numbers.get",
+      "haystack": "phone.numbers.get inkbox.api.phone.numbers.get returns one phone number with its sms readiness (`sms_status`) and incoming-call configuration. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.numbers.list",
+      "haystack": "phone.numbers.list inkbox.api.phone.numbers.list lists the organization's phone numbers with sms readiness and incoming-call settings. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.numbers.provision",
+      "haystack": "phone.numbers.provision inkbox.api.phone.numbers.provision provisions a new local phone number from carrier inventory (optional us `state`) and assigns it to an identity (`agent_handle`). returns 429 once the organization reaches its active-number cap. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.numbers.release",
+      "haystack": "phone.numbers.release inkbox.api.phone.numbers.release releases a phone number back to the carrier and removes it from your organization. it cannot be recovered. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.numbers.searchTranscripts",
+      "haystack": "phone.numbers.searchtranscripts inkbox.api.phone.numbers.searchtranscripts searches call transcript segments for one phone number with full-text query `q`, optionally by `party` (local or remote). read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.numbers.update",
+      "haystack": "phone.numbers.update inkbox.api.phone.numbers.update updates a phone number's incoming-call handling (`incoming_call_action`, websocket, webhook or forwarding target) and contact-rule `filter_mode`. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.smsOptIns.get",
+      "haystack": "phone.smsoptins.get inkbox.api.phone.smsoptins.get returns the sms consent state (opted in or out, and source) for one recipient number in your organization. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.smsOptIns.list",
+      "haystack": "phone.smsoptins.list inkbox.api.phone.smsoptins.list lists sms consent records for your organization, most recently updated first, optionally by `status`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.smsOptIns.optIn",
+      "haystack": "phone.smsoptins.optin inkbox.api.phone.smsoptins.optin marks a recipient number as opted in to sms from your organization, after you collected consent yourself. this overrides an earlier stop. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.smsOptIns.optOut",
+      "haystack": "phone.smsoptins.optout inkbox.api.phone.smsoptins.optout marks a recipient number as opted out, so further texts to it from your organization are refused. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.textConversations.get",
+      "haystack": "phone.textconversations.get inkbox.api.phone.textconversations.get returns the messages of one sms/mms conversation on a phone number, newest first; `key` is the conversation uuid or, for 1:1, the remote number. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.textConversations.list",
+      "haystack": "phone.textconversations.list inkbox.api.phone.textconversations.list lists sms/mms conversations on a phone number by most recent message, with previews and unread counts; groups only with `include_groups`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.textConversations.update",
+      "haystack": "phone.textconversations.update inkbox.api.phone.textconversations.update marks all messages in an sms/mms conversation on a phone number as read or unread (`is_read`). write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.textConversations.updateById",
+      "haystack": "phone.textconversations.updatebyid inkbox.api.phone.textconversations.updatebyid marks all messages in an sms/mms conversation (by `conversation_id`) as read or unread (`is_read`). write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.texts.delete",
+      "haystack": "phone.texts.delete inkbox.api.phone.texts.delete deletes one sms/mms message by `message_id`. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.texts.get",
+      "haystack": "phone.texts.get inkbox.api.phone.texts.get returns one sms/mms message on a phone number, with delivery status and media. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.texts.list",
+      "haystack": "phone.texts.list inkbox.api.phone.texts.list lists sms/mms messages on a phone number, newest first, filterable by read and blocked state and date range. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.texts.search",
+      "haystack": "phone.texts.search inkbox.api.phone.texts.search searches sms/mms message bodies on a phone number with full-text query `q`, ranked by relevance. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.texts.send",
+      "haystack": "phone.texts.send inkbox.api.phone.texts.send sends an sms, or mms with `media_urls`, from a phone number to `to` (1 to 8 numbers; 2 or more is a group) or into `conversation_id`. texts real phones and uses sms allowance. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "phone.texts.update",
+      "haystack": "phone.texts.update inkbox.api.phone.texts.update marks an sms/mms message read or unread (`is_read`), or deletes it (`status: deleted`). destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.actions.get",
+      "haystack": "slack.actions.get inkbox.api.slack.actions.get returns the recorded result of a slack message send (`action_id`): status, conversation, message timestamp or error. does not contact slack. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.actions.getByKey",
+      "haystack": "slack.actions.getbykey inkbox.api.slack.actions.getbykey looks up a slack message send by the idempotency key it was sent with, to check whether a timed-out send went through without sending again. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.applications.getRemoval",
+      "haystack": "slack.applications.getremoval inkbox.api.slack.applications.getremoval returns the progress of a slack app removal (`operation_id`), including whether the app was deleted from slack. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.applications.prepare",
+      "haystack": "slack.applications.prepare inkbox.api.slack.applications.prepare starts creating the identity's dedicated slack app in a saved provisioning workspace (`identity_id`, `provisioning_workspace_id`). runs in the background; repeat calls reuse it. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.applications.remove",
+      "haystack": "slack.applications.remove inkbox.api.slack.applications.remove removes an identity's slack app from inkbox and tries to delete it from slack (`expected_application_generation`, `request_id`); its connection and history become inaccessible. admin key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.archive.backfill",
+      "haystack": "slack.archive.backfill inkbox.api.slack.archive.backfill imports accessible past slack history for one conversation (`conversation_id`) or thread (`thread_ts`) into a connection's retained archive. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.archive.getCoverage",
+      "haystack": "slack.archive.getcoverage inkbox.api.slack.archive.getcoverage shows which slack conversations and threads a connection's archive has imported history for, and how far back. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.archive.getSettings",
+      "haystack": "slack.archive.getsettings inkbox.api.slack.archive.getsettings returns the retention period (`retention_days`; null means no age limit) for a slack connection's retained message archive. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.archive.listMessages",
+      "haystack": "slack.archive.listmessages inkbox.api.slack.archive.listmessages lists retained slack messages from a connection's archive, newest first, by conversation, thread or timestamp range, with optional cached sender, reaction and file details. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.archive.purge",
+      "haystack": "slack.archive.purge inkbox.api.slack.archive.purge deletes all retained slack messages in a connection's archive and cannot be undone; new messages keep being captured. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.archive.search",
+      "haystack": "slack.archive.search inkbox.api.slack.archive.search searches retained slack messages in one connection's archive by keyword (`q`), optionally by conversation, user or time range. not semantic search. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.archive.updateSettings",
+      "haystack": "slack.archive.updatesettings inkbox.api.slack.archive.updatesettings sets how many days a slack connection keeps retained messages (`retention_days`; null for no limit); shortening it schedules older messages for deletion. admin api key only. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.connections.disconnect",
+      "haystack": "slack.connections.disconnect inkbox.api.slack.connections.disconnect disconnects a slack workspace connection from its identity; live slack operations stop. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.connections.getCapabilities",
+      "haystack": "slack.connections.getcapabilities inkbox.api.slack.connections.getcapabilities returns a slack connection's granted and missing scopes, the features they enable, native status and task-streaming support, and the upload size limit. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.connections.importContacts",
+      "haystack": "slack.connections.importcontacts inkbox.api.slack.connections.importcontacts imports slack users the connection can see (workspace directory, dms, shared channels, or one `conversation_id`) as inkbox contacts, one page per call. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.connections.list",
+      "haystack": "slack.connections.list inkbox.api.slack.connections.list lists an identity's slack workspace connections (`identity_id`) with status, scopes, and app setup and installation state. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.connections.listAvailable",
+      "haystack": "slack.connections.listavailable inkbox.api.slack.connections.listavailable lists connected slack workspaces across the organization, optionally for one `identity_id`, from saved metadata. requires an admin api key. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.conversations.get",
+      "haystack": "slack.conversations.get inkbox.api.slack.conversations.get returns one slack channel, dm or group dm (`conversation_id`) visible to the connection. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.conversations.join",
+      "haystack": "slack.conversations.join inkbox.api.slack.conversations.join makes the identity's slack bot join a public channel (`conversation_id`). write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.conversations.leave",
+      "haystack": "slack.conversations.leave inkbox.api.slack.conversations.leave makes the identity's slack bot leave a channel (`conversation_id`). write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.conversations.list",
+      "haystack": "slack.conversations.list inkbox.api.slack.conversations.list lists slack conversations the bot is a member of through a connection, including slack connect channels; `include_unjoined` adds channels it has not joined. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.conversations.listMembers",
+      "haystack": "slack.conversations.listmembers inkbox.api.slack.conversations.listmembers lists the member user ids of a slack conversation. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.conversations.open",
+      "haystack": "slack.conversations.open inkbox.api.slack.conversations.open opens or resumes a slack dm or group dm with `user_ids` and returns the conversation. sends no message. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.conversations.setProcessingStatus",
+      "haystack": "slack.conversations.setprocessingstatus inkbox.api.slack.conversations.setprocessingstatus sets slack's native agent status (`status`: active, processing, suspended or closed) on a thread (`thread_ts`). not a message; fails where unsupported. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.files.download",
+      "haystack": "slack.files.download inkbox.api.slack.files.download downloads the bytes of a slack file (`file_id`) through a connection. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.files.get",
+      "haystack": "slack.files.get inkbox.api.slack.files.get returns metadata for a slack file (`file_id`): name, title, mime type, size and whether it can be downloaded. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.files.getPreview",
+      "haystack": "slack.files.getpreview inkbox.api.slack.files.getpreview downloads a cached preview image of a slack file, when one has been captured. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.files.upload",
+      "haystack": "slack.files.upload inkbox.api.slack.files.upload uploads a file (`filename`, `content_base64`) to a slack conversation, optionally in a thread with an `initial_comment`. posts to slack. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.getCachedMedia",
+      "haystack": "slack.getcachedmedia inkbox.api.slack.getcachedmedia downloads a cached slack display image: a user or bot avatar or a custom emoji (`kind`, `resource_id`). read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.installations.start",
+      "haystack": "slack.installations.start inkbox.api.slack.installations.start returns a slack `authorization_url` to open in a browser to install or reconnect the identity's slack app in a workspace. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.listEmoji",
+      "haystack": "slack.listemoji inkbox.api.slack.listemoji lists a slack workspace's cached custom emoji, optionally filtered by name `q`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.listOrgContactRules",
+      "haystack": "slack.listorgcontactrules inkbox.api.slack.listorgcontactrules lists slack contact rules across every identity in the organization, optionally for one `agent_identity_id`, filterable by `action`, `match_type` and `direction`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.messages.delete",
+      "haystack": "slack.messages.delete inkbox.api.slack.messages.delete deletes a bot message (`message_ts`) from a slack conversation; other users' messages cannot be deleted. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.messages.get",
+      "haystack": "slack.messages.get inkbox.api.slack.messages.get returns one slack message (`message_ts`) from a conversation, under the same permission and retained-history rules as `slack.messages.list`; pass `thread_ts` for a reply. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.messages.getContext",
+      "haystack": "slack.messages.getcontext inkbox.api.slack.messages.getcontext returns the slack messages around one message (`message_ts`), in its conversation or thread, up to 15 per side. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.messages.getPermalink",
+      "haystack": "slack.messages.getpermalink inkbox.api.slack.messages.getpermalink returns a slack permalink url for a message. the link does not grant its recipient access to the conversation. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.messages.list",
+      "haystack": "slack.messages.list inkbox.api.slack.messages.list reads a slack conversation's history, or a thread's replies with `thread_ts`: live from slack with current read permission, otherwise only previously retained messages. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.messages.send",
+      "haystack": "slack.messages.send inkbox.api.slack.messages.send posts a message (`text`) as the identity's slack bot to a conversation, optionally in a thread (`thread_ts`) or as a voice note. pass `idempotencykey` to make a retry safe; otherwise the plugin sends a fresh one. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.messages.update",
+      "haystack": "slack.messages.update inkbox.api.slack.messages.update edits the `text` of a bot message in a slack conversation; other users' messages cannot be edited. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.operations.get",
+      "haystack": "slack.operations.get inkbox.api.slack.operations.get returns the result of a slack operation (edit, delete, reaction, pin, join, file upload, task stream) by `operation_id`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.operations.getByKey",
+      "haystack": "slack.operations.getbykey inkbox.api.slack.operations.getbykey looks up a slack operation (edit, reaction, pin, file upload, task stream) by its idempotency key, to check a timed-out request without repeating it. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.pins.add",
+      "haystack": "slack.pins.add inkbox.api.slack.pins.add pins a message (`message_ts`) in a slack conversation. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.pins.list",
+      "haystack": "slack.pins.list inkbox.api.slack.pins.list lists the pinned items in a slack conversation. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.pins.remove",
+      "haystack": "slack.pins.remove inkbox.api.slack.pins.remove unpins a message (`message_ts`) in a slack conversation. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.provisioningWorkspaces.list",
+      "haystack": "slack.provisioningworkspaces.list inkbox.api.slack.provisioningworkspaces.list lists the slack workspaces saved for creating identity apps, with their saved-record `id` (not the slack workspace id). read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.provisioningWorkspaces.save",
+      "haystack": "slack.provisioningworkspaces.save inkbox.api.slack.provisioningworkspaces.save saves a slack workspace's app-configuration tokens (`access_token`, `refresh_token`) so inkbox can create identity apps there. tokens are never returned. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.reactions.add",
+      "haystack": "slack.reactions.add inkbox.api.slack.reactions.add adds an emoji reaction (`name`) from the bot to a slack message. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.reactions.list",
+      "haystack": "slack.reactions.list inkbox.api.slack.reactions.list lists the emoji reactions on a slack message, with counts and reacting users. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.reactions.remove",
+      "haystack": "slack.reactions.remove inkbox.api.slack.reactions.remove removes the bot's emoji reaction (`name`) from a slack message. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.search",
+      "haystack": "slack.search inkbox.api.slack.search searches retained slack messages by keyword (`q`) across all workspace connections of one identity, optionally narrowed by connection, conversation, user or time. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.streams.append",
+      "haystack": "slack.streams.append inkbox.api.slack.streams.append adds task-update `chunks` to an open slack task stream (`stream_id`) to show progress in a thread. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.streams.start",
+      "haystack": "slack.streams.start inkbox.api.slack.streams.start starts a native slack task stream in a thread (`thread_ts`) for a recipient user, with initial task-update `chunks`, to show work progress. does not start any work. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.streams.stop",
+      "haystack": "slack.streams.stop inkbox.api.slack.streams.stop closes a slack task stream (`stream_id`), optionally with final task-update `chunks`. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.users.get",
+      "haystack": "slack.users.get inkbox.api.slack.users.get returns one slack user's profile (`user_id`) through a connection. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "slack.users.list",
+      "haystack": "slack.users.list inkbox.api.slack.users.list lists users in the connected slack workspace, paged with `cursor`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "tunnels.get",
+      "haystack": "tunnels.get inkbox.api.tunnels.get returns one tunnel by `tunnel_id`, with its public host, tls mode, certificate details and whether it is connected right now. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "tunnels.list",
+      "haystack": "tunnels.list inkbox.api.tunnels.list lists all tunnels in the organization, each with its public host and whether it is connected right now. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "tunnels.signCsr",
+      "haystack": "tunnels.signcsr inkbox.api.tunnels.signcsr signs a certificate signing request (`csr_pem`, cn = tunnel hostname) for a passthrough-tls tunnel and returns the certificate and chain. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "tunnels.update",
+      "haystack": "tunnels.update inkbox.api.tunnels.update updates a tunnel's free-form `metadata` (null or {} clears it). the tunnel name and tls mode cannot change. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "vault.getInfo",
+      "haystack": "vault.getinfo inkbox.api.vault.getinfo returns metadata about the organization's vault: id, key count, secret count and recovery key count. no secret material. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "vault.getUnlockBundle",
+      "haystack": "vault.getunlockbundle inkbox.api.vault.getunlockbundle returns the vault's wrapped encryption keys and all encrypted secrets for client-side decryption. inkbox only stores ciphertext; decrypt locally with the sdk or cli. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "vault.initialize",
+      "haystack": "vault.initialize inkbox.api.vault.initialize creates the organization's zero-knowledge vault from client-generated key material (`vault_key`, exactly four `recovery_keys`). use the sdk or cli to generate it. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "vault.keys.list",
+      "haystack": "vault.keys.list inkbox.api.vault.keys.list lists the vault's keys (primary and recovery) as metadata only, optionally filtered by `type`. no wrapped key material. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "vault.keys.updatePrimary",
+      "haystack": "vault.keys.updateprimary inkbox.api.vault.keys.updateprimary replaces the vault's primary key with a new wrapped key (`wrapped_org_encryption_key`, `auth_hash`), proven by the current key or a recovery code, which is then used up. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "vault.secrets.create",
+      "haystack": "vault.secrets.create inkbox.api.vault.secrets.create stores a new vault secret: plaintext `name`, `description` and `secret_type`, plus an `encrypted_payload` encrypted client-side. inkbox cannot read the payload. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "vault.secrets.get",
+      "haystack": "vault.secrets.get inkbox.api.vault.secrets.get returns one vault secret with its access rules and client-side encrypted `encrypted_payload` (ciphertext); decrypt it locally with the vault key. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "vault.secrets.grantAccess",
+      "haystack": "vault.secrets.grantaccess inkbox.api.vault.secrets.grantaccess grants an agent identity (`identity_id`) access to one vault secret. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "vault.secrets.list",
+      "haystack": "vault.secrets.list inkbox.api.vault.secrets.list lists vault secrets (names, types, descriptions, access) without their encrypted payloads, optionally filtered by `secret_type`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "vault.secrets.listAccess",
+      "haystack": "vault.secrets.listaccess inkbox.api.vault.secrets.listaccess lists the agent identities that have access to one vault secret. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "vault.secrets.revokeAccess",
+      "haystack": "vault.secrets.revokeaccess inkbox.api.vault.secrets.revokeaccess revokes an agent identity's access to one vault secret. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "vault.secrets.update",
+      "haystack": "vault.secrets.update inkbox.api.vault.secrets.update updates a vault secret's `name`, `description` or `encrypted_payload` (new ciphertext encrypted client-side). only supplied fields change. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "voiceAgent.getConfig",
+      "haystack": "voiceagent.getconfig inkbox.api.voiceagent.getconfig returns an identity's inkbox voice ai settings: voice, instructions, effective voice and model, and authority mode. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "voiceAgent.listVoices",
+      "haystack": "voiceagent.listvoices inkbox.api.voiceagent.listvoices lists the voices available for inkbox voice ai calls and the default voice. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "voiceAgent.mcpServers.cancelAuthorization",
+      "haystack": "voiceagent.mcpservers.cancelauthorization inkbox.api.voiceagent.mcpservers.cancelauthorization cancels an unfinished oauth approval (`transaction_id`) for a voice ai mcp server connection. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "voiceAgent.mcpServers.create",
+      "haystack": "voiceagent.mcpservers.create inkbox.api.voiceagent.mcpservers.create adds a remote mcp server (`label`, `url`, `transport`, `auth`) whose tools an identity's voice ai agent can use on calls, optionally limited to `allowed_tools`. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "voiceAgent.mcpServers.delete",
+      "haystack": "voiceagent.mcpservers.delete inkbox.api.voiceagent.mcpservers.delete deletes a voice ai mcp server connection; new calls can no longer use its tools. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "voiceAgent.mcpServers.disconnect",
+      "haystack": "voiceagent.mcpservers.disconnect inkbox.api.voiceagent.mcpservers.disconnect disconnects the oauth account from a voice ai mcp server connection (`expected_version`), keeping its other settings. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "voiceAgent.mcpServers.get",
+      "haystack": "voiceagent.mcpservers.get inkbox.api.voiceagent.mcpservers.get returns one voice ai mcp server connection with its settings, auth state, preparation status and health. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "voiceAgent.mcpServers.getAuthorization",
+      "haystack": "voiceagent.mcpservers.getauthorization inkbox.api.voiceagent.mcpservers.getauthorization returns the status of an oauth approval for a voice ai mcp server connection, with its `connect_url` and requested scopes. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "voiceAgent.mcpServers.getCatalog",
+      "haystack": "voiceagent.mcpservers.getcatalog inkbox.api.voiceagent.mcpservers.getcatalog lists the tools, prompts, resources and skills a voice ai mcp server connection exposes. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "voiceAgent.mcpServers.list",
+      "haystack": "voiceagent.mcpservers.list inkbox.api.voiceagent.mcpservers.list lists the remote mcp server connections of an identity's voice ai agent. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "voiceAgent.mcpServers.refresh",
+      "haystack": "voiceagent.mcpservers.refresh inkbox.api.voiceagent.mcpservers.refresh queues a refresh of a voice ai mcp server connection's tool catalog. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "voiceAgent.mcpServers.startAuthorization",
+      "haystack": "voiceagent.mcpservers.startauthorization inkbox.api.voiceagent.mcpservers.startauthorization starts oauth for a voice ai mcp server connection (`expected_version`) and returns a `connect_url` a person must open to approve access. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "voiceAgent.mcpServers.test",
+      "haystack": "voiceagent.mcpservers.test inkbox.api.voiceagent.mcpservers.test tests that a voice ai mcp server connection can be reached and its tools discovered, without running any tool. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "voiceAgent.mcpServers.update",
+      "haystack": "voiceagent.mcpservers.update inkbox.api.voiceagent.mcpservers.update updates a voice ai mcp server connection (`label`, `url`, `auth`, `enabled`, `allowed_tools`, `context`), given its `expected_version`. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "voiceAgent.setAuthorityMode",
+      "haystack": "voiceagent.setauthoritymode inkbox.api.voiceagent.setauthoritymode sets what an identity's voice ai agent can access on calls (`authority_mode`): `contact_scoped` (the caller only) or `yolo` (all the identity's contacts and messages). write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "voiceAgent.setConfig",
+      "haystack": "voiceagent.setconfig inkbox.api.voiceagent.setconfig replaces an identity's voice ai `voice` and `instructions`; omitted fields reset to platform defaults. the authority mode is unchanged. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "webhooks.deliveries.list",
+      "haystack": "webhooks.deliveries.list inkbox.api.webhooks.deliveries.list lists logged webhook delivery attempts, newest first, filterable by identity, subscription, phone number, `event_type` and `success`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "webhooks.deliveries.replay",
+      "haystack": "webhooks.deliveries.replay inkbox.api.webhooks.deliveries.replay re-sends a logged webhook event to its subscription's current url and auth token, recording a new delivery. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "webhooks.getCatalog",
+      "haystack": "webhooks.getcatalog inkbox.api.webhooks.getcatalog lists the webhook event types you can subscribe to, with example signature headers. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "webhooks.subscriptions.create",
+      "haystack": "webhooks.subscriptions.create inkbox.api.webhooks.subscriptions.create subscribes a `url` to webhook `event_types` (mail, sms, calls, imessage and more) for an identity, mailbox or phone number. returns the identity's signing key once if new. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "webhooks.subscriptions.delete",
+      "haystack": "webhooks.subscriptions.delete inkbox.api.webhooks.subscriptions.delete deletes a webhook subscription, stopping all its event notifications. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "webhooks.subscriptions.get",
+      "haystack": "webhooks.subscriptions.get inkbox.api.webhooks.subscriptions.get returns one webhook subscription with its url, event types and status. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "webhooks.subscriptions.list",
+      "haystack": "webhooks.subscriptions.list inkbox.api.webhooks.subscriptions.list lists active webhook subscriptions, newest first, filterable by identity, mailbox, phone number, `url` or `event_type`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "webhooks.subscriptions.update",
+      "haystack": "webhooks.subscriptions.update inkbox.api.webhooks.subscriptions.update updates a webhook subscription's `url`, `event_types` (replaces the whole selection), `context_config` or `auth_token`. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.assignments.list",
+      "haystack": "whatsapp.assignments.list inkbox.api.whatsapp.assignments.list lists active whatsapp connections (one per recipient connected to an agent through a shared number or the router), newest first, optionally for one `agent_identity_id`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.assignments.release",
+      "haystack": "whatsapp.assignments.release inkbox.api.whatsapp.assignments.release disconnects a recipient from an agent over whatsapp (`assignment_id`): their messages stop reaching the agent and sends fail. requires an admin api key. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.connect",
+      "haystack": "whatsapp.connect inkbox.api.whatsapp.connect reserves a shared whatsapp number linking a recipient (`recipient_number`) to an agent identity without sending anything; the agent can reply once they message it. admin api key only. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.conversations.get",
+      "haystack": "whatsapp.conversations.get inkbox.api.whatsapp.conversations.get returns one whatsapp 1:1 or group conversation by `conversation_id`, with participants and connection status. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.conversations.getThread",
+      "haystack": "whatsapp.conversations.getthread inkbox.api.whatsapp.conversations.getthread returns the messages of one reply thread (`thread_id`) inside a whatsapp conversation, paged with `cursor`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.conversations.list",
+      "haystack": "whatsapp.conversations.list inkbox.api.whatsapp.conversations.list lists whatsapp conversations by most recent message, filterable by identity, participants, contact, blocked state, groups and date range. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.disconnect",
+      "haystack": "whatsapp.disconnect inkbox.api.whatsapp.disconnect disconnects the active whatsapp connection between an agent identity (`agent_identity_id`) and a recipient (`recipient_number`). requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.getLimits",
+      "haystack": "whatsapp.getlimits inkbox.api.whatsapp.getlimits returns an agent's effective whatsapp limits (such as media size and opening-message rules) and usage counters for the rolling 24 hours. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.getOnboarding",
+      "haystack": "whatsapp.getonboarding inkbox.api.whatsapp.getonboarding returns instructions a person follows to reach an agent on whatsapp (connect command, links and qr codes) and whether the channel is ready. sends nothing. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.getTriageNumber",
+      "haystack": "whatsapp.gettriagenumber inkbox.api.whatsapp.gettriagenumber returns the whatsapp router number and the `connect @handle` command, with a tap link and qr code, for people to reach an agent. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.markRead",
+      "haystack": "whatsapp.markread inkbox.api.whatsapp.markread marks a whatsapp conversation's inbound messages as read, optionally only up to `through_message_id`, and sends read receipts the person can see. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.media.get",
+      "haystack": "whatsapp.media.get inkbox.api.whatsapp.media.get returns metadata and a fresh temporary download url for a whatsapp media item (`media_id`), including any audio transcription. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.media.getPlayback",
+      "haystack": "whatsapp.media.getplayback inkbox.api.whatsapp.media.getplayback returns a whatsapp audio attachment (`media_id`) converted for browser playback. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.media.upload",
+      "haystack": "whatsapp.media.upload inkbox.api.whatsapp.media.upload uploads a file (`file`, multipart) for an agent and returns a media id to send in `media_ids`; pass `recipient_number` when replying through a shared number. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.messages.get",
+      "haystack": "whatsapp.messages.get inkbox.api.whatsapp.messages.get returns one whatsapp message by `message_id`, with sender, direction, participants and mentions. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.messages.getThread",
+      "haystack": "whatsapp.messages.getthread inkbox.api.whatsapp.messages.getthread returns the reply thread containing a whatsapp message (root and replies), using any message in the thread. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.messages.list",
+      "haystack": "whatsapp.messages.list inkbox.api.whatsapp.messages.list lists whatsapp messages, filterable by identity, `conversation_id`, `thread_id`, read and blocked state, groups and date range. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.messages.send",
+      "haystack": "whatsapp.messages.send inkbox.api.whatsapp.messages.send sends a whatsapp message from an identity to one e.164 number (`to`) or into `conversation_id`, with `text`, media, a reply target or a voice note. usually allowed only after the person messaged first. destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.numbers.assign",
+      "haystack": "whatsapp.numbers.assign inkbox.api.whatsapp.numbers.assign attaches a dedicated whatsapp number (`account_id`) to an agent (`agent_identity_id`), or detaches it with null, given `expected_revision`. requires an admin api key. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.numbers.list",
+      "haystack": "whatsapp.numbers.list inkbox.api.whatsapp.numbers.list lists the organization's dedicated whatsapp numbers with the agent each is assigned to, 100 per page. requires an admin api key. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.reactions.delete",
+      "haystack": "whatsapp.reactions.delete inkbox.api.whatsapp.reactions.delete removes a whatsapp reaction the agent sent (`reaction_id`). destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.reactions.get",
+      "haystack": "whatsapp.reactions.get inkbox.api.whatsapp.reactions.get returns one whatsapp reaction by `reaction_id`. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.reactions.send",
+      "haystack": "whatsapp.reactions.send inkbox.api.whatsapp.reactions.send sends an emoji reaction (`reaction` or `custom_emoji`) on a whatsapp message a person sent (`message_id`). destructive"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.router.get",
+      "haystack": "whatsapp.router.get inkbox.api.whatsapp.router.get returns the organization's own whatsapp router (number, revision, profile name, whether it accepts new connections), or null if it has none. requires an admin api key. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.router.listConversations",
+      "haystack": "whatsapp.router.listconversations inkbox.api.whatsapp.router.listconversations lists conversations on the organization's own whatsapp router, newest first. requires an admin api key. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.router.listMessages",
+      "haystack": "whatsapp.router.listmessages inkbox.api.whatsapp.router.listmessages lists messages exchanged with one person (`remote_number`) on the organization's whatsapp router, newest first. requires an admin api key. read"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.router.update",
+      "haystack": "whatsapp.router.update inkbox.api.whatsapp.router.update updates the organization's whatsapp router `profile_display_name` or `accepting_new_connections`, given `expected_router_id` and `expected_revision`. admin api key only. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "api",
+      "shortPath": "whatsapp.sendTyping",
+      "haystack": "whatsapp.sendtyping inkbox.api.whatsapp.sendtyping shows a typing indicator to the person in a whatsapp conversation (`conversation_id`); returns 409 where unsupported. write"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "webhook",
+      "shortPath": "a2a.taskEvent",
+      "haystack": "a2a.taskevent inkbox.webhooks.a2a.taskevent a2a task event: a2a.sent_task.updated, a2a.task.canceled, a2a.task.created, a2a.task.message"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "webhook",
+      "shortPath": "imessage.messageEvent",
+      "haystack": "imessage.messageevent inkbox.webhooks.imessage.messageevent imessage event: imessage.delivered, imessage.delivery_failed, imessage.reaction_received, imessage.received, imessage.sent"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "webhook",
+      "shortPath": "mail.messageEvent",
+      "haystack": "mail.messageevent inkbox.webhooks.mail.messageevent mail event: message.bounced, message.delivered, message.failed, message.forwarded, message.received, message.sent"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "webhook",
+      "shortPath": "phone.callEnded",
+      "haystack": "phone.callended inkbox.webhooks.phone.callended call lifecycle event: call.ended"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "webhook",
+      "shortPath": "phone.textEvent",
+      "haystack": "phone.textevent inkbox.webhooks.phone.textevent phone text event: text.delivered, text.delivery_failed, text.delivery_unconfirmed, text.received, text.sent"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "webhook",
+      "shortPath": "slack.event",
+      "haystack": "slack.event inkbox.webhooks.slack.event slack event: slack.channel_message_received, slack.channel_updated, slack.connection_changed, slack.dm_received, slack.file_changed, slack.file_deleted, slack.file_shared, slack.group_dm_received, slack.interaction, slack.member_joined, slack.member_left, slack.mention_received, slack.message_deleted, slack.message_send_failed, slack.message_send_unknown, slack.message_sent, slack.message_updated, slack.pin_added, slack.pin_removed, slack.reaction_added, slack.reaction_removed, slack.session_stopped, slack.thread_reply_received"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "webhook",
+      "shortPath": "transcriptions.finished",
+      "haystack": "transcriptions.finished inkbox.webhooks.transcriptions.finished message transcription finished: message.transcription_finished"
+    },
+    {
+      "pluginId": "inkbox",
+      "kind": "webhook",
+      "shortPath": "whatsapp.messageEvent",
+      "haystack": "whatsapp.messageevent inkbox.webhooks.whatsapp.messageevent whatsapp event: whatsapp.delivered, whatsapp.delivery_failed, whatsapp.delivery_unconfirmed, whatsapp.reaction_received, whatsapp.received, whatsapp.sent"
     },
     {
       "pluginId": "insightoai",
