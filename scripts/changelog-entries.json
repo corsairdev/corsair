@@ -12330,5 +12330,14 @@
         "title": "Search.filesAndFolders takes fields like files.list"
       }
     ]
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.95",
+    "isNew": false,
+    "changes": []
   }
 ]
