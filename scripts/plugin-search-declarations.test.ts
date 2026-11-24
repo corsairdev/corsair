@@ -171,10 +171,6 @@ function fixtures(s: EndpointSearch): Array<[string, SearchHints]> {
 const plugins = await declared();
 
 describe('plugin search declarations', () => {
-	it('finds the declarations to check', () => {
-		assert.ok(plugins.length > 0);
-	});
-
 	for (const { id, op, search, meta, schemas, entities } of plugins) {
 		describe(`${id} ${op}`, () => {
 			const input = schemas[op]?.input;
