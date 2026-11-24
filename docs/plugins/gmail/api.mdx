@@ -213,7 +213,7 @@ await corsair.gmail.api.drafts.get({});
 
 `drafts.list`
 
-Returns draft id and message id only. Use drafts.get to read subject and body.
+Returns only draft id and message id/threadId. Use drafts.get to read subject and body
 
 **Risk:** `read`
 
@@ -861,7 +861,7 @@ await corsair.gmail.api.messages.get({});
 
 `messages.getAttachment`
 
-Fetch an attachment of a message by partId (from messages.get, format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId.
+Fetch an attachment of a message by partId (from messages.get, format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId
 
 **Risk:** `read`
 
@@ -875,7 +875,7 @@ await corsair.gmail.api.messages.getAttachment({});
 |------|------|----------|-------------|
 | `userId` | `string` | No | — |
 | `messageId` | `string` | Yes | — |
-| `partId` | `string` | No | partId of a part from messages.get with format full: payload.parts[].partId, e.g. "1.2", or payload.partId ("") for a single-part message. Prefer it over attachmentId, which changes between reads. Give partId or attachmentId. |
+| `partId` | `string` | No | partId of a part from messages.get with format full, e.g. "1.2". Give partId or attachmentId |
 | `attachmentId` | `string` | No | Gmail attachmentId, if already known. Give partId or attachmentId; with partId, the part's own attachment is read. |
 
 
@@ -900,7 +900,7 @@ await corsair.gmail.api.messages.getAttachment({});
 
 `messages.list`
 
-Returns only id and threadId per message, no subject or body. Use messages.get to read one.
+Returns only id and threadId per message, no subject or body. Use messages.get to read one
 
 **Risk:** `read`
 
@@ -1293,7 +1293,7 @@ await corsair.gmail.api.messages.untrash({});
 
 `threads.get`
 
-Get every message in a thread. format works as in messages.get.
+Get every message in a thread. format works as in messages.get
 
 **Risk:** `read`
 
@@ -1376,7 +1376,7 @@ await corsair.gmail.api.threads.get({});
 
 `threads.list`
 
-Returns thread id and snippet only, no messages. Use threads.get for the messages.
+Returns thread id and snippet only, no messages. Use threads.get for the messages
 
 **Risk:** `read`
 

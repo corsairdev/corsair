@@ -306,7 +306,7 @@ const gmailEndpointMeta = {
 	'messages.list': {
 		riskLevel: 'read',
 		description:
-			'Returns only id and threadId per message, no subject or body. Use messages.get to read one.',
+			'Returns only id and threadId per message, no subject or body. Use messages.get to read one',
 	},
 	'messages.get': {
 		riskLevel: 'read',
@@ -336,7 +336,7 @@ const gmailEndpointMeta = {
 	'messages.getAttachment': {
 		riskLevel: 'read',
 		description:
-			'Fetch an attachment of a message by partId (from messages.get, format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId.',
+			'Fetch an attachment of a message by partId (from messages.get, format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId',
 	},
 	'labels.list': {
 		riskLevel: 'read',
@@ -355,7 +355,7 @@ const gmailEndpointMeta = {
 	'drafts.list': {
 		riskLevel: 'read',
 		description:
-			'Returns draft id and message id only. Use drafts.get to read subject and body.',
+			'Returns only draft id and message id/threadId. Use drafts.get to read subject and body',
 	},
 	'drafts.get': { riskLevel: 'read', description: 'Get a specific draft' },
 	'drafts.create': { riskLevel: 'write', description: 'Create a new draft' },
@@ -374,12 +374,12 @@ const gmailEndpointMeta = {
 	'threads.list': {
 		riskLevel: 'read',
 		description:
-			'Returns thread id and snippet only, no messages. Use threads.get for the messages.',
+			'Returns thread id and snippet only, no messages. Use threads.get for the messages',
 	},
 	'threads.get': {
 		riskLevel: 'read',
 		description:
-			'Get every message in a thread. format works as in messages.get.',
+			'Get every message in a thread. format works as in messages.get',
 	},
 	'threads.modify': {
 		riskLevel: 'write',
