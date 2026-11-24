@@ -3789,6 +3789,14 @@
                 ]
               },
               {
+                "group": "Mixpanel",
+                "pages": [
+                  "plugins/mixpanel/overview",
+                  "plugins/mixpanel/api",
+                  "plugins/mixpanel/database"
+                ]
+              },
+              {
                 "group": "Mocean",
                 "pages": [
                   "plugins/mocean/overview",
