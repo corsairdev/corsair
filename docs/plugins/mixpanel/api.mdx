@@ -3755,7 +3755,7 @@ await corsair.mixpanel.api.pipelines.create({});
 | `events` | `string[]` | No | Only these events. |
 | `where` | `string` | No | — |
 | `data_format` | `string` | No | — |
-| `settings` | `Record<string, string \| number \| boolean>` | No | Destination fields for this type, e.g. gcs_bucket and gcs_region, s3_bucket, s3_region and s3_role, bq_region, snowflake_*, azure_*. |
+| `settings` | `Record<string, string \| number \| boolean \| string[]>` | No | Destination fields for this type, e.g. gcs_bucket and gcs_region, s3_bucket, s3_region and s3_role, bq_region, snowflake_*, azure_*. |
 
 
 
@@ -3828,7 +3828,7 @@ await corsair.mixpanel.api.pipelines.edit({});
 | `name` | `string` | Yes | The pipeline name, from pipelines.list. |
 | `events` | `string[]` | No | — |
 | `where` | `string` | No | — |
-| `settings` | `Record<string, string \| number \| boolean>` | No | Other fields the pipeline type allows editing. |
+| `settings` | `Record<string, string \| number \| boolean \| string[]>` | No | Other fields the pipeline type allows editing. |
 
 
 
