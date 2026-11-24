@@ -1,6 +1,5 @@
 import type {
 	BindEndpoints,
-	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
@@ -13,36 +12,29 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import type { MixpanelRegion } from './client';
+import { packMixpanelKey, parseProjectId, parseRegion } from './client';
 import {
-	Cohorts,
-	Events,
-	Export,
-	Funnels,
-	Insights,
-	Profiles,
-	Retention,
+	mixpanelEndpointMetaMap,
+	mixpanelEndpointSchemaMap,
+	mixpanelEndpointsNested,
 } from './endpoints';
-import type {
-	MixpanelEndpointInputs,
-	MixpanelEndpointOutputs,
-} from './endpoints/types';
-import {
-	MixpanelEndpointInputSchemas,
-	MixpanelEndpointOutputSchemas,
-} from './endpoints/types';
 import { errorHandlers, mergeErrorHandlers } from './error-handlers';
 import { MixpanelSchema } from './schema';
 
 export type MixpanelPluginOptions = {
 	authType?: PickAuth<'api_key'>;
-	/** The service account username, saved on the account in managed auth. */
+	/** Service account username; otherwise read from the account. */
 	serviceAccountUsername?: string;
-	/** The service account secret, saved on the account in managed auth. */
+	/** Service account secret; otherwise the account's api_key. */
 	serviceAccountSecret?: string;
-	/** The Mixpanel project id every service-account request must carry. */
+	/** The Mixpanel project id every service-account request carries. */
 	projectId?: number;
-	/** Data residency of the project; defaults to `us`. */
+	/** Data residency of the project: us (default), eu or in. */
 	region?: MixpanelRegion;
+	/** Project token for /track, /engage, /groups, identity and GDPR calls. */
+	projectToken?: string;
+	/** GDPR API OAuth token (Personal Settings, Data & Privacy). */
+	gdprToken?: string;
 	hooks?: InternalMixpanelPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof mixpanelEndpointsNested>;
@@ -64,130 +56,35 @@ export type MixpanelBoundEndpoints = BindEndpoints<
 	typeof mixpanelEndpointsNested
 >;
 
-type MixpanelEndpoint<K extends keyof MixpanelEndpointOutputs> =
-	CorsairEndpoint<
-		MixpanelContext,
-		MixpanelEndpointInputs[K],
-		MixpanelEndpointOutputs[K]
+export const mixpanelEndpointSchemas =
+	mixpanelEndpointSchemaMap satisfies RequiredPluginEndpointSchemas<
+		typeof mixpanelEndpointsNested
 	>;
 
-export type MixpanelEndpoints = {
-	eventsImport: MixpanelEndpoint<'eventsImport'>;
-	profilesQuery: MixpanelEndpoint<'profilesQuery'>;
-	cohortsList: MixpanelEndpoint<'cohortsList'>;
-	insightsQuery: MixpanelEndpoint<'insightsQuery'>;
-	funnelsList: MixpanelEndpoint<'funnelsList'>;
-	retentionQuery: MixpanelEndpoint<'retentionQuery'>;
-	exportEvents: MixpanelEndpoint<'exportEvents'>;
-};
-
-const mixpanelEndpointsNested = {
-	events: {
-		import: Events.importEvents,
-	},
-	profiles: {
-		query: Profiles.query,
-	},
-	cohorts: {
-		list: Cohorts.list,
-	},
-	insights: {
-		query: Insights.query,
-	},
-	funnels: {
-		list: Funnels.list,
-	},
-	retention: {
-		query: Retention.query,
-	},
-	export: {
-		events: Export.events,
-	},
-} as const;
-
-export const mixpanelEndpointSchemas = {
-	'events.import': {
-		input: MixpanelEndpointInputSchemas.eventsImport,
-		output: MixpanelEndpointOutputSchemas.eventsImport,
-	},
-	'profiles.query': {
-		input: MixpanelEndpointInputSchemas.profilesQuery,
-		output: MixpanelEndpointOutputSchemas.profilesQuery,
-	},
-	'cohorts.list': {
-		input: MixpanelEndpointInputSchemas.cohortsList,
-		output: MixpanelEndpointOutputSchemas.cohortsList,
-	},
-	'insights.query': {
-		input: MixpanelEndpointInputSchemas.insightsQuery,
-		output: MixpanelEndpointOutputSchemas.insightsQuery,
-	},
-	'funnels.list': {
-		input: MixpanelEndpointInputSchemas.funnelsList,
-		output: MixpanelEndpointOutputSchemas.funnelsList,
-	},
-	'retention.query': {
-		input: MixpanelEndpointInputSchemas.retentionQuery,
-		output: MixpanelEndpointOutputSchemas.retentionQuery,
-	},
-	'export.events': {
-		input: MixpanelEndpointInputSchemas.exportEvents,
-		output: MixpanelEndpointOutputSchemas.exportEvents,
-	},
-} as const satisfies RequiredPluginEndpointSchemas<
-	typeof mixpanelEndpointsNested
->;
+const mixpanelEndpointMeta =
+	mixpanelEndpointMetaMap satisfies RequiredPluginEndpointMeta<
+		typeof mixpanelEndpointsNested
+	>;
 
 const defaultAuthType = 'api_key' as const;
 
-const mixpanelEndpointMeta = {
-	'events.import': {
-		riskLevel: 'write',
-		description:
-			'Import a batch of up to 2000 server-side events, validated per event when strict mode is on (the default)',
-	},
-	'profiles.query': {
-		riskLevel: 'read',
-		description:
-			'Query user or group profiles with an expression, a cohort filter or exact distinct_ids, paged via session_id and next_page',
-	},
-	'cohorts.list': {
-		riskLevel: 'read',
-		description:
-			'List every saved cohort with its id, member count, visibility and description',
-	},
-	'insights.query': {
-		riskLevel: 'read',
-		description:
-			'Read the data behind one saved Insights report by its bookmark id',
-	},
-	'funnels.list': {
-		riskLevel: 'read',
-		description: 'List the saved funnels with their ids and names',
-	},
-	'retention.query': {
-		riskLevel: 'read',
-		description:
-			'Run a birth or compounded retention query for a date range, per day, week or month',
-	},
-	'export.events': {
-		riskLevel: 'read',
-		description:
-			'Export raw events for a date range as parsed objects, with optional event-name filter, expression filter and limit',
-	},
-} as const satisfies RequiredPluginEndpointMeta<typeof mixpanelEndpointsNested>;
-
 /**
- * Every call authenticates with a Mixpanel service account over HTTP Basic,
- * so the account stores the username, the secret and the project id that
- * every service-account request must carry as a query parameter.
+ * The account's `api_key` is the service account secret. Beside it:
+ * - service_account_username: the service account username
+ * - project_id: the project every service-account request names
+ * - region: us (default), eu or in, for data residency hosts
+ * - project_token: optional; needed for track, profile and group updates,
+ *   identity calls and GDPR
+ * - gdpr_token: optional; the OAuth token the GDPR API takes
  */
 export const mixpanelAuthConfig = {
 	api_key: {
 		account: [
 			'service_account_username',
-			'service_account_secret',
 			'project_id',
+			'region',
+			'project_token',
+			'gdpr_token',
 		] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -207,13 +104,18 @@ export type InternalMixpanelPlugin = BaseMixpanelPlugin<MixpanelPluginOptions>;
 export type ExternalMixpanelPlugin<T extends MixpanelPluginOptions> =
 	BaseMixpanelPlugin<T>;
 
+function present(value: string | null | undefined): string | undefined {
+	return value === null || value === undefined || value.trim() === ''
+		? undefined
+		: value.trim();
+}
+
 export function mixpanel<const T extends MixpanelPluginOptions>(
 	incomingOptions: MixpanelPluginOptions & T = {} as MixpanelPluginOptions & T,
 ): ExternalMixpanelPlugin<T> {
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
-		region: incomingOptions.region ?? 'us',
 	};
 	return {
 		id: 'mixpanel',
@@ -231,41 +133,46 @@ export function mixpanel<const T extends MixpanelPluginOptions>(
 			if (source !== 'endpoint') {
 				throw new AuthMissingError('mixpanel', ctx.authType ?? 'api_key');
 			}
-
-			const username =
-				options.serviceAccountUsername ??
-				(await ctx.keys.get_service_account_username());
-			const secret =
-				options.serviceAccountSecret ??
-				(await ctx.keys.get_service_account_secret());
-			if (!username || !secret) {
+			const [secret, username, projectId, region, projectToken, gdprToken] =
+				await Promise.all([
+					options.serviceAccountSecret ?? ctx.keys.get_api_key(),
+					options.serviceAccountUsername ??
+						ctx.keys.get_service_account_username(),
+					options.projectId ?? ctx.keys.get_project_id(),
+					options.region ?? ctx.keys.get_region(),
+					options.projectToken ?? ctx.keys.get_project_token(),
+					options.gdprToken ?? ctx.keys.get_gdpr_token(),
+				]);
+			const parsedProjectId = parseProjectId(projectId);
+			if (!present(secret) || !present(username) || !parsedProjectId) {
 				throw new AuthMissingError('mixpanel', ctx.authType ?? 'api_key');
 			}
-
-			// Mixpanel's basic auth accepts the plain colon-joined pair, so the
-			// client sends it as-is after the Basic scheme.
-			return `${username}:${secret}`;
+			return packMixpanelKey({
+				username: present(username) as string,
+				secret: present(secret) as string,
+				projectId: parsedProjectId,
+				region: parseRegion(region) ?? 'us',
+				projectToken: present(projectToken),
+				gdprToken: present(gdprToken),
+			});
 		},
 	} satisfies InternalMixpanelPlugin;
 }
 
-export { MixpanelAPIError } from './client';
+export type {
+	MixpanelCredentials,
+	MixpanelRegion,
+	MixpanelService,
+} from './client';
+export {
+	MixpanelConfigError,
+	mixpanelHost,
+	packMixpanelKey,
+	parseMixpanelKey,
+} from './client';
 
 export type {
-	CohortsListInput,
-	CohortsListResponse,
-	EventsImportInput,
-	EventsImportResponse,
-	ExportEventsInput,
-	ExportEventsResponse,
-	FunnelsListInput,
-	FunnelsListResponse,
-	InsightsQueryInput,
-	InsightsQueryResponse,
 	MixpanelEndpointInputs,
 	MixpanelEndpointOutputs,
-	ProfilesQueryInput,
-	ProfilesQueryResponse,
-	RetentionQueryInput,
-	RetentionQueryResponse,
+	MixpanelOperationPath,
 } from './endpoints/types';

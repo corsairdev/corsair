@@ -1,42 +1,73 @@
+import type { CorsairEndpoint, EndpointMetaEntry } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import type { MixpanelContext } from '..';
-import type { MixpanelRequest } from '../client';
-import { makeMixpanelRequest } from '../client';
+import type { MixpanelCredentials, MixpanelRequest } from '../client';
+import { makeMixpanelRequest, parseMixpanelKey } from '../client';
 
 type LogFields = Record<string, string | number | boolean | undefined>;
 
-/**
- * Validates the input, sends the request, shapes and validates the response,
- * then logs the event. Inputs are not logged, because `where` expressions and
- * profile queries carry user data; `log` picks the safe fields.
- */
-export async function call<Input extends z.ZodType, Output extends z.ZodType>(
-	ctx: MixpanelContext,
-	operation: { event: string; input: Input; output: Output },
-	// unknown: raw caller input, parsed below by the operation's input schema.
-	rawInput: unknown,
+export type MixpanelOperationSpec<
+	Input extends z.ZodType,
+	Output extends z.ZodType,
+> = {
+	/** The dotted path the operation is registered under. */
+	name: string;
+	input: Input;
+	output: Output;
+	meta: EndpointMetaEntry;
 	toRequest: (
 		parsed: z.output<Input>,
-	) => MixpanelRequest | Promise<MixpanelRequest>,
-	options: {
-		// unknown: raw is the response body, or the JSONL text on export. The
-		// output schema validates whatever this returns.
-		shape?: (raw: unknown, parsed: z.output<Input>) => unknown;
-		log?: (parsed: z.output<Input>, result: z.output<Output>) => LogFields;
-	} = {},
-): Promise<z.output<Output>> {
-	const parsed = operation.input.parse(rawInput ?? {});
-	const raw = await makeMixpanelRequest(ctx, await toRequest(parsed));
-	const result = operation.output.parse(
-		options.shape ? options.shape(raw, parsed) : raw,
-	);
+		credentials: MixpanelCredentials,
+	) => MixpanelRequest;
+	// unknown: raw is the response body (JSON, or text for export and /track).
+	// The output schema validates whatever this returns.
+	shape?: (raw: unknown, parsed: z.output<Input>) => unknown;
+	/** Safe fields for the event log. Inputs are never logged whole. */
+	log?: (parsed: z.output<Input>, result: z.output<Output>) => LogFields;
+};
 
-	await logEventFromContext(
-		ctx,
-		`mixpanel.${operation.event}`,
-		options.log?.(parsed, result) ?? {},
-		'completed',
-	);
-	return result;
+export type MixpanelOperation<
+	Input extends z.ZodType,
+	Output extends z.ZodType,
+> = CorsairEndpoint<MixpanelContext, z.input<Input>, z.output<Output>> & {
+	readonly schemas: { input: Input; output: Output };
+	readonly meta: EndpointMetaEntry;
+};
+
+/**
+ * Declares one operation: validates the input, builds the request from the
+ * packed credentials in `ctx.key`, sends it, shapes and validates the
+ * response, then logs the event. Schemas and metadata ride on the returned
+ * function so index.ts registers each operation from one definition.
+ */
+export function op<Input extends z.ZodType, Output extends z.ZodType>(
+	spec: MixpanelOperationSpec<Input, Output>,
+): MixpanelOperation<Input, Output> {
+	const endpoint = async (
+		ctx: MixpanelContext,
+		// unknown: raw caller input, parsed below by the operation's input schema.
+		rawInput: unknown,
+	): Promise<z.output<Output>> => {
+		const parsed = spec.input.parse(rawInput ?? {});
+		const credentials = parseMixpanelKey(ctx.key);
+		const raw = await makeMixpanelRequest(
+			credentials,
+			spec.toRequest(parsed, credentials),
+		);
+		const result = spec.output.parse(
+			spec.shape ? spec.shape(raw, parsed) : raw,
+		);
+		await logEventFromContext(
+			ctx,
+			`mixpanel.${spec.name}`,
+			spec.log?.(parsed, result) ?? {},
+			'completed',
+		);
+		return result;
+	};
+	return Object.assign(endpoint, {
+		schemas: { input: spec.input, output: spec.output },
+		meta: spec.meta,
+	}) as MixpanelOperation<Input, Output>;
 }

@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/mixpanel",
   "version": "0.1.0",
-  "description": "Product analytics with Mixpanel - import server-side event batches, query profiles, cohorts, saved Insights reports, funnels and retention, and export raw events.",
+  "description": "Product analytics with Mixpanel - ingest events and user or group profiles, run Insights, funnel, retention and segmentation reports, export raw events, and manage annotations, Lexicon schemas, feature flags, experiments, warehouse imports, data pipelines, service accounts and GDPR requests.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
