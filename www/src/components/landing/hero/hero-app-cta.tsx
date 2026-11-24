@@ -2,7 +2,7 @@
 
 import { Sparkle } from '@phosphor-icons/react';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import { APP_URL } from '@/lib/site-links';
+import { CONSOLE_URL } from '@/lib/site-links';
 import { cn } from '@/lib/utils';
 import { CopyFeedbackIcon } from '../copy-feedback-icon';
 
@@ -72,12 +72,12 @@ export function HeroAppCta() {
 			className="group/app-cta relative flex w-full items-stretch overflow-visible rounded-lg border border-[#1c1c1c] bg-[#1c1c1c] shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] transition-all duration-300 ease-out hover:bg-[#2a2a2a] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_16px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 active:translate-y-0 sm:inline-flex sm:w-auto"
 		>
 			<a
-				href={APP_URL}
+				href={CONSOLE_URL}
 				target="_blank"
 				rel="noopener noreferrer"
 				className="inline-flex flex-1 touch-manipulation items-center justify-center px-6 py-3 text-sm font-[family-name:var(--landing-font-sans)] font-medium text-white no-underline sm:flex-none"
 			>
-				Go to app
+				Go to console
 			</a>
 
 			<button

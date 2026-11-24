@@ -3,19 +3,7 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
-
-export class CanvaAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly status?: number,
-		public readonly retryAfter?: number,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'CanvaAPIError';
-	}
-}
+import { request } from 'corsair/http';
 
 const CANVA_API_BASE = 'https://api.canva.com/rest';
 
@@ -44,9 +32,11 @@ export async function makeCanvaRequest<T>(
 		body?: Record<string, unknown> | string | Blob;
 		query?: Record<string, string | number | boolean | undefined>;
 		extraHeaders?: Record<string, string>;
+		/** Send no token: a public route that fails when one is sent (app JWKS). */
+		anonymous?: boolean;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, extraHeaders } = options;
+	const { method = 'GET', body, query, extraHeaders, anonymous } = options;
 	const binary = isBinaryBody(body);
 
 	const config: OpenAPIConfig = {
@@ -54,7 +44,7 @@ export async function makeCanvaRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: anonymous ? undefined : apiKey,
 		HEADERS: {
 			...(binary
 				? { 'Content-Type': 'application/octet-stream' }
@@ -76,29 +66,10 @@ export async function makeCanvaRequest<T>(
 		query: method === 'GET' || method === 'DELETE' ? query : undefined,
 	};
 
-	try {
-		return await request<T>(config, requestOptions, {
-			rateLimitConfig: CANVA_RATE_LIMIT_CONFIG,
-		});
-	} catch (error) {
-		if (error instanceof ApiError) {
-			const code =
-				typeof error.body === 'object' &&
-				error.body !== null &&
-				'code' in error.body &&
-				typeof (error.body as { code?: unknown }).code === 'string'
-					? (error.body as { code: string }).code
-					: undefined;
-			throw new CanvaAPIError(
-				error.message,
-				error.status,
-				error.retryAfter,
-				code,
-			);
-		}
-		if (error instanceof Error) {
-			throw new CanvaAPIError(error.message);
-		}
-		throw new CanvaAPIError('Unknown error');
-	}
+	// Core's ApiError goes through as it is: the error handlers and core's
+	// OAuth refresh after a 401 read its status and retryAfter, and Canva's own
+	// code and message stay on error.body.
+	return request<T>(config, requestOptions, {
+		rateLimitConfig: CANVA_RATE_LIMIT_CONFIG,
+	});
 }

@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
+import type { z } from 'zod';
 import { freeAgentApiBase } from './client';
 import {
 	Company,
@@ -23,9 +24,54 @@ import {
 	RecurringInvoices,
 	TrackingGroups,
 } from './endpoints';
+import {
+	AccountingEndpointMeta,
+	AccountingEndpointSchemas,
+	AccountingEndpoints,
+} from './endpoints/accounting';
+import {
+	AssetEndpointMeta,
+	AssetEndpointSchemas,
+	AssetEndpoints,
+} from './endpoints/assets';
+import {
+	BankingEndpointMeta,
+	BankingEndpointSchemas,
+	BankingEndpoints,
+} from './endpoints/banking';
+import {
+	CatalogEndpointMeta,
+	CatalogEndpointSchemas,
+	CatalogEndpoints,
+} from './endpoints/catalog';
+import {
+	CreditNoteEndpointMeta,
+	CreditNoteEndpointSchemas,
+	CreditNoteEndpoints,
+} from './endpoints/credit-notes';
+import {
+	EstimateEndpointMeta,
+	EstimateEndpointSchemas,
+	EstimateEndpoints,
+} from './endpoints/estimates';
+import {
+	ExpensesBillsEndpointMeta,
+	ExpensesBillsEndpointSchemas,
+	ExpensesBillsEndpoints,
+} from './endpoints/expenses-bills';
+import {
+	TaxReturnEndpointMeta,
+	TaxReturnEndpointSchemas,
+	TaxReturnEndpoints,
+} from './endpoints/tax-returns';
+import {
+	TimeUserEndpointMeta,
+	TimeUserEndpointSchemas,
+	TimeUserEndpoints,
+} from './endpoints/time-users';
 import type {
-	FreeAgentEndpointInputs,
-	FreeAgentEndpointOutputs,
+	FreeAgentEndpointInputs as BaseFreeAgentEndpointInputs,
+	FreeAgentEndpointOutputs as BaseFreeAgentEndpointOutputs,
 } from './endpoints/types';
 import {
 	FreeAgentEndpointInputSchemas,
@@ -53,11 +99,22 @@ export type FreeAgentBoundEndpoints = BindEndpoints<
 	typeof freeAgentEndpointsNested
 >;
 
-type Endpoint<K extends keyof FreeAgentEndpointOutputs> = CorsairEndpoint<
+type Endpoint<K extends keyof BaseFreeAgentEndpointOutputs> = CorsairEndpoint<
 	FreeAgentContext,
-	FreeAgentEndpointInputs[K],
-	FreeAgentEndpointOutputs[K]
+	BaseFreeAgentEndpointInputs[K],
+	BaseFreeAgentEndpointOutputs[K]
 >;
+
+export type FreeAgentEndpointInputs = BaseFreeAgentEndpointInputs & {
+	[K in keyof typeof freeAgentEndpointSchemas]: z.input<
+		(typeof freeAgentEndpointSchemas)[K]['input']
+	>;
+};
+export type FreeAgentEndpointOutputs = BaseFreeAgentEndpointOutputs & {
+	[K in keyof typeof freeAgentEndpointSchemas]: z.infer<
+		(typeof freeAgentEndpointSchemas)[K]['output']
+	>;
+};
 
 export type FreeAgentEndpoints = {
 	companyGet: Endpoint<'companyGet'>;
@@ -149,6 +206,15 @@ const freeAgentEndpointsNested = {
 		list: TrackingGroups.list,
 		get: TrackingGroups.get,
 	},
+	...BankingEndpoints,
+	...AccountingEndpoints,
+	...AssetEndpoints,
+	...CatalogEndpoints,
+	...TaxReturnEndpoints,
+	...ExpensesBillsEndpoints,
+	...CreditNoteEndpoints,
+	...EstimateEndpoints,
+	...TimeUserEndpoints,
 } as const;
 
 export const freeAgentEndpointSchemas = {
@@ -296,6 +362,15 @@ export const freeAgentEndpointSchemas = {
 		input: FreeAgentEndpointInputSchemas.trackingGroupsGet,
 		output: FreeAgentEndpointOutputSchemas.trackingGroupsGet,
 	},
+	...BankingEndpointSchemas,
+	...AccountingEndpointSchemas,
+	...AssetEndpointSchemas,
+	...CatalogEndpointSchemas,
+	...TaxReturnEndpointSchemas,
+	...ExpensesBillsEndpointSchemas,
+	...CreditNoteEndpointSchemas,
+	...EstimateEndpointSchemas,
+	...TimeUserEndpointSchemas,
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof freeAgentEndpointsNested
 >;
@@ -448,6 +523,15 @@ const freeAgentEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get a tracking group and its labels by FreeAgent ID',
 	},
+	...BankingEndpointMeta,
+	...AccountingEndpointMeta,
+	...AssetEndpointMeta,
+	...CatalogEndpointMeta,
+	...TaxReturnEndpointMeta,
+	...ExpensesBillsEndpointMeta,
+	...CreditNoteEndpointMeta,
+	...EstimateEndpointMeta,
+	...TimeUserEndpointMeta,
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof freeAgentEndpointsNested
 >;
@@ -518,8 +602,3 @@ export function freeagent<const T extends FreeAgentPluginOptions>(
 		},
 	} satisfies InternalFreeAgentPlugin;
 }
-
-export type {
-	FreeAgentEndpointInputs,
-	FreeAgentEndpointOutputs,
-} from './endpoints/types';

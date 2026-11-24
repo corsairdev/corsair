@@ -1,0 +1,137 @@
+---
+title: "Mailcoach plugin"
+sidebarTitle: "Overview"
+description: "Manage Mailcoach email lists, subscribers, campaigns, transactional mails, imports, tags, segments, and delivery statistics through its team-scoped REST API."
+---
+
+Use **Mailcoach** through Corsair: one client, typed API calls.
+
+Save the exact team API URL shown in Mailcoach account settings → API Tokens as the account-level `api_url` field alongside the Mailcoach API token (`api_key`). This lets each connected tenant use its own Mailcoach team host. For a single-team setup, `mailcoach({ apiUrl: "https://<team>.mailcoach.app/api" })` is accepted as a fallback. Only HTTPS team subdomains under `mailcoach.app` are accepted; self-hosted instances and custom domains are not enabled because their host contract is not documented by the linked API reference. Use an All API endpoints token for management operations, or a Send only token only when calling the transactional send operation. Tokens inherit the owner's permissions and must remain server-side.
+
+Collection operations return the provider's page plus `links.next`. Pass that absolute URL as the operation's `next` input to fetch the next page; the client verifies that it stays on the configured team host and same resource. Successful 204 operations return `undefined`. Transactional send returns a top-level `uuid` when stored, and `undefined` when `store: false`.
+
+Mailcoach Cloud's default authenticated limit is 300 requests per minute per user (shared across that user's tokens). Transactional sends have a separate 3,000/minute per-user limit. Campaign click statistics and individual link lookups also share a 5 requests/second per-team burst limit. On 429, Corsair's transport honors `Retry-After`; writes are not retried on timeouts because Mailcoach may already have accepted them. Errors retain status and retry metadata but redact provider text, request paths, query values, and bodies to prevent email addresses or message content from leaking.
+
+Sending a campaign, sending test mail, resending confirmations, starting an import, and transactional sends are destructive operations. Set `fake: true` for a transactional dry run. Subscriber imports are drafts until explicitly started; starting one may resubscribe addresses or unsubscribe contacts absent from the CSV. Only import addresses for which you have consent, and use `skip_confirmation: true` only when the subscriber has already consented.
+
+Mailcoach documents a single automation trigger endpoint, but its successful response body is not specified; it is excluded rather than exposing an unverifiable output schema. Inbound webhooks are not supported.
+
+**What you get:**
+
+- 70 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/mailcoach better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/mailcoach better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/mailcoach better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/mailcoach better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { mailcoach } from '@corsair-dev/mailcoach';
+
+export const corsair = createCorsair({
+	plugins: [
+		mailcoach(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Mailcoach API key before the first call: `pnpm corsair setup --plugin=mailcoach --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+mailcoach()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'mailcoach',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`automationMails.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.mailcoach.api.automationMails.get({});
+```
+
+
+**`automationMails.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.mailcoach.api.automationMails.create({});
+```
+
+
+See the full list on the [API](/plugins/mailcoach/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/mailcoach/api">
+    Every `mailcoach.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

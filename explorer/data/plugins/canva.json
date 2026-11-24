@@ -6,7 +6,7 @@
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
   "counts": {
-    "api": 39,
+    "api": 62,
     "webhooks": 0,
     "db": 4
   },
@@ -26,9 +26,281 @@
   ],
   "api": [
     {
+      "path": "canva.api.analytics.get",
+      "shortPath": "analytics.get",
+      "description": "Get a design's total views, unique viewers and view time (Canva Enterprise, preview)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "designId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "total_view_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "unique_view_count",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "total_view_duration_seconds",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "average_view_duration_seconds",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.analytics.listLinks",
+      "shortPath": "analytics.listLinks",
+      "description": "List a design's trackable links and their views (Canva Enterprise, preview)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "designId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "continuation",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ link_id: string, name?: string, total_view_count?: number, unique_view_count?: number, total_view_duration_seconds?: number, average_view_duration_seconds?: number, last_viewed_at?: number }[]"
+          },
+          {
+            "key": "continuation",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.analytics.listPageViews",
+      "shortPath": "analytics.listPageViews",
+      "description": "List view time per page of a design (Canva Enterprise, preview)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "designId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "page_ids",
+            "optional": false,
+            "type": "string[]",
+            "description": "Page ids, from designs.getPages."
+          },
+          {
+            "key": "filter",
+            "optional": true,
+            "type": "{ type: by_viewer, viewer_id: string, link_id?: string } | { type: for_editor } | { type: by_link, link_id: string }"
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "continuation",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ page_id?: string, total_view_duration_seconds: number, average_duration_seconds?: number, unique_view_count?: number }[]"
+          },
+          {
+            "key": "continuation",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.analytics.listViewers",
+      "shortPath": "analytics.listViewers",
+      "description": "List who viewed a design, most recent first (Canva Enterprise, preview)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "designId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "link_id",
+            "optional": true,
+            "type": "string",
+            "description": "Only viewers who came through this trackable link."
+          },
+          {
+            "key": "first_viewed_after",
+            "optional": true,
+            "type": "number",
+            "description": "Unix seconds; only viewers whose first view is after it."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "continuation",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ viewer_id: string, user?: { user_id?: string, team_id?: string, display_name?: string }, last_viewed_at: number, viewer_type: string, visibility: string, total_view_duration_seconds?: number, first_viewed_at?: number, pages_viewed?: number, form_factor?: string, device_operating_system?: string, city_country?: string, total_view_count?: number }[]"
+          },
+          {
+            "key": "continuation",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.analytics.listViewsOverTime",
+      "shortPath": "analytics.listViewsOverTime",
+      "description": "List a design's view counts per time bucket (Canva Enterprise, preview)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "designId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "start_time",
+            "optional": true,
+            "type": "number",
+            "description": "Unix seconds."
+          },
+          {
+            "key": "end_time",
+            "optional": true,
+            "type": "number",
+            "description": "Unix seconds."
+          },
+          {
+            "key": "timezone",
+            "optional": true,
+            "type": "string",
+            "description": "IANA time zone for the buckets, e.g. Australia/Sydney."
+          },
+          {
+            "key": "limit",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "continuation",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "items",
+            "optional": false,
+            "type": "{ count: number, bucket_start_at: number }[]"
+          },
+          {
+            "key": "continuation",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.apps.getJwks",
+      "shortPath": "apps.getJwks",
+      "description": "Get a Canva app's public keys for verifying the JWTs it sends to its backend",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "appId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keys",
+            "optional": false,
+            "type": "{ kid: string, kty: string, n: string, e: string, alg?: string, use?: string }[]"
+          }
+        ]
+      }
+    },
+    {
       "path": "canva.api.assets.delete",
       "shortPath": "assets.delete",
-      "description": "Delete an asset",
+      "description": "Move an asset to the trash (designs that use it keep it)",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -54,7 +326,7 @@
     {
       "path": "canva.api.assets.get",
       "shortPath": "assets.get",
-      "description": "Get metadata for an asset",
+      "description": "Get an image or video asset in the content library",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -72,7 +344,7 @@
           {
             "key": "asset",
             "optional": false,
-            "type": "{ type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, owner?: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string } }"
+            "type": "{ type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, owner?: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string }, metadata?: { type: image, width?: number, height?: number, smart_tags?: string[] } | { type: video, width: number, height: number, duration?: number } }"
           }
         ]
       }
@@ -80,7 +352,7 @@
     {
       "path": "canva.api.assets.update",
       "shortPath": "assets.update",
-      "description": "Update an asset name or tags",
+      "description": "Rename an asset or replace its tags",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -98,7 +370,8 @@
           {
             "key": "tags",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Replaces every existing tag."
           }
         ]
       },
@@ -108,7 +381,7 @@
           {
             "key": "asset",
             "optional": false,
-            "type": "{ type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, owner?: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string } }"
+            "type": "{ type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, owner?: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string }, metadata?: { type: image, width?: number, height?: number, smart_tags?: string[] } | { type: video, width: number, height: number, duration?: number } }"
           }
         ]
       }
@@ -116,20 +389,38 @@
     {
       "path": "canva.api.assetUploads.create",
       "shortPath": "assetUploads.create",
-      "description": "Start a job to upload an asset from binary content",
+      "description": "Start uploading a file to the user's content library",
       "riskLevel": "write",
+      "job": {
+        "idPath": "job.id",
+        "status": {
+          "op": "assetUploads.get",
+          "idArg": "jobId",
+          "statusPath": "job.status",
+          "done": ["success"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
           {
             "key": "name",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "The asset name in Canva."
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string }",
+            "description": "A file: a public URL to it, or {url, filename?, contentType?}, or {base64, filename?, contentType?} for a small one."
           },
           {
             "key": "contentBase64",
-            "optional": false,
-            "type": "string"
+            "optional": true,
+            "type": "string",
+            "description": "The file as base64. Prefer file for anything but a small file."
           }
         ]
       },
@@ -139,7 +430,7 @@
           {
             "key": "job",
             "optional": false,
-            "type": "{ id: string, status: in_progress | success | failed, asset?: { type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, owner?: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string } }, error?: { code: string, message: string } }"
+            "type": "{ id: string, status: in_progress | success | failed, asset?: { type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, owner?: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string }, metadata?: { type: image, width?: number, height?: number, smart_tags?: string[] } | { type: video, width: number, height: number, duration?: number } }, error?: { code: string, message: string } }"
           }
         ]
       }
@@ -147,8 +438,18 @@
     {
       "path": "canva.api.assetUploads.createFromUrl",
       "shortPath": "assetUploads.createFromUrl",
-      "description": "Start a job to upload an asset from a URL",
+      "description": "Start uploading a file from a public URL to the user's content library",
       "riskLevel": "write",
+      "job": {
+        "idPath": "job.id",
+        "status": {
+          "op": "assetUploads.getFromUrl",
+          "idArg": "jobId",
+          "statusPath": "job.status",
+          "done": ["success"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -160,7 +461,8 @@
           {
             "key": "url",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "A public URL Canva fetches. Videos from a URL are capped at 100 MB."
           }
         ]
       },
@@ -170,7 +472,7 @@
           {
             "key": "job",
             "optional": false,
-            "type": "{ id: string, status: in_progress | success | failed, asset?: { type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, owner?: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string } }, error?: { code: string, message: string } }"
+            "type": "{ id: string, status: in_progress | success | failed, asset?: { type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, owner?: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string }, metadata?: { type: image, width?: number, height?: number, smart_tags?: string[] } | { type: video, width: number, height: number, duration?: number } }, error?: { code: string, message: string } }"
           }
         ]
       }
@@ -178,7 +480,7 @@
     {
       "path": "canva.api.assetUploads.get",
       "shortPath": "assetUploads.get",
-      "description": "Get the status of an asset upload job",
+      "description": "Get an asset upload job",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -196,7 +498,7 @@
           {
             "key": "job",
             "optional": false,
-            "type": "{ id: string, status: in_progress | success | failed, asset?: { type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, owner?: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string } }, error?: { code: string, message: string } }"
+            "type": "{ id: string, status: in_progress | success | failed, asset?: { type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, owner?: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string }, metadata?: { type: image, width?: number, height?: number, smart_tags?: string[] } | { type: video, width: number, height: number, duration?: number } }, error?: { code: string, message: string } }"
           }
         ]
       }
@@ -204,7 +506,7 @@
     {
       "path": "canva.api.assetUploads.getFromUrl",
       "shortPath": "assetUploads.getFromUrl",
-      "description": "Get the status of a URL asset upload job",
+      "description": "Get a URL asset upload job",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -222,7 +524,7 @@
           {
             "key": "job",
             "optional": false,
-            "type": "{ id: string, status: in_progress | success | failed, asset?: { type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, owner?: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string } }, error?: { code: string, message: string } }"
+            "type": "{ id: string, status: in_progress | success | failed, asset?: { type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, owner?: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string }, metadata?: { type: image, width?: number, height?: number, smart_tags?: string[] } | { type: video, width: number, height: number, duration?: number } }, error?: { code: string, message: string } }"
           }
         ]
       }
@@ -230,25 +532,48 @@
     {
       "path": "canva.api.autofills.create",
       "shortPath": "autofills.create",
-      "description": "Start a job to autofill a brand template with data",
+      "description": "Start filling a brand template or design with text, images and chart data, as a new design or in place (Canva Pro, Teams or Enterprise)",
       "riskLevel": "write",
+      "job": {
+        "idPath": "job.id",
+        "status": {
+          "op": "autofills.get",
+          "idArg": "jobId",
+          "statusPath": "job.status",
+          "done": ["success"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
           {
+            "key": "type",
+            "optional": true,
+            "type": "create_from_brand_template | create_from_design | update_design",
+            "description": "create_from_brand_template (the default): a new design from brand_template_id. create_from_design: a new design from design_id. update_design: fill design_id in place."
+          },
+          {
             "key": "brand_template_id",
-            "optional": false,
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "design_id",
+            "optional": true,
             "type": "string"
           },
           {
             "key": "data",
             "optional": false,
-            "type": "Record<string, { type: text, text: string } | { type: image, asset_id: string } | { type: video, asset_id: string } | { type: chart, chart_data: Record<string, any> } | { type: sheet, sheet_data: Record<string, any> }>"
+            "type": "Record<string, { type: text, text: string } | { type: image, asset_id: string } | { type: video, asset_id: string } | { type: chart, chart_data: { column_configs?: { name?: string, type: string | number | boolean | date | variant }[], rows: { cells: ({ type: string, value?: string } | { type: number, value?: number, metadata?: never } | { type: boolean, value?: boolean } | { type: date, value?: number })[] }[] } } | { type: sheet, sheet_data: { column_configs?: { name?: string, type: string | number | boolean | date | variant | media }[], rows: { cells: ({ type: string, value?: string } | { type: number, value?: number, metadata?: never } | { type: boolean, value?: boolean } | { type: date, value?: number } | { type: media })[] }[] } }>",
+            "description": "Field name to value; get the field names from brandTemplates.getDataset or designs.getDataset."
           },
           {
             "key": "title",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Title of the new design; not used by update_design."
           }
         ]
       },
@@ -258,7 +583,7 @@
           {
             "key": "job",
             "optional": false,
-            "type": "{ id: string, status: in_progress | success | failed, result?: { type?: string, design?: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, current_page_index?: number } }, error?: { code: string, message: string } }"
+            "type": "{ id: string, status: in_progress | success | failed, result?: { type?: string, design?: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, urls?: { edit_url: string, view_url: string }, created_at?: number, updated_at?: number, page_count?: number }, trial_information?: { uses_remaining: number, upgrade_url: string } }, error?: { code: string, message: string } }"
           }
         ]
       }
@@ -266,7 +591,7 @@
     {
       "path": "canva.api.autofills.get",
       "shortPath": "autofills.get",
-      "description": "Get the status of a design autofill job",
+      "description": "Get a design autofill job",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -284,7 +609,7 @@
           {
             "key": "job",
             "optional": false,
-            "type": "{ id: string, status: in_progress | success | failed, result?: { type?: string, design?: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, current_page_index?: number } }, error?: { code: string, message: string } }"
+            "type": "{ id: string, status: in_progress | success | failed, result?: { type?: string, design?: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, urls?: { edit_url: string, view_url: string }, created_at?: number, updated_at?: number, page_count?: number }, trial_information?: { uses_remaining: number, upgrade_url: string } }, error?: { code: string, message: string } }"
           }
         ]
       }
@@ -292,7 +617,7 @@
     {
       "path": "canva.api.brandTemplates.get",
       "shortPath": "brandTemplates.get",
-      "description": "Get metadata for a brand template",
+      "description": "Get a brand template",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -310,7 +635,7 @@
           {
             "key": "brand_template",
             "optional": false,
-            "type": "{ id: string, title?: string, view_url?: string, create_url?: string, thumbnail?: { width: number, height: number, url: string }, created_at?: number, updated_at?: number }"
+            "type": "{ id: string, title?: string, view_url?: string, create_url?: string, thumbnail?: { width: number, height: number, url: string } | null, created_at?: number, updated_at?: number }"
           }
         ]
       }
@@ -318,7 +643,7 @@
     {
       "path": "canva.api.brandTemplates.getDataset",
       "shortPath": "brandTemplates.getDataset",
-      "description": "Get the autofill dataset definition for a brand template",
+      "description": "Get a brand template's autofill fields and the kind of data each takes",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -335,8 +660,9 @@
         "fields": [
           {
             "key": "dataset",
-            "optional": false,
-            "type": "Record<string, { type: text | image | chart }>"
+            "optional": true,
+            "type": "Record<string, { type: image | text | chart | sheet }>",
+            "description": "Autofill field names and the kind of data each takes (image, text, chart or sheet). Absent when there are none."
           }
         ]
       }
@@ -344,7 +670,7 @@
     {
       "path": "canva.api.brandTemplates.list",
       "shortPath": "brandTemplates.list",
-      "description": "List the user's brand templates",
+      "description": "List the user's brand templates (Canva Pro, Teams or Enterprise)",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -377,7 +703,8 @@
           {
             "key": "dataset",
             "optional": true,
-            "type": "any | non_empty"
+            "type": "any | non_empty",
+            "description": "non_empty lists only templates with autofill fields."
           }
         ]
       },
@@ -387,7 +714,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, title?: string, view_url?: string, create_url?: string, thumbnail?: { width: number, height: number, url: string }, created_at?: number, updated_at?: number }[]"
+            "type": "{ id: string, title?: string, view_url?: string, create_url?: string, thumbnail?: { width: number, height: number, url: string } | null, created_at?: number, updated_at?: number }[]"
           },
           {
             "key": "continuation",
@@ -398,9 +725,36 @@
       }
     },
     {
+      "path": "canva.api.brandTemplates.publish",
+      "shortPath": "brandTemplates.publish",
+      "description": "Publish a design as a brand template (Canva preview; needs a brand designer or admin role)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "design_id",
+            "optional": false,
+            "type": "string",
+            "description": "The design to publish as a brand template."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "brand_template",
+            "optional": false,
+            "type": "{ id: string, title?: string, view_url?: string, create_url?: string, thumbnail?: { width: number, height: number, url: string } | null, created_at?: number, updated_at?: number }"
+          }
+        ]
+      }
+    },
+    {
       "path": "canva.api.comments.createReply",
       "shortPath": "comments.createReply",
-      "description": "Reply to a comment thread on a design",
+      "description": "Reply to a comment thread (Canva preview)",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -428,7 +782,7 @@
           {
             "key": "reply",
             "optional": false,
-            "type": "{ id: string, design_id?: string, thread_id?: string, author?: { id: string, display_name?: string }, content?: { plaintext?: string, markdown?: string }, created_at?: number, updated_at?: number }"
+            "type": "{ id: string, design_id?: string, thread_id?: string, author?: { id: string, display_name?: string }, content?: { plaintext?: string, markdown?: string }, mentions?: Record<string, any>, created_at?: number, updated_at?: number }"
           }
         ]
       }
@@ -436,7 +790,7 @@
     {
       "path": "canva.api.comments.createThread",
       "shortPath": "comments.createThread",
-      "description": "Create a new comment thread on a design",
+      "description": "Start a comment thread on a design (Canva preview)",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -449,7 +803,8 @@
           {
             "key": "message_plaintext",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "The comment. Mention a user as [user_id:team_id]."
           },
           {
             "key": "assignee_id",
@@ -464,7 +819,7 @@
           {
             "key": "thread",
             "optional": false,
-            "type": "{ id: string, design_id?: string, thread_type?: { type?: string, content?: { plaintext?: string, markdown?: string } }, author?: { id: string, display_name?: string }, assignee?: { id: string, display_name?: string }, created_at?: number, updated_at?: number }"
+            "type": "{ id: string, design_id?: string, thread_type?: { type?: string, content?: { plaintext?: string, markdown?: string }, mentions?: Record<string, any>, assignee?: { id: string, display_name?: string }, resolver?: { id: string, display_name?: string }, suggested_edits?: Record<string, any>[], status?: string }, author?: { id: string, display_name?: string }, created_at?: number, updated_at?: number }"
           }
         ]
       }
@@ -472,7 +827,7 @@
     {
       "path": "canva.api.comments.getReply",
       "shortPath": "comments.getReply",
-      "description": "Get a reply to a comment thread on a design",
+      "description": "Get a reply in a comment thread (Canva preview)",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -500,7 +855,7 @@
           {
             "key": "reply",
             "optional": false,
-            "type": "{ id: string, design_id?: string, thread_id?: string, author?: { id: string, display_name?: string }, content?: { plaintext?: string, markdown?: string }, created_at?: number, updated_at?: number }"
+            "type": "{ id: string, design_id?: string, thread_id?: string, author?: { id: string, display_name?: string }, content?: { plaintext?: string, markdown?: string }, mentions?: Record<string, any>, created_at?: number, updated_at?: number }"
           }
         ]
       }
@@ -508,7 +863,7 @@
     {
       "path": "canva.api.comments.getThread",
       "shortPath": "comments.getThread",
-      "description": "Get a comment thread on a design",
+      "description": "Get a comment or suggestion thread on a design (Canva preview)",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -530,8 +885,14 @@
         "fields": [
           {
             "key": "thread",
-            "optional": false,
-            "type": "{ id: string, design_id?: string, thread_type?: { type?: string, content?: { plaintext?: string, markdown?: string } }, author?: { id: string, display_name?: string }, assignee?: { id: string, display_name?: string }, created_at?: number, updated_at?: number }"
+            "optional": true,
+            "type": "{ id: string, design_id?: string, thread_type?: { type?: string, content?: { plaintext?: string, markdown?: string }, mentions?: Record<string, any>, assignee?: { id: string, display_name?: string }, resolver?: { id: string, display_name?: string }, suggested_edits?: Record<string, any>[], status?: string }, author?: { id: string, display_name?: string }, created_at?: number, updated_at?: number }"
+          },
+          {
+            "key": "comment",
+            "optional": true,
+            "type": "Record<string, any>",
+            "description": "The older comment shape, when Canva sends it."
           }
         ]
       }
@@ -539,7 +900,7 @@
     {
       "path": "canva.api.comments.listReplies",
       "shortPath": "comments.listReplies",
-      "description": "List replies to a comment thread on a design",
+      "description": "List the replies in a comment thread (Canva preview)",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -572,7 +933,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "{ id: string, design_id?: string, thread_id?: string, author?: { id: string, display_name?: string }, content?: { plaintext?: string, markdown?: string }, created_at?: number, updated_at?: number }[]"
+            "type": "{ id: string, design_id?: string, thread_id?: string, author?: { id: string, display_name?: string }, content?: { plaintext?: string, markdown?: string }, mentions?: Record<string, any>, created_at?: number, updated_at?: number }[]"
           },
           {
             "key": "continuation",
@@ -585,7 +946,7 @@
     {
       "path": "canva.api.designs.create",
       "shortPath": "designs.create",
-      "description": "Create a new Canva design",
+      "description": "Create a design: a preset or custom size (optionally with an image asset), a copy of a design, or a design from a brand template",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -593,7 +954,8 @@
           {
             "key": "type",
             "optional": true,
-            "type": "type_and_asset"
+            "type": "type_and_asset | design | brand_template",
+            "description": "type_and_asset (the default): a new design from design_type and/or asset_id. design: a copy of design_id. brand_template: a design from brand_template_id. The last two are Canva preview features."
           },
           {
             "key": "design_type",
@@ -603,12 +965,30 @@
           {
             "key": "asset_id",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "An image asset to put in the new design."
           },
           {
             "key": "title",
             "optional": true,
             "type": "string"
+          },
+          {
+            "key": "design_id",
+            "optional": true,
+            "type": "string",
+            "description": "The design to copy."
+          },
+          {
+            "key": "brand_template_id",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "page_numbers",
+            "optional": true,
+            "type": "number[]",
+            "description": "Copy only these pages (type design or brand_template)."
           }
         ]
       },
@@ -626,7 +1006,7 @@
     {
       "path": "canva.api.designs.get",
       "shortPath": "designs.get",
-      "description": "Get metadata for a design",
+      "description": "Get a design: title, owner, page count, thumbnail, edit and view links",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -650,9 +1030,36 @@
       }
     },
     {
+      "path": "canva.api.designs.getDataset",
+      "shortPath": "designs.getDataset",
+      "description": "Get a design's autofill fields and the kind of data each takes",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "designId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "dataset",
+            "optional": true,
+            "type": "Record<string, { type: image | text | chart | sheet }>",
+            "description": "Autofill field names and the kind of data each takes (image, text, chart or sheet). Absent when there are none."
+          }
+        ]
+      }
+    },
+    {
       "path": "canva.api.designs.getExportFormats",
       "shortPath": "designs.getExportFormats",
-      "description": "Get the export formats available for a design",
+      "description": "List the file formats a design can be exported to",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -678,7 +1085,7 @@
     {
       "path": "canva.api.designs.getPages",
       "shortPath": "designs.getPages",
-      "description": "Get pages for a design",
+      "description": "List the pages of a design with their thumbnails and sizes (Canva preview)",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -691,7 +1098,8 @@
           {
             "key": "offset",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "First page number to return, starting at 1."
           },
           {
             "key": "limit",
@@ -714,7 +1122,7 @@
     {
       "path": "canva.api.designs.list",
       "shortPath": "designs.list",
-      "description": "List designs in the user projects",
+      "description": "List or search designs in the user's projects",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -765,8 +1173,18 @@
     {
       "path": "canva.api.exports.create",
       "shortPath": "exports.create",
-      "description": "Start a design export job",
-      "riskLevel": "write",
+      "description": "Start exporting a design to PDF, PNG, JPG, GIF, PPTX, MP4, HTML or CSV; a multi-page PNG or JPG export gives one file per page. Download links last 24 hours",
+      "riskLevel": "read",
+      "job": {
+        "idPath": "job.id",
+        "status": {
+          "op": "exports.get",
+          "idArg": "exportId",
+          "statusPath": "job.status",
+          "done": ["success"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -778,7 +1196,7 @@
           {
             "key": "format",
             "optional": false,
-            "type": "{ type: pdf, size?: a4 | a3 | letter | legal, pages?: number[], export_quality?: regular | pro } | { type: jpg, quality: number, width?: number, height?: number, pages?: number[], export_quality?: regular | pro } | { type: png, width?: number, height?: number, pages?: number[], lossless?: boolean, transparent_background?: boolean, as_single_image?: boolean, export_quality?: regular | pro } | { type: gif, width?: number, height?: number, pages?: number[], export_quality?: regular | pro } | { type: pptx, pages?: number[] } | { type: mp4, quality?: horizontal_480p | horizontal_720p | horizontal_1080p | horizontal_4k | vertical_480p | vertical_720p | vertical_1080p | vertical_4k } | { type: html_bundle, pages?: number[] } | { type: html_standalone, pages?: number[] } | { type: csv, pages?: number[] }"
+            "type": "{ type: pdf, export_quality?: regular | pro, size?: a4 | a3 | letter | legal, pages?: number[] } | { type: jpg, export_quality?: regular | pro, quality: number, width?: number, height?: number, pages?: number[] } | { type: png, export_quality?: regular | pro, width?: number, height?: number, lossless?: boolean, transparent_background?: boolean, as_single_image?: boolean, pages?: number[] } | { type: gif, export_quality?: regular | pro, width?: number, height?: number, pages?: number[] } | { type: pptx, pages?: number[] } | { type: mp4, export_quality?: regular | pro, quality: horizontal_480p | horizontal_720p | horizontal_1080p | horizontal_4k | vertical_480p | vertical_720p | vertical_1080p | vertical_4k, pages?: number[] } | { type: html_bundle, pages?: number[] } | { type: html_standalone, pages?: number[] } | { type: csv, pages?: number[] }"
           }
         ]
       },
@@ -794,9 +1212,101 @@
       }
     },
     {
+      "path": "canva.api.exports.download",
+      "shortPath": "exports.download",
+      "description": "Download one file of a finished export (one page of a PNG or JPG export) and return it as a file; index picks which",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "exportId",
+            "optional": false,
+            "type": "string",
+            "description": "The id of a finished export job."
+          },
+          {
+            "key": "index",
+            "optional": true,
+            "type": "number",
+            "description": "Which of the job's download URLs to fetch, from 0 (the default). A multi-page PNG or JPG export has one per page, so index 4 is the fifth exported page."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
+          },
+          {
+            "key": "exportId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "index",
+            "optional": false,
+            "type": "number"
+          },
+          {
+            "key": "count",
+            "optional": false,
+            "type": "number",
+            "description": "How many files the export has; call again with index up to count - 1."
+          },
+          {
+            "key": "url",
+            "optional": false,
+            "type": "string",
+            "description": "The download URL (valid for 24 hours after the export finished)."
+          }
+        ]
+      }
+    },
+    {
       "path": "canva.api.exports.get",
       "shortPath": "exports.get",
-      "description": "Get the status of an export job",
+      "description": "Get an export job's status and its download URLs",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -822,7 +1332,7 @@
     {
       "path": "canva.api.folders.create",
       "shortPath": "folders.create",
-      "description": "Create a folder",
+      "description": "Create a folder in projects, Uploads or another folder",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -835,7 +1345,8 @@
           {
             "key": "parent_folder_id",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "root for the top level of projects, uploads for the Uploads folder, or a folder id."
           }
         ]
       },
@@ -853,7 +1364,7 @@
     {
       "path": "canva.api.folders.delete",
       "shortPath": "folders.delete",
-      "description": "Delete a folder",
+      "description": "Delete a folder; the user's content in it moves to the trash",
       "riskLevel": "destructive",
       "input": {
         "kind": "object",
@@ -879,7 +1390,7 @@
     {
       "path": "canva.api.folders.get",
       "shortPath": "folders.get",
-      "description": "Get metadata for a folder",
+      "description": "Get a folder",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -905,7 +1416,7 @@
     {
       "path": "canva.api.folders.listItems",
       "shortPath": "folders.listItems",
-      "description": "List items in a folder",
+      "description": "List the designs, folders, images and brand templates in a folder",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -928,7 +1439,8 @@
           {
             "key": "item_types",
             "optional": true,
-            "type": "(design | folder | image | brand_template)[]"
+            "type": "(design | folder | image | brand_template)[]",
+            "description": "brand_template items are returned only when listed here."
           },
           {
             "key": "sort_by",
@@ -948,7 +1460,7 @@
           {
             "key": "items",
             "optional": false,
-            "type": "({ type: folder, folder: { id: string, name: string, created_at: number, updated_at: number, thumbnail?: { width: number, height: number, url: string } } } | { type: design, design: { id: string, title?: string, thumbnail?: { width: number, height: number, url: string }, urls: { edit_url: string, view_url: string }, created_at: number, updated_at: number, page_count?: number, design_types?: string[], owner?: { user_id: string, team_id: string }, url?: string } } | { type: image, image: { type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, owner?: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string } } } | { type: brand_template, brand_template: { id: string, title?: string, view_url?: string, create_url?: string, thumbnail?: { width: number, height: number, url: string }, created_at?: number, updated_at?: number } })[]"
+            "type": "({ type: folder, folder: { id: string, name: string, created_at: number, updated_at: number, thumbnail?: { width: number, height: number, url: string } } } | { type: design, design: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, urls?: { edit_url: string, view_url: string }, created_at?: number, updated_at?: number, page_count?: number, owner?: { user_id: string, team_id: string } } } | { type: image, image: { type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, owner?: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string }, metadata?: { type: image, width?: number, height?: number, smart_tags?: string[] } | { type: video, width: number, height: number, duration?: number } } } | { type: brand_template, brand_template: { id: string, title?: string, view_url?: string, create_url?: string, thumbnail?: { width: number, height: number, url: string } | null, created_at?: number, updated_at?: number } })[]"
           },
           {
             "key": "continuation",
@@ -961,7 +1473,7 @@
     {
       "path": "canva.api.folders.moveItem",
       "shortPath": "folders.moveItem",
-      "description": "Move an item to another folder",
+      "description": "Move a design, folder or image to another folder",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -992,7 +1504,7 @@
     {
       "path": "canva.api.folders.update",
       "shortPath": "folders.update",
-      "description": "Update a folder name",
+      "description": "Rename a folder",
       "riskLevel": "write",
       "input": {
         "kind": "object",
@@ -1021,25 +1533,213 @@
       }
     },
     {
-      "path": "canva.api.imports.create",
-      "shortPath": "imports.create",
-      "description": "Start a job to import a design from binary content",
+      "path": "canva.api.generations.create",
+      "shortPath": "generations.create",
+      "description": "Start generating a presentation or doc from a text brief and optional outline (Canva preview)",
       "riskLevel": "write",
+      "job": {
+        "idPath": "job.id",
+        "status": {
+          "op": "generations.get",
+          "idArg": "jobId",
+          "statusPath": "job.status",
+          "done": ["success"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
           {
-            "key": "title",
+            "key": "brief",
+            "optional": false,
+            "type": "string",
+            "description": "What the design should be about, in plain text."
+          },
+          {
+            "key": "design_type",
+            "optional": false,
+            "type": "doc | presentation"
+          },
+          {
+            "key": "outline",
+            "optional": true,
+            "type": "{ title: string, description?: string, points?: string[] }[]",
+            "description": "Sections in order, e.g. one per slide."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job",
+            "optional": false,
+            "type": "{ id: string, status: in_progress | success | failed, result?: { design: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, urls?: { edit_url: string, view_url: string }, created_at?: number, updated_at?: number, page_count?: number } }, error?: { code: string, message: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.generations.get",
+      "shortPath": "generations.get",
+      "description": "Get a design generation job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job",
+            "optional": false,
+            "type": "{ id: string, status: in_progress | success | failed, result?: { design: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, urls?: { edit_url: string, view_url: string }, created_at?: number, updated_at?: number, page_count?: number } }, error?: { code: string, message: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.imageGenerations.create",
+      "shortPath": "imageGenerations.create",
+      "description": "Start generating an image from a prompt, optionally saved to uploads (Canva preview; uses Canva AI quota)",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "job.id",
+        "status": {
+          "op": "imageGenerations.get",
+          "idArg": "jobId",
+          "statusPath": "job.status",
+          "done": ["success"],
+          "failed": ["failed"]
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "prompt",
             "optional": false,
             "type": "string"
           },
           {
-            "key": "contentBase64",
-            "optional": false,
-            "type": "string"
+            "key": "aspect_ratio",
+            "optional": true,
+            "type": "square | landscape | portrait | landscape_3_2 | portrait_2_3 | portrait_4_5 | landscape_4_3 | portrait_3_4 | landscape_5_4 | landscape_2_1 | portrait_1_2"
           },
           {
-            "key": "mime_type",
+            "key": "model",
+            "optional": true,
+            "type": "craft_v1_2k | lucid_origin | z_image_turbo"
+          },
+          {
+            "key": "idempotency_key",
+            "optional": true,
+            "type": "string",
+            "description": "A UUID; a retry with the same key returns the same job. One is made when left out."
+          },
+          {
+            "key": "save_to_uploads",
+            "optional": true,
+            "type": "boolean",
+            "description": "Also save the image to the user's Canva uploads as an asset."
+          },
+          {
+            "key": "asset_name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the saved asset, with save_to_uploads."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job",
+            "optional": false,
+            "type": "{ id: string, status: in_progress | success | failed, result?: { image: { url: string, asset?: { type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, thumbnail?: { width: number, height: number, url: string } }, width: number, height: number } }, error?: { code: string, message: string } }"
+          },
+          {
+            "key": "model_expiry",
+            "optional": true,
+            "type": "{ model: string, expires_at: number }",
+            "description": "Set when the chosen model is being retired."
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.imageGenerations.get",
+      "shortPath": "imageGenerations.get",
+      "description": "Get an image generation job and its download URL",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job",
+            "optional": false,
+            "type": "{ id: string, status: in_progress | success | failed, result?: { image: { url: string, asset?: { type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, thumbnail?: { width: number, height: number, url: string } }, width: number, height: number } }, error?: { code: string, message: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.imageTransformations.create",
+      "shortPath": "imageTransformations.create",
+      "description": "Start removing the background of an image asset, saved as a new asset (Canva preview)",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "job.id",
+        "status": {
+          "op": "imageTransformations.get",
+          "idArg": "jobId",
+          "statusPath": "job.status",
+          "done": ["success"],
+          "failed": ["failed"]
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset_id",
+            "optional": false,
+            "type": "string",
+            "description": "The image asset to transform; it is not changed."
+          },
+          {
+            "key": "name",
+            "optional": true,
+            "type": "string",
+            "description": "Name of the new asset."
+          },
+          {
+            "key": "transformations",
+            "optional": false,
+            "type": "{ type: background_removal }[]",
+            "description": "Applied in order. Canva offers background_removal today."
+          },
+          {
+            "key": "idempotency_key",
             "optional": true,
             "type": "string"
           }
@@ -1051,7 +1751,129 @@
           {
             "key": "job",
             "optional": false,
-            "type": "{ id: string, status: in_progress | success | failed, result?: { designs: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string } }[] }, error?: { code: string, message: string } }"
+            "type": "{ id?: string, status: in_progress | success | failed, result?: { asset: { type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, owner?: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string }, metadata?: { type: image, width?: number, height?: number, smart_tags?: string[] } | { type: video, width: number, height: number, duration?: number } }, url?: string }, error?: { code: string, message: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.imageTransformations.get",
+      "shortPath": "imageTransformations.get",
+      "description": "Get an image transformation job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job",
+            "optional": false,
+            "type": "{ id?: string, status: in_progress | success | failed, result?: { asset: { type: image | video, id: string, name: string, tags: string[], created_at: number, updated_at: number, owner?: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string }, metadata?: { type: image, width?: number, height?: number, smart_tags?: string[] } | { type: video, width: number, height: number, duration?: number } }, url?: string }, error?: { code: string, message: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.imports.create",
+      "shortPath": "imports.create",
+      "description": "Start importing a file (PDF, PowerPoint, Keynote, Word and more) as a new Canva design",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "job.id",
+        "status": {
+          "op": "imports.get",
+          "idArg": "jobId",
+          "statusPath": "job.status",
+          "done": ["success"],
+          "failed": ["failed"]
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "title",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "file",
+            "optional": true,
+            "type": "string | { url: string, filename?: string, contentType?: string } | { base64: string, filename?: string, contentType?: string }",
+            "description": "The file to import: PDF, PowerPoint, Keynote, Word, Excel, Illustrator, Photoshop and more (see Canva design imports)."
+          },
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file as base64. Prefer file for anything but a small file."
+          },
+          {
+            "key": "mime_type",
+            "optional": true,
+            "type": "string",
+            "description": "The file type; Canva detects it when left out."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job",
+            "optional": false,
+            "type": "{ id: string, status: in_progress | success | failed, result?: { designs: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, urls?: { edit_url: string, view_url: string }, created_at?: number, updated_at?: number, page_count?: number }[] }, error?: { code: string, message: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.imports.createFromImage",
+      "shortPath": "imports.createFromImage",
+      "description": "Start turning an image asset into an editable design with Magic Layers (Canva preview)",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "job.id",
+        "status": {
+          "op": "imports.getFromImage",
+          "idArg": "jobId",
+          "statusPath": "job.status",
+          "done": ["success"],
+          "failed": ["failed"]
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "asset_id",
+            "optional": false,
+            "type": "string",
+            "description": "An image asset in the user's library (upload it with assetUploads first)."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job",
+            "optional": false,
+            "type": "{ id: string, status: in_progress | success | failed, result?: { design: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, urls?: { edit_url: string, view_url: string }, created_at?: number, updated_at?: number, page_count?: number } }, error?: { code: string, message: string } }"
           }
         ]
       }
@@ -1059,8 +1881,18 @@
     {
       "path": "canva.api.imports.createFromUrl",
       "shortPath": "imports.createFromUrl",
-      "description": "Start a job to import a design from a URL",
+      "description": "Start importing a file from a public URL as a new Canva design",
       "riskLevel": "write",
+      "job": {
+        "idPath": "job.id",
+        "status": {
+          "op": "imports.getFromUrl",
+          "idArg": "jobId",
+          "statusPath": "job.status",
+          "done": ["success"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -1072,7 +1904,8 @@
           {
             "key": "url",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "A public URL Canva fetches."
           },
           {
             "key": "mime_type",
@@ -1087,7 +1920,7 @@
           {
             "key": "job",
             "optional": false,
-            "type": "{ id: string, status: in_progress | success | failed, result?: { designs: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string } }[] }, error?: { code: string, message: string } }"
+            "type": "{ id: string, status: in_progress | success | failed, result?: { designs: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, urls?: { edit_url: string, view_url: string }, created_at?: number, updated_at?: number, page_count?: number }[] }, error?: { code: string, message: string } }"
           }
         ]
       }
@@ -1095,7 +1928,7 @@
     {
       "path": "canva.api.imports.get",
       "shortPath": "imports.get",
-      "description": "Get the status of a design import job",
+      "description": "Get a design import job",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1113,7 +1946,33 @@
           {
             "key": "job",
             "optional": false,
-            "type": "{ id: string, status: in_progress | success | failed, result?: { designs: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string } }[] }, error?: { code: string, message: string } }"
+            "type": "{ id: string, status: in_progress | success | failed, result?: { designs: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, urls?: { edit_url: string, view_url: string }, created_at?: number, updated_at?: number, page_count?: number }[] }, error?: { code: string, message: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.imports.getFromImage",
+      "shortPath": "imports.getFromImage",
+      "description": "Get an image-to-design import job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job",
+            "optional": false,
+            "type": "{ id: string, status: in_progress | success | failed, result?: { design: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, urls?: { edit_url: string, view_url: string }, created_at?: number, updated_at?: number, page_count?: number } }, error?: { code: string, message: string } }"
           }
         ]
       }
@@ -1121,7 +1980,7 @@
     {
       "path": "canva.api.imports.getFromUrl",
       "shortPath": "imports.getFromUrl",
-      "description": "Get the status of a URL design import job",
+      "description": "Get a URL design import job",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1139,7 +1998,247 @@
           {
             "key": "job",
             "optional": false,
-            "type": "{ id: string, status: in_progress | success | failed, result?: { designs: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string } }[] }, error?: { code: string, message: string } }"
+            "type": "{ id: string, status: in_progress | success | failed, result?: { designs: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, urls?: { edit_url: string, view_url: string }, created_at?: number, updated_at?: number, page_count?: number }[] }, error?: { code: string, message: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.keys.list",
+      "shortPath": "keys.list",
+      "description": "Get the public keys that verify Canva webhook signatures (preview)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": []
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "keys",
+            "optional": false,
+            "type": "{ kid: string, kty: string, crv: string, x: string }[]"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.merges.create",
+      "shortPath": "merges.create",
+      "description": "Start inserting, moving or deleting pages: build a new design from other designs or change one in place (Canva preview)",
+      "riskLevel": "write",
+      "job": {
+        "idPath": "job.id",
+        "status": {
+          "op": "merges.get",
+          "idArg": "jobId",
+          "statusPath": "job.status",
+          "done": ["success"],
+          "failed": ["failed"]
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "create_new_design | modify_existing_design",
+            "description": "create_new_design builds a new design from the operations; modify_existing_design changes design_id in place."
+          },
+          {
+            "key": "design_id",
+            "optional": true,
+            "type": "string",
+            "description": "The design to change, for modify_existing_design."
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string",
+            "description": "Required for create_new_design."
+          },
+          {
+            "key": "operations",
+            "optional": false,
+            "type": "({ type: insert_pages, source: { type: design, design_id: string, page_numbers?: number[] }, after_page_number?: number } | { type: move_pages, from_page_numbers: number[], to_after_page_number: number } | { type: delete_pages, page_numbers: number[] })[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job",
+            "optional": false,
+            "type": "{ id: string, status: in_progress | success | failed, result?: { design: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, urls?: { edit_url: string, view_url: string }, created_at?: number, updated_at?: number, page_count?: number } }, error?: { code: string, message: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.merges.get",
+      "shortPath": "merges.get",
+      "description": "Get a design merge job",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "jobId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job",
+            "optional": false,
+            "type": "{ id: string, status: in_progress | success | failed, result?: { design: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, urls?: { edit_url: string, view_url: string }, created_at?: number, updated_at?: number, page_count?: number } }, error?: { code: string, message: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.printPartner.createDesign",
+      "shortPath": "printPartner.createDesign",
+      "description": "Create a design for a print product (Canva Print Partner apps only, preview)",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "design_source",
+            "optional": false,
+            "type": "{ type: dimensions, dimensions: { width: number, height: number, units: in | cm | mm }, product_type?: string } | { type: partner_product_id, partner_product_id: string }"
+          },
+          {
+            "key": "title",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "bleed",
+            "optional": true,
+            "type": "number",
+            "description": "Bleed in micrometres."
+          },
+          {
+            "key": "min_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_pages",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "design",
+            "optional": false,
+            "type": "{ id: string, title?: string, owner: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string }, urls: { edit_url: string, view_url: string }, created_at: number, updated_at: number, page_count?: number, design_types?: string[] }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.printPartner.createExport",
+      "shortPath": "printPartner.createExport",
+      "description": "Start a print-ready export (Canva Print Partner apps only, preview)",
+      "riskLevel": "read",
+      "job": {
+        "idPath": "job.id",
+        "status": {
+          "op": "exports.get",
+          "idArg": "exportId",
+          "statusPath": "job.status",
+          "done": ["success"],
+          "failed": ["failed"]
+        }
+      },
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "design_id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "format",
+            "optional": false,
+            "type": "{ type: pdf, bleed?: number, crop_marks?: boolean, cmyk?: boolean, pdfx?: boolean } | { type: jpg } | { type: png }"
+          },
+          {
+            "key": "dimensions",
+            "optional": true,
+            "type": "{ width?: number, height?: number, units?: px | in | cm | mm }"
+          },
+          {
+            "key": "pages",
+            "optional": true,
+            "type": "number[]"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "job",
+            "optional": false,
+            "type": "{ id: string, status: in_progress | success | failed, urls?: string[], error?: { code: string, message: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "canva.api.printPartner.getDesign",
+      "shortPath": "printPartner.getDesign",
+      "description": "Get a design with print proofing settings (Canva Print Partner apps only, preview)",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "designId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "bleed",
+            "optional": true,
+            "type": "number",
+            "description": "Bleed in micrometres."
+          },
+          {
+            "key": "min_pages",
+            "optional": true,
+            "type": "number"
+          },
+          {
+            "key": "max_pages",
+            "optional": true,
+            "type": "number"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "design",
+            "optional": false,
+            "type": "{ id: string, title?: string, owner: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string }, urls: { edit_url: string, view_url: string }, created_at: number, updated_at: number, page_count?: number, design_types?: string[] }"
           }
         ]
       }
@@ -1147,8 +2246,18 @@
     {
       "path": "canva.api.resizes.create",
       "shortPath": "resizes.create",
-      "description": "Start a job to resize a design",
+      "description": "Start making a resized copy of a design (Canva Pro; a few free trial uses)",
       "riskLevel": "write",
+      "job": {
+        "idPath": "job.id",
+        "status": {
+          "op": "resizes.get",
+          "idArg": "jobId",
+          "statusPath": "job.status",
+          "done": ["success"],
+          "failed": ["failed"]
+        }
+      },
       "input": {
         "kind": "object",
         "fields": [
@@ -1170,7 +2279,7 @@
           {
             "key": "job",
             "optional": false,
-            "type": "{ id: string, status: in_progress | success | failed, result?: { design: { id: string, title?: string, owner: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string }, urls: { edit_url: string, view_url: string }, created_at: number, updated_at: number, page_count?: number, design_types?: string[] } }, error?: { code: string, message: string } }"
+            "type": "{ id: string, status: in_progress | success | failed, result?: { design: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, urls?: { edit_url: string, view_url: string }, created_at?: number, updated_at?: number, page_count?: number }, trial_information?: { uses_remaining: number, upgrade_url: string } }, error?: { code: string, message: string } }"
           }
         ]
       }
@@ -1178,7 +2287,7 @@
     {
       "path": "canva.api.resizes.get",
       "shortPath": "resizes.get",
-      "description": "Get the status of a design resize job",
+      "description": "Get a design resize job",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1196,7 +2305,7 @@
           {
             "key": "job",
             "optional": false,
-            "type": "{ id: string, status: in_progress | success | failed, result?: { design: { id: string, title?: string, owner: { user_id: string, team_id: string }, thumbnail?: { width: number, height: number, url: string }, urls: { edit_url: string, view_url: string }, created_at: number, updated_at: number, page_count?: number, design_types?: string[] } }, error?: { code: string, message: string } }"
+            "type": "{ id: string, status: in_progress | success | failed, result?: { design: { id: string, title?: string, url?: string, thumbnail?: { width: number, height: number, url: string }, urls?: { edit_url: string, view_url: string }, created_at?: number, updated_at?: number, page_count?: number }, trial_information?: { uses_remaining: number, upgrade_url: string } }, error?: { code: string, message: string } }"
           }
         ]
       }
@@ -1204,7 +2313,7 @@
     {
       "path": "canva.api.users.getCapabilities",
       "shortPath": "users.getCapabilities",
-      "description": "Get the authenticated user's capabilities",
+      "description": "List what the user's Canva plan allows through the API (autofill, brand templates, resize, design and image generation, background removal, analytics)",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1215,8 +2324,9 @@
         "fields": [
           {
             "key": "capabilities",
-            "optional": false,
-            "type": "string[]"
+            "optional": true,
+            "type": "string[]",
+            "description": "What the user's plan allows through the API, e.g. autofill, brand_template, resize, design_generation, image_generation, background_removal, analytics."
           }
         ]
       }
@@ -1224,7 +2334,7 @@
     {
       "path": "canva.api.users.getMe",
       "shortPath": "users.getMe",
-      "description": "Get the authenticated user ID and team ID",
+      "description": "Get the user ID and team ID of the connected Canva account",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1244,7 +2354,7 @@
     {
       "path": "canva.api.users.getProfile",
       "shortPath": "users.getProfile",
-      "description": "Get the authenticated user profile",
+      "description": "Get the connected user's display name",
       "riskLevel": "read",
       "input": {
         "kind": "object",

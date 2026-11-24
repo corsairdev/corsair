@@ -14,6 +14,8 @@ export type BlogPostMeta = {
 	title: string;
 	description: string;
 	publishedAt: string;
+	/** Sanity `_updatedAt`: when the published post last changed. */
+	updatedAt?: string;
 	author: string;
 };
 
@@ -24,7 +26,6 @@ export type BlogImage = {
 
 export type BlogPost = BlogPostMeta & {
 	body: PortableTextBlock[];
-	updatedAt?: string;
 	metaTitle?: string;
 	metaDescription?: string;
 	keywords: string[];
@@ -38,12 +39,12 @@ type SanityPostRecord = {
 	title: string | null;
 	description: string | null;
 	publishedAt: string | null;
+	updatedAt?: string | null;
 	author: string | null;
 	body?: PortableTextBlock[];
 };
 
 type SanityPostDetailRecord = SanityPostRecord & {
-	updatedAt?: string | null;
 	metaTitle?: string | null;
 	metaDescription?: string | null;
 	targetKeywords?: string[] | null;
@@ -85,6 +86,7 @@ function toPostMeta(record: SanityPostRecord): BlogPostMeta | null {
 		title: record.title,
 		description: record.description ?? '',
 		publishedAt: record.publishedAt,
+		updatedAt: record.updatedAt ?? undefined,
 		author: record.author ?? 'Corsair Team',
 	};
 }
@@ -125,7 +127,6 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
 	return {
 		...meta,
 		body: record.body,
-		updatedAt: record.updatedAt ?? undefined,
 		metaTitle: record.metaTitle?.trim() || undefined,
 		metaDescription: record.metaDescription?.trim() || undefined,
 		keywords: (record.targetKeywords ?? []).filter(Boolean),

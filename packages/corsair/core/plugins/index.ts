@@ -690,6 +690,13 @@ export type OAuthConfig = {
 	 * e.g. `{ access_type: 'offline', prompt: 'consent' }` for Google offline access.
 	 */
 	authParams?: Record<string, string>;
+	/**
+	 * The provider requires PKCE (RFC 7636), as Canva does: the sign-in link
+	 * carries an S256 `code_challenge` and the code exchange sends the matching
+	 * `code_verifier`. Set `authParams.code_challenge_method` when the provider
+	 * spells the method differently.
+	 */
+	pkce?: boolean;
 };
 
 /**
