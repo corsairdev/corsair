@@ -378,19 +378,23 @@ const outlookEndpointMeta = {
 	},
 	'messages.get': {
 		riskLevel: 'read',
-		description: 'Get an email message by ID',
+		description:
+			'Reads one message by id. Body is HTML. Attachments are not included and this plugin cannot download them; hasAttachments only says whether any non-inline attachment exists, so it is false for a message with only inline ones.',
 	},
 	'messages.list': {
 		riskLevel: 'read',
-		description: 'List email messages in a folder',
+		description:
+			'Lists messages from one folder, or the whole mailbox including Deleted Items when folder is unset. 10 per page unless top is set (max 1000). Take the next skip from @odata.nextLink; it can exceed top, so do not add top to skip.',
 	},
 	'messages.query': {
 		riskLevel: 'read',
-		description: 'Query email messages with OData filters',
+		description:
+			'Raw OData filter over one folder or the whole mailbox. 10 per page unless top is set. Properties in orderby must also be in filter, first and in the same order, or Graph returns InefficientFilter.',
 	},
 	'messages.search': {
 		riskLevel: 'read',
-		description: 'Search email messages',
+		description:
+			"KQL search over the signed-in user's whole mailbox, newest sent first, at most 1,000 results. For a folder or date range use messages.list or messages.query.",
 	},
 	'messages.reply': {
 		riskLevel: 'write',
@@ -436,7 +440,11 @@ const outlookEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get a calendar event by ID',
 	},
-	'events.list': { riskLevel: 'read', description: 'List calendar events' },
+	'events.list': {
+		riskLevel: 'read',
+		description:
+			'Single events and series masters; with expand_recurring_events it lists the occurrences between start_datetime and end_datetime, one page at a time (next skip is in @odata.nextLink). Times are UTC unless timezone is set.',
+	},
 	'events.update': {
 		riskLevel: 'write',
 		description: 'Update a calendar event',
@@ -459,7 +467,8 @@ const outlookEndpointMeta = {
 	},
 	'events.getSchedule': {
 		riskLevel: 'read',
-		description: 'Get free/busy schedule for a calendar',
+		description:
+			'Free/busy for the listed schedules (email addresses), not event details. startTime and endTime are {dateTime, timeZone} objects.',
 	},
 	'calendars.create': {
 		riskLevel: 'write',
@@ -486,7 +495,11 @@ const outlookEndpointMeta = {
 		description: 'Create a new mail folder',
 	},
 	'folders.get': { riskLevel: 'read', description: 'Get a mail folder by ID' },
-	'folders.list': { riskLevel: 'read', description: 'List mail folders' },
+	'folders.list': {
+		riskLevel: 'read',
+		description:
+			'Top-level mail folders only; nested folders are not listed. Use a folder id or a name like "inbox" as folder in messages.list.',
+	},
 	'folders.update': { riskLevel: 'write', description: 'Rename a mail folder' },
 	'folders.delete': {
 		riskLevel: 'destructive',

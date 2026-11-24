@@ -6,11 +6,11 @@ rss: true
 
 Written from merged pull requests each time packages are released.
 
-<Update label="Week of November 23, 2026" description="corsair 0.2.31" tags={["SDK", "Plugins", "Cloud"]}>
+<Update label="Week of November 23, 2026" description="corsair 0.2.32" tags={["SDK", "Plugins", "Cloud"]}>
 
-## SDK: corsair 0.2.31
+## SDK: corsair 0.2.32
 
-Also released: `@corsair-dev/cli` 0.1.112, `@corsair-dev/langchain` 0.1.87, `@corsair-dev/llamaindex` 0.1.87, `@corsair-dev/mastra` 0.1.87, `@corsair-dev/mcp` 0.1.115, `@corsair-dev/studio` 0.1.98, `@corsair-dev/ui` 0.1.93.
+Also released: `@corsair-dev/cli` 0.1.113, `@corsair-dev/langchain` 0.1.88, `@corsair-dev/llamaindex` 0.1.88, `@corsair-dev/mastra` 0.1.88, `@corsair-dev/mcp` 0.1.116, `@corsair-dev/studio` 0.1.99, `@corsair-dev/ui` 0.1.95.
 
 - **corsair, studio and cli:** PKCE for plugin OAuth, for providers that require it ([#2712](https://github.com/corsairdev/corsair/pull/2712))
 
@@ -18,12 +18,16 @@ Also released: `@corsair-dev/cli` 0.1.112, `@corsair-dev/langchain` 0.1.87, `@co
 
 Now runs corsair 0.2.30.
 
-## 11 new plugins
+## 14 new plugins
 
-[Mailcoach](/plugins/mailcoach/overview), [Wispr Flow](/plugins/wisprflow/overview), [Meta Ads](/plugins/metaads/overview), [Productboard](/plugins/productboard/overview), [Spondyr](/plugins/spondyr/overview), [Metabase](/plugins/metabase/overview), [QuickBooks](/plugins/quickbooks/overview), [Zoho Books](/plugins/zohobooks/overview), [Amika](/plugins/amika/overview), [Fathom AI Notetaker](/plugins/fathomai/overview), [Inkbox](/plugins/inkbox/overview)
+[Mailcoach](/plugins/mailcoach/overview), [Wispr Flow](/plugins/wisprflow/overview), [Meta Ads](/plugins/metaads/overview), [Productboard](/plugins/productboard/overview), [Spondyr](/plugins/spondyr/overview), [Metabase](/plugins/metabase/overview), [QuickBooks](/plugins/quickbooks/overview), [Zoho Books](/plugins/zohobooks/overview), [Amika](/plugins/amika/overview), [Fathom AI Notetaker](/plugins/fathomai/overview), [Inkbox](/plugins/inkbox/overview), [Mocean](/plugins/mocean/overview), [Mopinion](/plugins/mopinion/overview), [Moosend](/plugins/moosend/overview)
 
-## 4 plugins updated
+## 8 plugins updated
 
+- **Google Drive 0.1.9:** Search.filesAndFolders takes fields like files.list ([#2725](https://github.com/corsairdev/corsair/pull/2725))
+- **Outlook 0.1.8:** Events.list honors timezone and expands recurring events ([#2723](https://github.com/corsairdev/corsair/pull/2723))
+- **Linear 0.1.9:** Issues.list filters by assignee, state, label and project ([#2724](https://github.com/corsairdev/corsair/pull/2724))
+- **HubSpot 0.1.9:** Recent records are the newest, and company domain search is a POST ([#2722](https://github.com/corsairdev/corsair/pull/2722))
 - **Gmail 0.1.10:** Add messages.getAttachment ([#2710](https://github.com/corsairdev/corsair/pull/2710))
 - **Canva 0.2.1:** Require corsair 0.2.31, the first release with PKCE ([#2717](https://github.com/corsairdev/corsair/pull/2717))
 - **Canva 0.2.0:** Cover Canva's current REST API (62 operations), download exports to files ([#2713](https://github.com/corsairdev/corsair/pull/2713))

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-24T12:33:48.619Z",
+  "generatedAt": "2026-11-24T15:35:10.021Z",
   "corsairVersion": "0.2.31",
   "catalogVersion": 2,
   "plugins": [
@@ -93903,7 +93903,7 @@
       "pluginId": "github",
       "kind": "api",
       "shortPath": "comments.list",
-      "haystack": "comments.list github.api.comments.list list all comments in a repository read"
+      "haystack": "comments.list github.api.comments.list issue and pull request conversation comments across one repo, not inline code-review comments. for one issue or pr use comments.listforissue. read"
     },
     {
       "pluginId": "github",
@@ -94017,7 +94017,7 @@
       "pluginId": "github",
       "kind": "api",
       "shortPath": "issues.list",
-      "haystack": "issues.list github.api.issues.list list issues in a repository read"
+      "haystack": "issues.list github.api.issues.list list open issues in one repo unless state is set. pull requests come back too, marked by a pullrequest key. read"
     },
     {
       "pluginId": "github",
@@ -94041,7 +94041,7 @@
       "pluginId": "github",
       "kind": "api",
       "shortPath": "pullRequests.list",
-      "haystack": "pullrequests.list github.api.pullrequests.list list pull requests read"
+      "haystack": "pullrequests.list github.api.pullrequests.list list open pull requests in one repo unless state is set. to find them by author or reviewer, use search.issues with is:pr. read"
     },
     {
       "pluginId": "github",
@@ -94089,13 +94089,13 @@
       "pluginId": "github",
       "kind": "api",
       "shortPath": "repositories.getContent",
-      "haystack": "repositories.getcontent github.api.repositories.getcontent get file or directory content from a repository read"
+      "haystack": "repositories.getcontent github.api.repositories.getcontent a file returns base64-encoded content; a directory returns an array of entries without content, at most 1,000. read"
     },
     {
       "pluginId": "github",
       "kind": "api",
       "shortPath": "repositories.list",
-      "haystack": "repositories.list github.api.repositories.list list repositories for the authenticated user read"
+      "haystack": "repositories.list github.api.repositories.list no owner: repos you own, collaborate on or reach through an org, private included. with owner: that account's public repos only. other repos: search.repositories. read"
     },
     {
       "pluginId": "github",
@@ -94137,7 +94137,7 @@
       "pluginId": "github",
       "kind": "api",
       "shortPath": "search.issues",
-      "haystack": "search.issues github.api.search.issues search github issues and pull requests read"
+      "haystack": "search.issues github.api.search.issues search issues and pull requests with github qualifiers in q, e.g. \"is:issue is:open repo:owner/name assignee:login\". users.getauthenticated gives your own login. read"
     },
     {
       "pluginId": "github",
@@ -94179,7 +94179,7 @@
       "pluginId": "github",
       "kind": "api",
       "shortPath": "users.list",
-      "haystack": "users.list github.api.users.list list all github users read"
+      "haystack": "users.list github.api.users.list every github account in id order, paged by since (a user id). to find a person use search.users or users.get. read"
     },
     {
       "pluginId": "github",
@@ -95985,7 +95985,7 @@
       "pluginId": "gmail",
       "kind": "api",
       "shortPath": "drafts.list",
-      "haystack": "drafts.list gmail.api.drafts.list list drafts in the mailbox read"
+      "haystack": "drafts.list gmail.api.drafts.list returns only draft id and message id/threadid. use drafts.get to read subject and body read"
     },
     {
       "pluginId": "gmail",
@@ -96039,19 +96039,19 @@
       "pluginId": "gmail",
       "kind": "api",
       "shortPath": "messages.get",
-      "haystack": "messages.get gmail.api.messages.get get a specific message read"
+      "haystack": "messages.get gmail.api.messages.get read one message. default format is full, with body text base64url-encoded in payload.body.data, or for multipart messages in payload.parts[].body.data (parts nest); use format metadata for headers only. read"
     },
     {
       "pluginId": "gmail",
       "kind": "api",
       "shortPath": "messages.getAttachment",
-      "haystack": "messages.getattachment gmail.api.messages.getattachment fetch an attachment of a message by partid (as shown in search results) or attachmentid. returns the file like drive files.download: inline when small, otherwise saved by the host and returned as fileid. read"
+      "haystack": "messages.getattachment gmail.api.messages.getattachment fetch an attachment of a message by partid (from messages.get, format full) or attachmentid. returns the file like drive files.download: inline when small, otherwise saved by the host and returned as fileid read"
     },
     {
       "pluginId": "gmail",
       "kind": "api",
       "shortPath": "messages.list",
-      "haystack": "messages.list gmail.api.messages.list list messages in a mailbox read"
+      "haystack": "messages.list gmail.api.messages.list returns only id and threadid per message, no subject or body. use messages.get to read one read"
     },
     {
       "pluginId": "gmail",
@@ -96081,13 +96081,13 @@
       "pluginId": "gmail",
       "kind": "api",
       "shortPath": "threads.get",
-      "haystack": "threads.get gmail.api.threads.get get a specific thread read"
+      "haystack": "threads.get gmail.api.threads.get get every message in a thread. format works as in messages.get read"
     },
     {
       "pluginId": "gmail",
       "kind": "api",
       "shortPath": "threads.list",
-      "haystack": "threads.list gmail.api.threads.list list threads in the mailbox read"
+      "haystack": "threads.list gmail.api.threads.list returns thread id and snippet only, no messages. use threads.get for the messages read"
     },
     {
       "pluginId": "gmail",
@@ -98055,7 +98055,7 @@
       "pluginId": "googlecalendar",
       "kind": "api",
       "shortPath": "calendar.getAvailability",
-      "haystack": "calendar.getavailability googlecalendar.api.calendar.getavailability get free/busy availability for a calendar read"
+      "haystack": "calendar.getavailability googlecalendar.api.calendar.getavailability busy time ranges only, no event details; use events.getmany to see the events read"
     },
     {
       "pluginId": "googlecalendar",
@@ -98073,13 +98073,13 @@
       "pluginId": "googlecalendar",
       "kind": "api",
       "shortPath": "events.get",
-      "haystack": "events.get googlecalendar.api.events.get get a specific calendar event read"
+      "haystack": "events.get googlecalendar.api.events.get get one event by its event id, not the icaluid. for one occurrence of a recurring event, use the instance id from events.getmany with singleevents true read"
     },
     {
       "pluginId": "googlecalendar",
       "kind": "api",
       "shortPath": "events.getMany",
-      "haystack": "events.getmany googlecalendar.api.events.getmany list calendar events read"
+      "haystack": "events.getmany googlecalendar.api.events.getmany list events in a time window. set singleevents true or recurring events appear once; page with pagetoken until nextpagetoken is empty read"
     },
     {
       "pluginId": "googlecalendar",
@@ -99255,19 +99255,19 @@
       "pluginId": "googledrive",
       "kind": "api",
       "shortPath": "files.exportText",
-      "haystack": "files.exporttext googledrive.api.files.exporttext get the plain text of a google doc across all of its tabs and store it read"
+      "haystack": "files.exporttext googledrive.api.files.exporttext google docs only; returns the plain text of all tabs, cut at 500,000 characters. for other files use files.export or files.download. read"
     },
     {
       "pluginId": "googledrive",
       "kind": "api",
       "shortPath": "files.get",
-      "haystack": "files.get googledrive.api.files.get get metadata for a specific file read"
+      "haystack": "files.get googledrive.api.files.get metadata of one file; set fields to choose which, e.g. \"id,name,modifiedtime,owners,webviewlink,size\". for content use files.download, files.export or files.exporttext. read"
     },
     {
       "pluginId": "googledrive",
       "kind": "api",
       "shortPath": "files.list",
-      "haystack": "files.list googledrive.api.files.list list files in google drive read"
+      "haystack": "files.list googledrive.api.files.list lists files, returning only id, name and mimetype unless fields is set. includes trashed files unless q has \"trashed = false\". page with nextpagetoken. read"
     },
     {
       "pluginId": "googledrive",
@@ -99315,7 +99315,7 @@
       "pluginId": "googledrive",
       "kind": "api",
       "shortPath": "folders.list",
-      "haystack": "folders.list googledrive.api.folders.list list folders in google drive read"
+      "haystack": "folders.list googledrive.api.folders.list lists folders only. for what is inside a folder use files.list with q \"'folder_id' in parents and trashed = false\". read"
     },
     {
       "pluginId": "googledrive",
@@ -99327,7 +99327,7 @@
       "pluginId": "googledrive",
       "kind": "api",
       "shortPath": "search.filesAndFolders",
-      "haystack": "search.filesandfolders googledrive.api.search.filesandfolders search for files and folders in google drive read"
+      "haystack": "search.filesandfolders googledrive.api.search.filesandfolders files and folders matching a drive q, returning only id, name and mimetype unless fields is set. includes trashed files unless q has \"trashed = false\". read"
     },
     {
       "pluginId": "googledrive",
@@ -107811,25 +107811,25 @@
       "pluginId": "hubspot",
       "kind": "api",
       "shortPath": "companies.getMany",
-      "haystack": "companies.getmany hubspot.api.companies.getmany get multiple companies read"
+      "haystack": "companies.getmany hubspot.api.companies.getmany pages through companies in id order, default properties only unless properties is set. to find a company by domain use companies.searchbydomain. read"
     },
     {
       "pluginId": "hubspot",
       "kind": "api",
       "shortPath": "companies.getRecentlyCreated",
-      "haystack": "companies.getrecentlycreated hubspot.api.companies.getrecentlycreated list recently created companies read"
+      "haystack": "companies.getrecentlycreated hubspot.api.companies.getrecentlycreated newest companies first by creation date; since keeps only those created at or after it. page with paging.next.after. read"
     },
     {
       "pluginId": "hubspot",
       "kind": "api",
       "shortPath": "companies.getRecentlyUpdated",
-      "haystack": "companies.getrecentlyupdated hubspot.api.companies.getrecentlyupdated list recently updated companies read"
+      "haystack": "companies.getrecentlyupdated hubspot.api.companies.getrecentlyupdated most recently modified companies first; since keeps only those modified at or after it. page with paging.next.after. read"
     },
     {
       "pluginId": "hubspot",
       "kind": "api",
       "shortPath": "companies.searchByDomain",
-      "haystack": "companies.searchbydomain hubspot.api.companies.searchbydomain search companies by domain name read"
+      "haystack": "companies.searchbydomain hubspot.api.companies.searchbydomain finds companies whose domain equals domain exactly (a search, not a prefix match). read"
     },
     {
       "pluginId": "hubspot",
@@ -107871,25 +107871,25 @@
       "pluginId": "hubspot",
       "kind": "api",
       "shortPath": "contacts.getMany",
-      "haystack": "contacts.getmany hubspot.api.contacts.getmany get multiple contacts read"
+      "haystack": "contacts.getmany hubspot.api.contacts.getmany pages through contacts in id order, default properties only unless properties is set. to find contacts by field or date use contacts.search. read"
     },
     {
       "pluginId": "hubspot",
       "kind": "api",
       "shortPath": "contacts.getRecentlyCreated",
-      "haystack": "contacts.getrecentlycreated hubspot.api.contacts.getrecentlycreated list recently created contacts read"
+      "haystack": "contacts.getrecentlycreated hubspot.api.contacts.getrecentlycreated newest contacts first by creation date; since keeps only those created at or after it. page with paging.next.after. read"
     },
     {
       "pluginId": "hubspot",
       "kind": "api",
       "shortPath": "contacts.getRecentlyUpdated",
-      "haystack": "contacts.getrecentlyupdated hubspot.api.contacts.getrecentlyupdated list recently updated contacts read"
+      "haystack": "contacts.getrecentlyupdated hubspot.api.contacts.getrecentlyupdated most recently modified contacts first; since keeps only those modified at or after it. page with paging.next.after. read"
     },
     {
       "pluginId": "hubspot",
       "kind": "api",
       "shortPath": "contacts.search",
-      "haystack": "contacts.search hubspot.api.contacts.search search contacts read"
+      "haystack": "contacts.search hubspot.api.contacts.search search with query text and/or filtergroups; only default properties come back unless properties is set. up to 200 per page and 10,000 results; follow paging.next.after. read"
     },
     {
       "pluginId": "hubspot",
@@ -107919,25 +107919,25 @@
       "pluginId": "hubspot",
       "kind": "api",
       "shortPath": "deals.getMany",
-      "haystack": "deals.getmany hubspot.api.deals.getmany get multiple deals read"
+      "haystack": "deals.getmany hubspot.api.deals.getmany pages through deals in id order, default properties only unless properties is set. to find deals by field or date use deals.search. read"
     },
     {
       "pluginId": "hubspot",
       "kind": "api",
       "shortPath": "deals.getRecentlyCreated",
-      "haystack": "deals.getrecentlycreated hubspot.api.deals.getrecentlycreated list recently created deals read"
+      "haystack": "deals.getrecentlycreated hubspot.api.deals.getrecentlycreated newest deals first by creation date; since keeps only those created at or after it. page with paging.next.after. read"
     },
     {
       "pluginId": "hubspot",
       "kind": "api",
       "shortPath": "deals.getRecentlyUpdated",
-      "haystack": "deals.getrecentlyupdated hubspot.api.deals.getrecentlyupdated list recently updated deals read"
+      "haystack": "deals.getrecentlyupdated hubspot.api.deals.getrecentlyupdated most recently modified deals first; since keeps only those modified at or after it. page with paging.next.after. read"
     },
     {
       "pluginId": "hubspot",
       "kind": "api",
       "shortPath": "deals.search",
-      "haystack": "deals.search hubspot.api.deals.search search deals read"
+      "haystack": "deals.search hubspot.api.deals.search search with query text and/or filtergroups; only default properties come back unless properties is set. up to 200 per page and 10,000 results; follow paging.next.after. read"
     },
     {
       "pluginId": "hubspot",
@@ -107991,7 +107991,7 @@
       "pluginId": "hubspot",
       "kind": "api",
       "shortPath": "tickets.getMany",
-      "haystack": "tickets.getmany hubspot.api.tickets.getmany get multiple tickets read"
+      "haystack": "tickets.getmany hubspot.api.tickets.getmany pages through tickets in id order, default properties only unless properties is set. read"
     },
     {
       "pluginId": "hubspot",
@@ -117471,7 +117471,7 @@
       "pluginId": "jira",
       "kind": "api",
       "shortPath": "comments.list",
-      "haystack": "comments.list jira.api.comments.list list all comments on a jira issue read"
+      "haystack": "comments.list jira.api.comments.list comments on one issue, 100 per page by default; page with start_at until startat plus the count reaches total. bodies are adf json read"
     },
     {
       "pluginId": "jira",
@@ -117519,7 +117519,7 @@
       "pluginId": "jira",
       "kind": "api",
       "shortPath": "issues.bulkFetch",
-      "haystack": "issues.bulkfetch jira.api.issues.bulkfetch bulk fetch multiple jira issues by id or key read"
+      "haystack": "issues.bulkfetch jira.api.issues.bulkfetch fetch up to 100 issues by id or key per call. fields is an array here, a comma-separated string in issues.search read"
     },
     {
       "pluginId": "jira",
@@ -117543,7 +117543,7 @@
       "pluginId": "jira",
       "kind": "api",
       "shortPath": "issues.get",
-      "haystack": "issues.get jira.api.issues.get get a jira issue by id or key read"
+      "haystack": "issues.get jira.api.issues.get get one issue with all fields unless fields limits them. description is adf json, not plain text read"
     },
     {
       "pluginId": "jira",
@@ -117567,7 +117567,7 @@
       "pluginId": "jira",
       "kind": "api",
       "shortPath": "issues.search",
-      "haystack": "issues.search jira.api.issues.search search issues using jql read"
+      "haystack": "issues.search jira.api.issues.search jql search. returns only the issue id unless fields is set. no total: page with next_page_token until islast is true. jql must be bounded, e.g. project = abc and ... read"
     },
     {
       "pluginId": "jira",
@@ -117597,7 +117597,7 @@
       "pluginId": "jira",
       "kind": "api",
       "shortPath": "projects.list",
-      "haystack": "projects.list jira.api.projects.list list jira projects read"
+      "haystack": "projects.list jira.api.projects.list projects the user can browse, 50 per page (max 100). query matches key or name read"
     },
     {
       "pluginId": "jira",
@@ -117609,7 +117609,7 @@
       "pluginId": "jira",
       "kind": "api",
       "shortPath": "sprints.list",
-      "haystack": "sprints.list jira.api.sprints.list list sprints for a jira board read"
+      "haystack": "sprints.list jira.api.sprints.list sprints of one board; get board_id from sprints.listboards. state is comma-separated future, active, closed: set active for the current sprint read"
     },
     {
       "pluginId": "jira",
@@ -117633,7 +117633,7 @@
       "pluginId": "jira",
       "kind": "api",
       "shortPath": "users.getAll",
-      "haystack": "users.getall jira.api.users.getall get all jira users read"
+      "haystack": "users.getall jira.api.users.getall jira accounts 50 per page, inactive and deleted users included; page with start_at read"
     },
     {
       "pluginId": "jira",
@@ -124977,7 +124977,7 @@
       "pluginId": "linear",
       "kind": "api",
       "shortPath": "comments.list",
-      "haystack": "comments.list linear.api.comments.list list comments on an issue read"
+      "haystack": "comments.list linear.api.comments.list comments on one issue; issueid is the uuid or an identifier such as \"eng-123\". read"
     },
     {
       "pluginId": "linear",
@@ -125001,13 +125001,13 @@
       "pluginId": "linear",
       "kind": "api",
       "shortPath": "issues.get",
-      "haystack": "issues.get linear.api.issues.get get a specific issue read"
+      "haystack": "issues.get linear.api.issues.get reads one issue; id is the uuid or an identifier such as \"eng-123\". read"
     },
     {
       "pluginId": "linear",
       "kind": "api",
       "shortPath": "issues.list",
-      "haystack": "issues.list linear.api.issues.list list issues in a team read"
+      "haystack": "issues.list linear.api.issues.list lists issues, newest created first, across the workspace or one team; filter by assignee, state, labels or project. read"
     },
     {
       "pluginId": "linear",
@@ -125037,7 +125037,7 @@
       "pluginId": "linear",
       "kind": "api",
       "shortPath": "projects.list",
-      "haystack": "projects.list linear.api.projects.list list projects in a team read"
+      "haystack": "projects.list linear.api.projects.list lists every project in the workspace; there is no team filter, so check each project's teams. page with after. read"
     },
     {
       "pluginId": "linear",
@@ -137871,7 +137871,7 @@
       "pluginId": "notion",
       "kind": "api",
       "shortPath": "blocks.getManyChildBlocks",
-      "haystack": "blocks.getmanychildblocks notion.api.blocks.getmanychildblocks retrieve child blocks of a block or page read"
+      "haystack": "blocks.getmanychildblocks notion.api.blocks.getmanychildblocks page body as blocks, one level only. call again with the id of any block that has has_children true. pass the page id as block_id for top-level content. up to 100 blocks per call; while has_more is true, pass next_cursor as start_cursor read"
     },
     {
       "pluginId": "notion",
@@ -137883,13 +137883,13 @@
       "pluginId": "notion",
       "kind": "api",
       "shortPath": "databasePages.getDatabasePage",
-      "haystack": "databasepages.getdatabasepage notion.api.databasepages.getdatabasepage get a page from a database read"
+      "haystack": "databasepages.getdatabasepage notion.api.databasepages.getdatabasepage properties of any page by id, not its body; read the body with blocks.getmanychildblocks using the page id read"
     },
     {
       "pluginId": "notion",
       "kind": "api",
       "shortPath": "databasePages.getManyDatabasePages",
-      "haystack": "databasepages.getmanydatabasepages notion.api.databasepages.getmanydatabasepages list and filter pages in a database read"
+      "haystack": "databasepages.getmanydatabasepages notion.api.databasepages.getmanydatabasepages rows of one database, properties only. read property names with databases.getdatabase first; a 404 means the database id is wrong or the database is not shared with the integration read"
     },
     {
       "pluginId": "notion",
@@ -137913,7 +137913,7 @@
       "pluginId": "notion",
       "kind": "api",
       "shortPath": "databases.searchDatabase",
-      "haystack": "databases.searchdatabase notion.api.databases.searchdatabase search and filter databases read"
+      "haystack": "databases.searchdatabase notion.api.databases.searchdatabase search databases by title only. to filter rows inside a database use databasepages.getmanydatabasepages read"
     },
     {
       "pluginId": "notion",
@@ -137931,7 +137931,7 @@
       "pluginId": "notion",
       "kind": "api",
       "shortPath": "pages.searchPage",
-      "haystack": "pages.searchpage notion.api.pages.searchpage search pages and databases by title read"
+      "haystack": "pages.searchpage notion.api.pages.searchpage matches titles only, not page text, and only items shared with the integration, so a miss does not mean the page is absent. pass filter {\"property\":\"object\",\"value\":\"page\"} for pages only read"
     },
     {
       "pluginId": "notion",
@@ -141675,13 +141675,13 @@
       "pluginId": "outlook",
       "kind": "api",
       "shortPath": "events.getSchedule",
-      "haystack": "events.getschedule outlook.api.events.getschedule get free/busy schedule for a calendar read"
+      "haystack": "events.getschedule outlook.api.events.getschedule free/busy for the listed schedules (email addresses), not event details. starttime and endtime are {datetime, timezone} objects. read"
     },
     {
       "pluginId": "outlook",
       "kind": "api",
       "shortPath": "events.list",
-      "haystack": "events.list outlook.api.events.list list calendar events read"
+      "haystack": "events.list outlook.api.events.list single events and series masters; with expand_recurring_events it lists the occurrences between start_datetime and end_datetime, one page at a time (next skip is in @odata.nextlink). times are utc unless timezone is set. read"
     },
     {
       "pluginId": "outlook",
@@ -141711,7 +141711,7 @@
       "pluginId": "outlook",
       "kind": "api",
       "shortPath": "folders.list",
-      "haystack": "folders.list outlook.api.folders.list list mail folders read"
+      "haystack": "folders.list outlook.api.folders.list top-level mail folders only; nested folders are not listed. use a folder id or a name like \"inbox\" as folder in messages.list. read"
     },
     {
       "pluginId": "outlook",
@@ -141759,13 +141759,13 @@
       "pluginId": "outlook",
       "kind": "api",
       "shortPath": "messages.get",
-      "haystack": "messages.get outlook.api.messages.get get an email message by id read"
+      "haystack": "messages.get outlook.api.messages.get reads one message by id. body is html. attachments are not included and this plugin cannot download them; hasattachments only says whether any non-inline attachment exists, so it is false for a message with only inline ones. read"
     },
     {
       "pluginId": "outlook",
       "kind": "api",
       "shortPath": "messages.list",
-      "haystack": "messages.list outlook.api.messages.list list email messages in a folder read"
+      "haystack": "messages.list outlook.api.messages.list lists messages from one folder, or the whole mailbox including deleted items when folder is unset. 10 per page unless top is set (max 1000). take the next skip from @odata.nextlink; it can exceed top, so do not add top to skip. read"
     },
     {
       "pluginId": "outlook",
@@ -141777,7 +141777,7 @@
       "pluginId": "outlook",
       "kind": "api",
       "shortPath": "messages.query",
-      "haystack": "messages.query outlook.api.messages.query query email messages with odata filters read"
+      "haystack": "messages.query outlook.api.messages.query raw odata filter over one folder or the whole mailbox. 10 per page unless top is set. properties in orderby must also be in filter, first and in the same order, or graph returns inefficientfilter. read"
     },
     {
       "pluginId": "outlook",
@@ -141789,7 +141789,7 @@
       "pluginId": "outlook",
       "kind": "api",
       "shortPath": "messages.search",
-      "haystack": "messages.search outlook.api.messages.search search email messages read"
+      "haystack": "messages.search outlook.api.messages.search kql search over the signed-in user's whole mailbox, newest sent first, at most 1,000 results. for a folder or date range use messages.list or messages.query. read"
     },
     {
       "pluginId": "outlook",
@@ -170949,7 +170949,7 @@
       "pluginId": "slack",
       "kind": "api",
       "shortPath": "channels.getHistory",
-      "haystack": "channels.gethistory slack.api.channels.gethistory fetch message history for a channel read"
+      "haystack": "channels.gethistory slack.api.channels.gethistory top-level messages of one conversation. thread replies are not included; use channels.getreplies. read"
     },
     {
       "pluginId": "slack",
@@ -170961,7 +170961,7 @@
       "pluginId": "slack",
       "kind": "api",
       "shortPath": "channels.getReplies",
-      "haystack": "channels.getreplies slack.api.channels.getreplies fetch replies for a thread read"
+      "haystack": "channels.getreplies slack.api.channels.getreplies messages of one thread. ts is the parent message's ts, from channels.gethistory or messages.search. read"
     },
     {
       "pluginId": "slack",
@@ -170991,13 +170991,13 @@
       "pluginId": "slack",
       "kind": "api",
       "shortPath": "channels.list",
-      "haystack": "channels.list slack.api.channels.list list all channels in the workspace read"
+      "haystack": "channels.list slack.api.channels.list list channels the app can see. public only unless types includes private_channel, which adds private ones the app was added to. channels.listmine lists a user's own conversations read"
     },
     {
       "pluginId": "slack",
       "kind": "api",
       "shortPath": "channels.listMine",
-      "haystack": "channels.listmine slack.api.channels.listmine list the connected user's own conversations (needs a user token) read"
+      "haystack": "channels.listmine slack.api.channels.listmine list the conversations the connected user is in. public only unless types includes private_channel, mpim or im. needs a user token; with only a bot token it lists the bot's conversations read"
     },
     {
       "pluginId": "slack",
@@ -171033,13 +171033,13 @@
       "pluginId": "slack",
       "kind": "api",
       "shortPath": "files.get",
-      "haystack": "files.get slack.api.files.get get info about a file read"
+      "haystack": "files.get slack.api.files.get get metadata of one file by id, not its content. read"
     },
     {
       "pluginId": "slack",
       "kind": "api",
       "shortPath": "files.list",
-      "haystack": "files.list slack.api.files.list list files in the workspace read"
+      "haystack": "files.list slack.api.files.list list file metadata, not file content. filter by channel, user, types or ts_from/ts_to. read"
     },
     {
       "pluginId": "slack",
@@ -171069,7 +171069,7 @@
       "pluginId": "slack",
       "kind": "api",
       "shortPath": "messages.search",
-      "haystack": "messages.search slack.api.messages.search search messages in the workspace read"
+      "haystack": "messages.search slack.api.messages.search search messages with slack search syntax, e.g. \"deploy in:#channel from:@user\". needs a user token. read"
     },
     {
       "pluginId": "slack",
@@ -171165,7 +171165,7 @@
       "pluginId": "slack",
       "kind": "api",
       "shortPath": "users.list",
-      "haystack": "users.list slack.api.users.list list all users in the workspace read"
+      "haystack": "users.list slack.api.users.list list workspace members, including invited, deactivated and deleted users. profile.email needs the users:read.email scope. use users.get for a known id. read"
     },
     {
       "pluginId": "slack",

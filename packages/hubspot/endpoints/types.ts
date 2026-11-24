@@ -10,9 +10,17 @@ const ContactsGetInputSchema = z.object({
 });
 
 const ContactsGetManyInputSchema = z.object({
-	limit: z.number().optional(),
-	after: z.string().optional(),
-	properties: z.array(z.string()).optional(),
+	limit: z.number().optional().describe('Page size, max 100.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	properties: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Internal property names such as "hs_lead_status", not labels. Only default properties come back if omitted.',
+		),
 	propertiesWithHistory: z.array(z.string()).optional(),
 	associations: z.array(z.string()).optional(),
 	archived: z.boolean().optional(),
@@ -42,18 +50,6 @@ const ContactsUpdateInputSchema = z.object({
 
 const ContactsDeleteInputSchema = z.object({
 	contactId: z.string(),
-});
-
-const ContactsGetRecentlyCreatedInputSchema = z.object({
-	count: z.number().optional(),
-	after: z.string().optional(),
-	since: z.string().optional(),
-});
-
-const ContactsGetRecentlyUpdatedInputSchema = z.object({
-	count: z.number().optional(),
-	after: z.string().optional(),
-	since: z.string().optional(),
 });
 
 const FilterOperator = z.enum([
@@ -105,13 +101,73 @@ const AssociationsSchema = z.record(
 	z.union([AssociationResults, z.array(z.string())]),
 );
 
+const ISO_SINCE =
+	/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?(Z|[+-]\d{2}:\d{2})?)?$/;
+
+// Epoch milliseconds for an ISO 8601 date or date-time, or for epoch
+// milliseconds; undefined when it is neither or the date does not exist.
+// A value with no offset is UTC, so the bound never depends on the server's zone.
+export function parseSince(since: string): number | undefined {
+	if (/^\d+$/.test(since)) return Number(since);
+	const m = ISO_SINCE.exec(since);
+	if (!m) return undefined;
+	const [y = 0, mo = 0, d = 0, h = 0, mi = 0] = m
+		.slice(1, 6)
+		.map((v) => Number(v ?? 0));
+	const day = new Date(Date.UTC(y, mo - 1, d));
+	if (day.getUTCMonth() !== mo - 1 || day.getUTCDate() !== d) return undefined;
+	if (h > 23 || mi > 59 || Number(m[6] ?? 0) > 59) return undefined;
+	const ms = Date.parse(m[4] && !m[7] ? `${since}Z` : since);
+	return Number.isNaN(ms) ? undefined : ms;
+}
+
+export const RecentInputSchema = z.object({
+	count: z.number().int().max(200).optional().describe('Page size, max 200.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	since: z
+		.string()
+		.refine((v) => parseSince(v) !== undefined, {
+			message: 'since must be an ISO 8601 date-time or epoch milliseconds',
+		})
+		.optional()
+		.describe(
+			'ISO 8601 date-time (UTC when it has no offset) or epoch milliseconds; keeps records created (getRecentlyCreated) or modified (getRecentlyUpdated) at or after it.',
+		),
+});
+
 const ContactsSearchInputSchema = z.object({
-	query: z.string().optional(),
-	limit: z.number().optional(),
-	after: z.string().optional(),
-	sorts: z.array(SearchSortSchema).optional(),
-	properties: z.array(z.string()).optional(),
-	filterGroups: z.array(FilterGroupSchema).optional(),
+	query: z
+		.string()
+		.optional()
+		.describe(
+			'Free text matched against the default searchable text properties.',
+		),
+	limit: z.number().optional().describe('Page size, max 200.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	sorts: z
+		.array(SearchSortSchema)
+		.optional()
+		.describe(
+			'One sort only, e.g. [{"propertyName":"createdate","direction":"DESCENDING"}].',
+		),
+	properties: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Internal property names to return, not labels. Only default properties come back if omitted.',
+		),
+	filterGroups: z
+		.array(FilterGroupSchema)
+		.optional()
+		.describe(
+			'Groups are ORed, filters inside a group are ANDed (max 5 groups, 6 filters each). Dates as epoch milliseconds in a string. e.g. [{"filters":[{"propertyName":"email","operator":"EQ","value":"a@b.com"}]}].',
+		),
 });
 
 const CompaniesGetInputSchema = z.object({
@@ -124,9 +180,17 @@ const CompaniesGetInputSchema = z.object({
 });
 
 const CompaniesGetManyInputSchema = z.object({
-	limit: z.number().optional(),
-	after: z.string().optional(),
-	properties: z.array(z.string()).optional(),
+	limit: z.number().optional().describe('Page size, max 100.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	properties: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Internal property names such as "hs_lead_status", not labels. Only default properties come back if omitted.',
+		),
 	propertiesWithHistory: z.array(z.string()).optional(),
 	associations: z.array(z.string()).optional(),
 	archived: z.boolean().optional(),
@@ -158,21 +222,18 @@ const CompaniesDeleteInputSchema = z.object({
 	companyId: z.string(),
 });
 
-const CompaniesGetRecentlyCreatedInputSchema = z.object({
-	count: z.number().optional(),
-	after: z.string().optional(),
-	since: z.string().optional(),
-});
-
-const CompaniesGetRecentlyUpdatedInputSchema = z.object({
-	count: z.number().optional(),
-	after: z.string().optional(),
-	since: z.string().optional(),
-});
-
 const CompaniesSearchByDomainInputSchema = z.object({
-	domain: z.string(),
-	properties: z.array(z.string()).optional(),
+	domain: z
+		.string()
+		.describe('Company domain such as "example.com", matched exactly.'),
+	properties: z
+		.array(z.string())
+		.optional()
+		.describe('Internal property names to return, not labels.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
 });
 
 const DealsGetInputSchema = z.object({
@@ -185,9 +246,17 @@ const DealsGetInputSchema = z.object({
 });
 
 const DealsGetManyInputSchema = z.object({
-	limit: z.number().optional(),
-	after: z.string().optional(),
-	properties: z.array(z.string()).optional(),
+	limit: z.number().optional().describe('Page size, max 100.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	properties: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Internal property names such as "hs_lead_status", not labels. Only default properties come back if omitted.',
+		),
 	propertiesWithHistory: z.array(z.string()).optional(),
 	associations: z.array(z.string()).optional(),
 	archived: z.boolean().optional(),
@@ -219,25 +288,36 @@ const DealsDeleteInputSchema = z.object({
 	dealId: z.string(),
 });
 
-const DealsGetRecentlyCreatedInputSchema = z.object({
-	count: z.number().optional(),
-	after: z.string().optional(),
-	since: z.string().optional(),
-});
-
-const DealsGetRecentlyUpdatedInputSchema = z.object({
-	count: z.number().optional(),
-	after: z.string().optional(),
-	since: z.string().optional(),
-});
-
 const DealsSearchInputSchema = z.object({
-	query: z.string().optional(),
-	limit: z.number().optional(),
-	after: z.string().optional(),
-	sorts: z.array(SearchSortSchema).optional(),
-	properties: z.array(z.string()).optional(),
-	filterGroups: z.array(FilterGroupSchema).optional(),
+	query: z
+		.string()
+		.optional()
+		.describe(
+			'Free text matched against the default searchable text properties.',
+		),
+	limit: z.number().optional().describe('Page size, max 200.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	sorts: z
+		.array(SearchSortSchema)
+		.optional()
+		.describe(
+			'One sort only, e.g. [{"propertyName":"createdate","direction":"DESCENDING"}].',
+		),
+	properties: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Internal property names to return, not labels. Only default properties come back if omitted.',
+		),
+	filterGroups: z
+		.array(FilterGroupSchema)
+		.optional()
+		.describe(
+			'Groups are ORed, filters inside a group are ANDed (max 5 groups, 6 filters each). Dates as epoch milliseconds in a string. e.g. [{"filters":[{"propertyName":"dealname","operator":"EQ","value":"Acme renewal"}]}].',
+		),
 });
 
 const TicketsGetInputSchema = z.object({
@@ -250,9 +330,17 @@ const TicketsGetInputSchema = z.object({
 });
 
 const TicketsGetManyInputSchema = z.object({
-	limit: z.number().optional(),
-	after: z.string().optional(),
-	properties: z.array(z.string()).optional(),
+	limit: z.number().optional().describe('Page size, max 100.'),
+	after: z
+		.string()
+		.optional()
+		.describe('paging.next.after from the previous page.'),
+	properties: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Internal property names such as "hs_lead_status", not labels. Only default properties come back if omitted.',
+		),
 	propertiesWithHistory: z.array(z.string()).optional(),
 	associations: z.array(z.string()).optional(),
 	archived: z.boolean().optional(),
@@ -333,24 +421,24 @@ export const HubSpotEndpointInputSchemas = {
 	contactsCreate: ContactsCreateInputSchema,
 	contactsUpdate: ContactsUpdateInputSchema,
 	contactsDelete: ContactsDeleteInputSchema,
-	contactsGetRecentlyCreated: ContactsGetRecentlyCreatedInputSchema,
-	contactsGetRecentlyUpdated: ContactsGetRecentlyUpdatedInputSchema,
+	contactsGetRecentlyCreated: RecentInputSchema,
+	contactsGetRecentlyUpdated: RecentInputSchema,
 	contactsSearch: ContactsSearchInputSchema,
 	companiesGet: CompaniesGetInputSchema,
 	companiesGetMany: CompaniesGetManyInputSchema,
 	companiesCreate: CompaniesCreateInputSchema,
 	companiesUpdate: CompaniesUpdateInputSchema,
 	companiesDelete: CompaniesDeleteInputSchema,
-	companiesGetRecentlyCreated: CompaniesGetRecentlyCreatedInputSchema,
-	companiesGetRecentlyUpdated: CompaniesGetRecentlyUpdatedInputSchema,
+	companiesGetRecentlyCreated: RecentInputSchema,
+	companiesGetRecentlyUpdated: RecentInputSchema,
 	companiesSearchByDomain: CompaniesSearchByDomainInputSchema,
 	dealsGet: DealsGetInputSchema,
 	dealsGetMany: DealsGetManyInputSchema,
 	dealsCreate: DealsCreateInputSchema,
 	dealsUpdate: DealsUpdateInputSchema,
 	dealsDelete: DealsDeleteInputSchema,
-	dealsGetRecentlyCreated: DealsGetRecentlyCreatedInputSchema,
-	dealsGetRecentlyUpdated: DealsGetRecentlyUpdatedInputSchema,
+	dealsGetRecentlyCreated: RecentInputSchema,
+	dealsGetRecentlyUpdated: RecentInputSchema,
 	dealsSearch: DealsSearchInputSchema,
 	ticketsGet: TicketsGetInputSchema,
 	ticketsGetMany: TicketsGetManyInputSchema,

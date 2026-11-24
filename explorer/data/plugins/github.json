@@ -139,7 +139,7 @@
     {
       "path": "github.api.comments.list",
       "shortPath": "comments.list",
-      "description": "List all comments in a repository",
+      "description": "Issue and pull request conversation comments across one repo, not inline code-review comments. For one issue or PR use comments.listForIssue.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -172,7 +172,8 @@
           {
             "key": "perPage",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Default 30, at most 100."
           },
           {
             "key": "page",
@@ -1320,7 +1321,7 @@
     {
       "path": "github.api.issues.list",
       "shortPath": "issues.list",
-      "description": "List issues in a repository",
+      "description": "List open issues in one repo unless state is set. Pull requests come back too, marked by a pullRequest key.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1343,12 +1344,14 @@
           {
             "key": "state",
             "optional": true,
-            "type": "open | closed | all"
+            "type": "open | closed | all",
+            "description": "Defaults to open."
           },
           {
             "key": "assignee",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "A login, \"none\" for unassigned, or \"*\" for any assignee."
           },
           {
             "key": "creator",
@@ -1363,7 +1366,8 @@
           {
             "key": "labels",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Comma-separated label names, e.g. \"bug,ui\"."
           },
           {
             "key": "sort",
@@ -1378,12 +1382,14 @@
           {
             "key": "since",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Only issues updated after this time, ISO 8601 such as 2025-01-31T00:00:00Z."
           },
           {
             "key": "perPage",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Default 30, at most 100."
           },
           {
             "key": "page",
@@ -1903,7 +1909,7 @@
     {
       "path": "github.api.pullRequests.list",
       "shortPath": "pullRequests.list",
-      "description": "List pull requests",
+      "description": "List open pull requests in one repo unless state is set. To find them by author or reviewer, use search.issues with is:pr.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1921,12 +1927,14 @@
           {
             "key": "state",
             "optional": true,
-            "type": "open | closed | all"
+            "type": "open | closed | all",
+            "description": "Defaults to open."
           },
           {
             "key": "head",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Head branch as \"user:branch\" or \"organization:branch\"."
           },
           {
             "key": "base",
@@ -1946,7 +1954,8 @@
           {
             "key": "perPage",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Default 30, at most 100."
           },
           {
             "key": "page",
@@ -2623,7 +2632,7 @@
     {
       "path": "github.api.repositories.getContent",
       "shortPath": "repositories.getContent",
-      "description": "Get file or directory content from a repository",
+      "description": "A file returns base64-encoded content; a directory returns an array of entries without content, at most 1,000.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -2641,12 +2650,14 @@
           {
             "key": "path",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "File or directory path; \"\" is the repo root."
           },
           {
             "key": "ref",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Branch, tag or commit sha. Defaults to the default branch."
           }
         ]
       },
@@ -2658,7 +2669,7 @@
     {
       "path": "github.api.repositories.list",
       "shortPath": "repositories.list",
-      "description": "List repositories for the authenticated user",
+      "description": "No owner: repos you own, collaborate on or reach through an org, private included. With owner: that account's public repos only. Other repos: search.repositories.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -2666,12 +2677,14 @@
           {
             "key": "owner",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "A user or org login. Leave empty for your own repos; set, it returns only that account's public repos."
           },
           {
             "key": "type",
             "optional": true,
-            "type": "all | owner | public | private | member"
+            "type": "all | owner | public | private | member",
+            "description": "With owner set GitHub accepts only all, owner and member; public and private need owner empty."
           },
           {
             "key": "sort",
@@ -2686,7 +2699,8 @@
           {
             "key": "perPage",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Default 30, at most 100."
           },
           {
             "key": "page",
@@ -2928,7 +2942,7 @@
     {
       "path": "github.api.search.issues",
       "shortPath": "search.issues",
-      "description": "Search GitHub issues and pull requests",
+      "description": "Search issues and pull requests with GitHub qualifiers in q, e.g. \"is:issue is:open repo:owner/name assignee:login\". users.getAuthenticated gives your own login.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -2936,7 +2950,8 @@
           {
             "key": "q",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Keywords then qualifiers: is:issue or is:pr (GitHub App user tokens get a 422 without one), repo:owner/name, author:, assignee:, label:, state:, updated:>=2025-01-31. Max 256 characters excluding operators and qualifiers, five AND/OR/NOT at most."
           },
           {
             "key": "sort",
@@ -3859,7 +3874,7 @@
     {
       "path": "github.api.users.list",
       "shortPath": "users.list",
-      "description": "List all GitHub users",
+      "description": "Every GitHub account in id order, paged by since (a user id). To find a person use search.users or users.get.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -3867,7 +3882,8 @@
           {
             "key": "since",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "A user id; returns accounts with a higher id."
           },
           {
             "key": "perPage",

@@ -1618,7 +1618,8 @@ const defaultAuthType = 'api_key' as const;
 const githubEndpointMeta = {
 	'issues.list': {
 		riskLevel: 'read',
-		description: 'List issues in a repository',
+		description:
+			'List open issues in one repo unless state is set. Pull requests come back too, marked by a pullRequest key.',
 	},
 	'issues.get': { riskLevel: 'read', description: 'Get a specific issue' },
 	'issues.create': { riskLevel: 'write', description: 'Create a new issue' },
@@ -1630,7 +1631,11 @@ const githubEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Post a comment on an issue',
 	},
-	'pullRequests.list': { riskLevel: 'read', description: 'List pull requests' },
+	'pullRequests.list': {
+		riskLevel: 'read',
+		description:
+			'List open pull requests in one repo unless state is set. To find them by author or reviewer, use search.issues with is:pr.',
+	},
 	'pullRequests.get': {
 		riskLevel: 'read',
 		description: 'Get a specific pull request',
@@ -1645,7 +1650,8 @@ const githubEndpointMeta = {
 	},
 	'repositories.list': {
 		riskLevel: 'read',
-		description: 'List repositories for the authenticated user',
+		description:
+			"No owner: repos you own, collaborate on or reach through an org, private included. With owner: that account's public repos only. Other repos: search.repositories.",
 	},
 	'repositories.get': {
 		riskLevel: 'read',
@@ -1661,7 +1667,8 @@ const githubEndpointMeta = {
 	},
 	'repositories.getContent': {
 		riskLevel: 'read',
-		description: 'Get file or directory content from a repository',
+		description:
+			'A file returns base64-encoded content; a directory returns an array of entries without content, at most 1,000.',
 	},
 	'events.list': {
 		riskLevel: 'read',
@@ -1763,7 +1770,8 @@ const githubEndpointMeta = {
 	},
 	'comments.list': {
 		riskLevel: 'read',
-		description: 'List all comments in a repository',
+		description:
+			'Issue and pull request conversation comments across one repo, not inline code-review comments. For one issue or PR use comments.listForIssue.',
 	},
 	'comments.listForIssue': {
 		riskLevel: 'read',
@@ -1783,7 +1791,8 @@ const githubEndpointMeta = {
 	},
 	'users.list': {
 		riskLevel: 'read',
-		description: 'List all GitHub users',
+		description:
+			'Every GitHub account in id order, paged by since (a user id). To find a person use search.users or users.get.',
 	},
 	'users.get': {
 		riskLevel: 'read',
@@ -1807,7 +1816,8 @@ const githubEndpointMeta = {
 	},
 	'search.issues': {
 		riskLevel: 'read',
-		description: 'Search GitHub issues and pull requests',
+		description:
+			'Search issues and pull requests with GitHub qualifiers in q, e.g. "is:issue is:open repo:owner/name assignee:login". users.getAuthenticated gives your own login.',
 	},
 	'search.repositories': {
 		riskLevel: 'read',

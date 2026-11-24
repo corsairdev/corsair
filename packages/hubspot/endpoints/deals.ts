@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeHubSpotRequest } from '../client';
+import { makeHubSpotRequest, recentSearchBody } from '../client';
 import type { HubSpotEndpoints } from '../index';
 import type {
 	CreateDealResponse,
@@ -152,12 +152,11 @@ export const deleteDeal: HubSpotEndpoints['dealsDelete'] = async (
 
 export const getRecentlyCreated: HubSpotEndpoints['dealsGetRecentlyCreated'] =
 	async (ctx, input) => {
-		const { ...queryParams } = input || {};
-		const endpoint = '/crm/v3/objects/deals';
+		const endpoint = '/crm/v3/objects/deals/search';
 		const result = await makeHubSpotRequest<GetManyDealsResponse>(
 			endpoint,
 			ctx.key,
-			{ query: queryParams },
+			{ method: 'POST', body: recentSearchBody(input, 'createdate') },
 		);
 
 		await logEventFromContext(
@@ -171,12 +170,11 @@ export const getRecentlyCreated: HubSpotEndpoints['dealsGetRecentlyCreated'] =
 
 export const getRecentlyUpdated: HubSpotEndpoints['dealsGetRecentlyUpdated'] =
 	async (ctx, input) => {
-		const { ...queryParams } = input || {};
-		const endpoint = '/crm/v3/objects/deals';
+		const endpoint = '/crm/v3/objects/deals/search';
 		const result = await makeHubSpotRequest<GetManyDealsResponse>(
 			endpoint,
 			ctx.key,
-			{ query: queryParams },
+			{ method: 'POST', body: recentSearchBody(input, 'hs_lastmodifieddate') },
 		);
 
 		await logEventFromContext(

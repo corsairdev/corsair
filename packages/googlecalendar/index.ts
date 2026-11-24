@@ -166,9 +166,14 @@ const googleCalendarEndpointMeta = {
 	},
 	'events.get': {
 		riskLevel: 'read',
-		description: 'Get a specific calendar event',
+		description:
+			'Get one event by its event id, not the iCalUID. For one occurrence of a recurring event, use the instance id from events.getMany with singleEvents true',
 	},
-	'events.getMany': { riskLevel: 'read', description: 'List calendar events' },
+	'events.getMany': {
+		riskLevel: 'read',
+		description:
+			'List events in a time window. Set singleEvents true or recurring events appear once; page with pageToken until nextPageToken is empty',
+	},
 	'events.update': {
 		riskLevel: 'write',
 		description: 'Update an existing calendar event',
@@ -179,7 +184,8 @@ const googleCalendarEndpointMeta = {
 	},
 	'calendar.getAvailability': {
 		riskLevel: 'read',
-		description: 'Get free/busy availability for a calendar',
+		description:
+			'Busy time ranges only, no event details; use events.getMany to see the events',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof googleCalendarEndpointsNested>;
 

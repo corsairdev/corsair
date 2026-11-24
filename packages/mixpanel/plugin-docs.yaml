@@ -1,0 +1,128 @@
+displayName: Mixpanel
+description: Product analytics with Mixpanel - ingest events and user or group profiles, run Insights, funnel, retention and segmentation reports, export raw events, and manage annotations, Lexicon schemas, feature flags, experiments, warehouse imports, data pipelines, service accounts and GDPR requests.
+domain: mixpanel.com
+recommendedAuth: api_key
+overviewNote: |
+  Create a service account in Mixpanel (Project Settings, Service Accounts)
+  with a role that fits what the agent should do: Consumer to read, Admin or
+  Owner to import events and manage annotations, Lexicon, flags and
+  experiments. Connect with:
+
+  - **api_key**: the service account secret.
+  - **service_account_username**: its username (`name.xxxxxx.mp-service-account`).
+  - **project_id**: the project id (Project Settings, Overview).
+  - **region**: `us` (default), `eu` or `in`, matching the project's data
+    residency. Every API switches to that region's hosts.
+  - **project_token** (optional): needed for `events.track`, profile and group
+    updates, identity calls and GDPR, which authenticate with the token.
+  - **gdpr_token** (optional): the GDPR API OAuth token from Personal Settings,
+    Data & Privacy. A service account gets 401 on the GDPR API.
+
+  Plan limits seen on a free project (11-24): the Query API reports
+  (insights, funnels, retention, segmentation, event counts, activity stream,
+  cohorts, JQL) answer 402 `plan_restricted`; `profiles.query` and raw export
+  work. Data Pipelines is a paid add-on (401), and the Platform API data
+  definitions answer 404 until Mixpanel enables them for the project.
+  Organization-level service account calls need an organization admin or
+  owner service account (403 otherwise).
+
+  - **Rate limits.** The Query API allows 60 queries per hour and 5 at once;
+    raw export 60 per hour and 3 per second. Core retries a 429 using
+    Retry-After; nothing else is retried.
+  - **Errors** come back as core `ApiError`s with Mixpanel's message and
+    `error_code`. Request bodies (tokens, profiles, events) are stripped from
+    the error, and secrets Mixpanel echoes are redacted.
+examples:
+  read:
+    path: profiles.query
+    title: Find profiles on a plan
+    args:
+      where: 'properties["plan"] == "pro"'
+      output_properties:
+        - $email
+        - plan
+  write:
+    path: events.import
+    title: Import a signed-up event
+    args:
+      events:
+        - event: Signed up
+          properties:
+            time: 1618716477000
+            distinct_id: 91304156-cafc-4673-a237-623d1129c801
+            $insert_id: 29fc2962-6d9c-455d-95ad-95b84f09b9e4
+            referrer: friend
+apiExamples:
+  events.import:
+    call: "{ events: [{ event: 'Signed up', properties: { time: 1618716477000, distinct_id: '91304156-cafc-4673-a237-623d1129c801', $insert_id: '29fc2962-6d9c-455d-95ad-95b84f09b9e4' } }] }"
+  events.track:
+    call: "{ events: [{ event: 'Viewed pricing', properties: { distinct_id: 'user-42' } }] }"
+  profiles.set:
+    call: "{ distinct_id: 'user-42', $set: { plan: 'pro', seats: 5 } }"
+  profiles.query:
+    call: "{ where: 'properties[\"plan\"] == \"pro\"', output_properties: ['$email', 'plan'] }"
+  groups.set:
+    call: "{ group_key: 'company', group_id: 'Acme', $set: { tier: 'enterprise' } }"
+  export.events:
+    call: "{ from_date: '2026-04-01', to_date: '2026-04-02', event_names: ['Signed up'], limit: 1000 }"
+  insights.query:
+    call: "{ bookmark_id: 12345 }"
+  retention.query:
+    call: "{ from_date: '2026-04-01', to_date: '2026-04-07', born_event: 'Signed up', event: 'Viewed report', unit: 'week' }"
+  segmentation.query:
+    call: "{ event: 'Signed up', from_date: '2026-04-01', to_date: '2026-04-07', on: 'properties[\"utm_source\"]' }"
+  annotations.create:
+    call: "{ date: '2026-04-01 09:00:00', description: 'Pricing page launched' }"
+  lexicon.upsert:
+    call: "{ entity_type: 'event', name: 'Signed up', schema: { description: 'A new account', properties: { plan: { type: 'string' } } } }"
+  featureFlags.evaluate:
+    call: "{ distinct_id: 'user-42' }"
+  gdpr.createRetrieval:
+    call: "{ distinct_ids: ['user-42'] }"
+apiNotes:
+  events.import: |
+    `POST /import` on the ingestion host with the service account and
+    `project_id`. Every event needs `time`, `distinct_id` and `$insert_id`;
+    Mixpanel deduplicates on those plus the event name, so a retried batch
+    cannot double-count. With the default `strict: '1'` a 400 lists the
+    rejected events in `failed_records`; the error quotes the first message.
+  events.track: |
+    `POST /track` with the project token added to each event. Takes events
+    from the last five days only; use events.import for older data.
+  profiles.query: |
+    `POST /engage` on the query host. To page, pass the response's
+    `next_page` as `page` with the same `session_id` and the same filters;
+    stop when `next_page` is null.
+  profiles.set: |
+    `POST /engage` with the project token. Every profile operation takes
+    `distinct_id` and its Mixpanel operator field (`$set`, `$set_once`,
+    `$add`, `$union`, `$append`, `$remove`, `$unset`). Mixpanel answers
+    status 1 even for a wrong token, so check the project with
+    profiles.query.
+  identity.merge: |
+    A `$merge` event through `/import`. Projects on Simplified ID Merge (every
+    project created since 2023) refuse it: 400 "identity events are not
+    allowed when project is using simplified identity management".
+    `identity.createIdentity` and `identity.createAlias` are accepted there
+    but have no effect.
+  export.events: |
+    `GET /export` on the data host. The body is newline-delimited JSON; the
+    plugin parses each line and fails, naming only the line number, on one it
+    cannot parse. One request covers one date range, capped by `limit`.
+  cohorts.list: |
+    `POST /cohorts/list` on the query host; Mixpanel answers a bare array,
+    returned as `{ cohorts }`. 402 on the free plan.
+  insights.run: |
+    `POST /insights/query`: an ad hoc report from metrics, time, filters and
+    breakdowns, in Mixpanel's Insights query format.
+  gdpr.createDeletion: |
+    Needs `gdpr_token` and `project_token`. Deletes every event and profile
+    of the users; Mixpanel runs it as a job you can cancel with
+    gdpr.cancelDeletion until it starts.
+  serviceAccounts.create: |
+    Returns the new account's secret once, in `results.token`. Organization
+    calls need an organization admin or owner service account.
+  dataDefinitions.list: |
+    Platform API (`platform-<region>.mixpanel.com/v1`). Pass `workspace_id`
+    for the workspace-scoped routes; otherwise the project's. Pages by
+    `cursor` (`pagination.next_cursor`).

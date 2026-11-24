@@ -12,11 +12,11 @@ pnpm add @corsair-dev/googlecalendar
 
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
-| `calendar.getAvailability` | `googlecalendar.api.calendar.getAvailability` | `read` | Get free/busy availability for a calendar |
+| `calendar.getAvailability` | `googlecalendar.api.calendar.getAvailability` | `read` | Busy time ranges only, no event details; use events.getMany to see the events |
 | `events.create` | `googlecalendar.api.events.create` | `write` | Create a new calendar event |
 | `events.delete` | `googlecalendar.api.events.delete` | `destructive` | Delete a calendar event [DESTRUCTIVE] |
-| `events.get` | `googlecalendar.api.events.get` | `read` | Get a specific calendar event |
-| `events.getMany` | `googlecalendar.api.events.getMany` | `read` | List calendar events |
+| `events.get` | `googlecalendar.api.events.get` | `read` | Get one event by its event id, not the iCalUID. For one occurrence of a recurring event, use the instance id from events.getMany with singleEvents true |
+| `events.getMany` | `googlecalendar.api.events.getMany` | `read` | List events in a time window. Set singleEvents true or recurring events appear once; page with pageToken until nextPageToken is empty |
 | `events.update` | `googlecalendar.api.events.update` | `write` | Update an existing calendar event |
 
 ## Auth

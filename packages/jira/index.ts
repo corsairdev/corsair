@@ -346,7 +346,8 @@ const jiraEndpointMeta = {
 	},
 	'issues.get': {
 		riskLevel: 'read',
-		description: 'Get a Jira issue by ID or key',
+		description:
+			'Get one issue with all fields unless fields limits them. description is ADF JSON, not plain text',
 	},
 	'issues.edit': {
 		riskLevel: 'write',
@@ -358,7 +359,8 @@ const jiraEndpointMeta = {
 	},
 	'issues.search': {
 		riskLevel: 'read',
-		description: 'Search issues using JQL',
+		description:
+			'JQL search. Returns only the issue id unless fields is set. No total: page with next_page_token until isLast is true. JQL must be bounded, e.g. project = ABC AND ...',
 	},
 	'issues.assign': {
 		riskLevel: 'write',
@@ -378,7 +380,8 @@ const jiraEndpointMeta = {
 	},
 	'issues.bulkFetch': {
 		riskLevel: 'read',
-		description: 'Bulk fetch multiple Jira issues by ID or key',
+		description:
+			'Fetch up to 100 issues by id or key per call. fields is an array here, a comma-separated string in issues.search',
 	},
 	'issues.addAttachment': {
 		riskLevel: 'write',
@@ -406,7 +409,8 @@ const jiraEndpointMeta = {
 	},
 	'comments.list': {
 		riskLevel: 'read',
-		description: 'List all comments on a Jira issue',
+		description:
+			'Comments on one issue, 100 per page by default; page with start_at until startAt plus the count reaches total. Bodies are ADF JSON',
 	},
 	'comments.update': {
 		riskLevel: 'write',
@@ -424,7 +428,11 @@ const jiraEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get a Jira project by ID or key',
 	},
-	'projects.list': { riskLevel: 'read', description: 'List Jira projects' },
+	'projects.list': {
+		riskLevel: 'read',
+		description:
+			'Projects the user can browse, 50 per page (max 100). query matches key or name',
+	},
 	'projects.getRoles': {
 		riskLevel: 'read',
 		description: 'Get project roles for a Jira project',
@@ -435,7 +443,8 @@ const jiraEndpointMeta = {
 	},
 	'sprints.list': {
 		riskLevel: 'read',
-		description: 'List sprints for a Jira board',
+		description:
+			'Sprints of one board; get board_id from sprints.listBoards. state is comma-separated future, active, closed: set active for the current sprint',
 	},
 	'sprints.moveIssues': {
 		riskLevel: 'write',
@@ -447,7 +456,11 @@ const jiraEndpointMeta = {
 		description: 'Get the currently authenticated Jira user',
 	},
 	'users.find': { riskLevel: 'read', description: 'Search for Jira users' },
-	'users.getAll': { riskLevel: 'read', description: 'Get all Jira users' },
+	'users.getAll': {
+		riskLevel: 'read',
+		description:
+			'Jira accounts 50 per page, inactive and deleted users included; page with start_at',
+	},
 	'groups.getAll': { riskLevel: 'read', description: 'Get all Jira groups' },
 	'groups.create': {
 		riskLevel: 'write',

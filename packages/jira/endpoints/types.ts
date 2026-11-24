@@ -162,8 +162,18 @@ export type IssuesCreateResponse = z.infer<typeof IssuesCreateResponseSchema>;
 
 const IssuesGetInputSchema = z.object({
 	issue_id_or_key: z.string(),
-	fields: z.string().optional(),
-	expand: z.string().optional(),
+	fields: z
+		.string()
+		.optional()
+		.describe(
+			'Comma-separated field ids, e.g. "summary,status". All fields by default.',
+		),
+	expand: z
+		.string()
+		.optional()
+		.describe(
+			'Comma-separated; "renderedFields" returns HTML versions of rich-text fields.',
+		),
 });
 export type IssuesGetInput = z.infer<typeof IssuesGetInputSchema>;
 
@@ -201,10 +211,29 @@ const IssuesDeleteResponseSchema = z.object({
 export type IssuesDeleteResponse = z.infer<typeof IssuesDeleteResponseSchema>;
 
 const IssuesSearchInputSchema = z.object({
-	jql: z.string(),
-	next_page_token: z.string().optional(),
-	max_results: z.number().optional(),
-	fields: z.string().optional(),
+	jql: z
+		.string()
+		.describe(
+			'Must be bounded by a search restriction, e.g. assignee = currentUser() ORDER BY updated DESC; "ORDER BY key DESC" alone is rejected.',
+		),
+	next_page_token: z
+		.string()
+		.optional()
+		.describe(
+			'nextPageToken from the previous response; omit for the first page.',
+		),
+	max_results: z
+		.number()
+		.optional()
+		.describe(
+			'Page size, default 50. Jira may return fewer when many fields are requested.',
+		),
+	fields: z
+		.string()
+		.optional()
+		.describe(
+			'Comma-separated field ids, e.g. "summary,status,assignee". "*all" returns every field. Without it only the id comes back.',
+		),
 	expand: z.string().optional(),
 });
 export type IssuesSearchInput = z.infer<typeof IssuesSearchInputSchema>;
@@ -290,8 +319,13 @@ export type IssuesBulkCreateResponse = z.infer<
 >;
 
 const IssuesBulkFetchInputSchema = z.object({
-	issue_ids_or_keys: z.array(z.string()),
-	fields: z.array(z.string()).optional(),
+	issue_ids_or_keys: z.array(z.string()).describe('Up to 100 per call.'),
+	fields: z
+		.array(z.string())
+		.optional()
+		.describe(
+			'Array of field ids, unlike the comma-separated string in issues.search.',
+		),
 	expand: z.string().optional(),
 });
 export type IssuesBulkFetchInput = z.infer<typeof IssuesBulkFetchInputSchema>;
@@ -410,8 +444,8 @@ export type CommentsGetResponse = z.infer<typeof CommentsGetResponseSchema>;
 const CommentsListInputSchema = z.object({
 	issue_id_or_key: z.string(),
 	start_at: z.number().optional(),
-	max_results: z.number().optional(),
-	order_by: z.string().optional(),
+	max_results: z.number().optional().describe('Page size, default 100.'),
+	order_by: z.string().optional().describe('"created" or "-created".'),
 });
 export type CommentsListInput = z.infer<typeof CommentsListInputSchema>;
 
@@ -480,7 +514,10 @@ const ProjectsGetResponseSchema = JiraProjectSchema;
 export type ProjectsGetResponse = z.infer<typeof ProjectsGetResponseSchema>;
 
 const ProjectsListInputSchema = z.object({
-	query: z.string().optional(),
+	query: z
+		.string()
+		.optional()
+		.describe('Case-insensitive match on project key or name.'),
 	order_by: z.string().optional(),
 	start_at: z.number().optional(),
 	max_results: z.number().optional(),
@@ -522,8 +559,13 @@ const SprintsCreateResponseSchema = JiraSprintSchema;
 export type SprintsCreateResponse = z.infer<typeof SprintsCreateResponseSchema>;
 
 const SprintsListInputSchema = z.object({
-	board_id: z.number(),
-	state: z.string().optional(),
+	board_id: z.number().describe('Board id from sprints.listBoards.'),
+	state: z
+		.string()
+		.optional()
+		.describe(
+			'Comma-separated: future, active, closed. Use "active" for the current sprint.',
+		),
 	start_at: z.number().optional(),
 	max_results: z.number().optional(),
 });

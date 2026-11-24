@@ -1,0 +1,779 @@
+---
+title: "Mopinion API reference"
+sidebarTitle: "API"
+description: "API reference for the Mopinion plugin in Corsair: every `mopinion.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### get
+
+`account.get`
+
+Read the account data behind the signed credentials
+
+**Risk:** `read`
+
+```ts
+await corsair.mopinion.api.account.get({});
+```
+
+**Input:** _empty object_
+
+`GET /account`. Returns the account data behind the signed credentials.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string \| null` | No | — |
+| `package` | `string \| null` | No | — |
+| `enddate` | `string \| null` | No | — |
+| `number_users` | `number \| null` | No | — |
+| `number_charts` | `number \| null` | No | — |
+| `number_forms` | `number \| null` | No | — |
+| `number_reports` | `number \| null` | No | — |
+| `reports` | `object[] \| null` | No | — |
+| `_meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="reports full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  language?: string | null,
+  created?: string | null,
+  dataSets?: {
+    id?: number | null,
+    name?: string | null,
+    report_id?: number | null,
+    description?: string | null,
+    data_source?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="_meta full type">
+
+```ts
+{
+  code?: number | null,
+  message?: string | null,
+  has_more?: boolean | null,
+  previous?: string | boolean | null,
+  next?: string | boolean | null,
+  count?: number | null,
+  total?: number | null,
+  warnings?: any[] | null,
+  changed?: number | null,
+  previous_attributes?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Datasets
+
+### feedback
+
+`datasets.feedback`
+
+List the feedback items of a dataset, one page at a time, with Mopinion filter expressions for date, rating, NPS, CES, GCR and tags
+
+**Risk:** `read`
+
+```ts
+await corsair.mopinion.api.datasets.feedback({ datasetId: '12345', page: 1, limit: 100, filters: { '<<nps': 5, date_from: '2026-01-01' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Defaults to 1. |
+| `limit` | `number` | No | Defaults to 10, at most 1000. |
+| `sort` | `created \| datetime` | No | — |
+| `order` | `asc \| desc` | No | Defaults to desc. |
+| `datasetId` | `number \| string` | Yes | — |
+| `filters` | `Record<string, string \| number>` | No | — |
+
+`GET /datasets/{datasetId}/feedback` with page, limit (max 1000), sort
+(created | datetime), order (asc | desc) and `filters`. Pagination state
+arrives in `_meta` (has_more, next, previous, count, total).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `_meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | string | null,
+  created?: string | null,
+  report_id?: number | null,
+  dataset_id?: number | null,
+  fields?: {
+    key?: string | null,
+    label?: string | null,
+    value: any
+  }[] | null,
+  tags?: string[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="_meta full type">
+
+```ts
+{
+  code?: number | null,
+  message?: string | null,
+  has_more?: boolean | null,
+  previous?: string | boolean | null,
+  next?: string | boolean | null,
+  count?: number | null,
+  total?: number | null,
+  warnings?: any[] | null,
+  changed?: number | null,
+  previous_attributes?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### feedbackItem
+
+`datasets.feedbackItem`
+
+Read one feedback item of a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.mopinion.api.datasets.feedbackItem({ datasetId: '12345', feedbackId: '987654' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetId` | `number \| string` | Yes | — |
+| `feedbackId` | `number \| string` | Yes | — |
+
+`GET /datasets/{datasetId}/feedback/{feedbackId}`. Mopinion answers with
+the same `{ data: [item], _meta }` envelope as the list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `_meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | string | null,
+  created?: string | null,
+  report_id?: number | null,
+  dataset_id?: number | null,
+  fields?: {
+    key?: string | null,
+    label?: string | null,
+    value: any
+  }[] | null,
+  tags?: string[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="_meta full type">
+
+```ts
+{
+  code?: number | null,
+  message?: string | null,
+  has_more?: boolean | null,
+  previous?: string | boolean | null,
+  next?: string | boolean | null,
+  count?: number | null,
+  total?: number | null,
+  warnings?: any[] | null,
+  changed?: number | null,
+  previous_attributes?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fields
+
+`datasets.fields`
+
+Read the field definitions of a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.mopinion.api.datasets.fields({ datasetId: '12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `_meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  key?: string | null,
+  label?: string | null,
+  short_label?: string | null,
+  type?: string | null,
+  report_id?: number | null,
+  dataset_id?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="_meta full type">
+
+```ts
+{
+  code?: number | null,
+  message?: string | null,
+  has_more?: boolean | null,
+  previous?: string | boolean | null,
+  next?: string | boolean | null,
+  count?: number | null,
+  total?: number | null,
+  warnings?: any[] | null,
+  changed?: number | null,
+  previous_attributes?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`datasets.get`
+
+Read basic info on one feedback dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.mopinion.api.datasets.get({ datasetId: '12345' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasetId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `report_id` | `number \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `data_source` | `string \| null` | No | — |
+| `_meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="_meta full type">
+
+```ts
+{
+  code?: number | null,
+  message?: string | null,
+  has_more?: boolean | null,
+  previous?: string | boolean | null,
+  next?: string | boolean | null,
+  count?: number | null,
+  total?: number | null,
+  warnings?: any[] | null,
+  changed?: number | null,
+  previous_attributes?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Deployments
+
+### get
+
+`deployments.get`
+
+Read one deployment
+
+**Risk:** `read`
+
+```ts
+await corsair.mopinion.api.deployments.get({ deploymentId: 'a1B2c3D4e5f6' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deploymentId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `key` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `org_id` | `number \| null` | No | — |
+| `datetime` | `string \| null` | No | — |
+| `published` | `boolean \| null` | No | — |
+| `revision` | `number \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `rules` | `any[] \| null` | No | — |
+| `_meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="_meta full type">
+
+```ts
+{
+  code?: number | null,
+  message?: string | null,
+  has_more?: boolean | null,
+  previous?: string | boolean | null,
+  next?: string | boolean | null,
+  count?: number | null,
+  total?: number | null,
+  warnings?: any[] | null,
+  changed?: number | null,
+  previous_attributes?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`deployments.list`
+
+List the deployments (the containers that publish feedback forms on a website or app), one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.mopinion.api.deployments.list({ page: 1, limit: 20 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Defaults to 1. |
+| `limit` | `number` | No | Defaults to 10, at most 1000. |
+
+`GET /deployments` with page and limit. A deployment is the container
+that publishes feedback forms on a website or in an app.
+
+
+
+**Output:** `object \| object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data?: {
+    id?: string | null,
+    key?: string | null,
+    name?: string | null,
+    domain?: string | null,
+    org_id?: number | null,
+    datetime?: string | null,
+    published?: boolean | null,
+    revision?: number | null,
+    type?: string | null,
+    rules?: any[] | null
+  }[] | null,
+  _meta?: {
+    code?: number | null,
+    message?: string | null,
+    has_more?: boolean | null,
+    previous?: string | boolean | null,
+    next?: string | boolean | null,
+    count?: number | null,
+    total?: number | null,
+    warnings?: any[] | null,
+    changed?: number | null,
+    previous_attributes?: Record<string, any> | null
+  } | null
+} | {
+  id?: string | null,
+  key?: string | null,
+  name?: string | null,
+  domain?: string | null,
+  org_id?: number | null,
+  datetime?: string | null,
+  published?: boolean | null,
+  revision?: number | null,
+  type?: string | null,
+  rules?: any[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Reports
+
+### feedback
+
+`reports.feedback`
+
+List the feedback items behind a report, one page at a time, with Mopinion filter expressions for date, rating, NPS, CES, GCR and tags
+
+**Risk:** `read`
+
+```ts
+await corsair.mopinion.api.reports.feedback({ reportId: '42', page: 1, limit: 100, sort: 'datetime', order: 'desc' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Defaults to 1. |
+| `limit` | `number` | No | Defaults to 10, at most 1000. |
+| `sort` | `created \| datetime` | No | — |
+| `order` | `asc \| desc` | No | Defaults to desc. |
+| `reportId` | `number \| string` | Yes | — |
+| `filters` | `Record<string, string \| number>` | No | — |
+
+`GET /reports/{reportId}/feedback`. Same paging and filtering behaviour
+as the dataset feedback list.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `_meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | string | null,
+  created?: string | null,
+  report_id?: number | null,
+  dataset_id?: number | null,
+  fields?: {
+    key?: string | null,
+    label?: string | null,
+    value: any
+  }[] | null,
+  tags?: string[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="_meta full type">
+
+```ts
+{
+  code?: number | null,
+  message?: string | null,
+  has_more?: boolean | null,
+  previous?: string | boolean | null,
+  next?: string | boolean | null,
+  count?: number | null,
+  total?: number | null,
+  warnings?: any[] | null,
+  changed?: number | null,
+  previous_attributes?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### feedbackItem
+
+`reports.feedbackItem`
+
+Read one feedback item of a report
+
+**Risk:** `read`
+
+```ts
+await corsair.mopinion.api.reports.feedbackItem({ reportId: '42', feedbackId: '987654' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reportId` | `number \| string` | Yes | — |
+| `feedbackId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `_meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | string | null,
+  created?: string | null,
+  report_id?: number | null,
+  dataset_id?: number | null,
+  fields?: {
+    key?: string | null,
+    label?: string | null,
+    value: any
+  }[] | null,
+  tags?: string[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="_meta full type">
+
+```ts
+{
+  code?: number | null,
+  message?: string | null,
+  has_more?: boolean | null,
+  previous?: string | boolean | null,
+  next?: string | boolean | null,
+  count?: number | null,
+  total?: number | null,
+  warnings?: any[] | null,
+  changed?: number | null,
+  previous_attributes?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fields
+
+`reports.fields`
+
+Read the field definitions of a report
+
+**Risk:** `read`
+
+```ts
+await corsair.mopinion.api.reports.fields({ reportId: '42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reportId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `_meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  key?: string | null,
+  label?: string | null,
+  short_label?: string | null,
+  type?: string | null,
+  report_id?: number | null,
+  dataset_id?: number | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="_meta full type">
+
+```ts
+{
+  code?: number | null,
+  message?: string | null,
+  has_more?: boolean | null,
+  previous?: string | boolean | null,
+  next?: string | boolean | null,
+  count?: number | null,
+  total?: number | null,
+  warnings?: any[] | null,
+  changed?: number | null,
+  previous_attributes?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`reports.get`
+
+Read basic info on one report
+
+**Risk:** `read`
+
+```ts
+await corsair.mopinion.api.reports.get({ reportId: '42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reportId` | `number \| string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `dataSets` | `object[] \| null` | No | — |
+| `_meta` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="dataSets full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  report_id?: number | null,
+  description?: string | null,
+  data_source?: string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="_meta full type">
+
+```ts
+{
+  code?: number | null,
+  message?: string | null,
+  has_more?: boolean | null,
+  previous?: string | boolean | null,
+  next?: string | boolean | null,
+  count?: number | null,
+  total?: number | null,
+  warnings?: any[] | null,
+  changed?: number | null,
+  previous_attributes?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
