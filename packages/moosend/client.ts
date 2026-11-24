@@ -1,58 +1,8 @@
 import { asRecord } from 'corsair/core';
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const MOOSEND_API_BASE = 'https://api.moosend.com/v3';
-
-/**
- * Moosend wraps every answer, success or failure, in HTTP 200 with
- * `{Code, Error, Context}`. Code 0 means success; the probed failure is
- * `{"Code":104,"Error":"API_KEY_NOT_VALID","Context":null}`.
- */
-export class MoosendAPIError extends Error {
-	/** The HTTP status, when the failure came from a non-2xx response. */
-	readonly status?: number;
-	/** The envelope's numeric code; 0 never reaches here. */
-	readonly code?: number;
-	/** The envelope's error string, e.g. `API_KEY_NOT_VALID`. */
-	readonly moosendError?: string;
-	// unknown: the envelope's Context carries whatever the call returned.
-	readonly context?: unknown;
-	/** Milliseconds from a Retry-After header, when a gateway sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request. */
-	readonly method?: string;
-	/** True when the failed request can be sent again after a 5xx. */
-	readonly replayable?: boolean;
-
-	constructor(
-		message: string,
-		options: {
-			status?: number;
-			code?: number;
-			moosendError?: string;
-			// unknown: same open envelope part as the field above.
-			context?: unknown;
-			retryAfter?: number;
-			method?: string;
-			replayable?: boolean;
-		} = {},
-	) {
-		super(message);
-		this.name = 'MoosendAPIError';
-		this.status = options.status;
-		this.code = options.code;
-		this.moosendError = options.moosendError;
-		this.context = options.context;
-		this.retryAfter = options.retryAfter;
-		this.method = options.method;
-		this.replayable = options.replayable;
-	}
-}
 
 export type MoosendQuery = Record<
 	string,
@@ -65,28 +15,104 @@ export type MoosendRequest = {
 	query?: MoosendQuery;
 	// unknown: the endpoint's input schema has already validated the body.
 	body?: unknown;
-	/**
-	 * True when a 5xx or a network drop can replay the request: reads only.
-	 */
-	replayable?: boolean;
 };
 
-// error-handlers.ts owns retries, so the client makes one attempt. Moosend
-// documents no rate limit; the config stays complete per corsair/http's
-// contract and reads a Retry-After header if one ever arrives.
-const MOOSEND_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'retry-after' },
+/**
+ * Moosend's `{Code, Error, Context}` envelope. Code 0 is success; on success
+ * `Error` is usually null, but bulk calls put a warning there (for example
+ * "1 items were ignored because Email is not valid ...").
+ */
+export type MoosendEnvelope = {
+	code: number;
+	notice: string | null;
+	// unknown: each endpoint parses Context with its own output schema.
+	context: unknown;
 };
 
-// unknown: callers parse Context with the endpoint's zod output schema.
+const EMAIL = /[^\s@()<>"',;:]+@[^\s@()<>"',;:]+/g;
+
+/** Masks email addresses Moosend quotes back in its error strings. */
+export function maskEmails(text: string): string {
+	return text.replace(EMAIL, '[email]');
+}
+
+/**
+ * Moosend answers almost every failure with HTTP 200 and a nonzero Code, so
+ * core's HTTP-status logic never sees them. The status here maps the code to
+ * the HTTP status it means, so Corsair's error handling (429 retries, a 401
+ * that asks to reconnect, a 404) treats it the same as a real HTTP failure.
+ * The original code and error string stay on `body`.
+ */
+export function statusForEnvelope(code: number, error: string): number {
+	if (code === 429 || /RATE.?LIMIT/i.test(error)) return 429;
+	if (code === 104 || /API_KEY/i.test(error)) return 401;
+	if (/NOT_FOUND/i.test(error)) return 404;
+	// -1 covers both real faults ("An internal error occurred ...", a bare
+	// "UNEXPECTED_ERROR") and refusals with a reason ("UNEXPECTED_ERROR: The
+	// email is unsubscribed from the mailing list"); only the first are 5xx.
+	if (
+		code === -1 &&
+		(/internal error/i.test(error) || /^UNEXPECTED_ERROR:?\s*$/.test(error))
+	)
+		return 500;
+	return 400;
+}
+
+function strippedRequest(options: ApiRequestOptions): ApiRequestOptions {
+	// The body carries subscriber emails, names and campaign content; the
+	// key rides in the query, which ApiError already redacts. Drop the body.
+	return { ...options, body: undefined, formData: undefined };
+}
+
+/** Rebuilds an HTTP ApiError without the request body, keeping its status. */
+function withoutRequestBody(error: ApiError): ApiError {
+	const rebuilt = new ApiError(
+		strippedRequest(error.request),
+		{
+			url: error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			// A gateway error page is HTML; keep only a short text sample.
+			body:
+				typeof error.body === 'string'
+					? maskEmails(error.body.slice(0, 300))
+					: error.body,
+		},
+		`Moosend HTTP ${error.status}: request failed`,
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+	rebuilt.stack = error.stack;
+	return rebuilt;
+}
+
+/** True for an ApiError built from a nonzero envelope Code. */
+export function isEnvelopeError(error: Error): error is ApiError {
+	if (!(error instanceof ApiError)) return false;
+	const body = asRecord(error.body);
+	return typeof body?.Code === 'number';
+}
+
+/** The envelope's Error string of an ApiError built from one. */
+export function envelopeErrorName(error: Error): string | undefined {
+	if (!isEnvelopeError(error)) return undefined;
+	const value = asRecord(error.body)?.Error;
+	return typeof value === 'string' ? value : undefined;
+}
+
+/**
+ * Sends one request and unwraps the envelope. Nonzero Codes throw core's
+ * `ApiError` with the mapped status and the masked envelope on `body`.
+ */
 export async function makeMoosendRequest(
 	apiKey: string,
-	{ method, path, query, body, replayable }: MoosendRequest,
-): Promise<unknown> {
+	{ method, path, query, body }: MoosendRequest,
+): Promise<MoosendEnvelope> {
 	const config: OpenAPIConfig = {
 		BASE: MOOSEND_API_BASE,
 		VERSION: '1.0.0',
@@ -103,57 +129,51 @@ export async function makeMoosendRequest(
 		mediaType: body === undefined ? undefined : 'application/json',
 	};
 
-	let envelope: unknown;
+	// unknown: the envelope is checked field by field below.
+	let raw: unknown;
 	try {
-		envelope = await request<unknown>(config, requestOptions, {
-			rateLimitConfig: MOOSEND_RATE_LIMIT_CONFIG,
-		});
+		raw = await request<unknown>(config, requestOptions);
 	} catch (error) {
-		if (error instanceof ApiError) {
-			// The key rides in the query string, which ApiError keeps on
-			// request. Keep only the safe fields and drop the cause so the
-			// query (with the key) can never be printed.
-			throw new MoosendAPIError(`Moosend ${error.status}: request failed`, {
-				status: error.status,
-				retryAfter: error.retryAfter,
-				method,
-				replayable,
-			});
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		// Transport failures never reached Moosend, so the cause carries no key.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new MoosendAPIError(error.message, {
-				method,
-				replayable,
-			});
-		}
-		throw new MoosendAPIError('Unknown Moosend error', {
-			method,
-			replayable,
-		});
+		if (error instanceof ApiError) throw withoutRequestBody(error);
+		throw error;
 	}
 
-	const record = asRecord(envelope);
+	const record = asRecord(raw);
 	const code = record?.Code;
 	if (!record || typeof code !== 'number') {
-		throw new MoosendAPIError('Moosend answered without its Code envelope', {
-			method,
-			replayable,
-		});
+		throw new ApiError(
+			strippedRequest(requestOptions),
+			{
+				url: `${MOOSEND_API_BASE}${path}`,
+				ok: false,
+				status: 502,
+				statusText: 'Bad Gateway',
+				body: 'Moosend answered without its {Code, Error, Context} envelope.',
+			},
+			'Moosend answered without its {Code, Error, Context} envelope',
+		);
 	}
+
+	const errorText =
+		typeof record.Error === 'string' ? maskEmails(record.Error) : null;
+
 	if (code !== 0) {
-		const moosendError =
-			typeof record.Error === 'string' ? record.Error : 'UNKNOWN_ERROR';
-		throw new MoosendAPIError(`Moosend ${code}: ${moosendError}`, {
-			code,
-			moosendError,
-			context: record.Context,
-			method,
-			replayable,
-		});
+		const name = errorText ?? 'UNKNOWN_ERROR';
+		const status = statusForEnvelope(code, name);
+		throw new ApiError(
+			strippedRequest(requestOptions),
+			{
+				url: `${MOOSEND_API_BASE}${path}`,
+				ok: false,
+				status,
+				statusText: name,
+				body: { Code: code, Error: name },
+			},
+			`Moosend ${code}: ${name}`,
+		);
 	}
-	return record.Context;
+
+	return { code, notice: errorText, context: record.Context };
 }
 
 /** Encodes one path segment. */

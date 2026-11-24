@@ -1,64 +1,66 @@
-import type { CorsairErrorHandler } from 'corsair/core';
-import { MoosendAPIError } from './client';
-
-function asMoosendError(error: Error): MoosendAPIError | undefined {
-	return error instanceof MoosendAPIError ? error : undefined;
-}
+import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
+import { isEnvelopeError } from './client';
+import { moosendEndpointMeta } from './endpoints/meta';
 
 function statusOf(error: Error): number | undefined {
-	return asMoosendError(error)?.status;
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+/** Reads only: a write after a 5xx or a dropped connection may have landed. */
+function isRead(context: ErrorContext): boolean {
+	const meta = (moosendEndpointMeta as Record<string, { riskLevel: string }>)[
+		context.operation
+	];
+	return meta?.riskLevel === 'read';
 }
 
 /**
- * Moosend answers failures inside a 200 envelope with a nonzero Code, and
- * documents no explicit rate limit. Non-2xx statuses come from the gateway
- * (404 unknown route, 411 missing Content-Length, 5xx upstream).
+ * Moosend sends most failures as HTTP 200 envelopes with a nonzero Code; the
+ * client turns them into core's ApiError with a mapped status (429 for
+ * RATE_LIMITING, 401 for a bad key, 404 for *_NOT_FOUND, 400 otherwise).
  */
 export const errorHandlers = {
-	// No documented rate limit; a gateway 429 is still worth a backoff.
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => statusOf(error) === 429,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs: asMoosendError(error)?.retryAfter ?? undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		// An HTTP 429 was already retried by corsair/http (three times, with
+		// Retry-After). An envelope 429 arrives behind HTTP 200, so core never
+		// retried it: back off here. Moosend refuses a rate-limited request
+		// before running it, so a write is safe to resend.
+		handler: async (error: Error) =>
+			isEnvelopeError(error)
+				? { maxRetries: 3, retryStrategy: 'exponential_backoff' as const }
+				: { maxRetries: 0 },
 	},
 	AUTH_ERROR: {
-		match: (error: Error) => {
-			const moosendError = asMoosendError(error);
-			return statusOf(error) === 401 || moosendError?.code === 104;
-		},
+		match: (error: Error) => statusOf(error) === 401,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// Envelope errors (a nonzero Code behind a 200) and gateway 404s: a
-	// corrected request fixes them, no retry can.
+	// A corrected request fixes these; no retry can.
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
-			const moosendError = asMoosendError(error);
+			const status = statusOf(error);
 			return (
 				error.name === 'ZodError' ||
-				statusOf(error) === 404 ||
-				(moosendError?.status === undefined && moosendError?.code !== undefined)
+				(status !== undefined && status >= 400 && status < 500)
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			asMoosendError(error)?.replayable === true &&
-			(statusOf(error) ?? 0) >= 500,
+		match: (error: Error, context: ErrorContext) =>
+			(statusOf(error) ?? 0) >= 500 && isRead(context),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
-	// A transport failure (reset, DNS, abort) never reached Moosend, so a
-	// read can be replayed without a status to gate on.
-	TRANSPORT_ERROR: {
-		match: (error: Error) =>
-			asMoosendError(error)?.replayable === true &&
-			asMoosendError(error)?.status === undefined,
+	// A dropped connection or timeout never got an answer; replay reads only.
+	NETWORK_ERROR: {
+		match: (error: Error, context: ErrorContext) =>
+			!(error instanceof ApiError) &&
+			error.name !== 'ZodError' &&
+			isRead(context),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
