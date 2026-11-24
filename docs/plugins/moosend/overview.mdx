@@ -1,36 +1,57 @@
 ---
 title: "Moosend plugin"
 sidebarTitle: "Overview"
-description: "Email marketing with Moosend - manage mailing lists and subscribers, subscribe and update contacts, and unsubscribe or remove them."
+description: "Email marketing with Moosend - mailing lists, custom fields, subscribers and tags, segments, draft and sent campaigns with their reports, senders, and transactional email."
 ---
 
 Use **Moosend** through Corsair: one client, typed API calls.
 
-Create an API key in Moosend under account settings and store it on the
-account. Every call authenticates with the key as the `apikey` query
-parameter, so it is sent in the URL; the plugin strips the key from any
-error it reports.
+Create an API key in Moosend under More → Settings → API key and store it
+on the account. Every call sends the key as the `apikey` query parameter;
+errors never carry it, the request body or the email addresses Moosend
+quotes back.
 
-- **Every answer is HTTP 200.** Success and failure both arrive as
-`{Code, Error, Context}` envelopes; Code 0 is success and anything else is
-a failure the plugin throws (for example 104 `API_KEY_NOT_VALID` for a bad
-key).
-- **subscribe is an upsert.** Adding a subscriber whose email already exists
-updates the record. `subscribers.subscribeMany` skips invalid addresses
-silently, per Moosend's docs, so a success there does not mean every
-address landed.
-- **unsubscribe versus remove.** `subscribers.unsubscribe` moves the
-contact to the suppression list and can be reversed by subscribing again;
-`subscribers.remove` deletes the record permanently.
-- **Paging.** The paged list operations take a `page` and a `pageSize` and
-return the paging info (total results, pages) alongside the items.
-- **No documented rate limit.** The plugin retries a gateway 429 with
-exponential backoff and never replays a write after a 5xx or a network
-failure.
+- **Errors arrive as HTTP 200.** Moosend wraps every answer in
+  `{Code, Error, Context}` and signals failure with a nonzero Code. The
+  plugin throws core's `ApiError` with the HTTP status the code means:
+  429 for `RATE_LIMITING` (retried with backoff), 401 for
+  `API_KEY_NOT_VALID`, 404 for any `*_NOT_FOUND`, 400 for validation
+  errors, 500 for an internal error. The original Code and Error are on
+  `error.body`.
+- **Outputs keep Moosend's field names** (`ID`, `Name`, `MailingLists`,
+  `Paging`, ...). Dates come as ASP.NET strings such as
+  `/Date(1795515243966+0000)/`, and most enums as numbers (a subscriber's
+  `SubscribeType` is 1 subscribed, 2 unsubscribed, 3 bounced, 4 removed).
+- **subscribe is an upsert.** It updates the existing subscriber with that
+  email, re-subscribes one who unsubscribed, and clears custom fields left
+  out of the call (so does `subscribers.update`). On a double opt-in list
+  it emails a confirmation unless `hasExternalDoubleOptIn` is true. Both
+  subscribe operations are `destructive` for that reason.
+  `subscribers.subscribeMany` skips invalid addresses and reports them in
+  `notice`.
+- **remove, unsubscribe and delete differ.** `remove` marks the member
+  Removed (it stays visible under that status), `unsubscribe` marks it
+  Unsubscribed, and the `delete` operations erase it. Moosend refuses to
+  remove an address that already unsubscribed.
+- **Segment criteria are addressed by position.** `segments.addCriteria`
+  returns the new criterion's position (1 = first);
+  `segments.updateCriteria` takes that number, not the criterion's `ID`.
+  `segments.update` with `criteria` replaces all of them.
+- **No campaigns yet.** Moosend answers the campaign list routes with
+  `CAMPAIGN_NOT_FOUND` when the account has none; `campaigns.list` returns
+  an empty list for that answer.
+- **Sending.** `campaigns.send`, `campaigns.sendTest`, `campaigns.schedule`
+  and `transactional.send` email real people and are `destructive`.
+  Creating, updating and cloning campaigns only makes drafts.
+- **Rate limits.** Moosend limits some routes per API key: campaign
+  activity 2 calls a minute, adding subscribers 10 per 10 s, bulk adds 2 per
+  10 s, tag updates 5 per 10 s.
+- Moosend's website tracking API (track.moosend.com) is a separate,
+  site-ID based API and is not part of this plugin.
 
 **What you get:**
 
-- 14 typed API operations
+- 52 typed API operations
 
 ## Setup
 
@@ -116,19 +137,30 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**List every active mailing list**
+**List the subscribed members of a mailing list**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.moosend.api.lists.list({});
+await tenant.moosend.api.subscribers.list({
+	mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3',
+	status: 'Subscribed',
+	page: 1,
+	pageSize: 50,
+});
 ```
 
 
-**Add a subscriber to a mailing list**
+**Create a draft campaign for a mailing list**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.moosend.api.subscribers.subscribe({ mailingListId: '8c4f9a52-3f3e-4f29-a497-1f4c30f10be9', email: 'jana.berger@beachy.example', name: 'Jana Berger' });
+await tenant.moosend.api.campaigns.create({
+	name: 'November newsletter',
+	subject: 'What\'s new in November',
+	senderEmail: 'news@example.com',
+	htmlContent: '<p>Hello {{recipient:name}}</p>',
+	mailingLists: [{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3' }],
+});
 ```
 
 

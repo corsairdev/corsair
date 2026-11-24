@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/moosend",
   "version": "0.1.0",
-  "description": "Email marketing with Moosend - manage mailing lists and subscribers, subscribe and update contacts, and unsubscribe or remove them.",
+  "description": "Email marketing with Moosend - mailing lists, custom fields, subscribers and tags, segments, draft and sent campaigns with their reports, senders, and transactional email.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -37,7 +37,9 @@
     "moosend",
     "plugin",
     "email-marketing",
-    "mailing-lists"
+    "mailing-lists",
+    "campaigns",
+    "transactional-email"
   ],
   "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",
