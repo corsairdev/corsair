@@ -421,7 +421,7 @@
   },
   "mixpanel": {
     "from": "https://media.brand.dev/c300b6eb-7aad-4fa6-97ef-76be786e02c1.svg",
-    "note": "found with the context.dev Brand API for mixpanel.com"
+    "note": "found with the context.dev Brand API for mixpanel.com; the brand.dev file is the white mark for dark surfaces, recoloured to Mixpanel purple #7856FF (mixpanel.com light favicon)"
   },
   "monday": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/monday.svg"

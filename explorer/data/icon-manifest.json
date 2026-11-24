@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-24T16:11:13.873Z",
+  "generatedAt": "2026-11-24T16:19:26.246Z",
   "primarySource": "https://twenty-icons.com",
   "fallbackSource": "https://www.google.com/s2/favicons",
   "size": 128,
   "format": "png",
   "total": 785,
-  "succeeded": 784,
-  "failed": 1,
+  "succeeded": 785,
+  "failed": 0,
   "domains": {
     "ably": "ably.io",
     "abstract": "abstractapi.com",
@@ -1239,7 +1239,8 @@
     "mistralai": "twenty-icons",
     "mixmax": "curated",
     "mixpanel": "curated",
-    "moco": "twenty-icons",
+    "mocean": "url-override",
+    "moco": "url-override",
     "modelry": "twenty-icons",
     "monday": "curated",
     "mondaymcp": "twenty-icons",
@@ -1858,6 +1859,7 @@
     "logodev",
     "mailtrap",
     "memberspot",
+    "moco",
     "nasa",
     "newsapi",
     "ollama",
@@ -1905,11 +1907,5 @@
     "writer",
     "zendesk"
   ],
-  "failures": [
-    {
-      "id": "mocean",
-      "domain": "moceanapi.com",
-      "error": "twenty-icons returned no PNG; google-favicon HTTP 404"
-    }
-  ]
+  "failures": []
 }
