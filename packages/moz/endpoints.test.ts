@@ -232,3 +232,21 @@ describe('risk levels', () => {
 		}
 	});
 });
+
+describe('review round 2', () => {
+	it('lets the first page omit offset.token', () => {
+		const schema = mozInputSchema('linkingDomains.recentlyGained');
+		expect(
+			schema.safeParse({
+				site_query: { query: 'moz.com', scope: 'domain' },
+				offset: { limit: 10 },
+			}).success,
+		).toBe(true);
+	});
+
+	it('declares account_id on local.locations.listForAccount', () => {
+		const schema = mozInputSchema('local.locations.listForAccount');
+		expect(schema.safeParse({ account_id: 4321 }).success).toBe(true);
+		expect(schema.safeParse({ account_id: '4321' }).success).toBe(false);
+	});
+});
