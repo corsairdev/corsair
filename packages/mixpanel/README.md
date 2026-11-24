@@ -27,7 +27,7 @@ pnpm add @corsair-dev/mixpanel
 | `dataDefinitions.list` | `mixpanel.api.dataDefinitions.list` | `read` | List Lexicon data definitions (events, properties, metrics, cohorts) with filters, paged by cursor |
 | `dataDefinitions.merge` | `mixpanel.api.dataDefinitions.merge` | `write` | Merge event or property definitions into one canonical definition |
 | `dataDefinitions.unmerge` | `mixpanel.api.dataDefinitions.unmerge` | `write` | Undo a merge of data definitions |
-| `dataDefinitions.update` | `mixpanel.api.dataDefinitions.update` | `write` | Update a data definition's description, display name, tags, owners or hidden/blocked/verified flags |
+| `dataDefinitions.update` | `mixpanel.api.dataDefinitions.update` | `destructive` | Update a data definition's description, display name, tags, owners or hidden/blocked/verified flags; blocked: true drops its data at ingestion |
 | `dataDefinitionTags.create` | `mixpanel.api.dataDefinitionTags.create` | `write` | Create a data definition tag |
 | `dataDefinitionTags.delete` | `mixpanel.api.dataDefinitionTags.delete` | `destructive` | Delete a data definition tag (it is removed from every definition) |
 | `dataDefinitionTags.get` | `mixpanel.api.dataDefinitionTags.get` | `read` | Get one data definition tag |
@@ -85,7 +85,7 @@ pnpm add @corsair-dev/mixpanel
 | `lexicon.get` | `mixpanel.api.lexicon.get` | `read` | Get the Lexicon schema of one event or profile type |
 | `lexicon.list` | `mixpanel.api.lexicon.list` | `read` | List every Lexicon schema in the project |
 | `lexicon.listForEntity` | `mixpanel.api.lexicon.listForEntity` | `read` | List the Lexicon schemas for events or for profiles |
-| `lexicon.upsert` | `mixpanel.api.lexicon.upsert` | `write` | Create or replace the Lexicon schema of one event or profile type |
+| `lexicon.upsert` | `mixpanel.api.lexicon.upsert` | `destructive` | Create or replace the Lexicon schema of one event or profile type; metadata dropped: true makes Mixpanel drop that event at ingestion |
 | `lexicon.upsertMany` | `mixpanel.api.lexicon.upsertMany` | `destructive` | Create or replace many Lexicon schemas at once; truncate deletes every schema not uploaded |
 | `lookupTables.list` | `mixpanel.api.lookupTables.list` | `read` | List the lookup tables in the project with their ids |
 | `lookupTables.replace` | `mixpanel.api.lookupTables.replace` | `destructive` | Replace every row of a lookup table with new CSV content (max 100 MB); the old rows are gone |

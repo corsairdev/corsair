@@ -822,9 +822,9 @@ await corsair.mixpanel.api.dataDefinitions.unmerge({});
 
 `dataDefinitions.update`
 
-Update a data definition's description, display name, tags, owners or hidden/blocked/verified flags
+Update a data definition's description, display name, tags, owners or hidden/blocked/verified flags; blocked: true drops its data at ingestion
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mixpanel.api.dataDefinitions.update({});
@@ -3542,9 +3542,9 @@ await corsair.mixpanel.api.lexicon.listForEntity({});
 
 `lexicon.upsert`
 
-Create or replace the Lexicon schema of one event or profile type
+Create or replace the Lexicon schema of one event or profile type; metadata dropped: true makes Mixpanel drop that event at ingestion
 
-**Risk:** `write`
+**Risk:** `destructive`
 
 ```ts
 await corsair.mixpanel.api.lexicon.upsert({ entity_type: 'event', name: 'Signed up', schema: { description: 'A new account', properties: { plan: { type: 'string' } } } });
