@@ -130,13 +130,13 @@ const IssuesListInputSchema = z.object({
 		.string()
 		.optional()
 		.describe('Team UUID from teams.list, not the short key like "ENG".'),
-	first: z.number().optional().describe('Page size, 50 if omitted.'),
+	first: z.number().optional(),
 	after: z
 		.string()
 		.optional()
 		.describe('pageInfo.endCursor from the previous page.'),
 	filter: IssueFilterSchema.optional().describe(
-		'Server-side filter, e.g. {"assignee":{"isMe":{"eq":true}},"state":{"type":{"in":["unstarted","started"]}}}. assignee: id, isMe, name, email or null:true for unassigned. state: id, name or type (triage, backlog, unstarted, started, completed, canceled). labels: some or every, each with id or name. project: id, name or null:true. Also createdAt/updatedAt (ISO 8601 date or duration like "-P2W"), title, description, team, and/or.',
+		'Server-side filter on assignee (isMe or id), state (type or name), labels.some (name), project (id), plus createdAt, updatedAt, title, description, team, and/or.',
 	),
 	orderBy: z.enum(['createdAt', 'updatedAt']).optional(),
 });
@@ -248,7 +248,7 @@ const ProjectsDeleteInputSchema = z.object({
 });
 
 const CommentsListInputSchema = z.object({
-	issueId: z.string(),
+	issueId: z.string().describe('Issue UUID or identifier such as "ENG-123".'),
 	first: z.number().optional(),
 	after: z.string().optional(),
 });

@@ -14,17 +14,17 @@ pnpm add @corsair-dev/linear
 |-----------|--------------|------|-------------|
 | `comments.create` | `linear.api.comments.create` | `write` | Post a comment on an issue |
 | `comments.delete` | `linear.api.comments.delete` | `destructive` | Delete a comment [DESTRUCTIVE] |
-| `comments.list` | `linear.api.comments.list` | `read` | List comments on an issue |
+| `comments.list` | `linear.api.comments.list` | `read` | Comments on one issue; issueId is the UUID or an identifier such as "ENG-123". |
 | `comments.update` | `linear.api.comments.update` | `write` | Update a comment |
 | `issues.create` | `linear.api.issues.create` | `write` | Create a new issue |
 | `issues.delete` | `linear.api.issues.delete` | `destructive` | Permanently delete an issue [DESTRUCTIVE · IRREVERSIBLE] |
-| `issues.get` | `linear.api.issues.get` | `read` | Get a specific issue |
-| `issues.list` | `linear.api.issues.list` | `read` | List issues in a team |
+| `issues.get` | `linear.api.issues.get` | `read` | Reads one issue; id is the UUID or an identifier such as "ENG-123". |
+| `issues.list` | `linear.api.issues.list` | `read` | Lists issues, newest created first, across the workspace or one team; filter by assignee, state, labels or project. |
 | `issues.update` | `linear.api.issues.update` | `write` | Update an existing issue |
 | `projects.create` | `linear.api.projects.create` | `write` | Create a new project |
 | `projects.delete` | `linear.api.projects.delete` | `destructive` | Permanently delete a project [DESTRUCTIVE · IRREVERSIBLE] |
 | `projects.get` | `linear.api.projects.get` | `read` | Get a specific project |
-| `projects.list` | `linear.api.projects.list` | `read` | List projects in a team |
+| `projects.list` | `linear.api.projects.list` | `read` | Lists every project in the workspace; there is no team filter, so check each project's teams. Page with after. |
 | `projects.update` | `linear.api.projects.update` | `write` | Update an existing project |
 | `teams.get` | `linear.api.teams.get` | `read` | Get a specific team |
 | `teams.list` | `linear.api.teams.list` | `read` | List teams in the workspace |

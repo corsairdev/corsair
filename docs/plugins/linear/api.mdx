@@ -111,7 +111,7 @@ await corsair.linear.api.comments.delete({});
 
 `comments.list`
 
-List comments on an issue
+Comments on one issue; issueId is the UUID or an identifier such as "ENG-123".
 
 **Risk:** `read`
 
@@ -123,7 +123,7 @@ await corsair.linear.api.comments.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `issueId` | `string` | Yes | — |
+| `issueId` | `string` | Yes | Issue UUID or identifier such as "ENG-123". |
 | `first` | `number` | No | — |
 | `after` | `string` | No | — |
 
@@ -1188,7 +1188,7 @@ await corsair.linear.api.issues.delete({});
 
 `issues.get`
 
-Get a specific issue
+Reads one issue; id is the UUID or an identifier such as "ENG-123".
 
 **Risk:** `read`
 
@@ -1419,7 +1419,7 @@ await corsair.linear.api.issues.get({});
 
 `issues.list`
 
-List issues in a team
+Lists issues, newest created first, across the workspace or one team; filter by assignee, state, labels or project.
 
 **Risk:** `read`
 
@@ -1431,10 +1431,10 @@ await corsair.linear.api.issues.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `teamId` | `string` | No | — |
+| `teamId` | `string` | No | Team UUID from teams.list, not the short key like "ENG". |
 | `first` | `number` | No | — |
-| `after` | `string` | No | — |
-| `filter` | `object` | No | — |
+| `after` | `string` | No | pageInfo.endCursor from the previous page. |
+| `filter` | `object` | No | Server-side filter on assignee (isMe or id), state (type or name), labels.some (name), project (id), plus createdAt, updatedAt, title, description, team, and/or. |
 | `orderBy` | `createdAt \| updatedAt` | No | — |
 
 <AccordionGroup>
@@ -1489,6 +1489,150 @@ await corsair.linear.api.issues.list({});
       in?: string[],
       nin?: string[]
     }
+  },
+  assignee?: {
+    id?: {
+      eq?: string,
+      neq?: string,
+      in?: string[],
+      nin?: string[]
+    },
+    isMe?: {
+      eq?: boolean,
+      neq?: boolean
+    },
+    name?: {
+      eq?: string,
+      neq?: string,
+      in?: string[],
+      nin?: string[],
+      contains?: string,
+      containsIgnoreCase?: string,
+      notContains?: string,
+      notContainsIgnoreCase?: string,
+      startsWith?: string,
+      endsWith?: string
+    },
+    displayName?: {
+      eq?: string,
+      neq?: string,
+      in?: string[],
+      nin?: string[],
+      contains?: string,
+      containsIgnoreCase?: string,
+      notContains?: string,
+      notContainsIgnoreCase?: string,
+      startsWith?: string,
+      endsWith?: string
+    },
+    email?: {
+      eq?: string,
+      neq?: string,
+      in?: string[],
+      nin?: string[],
+      contains?: string,
+      containsIgnoreCase?: string,
+      notContains?: string,
+      notContainsIgnoreCase?: string,
+      startsWith?: string,
+      endsWith?: string
+    },
+    null?: boolean
+  },
+  state?: {
+    id?: {
+      eq?: string,
+      neq?: string,
+      in?: string[],
+      nin?: string[]
+    },
+    name?: {
+      eq?: string,
+      neq?: string,
+      in?: string[],
+      nin?: string[],
+      contains?: string,
+      containsIgnoreCase?: string,
+      notContains?: string,
+      notContainsIgnoreCase?: string,
+      startsWith?: string,
+      endsWith?: string
+    },
+    type?: {
+      eq?: string,
+      neq?: string,
+      in?: string[],
+      nin?: string[],
+      contains?: string,
+      containsIgnoreCase?: string,
+      notContains?: string,
+      notContainsIgnoreCase?: string,
+      startsWith?: string,
+      endsWith?: string
+    }
+  },
+  labels?: {
+    some?: {
+      id?: {
+        eq?: string,
+        neq?: string,
+        in?: string[],
+        nin?: string[]
+      },
+      name?: {
+        eq?: string,
+        neq?: string,
+        in?: string[],
+        nin?: string[],
+        contains?: string,
+        containsIgnoreCase?: string,
+        notContains?: string,
+        notContainsIgnoreCase?: string,
+        startsWith?: string,
+        endsWith?: string
+      }
+    },
+    every?: {
+      id?: {
+        eq?: string,
+        neq?: string,
+        in?: string[],
+        nin?: string[]
+      },
+      name?: {
+        eq?: string,
+        neq?: string,
+        in?: string[],
+        nin?: string[],
+        contains?: string,
+        containsIgnoreCase?: string,
+        notContains?: string,
+        notContainsIgnoreCase?: string,
+        startsWith?: string,
+        endsWith?: string
+      }
+    }
+  },
+  project?: {
+    id?: {
+      eq?: string,
+      neq?: string,
+      in?: string[],
+      nin?: string[]
+    },
+    name?: {
+      eq?: string,
+      neq?: string,
+      in?: string[],
+      nin?: string[],
+      contains?: string,
+      containsIgnoreCase?: string,
+      notContains?: string,
+      notContainsIgnoreCase?: string,
+      startsWith?: string,
+      endsWith?: string
+    },
+    null?: boolean
   },
   and?: (recursive)[],
   or?: (recursive)[]
@@ -1971,7 +2115,7 @@ await corsair.linear.api.projects.get({});
 
 `projects.list`
 
-List projects in a team
+Lists every project in the workspace; there is no team filter, so check each project's teams. Page with after.
 
 **Risk:** `read`
 

@@ -313,9 +313,13 @@ const linearEndpointMeta = {
 	'issues.list': {
 		riskLevel: 'read',
 		description:
-			"Issues across the workspace, or one team if teamId is set, newest created first. Filter by assignee, state, label or project to find someone's issues; page with after until pageInfo.hasNextPage is false.",
+			'Lists issues, newest created first, across the workspace or one team; filter by assignee, state, labels or project.',
 	},
-	'issues.get': { riskLevel: 'read', description: 'Get a specific issue' },
+	'issues.get': {
+		riskLevel: 'read',
+		description:
+			'Reads one issue; id is the UUID or an identifier such as "ENG-123".',
+	},
 	'issues.create': { riskLevel: 'write', description: 'Create a new issue' },
 	'issues.update': {
 		riskLevel: 'write',
@@ -328,7 +332,8 @@ const linearEndpointMeta = {
 	},
 	'comments.list': {
 		riskLevel: 'read',
-		description: 'List comments on an issue',
+		description:
+			'Comments on one issue; issueId is the UUID or an identifier such as "ENG-123".',
 	},
 	'comments.create': {
 		riskLevel: 'write',
@@ -342,7 +347,8 @@ const linearEndpointMeta = {
 	},
 	'projects.list': {
 		riskLevel: 'read',
-		description: 'List projects in a team',
+		description:
+			"Lists every project in the workspace; there is no team filter, so check each project's teams. Page with after.",
 	},
 	'projects.get': { riskLevel: 'read', description: 'Get a specific project' },
 	'projects.create': {
