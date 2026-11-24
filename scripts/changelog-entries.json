@@ -12314,5 +12314,21 @@
     "version": "0.1.94",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/googledrive",
+    "dir": "packages/googledrive",
+    "name": "Google Drive",
+    "version": "0.1.9",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2725,
+        "title": "Search.filesAndFolders takes fields like files.list"
+      }
+    ]
   }
 ]
