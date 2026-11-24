@@ -13,7 +13,7 @@ pnpm add @corsair-dev/notion
 | Operation | Operation ID | Risk | Description |
 |-----------|--------------|------|-------------|
 | `blocks.appendBlock` | `notion.api.blocks.appendBlock` | `write` | Append new blocks to a block or page |
-| `blocks.getManyChildBlocks` | `notion.api.blocks.getManyChildBlocks` | `read` | Page body as blocks, one level only. Call again with the id of any block that has has_children true. Pass the page id as block_id for top-level content |
+| `blocks.getManyChildBlocks` | `notion.api.blocks.getManyChildBlocks` | `read` | Page body as blocks, one level only. Call again with the id of any block that has has_children true. Pass the page id as block_id for top-level content. Up to 100 blocks per call; while has_more is true, pass next_cursor as start_cursor |
 | `databasePages.createDatabasePage` | `notion.api.databasePages.createDatabasePage` | `write` | Create a new page in a database |
 | `databasePages.getDatabasePage` | `notion.api.databasePages.getDatabasePage` | `read` | Properties of any page by id, not its body; read the body with blocks.getManyChildBlocks using the page id |
 | `databasePages.getManyDatabasePages` | `notion.api.databasePages.getManyDatabasePages` | `read` | Rows of one database, properties only. Read property names with databases.getDatabase first; a 404 means the database id is wrong or the database is not shared with the integration |

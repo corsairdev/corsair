@@ -88,8 +88,13 @@ const BlocksGetManyChildBlocksInputSchema = z.object({
 	block_id: z
 		.string()
 		.describe('Block id, or a page id for the top level of that page.'),
-	start_cursor: z.string().optional(),
-	page_size: z.number().optional(),
+	start_cursor: z
+		.string()
+		.optional()
+		.describe(
+			'next_cursor from the previous response; omit for the first page.',
+		),
+	page_size: z.number().optional().describe('Default and maximum 100.'),
 });
 
 const DatabasesGetDatabaseInputSchema = z.object({

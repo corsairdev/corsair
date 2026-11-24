@@ -127,7 +127,7 @@ await corsair.notion.api.blocks.appendBlock({});
 
 `blocks.getManyChildBlocks`
 
-Page body as blocks, one level only. Call again with the id of any block that has has_children true. Pass the page id as block_id for top-level content
+Page body as blocks, one level only. Call again with the id of any block that has has_children true. Pass the page id as block_id for top-level content. Up to 100 blocks per call; while has_more is true, pass next_cursor as start_cursor
 
 **Risk:** `read`
 
@@ -140,8 +140,8 @@ await corsair.notion.api.blocks.getManyChildBlocks({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `block_id` | `string` | Yes | Block id, or a page id for the top level of that page. |
-| `start_cursor` | `string` | No | — |
-| `page_size` | `number` | No | — |
+| `start_cursor` | `string` | No | next_cursor from the previous response; omit for the first page. |
+| `page_size` | `number` | No | Default and maximum 100. |
 
 
 

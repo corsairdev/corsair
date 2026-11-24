@@ -154,7 +154,7 @@ const notionEndpointMeta = {
 	'blocks.getManyChildBlocks': {
 		riskLevel: 'read',
 		description:
-			'Page body as blocks, one level only. Call again with the id of any block that has has_children true. Pass the page id as block_id for top-level content',
+			'Page body as blocks, one level only. Call again with the id of any block that has has_children true. Pass the page id as block_id for top-level content. Up to 100 blocks per call; while has_more is true, pass next_cursor as start_cursor',
 	},
 	'databases.getDatabase': {
 		riskLevel: 'read',
