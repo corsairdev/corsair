@@ -2073,7 +2073,7 @@ await corsair.moz.api.linkingDomains.recentlyGained({});
 
 ```ts
 {
-  token: string | null,
+  token?: string | null,
   limit: number
 }
 ```
@@ -2253,7 +2253,7 @@ await corsair.moz.api.linkingDomains.recentlyLost({});
 
 ```ts
 {
-  token: string | null,
+  token?: string | null,
   limit: number
 }
 ```
@@ -2407,7 +2407,7 @@ await corsair.moz.api.links.filterByAnchorText({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `site_query` | `object` | Yes | A SiteQuery provides a target URL along with a scope to define how the query is parsed. |
-| `anchor_text` | `string \| null` | Yes | The anchor text provided for filtering in the original request. Pass an explicit `null` to request links with no anchor text. |
+| `anchor_text` | `string \| null` | No | The anchor text provided for filtering in the original request. Pass an explicit `null` to request links with no anchor text. |
 | `options` | `object` | No | Options for filtering links by anchor text. |
 | `offset` | `object` | No | Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results. |
 
@@ -2653,6 +2653,7 @@ await corsair.moz.api.links.filterByDomain({});
 | `domain_site_query` | `object` | Yes | Specify the source domain to filter by. Must be a fully resolved site_query with a scope of `domain`. |
 | `options` | `object` | No | Options for filtering links by domain. |
 | `offset` | `object` | No | Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results. |
+| `anchor_text` | `string` | No | Used in Moz example requests; not in its schema. |
 
 <AccordionGroup>
 <Accordion title="site_query full type">
@@ -3976,7 +3977,7 @@ await corsair.moz.api.local.groups.listForAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `account_id` | `number \| null` | Yes | The id of the local account the location resides in. May be null for legacy inactive locations. |
+| `account_id` | `number \| null` | No | The id of the local account the location resides in. May be null for legacy inactive locations. |
 
 
 
@@ -5130,6 +5131,7 @@ await corsair.moz.api.local.locations.listForAccount({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `object` | No | Control the number of results returned per call in addition to fetching additional results. The default `limit` is 25 with an `n` value of 0 (indicating the first page of results). Make subsequent calls to the endpoint with incrementing `n` values to fetch additional pages of results. To get all results, you must continue making calls with incrementing `n` values until an empty result set is retur |
+| `account_id` | `number` | No | Used in Moz example requests; not in its schema. |
 
 <AccordionGroup>
 <Accordion title="page full type">
