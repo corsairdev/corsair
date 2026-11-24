@@ -305,9 +305,14 @@ const defaultAuthType = 'oauth_2' as const;
 const gmailEndpointMeta = {
 	'messages.list': {
 		riskLevel: 'read',
-		description: 'List messages in a mailbox',
+		description:
+			'Returns only id and threadId per message, no subject or body. Use messages.get to read one.',
 	},
-	'messages.get': { riskLevel: 'read', description: 'Get a specific message' },
+	'messages.get': {
+		riskLevel: 'read',
+		description:
+			'Read one message. Default format is full, with body text base64url-encoded in payload.parts[].body.data; use format metadata for headers only.',
+	},
 	'messages.send': {
 		riskLevel: 'write',
 		description: 'Send an email to one or more recipients',
@@ -331,7 +336,7 @@ const gmailEndpointMeta = {
 	'messages.getAttachment': {
 		riskLevel: 'read',
 		description:
-			'Fetch an attachment of a message by partId (as shown in search results) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId.',
+			'Fetch an attachment of a message by partId (from messages.get, format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId.',
 	},
 	'labels.list': {
 		riskLevel: 'read',
@@ -349,7 +354,8 @@ const gmailEndpointMeta = {
 	},
 	'drafts.list': {
 		riskLevel: 'read',
-		description: 'List drafts in the mailbox',
+		description:
+			'Returns draft id and message id only. Use drafts.get to read subject and body.',
 	},
 	'drafts.get': { riskLevel: 'read', description: 'Get a specific draft' },
 	'drafts.create': { riskLevel: 'write', description: 'Create a new draft' },
@@ -367,9 +373,14 @@ const gmailEndpointMeta = {
 	},
 	'threads.list': {
 		riskLevel: 'read',
-		description: 'List threads in the mailbox',
+		description:
+			'Returns thread id and snippet only, no messages. Use threads.get for the messages.',
 	},
-	'threads.get': { riskLevel: 'read', description: 'Get a specific thread' },
+	'threads.get': {
+		riskLevel: 'read',
+		description:
+			'Get every message in a thread. format works as in messages.get.',
+	},
 	'threads.modify': {
 		riskLevel: 'write',
 		description: 'Add or remove labels from a thread',
