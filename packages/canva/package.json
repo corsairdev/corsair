@@ -19,7 +19,7 @@
     "test": "jest"
   },
   "peerDependencies": {
-    "corsair": ">=0.2.13",
+    "corsair": ">=0.2.31",
     "zod": "^4.1.13"
   },
   "devDependencies": {
