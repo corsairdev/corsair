@@ -93,4 +93,28 @@ describe('outlook events.list', () => {
 		await listEvents(ctx, { top: 5 });
 		expect(asked[0]?.url.pathname).toBe('/v1.0/me/events');
 	});
+
+	it('drops $select from calendarView when it names createdDateTime', async () => {
+		await listEvents(ctx, {
+			expand_recurring_events: true,
+			start_datetime: '2025-06-01T00:00:00Z',
+			end_datetime: '2025-06-30T00:00:00Z',
+			select: ['id', 'createdDateTime'],
+		});
+		expect(asked[0]?.url.searchParams.has('$select')).toBe(false);
+	});
+
+	it('keeps an ordinary $select on calendarView and on events', async () => {
+		await listEvents(ctx, {
+			expand_recurring_events: true,
+			start_datetime: '2025-06-01T00:00:00Z',
+			end_datetime: '2025-06-30T00:00:00Z',
+			select: ['id', 'subject'],
+		});
+		await listEvents(ctx, { select: ['id', 'createdDateTime'] });
+		expect(asked[0]?.url.searchParams.get('$select')).toBe('id,subject');
+		expect(asked[1]?.url.searchParams.get('$select')).toBe(
+			'id,createdDateTime',
+		);
+	});
 });

@@ -379,17 +379,17 @@ const outlookEndpointMeta = {
 	'messages.get': {
 		riskLevel: 'read',
 		description:
-			'Reads one message by id. Body is HTML. Attachments are not included and this plugin cannot download them; hasAttachments only says whether any exist.',
+			'Reads one message by id. Body is HTML. Attachments are not included and this plugin cannot download them; hasAttachments only says whether any non-inline attachment exists, so it is false for a message with only inline ones.',
 	},
 	'messages.list': {
 		riskLevel: 'read',
 		description:
-			'Lists messages from one folder, or the whole mailbox including Deleted Items when folder is unset. 10 per page unless top is set (max 1000); page with skip.',
+			'Lists messages from one folder, or the whole mailbox including Deleted Items when folder is unset. 10 per page unless top is set (max 1000). Take the next skip from @odata.nextLink; it can exceed top, so do not add top to skip.',
 	},
 	'messages.query': {
 		riskLevel: 'read',
 		description:
-			'Raw OData filter over one folder or the whole mailbox. 10 per page unless top is set. A property used in orderby must also be in filter, or Graph returns InefficientFilter.',
+			'Raw OData filter over one folder or the whole mailbox. 10 per page unless top is set. Properties in orderby must also be in filter, first and in the same order, or Graph returns InefficientFilter.',
 	},
 	'messages.search': {
 		riskLevel: 'read',
@@ -443,7 +443,7 @@ const outlookEndpointMeta = {
 	'events.list': {
 		riskLevel: 'read',
 		description:
-			'Single events and series masters; with expand_recurring_events it lists each occurrence between start_datetime and end_datetime. Times are UTC unless timezone is set.',
+			'Single events and series masters; with expand_recurring_events it lists the occurrences between start_datetime and end_datetime, one page at a time (next skip is in @odata.nextLink). Times are UTC unless timezone is set.',
 	},
 	'events.update': {
 		riskLevel: 'write',

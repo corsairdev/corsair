@@ -140,6 +140,11 @@ export const listEvents: OutlookEndpoints['eventsList'] = async (
 		: '';
 
 	const expandOccurrences = input.expand_recurring_events;
+	// calendarView rejects $select of these two; Graph says to omit $select to get them.
+	const select = input.select?.length ? input.select : undefined;
+	const selectBreaksCalendarView =
+		expandOccurrences &&
+		select?.some((f) => /^(createdDateTime|lastModifiedDateTime)$/i.test(f));
 	const result = await makeOutlookRequest<OutlookEndpointOutputs['eventsList']>(
 		`${base}${calendarPath}/${expandOccurrences ? 'calendarView' : 'events'}`,
 		ctx.key,
@@ -155,7 +160,8 @@ export const listEvents: OutlookEndpoints['eventsList'] = async (
 				...(input.top && { $top: input.top }),
 				...(input.skip && { $skip: input.skip }),
 				...(input.filter && { $filter: input.filter }),
-				...(input.select?.length && { $select: input.select.join(',') }),
+				...(select &&
+					!selectBreaksCalendarView && { $select: select.join(',') }),
 				...(input.orderby?.length && { $orderby: input.orderby.join(',') }),
 			},
 		},

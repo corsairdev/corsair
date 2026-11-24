@@ -26,8 +26,8 @@ pnpm add @corsair-dev/outlook
 | `events.delete` | `outlook.api.events.delete` | `destructive` | Delete a calendar event [DESTRUCTIVE] |
 | `events.findMeetingTimes` | `outlook.api.events.findMeetingTimes` | `read` | Find available meeting times for attendees |
 | `events.get` | `outlook.api.events.get` | `read` | Get a calendar event by ID |
-| `events.getSchedule` | `outlook.api.events.getSchedule` | `read` | Get free/busy schedule for a calendar |
-| `events.list` | `outlook.api.events.list` | `read` | Single events and series masters; with expand_recurring_events it lists each occurrence between start_datetime and end_datetime. Times are UTC unless timezone is set. |
+| `events.getSchedule` | `outlook.api.events.getSchedule` | `read` | Free/busy for the listed schedules (email addresses), not event details. startTime and endTime are {dateTime, timeZone} objects. |
+| `events.list` | `outlook.api.events.list` | `read` | Single events and series masters; with expand_recurring_events it lists the occurrences between start_datetime and end_datetime, one page at a time (next skip is in @odata.nextLink). Times are UTC unless timezone is set. |
 | `events.update` | `outlook.api.events.update` | `write` | Update a calendar event |
 | `folders.create` | `outlook.api.folders.create` | `write` | Create a new mail folder |
 | `folders.delete` | `outlook.api.folders.delete` | `destructive` | Delete a mail folder [DESTRUCTIVE] |
@@ -40,10 +40,10 @@ pnpm add @corsair-dev/outlook
 | `messages.createDraft` | `outlook.api.messages.createDraft` | `write` | Create an email draft |
 | `messages.delete` | `outlook.api.messages.delete` | `destructive` | Delete an email message [DESTRUCTIVE] |
 | `messages.forward` | `outlook.api.messages.forward` | `write` | Forward an email message |
-| `messages.get` | `outlook.api.messages.get` | `read` | Reads one message by id. Body is HTML. Attachments are not included and this plugin cannot download them; hasAttachments only says whether any exist. |
-| `messages.list` | `outlook.api.messages.list` | `read` | Lists messages from one folder, or the whole mailbox including Deleted Items when folder is unset. 10 per page unless top is set (max 1000); page with skip. |
+| `messages.get` | `outlook.api.messages.get` | `read` | Reads one message by id. Body is HTML. Attachments are not included and this plugin cannot download them; hasAttachments only says whether any non-inline attachment exists, so it is false for a message with only inline ones. |
+| `messages.list` | `outlook.api.messages.list` | `read` | Lists messages from one folder, or the whole mailbox including Deleted Items when folder is unset. 10 per page unless top is set (max 1000). Take the next skip from @odata.nextLink; it can exceed top, so do not add top to skip. |
 | `messages.move` | `outlook.api.messages.move` | `write` | Move a message to a different folder |
-| `messages.query` | `outlook.api.messages.query` | `read` | Raw OData filter over one folder or the whole mailbox. 10 per page unless top is set. A property used in orderby must also be in filter, or Graph returns InefficientFilter. |
+| `messages.query` | `outlook.api.messages.query` | `read` | Raw OData filter over one folder or the whole mailbox. 10 per page unless top is set. Properties in orderby must also be in filter, first and in the same order, or Graph returns InefficientFilter. |
 | `messages.reply` | `outlook.api.messages.reply` | `write` | Reply to an email message |
 | `messages.search` | `outlook.api.messages.search` | `read` | KQL search over the signed-in user's whole mailbox, newest sent first, at most 1,000 results. For a folder or date range use messages.list or messages.query. |
 | `messages.send` | `outlook.api.messages.send` | `write` | Send an email message |

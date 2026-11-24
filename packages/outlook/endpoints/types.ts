@@ -348,14 +348,14 @@ const MessagesQueryInputSchema = z.object({
 		.string()
 		.optional()
 		.describe(
-			'OData $filter, e.g. "isRead eq false and receivedDateTime ge 2025-01-31T00:00:00Z".',
+			'OData $filter, e.g. "receivedDateTime ge 2025-01-31T00:00:00Z and isRead eq false". With orderby, filter on the ordered properties first.',
 		),
 	select: z.array(z.string()).optional(),
 	orderby: z
 		.string()
 		.optional()
 		.describe(
-			'e.g. "receivedDateTime desc". Each property must also appear in filter.',
+			'e.g. "receivedDateTime desc". Each property must also appear in filter, first and in the same order, or Graph returns InefficientFilter.',
 		),
 	top: z
 		.number()
