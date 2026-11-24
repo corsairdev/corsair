@@ -8,6 +8,7 @@ import { CompareReasonSection } from '@/components/compare/compare-reason-sectio
 import { NangoLimitedApiOperationsSection } from '@/components/compare/nango-limited-api-operations-section';
 import content from '@/content/compare/nango.json';
 import type { ComparePageContent } from '@/content/compare/types';
+import { socialMetadata } from '@/lib/social-metadata';
 
 const nangoContent = content as ComparePageContent;
 
@@ -17,6 +18,11 @@ export const metadata: Metadata = {
 	alternates: {
 		canonical: '/compare/nango',
 	},
+	...socialMetadata({
+		title: nangoContent.meta.title,
+		description: nangoContent.meta.description,
+		path: '/compare/nango',
+	}),
 };
 
 export default function CompareNangoPage() {

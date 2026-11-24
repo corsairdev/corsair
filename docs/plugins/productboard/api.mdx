@@ -1,0 +1,2367 @@
+---
+title: "Productboard API reference"
+sidebarTitle: "API"
+description: "API reference for the Productboard plugin in Corsair: every `productboard.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Analytics
+
+### memberActivities
+
+`analytics.memberActivities`
+
+List member activities with date filters and cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.analytics.memberActivities({
+	query: { dateFrom: '2025-01-01', dateTo: '2025-01-31' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+## Entities
+
+### configurations.get
+
+`entities.configurations.get`
+
+Get configuration for an entity type.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.entities.configurations.get({ type: 'feature' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### configurations.list
+
+`entities.configurations.list`
+
+List workspace-specific entity configurations.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.entities.configurations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### create
+
+`entities.create`
+
+Create a workspace-configured Productboard entity.
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.entities.create({
+	body: {
+		data: {
+			type: 'feature',
+			fields: { name: 'Synthetic feature' },
+			relationships: [{
+				type: 'parent',
+				target: { id: '00000000-0000-4000-8000-000000000005' },
+			}],
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+If your workspace feature configuration requires a parent, include a `parent` relationship to an existing entity ID as shown; check the configuration for any other required fields.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### customerScore
+
+`entities.customerScore`
+
+Read the documented beta aggregated customer score.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.entities.customerScore({ id: '00000000-0000-4000-8000-000000000004' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+This Productboard customer-score API is documented as beta and may change or be removed.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### delete
+
+`entities.delete`
+
+Permanently delete an entity.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.productboard.api.entities.delete({ id: '00000000-0000-4000-8000-000000000004' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### fieldValues.create
+
+`entities.fieldValues.create`
+
+Create a value for a select-type or tag field (not STATUS).
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.entities.fieldValues.create({
+	fieldId: 'tags',
+	body: {
+		data: {
+			fields: { name: 'Synthetic tag' },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fieldId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+Productboard only supports creating values for SINGLE_SELECT, MULTI_SELECT, and TAG fields here; STATUS values are managed separately.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### fieldValues.delete
+
+`entities.fieldValues.delete`
+
+Delete a select-type or tag value (not STATUS).
+
+**Risk:** `destructive`
+
+```ts
+await corsair.productboard.api.entities.fieldValues.delete({ fieldId: 'tags', valueId: '00000000-0000-4000-8000-000000000006' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fieldId` | `string` | Yes | — |
+| `valueId` | `string` | Yes | — |
+| `query` | `Record<string, JsonValue>` | No | — |
+
+Productboard does not support deleting STATUS values. The `force` and `replaceWith` query options are mutually exclusive.
+
+
+
+**Output:** `null`
+
+
+---
+
+### fieldValues.list
+
+`entities.fieldValues.list`
+
+List paginated select, tag, or status field values.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.entities.fieldValues.list({ fieldId: 'status' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fieldId` | `string` | Yes | — |
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### fieldValues.update
+
+`entities.fieldValues.update`
+
+Update a select-type or tag value (not STATUS).
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.entities.fieldValues.update({
+	fieldId: 'tags',
+	valueId: '00000000-0000-4000-8000-000000000006',
+	body: {
+		data: {
+			fields: { name: 'Updated tag' },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fieldId` | `string` | Yes | — |
+| `valueId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+Productboard does not support updating STATUS values through this operation.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### get
+
+`entities.get`
+
+Get an entity by UUID.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.entities.get({ id: '00000000-0000-4000-8000-000000000004' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### list
+
+`entities.list`
+
+List entities across configured workspace resource types.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.entities.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### relationships.create
+
+`entities.relationships.create`
+
+Create a relationship between two entities.
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.entities.relationships.create({
+	id: '00000000-0000-4000-8000-000000000004',
+	body: {
+		data: {
+			type: 'link',
+			target: { id: '00000000-0000-4000-8000-000000000005' },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### relationships.delete
+
+`entities.relationships.delete`
+
+Delete an entity relationship.
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.entities.relationships.delete({ id: '00000000-0000-4000-8000-000000000004', type: 'link', targetId: '00000000-0000-4000-8000-000000000005' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `string` | Yes | — |
+| `targetId` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### relationships.list
+
+`entities.relationships.list`
+
+List an entity’s parent, child, and linked relationships.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.entities.relationships.list({ id: '00000000-0000-4000-8000-000000000004' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### relationships.setParent
+
+`entities.relationships.setParent`
+
+Replace an entity’s parent relationship.
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.entities.relationships.setParent({
+	id: '00000000-0000-4000-8000-000000000004',
+	body: {
+		data: {
+			target: { id: '00000000-0000-4000-8000-000000000005' },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### search
+
+`entities.search`
+
+Search entities using structured filters.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.entities.search({
+	body: {
+		data: {
+			filter: {
+				type: ['feature'],
+			},
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, JsonValue>` | No | — |
+| `body` | `object` | Yes | — |
+
+Entity types and available fields are workspace-configured. Only documented AND filter semantics are supported.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### update
+
+`entities.update`
+
+Update entity fields or patch operations.
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.entities.update({
+	id: '00000000-0000-4000-8000-000000000004',
+	body: {
+		data: {
+			fields: { name: 'Updated feature' },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+## Jira Integrations
+
+### connection
+
+`jiraIntegrations.connection`
+
+Get one feature-to-Jira issue connection.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.jiraIntegrations.connection({ integrationId: '00000000-0000-4000-8000-000000000009', entityId: '00000000-0000-4000-8000-000000000004' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationId` | `string` | Yes | — |
+| `entityId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### connections
+
+`jiraIntegrations.connections`
+
+List feature-to-Jira issue connections.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.jiraIntegrations.connections({ integrationId: '00000000-0000-4000-8000-000000000009' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationId` | `string` | Yes | — |
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### get
+
+`jiraIntegrations.get`
+
+Get one Jira integration.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.jiraIntegrations.get({ id: '00000000-0000-4000-8000-000000000009' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### list
+
+`jiraIntegrations.list`
+
+List Jira integrations with cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.jiraIntegrations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+## Members
+
+### get
+
+`members.get`
+
+Get one workspace member.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.members.get({ id: '00000000-0000-4000-8000-000000000007' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### list
+
+`members.list`
+
+List workspace members; PII may be redacted by Productboard.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.members.list({
+	query: { includeDisabled: false },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### search
+
+`members.search`
+
+Search or batch-lookup workspace members.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.members.search({
+	body: {
+		data: {
+			search: { query: 'synthetic' },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, JsonValue>` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+## Notes
+
+### configurations.get
+
+`notes.configurations.get`
+
+Get configuration metadata for one note type.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.notes.configurations.get({ type: 'textNote' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### configurations.list
+
+`notes.configurations.list`
+
+List note-type configuration metadata.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.notes.configurations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### create
+
+`notes.create`
+
+Create a text or conversation note, optionally with relationships.
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.notes.create({
+	body: {
+		data: {
+			type: 'textNote',
+			fields: { name: 'Synthetic note', content: 'Synthetic feedback' },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: {
+    type: string,
+    fields: {
+      name: string
+    },
+    metadata?: Record<string, JsonValue>,
+    relationships?: (
+      {
+        type: customer,
+        target: {
+          id: string,
+          type: user | company
+        } | {
+          email: string,
+          type: user
+        }
+      } | {
+        type: link,
+        target: {
+          id: string,
+          type: link
+        }
+      }
+    )[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### delete
+
+`notes.delete`
+
+Permanently delete a note.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.productboard.api.notes.delete({ id: '00000000-0000-4000-8000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### get
+
+`notes.get`
+
+Get a note by UUID.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.notes.get({ id: '00000000-0000-4000-8000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### list
+
+`notes.list`
+
+List notes using documented filters and cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.notes.list({
+	query: { archived: false },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### relationships.create
+
+`notes.relationships.create`
+
+Create a customer or product-link relationship for a note.
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.notes.relationships.create({
+	id: '00000000-0000-4000-8000-000000000001',
+	body: {
+		data: {
+			type: 'link',
+			target: { id: '00000000-0000-4000-8000-000000000002', type: 'link' },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### relationships.delete
+
+`notes.relationships.delete`
+
+Remove a note relationship.
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.notes.relationships.delete({ id: '00000000-0000-4000-8000-000000000001', targetType: 'link', targetId: '00000000-0000-4000-8000-000000000002' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `targetType` | `string` | Yes | — |
+| `targetId` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### relationships.list
+
+`notes.relationships.list`
+
+List a note’s customer and product-link relationships.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.notes.relationships.list({ id: '00000000-0000-4000-8000-000000000001' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### relationships.setCustomer
+
+`notes.relationships.setCustomer`
+
+Replace a note’s single customer relationship.
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.notes.relationships.setCustomer({
+	id: '00000000-0000-4000-8000-000000000001',
+	body: {
+		data: {
+			target: { id: '00000000-0000-4000-8000-000000000003', type: 'user' },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### search
+
+`notes.search`
+
+Search notes with structured filters and relationships.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.notes.search({
+	body: {
+		data: {
+			search: { query: 'onboarding' },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, JsonValue>` | No | — |
+| `body` | `object` | Yes | — |
+
+Structured filter groups use the documented relationship semantics. `pageCursor` is passed as a query parameter.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### update
+
+`notes.update`
+
+Update note fields or apply documented patch operations.
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.notes.update({
+	id: '00000000-0000-4000-8000-000000000001',
+	body: {
+		data: {
+			fields: { name: 'Updated note' },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+## Plugin Integrations
+
+### connections.delete
+
+`pluginIntegrations.connections.delete`
+
+Reset a connection to its initial state.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.productboard.api.pluginIntegrations.connections.delete({ integrationId: '00000000-0000-4000-8000-000000000010', entityId: '00000000-0000-4000-8000-000000000004' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationId` | `string` | Yes | — |
+| `entityId` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### connections.get
+
+`pluginIntegrations.connections.get`
+
+Get one connection; missing links return the initial state.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.pluginIntegrations.connections.get({ integrationId: '00000000-0000-4000-8000-000000000010', entityId: '00000000-0000-4000-8000-000000000004' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationId` | `string` | Yes | — |
+| `entityId` | `string` | Yes | — |
+
+If no connection exists, Productboard returns the initial state instead of 404.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### connections.list
+
+`pluginIntegrations.connections.list`
+
+List non-initial connections with cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.pluginIntegrations.connections.list({ integrationId: '00000000-0000-4000-8000-000000000010' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationId` | `string` | Yes | — |
+| `query` | `Record<string, JsonValue>` | No | — |
+
+List responses exclude connections in the initial state; follow the cursor in `links.next`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### connections.search
+
+`pluginIntegrations.connections.search`
+
+Search connections by documented state or entity-ID filters.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.pluginIntegrations.connections.search({
+	integrationId: '00000000-0000-4000-8000-000000000010',
+	body: {
+		data: {
+			filter: {
+				state: ['connected'],
+			},
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationId` | `string` | Yes | — |
+| `query` | `Record<string, JsonValue>` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### connections.update
+
+`pluginIntegrations.connections.update`
+
+Create or replace a connection state via upsert; setting it to initial permanently resets the connection.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.productboard.api.pluginIntegrations.connections.update({
+	integrationId: '00000000-0000-4000-8000-000000000010',
+	entityId: '00000000-0000-4000-8000-000000000004',
+	body: {
+		data: {
+			fields: {
+				connection: { state: 'initial' },
+			},
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationId` | `string` | Yes | — |
+| `entityId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+The operation is an upsert. State `initial` resets the connection, equivalent to delete.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### create
+
+`pluginIntegrations.create`
+
+Create an integration; Productboard probes its configured action URL.
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.pluginIntegrations.create({
+	body: {
+		data: {
+			fields: {
+				type: 'com.example.corsair',
+				name: 'Synthetic integration',
+				integrationStatus: 'disabled',
+				initialState: { label: 'Push' },
+				action: { url: 'https://receiver.example/productboard', version: 1 },
+			},
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+This example creates the integration disabled, which skips Productboard’s endpoint probe. Enabled creation requires a publicly reachable action URL that can answer the probe. The plugin passes `action` as provider-native JSON and does not locally validate its URL syntax or reachability; Productboard validates the request and probes enabled endpoints. `action.headers.authorization` is write-only and is never returned.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### delete
+
+`pluginIntegrations.delete`
+
+Delete an integration and all associated connections.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.productboard.api.pluginIntegrations.delete({ integrationId: '00000000-0000-4000-8000-000000000010' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationId` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### get
+
+`pluginIntegrations.get`
+
+Get an integration; its action authorization secret is write-only.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.pluginIntegrations.get({ integrationId: '00000000-0000-4000-8000-000000000010' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### list
+
+`pluginIntegrations.list`
+
+List configured plugin integrations with cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.pluginIntegrations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### update
+
+`pluginIntegrations.update`
+
+Update integration fields; changing an enabled action URL triggers a probe.
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.pluginIntegrations.update({
+	integrationId: '00000000-0000-4000-8000-000000000010',
+	body: {
+		data: {
+			fields: { integrationStatus: 'disabled' },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `integrationId` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+Changing an enabled integration action URL triggers a Productboard probe. The action authorization secret is write-only.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+## Teams
+
+### create
+
+`teams.create`
+
+Create a team.
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.teams.create({
+	body: {
+		data: {
+			fields: { name: 'Synthetic Team', handle: 'syntheticteam' },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### delete
+
+`teams.delete`
+
+Permanently delete a team and its memberships.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.productboard.api.teams.delete({ id: '00000000-0000-4000-8000-000000000008' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output:** `null`
+
+
+---
+
+### get
+
+`teams.get`
+
+Get one team.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.teams.get({ id: '00000000-0000-4000-8000-000000000008' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+### list
+
+`teams.list`
+
+List teams with cursor pagination and filters.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.teams.list({
+	query: { name: 'Product Team' },
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  fields: {
+    name: string,
+    handle: string
+  },
+  createdAt: string,
+  updatedAt: string,
+  links: {
+    self: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### members
+
+`teams.members`
+
+List a team’s members with cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.teams.members({ id: '00000000-0000-4000-8000-000000000008' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+
+
+---
+
+### search
+
+`teams.search`
+
+Search or batch-lookup teams.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.teams.search({
+	body: {
+		data: {
+			search: { query: 'product' },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, JsonValue>` | No | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `Record<string, JsonValue>` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  fields: {
+    name: string,
+    handle: string
+  },
+  createdAt: string,
+  updatedAt: string,
+  links: {
+    self: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`teams.update`
+
+Update team fields or member assignments.
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.teams.update({
+	id: '00000000-0000-4000-8000-000000000008',
+	body: {
+		data: {
+			fields: { name: 'Updated Team' },
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `body` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: Record<string, JsonValue>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, JsonValue>` | Yes | — |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook subscription at a public HTTPS notification URL.
+
+**Risk:** `write`
+
+```ts
+await corsair.productboard.api.webhooks.create({
+	body: {
+		data: {
+			fields: {
+				name: 'Synthetic feature update subscription',
+				events: [{ eventType: 'feature.updated' }],
+				notification: { url: 'https://receiver.example/productboard', version: 1 },
+			},
+		},
+	},
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `object` | Yes | — |
+
+The plugin validates notification URL syntax, length, and the HTTPS prefix; Productboard checks public reachability after the request is sent. Its optional authorization header is write-only and is never logged or returned.
+
+<AccordionGroup>
+<Accordion title="body full type">
+
+```ts
+{
+  data: {
+    fields: {
+      name: string,
+      events: {
+        eventType: feature.created | feature.updated | feature.deleted | component.created | component.updated | product.created | product.updated | release.created | release.updated | release.deleted | feature-release-assignment.updated | hierarchy-entity.custom-field-value.updated | note.created | note.updated | note.deleted | insight.created | insight.deleted | key-result.created | key-result.updated | key-result.deleted | objective.created | objective.updated | objective.deleted | initiative.created | initiative.updated | initiative.deleted
+      }[],
+      notification: {
+        url: string,
+        version: 1,
+        headers?: {
+          authorization?: string
+        }
+      }
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  links: {
+    self: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Permanently delete a webhook subscription.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.productboard.api.webhooks.delete({ webhookId: '00000000-0000-4000-8000-000000000011' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+
+Deleting a subscription is permanent and stops future notifications; the inbound notification receiver remains the caller's responsibility.
+
+
+
+**Output:** `null`
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get a webhook subscription by UUID.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.webhooks.get({ webhookId: '00000000-0000-4000-8000-000000000011' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string,
+  fields: {
+    name: string,
+    events: {
+      eventType: string
+    }[],
+    notification: {
+      url: string,
+      version: number
+    }
+  },
+  links: {
+    self: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List webhook subscriptions with cursor pagination.
+
+**Risk:** `read`
+
+```ts
+await corsair.productboard.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `Record<string, JsonValue>` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type: string,
+  createdAt?: string,
+  fields: {
+    name: string,
+    events: {
+      eventType: string
+    }[],
+    notification: {
+      url: string,
+      version: number
+    }
+  },
+  links: {
+    self: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+{
+  next?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

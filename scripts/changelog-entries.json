@@ -11523,5 +11523,714 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/cli",
+    "dir": "packages/cli",
+    "name": "cli",
+    "version": "0.1.106",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/langchain",
+    "dir": "adapters/langchain",
+    "name": "langchain",
+    "version": "0.1.81",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/llamaindex",
+    "dir": "adapters/llamaindex",
+    "name": "llamaindex",
+    "version": "0.1.81",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/mastra",
+    "dir": "adapters/mastra",
+    "name": "mastra",
+    "version": "0.1.81",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.109",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/studio",
+    "dir": "packages/studio",
+    "name": "studio",
+    "version": "0.1.92",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.86",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": "0.2.25",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-22",
+    "package": "@corsair-dev/passcreator",
+    "dir": "packages/passcreator",
+    "name": "Passcreator",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "cloud",
+    "version": "0.2.25",
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/cli",
+    "dir": "packages/cli",
+    "name": "cli",
+    "version": "0.1.107",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/langchain",
+    "dir": "adapters/langchain",
+    "name": "langchain",
+    "version": "0.1.82",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/llamaindex",
+    "dir": "adapters/llamaindex",
+    "name": "llamaindex",
+    "version": "0.1.82",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/mastra",
+    "dir": "adapters/mastra",
+    "name": "mastra",
+    "version": "0.1.82",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.110",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/studio",
+    "dir": "packages/studio",
+    "name": "studio",
+    "version": "0.1.93",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.87",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": "0.2.26",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/mailcoach",
+    "dir": "packages/mailcoach",
+    "name": "Mailcoach",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/wisprflow",
+    "dir": "packages/wisprflow",
+    "name": "Wispr Flow",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/cli",
+    "dir": "packages/cli",
+    "name": "cli",
+    "version": "0.1.108",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/langchain",
+    "dir": "adapters/langchain",
+    "name": "langchain",
+    "version": "0.1.83",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/llamaindex",
+    "dir": "adapters/llamaindex",
+    "name": "llamaindex",
+    "version": "0.1.83",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/mastra",
+    "dir": "adapters/mastra",
+    "name": "mastra",
+    "version": "0.1.83",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.111",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/studio",
+    "dir": "packages/studio",
+    "name": "studio",
+    "version": "0.1.94",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.88",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": "0.2.27",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/metaads",
+    "dir": "packages/metaads",
+    "name": "Meta Ads",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/productboard",
+    "dir": "packages/productboard",
+    "name": "Productboard",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/spondyr",
+    "dir": "packages/spondyr",
+    "name": "Spondyr",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/metabase",
+    "dir": "packages/metabase",
+    "name": "Metabase",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/quickbooks",
+    "dir": "packages/quickbooks",
+    "name": "QuickBooks",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/zohobooks",
+    "dir": "packages/zohobooks",
+    "name": "Zoho Books",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/freeagent",
+    "dir": "packages/freeagent",
+    "name": "FreeAgent",
+    "version": "0.1.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2610,
+        "title": "Expand the API coverage to 206 operations"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/pipedrive",
+    "dir": "packages/pipedrive",
+    "name": "Pipedrive",
+    "version": "0.1.2",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2608,
+        "title": "Cover the v1 and v2 APIs, 44 to 365 operations"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/cli",
+    "dir": "packages/cli",
+    "name": "cli",
+    "version": "0.1.109",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/langchain",
+    "dir": "adapters/langchain",
+    "name": "langchain",
+    "version": "0.1.84",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/llamaindex",
+    "dir": "adapters/llamaindex",
+    "name": "llamaindex",
+    "version": "0.1.84",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/mastra",
+    "dir": "adapters/mastra",
+    "name": "mastra",
+    "version": "0.1.84",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.112",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/studio",
+    "dir": "packages/studio",
+    "name": "studio",
+    "version": "0.1.95",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.89",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": "0.2.28",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/amika",
+    "dir": "packages/amika",
+    "name": "Amika",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/cli",
+    "dir": "packages/cli",
+    "name": "cli",
+    "version": "0.1.110",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/langchain",
+    "dir": "adapters/langchain",
+    "name": "langchain",
+    "version": "0.1.85",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/llamaindex",
+    "dir": "adapters/llamaindex",
+    "name": "llamaindex",
+    "version": "0.1.85",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/mastra",
+    "dir": "adapters/mastra",
+    "name": "mastra",
+    "version": "0.1.85",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.113",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/studio",
+    "dir": "packages/studio",
+    "name": "studio",
+    "version": "0.1.96",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.90",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": "0.2.29",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/fathomai",
+    "dir": "packages/fathomai",
+    "name": "Fathom AI Notetaker",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/cli",
+    "dir": "packages/cli",
+    "name": "cli",
+    "version": "0.1.111",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/langchain",
+    "dir": "adapters/langchain",
+    "name": "langchain",
+    "version": "0.1.86",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/llamaindex",
+    "dir": "adapters/llamaindex",
+    "name": "llamaindex",
+    "version": "0.1.86",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/mastra",
+    "dir": "adapters/mastra",
+    "name": "mastra",
+    "version": "0.1.86",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.114",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/studio",
+    "dir": "packages/studio",
+    "name": "studio",
+    "version": "0.1.97",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.91",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": "0.2.30",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-23",
+    "package": "@corsair-dev/inkbox",
+    "dir": "packages/inkbox",
+    "name": "Inkbox",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/cli",
+    "dir": "packages/cli",
+    "name": "cli",
+    "version": "0.1.112",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2712,
+        "title": "PKCE for plugin OAuth, for providers that require it"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/langchain",
+    "dir": "adapters/langchain",
+    "name": "langchain",
+    "version": "0.1.87",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/llamaindex",
+    "dir": "adapters/llamaindex",
+    "name": "llamaindex",
+    "version": "0.1.87",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/mastra",
+    "dir": "adapters/mastra",
+    "name": "mastra",
+    "version": "0.1.87",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/mcp",
+    "dir": "packages/mcp",
+    "name": "mcp",
+    "version": "0.1.115",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/studio",
+    "dir": "packages/studio",
+    "name": "studio",
+    "version": "0.1.98",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2712,
+        "title": "PKCE for plugin OAuth, for providers that require it"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.92",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-24",
+    "package": "corsair",
+    "dir": "packages/corsair",
+    "name": "corsair",
+    "version": "0.2.31",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2712,
+        "title": "PKCE for plugin OAuth, for providers that require it"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-24",
+    "package": "cloud",
+    "version": "0.2.30",
+    "changes": []
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/canva",
+    "dir": "packages/canva",
+    "name": "Canva",
+    "version": "0.2.0",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2713,
+        "title": "Cover Canva's current REST API (62 operations), download exports to files"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/canva",
+    "dir": "packages/canva",
+    "name": "Canva",
+    "version": "0.2.1",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2717,
+        "title": "Require corsair 0.2.31, the first release with PKCE"
+      }
+    ]
   }
 ]

@@ -1,4 +1,5 @@
 import { buildOAuthAuthorizeUrl } from '../../oauth/authorize-url';
+import { pkceVerifier } from '../../oauth/pkce';
 import type { CorsairPlugin, OAuthConfig } from '..';
 import { createIntegrationKeyManager } from '..';
 import { verifyAndDecodeState } from '../auth/state';
@@ -150,6 +151,7 @@ export async function resolveConnectLink(
 		clientId,
 		redirectUri,
 		state,
+		codeVerifier: oauthCfg.pkce ? pkceVerifier(state, internal.kek) : undefined,
 	});
 
 	return {

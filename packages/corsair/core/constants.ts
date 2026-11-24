@@ -46,6 +46,7 @@ export const BaseProviders = [
 	'ambee',
 	'ambientweather',
 	'amcards',
+	'amika',
 	'amplitude',
 	'anchorbrowser',
 	'anonyflow',
@@ -268,6 +269,7 @@ export const BaseProviders = [
 	'fal',
 	'faraday',
 	'fathom',
+	'fathomai',
 	'felt',
 	'fibery',
 	'fidel',
@@ -378,6 +380,7 @@ export const BaseProviders = [
 	'imgbb',
 	'imgix',
 	'inboxkit',
+	'inkbox',
 	'insightoai',
 	'instagram',
 	'instantly',
@@ -433,6 +436,7 @@ export const BaseProviders = [
 	'mailboxlayer',
 	'mailcheck',
 	'mailchimp',
+	'mailcoach',
 	'mailsso',
 	'mailtrap',
 	'make',
@@ -443,6 +447,8 @@ export const BaseProviders = [
 	'memberstack',
 	'memberspot',
 	'merriamwebsterdict',
+	'metaads',
+	'metabase',
 	'microsoftclarity',
 	'minerstat',
 	'minimax',
@@ -503,6 +509,7 @@ export const BaseProviders = [
 	'parsera',
 	'parseur',
 	'parsio',
+	'passcreator',
 	'payhere',
 	'payhip',
 	'paystack',
@@ -544,11 +551,13 @@ export const BaseProviders = [
 	'posthog',
 	'postman',
 	'prisma',
+	'productboard',
 	'proofly',
 	'pushbullet',
 	'pushover',
 	'qdrant',
 	'quaderno',
+	'quickbooks',
 	'radar',
 	'ragic',
 	'raisely',
@@ -636,6 +645,7 @@ export const BaseProviders = [
 	'snowflake',
 	'sourcegraph',
 	'splitwise',
+	'spondyr',
 	'spoki',
 	'spotlightr',
 	'spotify',
@@ -754,6 +764,7 @@ export const BaseProviders = [
 	'whautomate',
 	'whoisfreaks',
 	'winstonai',
+	'wisprflow',
 	'witai',
 	'wix',
 	'wiza',
@@ -775,6 +786,7 @@ export const BaseProviders = [
 	'zenrows',
 	'zenserp',
 	'zohobigin',
+	'zohobooks',
 	'zohodesk',
 	'zohoinventory',
 	'zohoinvoice',
@@ -817,6 +829,7 @@ export const ProviderDisplayNames = {
 	ambee: 'Ambee',
 	ambientweather: 'Ambient Weather',
 	amcards: 'AMcards',
+	amika: 'Amika',
 	amplitude: 'Amplitude',
 	anchorbrowser: 'Anchor Browser',
 	anonyflow: 'Anonyflow',
@@ -1039,6 +1052,7 @@ export const ProviderDisplayNames = {
 	fal: 'fal',
 	faraday: 'Faraday',
 	fathom: 'Fathom',
+	fathomai: 'Fathom AI Notetaker',
 	felt: 'Felt',
 	fibery: 'Fibery',
 	fidel: 'Fidel',
@@ -1149,6 +1163,7 @@ export const ProviderDisplayNames = {
 	imgbb: 'ImgBB',
 	imgix: 'Imgix',
 	inboxkit: 'InboxKit',
+	inkbox: 'Inkbox',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	instantly: 'Instantly',
@@ -1204,6 +1219,7 @@ export const ProviderDisplayNames = {
 	mailboxlayer: 'MailboxLayer',
 	mailcheck: 'Mailcheck',
 	mailchimp: 'Mailchimp',
+	mailcoach: 'Mailcoach',
 	mailsso: 'Mails.so',
 	mailtrap: 'Mailtrap',
 	make: 'Make',
@@ -1214,6 +1230,8 @@ export const ProviderDisplayNames = {
 	memberstack: 'Memberstack',
 	memberspot: 'MemberSpot',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
+	metaads: 'Meta Ads',
+	metabase: 'Metabase',
 	microsoftclarity: 'Microsoft Clarity',
 	minerstat: 'Minerstat',
 	minimax: 'MiniMax',
@@ -1274,6 +1292,7 @@ export const ProviderDisplayNames = {
 	parsera: 'Parsera',
 	parseur: 'Parseur',
 	parsio: 'Parsio',
+	passcreator: 'Passcreator',
 	payhere: 'Payhere',
 	payhip: 'Payhip',
 	paystack: 'Paystack',
@@ -1315,11 +1334,13 @@ export const ProviderDisplayNames = {
 	posthog: 'PostHog',
 	postman: 'Postman',
 	prisma: 'Prisma',
+	productboard: 'Productboard',
 	proofly: 'Proofly',
 	pushbullet: 'Pushbullet',
 	pushover: 'Pushover',
 	qdrant: 'Qdrant',
 	quaderno: 'Quaderno',
+	quickbooks: 'QuickBooks',
 	radar: 'Radar',
 	ragic: 'Ragic',
 	raisely: 'Raisely',
@@ -1407,6 +1428,7 @@ export const ProviderDisplayNames = {
 	snowflake: 'Snowflake',
 	sourcegraph: 'Sourcegraph',
 	splitwise: 'Splitwise',
+	spondyr: 'Spondyr',
 	spoki: 'Spoki',
 	spotlightr: 'Spotlightr',
 	spotify: 'Spotify',
@@ -1525,6 +1547,7 @@ export const ProviderDisplayNames = {
 	whautomate: 'Whautomate',
 	whoisfreaks: 'Whoisfreaks',
 	winstonai: 'Winston AI',
+	wisprflow: 'Wispr Flow',
 	witai: 'WitAi',
 	wix: 'Wix',
 	wiza: 'Wiza',
@@ -1546,6 +1569,7 @@ export const ProviderDisplayNames = {
 	zenrows: 'ZenRows',
 	zenserp: 'Zenserp',
 	zohobigin: 'Zoho Bigin',
+	zohobooks: 'Zoho Books',
 	zohodesk: 'Zoho Desk',
 	zohoinventory: 'Zoho Inventory',
 	zohoinvoice: 'Zoho Invoice',
@@ -1595,6 +1619,7 @@ export type AllProviders =
 	| 'ambee'
 	| 'ambientweather'
 	| 'amcards'
+	| 'amika'
 	| 'amplitude'
 	| 'anchorbrowser'
 	| 'anonyflow'
@@ -1817,6 +1842,7 @@ export type AllProviders =
 	| 'fal'
 	| 'faraday'
 	| 'fathom'
+	| 'fathomai'
 	| 'felt'
 	| 'fibery'
 	| 'fidel'
@@ -1927,6 +1953,7 @@ export type AllProviders =
 	| 'imgbb'
 	| 'imgix'
 	| 'inboxkit'
+	| 'inkbox'
 	| 'insightoai'
 	| 'instagram'
 	| 'instantly'
@@ -1982,6 +2009,7 @@ export type AllProviders =
 	| 'mailboxlayer'
 	| 'mailcheck'
 	| 'mailchimp'
+	| 'mailcoach'
 	| 'mailsso'
 	| 'mailtrap'
 	| 'make'
@@ -1992,6 +2020,8 @@ export type AllProviders =
 	| 'memberstack'
 	| 'memberspot'
 	| 'merriamwebsterdict'
+	| 'metaads'
+	| 'metabase'
 	| 'microsoftclarity'
 	| 'minerstat'
 	| 'minimax'
@@ -2052,6 +2082,7 @@ export type AllProviders =
 	| 'parsera'
 	| 'parseur'
 	| 'parsio'
+	| 'passcreator'
 	| 'payhere'
 	| 'payhip'
 	| 'paystack'
@@ -2093,11 +2124,13 @@ export type AllProviders =
 	| 'posthog'
 	| 'postman'
 	| 'prisma'
+	| 'productboard'
 	| 'proofly'
 	| 'pushbullet'
 	| 'pushover'
 	| 'qdrant'
 	| 'quaderno'
+	| 'quickbooks'
 	| 'radar'
 	| 'ragic'
 	| 'raisely'
@@ -2185,6 +2218,7 @@ export type AllProviders =
 	| 'snowflake'
 	| 'sourcegraph'
 	| 'splitwise'
+	| 'spondyr'
 	| 'spoki'
 	| 'spotlightr'
 	| 'spotify'
@@ -2303,6 +2337,7 @@ export type AllProviders =
 	| 'whautomate'
 	| 'whoisfreaks'
 	| 'winstonai'
+	| 'wisprflow'
 	| 'witai'
 	| 'wix'
 	| 'wiza'
@@ -2324,6 +2359,7 @@ export type AllProviders =
 	| 'zenrows'
 	| 'zenserp'
 	| 'zohobigin'
+	| 'zohobooks'
 	| 'zohodesk'
 	| 'zohoinventory'
 	| 'zohoinvoice'

@@ -1,0 +1,149 @@
+---
+title: "Fathom AI Notetaker database"
+sidebarTitle: "Database"
+description: "Fathom AI Notetaker local sync in Corsair: the entities stored in your database, the `.search()` filters each one accepts, and the filter operators."
+---
+
+The Fathom AI Notetaker plugin syncs data locally. Use `corsair.fathomai.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Meetings
+
+Path: `fathomai.db.meetings.search`
+
+```ts
+const rows = await corsair.fathomai.db.meetings.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `meeting_title` | `string` | equals, contains, startsWith, endsWith, in |
+| `meeting_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `recording_id` | `number` | equals, gt, gte, lt, lte, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `meeting_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `share_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `scheduled_start_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `scheduled_end_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `recording_start_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `recording_end_time` | `string` | equals, contains, startsWith, endsWith, in |
+| `calendar_invitees_domains_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared_with` | `string` | equals, contains, startsWith, endsWith, in |
+| `transcript_language` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Meeting Types
+
+Path: `fathomai.db.meetingTypes.search`
+
+```ts
+const rows = await corsair.fathomai.db.meetingTypes.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Team Members
+
+Path: `fathomai.db.teamMembers.search`
+
+```ts
+const rows = await corsair.fathomai.db.teamMembers.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Teams
+
+Path: `fathomai.db.teams.search`
+
+```ts
+const rows = await corsair.fathomai.db.teams.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Users
+
+Path: `fathomai.db.users.search`
+
+```ts
+const rows = await corsair.fathomai.db.users.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `created_at` | `string` | equals, contains, startsWith, endsWith, in |
+| `status` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
