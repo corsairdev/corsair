@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/mocean",
   "version": "0.1.0",
-  "description": "Messaging with Mocean - send SMS, check message status and account balance and pricing, run verify challenges and look up phone numbers.",
+  "description": "Messaging with Mocean - SMS and delivery status, verify codes over SMS and Telegram, voice calls, WhatsApp messages and templates, number lookup, and account balance and pricing.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

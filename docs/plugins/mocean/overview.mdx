@@ -1,42 +1,50 @@
 ---
 title: "Mocean plugin"
 sidebarTitle: "Overview"
-description: "Messaging with Mocean - send SMS, check message status and account balance and pricing, run verify challenges and look up phone numbers."
+description: "Messaging with Mocean - SMS and delivery status, verify codes over SMS and Telegram, voice calls, WhatsApp messages and templates, number lookup, and account balance and pricing."
 ---
 
 Use **Mocean** through Corsair: one client, typed API calls.
 
-Create an API token in the Mocean dashboard under API settings and store it
-as the account key. Requests authenticate with `Authorization: Bearer` and
-every call asks Mocean for JSON, since the default response format is XML.
+Create an API token in the Mocean dashboard under API Account and store it
+as the account key. Requests authenticate with `Authorization: Bearer`, and
+every `/rest/2` call asks Mocean for JSON, since the default is XML.
 
-- **sms.send and the verify calls are charged.** A send is billed per
-destination and returns one result per receiver, each with its own `status`
-and `msgid`; a nonzero status on a row means that receiver was not sent.
-`sms.send` fails the whole batch with body status 1 (a bad token) before
-anything is sent. Verify requests and resends are charged per attempt.
-- **Numbers need country codes.** `60123456789` is a valid Malaysian
-destination; a number that is invalid after stripping non-numerics answers
-body status 28.
-- **Errors arrive inside a 2xx body.** Mocean answers most failures with a
-`status` code and `err_msg` instead of an HTTP error, so the plugin throws
-from the body: 1 (or 2 on the verify family) is an auth failure, 2 (18 on
-verify) is insufficient balance, 32 (1 on verify) is throttled and 40 and 45
-mean maintenance or a retryable system error. Delivery reports, inbound SMS
-and number-lookup results that Mocean pushes to a callback URL are not
-received by this plugin.
-- **lookup.request is a metered read** charged against prepaid credit. Give
-`mocean_nl_url` only if you run the receiver of that callback yourself;
-without it the full carrier and porting result comes back synchronously.
-- **Scheduling is Malaysia time.** `mocean_schedule` must be
-`YYYY-MM-DD hh:mm:ss` in GMT+8, with leading zeros.
-- **Retries.** Throttling, maintenance and system errors are retried with
-exponential backoff. A send is never replayed after a network failure or a
-5xx, because the message may already have been delivered and charged.
+- **Errors.** Mocean answers many failures with HTTP 202 and a body
+`status`, and the same number means different things per API: 1 is a bad
+token for SMS but throttling for Verify. The plugin throws core's `ApiError`
+with the HTTP status the body status means: 429 throttled (retried with
+backoff), 401 bad token, 402 out of credit, 503 system down, 500 system
+error, 400 for a bad request. Some failures come as real HTTP 400/404 with
+the same `{ status, err_msg }` body; those keep their HTTP status. The
+original code is on `error.body.status`. Error messages are URL-decoded and
+have phone numbers masked; request bodies are never kept.
+- **Sends report per receiver.** `sms.send` returns one row per receiver
+with its own `status` and `msgid`; a failed row (28 invalid number) does not
+fail the others. `voice.dial` does the same in `calls[]`.
+- **Costs.** Sends, verify requests and resends, calls and WhatsApp messages
+spend credit and are `destructive`. `lookup.request` also spends prepaid
+credit but only returns data, so it stays `read` like other metered reads.
+- **Numbers and prices.** `price` and `credit_deducted` come back as
+numbers although the reference says strings; status codes on voice routes
+can come back as strings. `mocean_mcc` and `mocean_mnc` go together (either
+one alone answers status 46).
+- **Scheduling is Malaysia time.** `mocean_schedule` is
+`YYYY-MM-DD hh:mm:ss` in GMT+8.
+- **Downloads.** `voice.recording` and `whatsapp.downloadMedia` return the
+file (base64 with its type and size). A status answer instead of a file
+becomes an error.
+- **Callbacks are not received.** Delivery reports, inbound SMS, call events,
+WhatsApp events and asynchronous number lookups go to URLs you host; Mocean
+does not sign them, and this plugin has no webhooks. The number lookup
+result arrives as a `PUT` to `mocean_nl_url`; delivery reports arrive as a
+`PUT` to `mocean_dlr_url`.
+- **WhatsApp and voice** need a WhatsApp Business sender or voice enabled
+on the Mocean account; without it those routes answer 401 or 403.
 
 **What you get:**
 
-- 8 typed API operations
+- 20 typed API operations
 
 ## Setup
 

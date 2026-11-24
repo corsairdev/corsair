@@ -14,7 +14,7 @@ description: "API reference for the Mocean plugin in Corsair: every `mocean.api.
 
 `account.balance`
 
-Read the account balance
+Read the account credit balance
 
 **Risk:** `read`
 
@@ -24,14 +24,12 @@ await corsair.mocean.api.account.balance({});
 
 **Input:** _empty object_
 
-`GET /rest/2/account/balance`. The answer is `{ status: 0, value }`.
-
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `number` | Yes | — |
+| `status` | `number \| string` | Yes | — |
 | `value` | `number` | Yes | — |
 
 
@@ -42,7 +40,7 @@ await corsair.mocean.api.account.balance({});
 
 `account.pricing`
 
-List the account per-destination pricing, optionally filtered by MCC/MNC or service type
+List per-destination prices for SMS, number lookup or verify, optionally for one MCC/MNC pair
 
 **Risk:** `read`
 
@@ -54,13 +52,9 @@ await corsair.mocean.api.account.pricing({ mocean_mcc: '502', mocean_mnc: '13', 
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `mocean_mcc` | `string` | No | Only pricing for this Mobile Country Code. |
-| `mocean_mnc` | `string` | No | One Mobile Network Code; needs mocean_mcc. |
+| `mocean_mcc` | `string` | No | Only pricing for this Mobile Country Code; needs mocean_mnc. |
+| `mocean_mnc` | `string` | No | One Mobile Network Code; sent together with mocean_mcc. |
 | `mocean_type` | `sms \| number-lookup \| verify` | No | Defaults to 'sms'. |
-
-`GET /rest/2/account/pricing`. `price`, `mcc` and `mnc` come back as
-strings in the documented example (`mnc` can be a comma list like
-"13,19"). `mocean_mnc` needs `mocean_mcc`.
 
 
 
@@ -68,7 +62,7 @@ strings in the documented example (`mnc` can be a comma list like
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `number \| null` | No | — |
+| `status` | `number \| string \| null` | No | — |
 | `destinations` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -80,7 +74,7 @@ strings in the documented example (`mnc` can be a comma list like
   operator?: string | null,
   mcc?: string | null,
   mnc?: string | null,
-  price?: string | null,
+  price?: number | string | null,
   currency?: string | null
 }[]
 ```
@@ -97,7 +91,7 @@ strings in the documented example (`mnc` can be a comma list like
 
 `lookup.request`
 
-Look up a number's original and current carrier and porting status, charged against prepaid credit; returns synchronously without a callback URL
+Look up a number's original and current carrier and porting status, paid from prepaid credit; synchronous without a callback URL
 
 **Risk:** `read`
 
@@ -112,8 +106,8 @@ await corsair.mocean.api.lookup.request({ mocean_to: '60123456789' });
 | `mocean_to` | `string` | Yes | The phone number to look up, with country code. |
 | `mocean_nl_url` | `string` | No | Callback URL for the async result. Omit it to get the full result synchronously. |
 
-`POST /rest/2/nl`. Synchronous without `mocean_nl_url`; the callback answer
-is a form POST to that URL, which the plugin does not receive.
+`POST /rest/2/nl`. Synchronous without `mocean_nl_url`; with it, Mocean
+sends the result as a `PUT` to that URL, which the plugin does not receive.
 
 
 
@@ -121,7 +115,7 @@ is a form POST to that URL, which the plugin does not receive.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `number` | Yes | — |
+| `status` | `number \| string` | Yes | — |
 | `msgid` | `string \| null` | No | — |
 | `to` | `string \| null` | No | — |
 | `current_carrier` | `object \| null` | No | — |
@@ -162,11 +156,44 @@ is a form POST to that URL, which the plugin does not receive.
 
 ## Sms
 
+### reportConversion
+
+`sms.reportConversion`
+
+Tell Mocean whether a sent SMS reached the user (conversion tracking for OTP routes)
+
+**Risk:** `write`
+
+```ts
+await corsair.mocean.api.sms.reportConversion({ mocean_msgid: 'cust20013050311050614001', mocean_delivered: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mocean_msgid` | `string` | Yes | The msgid from the send response. |
+| `mocean_delivered` | `boolean` | Yes | true when the user received the message (for example, used the OTP). |
+| `mocean_timestamp` | `string` | No | When it happened; defaults to the submission time. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string` | Yes | — |
+| `err_msg` | `string \| null` | No | — |
+
+
+
+---
+
 ### send
 
 `sms.send`
 
-Send an SMS to up to 500 receivers, charged per destination; the response carries a status and msgid per receiver
+Send an SMS to up to 500 receivers, charged per destination; the response has a status and msgid per receiver
 
 **Risk:** `destructive`
 
@@ -192,10 +219,8 @@ await corsair.mocean.api.sms.send({ mocean_from: 'Acme', mocean_to: '60123456789
 | `mocean_validity` | `number` | No | How long the message stays deliverable, in seconds. |
 
 `POST /rest/2/sms` with a form-encoded body. Mocean answers HTTP 202 with
-`{ messages: [{ status, receiver, msgid }] }`; each row can fail on its own
-(28 invalid number, 27 over the 500-receiver cap). Delivery reports go to
-`mocean_dlr_url`, which the plugin requires when `mocean_dlr_mask` is 1,
-but it does not receive them.
+`{ messages: [{ status, receiver, msgid }] }`; each row can fail on its own.
+A request with no receiver answers HTTP 400 with the same shape.
 
 
 
@@ -210,7 +235,7 @@ but it does not receive them.
 
 ```ts
 {
-  status: number,
+  status: number | string,
   receiver?: string | null,
   msgid?: string | null,
   err_msg?: string | null
@@ -227,7 +252,7 @@ but it does not receive them.
 
 `sms.status`
 
-Read one sent message's final status (success, failed, expired, pending or not found) and the credit it deducted
+Read a sent message's final status (success, failed, expired, pending or not found) and the credit it took
 
 **Risk:** `read`
 
@@ -241,9 +266,9 @@ await corsair.mocean.api.sms.status({ mocean_msgid: 'cust20013050311050614001' }
 |------|------|----------|-------------|
 | `mocean_msgid` | `string` | Yes | The msgid from the send response. |
 
-`GET /rest/2/report/message?mocean-msgid=...`. `message_status` is 1
-success, 2 failed, 3 expired, 4 pending, 5 not found; `credit_deducted`
-comes back as a string.
+`GET /rest/2/report/message`. `message_status` is 1 success, 2 failed,
+3 expired, 4 pending, 5 not found (an unknown msgid answers 5, not an
+error).
 
 
 
@@ -251,10 +276,253 @@ comes back as a string.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `status` | `number` | Yes | — |
-| `message_status` | `number` | Yes | — |
+| `status` | `number \| string` | Yes | — |
+| `message_status` | `number \| null` | No | — |
 | `msgid` | `string \| null` | No | — |
-| `credit_deducted` | `string \| null` | No | — |
+| `credit_deducted` | `number \| string \| null` | No | — |
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create a WhatsApp message template and submit it to Meta for review
+
+**Risk:** `write`
+
+```ts
+await corsair.mocean.api.templates.create({ name: 'order_ready', language: 'en_US', category: 'UTILITY', components: [{ type: 'BODY', text: 'Your order {{1}} is ready', example: { body_text: [['1042']] } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Template name. |
+| `language` | `string` | Yes | Language code, e.g. en_US. |
+| `category` | `AUTHENTICATION \| MARKETING \| UTILITY` | Yes | — |
+| `allowCategoryChange` | `boolean` | No | Let Meta pick the category under its guidelines. |
+| `message_send_ttl_seconds` | `number` | No | Time to live of an authentication message, in seconds. |
+| `parameter_format` | `POSITIONAL \| NAMED` | No | — |
+| `components` | `object[]` | Yes | Header, body, footer and buttons, as in the Meta template API. |
+
+<AccordionGroup>
+<Accordion title="components full type">
+
+```ts
+{
+  type: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `components` | `any[] \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Delete a WhatsApp message template, every language of it or one by ID; cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mocean.api.templates.delete({ name: 'order_ready', hsm_id: '5653923468721315' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Template name; deletes every language of it. |
+| `hsm_id` | `string` | No | Template ID, to delete only that one language. |
+
+`DELETE /template/whatsapp/message_templates?name=...&hsm_id=...`. Without
+`hsm_id` every language of the template is deleted.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `string \| boolean \| null` | No | — |
+
+
+
+---
+
+### edit
+
+`templates.edit`
+
+Edit a WhatsApp message template; Meta reviews it again
+
+**Risk:** `write`
+
+```ts
+await corsair.mocean.api.templates.edit({ templateId: '5653923468721315', name: 'order_ready', language: 'en_US', category: 'UTILITY', components: [{ type: 'BODY', text: 'Order {{1}} is ready for pickup' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | The WhatsApp template ID. |
+| `name` | `string` | Yes | Template name. |
+| `language` | `string` | Yes | Language code, e.g. en_US. |
+| `category` | `AUTHENTICATION \| MARKETING \| UTILITY` | Yes | — |
+| `allowCategoryChange` | `boolean` | No | Let Meta pick the category under its guidelines. |
+| `message_send_ttl_seconds` | `number` | No | Time to live of an authentication message, in seconds. |
+| `parameter_format` | `POSITIONAL \| NAMED` | No | — |
+| `components` | `object[]` | Yes | Header, body, footer and buttons, as in the Meta template API. |
+
+<AccordionGroup>
+<Accordion title="components full type">
+
+```ts
+{
+  type: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `components` | `any[] \| null` | No | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Read one WhatsApp message template
+
+**Risk:** `read`
+
+```ts
+await corsair.mocean.api.templates.get({ templateId: '5653923468721315' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | Yes | The WhatsApp template ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `category` | `string \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `components` | `any[] \| null` | No | — |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List WhatsApp message templates, filtered by name, status, category or language
+
+**Risk:** `read`
+
+```ts
+await corsair.mocean.api.templates.list({ limit: 20, status: 'APPROVED' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `category` | `AUTHENTICATION \| MARKETING \| UTILITY` | No | — |
+| `content` | `string` | No | Search the template text. |
+| `language` | `string` | No | — |
+| `name` | `string` | No | — |
+| `name_or_content` | `string` | No | — |
+| `quality_score` | `string` | No | GREEN, YELLOW, RED or UNKNOWN |
+| `status` | `string` | No | Review status: APPROVED, PENDING, REJECTED, ... |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
+| `paging` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | number | null,
+  name?: string | null,
+  language?: string | null,
+  category?: string | null,
+  status?: string | null,
+  components?: any[] | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="paging full type">
+
+```ts
+{
+  cursors?: {
+    before?: string | null,
+    after?: string | null
+  } | null,
+  next?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -266,7 +534,7 @@ comes back as a string.
 
 `verify.check`
 
-Check the PIN a user gave you against a verify request; Mocean allows three wrong attempts
+Check the code a user gave you against a verify request; Mocean allows three wrong attempts
 
 **Risk:** `write`
 
@@ -281,9 +549,8 @@ await corsair.mocean.api.verify.check({ mocean_reqid: 'moceanq5672285037', mocea
 | `mocean_reqid` | `string` | Yes | The reqid of the verify request. |
 | `mocean_code` | `string` | Yes | The PIN the user gave you. |
 
-`POST /rest/2/verify/check`. Body status 16 means the code did not match
-and 15 means the three wrong attempts are used up; both are data, not
-retryable errors.
+`POST /rest/2/verify/check`. An expired or unknown reqid answers HTTP 404
+with body status 17; a wrong code is status 16.
 
 
 
@@ -292,7 +559,7 @@ retryable errors.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `reqid` | `string \| null` | No | — |
-| `status` | `number` | Yes | — |
+| `status` | `number \| string` | Yes | — |
 
 
 
@@ -302,7 +569,7 @@ retryable errors.
 
 `verify.request`
 
-Send a verification code over SMS, charged per attempt; keep the reqid for check and resend
+Send a verification code by SMS, charged per attempt; keep the reqid for check and resend
 
 **Risk:** `destructive`
 
@@ -320,8 +587,43 @@ await corsair.mocean.api.verify.request({ mocean_to: '60123456789', mocean_brand
 | `mocean_code_length` | `4 \| 6` | No | The verification code length. Defaults to 4 or the account setting. |
 | `mocean_pin_validity` | `number` | No | Seconds the code stays valid, 60-3600. Defaults to 300 or the account setting. |
 
-`POST /rest/2/verify/req/sms`. The verify family reports auth failures
-with body status 2 and throttling with 1, unlike the other APIs.
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reqid` | `string \| null` | No | — |
+| `status` | `number \| string` | Yes | — |
+| `to` | `string \| null` | No | — |
+| `is_number_reachable` | `string \| null` | No | — |
+| `resend_number` | `string \| null` | No | — |
+
+
+
+---
+
+### requestTelegram
+
+`verify.requestTelegram`
+
+Send a verification code to a Telegram chat through your bot; keep the reqid for check
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mocean.api.verify.requestTelegram({ mocean_to: '123456789', mocean_from: 'acme_bot', mocean_brand: 'Acme' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mocean_to` | `string` | Yes | The Telegram chat ID that gets the code. |
+| `mocean_from` | `string` | Yes | Your Telegram bot username that sends the code. |
+| `mocean_brand` | `string` | Yes | The company or application name shown to the user. |
+| `mocean_code_length` | `4 \| 6` | No | — |
+| `mocean_pin_validity` | `number` | No | — |
 
 
 
@@ -330,7 +632,7 @@ with body status 2 and throttling with 1, unlike the other APIs.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `reqid` | `string \| null` | No | — |
-| `status` | `number` | Yes | — |
+| `status` | `number \| string` | Yes | — |
 | `to` | `string \| null` | No | — |
 | `is_number_reachable` | `string \| null` | No | — |
 | `resend_number` | `string \| null` | No | — |
@@ -343,7 +645,7 @@ with body status 2 and throttling with 1, unlike the other APIs.
 
 `verify.resend`
 
-Resend the code of an existing verify request over SMS, charged per attempt
+Resend the code of a verify request by SMS, charged per attempt
 
 **Risk:** `destructive`
 
@@ -364,10 +666,228 @@ await corsair.mocean.api.verify.resend({ mocean_reqid: 'moceanq5672285037' });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `reqid` | `string \| null` | No | — |
-| `status` | `number` | Yes | — |
+| `status` | `number \| string` | Yes | — |
 | `to` | `string \| null` | No | — |
 | `is_number_reachable` | `string \| null` | No | — |
 | `resend_number` | `string \| null` | No | — |
+
+
+
+---
+
+## Voice
+
+### dial
+
+`voice.dial`
+
+Call one or more numbers and run a Mocean Command flow (say, play, collect, record, dial), charged per call
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mocean.api.voice.dial({ mocean_to: '60123456789', mocean_command: [{ action: 'say', language: 'en-US', text: 'Your code is 1 2 3 4' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mocean_to` | `string` | Yes | Number(s) to call with country code, separated by commas or spaces. |
+| `mocean_command` | `object[]` | Yes | Mocean Command (MC) objects run in order, e.g. [&#123; action: "say", language: "en-US", text: "Hello" &#125;]. |
+| `mocean_from` | `string` | No | Caller ID (number of origin). |
+| `mocean_event_url` | `string` | No | Webhook that receives call status events. |
+
+`POST /rest/2/voice/dial`. `mocean_command` is sent as one JSON string
+field, as Mocean expects.
+
+<AccordionGroup>
+<Accordion title="mocean_command full type">
+
+```ts
+{
+  action: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `calls` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="calls full type">
+
+```ts
+{
+  status: number | string,
+  receiver?: string | null,
+  session_uuid?: string | null,
+  call_uuid?: string | null,
+  err_msg?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### hangup
+
+`voice.hangup`
+
+Hang up a call in progress
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mocean.api.voice.hangup({ mocean_call_uuid: 'xxx-xxx-xxx-xxx' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mocean_call_uuid` | `string` | Yes | The call_uuid from voice.dial. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string` | Yes | — |
+| `session_uuid` | `string \| null` | No | — |
+| `call_uuid` | `string \| null` | No | — |
+
+
+
+---
+
+### recording
+
+`voice.recording`
+
+Download the audio recording of a call
+
+**Risk:** `read`
+
+```ts
+await corsair.mocean.api.voice.recording({ mocean_call_uuid: 'xxx-xxx-xxx-xxx' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mocean_call_uuid` | `string` | Yes | The call_uuid from voice.dial. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+
+
+
+---
+
+## Whatsapp
+
+### downloadMedia
+
+`whatsapp.downloadMedia`
+
+Download media a WhatsApp user sent to your business number
+
+**Risk:** `read`
+
+```ts
+await corsair.mocean.api.whatsapp.downloadMedia({ mocean_from: '60111111111', mocean_media_id: '1234567890' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mocean_from` | `string` | Yes | Your WhatsApp Business sender number that received the media. |
+| `mocean_media_id` | `string` | Yes | The media ID from the inbound message. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+
+
+
+---
+
+### send
+
+`whatsapp.send`
+
+Send a WhatsApp message (text, media, template, interactive, location or contacts) from your business number
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mocean.api.whatsapp.send({ mocean_from: '60111111111', mocean_to: '60123456789', mocean_content: { type: 'text', text: 'Your order has shipped.' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mocean_from` | `string` | Yes | Your registered WhatsApp Business sender number. |
+| `mocean_to` | `string` | Yes | Receiver number with country code, or a Business Scoped User ID. |
+| `mocean_event_url` | `string` | No | Webhook that receives delivery events. |
+| `mocean_content` | `object` | Yes | The message, e.g. &#123; type: "text", text: "Hello" &#125;. |
+
+<AccordionGroup>
+<Accordion title="mocean_content full type">
+
+```ts
+{
+  type: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string` | Yes | — |
+| `message_id` | `string \| null` | No | — |
+| `err_msg` | `string \| null` | No | — |
 
 
 
