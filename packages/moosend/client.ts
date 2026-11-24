@@ -59,9 +59,15 @@ export function statusForEnvelope(code: number, error: string): number {
 }
 
 function strippedRequest(options: ApiRequestOptions): ApiRequestOptions {
-	// The body carries subscriber emails, names and campaign content; the
-	// key rides in the query, which ApiError already redacts. Drop the body.
-	return { ...options, body: undefined, formData: undefined };
+	// The body carries subscriber emails, names and campaign content, and the
+	// query can carry an `Email` lookup next to the key. Drop both.
+	return { ...options, query: undefined, body: undefined, formData: undefined };
+}
+
+/** The URL without its query string (key, Email lookups). */
+function withoutQuery(url: string): string {
+	const index = url.indexOf('?');
+	return index === -1 ? url : url.slice(0, index);
 }
 
 /** Rebuilds an HTTP ApiError without the request body, keeping its status. */
@@ -69,7 +75,7 @@ function withoutRequestBody(error: ApiError): ApiError {
 	const rebuilt = new ApiError(
 		strippedRequest(error.request),
 		{
-			url: error.url,
+			url: withoutQuery(error.url),
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,

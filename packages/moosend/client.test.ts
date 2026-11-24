@@ -5,7 +5,7 @@ import { errorHandlers } from './error-handlers';
 
 let fetchMock: jest.SpyInstance;
 
-// unknown: response bodies are arbitrary.
+// unknown: response bodies are arbitrary JSON or HTML test payloads.
 function respond(
 	body: unknown,
 	status = 200,
@@ -116,6 +116,31 @@ describe('makeMoosendRequest', () => {
 		expect(JSON.stringify(thrown)).not.toContain('jana@example.com');
 	});
 
+	it.each([
+		['an envelope failure', { Code: 501, Error: 'VALIDATION_ERROR' }, 200],
+		['an HTTP failure', '<html>Server Error</html>', 500],
+	])('keeps an Email lookup out of %s', async (_, body, status) => {
+		respond(
+			body,
+			status,
+			typeof body === 'string' ? 'text/html' : 'application/json',
+		);
+		let thrown: unknown;
+		try {
+			await makeMoosendRequest('secret-key', {
+				method: 'GET',
+				path: '/subscribers/l1/view.json',
+				query: { Email: 'jana@example.com' },
+			});
+		} catch (error) {
+			thrown = error;
+		}
+		expect(thrown).toBeInstanceOf(ApiError);
+		const dump = JSON.stringify(thrown);
+		expect(dump).not.toContain('jana');
+		expect(dump).not.toContain('secret-key');
+	});
+
 	it('fails a 200 answer without the envelope instead of returning it', async () => {
 		respond({ hello: 'world' });
 		const thrown = await failure();
@@ -142,6 +167,7 @@ function context(operation: string): ErrorContext {
 	};
 }
 
+// unknown: tests build both envelope objects and plain-text HTTP bodies.
 function apiError(status: number, body: unknown) {
 	return new ApiError(
 		{ method: 'GET', url: '/lists.json' },
