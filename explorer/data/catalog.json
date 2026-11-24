@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-24T06:41:48.374Z",
+  "generatedAt": "2026-11-24T12:33:48.619Z",
   "corsairVersion": "0.2.31",
   "catalogVersion": 2,
   "plugins": [
@@ -4599,7 +4599,7 @@
       ],
       "defaultAuthType": "oauth_2",
       "counts": {
-        "api": 23,
+        "api": 24,
         "webhooks": 1,
         "db": 4
       }
@@ -96040,6 +96040,12 @@
       "kind": "api",
       "shortPath": "messages.get",
       "haystack": "messages.get gmail.api.messages.get get a specific message read"
+    },
+    {
+      "pluginId": "gmail",
+      "kind": "api",
+      "shortPath": "messages.getAttachment",
+      "haystack": "messages.getattachment gmail.api.messages.getattachment fetch an attachment of a message by partid (as shown in search results) or attachmentid. returns the file like drive files.download: inline when small, otherwise saved by the host and returned as fileid. read"
     },
     {
       "pluginId": "gmail",

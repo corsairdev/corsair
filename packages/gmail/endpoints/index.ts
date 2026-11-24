@@ -11,6 +11,7 @@ export const MessagesEndpoints = {
 	batchModify: Messages.batchModify,
 	trash: Messages.trash,
 	untrash: Messages.untrash,
+	getAttachment: Messages.getAttachment,
 };
 
 export const LabelsEndpoints = {
