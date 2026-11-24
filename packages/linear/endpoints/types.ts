@@ -46,6 +46,51 @@ const IdComparatorSchema = z
 	.partial()
 	.strict();
 
+const BooleanComparatorSchema = z
+	.object({ eq: z.boolean(), neq: z.boolean() })
+	.partial()
+	.strict();
+
+const AssigneeFilterSchema = z
+	.object({
+		id: IdComparatorSchema,
+		isMe: BooleanComparatorSchema,
+		name: StringComparatorSchema,
+		displayName: StringComparatorSchema,
+		email: StringComparatorSchema,
+		null: z.boolean(),
+	})
+	.partial()
+	.strict();
+
+const StateFilterSchema = z
+	.object({
+		id: IdComparatorSchema,
+		name: StringComparatorSchema,
+		type: StringComparatorSchema,
+	})
+	.partial()
+	.strict();
+
+const LabelFilterSchema = z
+	.object({ id: IdComparatorSchema, name: StringComparatorSchema })
+	.partial()
+	.strict();
+
+const LabelsFilterSchema = z
+	.object({ some: LabelFilterSchema, every: LabelFilterSchema })
+	.partial()
+	.strict();
+
+const ProjectFilterSchema = z
+	.object({
+		id: IdComparatorSchema,
+		name: StringComparatorSchema,
+		null: z.boolean(),
+	})
+	.partial()
+	.strict();
+
 // The subset of Linear's IssueFilter this plugin supports; unsupported keys are rejected.
 export type IssueFilter = {
 	createdAt?: z.infer<typeof DateComparatorSchema>;
@@ -53,6 +98,10 @@ export type IssueFilter = {
 	title?: z.infer<typeof StringComparatorSchema>;
 	description?: z.infer<typeof StringComparatorSchema>;
 	team?: { id?: z.infer<typeof IdComparatorSchema> };
+	assignee?: z.infer<typeof AssigneeFilterSchema>;
+	state?: z.infer<typeof StateFilterSchema>;
+	labels?: z.infer<typeof LabelsFilterSchema>;
+	project?: z.infer<typeof ProjectFilterSchema>;
 	and?: IssueFilter[];
 	or?: IssueFilter[];
 };
@@ -65,6 +114,10 @@ export const IssueFilterSchema: z.ZodType<IssueFilter> = z.lazy(() =>
 			title: StringComparatorSchema,
 			description: StringComparatorSchema,
 			team: z.object({ id: IdComparatorSchema }).partial().strict(),
+			assignee: AssigneeFilterSchema,
+			state: StateFilterSchema,
+			labels: LabelsFilterSchema,
+			project: ProjectFilterSchema,
 			and: z.array(IssueFilterSchema),
 			or: z.array(IssueFilterSchema),
 		})
@@ -73,10 +126,18 @@ export const IssueFilterSchema: z.ZodType<IssueFilter> = z.lazy(() =>
 );
 
 const IssuesListInputSchema = z.object({
-	teamId: z.string().optional(),
-	first: z.number().optional(),
-	after: z.string().optional(),
-	filter: IssueFilterSchema.optional(),
+	teamId: z
+		.string()
+		.optional()
+		.describe('Team UUID from teams.list, not the short key like "ENG".'),
+	first: z.number().optional().describe('Page size, 50 if omitted.'),
+	after: z
+		.string()
+		.optional()
+		.describe('pageInfo.endCursor from the previous page.'),
+	filter: IssueFilterSchema.optional().describe(
+		'Server-side filter, e.g. {"assignee":{"isMe":{"eq":true}},"state":{"type":{"in":["unstarted","started"]}}}. assignee: id, isMe, name, email or null:true for unassigned. state: id, name or type (triage, backlog, unstarted, started, completed, canceled). labels: some or every, each with id or name. project: id, name or null:true. Also createdAt/updatedAt (ISO 8601 date or duration like "-P2W"), title, description, team, and/or.',
+	),
 	orderBy: z.enum(['createdAt', 'updatedAt']).optional(),
 });
 

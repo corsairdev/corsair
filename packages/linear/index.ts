@@ -310,7 +310,11 @@ export const linearAuthConfig = {
  * Used by the MCP server permission system to decide allow / deny / require_approval.
  */
 const linearEndpointMeta = {
-	'issues.list': { riskLevel: 'read', description: 'List issues in a team' },
+	'issues.list': {
+		riskLevel: 'read',
+		description:
+			"Issues across the workspace, or one team if teamId is set, newest created first. Filter by assignee, state, label or project to find someone's issues; page with after until pageInfo.hasNextPage is false.",
+	},
 	'issues.get': { riskLevel: 'read', description: 'Get a specific issue' },
 	'issues.create': { riskLevel: 'write', description: 'Create a new issue' },
 	'issues.update': {
