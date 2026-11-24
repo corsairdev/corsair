@@ -12429,5 +12429,23 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.96",
+    "isNew": false,
+    "changes": []
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/mixpanel",
+    "dir": "packages/mixpanel",
+    "name": "Mixpanel",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
