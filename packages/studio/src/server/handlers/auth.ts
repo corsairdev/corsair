@@ -12,7 +12,7 @@ import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
 } from 'corsair/core';
-import { localPkceVerifier, pkceAuthParams } from 'corsair/oauth';
+import { localPkceVerifier, newPkceNonce, pkceAuthParams } from 'corsair/oauth';
 import { readJsonBody } from '../router';
 import type { HandlerFn } from '../types';
 
@@ -61,6 +61,12 @@ function findFreePort(): Promise<number> {
  * Tracks in-flight OAuth code listeners. Key: pluginId:tenantId.
  * Each entry resolves when the user hits the redirect URL with ?code=.
  */
+/**
+ * The PKCE nonce of each sign-in in progress (key pluginId:tenantId), so the
+ * listener or a pasted code exchanges with the verifier its link was built for.
+ */
+const pkceNonces = new Map<string, string>();
+
 const pendingListeners = new Map<
 	string,
 	{ redirectUri: string; codePromise: Promise<string>; server: http.Server }
@@ -218,9 +224,12 @@ export const startOAuth: HandlerFn = async (ctx) => {
 			`client_id and/or client_secret not set for '${plugin.id}'. Set them in Credentials first.`,
 		);
 	}
-	// Studio sends no state; keyed like the CLI so a pasted code can be exchanged too.
-	const verifier = oauthCfg.pkce
-		? localPkceVerifier(plugin.id, tenantId, internal.kek)
+	// Studio sends no state, so each sign-in gets its own nonce; a pasted code
+	// finds it here too (see corsair/oauth).
+	const pkceNonce = oauthCfg.pkce ? newPkceNonce() : undefined;
+	if (pkceNonce) pkceNonces.set(`${plugin.id}:${tenantId}`, pkceNonce);
+	const verifier = pkceNonce
+		? localPkceVerifier(plugin.id, tenantId, internal.kek, pkceNonce)
 		: undefined;
 
 	let redirectUri: string;
@@ -270,6 +279,7 @@ export const startOAuth: HandlerFn = async (ctx) => {
 					redirectUri,
 					verifier,
 				);
+				pkceNonces.delete(`${plugin.id}:${tenantId}`);
 				if (!tokens.access_token) return;
 				const extraAccount = getCustomAccountFields(plugin, 'oauth_2');
 				const accountKm = createAccountKeyManager({
@@ -350,16 +360,26 @@ export const exchangeOAuth: HandlerFn = async (ctx) => {
 		);
 	}
 
+	let codeVerifier: string | undefined;
+	if (oauthCfg.pkce) {
+		const nonce = pkceNonces.get(`${plugin.id}:${tenantId}`);
+		if (!nonce) {
+			throw new Error(
+				`No sign-in for '${plugin.id}' is waiting for a code. Start it again.`,
+			);
+		}
+		codeVerifier = localPkceVerifier(plugin.id, tenantId, internal.kek, nonce);
+	}
+
 	const tokens = await exchangeCodeForTokens(
 		code,
 		clientId,
 		clientSecret,
 		oauthCfg,
 		redirectUri,
-		oauthCfg.pkce
-			? localPkceVerifier(plugin.id, tenantId, internal.kek)
-			: undefined,
+		codeVerifier,
 	);
+	pkceNonces.delete(`${plugin.id}:${tenantId}`);
 	if (!tokens.access_token) {
 		throw new Error('No access_token in response from provider.');
 	}

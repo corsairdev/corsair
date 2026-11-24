@@ -25,7 +25,7 @@ import {
 	generateDEK,
 } from 'corsair/core';
 import type { CorsairDatabase } from 'corsair/db';
-import { localPkceVerifier, pkceAuthParams } from 'corsair/oauth';
+import { localPkceVerifier, newPkceNonce, pkceAuthParams } from 'corsair/oauth';
 import { createCorsairOrm } from 'corsair/orm';
 import { getCorsairInstance } from './utils/corsair-instance';
 
@@ -282,20 +282,48 @@ async function ensureAccount(
 // OAuth flow
 // ─────────────────────────────────────────────────────────────────────────────
 
-// The CLI sends no state, and a pasted --code runs in a later process, so the
-// PKCE verifier is keyed on plugin and tenant under the KEK (see corsair/oauth).
+// The CLI sends no state, so each sign-in gets a fresh nonce for its PKCE
+// verifier (see corsair/oauth). A pasted --code is exchanged in a later
+// process, so for that path the nonce waits in a private temp file.
 function cliPkceParams(
 	oauthCfg: OAuthConfig,
-	pluginId: string,
-	tenantId: string,
-	kek: string,
+	codeVerifier: string | undefined,
 ): Record<string, string> {
-	return oauthCfg.pkce
-		? pkceAuthParams(
-				localPkceVerifier(pluginId, tenantId, kek),
-				oauthCfg.authParams,
-			)
+	return oauthCfg.pkce && codeVerifier
+		? pkceAuthParams(codeVerifier, oauthCfg.authParams)
 		: {};
+}
+
+function pkceNonceFile(pluginId: string, tenantId: string): string {
+	const safe = (v: string) => v.replace(/[^A-Za-z0-9_-]/g, '_');
+	return path.join(
+		os.tmpdir(),
+		`corsair-pkce-${safe(pluginId)}-${safe(tenantId)}.json`,
+	);
+}
+
+function savePkceNonce(pluginId: string, tenantId: string, nonce: string) {
+	fs.writeFileSync(
+		pkceNonceFile(pluginId, tenantId),
+		JSON.stringify({ nonce }),
+		{
+			mode: 0o600,
+		},
+	);
+}
+
+/** The nonce of the sign-in waiting for a pasted code; read once, then removed. */
+function takePkceNonce(pluginId: string, tenantId: string): string | undefined {
+	const file = pkceNonceFile(pluginId, tenantId);
+	try {
+		const { nonce } = JSON.parse(fs.readFileSync(file, 'utf8')) as {
+			nonce?: string;
+		};
+		fs.unlinkSync(file);
+		return nonce;
+	} catch {
+		return undefined;
+	}
 }
 
 async function oauthExchangeCode(
@@ -308,6 +336,7 @@ async function oauthExchangeCode(
 	clientId: string,
 	clientSecret: string,
 	oauthCfg: OAuthConfig,
+	codeVerifier?: string,
 ): Promise<boolean> {
 	let tokens: TokenResponse;
 	try {
@@ -317,7 +346,7 @@ async function oauthExchangeCode(
 			clientSecret,
 			oauthCfg,
 			redirectUri,
-			oauthCfg.pkce ? localPkceVerifier(plugin.id, tenantId, kek) : undefined,
+			codeVerifier,
 		);
 	} catch (err) {
 		out({
@@ -388,6 +417,18 @@ async function oauthWithCode(
 		return;
 	}
 
+	let codeVerifier: string | undefined;
+	if (oauthCfg.pkce) {
+		const nonce = takePkceNonce(plugin.id, tenantId);
+		if (!nonce) {
+			out({
+				error: `No sign-in for '${plugin.id}' is waiting for a code. Run \`corsair auth --plugin=${plugin.id}\` again for a new link.`,
+			});
+			return;
+		}
+		codeVerifier = localPkceVerifier(plugin.id, tenantId, kek, nonce);
+	}
+
 	await oauthExchangeCode(
 		database,
 		plugin,
@@ -398,6 +439,7 @@ async function oauthWithCode(
 		clientId,
 		clientSecret,
 		oauthCfg,
+		codeVerifier,
 	);
 }
 
@@ -439,6 +481,11 @@ async function oauthListen(
 		return;
 	}
 
+	const pkceNonce = oauthCfg.pkce ? newPkceNonce() : undefined;
+	const codeVerifier = pkceNonce
+		? localPkceVerifier(plugin.id, tenantId, kek, pkceNonce)
+		: undefined;
+
 	const clientSecret = await integrationKm.get_client_secret();
 	if (!clientSecret) {
 		writeAuthState(sessionId, {
@@ -469,9 +516,11 @@ async function oauthListen(
 				response_type: 'code',
 				scope: oauthCfg.scopes.join(' '),
 				...oauthCfg.authParams,
-				...cliPkceParams(oauthCfg, plugin.id, tenantId, kek),
+				...cliPkceParams(oauthCfg, codeVerifier),
 			};
 			const authUrl = `${oauthCfg.authUrl}?${querystring.stringify(authParams)}`;
+			// The pasted code is exchanged by a later `--code` run.
+			if (pkceNonce) savePkceNonce(plugin.id, tenantId, pkceNonce);
 			writeAuthState(sessionId, {
 				status: 'needs_code',
 				url: authUrl,
@@ -492,7 +541,7 @@ async function oauthListen(
 		response_type: 'code',
 		scope: oauthCfg.scopes.join(' '),
 		...oauthCfg.authParams,
-		...cliPkceParams(oauthCfg, plugin.id, tenantId, kek),
+		...cliPkceParams(oauthCfg, codeVerifier),
 	};
 	const authUrl = `${oauthCfg.authUrl}?${querystring.stringify(authParams)}`;
 
@@ -533,6 +582,7 @@ async function oauthListen(
 		clientId,
 		clientSecret,
 		oauthCfg,
+		codeVerifier,
 	);
 	writeAuthState(
 		sessionId,

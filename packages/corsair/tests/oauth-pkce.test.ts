@@ -32,6 +32,7 @@ import type { OAuthConfig } from '../core/plugins';
 import { buildOAuthAuthorizeUrl } from '../oauth/authorize-url';
 import {
 	localPkceVerifier,
+	newPkceNonce,
 	pkceAuthParams,
 	pkceChallenge,
 	pkceVerifier,
@@ -60,9 +61,19 @@ describe('PKCE helpers', () => {
 		expect(v).not.toBe(pkceVerifier('state-2', 'kek'));
 		expect(v).not.toBe(pkceVerifier('state-1', 'other-kek'));
 		expect(v).toMatch(/^[A-Za-z0-9\-._~]{43,128}$/);
-		expect(localPkceVerifier('canva', 'default', 'kek')).toBe(
-			pkceVerifier('local:canva:default', 'kek'),
+		expect(localPkceVerifier('canva', 'default', 'kek', 'n1')).toBe(
+			pkceVerifier('local:canva:default:n1', 'kek'),
 		);
+	});
+
+	it('gives every local sign-in its own verifier', () => {
+		const a = newPkceNonce();
+		const b = newPkceNonce();
+		expect(a).not.toBe(b);
+		expect(localPkceVerifier('canva', 'default', 'kek', a)).not.toBe(
+			localPkceVerifier('canva', 'default', 'kek', b),
+		);
+		expect(() => localPkceVerifier('canva', 'default', 'kek', '')).toThrow();
 	});
 
 	it('refuses an empty seed or KEK', () => {

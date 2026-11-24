@@ -12,6 +12,7 @@ export {
 	encodeOAuthState,
 	generateOAuthUrl,
 	localPkceVerifier,
+	newPkceNonce,
 	OAuthCallbackError,
 	pkceAuthParams,
 	pkceChallenge,

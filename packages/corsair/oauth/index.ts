@@ -44,6 +44,7 @@ export {
 } from './authorize-url';
 export {
 	localPkceVerifier,
+	newPkceNonce,
 	pkceAuthParams,
 	pkceChallenge,
 	pkceVerifier,
