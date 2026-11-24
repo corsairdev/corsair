@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAuthenticatedGoogleDriveRequest } from '../client';
 import type { GoogleDriveEndpoints } from '../index';
-import { saveFile } from './files';
+import { saveFile, withNextPageToken } from './files';
 import type { GoogleDriveEndpointOutputs } from './types';
 
 export const filesAndFolders: GoogleDriveEndpoints['searchFilesAndFolders'] =
@@ -23,11 +23,7 @@ export const filesAndFolders: GoogleDriveEndpoints['searchFilesAndFolders'] =
 				supportsAllDrives: input.supportsAllDrives,
 				supportsTeamDrives: input.supportsTeamDrives,
 				teamDriveId: input.teamDriveId,
-				// A fields mask without nextPageToken silently ends pagination.
-				fields:
-					input.fields && !input.fields.includes('nextPageToken')
-						? `nextPageToken,${input.fields}`
-						: input.fields,
+				fields: withNextPageToken(input.fields),
 			},
 		});
 

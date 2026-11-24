@@ -34,6 +34,12 @@ export async function saveFile<T extends { id: string }>(
 	await table.upsertByEntityId(data.id, { ...prior, ...data });
 }
 
+// A fields mask without nextPageToken silently ends pagination.
+export const withNextPageToken = (fields?: string) =>
+	fields && !fields.includes('nextPageToken')
+		? `nextPageToken,${fields}`
+		: fields;
+
 export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
 	const result = await makeAuthenticatedGoogleDriveRequest<
 		GoogleDriveEndpointOutputs['filesList']
@@ -41,11 +47,7 @@ export const list: GoogleDriveEndpoints['filesList'] = async (ctx, input) => {
 		method: 'GET',
 		query: {
 			...input,
-			// A fields mask without nextPageToken silently ends pagination.
-			fields:
-				input.fields && !input.fields.includes('nextPageToken')
-					? `nextPageToken,${input.fields}`
-					: input.fields,
+			fields: withNextPageToken(input.fields),
 		},
 	});
 
