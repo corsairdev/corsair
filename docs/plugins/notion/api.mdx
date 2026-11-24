@@ -127,7 +127,7 @@ await corsair.notion.api.blocks.appendBlock({});
 
 `blocks.getManyChildBlocks`
 
-Retrieve child blocks of a block or page
+Page body as blocks, one level only. Call again with the id of any block that has has_children true. Pass the page id as block_id for top-level content. Up to 100 blocks per call; while has_more is true, pass next_cursor as start_cursor
 
 **Risk:** `read`
 
@@ -139,9 +139,9 @@ await corsair.notion.api.blocks.getManyChildBlocks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `block_id` | `string` | Yes | — |
-| `start_cursor` | `string` | No | — |
-| `page_size` | `number` | No | — |
+| `block_id` | `string` | Yes | Block id, or a page id for the top level of that page. |
+| `start_cursor` | `string` | No | next_cursor from the previous response; omit for the first page. |
+| `page_size` | `number` | No | Default and maximum 100. |
 
 
 
@@ -319,7 +319,7 @@ await corsair.notion.api.databasePages.createDatabasePage({});
 
 `databasePages.getDatabasePage`
 
-Get a page from a database
+Properties of any page by id, not its body; read the body with blocks.getManyChildBlocks using the page id
 
 **Risk:** `read`
 
@@ -432,7 +432,7 @@ await corsair.notion.api.databasePages.getDatabasePage({});
 
 `databasePages.getManyDatabasePages`
 
-List and filter pages in a database
+Rows of one database, properties only. Read property names with databases.getDatabase first; a 404 means the database id is wrong or the database is not shared with the integration
 
 **Risk:** `read`
 
@@ -445,8 +445,8 @@ await corsair.notion.api.databasePages.getManyDatabasePages({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `database_id` | `string` | Yes | — |
-| `filter` | `any` | No | — |
-| `sorts` | `any[]` | No | — |
+| `filter` | `any` | No | &#123;"property":"Status","select":&#123;"equals":"Done"&#125;&#125;: the inner key is the property type. Combine with &#123;"and":[...]&#125; or &#123;"or":[...]&#125;. |
+| `sorts` | `any[]` | No | [&#123;"property":"Due","direction":"ascending"&#125;] |
 | `start_cursor` | `string` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -937,7 +937,7 @@ await corsair.notion.api.databases.getManyDatabases({});
 
 `databases.searchDatabase`
 
-Search and filter databases
+Search databases by title only. To filter rows inside a database use databasePages.getManyDatabasePages
 
 **Risk:** `read`
 
@@ -949,9 +949,9 @@ await corsair.notion.api.databases.searchDatabase({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | No | — |
-| `sort` | `any` | No | — |
-| `filter` | `any` | No | — |
+| `query` | `string` | No | Text matched against database titles only. |
+| `sort` | `any` | No | &#123;"timestamp":"last_edited_time","direction":"descending"&#125; |
+| `filter` | `any` | No | Defaults to databases only, &#123;"property":"object","value":"database"&#125;. |
 | `start_cursor` | `string` | No | — |
 | `page_size` | `number` | No | — |
 
@@ -1353,7 +1353,7 @@ await corsair.notion.api.pages.createPage({});
 
 `pages.searchPage`
 
-Search pages and databases by title
+Matches titles only, not page text, and only items shared with the integration, so a miss does not mean the page is absent. Pass filter &#123;"property":"object","value":"page"&#125; for pages only
 
 **Risk:** `read`
 
@@ -1365,9 +1365,9 @@ await corsair.notion.api.pages.searchPage({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | No | — |
-| `sort` | `any` | No | — |
-| `filter` | `any` | No | — |
+| `query` | `string` | No | Text matched against page and database titles only. |
+| `sort` | `any` | No | &#123;"timestamp":"last_edited_time","direction":"descending"&#125; |
+| `filter` | `any` | No | Results include pages and databases unless this is &#123;"property":"object","value":"page"&#125;. |
 | `start_cursor` | `string` | No | — |
 | `page_size` | `number` | No | — |
 

@@ -153,7 +153,8 @@ const notionEndpointMeta = {
 	},
 	'blocks.getManyChildBlocks': {
 		riskLevel: 'read',
-		description: 'Retrieve child blocks of a block or page',
+		description:
+			'Page body as blocks, one level only. Call again with the id of any block that has has_children true. Pass the page id as block_id for top-level content. Up to 100 blocks per call; while has_more is true, pass next_cursor as start_cursor',
 	},
 	'databases.getDatabase': {
 		riskLevel: 'read',
@@ -165,7 +166,8 @@ const notionEndpointMeta = {
 	},
 	'databases.searchDatabase': {
 		riskLevel: 'read',
-		description: 'Search and filter databases',
+		description:
+			'Search databases by title only. To filter rows inside a database use databasePages.getManyDatabasePages',
 	},
 	'databasePages.createDatabasePage': {
 		riskLevel: 'write',
@@ -173,11 +175,13 @@ const notionEndpointMeta = {
 	},
 	'databasePages.getDatabasePage': {
 		riskLevel: 'read',
-		description: 'Get a page from a database',
+		description:
+			'Properties of any page by id, not its body; read the body with blocks.getManyChildBlocks using the page id',
 	},
 	'databasePages.getManyDatabasePages': {
 		riskLevel: 'read',
-		description: 'List and filter pages in a database',
+		description:
+			'Rows of one database, properties only. Read property names with databases.getDatabase first; a 404 means the database id is wrong or the database is not shared with the integration',
 	},
 	'databasePages.updateDatabasePage': {
 		riskLevel: 'write',
@@ -193,7 +197,8 @@ const notionEndpointMeta = {
 	},
 	'pages.searchPage': {
 		riskLevel: 'read',
-		description: 'Search pages and databases by title',
+		description:
+			'Matches titles only, not page text, and only items shared with the integration, so a miss does not mean the page is absent. Pass filter {"property":"object","value":"page"} for pages only',
 	},
 	'users.getUser': {
 		riskLevel: 'read',
