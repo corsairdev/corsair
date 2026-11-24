@@ -12200,5 +12200,21 @@
     "package": "cloud",
     "version": "0.2.30",
     "changes": []
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/canva",
+    "dir": "packages/canva",
+    "name": "Canva",
+    "version": "0.2.0",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2713,
+        "title": "Cover Canva's current REST API (62 operations), download exports to files"
+      }
+    ]
   }
 ]
