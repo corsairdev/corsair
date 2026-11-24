@@ -914,7 +914,7 @@ export const mozInputBuilders = {
 								]),
 							)
 							.describe(
-								'Only return links that match these filters. As many filter values as desired can be supplied, separated by `+` *(with no spaces)*, but if providing multiple filters, `external` must be one of them. **Acceptable values:** `external`, `follow`, `nofollow`, `deleted`, `not_deleted`, `redirect`, `not_redirect`, `rel_canonical`, `not_rel_canonical`, `via_redirect`, `not_via_redirect`, `via_rel_canonica',
+								'Only return links that match these filters. Pass them as an array, e.g. `["external", "follow"]`; when providing multiple filters, `external` must be one of them. **Acceptable values:** `external`, `follow`, `nofollow`, `deleted`, `not_deleted`, `redirect`, `not_redirect`, `rel_canonical`, `not_rel_canonical`, `via_redirect`, `not_via_redirect`, `via_rel_canonica',
 							)
 							.optional(),
 					})
@@ -2135,7 +2135,7 @@ export const mozInputBuilders = {
 							),
 					)
 					.describe(
-						'Optional array of values for which to get daily history deltas. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, and `domain_authority`. At least one value must be provided between `get_daily_history_deltas_for`, `get_daily_history_values_for`, `get_monthl',
+						'Optional array of values for which to get daily history deltas. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](https://moz.com/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, and `domain_authority`. At least one value must be provided between `get_daily_history_deltas_for`, `get_daily_history_values_for`, `get_monthl',
 					)
 					.optional(),
 				get_daily_history_values_for: z
@@ -2183,7 +2183,7 @@ export const mozInputBuilders = {
 							),
 					)
 					.describe(
-						'Optional array of values for which to get daily history values. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, `domain_authority`, `nofollow_pages_to_root_domain_by_spam_score`, `nofollow_root_domains_to_root_domain_by_root_domains`, `nofollow_root_domai',
+						'Optional array of values for which to get daily history values. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](https://moz.com/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, `domain_authority`, `nofollow_pages_to_root_domain_by_spam_score`, `nofollow_root_domains_to_root_domain_by_root_domains`, `nofollow_root_domai',
 					)
 					.optional(),
 				get_monthly_history_deltas_for: z
@@ -2225,7 +2225,7 @@ export const mozInputBuilders = {
 							),
 					)
 					.describe(
-						'Optional array of values for which to get monthly history deltas. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, and `domain_authority`. At least one value must be provided between `get_daily_history_deltas_for`, `get_daily_history_values_for`, `get_mont',
+						'Optional array of values for which to get monthly history deltas. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](https://moz.com/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, and `domain_authority`. At least one value must be provided between `get_daily_history_deltas_for`, `get_daily_history_values_for`, `get_mont',
 					)
 					.optional(),
 				get_monthly_history_values_for: z
@@ -2273,7 +2273,7 @@ export const mozInputBuilders = {
 							),
 					)
 					.describe(
-						'Optional array of values for which to get monthly history values. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, `domain_authority`, `nofollow_pages_to_root_domain_by_spam_score`, `nofollow_root_domains_to_root_domain_by_root_domains`, `nofollow_root_dom',
+						'Optional array of values for which to get monthly history values. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](https://moz.com/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, `domain_authority`, `nofollow_pages_to_root_domain_by_spam_score`, `nofollow_root_domains_to_root_domain_by_root_domains`, `nofollow_root_dom',
 					)
 					.optional(),
 			})
@@ -2795,11 +2795,11 @@ export const mozOutputBuilders = {
 							.object({ collected_at: z.string().nullish() })
 							.loose()
 							.nullish(),
-						volume: z.unknown(),
+						volume: z.unknown().optional(),
 						difficulty: z.number().nullish(),
-						organic_ctr: z.unknown(),
-						priority: z.unknown(),
-						intent: z.unknown(),
+						organic_ctr: z.unknown().optional(),
+						priority: z.unknown().optional(),
+						intent: z.unknown().optional(),
 					})
 					.loose()
 					.nullish(),
@@ -3155,10 +3155,10 @@ export const mozOutputBuilders = {
 							.object({ collected_at: z.string().nullish() })
 							.loose()
 							.nullish(),
-						volume: z.unknown(),
-						difficulty: z.unknown(),
-						organic_ctr: z.unknown(),
-						priority: z.unknown(),
+						volume: z.unknown().optional(),
+						difficulty: z.unknown().optional(),
+						organic_ctr: z.unknown().optional(),
+						priority: z.unknown().optional(),
 						intent: z
 							.object({
 								primary_intents: z.array(z.string().nullish()).nullish(),
@@ -3349,11 +3349,11 @@ export const mozOutputBuilders = {
 							.object({ collected_at: z.string().nullish() })
 							.loose()
 							.nullish(),
-						volume: z.unknown(),
-						difficulty: z.unknown(),
+						volume: z.unknown().optional(),
+						difficulty: z.unknown().optional(),
 						organic_ctr: z.number().nullish(),
-						priority: z.unknown(),
-						intent: z.unknown(),
+						priority: z.unknown().optional(),
+						intent: z.unknown().optional(),
 					})
 					.loose()
 					.nullish(),
@@ -3386,11 +3386,11 @@ export const mozOutputBuilders = {
 							.object({ collected_at: z.string().nullish() })
 							.loose()
 							.nullish(),
-						volume: z.unknown(),
-						difficulty: z.unknown(),
-						organic_ctr: z.unknown(),
+						volume: z.unknown().optional(),
+						difficulty: z.unknown().optional(),
+						organic_ctr: z.unknown().optional(),
 						priority: z.number().nullish(),
-						intent: z.unknown(),
+						intent: z.unknown().optional(),
 					})
 					.loose()
 					.nullish(),
@@ -3663,10 +3663,10 @@ export const mozOutputBuilders = {
 							.loose()
 							.nullish(),
 						volume: z.number().nullish(),
-						difficulty: z.unknown(),
-						organic_ctr: z.unknown(),
-						priority: z.unknown(),
-						intent: z.unknown(),
+						difficulty: z.unknown().optional(),
+						organic_ctr: z.unknown().optional(),
+						priority: z.unknown().optional(),
+						intent: z.unknown().optional(),
 					})
 					.loose()
 					.nullish(),

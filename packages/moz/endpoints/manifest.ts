@@ -159,7 +159,7 @@ export const mozEndpointMetaMap = {
 	'keywords.metricsMultiple': {
 		riskLevel: 'read',
 		description:
-			'Retrieve difficulty, volume, organic CTR, priority, and search intent metrics for up to 50 keywords in a single request. Costs rows per result returned.',
+			'Retrieve difficulty, volume, organic CTR, priority, and search intent metrics for up to 50 keywords in a single request. Costs one row per returned metric value, up to 5 per keyword; null metrics and keywords in errors_by_serp_query cost nothing.',
 	},
 	'keywords.opportunity': {
 		riskLevel: 'read',

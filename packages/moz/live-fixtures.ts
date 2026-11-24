@@ -1,5 +1,5 @@
 // Real Moz API results recorded by the 11-24 live run (limit 1, arrays trimmed,
-// account id replaced). Each one must keep parsing through its output schema.
+// account id replaced, URL query strings removed). Each one must keep parsing.
 // unknown: these are recorded JSON bodies, checked by live-fixtures.test.ts.
 export const mozLiveResults: Record<string, unknown> = {
 	'anchorText.list': {
@@ -890,7 +890,7 @@ export const mozLiveResults: Record<string, unknown> = {
 					nofollow_root_domains_to_page: 0,
 					nofollow_root_domains_to_root_domain: 700,
 					nofollow_root_domains_to_subdomain: 666,
-					page: 'getstat.com/blog/featured-snippets?__hsfp=1910549127&__hssc=103427807.4.1723616272494&__hstc=103427807.6a50029b3a05354839a2c0e1049c30c7.1693928334642.1723567352193.1723616272494.745',
+					page: 'getstat.com/blog/featured-snippets',
 					page_authority: 28,
 					pages_crawled_from_root_domain: 33707,
 					pages_from_page: 0,
@@ -951,7 +951,7 @@ export const mozLiveResults: Record<string, unknown> = {
 			{
 				domain_authority: 100,
 				matching_target_indexes: [0],
-				page: 'www.google.com/url?sa=t&url=http%3A%2F%2Fmoz.com',
+				page: 'www.google.com/url',
 				spam_score: 19,
 				title: 'Redirect Notice',
 			},

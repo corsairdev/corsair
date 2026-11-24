@@ -14,19 +14,6 @@ const NOT_RUN_LIVE = [
 	'keywords.serp',
 ];
 
-// unknown: walks a recorded JSON value to list its leaf paths.
-function leafPaths(value: unknown, prefix = ''): string[] {
-	if (Array.isArray(value)) {
-		return value.flatMap((item) => leafPaths(item, `${prefix}[]`));
-	}
-	if (value && typeof value === 'object') {
-		return Object.entries(value).flatMap(([key, item]) =>
-			leafPaths(item, prefix ? `${prefix}.${key}` : key),
-		);
-	}
-	return [prefix];
-}
-
 describe('real Moz results (11-24 live run)', () => {
 	it('cover every non-Moz Local method except the ones not run live', () => {
 		const expected = Object.keys(mozMethods)
@@ -40,9 +27,22 @@ describe('real Moz results (11-24 live run)', () => {
 		'%s parses and keeps every field',
 		(name, result) => {
 			const parsed = mozOutputSchema(name as MozOperationName).parse(result);
-			expect(new Set(leafPaths(parsed))).toEqual(new Set(leafPaths(result)));
+			expect(parsed).toStrictEqual(result);
 		},
 	);
+});
+
+describe('keyword metrics Moz leaves out', () => {
+	it('parse when a metric key is missing, not only null', () => {
+		const recorded = mozLiveResults['keywords.difficulty'] as {
+			keyword_metrics: Record<string, unknown>;
+		};
+		const { volume: _volume, ...withoutVolume } = recorded.keyword_metrics;
+		const result = { ...recorded, keyword_metrics: withoutVolume };
+		expect(mozOutputSchema('keywords.difficulty').parse(result)).toStrictEqual(
+			result,
+		);
+	});
 });
 
 describe('a real Moz error', () => {
@@ -63,13 +63,13 @@ describe('a real Moz error', () => {
 			ctx: never,
 			input: unknown,
 		) => Promise<unknown>;
-		const error = await lookup({ key: 'moz-token-abcdef-123456' } as never, {
+		const call = lookup({ key: 'moz-token-abcdef-123456' } as never, {
 			id: '00000000-0000-4000-8000-000000000000',
-		}).catch((e: unknown) => e);
-		expect(error).toBeInstanceOf(ApiError);
-		expect((error as ApiError).status).toBe(404);
-		expect((error as ApiError).message).toBe(
-			'Moz 404 -32655: Call was not found.',
-		);
+		});
+		await expect(call).rejects.toBeInstanceOf(ApiError);
+		await expect(call).rejects.toMatchObject({
+			status: 404,
+			message: 'Moz 404 -32655: Call was not found.',
+		});
 	});
 });

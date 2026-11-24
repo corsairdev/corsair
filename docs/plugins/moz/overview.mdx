@@ -12,11 +12,12 @@ every call. The Moz API is JSON-RPC 2.0: one endpoint
 (https://api.moz.com/jsonrpc), one POST per operation, with the method
 name in the request body.
 
-- **Quota is per row.** Every method reports the rows it consumed in the
-response body, and quota.lookup reads the remaining balance for free.
-Metrics and link methods charge api.limits.data.rows (one row per call or
-per returned result); the competitor fetch draws on the separate
-api.limits.mozscape.rows bucket.
+- **Quota is per row.** Responses carry no row count; quota.lookup
+reports the usage and allowance of a bucket for free. Metrics, link and
+keyword methods charge api.limits.data.rows (one row per call, per
+returned result or per returned metric value); the competitor fetch
+draws on the separate api.limits.mozscape.rows bucket. Lists default to
+25 results, so pass a limit to control the cost.
 - **Errors are JSON-RPC envelopes** with a stable `code`: -32651 is a bad
 token (401), -32670 is exhausted quota (403), -32658 and -32650 are the
 two 429 rate limits (a per-method one with Retry-After and an edge one
@@ -26,12 +27,17 @@ retries an HTTP 429 and nothing else is retried.
 with an async_call receipt; follow it with jobs.lookup until the status
 is complete, then read async_call.result (or .error). Poll no more than
 once every five seconds; lookups are free.
-- **Paging is token-based.** List methods take offset.limit (1-50) and an
-optional offset.token; the response's offset.token is null when there is
-no next page.
-- **Keywords.** keywords.metrics returns difficulty, volume, organic CTR,
-priority and intent at once; the single-metric fetches cost one row
-each. keywords.suggestions, keywords.generateMetrics and
+- **Two paging styles.** Link, linking-domain, anchor-text and top-page
+lists take offset.limit (1-50) and an optional offset.token; pass the
+response's offset.token for the next page (null when there is none).
+global.topDomains, global.topPages, keywords.suggestions and
+rankingKeywords.list take page.n (0 for the first page) and page.limit;
+raise page.n by one for each next page.
+- **Keywords.** keywords.metrics returns difficulty, volume, organic CTR
+and priority at once (four rows); search intent is opt-in with
+options.include_intent until December 1, 2026 and returned by default
+from that date, for one more row when available. The single-metric
+fetches cost one row each. keywords.suggestions, keywords.generateMetrics and
 keywords.generateSerp are asynchronous; the two generate methods start a
 fresh SERP collection billed per call, so they are destructive.
 - **Moz Local** (local.*) manages business listings for Moz Local
