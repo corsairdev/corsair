@@ -12,19 +12,39 @@ import type {
 } from '../types';
 
 const FilesListInputSchema = z.object({
-	q: z.string().optional(),
-	pageSize: z.number().optional(),
+	q: z
+		.string()
+		.optional()
+		.describe(
+			"Drive query, e.g. name contains 'budget' and mimeType = 'application/pdf' and trashed = false. Strings go in single quotes; escape ' and \\ with a backslash. Folders are mimeType 'application/vnd.google-apps.folder'.",
+		),
+	pageSize: z.number().optional().describe('Max 1000.'),
 	pageToken: z.string().optional(),
 	spaces: z.string().optional(),
-	corpora: z.string().optional(),
+	corpora: z
+		.string()
+		.optional()
+		.describe(
+			'Defaults to "user". For shared drives use "allDrives" with includeItemsFromAllDrives and supportsAllDrives true.',
+		),
 	driveId: z.string().optional(),
 	includeItemsFromAllDrives: z.boolean().optional(),
 	includePermissionsForView: z.string().optional(),
-	orderBy: z.string().optional(),
+	orderBy: z
+		.string()
+		.optional()
+		.describe(
+			'Comma-separated keys, each optionally followed by desc: "modifiedTime desc,name".',
+		),
 	supportsAllDrives: z.boolean().optional(),
 	supportsTeamDrives: z.boolean().optional(),
 	teamDriveId: z.string().optional(),
-	fields: z.string().optional(),
+	fields: z
+		.string()
+		.optional()
+		.describe(
+			'Response mask, e.g. "nextPageToken,files(id,name,mimeType,modifiedTime,owners(emailAddress),webViewLink,size)".',
+		),
 });
 
 const FilesGetInputSchema = z.object({
@@ -33,7 +53,12 @@ const FilesGetInputSchema = z.object({
 	supportsAllDrives: z.boolean().optional(),
 	supportsTeamDrives: z.boolean().optional(),
 	includePermissionsForView: z.string().optional(),
-	fields: z.string().optional(),
+	fields: z
+		.string()
+		.optional()
+		.describe(
+			'Response mask, e.g. "id,name,modifiedTime,owners(emailAddress),webViewLink,size".',
+		),
 });
 
 const FilesCreateFromTextInputSchema = z.object({
@@ -217,7 +242,12 @@ const SharedDrivesListInputSchema = z.object({
 	pageSize: z.number().optional(),
 	pageToken: z.string().optional(),
 	q: z.string().optional(),
-	useDomainAdminAccess: z.boolean().optional(),
+	useDomainAdminAccess: z
+		.boolean()
+		.optional()
+		.describe(
+			'Needs domain administrator rights; true returns every shared drive in the domain.',
+		),
 });
 
 const SharedDrivesUpdateInputSchema = z.object({
@@ -241,18 +271,38 @@ const SharedDrivesDeleteInputSchema = z.object({
 });
 
 const SearchFilesAndFoldersInputSchema = z.object({
-	q: z.string(),
-	pageSize: z.number().optional(),
+	q: z
+		.string()
+		.describe(
+			"Drive query, e.g. name contains 'budget' and mimeType = 'application/pdf' and trashed = false. Strings go in single quotes; escape ' and \\ with a backslash. Folders are mimeType 'application/vnd.google-apps.folder'.",
+		),
+	pageSize: z.number().optional().describe('Max 1000.'),
 	pageToken: z.string().optional(),
 	spaces: z.string().optional(),
-	corpora: z.string().optional(),
+	corpora: z
+		.string()
+		.optional()
+		.describe(
+			'Defaults to "user". For shared drives use "allDrives" with includeItemsFromAllDrives and supportsAllDrives true.',
+		),
 	driveId: z.string().optional(),
 	includeItemsFromAllDrives: z.boolean().optional(),
 	includePermissionsForView: z.string().optional(),
-	orderBy: z.string().optional(),
+	orderBy: z
+		.string()
+		.optional()
+		.describe(
+			'Comma-separated keys, each optionally followed by desc: "modifiedTime desc,name".',
+		),
 	supportsAllDrives: z.boolean().optional(),
 	supportsTeamDrives: z.boolean().optional(),
 	teamDriveId: z.string().optional(),
+	fields: z
+		.string()
+		.optional()
+		.describe(
+			'Response mask, e.g. "nextPageToken,files(id,name,mimeType,modifiedTime,owners(emailAddress),webViewLink,size)".',
+		),
 });
 
 const StorageGetQuotaInputSchema = z.object({});
