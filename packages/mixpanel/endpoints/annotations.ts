@@ -148,11 +148,13 @@ export const listTags = op({
 		method: 'GET',
 		path: `${base(c.projectId)}/tags`,
 	}),
-	// The spec shows a bare array; accept the usual envelope as well.
-	shape: (raw) => ({
+	// The spec shows a bare array; the usual envelope is accepted too. Any
+	// other shape fails the output schema rather than reading as no tags.
+	// unknown: the raw body before the output schema parses it.
+	shape: (raw: unknown) => ({
 		tags: Array.isArray(raw)
 			? raw
-			: ((raw as { results?: unknown } | null)?.results ?? []),
+			: (raw as { results?: unknown } | null)?.results,
 	}),
 });
 
@@ -169,7 +171,8 @@ export const createTag = op({
 		mediaType: 'application/json',
 	}),
 	// Accept `{ status, results: tag }` as well as the bare tag.
-	shape: (raw) => {
+	// unknown: the raw body before the output schema parses it.
+	shape: (raw: unknown) => {
 		const results = (raw as { results?: unknown } | null)?.results;
 		return results && typeof results === 'object' ? results : raw;
 	},

@@ -12,6 +12,22 @@ const PipelineName = z
 	.min(1)
 	.describe('The pipeline name, from pipelines.list.');
 
+const RESERVED_SETTINGS = [
+	'project_id',
+	'name',
+	'type',
+	'trial',
+	'from_date',
+	'to_date',
+];
+
+/** Destination fields only; the reserved ones have their own inputs. */
+const Settings = z
+	.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
+	.refine((value) => RESERVED_SETTINGS.every((key) => !(key in value)), {
+		message: `settings cannot set ${RESERVED_SETTINGS.join(', ')}`,
+	});
+
 function post(
 	path: string,
 	c: MixpanelCredentials,
@@ -22,7 +38,8 @@ function post(
 		service: 'data',
 		method: 'POST',
 		path,
-		body: form({ project_id: c.projectId, ...fields }),
+		// The connected project comes last so no field can redirect the call.
+		body: form({ ...fields, project_id: c.projectId }),
 		mediaType: FORM,
 	};
 }
@@ -44,7 +61,7 @@ export const list = op({
 		path: '/nessie/pipeline/jobs',
 		query: { project_id: c.projectId },
 	}),
-	shape: (raw) => ({ pipelines: raw ?? [] }),
+	shape: (raw) => ({ pipelines: raw }),
 });
 
 export const create = op({
@@ -76,12 +93,9 @@ export const create = op({
 		events: z.array(z.string()).optional().describe('Only these events.'),
 		where: z.string().optional(),
 		data_format: z.string().optional(),
-		settings: z
-			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-			.optional()
-			.describe(
-				'Destination fields for this type, e.g. gcs_bucket and gcs_region, s3_bucket, s3_region and s3_role, bq_region, snowflake_*, azure_*.',
-			),
+		settings: Settings.optional().describe(
+			'Destination fields for this type, e.g. gcs_bucket and gcs_region, s3_bucket, s3_region and s3_role, bq_region, snowflake_*, azure_*.',
+		),
 	}),
 	output: PipelineAnswer,
 	meta: {
@@ -90,7 +104,7 @@ export const create = op({
 			'Create a data pipeline that exports project data to a bucket or warehouse (a paid add-on that bills while it runs)',
 	},
 	toRequest: ({ settings, events, ...fields }, c) =>
-		post('/nessie/pipeline/create', c, { ...fields, ...settings, events }),
+		post('/nessie/pipeline/create', c, { ...settings, ...fields, events }),
 });
 
 export const edit = op({
@@ -99,10 +113,9 @@ export const edit = op({
 		name: PipelineName,
 		events: z.array(z.string()).optional(),
 		where: z.string().optional(),
-		settings: z
-			.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
-			.optional()
-			.describe('Other fields the pipeline type allows editing.'),
+		settings: Settings.optional().describe(
+			'Other fields the pipeline type allows editing.',
+		),
 	}),
 	output: PipelineAnswer,
 	meta: {
@@ -110,7 +123,7 @@ export const edit = op({
 		description: "Change a pipeline's event filter or settings",
 	},
 	toRequest: ({ settings, ...fields }, c) =>
-		post('/nessie/pipeline/edit', c, { ...fields, ...settings }),
+		post('/nessie/pipeline/edit', c, { ...settings, ...fields }),
 	shape: (raw) => raw ?? {},
 });
 
@@ -210,5 +223,5 @@ export const timeline = op({
 		path: '/nessie/pipeline/timeline',
 		query: { project_id: c.projectId, name: input.name },
 	}),
-	shape: (raw) => ({ timeline: raw ?? [] }),
+	shape: (raw) => ({ timeline: raw }),
 });

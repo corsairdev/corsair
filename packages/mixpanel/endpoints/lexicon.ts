@@ -106,9 +106,9 @@ export const upsert = op({
 	}),
 	output: okEnvelope(LooseObject),
 	meta: {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			'Create or replace the Lexicon schema of one event or profile type',
+			'Create or replace the Lexicon schema of one event or profile type; metadata dropped: true makes Mixpanel drop that event at ingestion',
 	},
 	toRequest: (input, c) => ({
 		service: 'app',

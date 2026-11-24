@@ -276,8 +276,13 @@ export async function makeMixpanelRequest(
 		query: req.query,
 		body: req.body,
 		mediaType: req.mediaType,
+		// Text answers (raw export JSONL) are read as bytes and decoded here:
+		// core parses any application/json body as one JSON document and would
+		// turn several JSON lines into undefined. A failed body read throws.
+		...(req.responseType === 'text' ? { responseType: 'binary' as const } : {}),
 	};
 
+	// unknown: the body is parsed by the endpoint's output schema.
 	let raw: unknown;
 	try {
 		raw = await request<unknown>(config, requestOptions);
@@ -286,6 +291,13 @@ export async function makeMixpanelRequest(
 			throw withoutRequestData(error, credentials);
 		}
 		throw error;
+	}
+	if (req.responseType === 'text') {
+		const bytes = (raw as { bytes?: Uint8Array } | undefined)?.bytes;
+		if (!(bytes instanceof Uint8Array)) {
+			throw new Error('Mixpanel returned no readable body');
+		}
+		return new TextDecoder().decode(bytes);
 	}
 
 	// The query and app APIs can answer 200 with `status: "error"`, and the
@@ -300,9 +312,9 @@ export async function makeMixpanelRequest(
 				ok: false,
 				status: 200,
 				statusText: 'OK',
-				body: scrubSecrets(raw, credentials),
+				body: safeErrorBody(raw, credentials),
 			},
-			mixpanelErrorMessage(200, scrubSecrets(raw, credentials), 'failed'),
+			mixpanelErrorMessage(200, safeErrorBody(raw, credentials), 'failed'),
 		);
 	}
 	return raw;
@@ -332,7 +344,7 @@ export function withoutRequestData(
 	error: ApiError,
 	credentials?: MixpanelCredentials,
 ): ApiError {
-	const body = scrubSecrets(error.body, credentials);
+	const body = safeErrorBody(error.body, credentials);
 	return new ApiError(
 		{
 			method: error.request.method,
@@ -364,6 +376,48 @@ export function withoutRequestData(
 			rateLimitLimit: error.rateLimitLimit,
 		},
 	);
+}
+
+const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+
+// Fields in an error body that echo customer identifiers back (a strict
+// import's failed_records carry each event's $insert_id).
+const ECHOED_ID_KEYS = new Set([
+	'insert_id',
+	'$insert_id',
+	'distinct_id',
+	'$distinct_id',
+	'distinct_ids',
+	'$distinct_ids',
+]);
+
+/**
+ * An error body fit to keep on ApiError: the account's secrets and any
+ * email address replaced, echoed customer ids dropped. Status fields,
+ * failure indexes, field names and messages stay.
+ */
+// unknown: the error body is any JSON or text.
+export function safeErrorBody(
+	value: unknown,
+	credentials: MixpanelCredentials | undefined,
+	depth = 0,
+): unknown {
+	const scrubbed = scrubSecrets(value, credentials);
+	// unknown: walks any JSON value.
+	const walk = (node: unknown, level: number): unknown => {
+		if (level > 8) return node;
+		if (typeof node === 'string') return node.replace(EMAIL, '[email]');
+		if (Array.isArray(node)) return node.map((item) => walk(item, level + 1));
+		if (node && typeof node === 'object') {
+			return Object.fromEntries(
+				Object.entries(node)
+					.filter(([key]) => !ECHOED_ID_KEYS.has(key))
+					.map(([key, inner]) => [key, walk(inner, level + 1)]),
+			);
+		}
+		return node;
+	};
+	return walk(scrubbed, depth);
 }
 
 /** Replaces the account's own secrets wherever an error body echoes them. */
@@ -452,7 +506,17 @@ export function mixpanelErrorMessage(
 	return text.length > 500 ? `${text.slice(0, 497)}...` : text;
 }
 
-/** Encodes one path segment. */
+/**
+ * Encodes one path segment. `.` and `..` survive encodeURIComponent and
+ * fetch resolves them as dot-segments, so `schemas/event/..` would become
+ * `schemas/` (delete every schema); they are refused, as is an empty id.
+ */
 export function segment(value: string | number): string {
-	return encodeURIComponent(String(value));
+	const text = String(value);
+	if (text === '' || text === '.' || text === '..') {
+		throw new MixpanelConfigError(
+			`"${text}" is not a valid Mixpanel id or name.`,
+		);
+	}
+	return encodeURIComponent(text);
 }

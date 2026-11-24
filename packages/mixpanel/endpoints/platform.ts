@@ -182,9 +182,9 @@ export const updateDefinition = op({
 	}),
 	output: DefinitionSchema,
 	meta: {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description:
-			"Update a data definition's description, display name, tags, owners or hidden/blocked/verified flags",
+			"Update a data definition's description, display name, tags, owners or hidden/blocked/verified flags; blocked: true drops its data at ingestion",
 	},
 	toRequest: ({ workspace_id, definition_id, ...body }, c) => ({
 		service: 'platform',

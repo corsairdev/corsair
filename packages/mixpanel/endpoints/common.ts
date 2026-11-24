@@ -1,4 +1,3 @@
-import { asRecord } from 'corsair/core';
 import { z } from 'zod';
 
 // Inputs use Mixpanel's own parameter names, so a parameter maps one to one.
@@ -92,10 +91,4 @@ export function checkDateRange(
 // unknown: the raw body before the output schema parses it.
 export function wrapArray(key: string) {
 	return (raw: unknown) => ({ [key]: raw });
-}
-
-// unknown: raw response body.
-export function countResults(raw: unknown): number {
-	const results = asRecord(raw)?.results;
-	return Array.isArray(results) ? results.length : 0;
 }

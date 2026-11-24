@@ -22,12 +22,7 @@ export function parseExportLines(
 	// HTML or an error object, which must fail loudly rather than parse.
 	raw: unknown,
 ): z.infer<typeof ExportedEventSchema>[] {
-	if (raw === undefined || raw === null || raw === '') return [];
 	if (typeof raw !== 'string') {
-		// A one-line export can arrive already parsed as JSON.
-		if (typeof raw === 'object' && !Array.isArray(raw)) {
-			return [raw as z.infer<typeof ExportedEventSchema>];
-		}
 		throw new Error(
 			`Mixpanel export returned ${typeof raw}, expected newline-delimited JSON text`,
 		);
@@ -45,7 +40,8 @@ export function parseExportLines(
 /**
  * Downloads raw events as newline-delimited JSON. There is no cursor: a range
  * is one request, capped by `limit`, so wide ranges are the caller's job to
- * split. Works on Mixpanel's free plan.
+ * split. Works on Mixpanel's free plan. An empty body means no events; a body
+ * that could not be read fails instead of passing for an empty range.
  */
 export const events = op({
 	name: 'export.events',
