@@ -30,8 +30,16 @@ describe('the CLI PKCE nonce file', () => {
 		expect(fs.statSync(file).mode & 0o777).toBe(0o600);
 		expect(readPkceNonce(file)).toBe('n1');
 		expect(readPkceNonce(file)).toBe('n1');
-		removePkceNonce(file);
+		removePkceNonce(file, 'n1');
 		expect(readPkceNonce(file)).toBeUndefined();
+	});
+
+	it("keeps a newer sign-in's nonce when an older exchange finishes", () => {
+		const file = pkceNonceFile('canva', 'default', 'kek', home);
+		savePkceNonce(file, 'older');
+		savePkceNonce(file, 'newer');
+		removePkceNonce(file, 'older');
+		expect(readPkceNonce(file)).toBe('newer');
 	});
 
 	it('refuses to write through a planted symlink', () => {

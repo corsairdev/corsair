@@ -72,6 +72,11 @@ export function readPkceNonce(file: string): string | undefined {
 	}
 }
 
-export function removePkceNonce(file: string): void {
-	fs.rmSync(file, { force: true });
+/**
+ * Removes the file only while it still holds this exchange's nonce: a newer
+ * sign-in for the same plugin and tenant may have saved its own meanwhile, and
+ * its pasted code still needs it.
+ */
+export function removePkceNonce(file: string, nonce: string): void {
+	if (readPkceNonce(file) === nonce) fs.rmSync(file, { force: true });
 }

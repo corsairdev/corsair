@@ -395,8 +395,8 @@ async function oauthWithCode(
 	const nonceFile = oauthCfg.pkce
 		? pkceNonceFile(plugin.id, tenantId, kek)
 		: undefined;
+	const nonce = nonceFile ? readPkceNonce(nonceFile) : undefined;
 	if (nonceFile) {
-		const nonce = readPkceNonce(nonceFile);
 		if (!nonce) {
 			out({
 				error: `No sign-in for '${plugin.id}' is waiting for a code. Run \`corsair auth --plugin=${plugin.id}\` again for a new link.`,
@@ -419,7 +419,7 @@ async function oauthWithCode(
 		codeVerifier,
 	);
 	// Kept after a failure (a mistyped code, a dropped connection) for a retry.
-	if (exchanged && nonceFile) removePkceNonce(nonceFile);
+	if (exchanged && nonceFile && nonce) removePkceNonce(nonceFile, nonce);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
