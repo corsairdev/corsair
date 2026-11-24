@@ -1,77 +1,113 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { parseGatewayContent } from './gateway-content';
 import {
-	GATEWAY_SKILLS,
-	hasAppName,
+	builtInNames,
 	listNames,
-	SKILL_CATEGORIES,
 	skillApps,
+	skillBySlug,
 	skillMeta,
+	skillWhen,
 } from './gateway-skills';
 
-describe('GATEWAY_SKILLS', () => {
-	it('has unique slugs that work as URL segments', () => {
-		const slugs = GATEWAY_SKILLS.map((s) => s.slug);
-		assert.equal(new Set(slugs).size, slugs.length);
-		for (const slug of slugs) assert.match(slug, /^[a-z0-9]+(-[a-z0-9]+)*$/);
+// A small answer in the shape Hub's /api/public/gateway sends.
+const SAMPLE = {
+	version: 1,
+	clients: [
+		{
+			id: 'claude',
+			name: 'Claude app',
+			domain: 'claude.ai',
+			auth: 'sign-in',
+			featured: true,
+			guide: { steps: [{ text: 'Open Customize.' }] },
+		},
+	],
+	skills: [
+		{
+			slug: 'morning-brief',
+			name: 'Morning brief',
+			summary: 'One message each weekday morning.',
+			category: 'everyday',
+			required: ['googlecalendar', 'gmail'],
+			optional: ['gmail', 'slack'],
+			builtIn: ['pm'],
+			steps: ['Reads today.'],
+			result: 'A brief.',
+			schedule: 'Every weekday at 8:00',
+		},
+	],
+	skillCategories: [
+		{ id: 'everyday', name: 'Inbox and calendar', blurb: 'Mail.' },
+	],
+	builtIns: { pm: 'Issues', crm: 'CRM', files: 'Files', pg: 'Postgres' },
+	appNames: {
+		googlecalendar: 'Google Calendar',
+		gmail: 'Gmail',
+		slack: 'Slack',
+	},
+};
+
+describe('parseGatewayContent', () => {
+	it('accepts what Hub sends', () => {
+		const content = parseGatewayContent(SAMPLE);
+		assert.equal(content.skills[0]?.slug, 'morning-brief');
+		assert.equal(content.clients[0]?.id, 'claude');
 	});
 
-	it('puts every skill in a listed category, and every category has skills', () => {
-		const ids = new Set(SKILL_CATEGORIES.map((c) => c.id));
-		for (const s of GATEWAY_SKILLS) assert.ok(ids.has(s.category), s.slug);
-		for (const c of SKILL_CATEGORIES) {
-			assert.ok(
-				GATEWAY_SKILLS.some((s) => s.category === c.id),
-				c.id,
-			);
-		}
-	});
-
-	it('names every app a skill uses', () => {
-		for (const s of GATEWAY_SKILLS) {
-			for (const id of skillApps(s))
-				assert.ok(hasAppName(id), `${s.slug}: ${id}`);
-		}
-	});
-
-	it('gives every skill at least one app to connect or a built-in', () => {
-		for (const s of GATEWAY_SKILLS) {
-			assert.ok(skillApps(s).length + s.builtIn.length > 0, s.slug);
-		}
-	});
-
-	it('keeps meta descriptions within 160 characters', () => {
-		for (const s of GATEWAY_SKILLS) {
-			const { description } = skillMeta(s);
-			assert.ok(description.length <= 160, `${s.slug}: ${description.length}`);
-		}
-	});
-
-	it('never says Lug in text the pages show', () => {
-		for (const s of GATEWAY_SKILLS) {
-			const text = [
-				s.name,
-				s.summary,
-				s.result,
-				...s.steps,
-				...(s.notes ?? []),
-			].join(' ');
-			assert.doesNotMatch(text, /\blug\b/i, s.slug);
-		}
+	it('refuses another version or an empty list, so a build fails instead of shipping empty pages', () => {
+		assert.throws(
+			() => parseGatewayContent({ ...SAMPLE, version: 2 }),
+			/version 2/,
+		);
+		assert.throws(
+			() => parseGatewayContent({ ...SAMPLE, skills: [] }),
+			/no skills/,
+		);
+		assert.throws(
+			() => parseGatewayContent({ ...SAMPLE, clients: [] }),
+			/no clients/,
+		);
+		assert.throws(() => parseGatewayContent(null), /not an object/);
+		assert.throws(
+			() => parseGatewayContent({ ...SAMPLE, skills: [{ name: 'x' }] }),
+			/without a slug/,
+		);
 	});
 });
 
-describe('listNames', () => {
-	it('joins app names the way a person would', () => {
-		assert.equal(listNames(['gmail']), 'Gmail');
+describe('skill helpers', () => {
+	const content = parseGatewayContent(SAMPLE);
+	const skill = skillBySlug(content.skills, 'morning-brief');
+
+	it('finds a skill by slug', () => {
+		assert.ok(skill);
+		assert.equal(skillBySlug(content.skills, 'nope'), undefined);
+	});
+
+	it('lists required apps first, each once', () => {
+		assert.ok(skill);
+		assert.deepEqual(skillApps(skill), ['googlecalendar', 'gmail', 'slack']);
+	});
+
+	it('names apps and built-ins', () => {
+		assert.ok(skill);
 		assert.equal(
-			listNames(['googlecalendar', 'exa']),
-			'Google Calendar and Exa',
+			listNames(content.appNames, skillApps(skill)),
+			'Google Calendar, Gmail and Slack',
 		);
+		assert.equal(listNames(content.appNames, ['unknownapp']), 'unknownapp');
+		assert.deepEqual(builtInNames(content.builtIns, skill), ['Issues']);
+	});
+
+	it('writes the page title and when it runs', () => {
+		assert.ok(skill);
 		assert.equal(
-			listNames(['gmail', 'slack', 'linear']),
-			'Gmail, Slack and Linear',
+			skillMeta(skill).title,
+			'Morning brief: a skill for your AI agent',
 		);
+		assert.equal(skillWhen(skill), 'Every weekday at 8:00');
+		assert.equal(skillWhen({ ...skill, schedule: undefined }), 'When you ask');
 	});
 });

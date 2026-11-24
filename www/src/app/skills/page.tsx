@@ -12,7 +12,7 @@ import {
 	Steps,
 } from '@/components/gateway/gateway-ui';
 import { SkillGrid } from '@/components/skills/skill-card';
-import { GATEWAY_SKILLS, SKILL_CATEGORIES } from '@/lib/gateway-skills';
+import { getGatewayContent } from '@/lib/gateway-content';
 import { CLAIM_HREF } from '@/lib/site-links';
 import { socialMetadata } from '@/lib/social-metadata';
 
@@ -43,7 +43,12 @@ const HOW = [
 	},
 ] as const;
 
-export default function SkillsPage() {
+export default async function SkillsPage() {
+	const {
+		skills: GATEWAY_SKILLS,
+		skillCategories: SKILL_CATEGORIES,
+		appNames,
+	} = await getGatewayContent();
 	const list = {
 		'@context': 'https://schema.org',
 		'@type': 'ItemList',
@@ -103,6 +108,7 @@ export default function SkillsPage() {
 				>
 					<SkillGrid
 						skills={GATEWAY_SKILLS.filter((s) => s.category === cat.id)}
+						names={appNames}
 					/>
 				</Section>
 			))}

@@ -4,14 +4,15 @@ import { getAllPosts } from '@/lib/blog';
 import { postLastModified } from '@/lib/blog-seo';
 import { getComboCanonicalUrls } from '@/lib/combined-integrations';
 import { COMPARE_SLUGS } from '@/lib/compare-pages';
-import { GATEWAY_SKILLS } from '@/lib/gateway-skills';
+import { getGatewayContent } from '@/lib/gateway-content';
 import { USE_CASES } from '@/lib/use-cases';
 import { getCatalogIntegrationIds } from '@/server/catalog-integration-cache';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-	const [posts, integrationIds] = await Promise.all([
+	const [posts, integrationIds, gateway] = await Promise.all([
 		getAllPosts(),
 		getCatalogIntegrationIds(),
+		getGatewayContent(),
 	]);
 
 	return [
@@ -28,7 +29,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 				priority: 0.9,
 			}),
 		),
-		...GATEWAY_SKILLS.map((skill) => ({
+		...gateway.skills.map((skill) => ({
 			url: `https://corsair.dev/skills/${skill.slug}`,
 			changeFrequency: 'monthly' as const,
 			priority: 0.7,

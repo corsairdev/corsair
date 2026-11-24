@@ -13,13 +13,13 @@ import {
 	Steps,
 } from '@/components/gateway/gateway-ui';
 import { SkillAppIcon, SkillGrid } from '@/components/skills/skill-card';
+import type { GatewayContent } from '@/lib/gateway-content';
+import { getGatewayContent } from '@/lib/gateway-content';
 import type { GatewaySkill } from '@/lib/gateway-skills';
 import {
 	appName,
 	builtInNames,
-	GATEWAY_SKILLS,
 	listNames,
-	SKILL_CATEGORIES,
 	skillApps,
 	skillBySlug,
 	skillMeta,
@@ -36,12 +36,14 @@ type Params = { params: Promise<{ slug: string }> };
 
 export const dynamicParams = false;
 
-export function generateStaticParams() {
-	return GATEWAY_SKILLS.map((s) => ({ slug: s.slug }));
+export async function generateStaticParams() {
+	const { skills } = await getGatewayContent();
+	return skills.map((s) => ({ slug: s.slug }));
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-	const skill = skillBySlug((await params).slug);
+	const { skills } = await getGatewayContent();
+	const skill = skillBySlug(skills, (await params).slug);
 	if (!skill) return {};
 	const path = `/skills/${skill.slug}`;
 	const { title, description } = skillMeta(skill);
@@ -53,15 +55,20 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 	};
 }
 
-function setupSteps(skill: GatewaySkill): { title: string; body: string }[] {
+type Names = Record<string, string>;
+
+function setupSteps(
+	skill: GatewaySkill,
+	names: Names,
+): { title: string; body: string }[] {
 	const { required, optional } = skill;
 	const connect = required.length
-		? `Connect ${listNames(required)}.${
+		? `Connect ${listNames(names, required)}.${
 				optional.length
-					? ` ${listNames(optional)} ${optional.length > 1 ? 'add' : 'adds'} to it if you use ${optional.length > 1 ? 'them' : 'it'}.`
+					? ` ${listNames(names, optional)} ${optional.length > 1 ? 'add' : 'adds'} to it if you use ${optional.length > 1 ? 'them' : 'it'}.`
 					: ''
 			}`
-		: `Connect the apps you use: ${listNames(optional)}.`;
+		: `Connect the apps you use: ${listNames(names, optional)}.`;
 	return [
 		{
 			title: 'Claim your URL',
@@ -83,11 +90,19 @@ function setupSteps(skill: GatewaySkill): { title: string; body: string }[] {
 const listHeading =
 	'font-[family-name:var(--landing-font-mono)] text-xs tracking-[-0.02em] text-[#1c1c1c99]';
 
-function AppRow({ id, note }: { id: string; note?: string }) {
+function AppRow({
+	id,
+	names,
+	note,
+}: {
+	id: string;
+	names: Names;
+	note?: string;
+}) {
 	return (
 		<li className="flex items-center gap-3 text-[15px] text-[#1c1c1c]">
-			<SkillAppIcon id={id} size={28} />
-			<span>{appName(id)}</span>
+			<SkillAppIcon id={id} names={names} size={28} />
+			<span>{appName(names, id)}</span>
 			{note ? (
 				<span className="ml-auto text-xs text-[#1c1c1c99]">{note}</span>
 			) : null}
@@ -95,7 +110,14 @@ function AppRow({ id, note }: { id: string; note?: string }) {
 	);
 }
 
-function AppsPanel({ skill }: { skill: GatewaySkill }) {
+function AppsPanel({
+	skill,
+	content,
+}: {
+	skill: GatewaySkill;
+	content: GatewayContent;
+}) {
+	const names = content.appNames;
 	return (
 		<aside className="flex flex-col gap-6 border border-[#1c1c1c1a] bg-white p-5 md:p-6">
 			{skill.required.length ? (
@@ -103,7 +125,7 @@ function AppsPanel({ skill }: { skill: GatewaySkill }) {
 					<h3 className={listHeading}>Needs</h3>
 					<ul className="mt-2.5 flex flex-col gap-2.5">
 						{skill.required.map((id) => (
-							<AppRow key={id} id={id} />
+							<AppRow key={id} id={id} names={names} />
 						))}
 					</ul>
 				</div>
@@ -115,7 +137,7 @@ function AppsPanel({ skill }: { skill: GatewaySkill }) {
 					</h3>
 					<ul className="mt-2.5 flex flex-col gap-2.5">
 						{skill.optional.map((id) => (
-							<AppRow key={id} id={id} note="optional" />
+							<AppRow key={id} id={id} names={names} note="optional" />
 						))}
 					</ul>
 				</div>
@@ -124,7 +146,7 @@ function AppsPanel({ skill }: { skill: GatewaySkill }) {
 				<div>
 					<h3 className={listHeading}>Built into Corsair</h3>
 					<ul className="mt-2.5 flex flex-col gap-2.5">
-						{builtInNames(skill).map((name) => (
+						{builtInNames(content.builtIns, skill).map((name) => (
 							<li
 								key={name}
 								className="flex items-center gap-3 text-[15px] text-[#1c1c1c]"
@@ -152,19 +174,22 @@ function AppsPanel({ skill }: { skill: GatewaySkill }) {
 }
 
 export default async function SkillPage({ params }: Params) {
-	const skill = skillBySlug((await params).slug);
+	const content = await getGatewayContent();
+	const skill = skillBySlug(content.skills, (await params).slug);
 	if (!skill) notFound();
 	const path = `/skills/${skill.slug}`;
-	const category = SKILL_CATEGORIES.find((cat) => cat.id === skill.category);
-	const related = GATEWAY_SKILLS.filter(
-		(s) => s.category === skill.category && s.slug !== skill.slug,
-	).slice(0, 3);
+	const category = content.skillCategories.find(
+		(cat) => cat.id === skill.category,
+	);
+	const related = content.skills
+		.filter((s) => s.category === skill.category && s.slug !== skill.slug)
+		.slice(0, 3);
 	const setup = claimHref({
 		apps: skillApps(skill).slice(0, 8),
 		skill: skill.slug,
 	});
 	const signIn = hubMeSkillUrl(skill.slug);
-	const steps = setupSteps(skill);
+	const steps = setupSteps(skill, content.appNames);
 	const howTo = {
 		'@context': 'https://schema.org',
 		'@type': 'HowTo',
@@ -255,7 +280,7 @@ export default async function SkillPage({ params }: Params) {
 							</>
 						) : null}
 					</div>
-					<AppsPanel skill={skill} />
+					<AppsPanel skill={skill} content={content} />
 				</div>
 			</Section>
 
@@ -269,7 +294,7 @@ export default async function SkillPage({ params }: Params) {
 					title={`More in ${category.name.toLowerCase()}`}
 					width="wide"
 				>
-					<SkillGrid skills={related} />
+					<SkillGrid skills={related} names={content.appNames} />
 				</Section>
 			) : null}
 

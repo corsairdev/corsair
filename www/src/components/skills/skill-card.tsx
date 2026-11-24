@@ -2,13 +2,31 @@ import { IntegrationLogo } from '@/components/integrations/integration-logo';
 import type { GatewaySkill } from '@/lib/gateway-skills';
 import { appName, skillWhen } from '@/lib/gateway-skills';
 
+type Names = Record<string, string>;
+
 /** An app's mark from /plugin-icons, with its initial when the icon fails. */
-export function SkillAppIcon({ id, size = 24 }: { id: string; size?: number }) {
-	return <IntegrationLogo id={id} displayName={appName(id)} size={size} />;
+export function SkillAppIcon({
+	id,
+	names,
+	size = 24,
+}: {
+	id: string;
+	names: Names;
+	size?: number;
+}) {
+	return (
+		<IntegrationLogo id={id} displayName={appName(names, id)} size={size} />
+	);
 }
 
 /** One skill in the directory: its apps, what it does and when it runs. The whole card links to its page. */
-export function SkillCard({ skill }: { skill: GatewaySkill }) {
+export function SkillCard({
+	skill,
+	names,
+}: {
+	skill: GatewaySkill;
+	names: Names;
+}) {
 	return (
 		<a
 			href={`/skills/${skill.slug}`}
@@ -16,11 +34,11 @@ export function SkillCard({ skill }: { skill: GatewaySkill }) {
 		>
 			<span className="flex min-h-6 items-center gap-1.5" aria-hidden>
 				{skill.required.map((id) => (
-					<SkillAppIcon key={id} id={id} />
+					<SkillAppIcon key={id} id={id} names={names} />
 				))}
 				{skill.optional.slice(0, 4).map((id) => (
 					<span key={id} className="inline-flex opacity-45">
-						<SkillAppIcon id={id} />
+						<SkillAppIcon id={id} names={names} />
 					</span>
 				))}
 			</span>
@@ -40,11 +58,17 @@ export function SkillCard({ skill }: { skill: GatewaySkill }) {
 	);
 }
 
-export function SkillGrid({ skills }: { skills: readonly GatewaySkill[] }) {
+export function SkillGrid({
+	skills,
+	names,
+}: {
+	skills: readonly GatewaySkill[];
+	names: Names;
+}) {
 	return (
 		<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 			{skills.map((s) => (
-				<SkillCard key={s.slug} skill={s} />
+				<SkillCard key={s.slug} skill={s} names={names} />
 			))}
 		</div>
 	);

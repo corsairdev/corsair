@@ -14,8 +14,8 @@ import {
 	Section,
 	textLink,
 } from '@/components/gateway/gateway-ui';
-import type { ClientGuide, ClientLink, McpClient } from '@/lib/mcp-clients';
-import { FEATURED_CLIENTS, MCP_CLIENTS } from '@/lib/mcp-clients';
+import type { ClientGuide, GatewayClient } from '@/lib/gateway-content';
+import { getGatewayContent } from '@/lib/gateway-content';
 import {
 	APP_URL,
 	CHATGPT_LISTING_URL,
@@ -37,25 +37,10 @@ export const metadata: Metadata = {
 	...socialMetadata({ title: TITLE, description: DESCRIPTION, path: PATH }),
 };
 
-// What Hub fills in after signup, shown as placeholders here. The guides are Hub's own
-// (copied into lib/mcp-clients.ts), so this page and Hub's setup screens say the same thing.
-const PLACEHOLDER: ClientLink = {
-	shortUrl: 'https://yourname.lug.dev/work',
-	secretUrl: '<your secret URL, from Corsair Hub>',
-	apiKey: null,
-};
-
 // Code that uses Corsair rather than an app that connects to it.
 const FRAMEWORKS = new Set(['ai-sdk', 'openai-agents', 'mastra']);
 
-const ordered: McpClient[] = [
-	...FEATURED_CLIENTS.flatMap((id) => MCP_CLIENTS.filter((m) => m.id === id)),
-	...MCP_CLIENTS.filter((m) => !FEATURED_CLIENTS.includes(m.id)),
-];
-const AGENTS = ordered.filter((m) => !FRAMEWORKS.has(m.id));
-const CODE = ordered.filter((m) => FRAMEWORKS.has(m.id));
-
-const AUTH: Record<McpClient['auth'], string> = {
+const AUTH: Record<GatewayClient['auth'], string> = {
 	'sign-in': 'Signs in with Corsair',
 	key: 'API key in a header',
 	both: 'Sign-in or API key',
@@ -188,7 +173,13 @@ function CardHead({
 
 const stepText = 'text-[15px] leading-[1.6] text-[#1c1c1c99]';
 
-function Guide({ client, guide }: { client: McpClient; guide: ClientGuide }) {
+function Guide({
+	client,
+	guide,
+}: {
+	client: GatewayClient;
+	guide: ClientGuide;
+}) {
 	return (
 		<Card id={client.id}>
 			<CardHead
@@ -240,7 +231,12 @@ function Guide({ client, guide }: { client: McpClient; guide: ClientGuide }) {
 	);
 }
 
-export default function ConnectPage() {
+export default async function ConnectPage() {
+	// Hub's guides, written for a placeholder URL (yourname.lug.dev/work); Hub
+	// shows the same steps with the person's own URL and key after sign-up.
+	const { clients } = await getGatewayContent();
+	const AGENTS = clients.filter((m) => !FRAMEWORKS.has(m.id));
+	const CODE = clients.filter((m) => FRAMEWORKS.has(m.id));
 	return (
 		<GatewayLayout>
 			<JsonLd
@@ -325,7 +321,7 @@ export default function ConnectPage() {
 			>
 				<CardGrid>
 					{AGENTS.map((m) => (
-						<Guide key={m.id} client={m} guide={m.guide(PLACEHOLDER)} />
+						<Guide key={m.id} client={m} guide={m.guide} />
 					))}
 				</CardGrid>
 			</Section>
@@ -338,7 +334,7 @@ export default function ConnectPage() {
 			>
 				<CardGrid>
 					{CODE.map((m) => (
-						<Guide key={m.id} client={m} guide={m.guide(PLACEHOLDER)} />
+						<Guide key={m.id} client={m} guide={m.guide} />
 					))}
 				</CardGrid>
 			</Section>
