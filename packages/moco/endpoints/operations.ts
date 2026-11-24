@@ -194,13 +194,25 @@ export function queryEntries(
 	return { [name]: value };
 }
 
-// `unknown` because the body is untrusted until the output schema parses it.
-function isEmptyBody(body: unknown): boolean {
-	return (
-		body === undefined ||
-		body === null ||
-		(typeof body === 'string' && body.trim().length === 0)
-	);
+/** Marks a 2xx that came back without a body. */
+const EMPTY = Symbol('empty');
+
+/**
+ * The body of a route the spec documents as JSON or no body at all, read as
+ * bytes: nothing (or whitespace) is a bodiless success, anything else must
+ * be JSON. A body that isn't is an error, never a made-up success.
+ */
+// `unknown` because the value came from core's binary transport and is parsed by the output schema next.
+export function decodeMaybeEmpty(id: string, value: unknown): unknown {
+	if (!isBinaryResponse(value)) return value;
+	const text = new TextDecoder().decode(value.bytes);
+	if (text.trim().length === 0) return EMPTY;
+	try {
+		return JSON.parse(text);
+	} catch {
+		// The body itself stays out of the message: it can hold customer data.
+		throw new Error(`MOCO ${id} answered with a body that is not JSON`);
+	}
 }
 
 // `unknown` because the value came from core's binary transport.
@@ -262,6 +274,10 @@ export function createMocoOperation<Id extends MocoOperationId>(
 			pathParameters,
 			query,
 			headers,
+			// A route that may answer with no body is read as bytes: core turns
+			// both an empty body and JSON it can't decode into `undefined`, and
+			// only the second is an error.
+			...(operation.emptyOk ? { responseType: 'binary' as const } : {}),
 		};
 		// Fields MOCO sets itself never go back, even when the caller passes an object it read.
 		for (const name of operation.serverSetFields ?? []) delete valid[name];
@@ -279,12 +295,16 @@ export function createMocoOperation<Id extends MocoOperationId>(
 			response = toFileOutput(binary.bytes, binary.contentType, {
 				filename: fileNameFor(id, parsedInput.data),
 			});
+		} else if (operation.response === 'empty') {
+			// The spec documents no body: the 2xx status is the answer.
+			await makeMocoRequest(ctx, request);
+			response = { success: true };
 		} else {
-			const body = await makeMocoRequest(ctx, request);
-			if (
-				operation.response === 'empty' ||
-				(operation.emptyOk && isEmptyBody(body))
-			) {
+			let body = await makeMocoRequest(ctx, request);
+			if (operation.emptyOk) {
+				body = decodeMaybeEmpty(id, body);
+			}
+			if (body === EMPTY) {
 				response = { success: true };
 			} else if (operation.paginated && Array.isArray(body)) {
 				response = {

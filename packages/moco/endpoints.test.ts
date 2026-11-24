@@ -1,5 +1,6 @@
 import { ApiError } from 'corsair/http';
 import { mocoEndpointsNested } from './endpoints/catalog';
+import { mocoDefinitions, mocoOperations } from './endpoints/manifest';
 import { fileNameFor, nextPageOf, queryEntries } from './endpoints/operations';
 import type { MocoContext } from './index';
 
@@ -44,6 +45,28 @@ function reply(
 		});
 	});
 }
+
+/** A reply with a raw body string (or none) and a content type. */
+function replyRaw(status: number, text: string | null, contentType?: string) {
+	jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+		calls.push({
+			url: String(input),
+			method: init?.method ?? 'GET',
+			headers: {},
+			body: init?.body,
+		});
+		return new Response(text, {
+			status,
+			headers: contentType ? { 'content-type': contentType } : {},
+		});
+	});
+}
+
+// jest-yaml-transform turns the yaml into a plain object.
+const docs = require('./plugin-docs.yaml') as {
+	// `unknown` because example args are free-form YAML values.
+	apiExamples: Record<string, { args: Record<string, unknown> }>;
+};
 
 function ctx(subdomain: string | undefined = 'acme'): MocoContext {
 	return {
@@ -294,4 +317,84 @@ describe('errors', () => {
 		).rejects.toThrow(/Invalid input for moco invoices.updateStatus/);
 		expect(calls).toHaveLength(0);
 	});
+});
+
+describe('routes that may answer without a body', () => {
+	it('returns the JSON when there is one', async () => {
+		replyRaw(200, JSON.stringify({ id: 3 }), 'application/json');
+		await expect(
+			endpointFor('deals.delete')(ctx(), { id: 3 }),
+		).resolves.toEqual({ id: 3 });
+	});
+
+	it('answers success for an empty 200', async () => {
+		replyRaw(200, '', 'application/json');
+		await expect(
+			endpointFor('deals.delete')(ctx(), { id: 3 }),
+		).resolves.toEqual({ success: true });
+	});
+
+	it('refuses a body that is not JSON instead of calling it a success', async () => {
+		replyRaw(200, '{"email":"person@exam', 'application/json');
+		const error = (await endpointFor('deals.delete')(ctx(), {
+			id: 3,
+		}).catch((e: unknown) => e)) as Error;
+		expect(error.message).toBe(
+			'MOCO deals.delete answered with a body that is not JSON',
+		);
+		expect(error.message).not.toContain('person');
+	});
+});
+
+// `unknown` because a resolved schema is any JSON Schema document.
+function resolveSchema(schema: unknown): Record<string, unknown> {
+	let current = schema as Record<string, unknown> | undefined;
+	for (
+		let depth = 0;
+		depth < 10 && typeof current?.$ref === 'string';
+		depth++
+	) {
+		current = mocoDefinitions[current.$ref as string];
+	}
+	return current ?? {};
+}
+
+describe('every operation', () => {
+	it.each(mocoOperations.map((o) => [o.id, o] as const))(
+		'%s sends its documented method and route',
+		async (id, operation) => {
+			const output = resolveSchema(operation.output);
+			if (operation.response === 'file') {
+				reply(200, new Uint8Array([37, 80, 68, 70]), 'application/pdf');
+			} else if (operation.response === 'empty') {
+				reply(204, undefined);
+			} else {
+				reply(200, output.type === 'array' ? [] : {});
+			}
+			const args = docs.apiExamples[id]?.args ?? {};
+			await endpointFor(id)(ctx(), args);
+			expect(calls).toHaveLength(1);
+			const url = new URL(String(calls[0]?.url));
+			const route = operation.path.replace(/\{(\w+)\}/g, (_, name: string) =>
+				encodeURIComponent(String(args[name])),
+			);
+			expect(url.host).toBe('acme.mocoapp.com');
+			expect(decodeURIComponent(url.pathname)).toBe(
+				decodeURIComponent(`/api/v1${route}`),
+			);
+			expect(calls[0]?.method).toBe(operation.method);
+			expect(calls[0]?.headers.authorization).toBe('Token token=moco_test_key');
+			if (operation.request === 'json') {
+				const body = JSON.parse(String(calls[0]?.body ?? '{}'));
+				for (const name of Object.keys(args)) {
+					if (
+						/\{/.test(operation.path) &&
+						operation.path.includes(`{${name}}`)
+					) {
+						expect(body).not.toHaveProperty(name);
+					}
+				}
+			}
+		},
+	);
 });
