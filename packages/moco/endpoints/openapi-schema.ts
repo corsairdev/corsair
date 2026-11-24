@@ -261,7 +261,10 @@ function schemaFromOpenApi(
 		if (pattern) stringSchema = stringSchema.regex(pattern);
 		schema = stringSchema;
 	} else if (type === 'integer' || type === 'number') {
-		let numberSchema = z.number();
+		// MOCO writes some decimals as strings: an expense's
+		// purchase_items[].net_total came back "9.09" in the live run. A
+		// response reads a numeric string as its number (`lots` still fails).
+		let numberSchema = strict ? z.number() : z.coerce.number();
 		// A cursor or count that comes back fractional would be refused when sent back.
 		if (type === 'integer') numberSchema = numberSchema.int();
 		// OpenAPI 3.0 writes an exclusive bound as `exclusiveMinimum: true` next to
