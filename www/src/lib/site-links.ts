@@ -147,6 +147,15 @@ export function claimHref(
 	return `${APP_URL}/login?${params.toString()}`;
 }
 
+/** Sign in and open /me with a skill ready to set up, for people who already have an MCP URL. */
+export function hubMeSkillUrl(skill: string): string {
+	const params = new URLSearchParams({
+		mode: 'lug',
+		redirect: `/me?${new URLSearchParams({ skill })}`,
+	});
+	return `${APP_URL}/login?${params.toString()}`;
+}
+
 /** Billing for an MCP URL's plan, on Hub. */
 export const HUB_ME_BILLING_URL = `${APP_URL}/me/billing`;
 
