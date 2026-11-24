@@ -113,6 +113,57 @@ export function hubLugClaimUrl(handle: string): string {
 	return `${APP_URL}/login?${params.toString()}`;
 }
 
+/**
+ * Where "Claim your URL" buttons on the gateway pages go: the claim box on
+ * the homepage.
+ */
+export const CLAIM_HREF = '/#lug';
+
+/**
+ * Hub sign-in for people who already have an MCP URL. `mode=lug` is Hub's
+ * internal flag for the MCP gateway: it lands them on /me (their links and
+ * apps), not on the developer dashboard.
+ */
+export function hubMeSignInUrl(): string {
+	const params = new URLSearchParams({ mode: 'lug', redirect: '/me' });
+	return `${APP_URL}/login?${params.toString()}`;
+}
+
+/**
+ * "Set up" links that start the claim with apps (and a skill) already picked.
+ * Until corsair.dev has the claim steps itself, they go to Hub's sign-in in
+ * gateway mode, which ends on /me with the skill passed on.
+ */
+export function claimHref(
+	opts: { apps?: readonly string[]; skill?: string } = {},
+): string {
+	const apps = normalizePluginIds(opts.apps ?? []);
+	if (!apps && !opts.skill) return CLAIM_HREF;
+	const me = opts.skill
+		? `/me?${new URLSearchParams({ skill: opts.skill })}`
+		: '/me';
+	const params = new URLSearchParams({ mode: 'lug', redirect: me });
+	if (apps) params.set('plugins', apps);
+	return `${APP_URL}/login?${params.toString()}`;
+}
+
+/** Sign in and open /me with a skill ready to set up, for people who already have an MCP URL. */
+export function hubMeSkillUrl(skill: string): string {
+	const params = new URLSearchParams({
+		mode: 'lug',
+		redirect: `/me?${new URLSearchParams({ skill })}`,
+	});
+	return `${APP_URL}/login?${params.toString()}`;
+}
+
+/** Billing for an MCP URL's plan, on Hub. */
+export const HUB_ME_BILLING_URL = `${APP_URL}/me/billing`;
+
+/** Corsair's MCP server in the ChatGPT, Cursor, Claude Code and Hermes listings. */
+export const CHATGPT_LISTING_URL =
+	'https://chatgpt.com/plugins/plugin_asdk_app_6ae189f951708191920e9f41269c8cde';
+export const CURSOR_DIRECTORY_URL = 'https://cursor.directory/plugins/corsair';
+
 export const TWITTER_URL = 'https://x.com/corsairdotdev';
 export const DISCORD_URL = 'https://discord.com/invite/uNgCP3mSzU';
 export const ENTERPRISE_CONTACT_URL = '';
