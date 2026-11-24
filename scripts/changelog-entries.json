@@ -12447,5 +12447,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/moz",
+    "dir": "packages/moz",
+    "name": "Moz",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
