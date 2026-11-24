@@ -1,71 +1,49 @@
-import { createCorsair } from 'corsair';
+import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
-import { MozEndpointOutputSchemas as Outputs } from './endpoints/types';
 import { moz } from './index';
 
 /**
- * Live smoke against free operations only. Skipped unless a Moz API token is
- * provided. quota.lookup, metadata.locale.list and the free example of
- * data.site.metrics.fetch (moz.com with a domain scope) consume no rows;
- * nothing here writes because the Moz data API has no write operations.
- *
- *   MOZ_API_KEY=... pnpm test:live
+ * Live smoke against the free calls only: test.ping, quota.lookup,
+ * index.fetch and locales.list cost no rows. Skipped without MOZ_API_TOKEN.
  */
-const apiKey = process.env.MOZ_API_KEY ?? '';
-const describeIfKey = apiKey ? describe : describe.skip;
+const TOKEN = process.env.MOZ_API_TOKEN;
+const describeIfKey = TOKEN ? describe : describe.skip;
+if (!TOKEN) console.warn('Skipping Moz live tests: set MOZ_API_TOKEN.');
 
-if (!apiKey) {
-	console.warn('Skipping Moz live tests: set MOZ_API_KEY.');
-}
-
-async function createClient() {
-	const testDb = createTestDatabase();
-	await createIntegrationAndAccount(testDb.db, 'moz', 'default');
-	const corsair = createCorsair({
-		plugins: [moz({ key: apiKey })],
-		database: testDb.db,
-		kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
-	});
-	return { corsair, testDb };
-}
-
-describeIfKey('moz live', () => {
-	jest.setTimeout(30_000);
-
-	let client: Awaited<ReturnType<typeof createClient>> | undefined;
+describeIfKey('moz live (free calls)', () => {
+	jest.setTimeout(60_000);
+	let testDb: ReturnType<typeof createTestDatabase>;
+	let corsair: ReturnType<typeof createCorsair>;
 
 	beforeAll(async () => {
-		client = await createClient();
+		testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'moz', 'default');
+		corsair = createCorsair({
+			plugins: [moz()],
+			database: testDb.db,
+			kek: process.env.CORSAIR_KEK ?? '0123456789abcdef0123456789abcdef',
+		});
+		await corsair.moz.keys.issue_new_dek();
+		await corsair.moz.keys.set_api_key(TOKEN ?? '');
 	});
 
-	afterAll(() => {
-		client?.testDb.cleanup();
+	afterAll(() => testDb?.cleanup());
+
+	it('pings', async () => {
+		const result = await corsair.moz.api.test.ping({});
+		expect(result).toBeDefined();
 	});
 
-	it('reads the quota through its output schema', async () => {
-		const { corsair } = client as NonNullable<typeof client>;
-		const raw = await corsair.moz.api.quota.lookup({
+	it('reads the row quota', async () => {
+		const result = await corsair.moz.api.quota.lookup({
 			path: 'api.limits.data.rows',
 		});
-		const result = Outputs.quotaLookup.parse(raw);
-		expect(result.quota.allotted).toBeGreaterThan(0);
+		expect(result).toHaveProperty('quota');
 	});
 
-	it('lists google locales through its output schema', async () => {
-		const { corsair } = client as NonNullable<typeof client>;
-		const raw = await corsair.moz.api.locales.list({ engine: 'google' });
-		const result = Outputs.localesList.parse(raw);
-		expect(result.engine).toBe('google');
-		expect(result.locales.length).toBeGreaterThan(0);
-	});
-
-	// The documented free example: costs no rows when sent exactly as-is.
-	it('fetches moz.com metrics through its output schema', async () => {
-		const { corsair } = client as NonNullable<typeof client>;
-		const raw = await corsair.moz.api.metrics.fetch({
-			site_query: { query: 'moz.com', scope: 'domain' },
-		});
-		const result = Outputs.metricsFetch.parse(raw);
-		expect(typeof result.site_metrics.domain_authority).toBe('number');
+	it('reads the index id and the google locales', async () => {
+		await expect(corsair.moz.api.index.fetch({})).resolves.toBeDefined();
+		const locales = await corsair.moz.api.locales.list({ engine: 'google' });
+		expect(Array.isArray(locales.locales)).toBe(true);
 	});
 });

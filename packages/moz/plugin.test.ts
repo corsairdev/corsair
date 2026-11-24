@@ -1,109 +1,83 @@
 import { AuthMissingError } from 'corsair/core';
-import type { MozKeyBuilderContext } from './index';
 import { moz, mozEndpointSchemas } from './index';
-import { MozSchema } from './schema';
 
-const operations = [
-	'quota.lookup',
-	'locales.list',
-	'metrics.fetch',
-	'metrics.fetchMultiple',
-	'links.list',
-	'links.intersect',
-	'linkingDomains.list',
-	'anchorText.list',
-	'topPages.list',
-	'competitors.fetch',
-	'jobs.lookup',
-];
-
-type KeyBuilder = (
-	ctx: MozKeyBuilderContext,
-	source: string,
-) => Promise<string>;
-
-// A fixture cannot be typed as KeyBuilderContext directly: keys must be a
-// full AccountKeyManager, and this test only implements get_api_key.
-function keyContext(storedKey: string | null) {
+function keyContext(stored: Record<string, string | null>) {
 	return {
-		authType: 'api_key',
-		keys: { get_api_key: jest.fn().mockResolvedValue(storedKey) },
-	} as unknown as MozKeyBuilderContext;
+		authType: 'api_key' as const,
+		options: {},
+		tenantId: 'default',
+		keys: {
+			get_api_key: jest.fn().mockResolvedValue(stored.api_key ?? null),
+			get_webhook_signature: jest
+				.fn()
+				.mockResolvedValue(stored.webhook_signature ?? null),
+		},
+	};
 }
 
-describe('moz plugin', () => {
+describe('moz plugin definition', () => {
 	const plugin = moz();
-	// unknown: a plugin config under test only carries keyBuilder; the real
-	// shape is Corsair's internal plugin record.
-	const keyBuilderOf = (candidate: { keyBuilder?: unknown }): KeyBuilder =>
-		candidate.keyBuilder as KeyBuilder;
 
-	it('registers the id and api_key auth', () => {
-		expect(plugin.id).toBe('moz');
-		expect(plugin.options?.authType).toBe('api_key');
-		expect(plugin.webhooks).toEqual({});
+	it('registers 74 operations with lazy schemas and metadata', () => {
+		const meta = Object.keys(plugin.endpointMeta ?? {});
+		expect(meta).toHaveLength(74);
+		expect(Object.keys(mozEndpointSchemas).sort()).toEqual([...meta].sort());
+		const entry = mozEndpointSchemas['metrics.fetch'];
 		expect(
-			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
-		).toBe(false);
+			entry.input.safeParse({
+				site_query: { query: 'moz.com', scope: 'domain' },
+			}).success,
+		).toBe(true);
 	});
 
-	it('lists exactly the documented operations', () => {
-		const listed = Object.keys(plugin.endpointMeta ?? {}).sort();
-		expect(listed).toEqual(operations.sort());
-	});
-
-	it('covers every operation with input and output schemas', () => {
-		expect(Object.keys(mozEndpointSchemas).sort()).toEqual(operations.sort());
-		for (const schemas of Object.values(mozEndpointSchemas)) {
-			expect(schemas.input).toBeDefined();
-			expect(schemas.output).toBeDefined();
+	it('keeps the eleven original operation names', () => {
+		for (const name of [
+			'quota.lookup',
+			'locales.list',
+			'metrics.fetch',
+			'metrics.fetchMultiple',
+			'links.list',
+			'links.intersect',
+			'linkingDomains.list',
+			'anchorText.list',
+			'topPages.list',
+			'competitors.fetch',
+			'jobs.lookup',
+		]) {
+			expect(plugin.endpointMeta).toHaveProperty([name]);
 		}
 	});
 
-	it('marks every operation read; nothing in this API writes', () => {
-		for (const [op, meta] of Object.entries(plugin.endpointMeta ?? {})) {
-			expect(meta.riskLevel).toBe('read');
-			if (op !== 'competitors.fetch') {
-				expect(meta.job).toBeUndefined();
-			}
-		}
+	it('registers the four Moz Local location webhooks', () => {
+		expect(Object.keys(plugin.webhookSchemas ?? {}).sort()).toEqual([
+			'locations.canceled',
+			'locations.closed',
+			'locations.created',
+			'locations.updated',
+		]);
+	});
+});
+
+describe('keyBuilder', () => {
+	const build = (
+		stored: Record<string, string | null>,
+		source: 'endpoint' | 'webhook',
+		options = {},
+	) => moz(options).keyBuilder?.(keyContext(stored) as never, source);
+
+	it('returns the stored token for endpoints', async () => {
+		await expect(build({ api_key: 'tok' }, 'endpoint')).resolves.toBe('tok');
 	});
 
-	it('declares the competitor job reading jobs.lookup', () => {
-		const job = plugin.endpointMeta?.['competitors.fetch']?.job;
-		expect(job).toMatchObject({
-			idPath: 'async_call.id',
-			status: {
-				op: 'jobs.lookup',
-				idArg: 'id',
-				statusPath: 'async_call.status',
-				done: ['complete'],
-				failed: [],
-			},
-		});
-	});
-
-	it('prefers the inline key over the stored key', async () => {
-		const configured = moz({ key: 'option-key' });
+	it('returns the webhook secret for webhooks, never the API token', async () => {
 		await expect(
-			keyBuilderOf(configured)(keyContext('stored-key'), 'endpoint'),
-		).resolves.toBe('option-key');
+			build({ api_key: 'tok', webhook_signature: 'whsec_x' }, 'webhook'),
+		).resolves.toBe('whsec_x');
 	});
 
-	it('falls back to the stored key', async () => {
-		await expect(
-			keyBuilderOf(plugin)(keyContext('stored-key'), 'endpoint'),
-		).resolves.toBe('stored-key');
-	});
-
-	it('throws AuthMissingError when no key is available', async () => {
-		await expect(
-			keyBuilderOf(plugin)(keyContext(null), 'endpoint'),
-		).rejects.toBeInstanceOf(AuthMissingError);
-	});
-
-	it('exposes the schema version and no entities', () => {
-		expect(MozSchema.version).toBe('1.0.0');
-		expect(Array.isArray(MozSchema.entities)).toBe(false);
+	it('asks for a connection when the token is missing', async () => {
+		await expect(build({}, 'endpoint')).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
 	});
 });

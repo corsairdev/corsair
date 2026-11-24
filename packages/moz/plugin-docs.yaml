@@ -1,5 +1,5 @@
 displayName: Moz
-description: SEO data with Moz - read Domain Authority, Page Authority and Spam Score for sites, list backlinks, linking domains, anchor texts and top pages, find link intersects and ranking competitors, and check API quota.
+description: SEO data with Moz - site metrics (Domain Authority, Page Authority, Spam Score, Brand Authority, histories), backlinks, linking domains, anchor texts, top pages, ranking keywords, keyword metrics, SERPs and suggestions, competitors, global top lists, and Moz Local accounts, groups, locations, listings and insights.
 domain: moz.com
 recommendedAuth: api_key
 overviewNote: |
@@ -17,8 +17,8 @@ overviewNote: |
   - **Errors are JSON-RPC envelopes** with a stable `code`: -32651 is a bad
   token (401), -32670 is exhausted quota (403), -32658 and -32650 are the
   two 429 rate limits (a per-method one with Retry-After and an edge one
-  without). The plugin retries the 429s and 5xx on reads and never retries
-  auth or quota errors.
+  without). Errors come back as core ApiErrors carrying that code; core
+  retries an HTTP 429 and nothing else is retried.
   - **The competitor lookup is asynchronous.** competitors.fetch answers
   with an async_call receipt; follow it with jobs.lookup until the status
   is complete, then read async_call.result (or .error). Poll no more than
@@ -26,8 +26,23 @@ overviewNote: |
   - **Paging is token-based.** List methods take offset.limit (1-50) and an
   optional offset.token; the response's offset.token is null when there is
   no next page.
-  - **Nothing writes.** The Moz data API is read-only, so every operation
-  here is a read.
+  - **Keywords.** keywords.metrics returns difficulty, volume, organic CTR,
+  priority and intent at once; the single-metric fetches cost one row
+  each. keywords.suggestions, keywords.generateMetrics and
+  keywords.generateSerp are asynchronous; the two generate methods start a
+  fresh SERP collection billed per call, so they are destructive.
+  - **Moz Local** (local.*) manages business listings for Moz Local
+  customers; most of it is Enterprise only. Creating a location adds a
+  billed listing; cancelling, closing and changing a location's level
+  change billing or unpublish it, so those are destructive.
+  - **Webhooks.** Moz sends Moz Local location events (created, updated,
+  canceled, closed) with the Standard Webhooks signature. Moz's team sets
+  them up per account; save the `whsec_` secret as the account's
+  webhook_signature (or the webhookSecret option).
+  - **Schemas come from Moz's method reference.** Inputs follow each
+  method's payload definition and reject unknown fields; Moz Local inputs
+  stay open because Moz's own examples use fields its schema leaves out.
+  Responses are parsed leniently.
 examples:
   read:
     path: metrics.fetch
@@ -75,11 +90,19 @@ apiNotes:
   linkingDomains.list: |
     `data.site.linking-domain.list`. One row per returned root domain. With
     several filters, `external` must be one of them.
+  keywords.metrics: |
+    `data.keyword.metrics.fetch`. Pick metrics with `metrics` (difficulty,
+    volume, opportunity, priority, intent); costs one row per metric.
+  rankingKeywords.list: |
+    `data.site.ranking-keyword.list`: keywords a site ranks for in the top 50,
+    one row per result. rankingKeywords.count is one row.
+  local.locations.create: |
+    `local.location.create` adds a billed Moz Local location at the given
+    `level`; check levels with local.locations.levels first.
   competitors.fetch: |
     `data.site.competitor.fetch` is asynchronous: the answer is an
     async_call receipt, and the competitors arrive through jobs.lookup once
-    the status is complete. It spends the mozscape quota bucket, so the
-    plugin never replays it after a failure.
+    the status is complete. It spends the mozscape quota bucket.
   jobs.lookup: |
     `async.call.lookup` is free and safe to poll every five seconds. A
     completed call carries exactly one of async_call.result and
