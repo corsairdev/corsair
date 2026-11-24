@@ -14,7 +14,8 @@ import {
 } from '@/lib/site-links';
 
 const PRODUCT_LINKS = [
-	{ href: '/mcp-gateway', label: 'MCP gateway' },
+	{ href: '/mcp-gateway', label: 'Lug MCP gateway' },
+	{ href: '/developers', label: 'Hub for developers' },
 	{ href: '/pricing', label: 'Pricing' },
 	{ href: '/connect', label: 'Connect an agent' },
 	{ href: '/skills', label: 'Skills' },
@@ -56,7 +57,7 @@ export function SiteFooter() {
 					{/* Product Column */}
 					<div className="flex flex-col gap-3">
 						<h3 className="font-[family-name:var(--landing-font-mono)] text-[11px] font-semibold uppercase tracking-wider text-[#1c1c1c66]">
-							Product
+							Products
 						</h3>
 						<ul className="flex flex-col gap-2 p-0 list-none">
 							{PRODUCT_LINKS.map((link) => (
