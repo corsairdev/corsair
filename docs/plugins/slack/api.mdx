@@ -1033,7 +1033,7 @@ await corsair.slack.api.channels.leave({});
 
 `channels.list`
 
-List all channels in the workspace
+List the channels the app can see: public ones, and private ones the app was added to. A private channel the user is in may be missing here; channels.listMine lists those
 
 **Risk:** `read`
 
@@ -1046,7 +1046,98 @@ await corsair.slack.api.channels.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `exclude_archived` | `boolean` | No | — |
-| `types` | `string` | No | — |
+| `types` | `string` | No | Comma-separated: public_channel, private_channel, mpim, im. Slack returns only public_channel when this is omitted, so include private_channel to see private channels. |
+| `team_id` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `channels` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="channels full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  created?: number,
+  is_archived?: boolean,
+  is_general?: boolean,
+  unlinked?: number,
+  name_normalized?: string,
+  is_shared?: boolean,
+  is_org_shared?: boolean,
+  is_pending_ext_shared?: boolean,
+  pending_shared?: string[],
+  context_team_id?: string,
+  updated?: number,
+  creator?: string,
+  is_member?: boolean,
+  num_members?: number,
+  topic?: {
+    value: string,
+    creator: string,
+    last_set: number
+  },
+  purpose?: {
+    value: string,
+    creator: string,
+    last_set: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMine
+
+`channels.listMine`
+
+List the conversations the connected user is in, private channels included when types asks for them (needs a user token)
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.channels.listMine({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | No | — |
+| `types` | `string` | No | Comma-separated: public_channel, private_channel, mpim, im. Slack returns only public_channel when this is omitted, so include private_channel to see private channels. |
+| `exclude_archived` | `boolean` | No | — |
 | `team_id` | `string` | No | — |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
