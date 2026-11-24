@@ -86,6 +86,84 @@ export type EndpointJob = {
 	cancel?: { op: string; idArg: string };
 };
 
+/** Plain JSON; a search declaration is serialised into the runtime sandbox, so it holds no functions. */
+export type SearchJson =
+	| string
+	| number
+	| boolean
+	| null
+	| readonly SearchJson[]
+	| { readonly [key: string]: SearchJson };
+
+/** How a hint's date is written into the query: epoch seconds, a UTC instant, or a calendar day in the caller's zone. */
+export type SearchDateFormat = 'epoch' | 'iso' | 'YYYY-MM-DD' | 'YYYY/MM/DD';
+
+/**
+ * Where one hint goes in the operation's args. Give exactly one of `text`,
+ * `list` or `set`; `{v}` in a template is replaced by the hint's value.
+ */
+export type SearchPart = {
+	/** Dot path into the operation's input, e.g. `q` or `filter.updatedAt.gte`. */
+	arg: string;
+	/** Query-string apps: terms appended to the string at `arg`. One template is rendered per value, and a value with spaces or operator characters is quoted. */
+	text?: string | readonly string[];
+	/** Structured apps: templates rendered per value and pushed onto the array at `arg`. */
+	list?: readonly SearchJson[];
+	/** Structured apps: one JSON value set at `arg`, with `{v}` replaced by the first value; with no `{v}` it is a constant. */
+	set?: SearchJson;
+	/** How `text` terms from several values meet: `space` repeats them, `or` wraps them as `(a OR b)`. Default `space`. */
+	join?: 'space' | 'or';
+	/** Stop adding values once their combined length passes this, for an API with a query length limit. */
+	cap?: number;
+	/** At most this many values; more and the hint is left out, so the search widens instead of guessing. */
+	max?: number;
+	/** For dates: how the instant is written. Default `iso`. */
+	format?: SearchDateFormat;
+	/** For day formats: days added to the day written, for an API whose bound excludes its own day. */
+	shiftDays?: number;
+};
+
+/** Kind or state values the app understands, each with where it goes. Values it does not list are ignored. */
+export type SearchChoices = {
+	map: Readonly<Record<string, SearchPart>>;
+	/** At most this many mapped values; more and the hint is left out. */
+	max?: number;
+};
+
+/**
+ * Declared on the `endpointMeta` entry of an operation that searches or lists
+ * records, so a caller can turn what it is certain of (people, dates, kinds,
+ * states, ids, topic words) into that operation's arguments with `searchArgs`.
+ * Plain data only. Optional: an operation without one is not searched live.
+ */
+export type EndpointSearch = {
+	/** Entity kinds the rows are, as the plugin's schema names them. */
+	kinds: readonly string[];
+	/** Dot path in the result to the row list; empty when the result is the list. */
+	rows: string;
+	/** Field in each row that holds its id. */
+	id: string;
+	/** The operation in this plugin that reads one result by id. */
+	open?: { op: string; idArg: string };
+	limit: { arg: string; default: number; max?: number };
+	/** Args sent on every search. */
+	fixed?: Readonly<Record<string, SearchJson>>;
+	hints: {
+		topic?: SearchPart;
+		/** People as this app knows them (login, email, id); a record by any one matches. */
+		people?: SearchPart;
+		/** Channels, repos, projects or labels the question names, as this app writes them. */
+		places?: SearchPart;
+		ids?: SearchPart;
+		after?: SearchPart;
+		before?: SearchPart;
+		/** Used instead of `after` and `before` when both are given; `{after}` and `{before}` stand for the two bounds. */
+		window?: SearchPart;
+		kinds?: SearchChoices;
+		states?: SearchChoices;
+	};
+};
+
 /**
  * Metadata for a single endpoint entry. Drives permission decisions and MCP tool descriptions.
  * Plugin authors populate this on the `endpointMeta` field of their plugin definition.
@@ -105,6 +183,8 @@ export type EndpointMetaEntry = {
 	description?: string;
 	/** Set when the operation starts a long job; see {@link EndpointJob}. */
 	job?: EndpointJob;
+	/** Set on a search or list operation; see {@link EndpointSearch}. */
+	search?: EndpointSearch;
 };
 
 /**
