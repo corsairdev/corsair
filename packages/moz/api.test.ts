@@ -3,7 +3,8 @@ import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { moz } from './index';
 
 /**
- * Live smoke against the free calls only: test.ping, quota.lookup,
+ * Live smoke against the free calls only: test.ping, test.ping.async +
+ * jobs.lookup, the global top lists, quota.lookup,
  * index.fetch and locales.list cost no rows. Skipped without MOZ_API_TOKEN.
  */
 const TOKEN = process.env.MOZ_API_TOKEN;
@@ -45,5 +46,30 @@ describeIfKey('moz live (free calls)', () => {
 		await expect(corsair.moz.api.index.fetch({})).resolves.toBeDefined();
 		const locales = await corsair.moz.api.locales.list({ engine: 'google' });
 		expect(Array.isArray(locales.locales)).toBe(true);
+	});
+
+	it('runs the async ping through jobs.lookup', async () => {
+		const pending = await corsair.moz.api.test.pingAsync({
+			message: 'corsair live test',
+		});
+		const id = pending.async_call?.id ?? '';
+		let status: string | null | undefined;
+		for (let i = 0; i < 10 && status !== 'complete'; i++) {
+			await new Promise((resolve) => setTimeout(resolve, 1500));
+			const job = await corsair.moz.api.jobs.lookup({ id });
+			status = job.async_call?.status;
+		}
+		expect(status).toBe('complete');
+	});
+
+	it('reads the global top lists (free) one row at a time', async () => {
+		const domains = await corsair.moz.api.global.topDomains({
+			page: { n: 0, limit: 1 },
+		});
+		const pages = await corsair.moz.api.global.topPages({
+			page: { n: 0, limit: 1 },
+		});
+		expect(domains.top_domains).toHaveLength(1);
+		expect(pages.top_pages).toHaveLength(1);
 	});
 });
