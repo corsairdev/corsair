@@ -11,7 +11,15 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Lists, Subscribers } from './endpoints';
+import {
+	Campaigns,
+	Lists,
+	Segments,
+	Senders,
+	Subscribers,
+	Transactional,
+} from './endpoints';
+import { moosendEndpointMeta as endpointMeta } from './endpoints/meta';
 import type {
 	MoosendEndpointInputs,
 	MoosendEndpointOutputs,
@@ -25,7 +33,7 @@ import { MoosendSchema } from './schema';
 
 export type MoosendPluginOptions = {
 	authType?: PickAuth<'api_key'>;
-	/** The Moosend API key, from account settings. */
+	/** The Moosend API key, from Settings > API key. */
 	key?: string;
 	hooks?: InternalMoosendPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -43,27 +51,12 @@ export type MoosendBoundEndpoints = BindEndpoints<
 	typeof moosendEndpointsNested
 >;
 
-type MoosendEndpoint<K extends keyof MoosendEndpointOutputs> = CorsairEndpoint<
-	MoosendContext,
-	MoosendEndpointInputs[K],
-	MoosendEndpointOutputs[K]
->;
-
 export type MoosendEndpoints = {
-	listsList: MoosendEndpoint<'listsList'>;
-	listsListPaged: MoosendEndpoint<'listsListPaged'>;
-	listsGet: MoosendEndpoint<'listsGet'>;
-	listsCreate: MoosendEndpoint<'listsCreate'>;
-	listsUpdate: MoosendEndpoint<'listsUpdate'>;
-	listsDelete: MoosendEndpoint<'listsDelete'>;
-	subscribersList: MoosendEndpoint<'subscribersList'>;
-	subscribersGetByEmail: MoosendEndpoint<'subscribersGetByEmail'>;
-	subscribersGetById: MoosendEndpoint<'subscribersGetById'>;
-	subscribersSubscribe: MoosendEndpoint<'subscribersSubscribe'>;
-	subscribersSubscribeMany: MoosendEndpoint<'subscribersSubscribeMany'>;
-	subscribersUpdate: MoosendEndpoint<'subscribersUpdate'>;
-	subscribersUnsubscribe: MoosendEndpoint<'subscribersUnsubscribe'>;
-	subscribersRemove: MoosendEndpoint<'subscribersRemove'>;
+	[K in keyof MoosendEndpointOutputs]: CorsairEndpoint<
+		MoosendContext,
+		MoosendEndpointInputs[K],
+		MoosendEndpointOutputs[K]
+	>;
 };
 
 const moosendEndpointsNested = {
@@ -75,147 +68,140 @@ const moosendEndpointsNested = {
 		update: Lists.update,
 		delete: Lists.remove,
 	},
+	customFields: {
+		create: Lists.createCustomField,
+		update: Lists.updateCustomField,
+		delete: Lists.removeCustomField,
+	},
 	subscribers: {
 		list: Subscribers.list,
 		getByEmail: Subscribers.getByEmail,
 		getById: Subscribers.getById,
+		getByIdAnyList: Subscribers.getByIdAnyList,
 		subscribe: Subscribers.subscribe,
 		subscribeMany: Subscribers.subscribeMany,
 		update: Subscribers.update,
 		unsubscribe: Subscribers.unsubscribe,
+		unsubscribeFromCampaign: Subscribers.unsubscribeFromCampaign,
+		unsubscribeFromAccount: Subscribers.unsubscribeFromAccount,
 		remove: Subscribers.remove,
+		removeMany: Subscribers.removeMany,
+		delete: Subscribers.deleteOne,
+		deleteMany: Subscribers.deleteMany,
+		deleteFromAccount: Subscribers.deleteFromAccount,
+		addTags: Subscribers.addTags,
+		removeTags: Subscribers.removeTags,
+	},
+	segments: {
+		list: Segments.list,
+		get: Segments.get,
+		members: Segments.members,
+		create: Segments.create,
+		update: Segments.update,
+		addCriteria: Segments.addCriteria,
+		updateCriteria: Segments.updateCriteria,
+		delete: Segments.remove,
+	},
+	campaigns: {
+		list: Campaigns.list,
+		get: Campaigns.get,
+		create: Campaigns.create,
+		update: Campaigns.update,
+		clone: Campaigns.clone,
+		delete: Campaigns.remove,
+		send: Campaigns.send,
+		sendTest: Campaigns.sendTest,
+		schedule: Campaigns.schedule,
+		unschedule: Campaigns.unschedule,
+		summary: Campaigns.summary,
+		abSummary: Campaigns.abSummary,
+		stats: Campaigns.stats,
+		activityByLocation: Campaigns.activityByLocation,
+		linkActivity: Campaigns.linkActivity,
+	},
+	senders: {
+		list: Senders.list,
+		get: Senders.get,
+	},
+	transactional: {
+		send: Transactional.send,
 	},
 } as const;
 
+const schemas = <K extends keyof typeof MoosendEndpointInputSchemas>(key: K) =>
+	({
+		input: MoosendEndpointInputSchemas[key],
+		output: MoosendEndpointOutputSchemas[key],
+	}) as const;
+
+// 52 operations, one per Moosend v3 route (campaigns.list covers the
+// three campaign list routes).
 export const moosendEndpointSchemas = {
-	'lists.list': {
-		input: MoosendEndpointInputSchemas.listsList,
-		output: MoosendEndpointOutputSchemas.listsList,
-	},
-	'lists.listPaged': {
-		input: MoosendEndpointInputSchemas.listsListPaged,
-		output: MoosendEndpointOutputSchemas.listsListPaged,
-	},
-	'lists.get': {
-		input: MoosendEndpointInputSchemas.listsGet,
-		output: MoosendEndpointOutputSchemas.listsGet,
-	},
-	'lists.create': {
-		input: MoosendEndpointInputSchemas.listsCreate,
-		output: MoosendEndpointOutputSchemas.listsCreate,
-	},
-	'lists.update': {
-		input: MoosendEndpointInputSchemas.listsUpdate,
-		output: MoosendEndpointOutputSchemas.listsUpdate,
-	},
-	'lists.delete': {
-		input: MoosendEndpointInputSchemas.listsDelete,
-		output: MoosendEndpointOutputSchemas.listsDelete,
-	},
-	'subscribers.list': {
-		input: MoosendEndpointInputSchemas.subscribersList,
-		output: MoosendEndpointOutputSchemas.subscribersList,
-	},
-	'subscribers.getByEmail': {
-		input: MoosendEndpointInputSchemas.subscribersGetByEmail,
-		output: MoosendEndpointOutputSchemas.subscribersGetByEmail,
-	},
-	'subscribers.getById': {
-		input: MoosendEndpointInputSchemas.subscribersGetById,
-		output: MoosendEndpointOutputSchemas.subscribersGetById,
-	},
-	'subscribers.subscribe': {
-		input: MoosendEndpointInputSchemas.subscribersSubscribe,
-		output: MoosendEndpointOutputSchemas.subscribersSubscribe,
-	},
-	'subscribers.subscribeMany': {
-		input: MoosendEndpointInputSchemas.subscribersSubscribeMany,
-		output: MoosendEndpointOutputSchemas.subscribersSubscribeMany,
-	},
-	'subscribers.update': {
-		input: MoosendEndpointInputSchemas.subscribersUpdate,
-		output: MoosendEndpointOutputSchemas.subscribersUpdate,
-	},
-	'subscribers.unsubscribe': {
-		input: MoosendEndpointInputSchemas.subscribersUnsubscribe,
-		output: MoosendEndpointOutputSchemas.subscribersUnsubscribe,
-	},
-	'subscribers.remove': {
-		input: MoosendEndpointInputSchemas.subscribersRemove,
-		output: MoosendEndpointOutputSchemas.subscribersRemove,
-	},
+	'lists.list': schemas('listsList'),
+	'lists.listPaged': schemas('listsListPaged'),
+	'lists.get': schemas('listsGet'),
+	'lists.create': schemas('listsCreate'),
+	'lists.update': schemas('listsUpdate'),
+	'lists.delete': schemas('listsDelete'),
+	'customFields.create': schemas('customFieldsCreate'),
+	'customFields.update': schemas('customFieldsUpdate'),
+	'customFields.delete': schemas('customFieldsDelete'),
+	'subscribers.list': schemas('subscribersList'),
+	'subscribers.getByEmail': schemas('subscribersGetByEmail'),
+	'subscribers.getById': schemas('subscribersGetById'),
+	'subscribers.getByIdAnyList': schemas('subscribersGetByIdAnyList'),
+	'subscribers.subscribe': schemas('subscribersSubscribe'),
+	'subscribers.subscribeMany': schemas('subscribersSubscribeMany'),
+	'subscribers.update': schemas('subscribersUpdate'),
+	'subscribers.unsubscribe': schemas('subscribersUnsubscribe'),
+	'subscribers.unsubscribeFromCampaign': schemas(
+		'subscribersUnsubscribeFromCampaign',
+	),
+	'subscribers.unsubscribeFromAccount': schemas(
+		'subscribersUnsubscribeFromAccount',
+	),
+	'subscribers.remove': schemas('subscribersRemove'),
+	'subscribers.removeMany': schemas('subscribersRemoveMany'),
+	'subscribers.delete': schemas('subscribersDelete'),
+	'subscribers.deleteMany': schemas('subscribersDeleteMany'),
+	'subscribers.deleteFromAccount': schemas('subscribersDeleteFromAccount'),
+	'subscribers.addTags': schemas('subscribersAddTags'),
+	'subscribers.removeTags': schemas('subscribersRemoveTags'),
+	'segments.list': schemas('segmentsList'),
+	'segments.get': schemas('segmentsGet'),
+	'segments.members': schemas('segmentsMembers'),
+	'segments.create': schemas('segmentsCreate'),
+	'segments.update': schemas('segmentsUpdate'),
+	'segments.addCriteria': schemas('segmentsAddCriteria'),
+	'segments.updateCriteria': schemas('segmentsUpdateCriteria'),
+	'segments.delete': schemas('segmentsDelete'),
+	'campaigns.list': schemas('campaignsList'),
+	'campaigns.get': schemas('campaignsGet'),
+	'campaigns.create': schemas('campaignsCreate'),
+	'campaigns.update': schemas('campaignsUpdate'),
+	'campaigns.clone': schemas('campaignsClone'),
+	'campaigns.delete': schemas('campaignsDelete'),
+	'campaigns.send': schemas('campaignsSend'),
+	'campaigns.sendTest': schemas('campaignsSendTest'),
+	'campaigns.schedule': schemas('campaignsSchedule'),
+	'campaigns.unschedule': schemas('campaignsUnschedule'),
+	'campaigns.summary': schemas('campaignsSummary'),
+	'campaigns.abSummary': schemas('campaignsAbSummary'),
+	'campaigns.stats': schemas('campaignsStats'),
+	'campaigns.activityByLocation': schemas('campaignsActivityByLocation'),
+	'campaigns.linkActivity': schemas('campaignsLinkActivity'),
+	'senders.list': schemas('sendersList'),
+	'senders.get': schemas('sendersGet'),
+	'transactional.send': schemas('transactionalSend'),
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof moosendEndpointsNested
 >;
 
 const defaultAuthType = 'api_key' as const;
 
-const moosendEndpointMeta = {
-	'lists.list': {
-		riskLevel: 'read',
-		description:
-			'List every active mailing list in the account, with subscriber statistics and custom fields',
-	},
-	'lists.listPaged': {
-		riskLevel: 'read',
-		description: 'List mailing lists one page at a time',
-	},
-	'lists.get': {
-		riskLevel: 'read',
-		description:
-			'Read one mailing list with its custom fields, optionally without subscriber statistics',
-	},
-	'lists.create': {
-		riskLevel: 'write',
-		description: 'Create an empty mailing list',
-	},
-	'lists.update': {
-		riskLevel: 'write',
-		description: 'Update a mailing list name and confirmation pages',
-	},
-	'lists.delete': {
-		riskLevel: 'destructive',
-		description:
-			'Delete a mailing list and its subscriber data; cannot be undone',
-	},
-	'subscribers.list': {
-		riskLevel: 'read',
-		description:
-			'List a mailing list by subscriber status (subscribed, unsubscribed or cleaned), one page at a time',
-	},
-	'subscribers.getByEmail': {
-		riskLevel: 'read',
-		description: 'Find a subscriber by email address in one mailing list',
-	},
-	'subscribers.getById': {
-		riskLevel: 'read',
-		description: 'Find a subscriber by its unique id in one mailing list',
-	},
-	'subscribers.subscribe': {
-		riskLevel: 'write',
-		description:
-			'Add a subscriber, updating the existing entry when the email is already on the list',
-	},
-	'subscribers.subscribeMany': {
-		riskLevel: 'write',
-		description:
-			'Add many subscribers in one call; invalid addresses are skipped silently by Moosend',
-	},
-	'subscribers.update': {
-		riskLevel: 'write',
-		description: "Update a subscriber's email, name and custom fields",
-	},
-	'subscribers.unsubscribe': {
-		riskLevel: 'write',
-		description:
-			'Unsubscribe an email from one mailing list, moving it to the suppression list; subscribe adds it back',
-	},
-	'subscribers.remove': {
-		riskLevel: 'destructive',
-		description:
-			'Remove a subscriber from the mailing list permanently, without the suppression list',
-	},
-} as const satisfies RequiredPluginEndpointMeta<typeof moosendEndpointsNested>;
+const moosendEndpointMeta = endpointMeta satisfies RequiredPluginEndpointMeta<
+	typeof moosendEndpointsNested
+>;
 
 export type BaseMoosendPlugin<T extends MoosendPluginOptions> = CorsairPlugin<
 	'moosend',
@@ -264,28 +250,12 @@ export function moosend<const T extends MoosendPluginOptions>(
 	} satisfies InternalMoosendPlugin;
 }
 
-export { MoosendAPIError } from './client';
-
 export type {
-	ListsListInput,
-	ListsListPagedInput,
-	ListsListPagedResponse,
-	ListsListResponse,
-	ListsUpsertInput,
+	Campaign,
 	MailingList,
-	MailingListGetInput,
-	MailingListResponse,
 	MoosendEndpointInputs,
 	MoosendEndpointOutputs,
+	Segment,
+	Sender,
 	Subscriber,
-	SubscriberByIdInput,
-	SubscriberGetInput,
-	SubscriberResponse,
-	SubscribersListInput,
-	SubscribersListResponse,
-	SubscribersUpsertManyInput,
-	SubscribersUpsertManyResponse,
-	SubscriberUnsubscribeInput,
-	SubscriberUpdateInput,
-	SubscriberUpsertInput,
 } from './endpoints/types';

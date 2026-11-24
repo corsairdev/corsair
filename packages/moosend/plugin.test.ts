@@ -19,39 +19,50 @@ function buildKey(
 	return plugin.keyBuilder?.(ctx as never, 'endpoint');
 }
 
-const operations = [
-	'lists.create',
+// Every operation that can send email, change consent or delete data for
+// good; the rest are reads or ordinary writes.
+const destructive = [
+	'campaigns.delete',
+	'campaigns.schedule',
+	'campaigns.send',
+	'campaigns.sendTest',
+	'customFields.delete',
 	'lists.delete',
-	'lists.get',
-	'lists.list',
-	'lists.listPaged',
-	'lists.update',
-	'subscribers.getByEmail',
-	'subscribers.getById',
-	'subscribers.list',
+	'segments.delete',
+	'subscribers.delete',
+	'subscribers.deleteFromAccount',
+	'subscribers.deleteMany',
 	'subscribers.remove',
+	'subscribers.removeMany',
 	'subscribers.subscribe',
 	'subscribers.subscribeMany',
 	'subscribers.unsubscribe',
-	'subscribers.update',
+	'subscribers.unsubscribeFromAccount',
+	'subscribers.unsubscribeFromCampaign',
+	'transactional.send',
 ];
 
-const riskLevels: Record<string, string> = {
-	'lists.list': 'read',
-	'lists.listPaged': 'read',
-	'lists.get': 'read',
-	'lists.create': 'write',
-	'lists.update': 'write',
-	'lists.delete': 'destructive',
-	'subscribers.list': 'read',
-	'subscribers.getByEmail': 'read',
-	'subscribers.getById': 'read',
-	'subscribers.subscribe': 'write',
-	'subscribers.subscribeMany': 'write',
-	'subscribers.update': 'write',
-	'subscribers.unsubscribe': 'write',
-	'subscribers.remove': 'destructive',
-};
+const reads = [
+	'campaigns.abSummary',
+	'campaigns.activityByLocation',
+	'campaigns.get',
+	'campaigns.linkActivity',
+	'campaigns.list',
+	'campaigns.stats',
+	'campaigns.summary',
+	'lists.get',
+	'lists.list',
+	'lists.listPaged',
+	'segments.get',
+	'segments.list',
+	'segments.members',
+	'senders.get',
+	'senders.list',
+	'subscribers.getByEmail',
+	'subscribers.getById',
+	'subscribers.getByIdAnyList',
+	'subscribers.list',
+];
 
 describe('moosend plugin definition', () => {
 	const plugin = moosend();
@@ -65,29 +76,45 @@ describe('moosend plugin definition', () => {
 		).toBe(false);
 	});
 
-	it('exposes exactly the 14 catalog operations across 2 groups', () => {
-		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
-			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
-		);
-		expect(nested.sort()).toEqual(operations);
-		expect(Object.keys(plugin.endpoints ?? {})).toHaveLength(2);
+	const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
+		([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
+	);
+
+	it('exposes 52 operations across 7 groups', () => {
+		expect(nested).toHaveLength(52);
+		expect(Object.keys(plugin.endpoints ?? {}).sort()).toEqual([
+			'campaigns',
+			'customFields',
+			'lists',
+			'segments',
+			'senders',
+			'subscribers',
+			'transactional',
+		]);
 	});
 
 	it('gives every endpoint a description and the right risk level', () => {
 		const meta = plugin.endpointMeta ?? {};
-		expect(Object.keys(meta).sort()).toEqual(operations);
+		expect(Object.keys(meta).sort()).toEqual([...nested].sort());
 		for (const entry of Object.values(meta)) {
 			expect(entry.description?.length).toBeGreaterThan(10);
 		}
-		expect(
-			Object.fromEntries(
-				Object.entries(meta).map(([name, entry]) => [name, entry.riskLevel]),
-			),
-		).toEqual(riskLevels);
+		const byLevel = (level: string) =>
+			Object.entries(meta)
+				.filter(([, entry]) => entry.riskLevel === level)
+				.map(([name]) => name)
+				.sort();
+		expect(byLevel('destructive')).toEqual(destructive);
+		expect(byLevel('read')).toEqual(reads);
+		expect(byLevel('write')).toHaveLength(
+			52 - destructive.length - reads.length,
+		);
 	});
 
 	it('has input and output schemas for every endpoint', () => {
-		expect(Object.keys(moosendEndpointSchemas).sort()).toEqual(operations);
+		expect(Object.keys(moosendEndpointSchemas).sort()).toEqual(
+			[...nested].sort(),
+		);
 		for (const schemas of Object.values(moosendEndpointSchemas)) {
 			expect(typeof schemas.input.safeParse).toBe('function');
 			expect(typeof schemas.output.safeParse).toBe('function');

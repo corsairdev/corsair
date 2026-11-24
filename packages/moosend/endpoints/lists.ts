@@ -1,167 +1,153 @@
-import { asRecord } from 'corsair/core';
-import type { MoosendEndpoints } from '..';
 import { segment } from '../client';
-import { call } from './call';
-import {
-	MoosendEndpointInputSchemas as Inputs,
-	MoosendEndpointOutputSchemas as Outputs,
-} from './types';
+import { compact, endpoint, success } from './call';
 
-/** Lists every active mailing list in the account. */
-export const list: MoosendEndpoints['listsList'] = async (ctx, input) =>
-	call(
-		ctx,
-		{
-			event: 'lists.list',
-			input: Inputs.listsList,
-			output: Outputs.listsList,
+type ListSettingsInput = {
+	name: string;
+	confirmationPage?: string;
+	redirectAfterUnsubscribePage?: string;
+	preferences?: {
+		selectType: 'SingleSelect' | 'MultiSelect';
+		options: string[];
+		isRequired?: boolean;
+	};
+	preferencePageId?: string;
+};
+
+function listBody(input: ListSettingsInput) {
+	return compact({
+		Name: input.name,
+		ConfirmationPage: input.confirmationPage,
+		RedirectAfterUnsubscribePage: input.redirectAfterUnsubscribePage,
+		Preferences: input.preferences
+			? compact({
+					SelectType: input.preferences.selectType,
+					Options: input.preferences.options,
+					IsRequired: input.preferences.isRequired,
+				})
+			: undefined,
+		PreferencePageId: input.preferencePageId,
+	});
+}
+
+const listCount = (_: unknown, result: { MailingLists: unknown[] }) => ({
+	lists: result.MailingLists.length,
+});
+
+/** Lists the active mailing lists (first page; Moosend pages by 10). */
+export const list = endpoint('listsList', {
+	event: 'lists.list',
+	request: ({ withStatistics, sortBy, sortMethod }) => ({
+		method: 'GET',
+		path: '/lists.json',
+		query: {
+			WithStatistics: withStatistics,
+			SortBy: sortBy,
+			SortMethod: sortMethod,
 		},
-		input,
-		({ withStatistics, shortBy, sortMethod }) => ({
-			replayable: true,
-			method: 'GET',
-			path: '/lists.json',
-			query: {
-				withStatistics: withStatistics === false ? 'false' : undefined,
-				shortBy,
-				sortMethod,
-			},
-		}),
-		{
-			shape: (raw) => ({ mailingLists: raw }),
-			log: (_, result) => ({ lists: result.mailingLists.length }),
-		},
-	);
+	}),
+	log: listCount,
+});
 
 /** Lists mailing lists one page at a time. */
-export const listPaged: MoosendEndpoints['listsListPaged'] = async (
-	ctx,
-	input,
-) =>
-	call(
-		ctx,
-		{
-			event: 'lists.listPaged',
-			input: Inputs.listsListPaged,
-			output: Outputs.listsListPaged,
-		},
-		input,
-		({ page, pageSize, shortBy, sortMethod }) => ({
-			replayable: true,
-			method: 'GET',
-			path: `/lists/${segment(page)}/${segment(pageSize)}.json`,
-			query: { shortBy, sortMethod },
-		}),
-		{
-			shape: (raw) => {
-				// The context keys are snake_case; the schema exposes camelCase.
-				const body = asRecord(raw);
-				if (!body) {
-					throw new Error('Moosend answered no paging context');
-				}
-				const items = body.mailing_lists;
-				return {
-					mailingLists: Array.isArray(items) ? items : [],
-					paging: body.paging,
-				};
-			},
-			log: (_, result) => ({ lists: result.mailingLists.length }),
-		},
-	);
+export const listPaged = endpoint('listsListPaged', {
+	event: 'lists.listPaged',
+	request: ({ page, pageSize, sortBy, sortMethod }) => ({
+		method: 'GET',
+		path: `/lists/${segment(page)}/${segment(pageSize)}.json`,
+		query: { SortBy: sortBy, SortMethod: sortMethod },
+	}),
+	log: listCount,
+});
 
-/** Reads one mailing list, with or without subscriber statistics. */
-export const get: MoosendEndpoints['listsGet'] = async (ctx, input) =>
-	call(
-		ctx,
-		{
-			event: 'lists.get',
-			input: Inputs.listsGet,
-			output: Outputs.listsGet,
-		},
-		input,
-		({ mailingListId, withStatistics }) => ({
-			replayable: true,
-			method: 'GET',
-			path: `/lists/${segment(mailingListId)}/details.json`,
-			query: { withStatistics: withStatistics === false ? 'false' : undefined },
-		}),
-		{
-			shape: (raw) => ({ mailingList: raw }),
-			log: ({ mailingListId }) => ({ mailingListId }),
-		},
-	);
+/** Reads one mailing list with its custom field definitions. */
+export const get = endpoint('listsGet', {
+	event: 'lists.get',
+	request: ({ mailingListId, withStatistics }) => ({
+		method: 'GET',
+		path: `/lists/${segment(mailingListId)}/details.json`,
+		query: { WithStatistics: withStatistics },
+	}),
+});
 
-export const create: MoosendEndpoints['listsCreate'] = async (ctx, input) =>
-	call(
-		ctx,
-		{
-			event: 'lists.create',
-			input: Inputs.listsCreate,
-			output: Outputs.listsCreate,
-		},
-		input,
-		({ name, confirmationPage, redirectAfterUnsubscribePage }) => ({
-			method: 'POST',
-			path: '/lists/create.json',
-			// Body keys follow Moosend's request models (lowercase).
-			body: {
-				name,
-				confirmation_page: confirmationPage,
-				redirect_after_unsubscribe_page: redirectAfterUnsubscribePage,
-			},
-			mediaType: 'application/json',
-		}),
-		{
-			shape: (raw) => ({ mailingList: raw }),
-			log: (_, result) => ({ id: result.mailingList.id ?? undefined }),
-		},
-	);
+/** Creates an empty mailing list; Moosend answers with its ID. */
+export const create = endpoint('listsCreate', {
+	event: 'lists.create',
+	request: (input) => ({
+		method: 'POST',
+		path: '/lists/create.json',
+		body: listBody(input),
+	}),
+	shape: (context) => ({ mailingListId: context }),
+});
 
-export const update: MoosendEndpoints['listsUpdate'] = async (ctx, input) =>
-	call(
-		ctx,
-		{
-			event: 'lists.update',
-			input: Inputs.listsUpdate,
-			output: Outputs.listsUpdate,
-		},
-		input,
-		({
-			mailingListId,
-			name,
-			confirmationPage,
-			redirectAfterUnsubscribePage,
-		}) => ({
-			method: 'POST',
-			path: `/lists/${segment(mailingListId)}/update.json`,
-			body: {
-				name,
-				confirmation_page: confirmationPage,
-				redirect_after_unsubscribe_page: redirectAfterUnsubscribePage,
-			},
-			mediaType: 'application/json',
-		}),
-		{
-			shape: (raw) => ({ mailingList: raw }),
-			log: ({ mailingListId }) => ({ mailingListId }),
-		},
-	);
+/** Renames a list or changes its pages and preferences. */
+export const update = endpoint('listsUpdate', {
+	event: 'lists.update',
+	request: ({ mailingListId, ...settings }) => ({
+		method: 'POST',
+		path: `/lists/${segment(mailingListId)}/update.json`,
+		body: listBody(settings),
+	}),
+	shape: (context) => ({ mailingListId: context }),
+});
 
-/** Deletes a mailing list and all its subscriber data. Cannot be undone. */
-export const remove: MoosendEndpoints['listsDelete'] = async (ctx, input) =>
-	call(
-		ctx,
-		{
-			event: 'lists.delete',
-			input: Inputs.listsDelete,
-			output: Outputs.listsDelete,
-		},
-		input,
-		({ mailingListId }) => ({
-			method: 'DELETE',
-			path: `/lists/${segment(mailingListId)}/delete.json`,
-		}),
-		{
-			log: ({ mailingListId }) => ({ mailingListId }),
-		},
-	);
+/** Deletes a mailing list and its subscribers. */
+export const remove = endpoint('listsDelete', {
+	event: 'lists.delete',
+	request: ({ mailingListId }) => ({
+		method: 'DELETE',
+		path: `/lists/${segment(mailingListId)}/delete.json`,
+	}),
+	shape: success,
+});
+
+type CustomFieldInput = {
+	name: string;
+	type?: string;
+	options?: string[];
+	isRequired?: boolean;
+	isHidden?: boolean;
+};
+
+function customFieldBody(input: CustomFieldInput) {
+	return compact({
+		Name: input.name,
+		CustomFieldType: input.type,
+		// Moosend takes the dropdown choices as one comma-separated string.
+		Options: input.options?.join(','),
+		IsRequired: input.isRequired,
+		IsHidden: input.isHidden,
+	});
+}
+
+/** Adds a custom field to a list; Moosend answers with its ID. */
+export const createCustomField = endpoint('customFieldsCreate', {
+	event: 'customFields.create',
+	request: ({ mailingListId, ...field }) => ({
+		method: 'POST',
+		path: `/lists/${segment(mailingListId)}/customfields/create.json`,
+		body: customFieldBody(field),
+	}),
+	shape: (context) => ({ customFieldId: context }),
+});
+
+/** Changes a custom field's name, type, options or visibility. */
+export const updateCustomField = endpoint('customFieldsUpdate', {
+	event: 'customFields.update',
+	request: ({ mailingListId, customFieldId, ...field }) => ({
+		method: 'POST',
+		path: `/lists/${segment(mailingListId)}/customfields/${segment(customFieldId)}/update.json`,
+		body: customFieldBody(field),
+	}),
+	shape: success,
+});
+
+/** Removes a custom field and every subscriber's value for it. */
+export const removeCustomField = endpoint('customFieldsDelete', {
+	event: 'customFields.delete',
+	request: ({ mailingListId, customFieldId }) => ({
+		method: 'DELETE',
+		path: `/lists/${segment(mailingListId)}/customfields/${segment(customFieldId)}/delete.json`,
+	}),
+	shape: success,
+});
