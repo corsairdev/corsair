@@ -311,7 +311,7 @@ const gmailEndpointMeta = {
 	'messages.get': {
 		riskLevel: 'read',
 		description:
-			'Read one message. Default format is full, with body text base64url-encoded in payload.parts[].body.data; use format metadata for headers only.',
+			'Read one message. Default format is full, with body text base64url-encoded in payload.body.data, or for multipart messages in payload.parts[].body.data (parts nest); use format metadata for headers only.',
 	},
 	'messages.send': {
 		riskLevel: 'write',

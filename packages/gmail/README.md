@@ -24,13 +24,13 @@ pnpm add @corsair-dev/gmail
 | `labels.list` | `gmail.api.labels.list` | `read` | List all labels in the mailbox |
 | `labels.update` | `gmail.api.labels.update` | `write` | Update an existing label |
 | `messages.batchModify` | `gmail.api.messages.batchModify` | `write` | Add or remove labels from multiple messages in bulk |
-| `messages.get` | `gmail.api.messages.get` | `read` | Read one message. Default format is full, with body text base64url-encoded in payload.parts[].body.data; use format metadata for headers only. |
+| `messages.get` | `gmail.api.messages.get` | `read` | Read one message. Default format is full, with body text base64url-encoded in payload.body.data, or for multipart messages in payload.parts[].body.data (parts nest); use format metadata for headers only. |
+| `messages.getAttachment` | `gmail.api.messages.getAttachment` | `read` | Fetch an attachment of a message by partId (from messages.get, format full) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId. |
 | `messages.list` | `gmail.api.messages.list` | `read` | Returns only id and threadId per message, no subject or body. Use messages.get to read one. |
 | `messages.modify` | `gmail.api.messages.modify` | `write` | Add or remove labels from a message |
 | `messages.send` | `gmail.api.messages.send` | `write` | Send an email to one or more recipients |
 | `messages.trash` | `gmail.api.messages.trash` | `write` | Move a message to the trash |
 | `messages.untrash` | `gmail.api.messages.untrash` | `write` | Restore a message from the trash |
-| `messages.getAttachment` | `gmail.api.messages.getAttachment` | `read` | Fetch a message attachment by partId or attachmentId |
 | `threads.get` | `gmail.api.threads.get` | `read` | Get every message in a thread. format works as in messages.get. |
 | `threads.list` | `gmail.api.threads.list` | `read` | Returns thread id and snippet only, no messages. Use threads.get for the messages. |
 | `threads.modify` | `gmail.api.threads.modify` | `write` | Add or remove labels from a thread |
