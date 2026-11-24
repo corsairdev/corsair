@@ -451,7 +451,8 @@ const slackEndpointMeta = {
 	},
 	'channels.list': {
 		riskLevel: 'read',
-		description: 'List all channels in the workspace',
+		description:
+			"List channels the app can see. Public only unless types includes private_channel, which adds private ones the app was added to. channels.listMine lists a user's own conversations",
 	},
 	'channels.getHistory': {
 		riskLevel: 'read',
@@ -471,7 +472,7 @@ const slackEndpointMeta = {
 	'channels.listMine': {
 		riskLevel: 'read',
 		description:
-			"List the connected user's own conversations (needs a user token)",
+			"List the conversations the connected user is in. Public only unless types includes private_channel, mpim or im. Needs a user token; with only a bot token it lists the bot's conversations",
 	},
 	'channels.getMembers': {
 		riskLevel: 'read',

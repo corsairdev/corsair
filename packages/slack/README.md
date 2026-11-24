@@ -22,13 +22,13 @@ pnpm add @corsair-dev/slack
 | `channels.get` | `slack.api.channels.get` | `read` | Get info about a channel |
 | `channels.getHistory` | `slack.api.channels.getHistory` | `read` | Top-level messages of one conversation. Thread replies are not included; use channels.getReplies. |
 | `channels.getMembers` | `slack.api.channels.getMembers` | `read` | List members of a channel |
-| `channels.listMine` | `slack.api.channels.listMine` | `read` | List the connected user's own conversations (user token) |
 | `channels.getReplies` | `slack.api.channels.getReplies` | `read` | Messages of one thread. ts is the parent message's ts, from channels.getHistory or messages.search. |
 | `channels.invite` | `slack.api.channels.invite` | `write` | Invite users to a channel |
 | `channels.join` | `slack.api.channels.join` | `write` | Join a channel |
 | `channels.kick` | `slack.api.channels.kick` | `write` | Remove a user from a channel |
 | `channels.leave` | `slack.api.channels.leave` | `write` | Leave a channel |
-| `channels.list` | `slack.api.channels.list` | `read` | List all channels in the workspace |
+| `channels.list` | `slack.api.channels.list` | `read` | List channels the app can see. Public only unless types includes private_channel, which adds private ones the app was added to. channels.listMine lists a user's own conversations |
+| `channels.listMine` | `slack.api.channels.listMine` | `read` | List the conversations the connected user is in. Public only unless types includes private_channel, mpim or im. Needs a user token; with only a bot token it lists the bot's conversations |
 | `channels.open` | `slack.api.channels.open` | `write` | Open a direct message or multi-party DM |
 | `channels.rename` | `slack.api.channels.rename` | `write` | Rename a channel |
 | `channels.setPurpose` | `slack.api.channels.setPurpose` | `write` | Set the purpose of a channel |

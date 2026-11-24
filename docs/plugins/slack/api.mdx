@@ -1033,7 +1033,7 @@ await corsair.slack.api.channels.leave({});
 
 `channels.list`
 
-List all channels in the workspace
+List channels the app can see. Public only unless types includes private_channel, which adds private ones the app was added to. channels.listMine lists a user's own conversations
 
 **Risk:** `read`
 
@@ -1046,7 +1046,7 @@ await corsair.slack.api.channels.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `exclude_archived` | `boolean` | No | — |
-| `types` | `string` | No | — |
+| `types` | `string` | No | Comma-separated: public_channel, private_channel, mpim, im. Slack returns only public_channel when omitted, so pass "public_channel,private_channel" to include private ones. |
 | `team_id` | `string` | No | — |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -1123,7 +1123,7 @@ await corsair.slack.api.channels.list({});
 
 `channels.listMine`
 
-List the connected user's own conversations (needs a user token)
+List the conversations the connected user is in. Public only unless types includes private_channel, mpim or im. Needs a user token; with only a bot token it lists the bot's conversations
 
 **Risk:** `read`
 
@@ -1136,7 +1136,7 @@ await corsair.slack.api.channels.listMine({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `user` | `string` | No | — |
-| `types` | `string` | No | — |
+| `types` | `string` | No | Comma-separated: public_channel, private_channel, mpim, im. Slack returns only public_channel when omitted, so pass "public_channel,private_channel" to include private ones. |
 | `exclude_archived` | `boolean` | No | — |
 | `team_id` | `string` | No | — |
 | `cursor` | `string` | No | — |

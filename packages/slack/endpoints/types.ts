@@ -20,9 +20,12 @@ const ChannelsGetInputSchema = z.object({
 	include_num_members: z.boolean().optional(),
 });
 
+const CHANNEL_TYPES_DESCRIPTION =
+	'Comma-separated: public_channel, private_channel, mpim, im. Slack returns only public_channel when omitted, so pass "public_channel,private_channel" to include private ones.';
+
 const ChannelsListInputSchema = z.object({
 	exclude_archived: z.boolean().optional(),
-	types: z.string().optional(),
+	types: z.string().optional().describe(CHANNEL_TYPES_DESCRIPTION),
 	team_id: z.string().optional(),
 	cursor: z.string().optional(),
 	limit: z.number().optional(),
@@ -30,7 +33,7 @@ const ChannelsListInputSchema = z.object({
 
 const ChannelsListMineInputSchema = z.object({
 	user: z.string().optional(),
-	types: z.string().optional(),
+	types: z.string().optional().describe(CHANNEL_TYPES_DESCRIPTION),
 	exclude_archived: z.boolean().optional(),
 	team_id: z.string().optional(),
 	cursor: z.string().optional(),
