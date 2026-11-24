@@ -21,9 +21,15 @@ const RESERVED_SETTINGS = [
 	'to_date',
 ];
 
-/** Destination fields only; the reserved ones have their own inputs. */
+/**
+ * Destination fields only; the reserved ones have their own inputs. List
+ * settings (bq_share_with_group) are sent JSON-encoded, like `events`.
+ */
 const Settings = z
-	.record(z.string(), z.union([z.string(), z.number(), z.boolean()]))
+	.record(
+		z.string(),
+		z.union([z.string(), z.number(), z.boolean(), z.array(z.string())]),
+	)
 	.refine((value) => RESERVED_SETTINGS.every((key) => !(key in value)), {
 		message: `settings cannot set ${RESERVED_SETTINGS.join(', ')}`,
 	});
