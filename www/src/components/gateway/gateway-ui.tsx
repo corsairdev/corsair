@@ -4,6 +4,7 @@ import { SiteFooter } from '@/components/landing/footer/site-footer';
 import { ChevronIcon, PlusCorner } from '@/components/landing/icons';
 import { SiteMenu } from '@/components/landing/menu/site-menu';
 import '@/components/landing/theme.css';
+import { escapeJsonLd } from '@/lib/integration-seo';
 
 /**
  * Building blocks for the MCP gateway pages (/pricing, /mcp-gateway, /connect,
@@ -380,11 +381,16 @@ export function EndCta({
 	);
 }
 
+/**
+ * `data` is `unknown` because any JSON-LD object goes in; it is only
+ * serialized. escapeJsonLd keeps text from Hub (such as a "</script>" in a
+ * skill name) from ending the script element early.
+ */
 export function JsonLd({ data }: { data: unknown }) {
 	return (
 		<script
 			type="application/ld+json"
-			dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+			dangerouslySetInnerHTML={{ __html: escapeJsonLd(JSON.stringify(data)) }}
 		/>
 	);
 }

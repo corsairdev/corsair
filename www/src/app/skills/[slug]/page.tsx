@@ -34,7 +34,8 @@ function lowerFirst(text: string): string {
 
 type Params = { params: Promise<{ slug: string }> };
 
-export const dynamicParams = false;
+// Skills Hub adds after this build render on first visit; notFound() still rejects unknown slugs.
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
 	const { skills } = await getGatewayContent();

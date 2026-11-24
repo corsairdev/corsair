@@ -56,24 +56,23 @@ describe('parseGatewayContent', () => {
 		assert.equal(content.clients[0]?.id, 'claude');
 	});
 
-	it('refuses another version or an empty list, so a build fails instead of shipping empty pages', () => {
-		assert.throws(
-			() => parseGatewayContent({ ...SAMPLE, version: 2 }),
-			/version 2/,
-		);
-		assert.throws(
-			() => parseGatewayContent({ ...SAMPLE, skills: [] }),
-			/no skills/,
-		);
-		assert.throws(
-			() => parseGatewayContent({ ...SAMPLE, clients: [] }),
-			/no clients/,
-		);
-		assert.throws(() => parseGatewayContent(null), /not an object/);
-		assert.throws(
-			() => parseGatewayContent({ ...SAMPLE, skills: [{ name: 'x' }] }),
-			/without a slug/,
-		);
+	it('refuses an answer the pages cannot use, so a build fails instead of shipping empty pages', () => {
+		const skill = SAMPLE.skills[0];
+		const bad = [
+			{ ...SAMPLE, version: 2 },
+			{ ...SAMPLE, skills: [] },
+			{ ...SAMPLE, clients: [] },
+			{ ...SAMPLE, skillCategories: [] },
+			{ ...SAMPLE, skills: [{ ...skill, category: 'nowhere' }] },
+			{ ...SAMPLE, skills: [{ ...skill, steps: undefined }] },
+			{ ...SAMPLE, skills: [{ ...skill, builtIn: undefined }] },
+			{ ...SAMPLE, skills: [{ name: 'x' }] },
+			{ ...SAMPLE, clients: [{ ...SAMPLE.clients[0], guide: undefined }] },
+			null,
+		];
+		for (const data of bad) {
+			assert.throws(() => parseGatewayContent(data), /gateway content:/);
+		}
 	});
 });
 

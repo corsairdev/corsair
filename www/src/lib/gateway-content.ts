@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 import { APP_URL } from './site-links';
 
 /**
@@ -75,53 +77,101 @@ export type GatewayContent = {
 	appNames: Record<string, string>;
 };
 
-const isObject = (value: unknown): value is Record<string, unknown> =>
-	Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+const guideStep = z.object({
+	text: z.string(),
+	copy: z
+		.array(
+			z.object({
+				label: z.string(),
+				value: z.string(),
+				secret: z.boolean().optional(),
+			}),
+		)
+		.optional(),
+	or: z.string().optional(),
+});
 
-/** Checks the shape this site relies on, so a bad answer fails the build instead of publishing empty pages. */
+const clientSchema = z.object({
+	id: z.string().min(1),
+	name: z.string().min(1),
+	domain: z.string(),
+	terminal: z.boolean().optional(),
+	aliases: z.array(z.string()).optional(),
+	family: z
+		.object({ id: z.string(), name: z.string(), variant: z.string() })
+		.optional(),
+	auth: z.enum(['sign-in', 'key', 'both', 'secret-url']),
+	featured: z.boolean(),
+	guide: z.object({
+		snippet: z.object({ label: z.string(), code: z.string() }).optional(),
+		install: z.object({ label: z.string(), href: z.string() }).optional(),
+		or: z.string().optional(),
+		steps: z.array(guideStep),
+		note: z.string().optional(),
+	}),
+});
+
+const builtInApp = z.enum(['pm', 'crm', 'files', 'pg']);
+
+const skillSchema = z.object({
+	slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+	name: z.string().min(1),
+	summary: z.string().min(1),
+	category: z.string().min(1),
+	required: z.array(z.string()),
+	optional: z.array(z.string()),
+	builtIn: z.array(builtInApp),
+	steps: z.array(z.string()).min(1),
+	result: z.string(),
+	notes: z.array(z.string()).optional(),
+	schedule: z.string().optional(),
+});
+
+const contentSchema = z
+	.object({
+		version: z.literal(VERSION),
+		clients: z.array(clientSchema).min(1),
+		skills: z.array(skillSchema).min(1),
+		skillCategories: z
+			.array(
+				z.object({
+					id: z.string().min(1),
+					name: z.string().min(1),
+					blurb: z.string(),
+				}),
+			)
+			.min(1),
+		builtIns: z.record(builtInApp, z.string()),
+		appNames: z.record(z.string(), z.string()),
+	})
+	.superRefine((content, ctx) => {
+		// /skills shows skills inside their category, so one outside every
+		// category would vanish from the directory.
+		const categories = new Set(content.skillCategories.map((c) => c.id));
+		for (const skill of content.skills) {
+			if (!categories.has(skill.category)) {
+				ctx.addIssue({
+					code: 'custom',
+					message: `skill ${skill.slug} is in unknown category ${skill.category}`,
+				});
+			}
+		}
+	});
+
+/**
+ * Checks Hub's answer against everything the pages read, so a bad answer fails
+ * the build instead of publishing empty or broken pages. `data` is `unknown`
+ * because it is parsed JSON from another service: its type is only known
+ * after this check.
+ */
 export function parseGatewayContent(data: unknown): GatewayContent {
-	if (!isObject(data)) throw new Error('gateway content: not an object');
-	if (data.version !== VERSION) {
-		throw new Error(
-			`gateway content: version ${String(data.version)}, this site reads ${VERSION}`,
-		);
+	const result = contentSchema.safeParse(data);
+	if (!result.success) {
+		const issue = result.error.issues[0];
+		const where = issue?.path.length ? ` at ${issue.path.join('.')}` : '';
+		throw new Error(`gateway content: ${issue?.message ?? 'invalid'}${where}`);
 	}
-	const { clients, skills, skillCategories, builtIns, appNames } = data;
-	if (!Array.isArray(clients) || clients.length === 0) {
-		throw new Error('gateway content: no clients');
-	}
-	if (!Array.isArray(skills) || skills.length === 0) {
-		throw new Error('gateway content: no skills');
-	}
-	if (
-		!Array.isArray(skillCategories) ||
-		!isObject(builtIns) ||
-		!isObject(appNames)
-	) {
-		throw new Error(
-			'gateway content: categories, built-ins or app names missing',
-		);
-	}
-	for (const client of clients) {
-		if (
-			!isObject(client) ||
-			typeof client.id !== 'string' ||
-			!isObject(client.guide)
-		) {
-			throw new Error('gateway content: a client without an id or guide');
-		}
-	}
-	for (const skill of skills) {
-		if (
-			!isObject(skill) ||
-			typeof skill.slug !== 'string' ||
-			!Array.isArray(skill.required) ||
-			!Array.isArray(skill.optional)
-		) {
-			throw new Error('gateway content: a skill without a slug or apps');
-		}
-	}
-	return data as unknown as GatewayContent;
+	return result.data;
 }
 
 /** Hub's lists, refreshed at most hourly. Throws when Hub can't be read, so a build never ships empty pages. */
