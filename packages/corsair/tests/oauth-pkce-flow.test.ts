@@ -24,6 +24,8 @@ jest.mock('../webhooks/resolve-oauth-tenant-link', () => ({
 const KEK = 'test-kek-with-at-least-32-characters!!';
 const REDIRECT = 'https://app.example/oauth/callback';
 
+// unknown: a full CorsairPlugin needs endpoints, schemas and hooks this flow
+// never touches; the callback only reads id, options and oauthConfig.
 const plugin = (id: string, pkce: boolean) =>
 	({
 		id,

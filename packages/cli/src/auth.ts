@@ -27,6 +27,12 @@ import {
 import type { CorsairDatabase } from 'corsair/db';
 import { localPkceVerifier, newPkceNonce, pkceAuthParams } from 'corsair/oauth';
 import { createCorsairOrm } from 'corsair/orm';
+import {
+	pkceNonceFile,
+	readPkceNonce,
+	removePkceNonce,
+	savePkceNonce,
+} from './pkce-nonce';
 import { getCorsairInstance } from './utils/corsair-instance';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -284,7 +290,7 @@ async function ensureAccount(
 
 // The CLI sends no state, so each sign-in gets a fresh nonce for its PKCE
 // verifier (see corsair/oauth). A pasted --code is exchanged in a later
-// process, so for that path the nonce waits in a private temp file.
+// process, so for that path the nonce waits in a private file.
 function cliPkceParams(
 	oauthCfg: OAuthConfig,
 	codeVerifier: string | undefined,
@@ -292,38 +298,6 @@ function cliPkceParams(
 	return oauthCfg.pkce && codeVerifier
 		? pkceAuthParams(codeVerifier, oauthCfg.authParams)
 		: {};
-}
-
-function pkceNonceFile(pluginId: string, tenantId: string): string {
-	const safe = (v: string) => v.replace(/[^A-Za-z0-9_-]/g, '_');
-	return path.join(
-		os.tmpdir(),
-		`corsair-pkce-${safe(pluginId)}-${safe(tenantId)}.json`,
-	);
-}
-
-function savePkceNonce(pluginId: string, tenantId: string, nonce: string) {
-	fs.writeFileSync(
-		pkceNonceFile(pluginId, tenantId),
-		JSON.stringify({ nonce }),
-		{
-			mode: 0o600,
-		},
-	);
-}
-
-/** The nonce of the sign-in waiting for a pasted code; read once, then removed. */
-function takePkceNonce(pluginId: string, tenantId: string): string | undefined {
-	const file = pkceNonceFile(pluginId, tenantId);
-	try {
-		const { nonce } = JSON.parse(fs.readFileSync(file, 'utf8')) as {
-			nonce?: string;
-		};
-		fs.unlinkSync(file);
-		return nonce;
-	} catch {
-		return undefined;
-	}
 }
 
 async function oauthExchangeCode(
@@ -418,8 +392,11 @@ async function oauthWithCode(
 	}
 
 	let codeVerifier: string | undefined;
-	if (oauthCfg.pkce) {
-		const nonce = takePkceNonce(plugin.id, tenantId);
+	const nonceFile = oauthCfg.pkce
+		? pkceNonceFile(plugin.id, tenantId, kek)
+		: undefined;
+	if (nonceFile) {
+		const nonce = readPkceNonce(nonceFile);
 		if (!nonce) {
 			out({
 				error: `No sign-in for '${plugin.id}' is waiting for a code. Run \`corsair auth --plugin=${plugin.id}\` again for a new link.`,
@@ -429,7 +406,7 @@ async function oauthWithCode(
 		codeVerifier = localPkceVerifier(plugin.id, tenantId, kek, nonce);
 	}
 
-	await oauthExchangeCode(
+	const exchanged = await oauthExchangeCode(
 		database,
 		plugin,
 		kek,
@@ -441,6 +418,8 @@ async function oauthWithCode(
 		oauthCfg,
 		codeVerifier,
 	);
+	// Kept after a failure (a mistyped code, a dropped connection) for a retry.
+	if (exchanged && nonceFile) removePkceNonce(nonceFile);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -520,7 +499,8 @@ async function oauthListen(
 			};
 			const authUrl = `${oauthCfg.authUrl}?${querystring.stringify(authParams)}`;
 			// The pasted code is exchanged by a later `--code` run.
-			if (pkceNonce) savePkceNonce(plugin.id, tenantId, pkceNonce);
+			if (pkceNonce)
+				savePkceNonce(pkceNonceFile(plugin.id, tenantId, kek), pkceNonce);
 			writeAuthState(sessionId, {
 				status: 'needs_code',
 				url: authUrl,

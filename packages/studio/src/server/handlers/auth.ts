@@ -67,6 +67,11 @@ function findFreePort(): Promise<number> {
  */
 const pkceNonces = new Map<string, string>();
 
+/** Forgets a sign-in's nonce, unless a newer sign-in has replaced it meanwhile. */
+function forgetPkceNonce(key: string, nonce: string | undefined): void {
+	if (nonce && pkceNonces.get(key) === nonce) pkceNonces.delete(key);
+}
+
 const pendingListeners = new Map<
 	string,
 	{ redirectUri: string; codePromise: Promise<string>; server: http.Server }
@@ -279,8 +284,9 @@ export const startOAuth: HandlerFn = async (ctx) => {
 					redirectUri,
 					verifier,
 				);
-				pkceNonces.delete(`${plugin.id}:${tenantId}`);
 				if (!tokens.access_token) return;
+				// The code is spent once the provider answers with a token.
+				forgetPkceNonce(`${plugin.id}:${tenantId}`, pkceNonce);
 				const extraAccount = getCustomAccountFields(plugin, 'oauth_2');
 				const accountKm = createAccountKeyManager({
 					authType: 'oauth_2',
@@ -361,8 +367,10 @@ export const exchangeOAuth: HandlerFn = async (ctx) => {
 	}
 
 	let codeVerifier: string | undefined;
+	const nonce = oauthCfg.pkce
+		? pkceNonces.get(`${plugin.id}:${tenantId}`)
+		: undefined;
 	if (oauthCfg.pkce) {
-		const nonce = pkceNonces.get(`${plugin.id}:${tenantId}`);
 		if (!nonce) {
 			throw new Error(
 				`No sign-in for '${plugin.id}' is waiting for a code. Start it again.`,
@@ -379,10 +387,11 @@ export const exchangeOAuth: HandlerFn = async (ctx) => {
 		redirectUri,
 		codeVerifier,
 	);
-	pkceNonces.delete(`${plugin.id}:${tenantId}`);
 	if (!tokens.access_token) {
 		throw new Error('No access_token in response from provider.');
 	}
+	// Kept after a failure (a mistyped code) so the same sign-in can be retried.
+	forgetPkceNonce(`${plugin.id}:${tenantId}`, nonce);
 
 	const extraAccount = getCustomAccountFields(plugin, 'oauth_2');
 	const accountKm = createAccountKeyManager({
