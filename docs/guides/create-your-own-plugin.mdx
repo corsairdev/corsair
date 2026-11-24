@@ -199,6 +199,41 @@ Without this, the test sandbox will be running stale compiled output.
 </Steps>
 
 
+## Let search read your plugin live (optional)
+
+If an endpoint searches or lists records, add a `search` block to its `endpointMeta` entry. It tells Corsair how to turn what a question makes certain (people, a date window, kinds, states, ids, topic words) into that endpoint's arguments, so a search can ask your app directly. The block is plain JSON: no functions. Without it the plugin is simply not searched live.
+
+```ts
+'messages.list': {
+  riskLevel: 'read',
+  search: {
+    kinds: ['messages'],              // entities the rows are, as in your schema
+    rows: 'messages',                 // path to the row list in the result ('' if the result is the list)
+    id: 'id',                         // field in each row that holds its id
+    open: { op: 'messages.get', idArg: 'id' }, // optional: read one result by id
+    limit: { arg: 'maxResults', default: 25, max: 100 },
+    fixed: { sort: 'timestamp' },     // optional: args sent every time
+    hints: {
+      topic: { arg: 'q', text: '{v}' },
+      people: { arg: 'q', text: ['from:{v}', 'to:{v}'], join: 'or' },
+      after: { arg: 'q', text: 'after:{v}', format: 'epoch' },
+      before: { arg: 'q', text: 'before:{v}', format: 'epoch' },
+      states: { map: { unread: { arg: 'q', text: 'is:unread' } } },
+    },
+  },
+},
+```
+
+Each hint (`topic`, `people`, `places`, `ids`, `after`, `before`, `window`, `kinds`, `states`) is optional; declare only what the provider can filter on. A part names the argument it fills (`arg` is a dot path such as `filter.updatedAt.gte`) and gives exactly one of:
+
+- `text`: query-string apps. Terms are appended to the string at `arg`, `{v}` is the value, and a value with spaces or operator characters is quoted. `join: 'or'` writes several values as `(a OR b)`; the default repeats the term.
+- `list`: structured apps. Templates are pushed onto the array at `arg`, once per value.
+- `set`: structured apps. One value is set at `arg`; with no `{v}` it is a constant.
+
+Dates arrive as ISO instants. `format` is `iso`, `epoch` (seconds), `YYYY-MM-DD` or `YYYY/MM/DD`; day formats are written in the caller's time zone, and `shiftDays` moves them for a provider whose bound excludes its own day. Set `max` or `cap` where the provider cannot take more (a query length limit, two values that contradict each other): a hint past its limit is left out, so the search widens instead of guessing.
+
+Check each operator against the provider's search documentation. `pnpm test` checks the rest: every `arg` exists in the endpoint's input schema, the compiled arguments pass that schema, and `rows` and `id` exist in its output.
+
 ## Tips
 
 - **Look at existing plugins** for reference. `packages/github/` and `packages/resend/` are good examples at different complexity levels.
