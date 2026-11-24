@@ -40,6 +40,8 @@ const OperationSchema = z
 		paginated: z.literal(true).optional(),
 		/** Body fields MOCO sets itself (readOnly): dropped before sending. */
 		serverSetFields: z.array(z.string()).optional(),
+		/** A route MOCO is slow to answer (seen live): its own request timeout. */
+		timeoutMs: z.number().int().positive().optional(),
 		input: OpenApiSchemaDocument,
 		output: OpenApiSchemaDocument.optional(),
 	})

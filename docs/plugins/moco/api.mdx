@@ -19,15 +19,18 @@ Create account catalog service
 **Risk:** `write`
 
 ```ts
-await corsair.moco.api.account.catalogServices.create({});
+await corsair.moco.api.account.catalogServices.create({
+	title: 'Website Relaunch',
+	items: [{ type: 'title' }],
+});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `title` | `string` | No | — |
-| `items` | `object[]` | No | — |
+| `title` | `string` | Yes | — |
+| `items` | `object[]` | Yes | — |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -35,7 +38,7 @@ await corsair.moco.api.account.catalogServices.create({});
 ```ts
 {
   id?: number,
-  type?: title | description | item | subtotal | page-break | separator | position-group,
+  type: title | description | item | subtotal | page-break | separator | position-group,
   title?: string,
   description?: string,
   quantity?: number,
@@ -274,7 +277,7 @@ Create account catalog service item
 **Risk:** `write`
 
 ```ts
-await corsair.moco.api.account.catalogServices.items.create({ catalog_service_id: 12 });
+await corsair.moco.api.account.catalogServices.items.create({ catalog_service_id: 12, type: 'title' });
 ```
 
 **Input**
@@ -283,7 +286,7 @@ await corsair.moco.api.account.catalogServices.items.create({ catalog_service_id
 |------|------|----------|-------------|
 | `catalog_service_id` | `number` | Yes | — |
 | `id` | `number` | No | — |
-| `type` | `title \| description \| item \| subtotal \| page-break \| separator \| position-group` | No | — |
+| `type` | `title \| description \| item \| subtotal \| page-break \| separator \| position-group` | Yes | — |
 | `title` | `string` | No | — |
 | `description` | `string` | No | — |
 | `quantity` | `number` | No | — |
@@ -986,7 +989,7 @@ Update account custom property
 **Risk:** `write`
 
 ```ts
-await corsair.moco.api.account.customProperties.update({ id: 1234567 });
+await corsair.moco.api.account.customProperties.update({ id: 1234567, name: 'Website Relaunch' });
 ```
 
 **Input**
@@ -994,7 +997,7 @@ await corsair.moco.api.account.customProperties.update({ id: 1234567 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number` | Yes | Resource ID. |
-| `name` | `string` | No | — |
+| `name` | `string` | Yes | — |
 | `kind` | `String \| Textarea \| Link \| Boolean \| Select \| MultiSelect \| Date` | No | — |
 | `entity` | `Project \| Customer \| Supplier \| Organization \| Contact \| Unit \| User \| AbsenceRequest \| HolidayRequest \| Deal \| Expense \| Purchase \| Invoice \| Offer \| ProjectGroup \| PurchaseOrder` | No | — |
 | `placeholder` | `string` | No | — |
@@ -1038,7 +1041,7 @@ Create account expense template
 **Risk:** `write`
 
 ```ts
-await corsair.moco.api.account.expenseTemplates.create({});
+await corsair.moco.api.account.expenseTemplates.create({ currency: 'EUR' });
 ```
 
 **Input**
@@ -1051,6 +1054,7 @@ await corsair.moco.api.account.expenseTemplates.create({});
 | `unit_price` | `number` | No | — |
 | `unit_cost` | `number` | No | — |
 | `revenue_category_id` | `number` | No | — |
+| `currency` | `string` | Yes | Currency code, like USD or EUR. |
 
 
 
@@ -1278,6 +1282,7 @@ await corsair.moco.api.account.expenseTemplates.update({ id: 1234567 });
 | `unit_price` | `number` | No | — |
 | `unit_cost` | `number` | No | — |
 | `revenue_category_id` | `number` | No | — |
+| `currency` | `string` | No | Currency code, like USD or EUR. |
 
 
 
@@ -10171,6 +10176,7 @@ await corsair.moco.api.plannedPurchases.create({
 	net_total: 1,
 	currency: 'EUR',
 	user_id: 933590696,
+	frequency: 'once',
 });
 ```
 
@@ -10181,7 +10187,7 @@ await corsair.moco.api.plannedPurchases.create({
 | `impersonate_user_id` | `number` | No | Execute request on behalf of another user if the authenticated user has permission to *Staff*. Some resources, such as Activities and User Presences, can be created for other users only if this header is used. |
 | `date` | `string` | Yes | — |
 | `finish_date` | `string` | No | — |
-| `frequency` | `once \| weekly \| biweekly \| monthly \| quarterly \| biannual \| annual` | No | — |
+| `frequency` | `once \| weekly \| biweekly \| monthly \| quarterly \| biannual \| annual` | Yes | — |
 | `title` | `string` | Yes | — |
 | `info` | `string \| null` | No | — |
 | `net_total` | `number` | Yes | — |
@@ -19722,7 +19728,7 @@ Create revenue category
 **Risk:** `write`
 
 ```ts
-await corsair.moco.api.revenueCategories.create({});
+await corsair.moco.api.revenueCategories.create({ assignment_kind: 'only_tasks' });
 ```
 
 **Input**
@@ -19732,7 +19738,7 @@ await corsair.moco.api.revenueCategories.create({});
 | `name` | `string` | No | — |
 | `revenue_account` | `number \| null` | No | — |
 | `cost_category` | `string \| null` | No | — |
-| `assignment_kind` | `only_tasks \| only_expenses \| tasks_and_expenses` | No | — |
+| `assignment_kind` | `only_tasks \| only_expenses \| tasks_and_expenses` | Yes | — |
 
 
 

@@ -297,6 +297,43 @@ describe('errors', () => {
 		expect(error.url).toBe('https://acme.mocoapp.com/api/v1/contacts/people');
 	});
 
+	// Real 422 bodies from the live run (11-24): a list of field errors, and
+	// field errors at the top level with no `errors` wrapper.
+	it('reads a 422 list of { error_message, field_name } objects', async () => {
+		reply(422, {
+			errors: [
+				{ error_message: 'Budgets are stored for 2026', field_name: 'base' },
+			],
+		});
+		const error = (await endpointFor('purchases.budgets.delete')(ctx(), {
+			id: 5,
+		}).catch((e: unknown) => e)) as ApiError;
+		expect(error.status).toBe(422);
+		expect(error.message).toBe('MOCO 422: Budgets are stored for 2026');
+	});
+
+	it('names the field for a field error in the list', async () => {
+		reply(422, {
+			errors: [{ field_name: 'targetAmount', error_message: "can't be blank" }],
+		});
+		const error = (await endpointFor('purchases.budgets.updateTarget')(ctx(), {
+			id: 5,
+			target_amount: 1,
+		}).catch((e: unknown) => e)) as ApiError;
+		expect(error.message).toBe("MOCO 422: targetAmount: can't be blank");
+	});
+
+	it('reads field errors sent at the top level', async () => {
+		reply(422, { currency: ["can't be blank", 'Currency is not deposited.'] });
+		const error = (await endpointFor('account.expenseTemplates.create')(ctx(), {
+			title: 'Hosting',
+			currency: 'CHF',
+		}).catch((e: unknown) => e)) as ApiError;
+		expect(error.message).toBe(
+			"MOCO 422: currency: can't be blank, Currency is not deposited.",
+		);
+	});
+
 	it('uses the message body for a 404', async () => {
 		reply(404, { message: 'Not found' });
 		const error = (await endpointFor('deals.get')(ctx(), { id: 1 }).catch(
@@ -316,6 +353,51 @@ describe('errors', () => {
 			}),
 		).rejects.toThrow(/Invalid input for moco invoices.updateStatus/);
 		expect(calls).toHaveLength(0);
+	});
+});
+
+// Found by the live run on a trial account (11-24); see kits/plugin-gen/moco
+// gen.py LIVE_REQUIRED / LIVE_TIMEOUT_MS.
+describe('what the live run corrected in the spec', () => {
+	it.each([
+		// MOCO answers 500 without frequency.
+		[
+			'plannedPurchases.create',
+			{
+				date: '2027-06-15',
+				title: 'Hosting',
+				net_total: 50,
+				currency: 'USD',
+				user_id: 1,
+			},
+		],
+		['revenueCategories.create', { name: 'Consulting' }],
+		['account.expenseTemplates.create', { title: 'Hosting' }],
+		['account.customProperties.update', { id: 1, placeholder: 'x' }],
+		['account.catalogServices.create', { title: 'Package', items: [] }],
+		[
+			'account.catalogServices.create',
+			{ title: 'Package', items: [{ title: 'No type' }] },
+		],
+		['account.catalogServices.items.create', { catalog_service_id: 1 }],
+	])('refuses %s without what MOCO needs', async (id, input) => {
+		reply(200, {});
+		await expect(endpointFor(id)(ctx(), input)).rejects.toThrow(
+			/Invalid input/,
+		);
+		expect(calls).toHaveLength(0);
+	});
+
+	it('gives revenueCategories.delete a longer timeout (MOCO takes 25-90+ s)', () => {
+		const slow = mocoOperations.find(
+			(op) => op.id === 'revenueCategories.delete',
+		);
+		expect(slow?.timeoutMs).toBe(180_000);
+		expect(
+			mocoOperations
+				.filter((op) => op.timeoutMs !== undefined)
+				.map((op) => op.id),
+		).toEqual(['revenueCategories.delete']);
 	});
 });
 

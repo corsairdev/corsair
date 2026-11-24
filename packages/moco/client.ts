@@ -233,8 +233,10 @@ export function withoutRequestData(
 
 /**
  * MOCO's error bodies: `{ "message": "..." }` for 401/403/404 and most
- * refusals, `{ "errors": { field: [messages] } }` or `{ "errors": [messages] }`
- * for a 422 (common.json's MessageError and ErrorList).
+ * refusals; for a 422 any of `{ "errors": { field: [messages] } }`,
+ * `{ "errors": [messages] }`, `{ "errors": [{ "error_message", "field_name" }] }`
+ * (budgets, seen live) or the field map with no wrapper,
+ * `{ field: [messages] }` (expense templates, seen live).
  */
 export function mocoErrorMessage(
 	status: number,
@@ -245,30 +247,24 @@ export function mocoErrorMessage(
 	const fields =
 		typeof body === 'object' && body !== null && !Array.isArray(body)
 			? // `unknown` because an error body's fields are narrowed one by one below.
-				(body as { message?: unknown; errors?: unknown; error?: unknown })
+				(body as Record<string, unknown>)
 			: {};
 	let reason: string | undefined;
 	if (typeof fields.message === 'string' && fields.message.length > 0) {
 		reason = fields.message;
 	} else if (Array.isArray(fields.errors)) {
 		reason = fields.errors
-			.filter((item): item is string => typeof item === 'string')
+			.map(listedError)
+			.filter((item): item is string => item !== undefined)
 			.slice(0, 5)
 			.join('; ');
 	} else if (typeof fields.errors === 'object' && fields.errors !== null) {
-		reason = Object.entries(fields.errors)
-			.slice(0, 5)
-			.map(([field, messages]) => {
-				const list = Array.isArray(messages)
-					? messages.filter((item) => typeof item === 'string').join(', ')
-					: typeof messages === 'string'
-						? messages
-						: '';
-				return list ? `${field}: ${list}` : field;
-			})
-			.join('; ');
+		// `unknown` because the field map's values are narrowed in fieldErrors.
+		reason = fieldErrors(fields.errors as Record<string, unknown>);
 	} else if (typeof fields.error === 'string') {
 		reason = fields.error;
+	} else if (Object.keys(fields).length > 0) {
+		reason = fieldErrors(fields);
 	} else if (typeof body === 'string' && body.trim().length > 0) {
 		// An HTML error page says nothing useful; keep only short plain text.
 		const text = body.trim();
@@ -276,6 +272,36 @@ export function mocoErrorMessage(
 	}
 	const text = `MOCO ${status}: ${reason || statusText || 'request failed'}`;
 	return text.length > 500 ? `${text.slice(0, 497)}...` : text;
+}
+
+/** One entry of an `errors` list: a message, or `{ error_message, field_name }`. */
+// `unknown` because a list entry is whatever JSON MOCO sent.
+function listedError(item: unknown): string | undefined {
+	if (typeof item === 'string') return item;
+	if (typeof item !== 'object' || item === null) return undefined;
+	// `unknown` because the entry's fields are narrowed below.
+	const entry = item as { error_message?: unknown; field_name?: unknown };
+	if (typeof entry.error_message !== 'string') return undefined;
+	return typeof entry.field_name === 'string' && entry.field_name !== 'base'
+		? `${entry.field_name}: ${entry.error_message}`
+		: entry.error_message;
+}
+
+/** `{ field: [messages] }` as `field: a, b; other: c`; only string messages count. */
+// `unknown` because the field map's values are whatever JSON MOCO sent.
+function fieldErrors(map: Record<string, unknown>): string | undefined {
+	const parts = Object.entries(map)
+		.map(([field, messages]) => {
+			const list = Array.isArray(messages)
+				? messages.filter((item) => typeof item === 'string').join(', ')
+				: typeof messages === 'string'
+					? messages
+					: '';
+			return list ? `${field}: ${list}` : undefined;
+		})
+		.filter((part): part is string => part !== undefined)
+		.slice(0, 5);
+	return parts.length > 0 ? parts.join('; ') : undefined;
 }
 
 /** Strings shorter than this are matched as whole words only... */

@@ -19,10 +19,12 @@
           "items": {
             "type": "array",
             "items": {
-              "$ref": "AccountCatalogServiceItemUpsertRequest"
-            }
+              "$ref": "AccountCatalogServiceItemCreateRequest"
+            },
+            "minItems": 1
           }
-        }
+        },
+        "required": ["title", "items"]
       },
       "output": {
         "$ref": "AccountCatalogService"
@@ -178,7 +180,7 @@
             }
           }
         },
-        "required": ["catalog_service_id"]
+        "required": ["catalog_service_id", "type"]
       },
       "output": {
         "$ref": "AccountCatalogServiceItem"
@@ -710,7 +712,7 @@
             }
           }
         },
-        "required": ["id"]
+        "required": ["id", "name"]
       },
       "output": {
         "$ref": "AccountCustomProperty"
@@ -744,8 +746,13 @@
           },
           "revenue_category_id": {
             "type": "integer"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code, like USD or EUR."
           }
-        }
+        },
+        "required": ["currency"]
       },
       "output": {
         "$ref": "AccountExpenseTemplate"
@@ -882,6 +889,10 @@
           },
           "revenue_category_id": {
             "type": "integer"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code, like USD or EUR."
           }
         },
         "required": ["id"]
@@ -5872,7 +5883,14 @@
             "nullable": true
           }
         },
-        "required": ["date", "title", "net_total", "currency", "user_id"]
+        "required": [
+          "date",
+          "title",
+          "net_total",
+          "currency",
+          "user_id",
+          "frequency"
+        ]
       },
       "output": {
         "$ref": "PlannedPurchase"
@@ -10647,7 +10665,8 @@
             "type": "string",
             "enum": ["only_tasks", "only_expenses", "tasks_and_expenses"]
           }
-        }
+        },
+        "required": ["assignment_kind"]
       },
       "output": {
         "$ref": "RevenueCategory"
@@ -10662,6 +10681,7 @@
       "request": "none",
       "response": "json",
       "emptyOk": true,
+      "timeoutMs": 180000,
       "input": {
         "type": "object",
         "properties": {
@@ -13295,6 +13315,99 @@
           "type": "string"
         }
       }
+    },
+    "AccountCatalogServiceItemCreateRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "title",
+            "description",
+            "item",
+            "subtotal",
+            "page-break",
+            "separator",
+            "position-group"
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "number"
+        },
+        "unit": {
+          "type": "string"
+        },
+        "unit_price": {
+          "type": "number"
+        },
+        "unit_cost": {
+          "type": "number"
+        },
+        "net_total": {
+          "type": "number"
+        },
+        "optional": {
+          "type": "boolean"
+        },
+        "part": {
+          "type": "boolean"
+        },
+        "subtotal_type": {
+          "type": "string",
+          "enum": [
+            "part_total",
+            "sub_total",
+            "optional_part_total",
+            "optional_sub_total"
+          ]
+        },
+        "destroyed": {
+          "type": "boolean"
+        },
+        "additional": {
+          "type": "boolean"
+        },
+        "position_group_display": {
+          "type": "string"
+        },
+        "revenue_category_id": {
+          "type": "integer",
+          "nullable": true
+        },
+        "position_group_items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "unit": {
+                "type": "string"
+              },
+              "quantity": {
+                "type": "number"
+              },
+              "unit_price": {
+                "type": "number"
+              },
+              "unit_cost": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "required": ["type"]
     },
     "AccountCatalogServiceItemUpsertRequest": {
       "type": "object",

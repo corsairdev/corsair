@@ -309,9 +309,9 @@ export const MOCO_OPERATION_IDS = [
 
 export type MocoOperationId = (typeof MOCO_OPERATION_IDS)[number];
 
-export type MocoAccountCatalogServiceItemUpsertRequestInput = {
+export type MocoAccountCatalogServiceItemCreateRequestInput = {
 	id?: number;
-	type?:
+	type:
 		| 'title'
 		| 'description'
 		| 'item'
@@ -2320,8 +2320,8 @@ export type MocoWebHookTarget = string;
 
 export type MocoOperationInputs = {
 	'account.catalogServices.create': {
-		title?: string;
-		items?: Array<MocoAccountCatalogServiceItemUpsertRequestInput>;
+		title: string;
+		items: Array<MocoAccountCatalogServiceItemCreateRequestInput>;
 	};
 	'account.catalogServices.delete': {
 		/** Resource ID. */
@@ -2334,7 +2334,7 @@ export type MocoOperationInputs = {
 	'account.catalogServices.items.create': {
 		catalog_service_id: number;
 		id?: number;
-		type?:
+		type:
 			| 'title'
 			| 'description'
 			| 'item'
@@ -2506,7 +2506,7 @@ export type MocoOperationInputs = {
 	'account.customProperties.update': {
 		/** Resource ID. */
 		id: number;
-		name?: string;
+		name: string;
 		kind?:
 			| 'String'
 			| 'Textarea'
@@ -2548,6 +2548,8 @@ export type MocoOperationInputs = {
 		unit_price?: number;
 		unit_cost?: number;
 		revenue_category_id?: number;
+		/** Currency code, like USD or EUR. */
+		currency: string;
 	};
 	'account.expenseTemplates.delete': {
 		/** Resource ID. */
@@ -2576,6 +2578,8 @@ export type MocoOperationInputs = {
 		unit_price?: number;
 		unit_cost?: number;
 		revenue_category_id?: number;
+		/** Currency code, like USD or EUR. */
+		currency?: string;
 	};
 	'account.fixedCosts.list': {
 		/** Page number, starting at 1. */
@@ -3836,7 +3840,7 @@ export type MocoOperationInputs = {
 		impersonate_user_id?: number;
 		date: string;
 		finish_date?: string;
-		frequency?:
+		frequency:
 			| 'once'
 			| 'weekly'
 			| 'biweekly'
@@ -5066,7 +5070,7 @@ export type MocoOperationInputs = {
 		name?: string;
 		revenue_account?: number | null;
 		cost_category?: string | null;
-		assignment_kind?: 'only_tasks' | 'only_expenses' | 'tasks_and_expenses';
+		assignment_kind: 'only_tasks' | 'only_expenses' | 'tasks_and_expenses';
 	};
 	'revenueCategories.delete': {
 		/** Resource ID. */

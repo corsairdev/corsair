@@ -46,13 +46,13 @@ examples:
     args: {"date": "2026-04-09", "project_id": 1234567, "task_id": 7536, "seconds": 1800, "description": "Kickoff call", "billable": true}
 apiExamples:
   account.catalogServices.create:
-    args: {}
+    args: {"title": "Website Relaunch", "items": [{"type": "title"}]}
   account.catalogServices.delete:
     args: {"id": 1234567}
   account.catalogServices.get:
     args: {"id": 1234567}
   account.catalogServices.items.create:
-    args: {"catalog_service_id": 12}
+    args: {"catalog_service_id": 12, "type": "title"}
   account.catalogServices.items.delete:
     args: {"catalog_service_id": 12, "id": 1234567}
   account.catalogServices.items.get:
@@ -72,9 +72,9 @@ apiExamples:
   account.customProperties.list:
     args: {}
   account.customProperties.update:
-    args: {"id": 1234567}
+    args: {"id": 1234567, "name": "Website Relaunch"}
   account.expenseTemplates.create:
-    args: {}
+    args: {"currency": "EUR"}
   account.expenseTemplates.delete:
     args: {"id": 1234567}
   account.expenseTemplates.get:
@@ -304,7 +304,7 @@ apiExamples:
   offers.updateStatus:
     args: {"id": 1234567, "status": "sent"}
   plannedPurchases.create:
-    args: {"date": "2026-04-09", "title": "Website Relaunch", "net_total": 1, "currency": "EUR", "user_id": 933590696}
+    args: {"date": "2026-04-09", "title": "Website Relaunch", "net_total": 1, "currency": "EUR", "user_id": 933590696, "frequency": "once"}
   plannedPurchases.delete:
     args: {"id": 1234567}
   plannedPurchases.get:
@@ -500,7 +500,7 @@ apiExamples:
   reports.utilization:
     args: {}
   revenueCategories.create:
-    args: {}
+    args: {"assignment_kind": "only_tasks"}
   revenueCategories.delete:
     args: {"id": 1234567}
   revenueCategories.get:

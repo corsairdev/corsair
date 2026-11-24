@@ -280,6 +280,7 @@ export function createMocoOperation<Id extends MocoOperationId>(
 			...(operation.emptyOk || operation.response === 'empty'
 				? { responseType: 'binary' as const }
 				: {}),
+			...(operation.timeoutMs ? { timeoutMs: operation.timeoutMs } : {}),
 		};
 		// Fields MOCO sets itself never go back, even when the caller passes an object it read.
 		for (const name of operation.serverSetFields ?? []) delete valid[name];
