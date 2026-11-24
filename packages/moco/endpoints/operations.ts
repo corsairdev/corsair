@@ -17,6 +17,7 @@ import {
 	maskedIssuePath,
 	mocoInputFields,
 	mocoOperationFor,
+	numbersFromStrings,
 } from './openapi-schema';
 import type {
 	MocoOperationId,
@@ -215,6 +216,25 @@ export function decodeMaybeEmpty(id: string, value: unknown): unknown {
 	}
 }
 
+/**
+ * A file route's body is usable when it isn't empty or an HTML page. The
+ * routes MOCO documents as PDFs must start with `%PDF`; a purchase draft's
+ * document is the uploaded original, which may be an image.
+ */
+export function isUsableFile(
+	id: string,
+	bytes: Uint8Array,
+	contentType: string | null | undefined,
+): boolean {
+	if (bytes.byteLength === 0) return false;
+	if ((contentType ?? '').toLowerCase().includes('html')) return false;
+	const head = new TextDecoder()
+		.decode(bytes.subarray(0, 1024))
+		.replace(/^[\s\uFEFF]+/, '');
+	if (head.startsWith('<')) return false;
+	return id === 'purchases.drafts.getPdf' || head.startsWith('%PDF');
+}
+
 // `unknown` because the value came from core's binary transport.
 function isBinaryResponse(value: unknown): value is BinaryResponse {
 	return (
@@ -295,6 +315,11 @@ export function createMocoOperation<Id extends MocoOperationId>(
 			request.responseType = 'binary';
 			const binary = await makeMocoRequest(ctx, request);
 			if (!isBinaryResponse(binary)) throw new Error('MOCO returned no file');
+			// An empty body or an HTML page (a proxy, a login redirect) is an
+			// error, not a file.
+			if (!isUsableFile(id, binary.bytes, binary.contentType)) {
+				throw new Error(`MOCO ${id} answered without a file`);
+			}
 			response = toFileOutput(binary.bytes, binary.contentType, {
 				filename: fileNameFor(id, parsedInput.data),
 			});
@@ -310,6 +335,7 @@ export function createMocoOperation<Id extends MocoOperationId>(
 			if (operation.emptyOk) {
 				body = decodeMaybeEmpty(id, body);
 			}
+			if (body !== EMPTY) body = numbersFromStrings(operation.output, body);
 			if (body === EMPTY) {
 				response = { success: true };
 			} else if (operation.paginated && Array.isArray(body)) {

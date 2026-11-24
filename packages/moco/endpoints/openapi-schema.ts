@@ -261,10 +261,7 @@ function schemaFromOpenApi(
 		if (pattern) stringSchema = stringSchema.regex(pattern);
 		schema = stringSchema;
 	} else if (type === 'integer' || type === 'number') {
-		// MOCO writes some decimals as strings: an expense's
-		// purchase_items[].net_total came back "9.09" in the live run. A
-		// response reads a numeric string as its number (`lots` still fails).
-		let numberSchema = strict ? z.number() : z.coerce.number();
+		let numberSchema = z.number();
 		// A cursor or count that comes back fractional would be refused when sent back.
 		if (type === 'integer') numberSchema = numberSchema.int();
 		// OpenAPI 3.0 writes an exclusive bound as `exclusiveMinimum: true` next to
@@ -579,3 +576,64 @@ export function maskedIssuePath(
 }
 
 export type { MocoOpenApiSchema, MocoOperationDefinition };
+
+const NUMERIC_STRING = /^-?\d+(\.\d+)?$/;
+
+/**
+ * MOCO writes some decimals as strings: an expense's
+ * purchase_items[].net_total came back "9.09" in the live run. This walks a
+ * response next to its documented schema and turns a numeric string into its
+ * number wherever the schema says number or integer. Everything else is left
+ * as it came (a blank string, `false`, `lots`), so the output schema still
+ * refuses it.
+ */
+// `unknown` because the response is untrusted JSON until the output schema parses it.
+export function numbersFromStrings(
+	schema: unknown,
+	value: unknown,
+	depth = 0,
+): unknown {
+	if (depth > 30 || value === null || value === undefined) return value;
+	const resolved = resolve(schema);
+	if (!isRecord(resolved)) return value;
+	if (Array.isArray(resolved.allOf)) {
+		return resolved.allOf.reduce(
+			(current, member) => numbersFromStrings(member, current, depth + 1),
+			value,
+		);
+	}
+	for (const key of ['anyOf', 'oneOf'] as const) {
+		const members = resolved[key];
+		if (Array.isArray(members)) {
+			return members.reduce(
+				(current, member) => numbersFromStrings(member, current, depth + 1),
+				value,
+			);
+		}
+	}
+	const type = resolved.type;
+	if (
+		(type === 'number' || type === 'integer') &&
+		typeof value === 'string' &&
+		NUMERIC_STRING.test(value)
+	) {
+		return Number(value);
+	}
+	if (Array.isArray(value)) {
+		return type === 'array' || resolved.items !== undefined
+			? value.map((item) => numbersFromStrings(resolved.items, item, depth + 1))
+			: value;
+	}
+	if (isRecord(value) && isRecord(resolved.properties)) {
+		const properties = resolved.properties;
+		// `unknown` because each field is converted (or left) by its own schema.
+		const result: Record<string, unknown> = { ...value };
+		for (const [name, inner] of Object.entries(value)) {
+			if (name in properties) {
+				result[name] = numbersFromStrings(properties[name], inner, depth + 1);
+			}
+		}
+		return result;
+	}
+	return value;
+}

@@ -181,6 +181,9 @@ export async function makeMocoRequest(
 
 const REDACTED = '[REDACTED]';
 
+/** How deep into an error body values are checked; anything deeper is replaced. */
+const MAX_ERROR_DEPTH = 6;
+
 /**
  * Core keeps the sent body on `ApiError.request`. A MOCO body can hold
  * customer, contact, payroll and bank details (an IBAN, a salary, an address)
@@ -367,7 +370,9 @@ function escapeRegExp(text: string): string {
 /** Replaces every sent string inside an error body with [REDACTED]. */
 // `unknown` because an error body is whatever JSON (or text) MOCO sent.
 function scrubSent(value: unknown, sent: SentString[], depth = 0): unknown {
-	if (sent.length === 0 || depth > 6) return value;
+	if (sent.length === 0) return value;
+	// A sent value echoed deeper than this is dropped with its subtree.
+	if (depth > MAX_ERROR_DEPTH) return REDACTED;
 	if (typeof value === 'string') {
 		let text = value;
 		for (const item of sent) {
@@ -433,7 +438,9 @@ const ECHO_KEYS = new Set(['value', 'values', 'input', 'received', 'params']);
 /** Drops fields a validation error may use to echo back what was sent. */
 // `unknown` because an error body is whatever JSON (or text) MOCO sent.
 function withoutEchoedValues(body: unknown, depth = 0): unknown {
-	if (depth > 4 || typeof body !== 'object' || body === null) return body;
+	if (typeof body !== 'object' || body === null) return body;
+	// Deeper than the scrub below reaches: nothing of it is kept.
+	if (depth > MAX_ERROR_DEPTH) return REDACTED;
 	if (Array.isArray(body)) {
 		return body.map((item) => withoutEchoedValues(item, depth + 1));
 	}

@@ -230,6 +230,25 @@ describe('responses', () => {
 		).resolves.toEqual({ success: true });
 	});
 
+	it.each([
+		['an empty body', new Uint8Array(), 'application/pdf'],
+		[
+			'an HTML page',
+			new TextEncoder().encode('<!doctype html><p>Sign in</p>'),
+			'text/html',
+		],
+		[
+			'bytes that are not a PDF',
+			new TextEncoder().encode('not a pdf'),
+			'application/pdf',
+		],
+	])('refuses %s on a PDF route', async (_what, bytes, type) => {
+		reply(200, bytes, type);
+		await expect(
+			endpointFor('invoices.getPdf')(ctx(), { id: 77 }),
+		).rejects.toThrow('MOCO invoices.getPdf answered without a file');
+	});
+
 	it('returns a PDF as a file output', async () => {
 		reply(200, new Uint8Array([37, 80, 68, 70]), 'application/pdf');
 		const out = (await endpointFor('invoices.getPdf')(ctx(), { id: 77 })) as {
@@ -334,6 +353,22 @@ describe('errors', () => {
 		);
 	});
 
+	it('drops a sent value echoed deep inside an error body', async () => {
+		reply(422, {
+			message: 'Invalid',
+			errors: {
+				a: { b: { c: { d: { e: { f: { g: { echo: 'Secret Person' } } } } } } },
+			},
+		});
+		const error = (await endpointFor('contacts.create')(ctx(), {
+			firstname: 'Secret',
+			lastname: 'Person',
+		}).catch((e: unknown) => e)) as ApiError;
+		expect(error.message).toBe('MOCO 422: Invalid');
+		expect(JSON.stringify(error.body)).not.toContain('Secret');
+		expect(JSON.stringify(error.body)).not.toContain('Person');
+	});
+
 	it('uses the message body for a 404', async () => {
 		reply(404, { message: 'Not found' });
 		const error = (await endpointFor('deals.get')(ctx(), { id: 1 }).catch(
@@ -399,6 +434,50 @@ describe('what the live run corrected in the spec', () => {
 				.map((op) => op.id),
 		).toEqual(['revenueCategories.delete']);
 	});
+});
+
+// Live run 11-24: an expense booked from a purchase lists its purchase items
+// with net_total as a string (trimmed from the real response).
+describe('decimals MOCO sends as strings', () => {
+	const expense = (netTotal: unknown) => [
+		{
+			id: 6030210,
+			title: 'Test item',
+			quantity: 1,
+			purchase_items: [
+				{
+					id: 6549532,
+					title: 'Test item',
+					net_total: netTotal,
+					purchase_id: 5141848,
+				},
+			],
+		},
+	];
+
+	it('reads a numeric string as its number', async () => {
+		reply(200, expense('9.09'));
+		const result = (await endpointFor('projects.expenses.list')(ctx(), {
+			project_id: 3,
+		})) as {
+			items: Array<{
+				purchase_items: Array<{ net_total: unknown; title: unknown }>;
+			}>;
+		};
+		expect(result.items[0]?.purchase_items[0]?.net_total).toBe(9.09);
+		// A string field that looks like a number stays a string.
+		expect(result.items[0]?.purchase_items[0]?.title).toBe('Test item');
+	});
+
+	it.each([[''], [' '], [false], ['lots']])(
+		'still refuses %p where a number belongs',
+		async (value) => {
+			reply(200, expense(value));
+			await expect(
+				endpointFor('projects.expenses.list')(ctx(), { project_id: 3 }),
+			).rejects.toThrow(/did not match its documented schema/);
+		},
+	);
 });
 
 describe('routes that may answer without a body', () => {
@@ -491,6 +570,26 @@ describe('every operation', () => {
 					} else {
 						expect(body).not.toHaveProperty(name);
 					}
+				}
+			}
+			// Every query field of the example reaches the URL (lists as `name[]`).
+			for (const [name, value] of Object.entries(args)) {
+				const where = (
+					operation.input.properties as
+						| Record<string, Record<string, unknown>>
+						| undefined
+				)?.[name]?.['x-corsair-in'];
+				if (where !== 'query') continue;
+				if (Array.isArray(value)) {
+					expect([name, url.searchParams.getAll(`${name}[]`)]).toEqual([
+						name,
+						value.map(String),
+					]);
+				} else if (typeof value !== 'object' || value === null) {
+					expect([name, url.searchParams.get(name)]).toEqual([
+						name,
+						String(value),
+					]);
 				}
 			}
 		},

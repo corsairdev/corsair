@@ -18560,7 +18560,6 @@ await corsair.moco.api.purchases.update({ id: 1234567 });
 | `cash_discount_until` | `string` | No | — |
 | `custom_properties` | `object` | No | — |
 | `tags` | `string[]` | No | — |
-| `items` | `object[]` | No | — |
 | `file` | `object` | No | — |
 
 <AccordionGroup>
@@ -18569,21 +18568,6 @@ await corsair.moco.api.purchases.update({ id: 1234567 });
 ```ts
 {
 }
-```
-</Accordion>
-
-<Accordion title="items full type">
-
-```ts
-{
-  title?: string,
-  total?: number,
-  tax?: number,
-  vat_code_id?: number,
-  tax_included?: boolean,
-  ksk_relevant?: boolean,
-  category_id?: number
-}[]
 ```
 </Accordion>
 

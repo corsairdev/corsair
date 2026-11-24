@@ -9944,35 +9944,6 @@
               "type": "string"
             }
           },
-          "items": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "type": "string"
-                },
-                "total": {
-                  "type": "number"
-                },
-                "tax": {
-                  "type": "number"
-                },
-                "vat_code_id": {
-                  "type": "integer"
-                },
-                "tax_included": {
-                  "type": "boolean"
-                },
-                "ksk_relevant": {
-                  "type": "boolean"
-                },
-                "category_id": {
-                  "type": "integer"
-                }
-              }
-            }
-          },
           "file": {
             "type": "object",
             "properties": {

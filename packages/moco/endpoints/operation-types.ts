@@ -4886,15 +4886,6 @@ export type MocoOperationInputs = {
 		cash_discount_until?: string;
 		custom_properties?: Record<string, MocoJsonValue>;
 		tags?: Array<string>;
-		items?: Array<{
-			title?: string;
-			total?: number;
-			tax?: number;
-			vat_code_id?: number;
-			tax_included?: boolean;
-			ksk_relevant?: boolean;
-			category_id?: number;
-		}>;
 		file?: {
 			filename?: string;
 			base64?: string;

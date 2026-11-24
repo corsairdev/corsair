@@ -177,41 +177,6 @@ describe('schemas', () => {
 		expect(out.safeParse([{ id: 1 }]).success).toBe(false);
 	});
 
-	// Live run 11-24: an expense booked from a purchase lists its purchase
-	// items with net_total as a string (trimmed from the real response).
-	it('reads a decimal MOCO sends as a string as a number', () => {
-		const out = getMocoOutputSchema('projects.expenses.list');
-		const parsed = out.safeParse({
-			items: [
-				{
-					id: 6030210,
-					title: 'Test item',
-					billed: false,
-					purchase_items: [
-						{
-							id: 6549532,
-							title: 'Test item',
-							net_total: '9.09',
-							currency: 'USD',
-							purchase_id: 5141848,
-						},
-					],
-				},
-			],
-			next_page: null,
-		});
-		expect(parsed.success).toBe(true);
-		const data = parsed.data as {
-			items: Array<{ purchase_items: Array<{ net_total: unknown }> }>;
-		};
-		expect(data.items[0]?.purchase_items[0]?.net_total).toBe(9.09);
-		const expense = getMocoOutputSchema('projects.expenses.get');
-		expect(expense.safeParse({ quantity: 'lots' }).success).toBe(false);
-		const empty = expense.safeParse({ quantity: null, price: undefined });
-		expect(empty.success).toBe(true);
-		expect((empty.data as { quantity: unknown }).quantity).toBeNull();
-	});
-
 	it('parses responses leniently: nulls and unknown fields pass', () => {
 		const out = getMocoOutputSchema('projects.get');
 		const parsed = out.safeParse({
