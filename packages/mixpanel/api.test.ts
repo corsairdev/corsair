@@ -39,8 +39,15 @@ const GATE_REASONS: Record<number, RegExp> = {
 	402: /plan_restricted/,
 	401: /authorization failed/i,
 	403: /does not have permissions/i,
-	404: /Not Found/,
 };
+
+// The Platform API's own 404 carries an error_id; a wrong route's does not.
+function platformNotFound(error: ApiError): boolean {
+	return (
+		error.status === 404 &&
+		typeof (error.body as { error_id?: unknown } | null)?.error_id === 'string'
+	);
+}
 
 type Outcome = { op: string; result: 'pass' | 'gated' | 'fail'; note: string };
 const outcomes: Outcome[] = [];
@@ -94,7 +101,9 @@ async function attempt<T>(
 			gatedStatus !== undefined &&
 			error instanceof ApiError &&
 			error.status === gatedStatus &&
-			(gatedReason ?? GATE_REASONS[gatedStatus] ?? /./).test(error.message)
+			(gatedStatus === 404
+				? platformNotFound(error)
+				: (gatedReason ?? GATE_REASONS[gatedStatus] ?? /./).test(error.message))
 		) {
 			outcomes.push({ op, result: 'gated', note: `${error.status}` });
 			return undefined;

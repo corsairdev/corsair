@@ -510,6 +510,16 @@ describe('round 1 review fixes', () => {
 		expect(form.get('name')).toBe('p1');
 	});
 
+	it('sends list settings JSON-encoded', async () => {
+		fetchMock.mockResolvedValueOnce(reply(200, {}));
+		await api.pipelines.edit(ctx(), {
+			name: 'p1',
+			settings: { bq_share_with_group: ['analytics@example.com'] },
+		});
+		const form = new URLSearchParams(sent().body);
+		expect(form.get('bq_share_with_group')).toBe('["analytics@example.com"]');
+	});
+
 	it.each(['.', '..'])(
 		'refuses %s as a path name before sending',
 		async (name) => {
