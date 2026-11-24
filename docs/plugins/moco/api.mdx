@@ -1798,14 +1798,14 @@ Create account web hook
 **Risk:** `write`
 
 ```ts
-await corsair.moco.api.account.webHooks.create({ target: 'Activity', event: 'example', hook: 'example' });
+await corsair.moco.api.account.webHooks.create({ target: 'Activity', event: 'create', hook: 'https://example.com/moco/webhooks' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `target` | `Activity \| Comment \| Company \| Contact \| Contract \| Deal \| Expense \| Invoice \| Invoice::Approval \| Invoice::BookkeepingExport \| Invoice::Payment \| InvoiceDraft \| InvoiceReminder \| Offer \| PlanningEntry \| Presence \| Project \| Project::PaymentSchedule \| ProjectGroup \| Purchase \| Purchase::Approval \| Purchase::BookkeepingExport \| Purchase::Draft \| Purchase::Order \| Purchase::Payment \| RecurringExpense \| Schedule \| Task \| User \| User::HolidayRequest \| User::AbsenceRequest \| User::PeriodLockOverride \| User::WorkTimeAdjustment` | Yes | — |
+| `target` | `Activity \| Comment \| Company \| Contact \| Contract \| Deal \| Expense \| Invoice \| Invoice::Approval \| Invoice::BookkeepingExport \| Invoice::Payment \| InvoiceDraft \| InvoiceReminder \| Offer \| PlanningEntry \| Presence \| Project \| Project::PaymentSchedule \| ProjectGroup \| Purchase \| Purchase::Approval \| Purchase::BookkeepingExport \| Purchase::Draft \| Purchase::Order \| Purchase::Payment \| RecurringExpense \| Schedule \| Task \| User \| User::HolidayRequest \| User::AbsenceRequest \| User::PeriodLockOverride \| User::WorkTimeAdjustment` | Yes | Resource type a webhook watches for events. Values correspond to internal class names. Namespace qualifiers (`::`) are used where the resource lives under another model (for example `Invoice::Approval`, `Project::PaymentSchedule`, `User::AbsenceRequest`). |
 | `event` | `string` | Yes | — |
 | `hook` | `string` | Yes | — |
 
@@ -1816,7 +1816,7 @@ await corsair.moco.api.account.webHooks.create({ target: 'Activity', event: 'exa
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| null` | No | — |
-| `target` | `string \| null` | No | — |
+| `target` | `string \| null` | No | Resource type a webhook watches for events. Values correspond to internal class names. Namespace qualifiers (`::`) are used where the resource lives under another model (for example `Invoice::Approval`, `Project::PaymentSchedule`, `User::AbsenceRequest`). |
 | `event` | `string \| null` | No | — |
 | `hook` | `string \| null` | No | — |
 | `disabled` | `boolean \| null` | No | — |
@@ -1898,7 +1898,7 @@ await corsair.moco.api.account.webHooks.disable({ id: 1234567 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| null` | No | — |
-| `target` | `string \| null` | No | — |
+| `target` | `string \| null` | No | Resource type a webhook watches for events. Values correspond to internal class names. Namespace qualifiers (`::`) are used where the resource lives under another model (for example `Invoice::Approval`, `Project::PaymentSchedule`, `User::AbsenceRequest`). |
 | `event` | `string \| null` | No | — |
 | `hook` | `string \| null` | No | — |
 | `disabled` | `boolean \| null` | No | — |
@@ -1935,7 +1935,7 @@ await corsair.moco.api.account.webHooks.enable({ id: 1234567 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| null` | No | — |
-| `target` | `string \| null` | No | — |
+| `target` | `string \| null` | No | Resource type a webhook watches for events. Values correspond to internal class names. Namespace qualifiers (`::`) are used where the resource lives under another model (for example `Invoice::Approval`, `Project::PaymentSchedule`, `User::AbsenceRequest`). |
 | `event` | `string \| null` | No | — |
 | `hook` | `string \| null` | No | — |
 | `disabled` | `boolean \| null` | No | — |
@@ -1972,7 +1972,7 @@ await corsair.moco.api.account.webHooks.get({ id: 1234567 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| null` | No | — |
-| `target` | `string \| null` | No | — |
+| `target` | `string \| null` | No | Resource type a webhook watches for events. Values correspond to internal class names. Namespace qualifiers (`::`) are used where the resource lives under another model (for example `Invoice::Approval`, `Project::PaymentSchedule`, `User::AbsenceRequest`). |
 | `event` | `string \| null` | No | — |
 | `hook` | `string \| null` | No | — |
 | `disabled` | `boolean \| null` | No | — |
@@ -2045,7 +2045,7 @@ Update account web hook: only `hook` can be changed
 **Risk:** `write`
 
 ```ts
-await corsair.moco.api.account.webHooks.update({ id: 1234567, hook: 'example' });
+await corsair.moco.api.account.webHooks.update({ id: 1234567, hook: 'https://example.com/moco/webhooks' });
 ```
 
 **Input**
@@ -2062,7 +2062,7 @@ await corsair.moco.api.account.webHooks.update({ id: 1234567, hook: 'example' })
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `number \| null` | No | — |
-| `target` | `string \| null` | No | — |
+| `target` | `string \| null` | No | Resource type a webhook watches for events. Values correspond to internal class names. Namespace qualifiers (`::`) are used where the resource lives under another model (for example `Invoice::Approval`, `Project::PaymentSchedule`, `User::AbsenceRequest`). |
 | `event` | `string \| null` | No | — |
 | `hook` | `string \| null` | No | — |
 | `disabled` | `boolean \| null` | No | — |
@@ -2232,10 +2232,10 @@ await corsair.moco.api.activities.create({
 | `remote_service` | `string \| null \| null` | No | External integration identifier. |
 | `remote_id` | `string \| null \| null` | No | External activity ID. |
 | `remote_url` | `string \| null \| null` | No | External activity URL. |
-| `project` | `object \| null` | No | — |
-| `task` | `object \| null` | No | — |
-| `customer` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `project` | `object \| null` | No | Minimal project reference used in nested resources. |
+| `task` | `object \| null` | No | Minimal task reference used in nested resources. |
+| `customer` | `object \| null` | No | Minimal company reference used in nested resources. |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `deal` | `object \| null` | No | — |
 | `hourly_rate` | `number \| null \| null` | No | Effective hourly rate if visible to caller. |
 | `seconds` | `number \| null` | No | Tracked seconds. |
@@ -2393,7 +2393,7 @@ Disregard activities for invoicing: marks selected activities as disregarded for
 ```ts
 await corsair.moco.api.activities.disregard({
 	company_id: 889,
-	reason: 'example',
+	reason: 'Created by mistake',
 	activity_ids: [1],
 });
 ```
@@ -2450,10 +2450,10 @@ await corsair.moco.api.activities.get({ id: 654321 });
 | `remote_service` | `string \| null \| null` | No | External integration identifier. |
 | `remote_id` | `string \| null \| null` | No | External activity ID. |
 | `remote_url` | `string \| null \| null` | No | External activity URL. |
-| `project` | `object \| null` | No | — |
-| `task` | `object \| null` | No | — |
-| `customer` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `project` | `object \| null` | No | Minimal project reference used in nested resources. |
+| `task` | `object \| null` | No | Minimal task reference used in nested resources. |
+| `customer` | `object \| null` | No | Minimal company reference used in nested resources. |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `deal` | `object \| null` | No | — |
 | `hourly_rate` | `number \| null \| null` | No | Effective hourly rate if visible to caller. |
 | `seconds` | `number \| null` | No | Tracked seconds. |
@@ -2655,10 +2655,10 @@ await corsair.moco.api.activities.startTimer({ id: 1234567 });
 | `remote_service` | `string \| null \| null` | No | External integration identifier. |
 | `remote_id` | `string \| null \| null` | No | External activity ID. |
 | `remote_url` | `string \| null \| null` | No | External activity URL. |
-| `project` | `object \| null` | No | — |
-| `task` | `object \| null` | No | — |
-| `customer` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `project` | `object \| null` | No | Minimal project reference used in nested resources. |
+| `task` | `object \| null` | No | Minimal task reference used in nested resources. |
+| `customer` | `object \| null` | No | Minimal company reference used in nested resources. |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `deal` | `object \| null` | No | — |
 | `hourly_rate` | `number \| null \| null` | No | Effective hourly rate if visible to caller. |
 | `seconds` | `number \| null` | No | Tracked seconds. |
@@ -2762,10 +2762,10 @@ await corsair.moco.api.activities.stopTimer({ id: 1234567 });
 | `remote_service` | `string \| null \| null` | No | External integration identifier. |
 | `remote_id` | `string \| null \| null` | No | External activity ID. |
 | `remote_url` | `string \| null \| null` | No | External activity URL. |
-| `project` | `object \| null` | No | — |
-| `task` | `object \| null` | No | — |
-| `customer` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `project` | `object \| null` | No | Minimal project reference used in nested resources. |
+| `task` | `object \| null` | No | Minimal task reference used in nested resources. |
+| `customer` | `object \| null` | No | Minimal company reference used in nested resources. |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `deal` | `object \| null` | No | — |
 | `hourly_rate` | `number \| null \| null` | No | Effective hourly rate if visible to caller. |
 | `seconds` | `number \| null` | No | Tracked seconds. |
@@ -2882,10 +2882,10 @@ await corsair.moco.api.activities.update({ id: 654321, description: 'Kickoff cal
 | `remote_service` | `string \| null \| null` | No | External integration identifier. |
 | `remote_id` | `string \| null \| null` | No | External activity ID. |
 | `remote_url` | `string \| null \| null` | No | External activity URL. |
-| `project` | `object \| null` | No | — |
-| `task` | `object \| null` | No | — |
-| `customer` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `project` | `object \| null` | No | Minimal project reference used in nested resources. |
+| `task` | `object \| null` | No | Minimal task reference used in nested resources. |
+| `customer` | `object \| null` | No | Minimal company reference used in nested resources. |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `deal` | `object \| null` | No | — |
 | `hourly_rate` | `number \| null \| null` | No | Effective hourly rate if visible to caller. |
 | `seconds` | `number \| null` | No | Tracked seconds. |
@@ -2990,10 +2990,10 @@ await corsair.moco.api.activities.updateBillableSeconds({ id: 1234567 });
 | `remote_service` | `string \| null \| null` | No | External integration identifier. |
 | `remote_id` | `string \| null \| null` | No | External activity ID. |
 | `remote_url` | `string \| null \| null` | No | External activity URL. |
-| `project` | `object \| null` | No | — |
-| `task` | `object \| null` | No | — |
-| `customer` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `project` | `object \| null` | No | Minimal project reference used in nested resources. |
+| `task` | `object \| null` | No | Minimal task reference used in nested resources. |
+| `customer` | `object \| null` | No | Minimal company reference used in nested resources. |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `deal` | `object \| null` | No | — |
 | `hourly_rate` | `number \| null \| null` | No | Effective hourly rate if visible to caller. |
 | `seconds` | `number \| null` | No | Tracked seconds. |
@@ -3725,8 +3725,8 @@ await corsair.moco.api.comments.create({});
 | `manual` | `boolean \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
-| `user` | `object \| null` | No | — |
-| `impersonating_user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `impersonating_user` | `object \| null` | No | Minimal user reference used in nested resources. |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -3817,8 +3817,8 @@ await corsair.moco.api.comments.get({ id: 1234567 });
 | `manual` | `boolean \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
-| `user` | `object \| null` | No | — |
-| `impersonating_user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `impersonating_user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `attachment_filename` | `string \| null \| null` | No | — |
 | `attachment_content` | `string \| null \| null` | No | Base64 encoded attachment content. |
 
@@ -3952,8 +3952,8 @@ await corsair.moco.api.comments.update({ id: 1234567 });
 | `manual` | `boolean \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
-| `user` | `object \| null` | No | — |
-| `impersonating_user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `impersonating_user` | `object \| null` | No | Minimal user reference used in nested resources. |
 
 <AccordionGroup>
 <Accordion title="user full type">
@@ -4025,7 +4025,7 @@ await corsair.moco.api.companies.archive({ id: 889 });
 | `english_correspondence_language` | `boolean \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
 | `labels` | `string[] \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `info` | `string \| null \| null` | No | — |
 | `footer` | `string \| null \| null` | No | — |
 | `custom_properties` | `object \| null` | No | — |
@@ -4206,7 +4206,7 @@ await corsair.moco.api.companies.create({
 | `english_correspondence_language` | `boolean \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
 | `labels` | `string[] \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `info` | `string \| null \| null` | No | — |
 | `footer` | `string \| null \| null` | No | — |
 | `custom_properties` | `object \| null` | No | — |
@@ -4445,7 +4445,7 @@ await corsair.moco.api.companies.get({ id: 889 });
 | `english_correspondence_language` | `boolean \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
 | `labels` | `string[] \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `info` | `string \| null \| null` | No | — |
 | `footer` | `string \| null \| null` | No | — |
 | `custom_properties` | `object \| null` | No | — |
@@ -4697,7 +4697,7 @@ await corsair.moco.api.companies.unarchive({ id: 889 });
 | `english_correspondence_language` | `boolean \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
 | `labels` | `string[] \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `info` | `string \| null \| null` | No | — |
 | `footer` | `string \| null \| null` | No | — |
 | `custom_properties` | `object \| null` | No | — |
@@ -4874,7 +4874,7 @@ await corsair.moco.api.companies.update({ id: 889, info: 'Retainer client' });
 | `english_correspondence_language` | `boolean \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
 | `labels` | `string[] \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `info` | `string \| null \| null` | No | — |
 | `footer` | `string \| null \| null` | No | — |
 | `custom_properties` | `object \| null` | No | — |
@@ -5063,7 +5063,7 @@ await corsair.moco.api.contacts.create({
 | `tags` | `string[] \| null` | No | — |
 | `custom_properties` | `object \| null` | No | — |
 | `company` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -5216,7 +5216,7 @@ await corsair.moco.api.contacts.get({ id: 4471 });
 | `tags` | `string[] \| null` | No | — |
 | `custom_properties` | `object \| null` | No | — |
 | `company` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -5424,7 +5424,7 @@ await corsair.moco.api.contacts.update({ id: 4471, job_position: 'CEO' });
 | `tags` | `string[] \| null` | No | — |
 | `custom_properties` | `object \| null` | No | — |
 | `company` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -5729,7 +5729,7 @@ await corsair.moco.api.deals.create({
 | `info` | `string \| null \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
 | `custom_properties` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `person` | `object \| null` | No | — |
 | `customer` | `object \| null` | No | — |
 | `company` | `object \| null` | No | — |
@@ -5917,7 +5917,7 @@ await corsair.moco.api.deals.get({ id: 991 });
 | `info` | `string \| null \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
 | `custom_properties` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `person` | `object \| null` | No | — |
 | `customer` | `object \| null` | No | — |
 | `company` | `object \| null` | No | — |
@@ -6145,7 +6145,7 @@ await corsair.moco.api.deals.update({ id: 991, status: 'won', closed_on: '2026-0
 | `info` | `string \| null \| null` | No | — |
 | `tags` | `string[] \| null` | No | — |
 | `custom_properties` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `person` | `object \| null` | No | — |
 | `customer` | `object \| null` | No | — |
 | `company` | `object \| null` | No | — |
@@ -6506,7 +6506,7 @@ Create invoice attachment: uploads a file as invoice attachment using base64-enc
 ```ts
 await corsair.moco.api.invoices.attachments.create({
 	invoice_id: 777001,
-	attachment: { filename: 'example', base64: 'example' },
+	attachment: { filename: 'receipt.pdf', base64: 'JVBERi0xLjQKJSVFT0YK' },
 });
 ```
 
@@ -6656,7 +6656,7 @@ await corsair.moco.api.invoices.bookkeepingExports.create({});
 | `to` | `string \| null` | No | — |
 | `invoice_ids` | `number[] \| null` | No | — |
 | `comment` | `string \| null \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `status` | `string \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
@@ -6707,7 +6707,7 @@ await corsair.moco.api.invoices.bookkeepingExports.get({ id: 1234567 });
 | `to` | `string \| null` | No | — |
 | `invoice_ids` | `number[] \| null` | No | — |
 | `comment` | `string \| null \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `status` | `string \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
@@ -6796,9 +6796,11 @@ Create invoice
 ```ts
 await corsair.moco.api.invoices.create({
 	customer_id: 1,
-	recipient_address: 'example',
+	recipient_address: 'Beachy GmbH
+Example Street 1
+10115 Berlin',
 	date: '2026-04-09',
-	due_date: 'example',
+	due_date: '2026-04-09',
 	title: 'Website Relaunch',
 	currency: 'EUR',
 	items: [{ type: 'title' }],
@@ -6913,9 +6915,9 @@ await corsair.moco.api.invoices.create({
 | `tags` | `string[] \| null` | No | Invoice tags. |
 | `letter_paper_id` | `number \| null \| null` | No | Letter paper ID used for this invoice. Available letter papers can be fetched via `GET /api/v1/letter_papers`. |
 | `without_letter_paper` | `boolean \| null` | No | Whether the invoice is set to be printed without letter paper (white). When `true`, `letter_paper_id` will be `null`. |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `file_url` | `string \| null \| null` | No | Download URL to the invoice file. URL is temporary and can change. |
-| `debt_collection_procedure` | `object \| null` | No | — |
+| `debt_collection_procedure` | `object \| null` | No | A debt collection procedure linked to an invoice. |
 | `created_at` | `string \| null` | No | Creation timestamp in UTC. |
 | `updated_at` | `string \| null` | No | Last update timestamp in UTC. |
 | `created_on` | `string \| null` | No | Deprecated date-only version of `created_at`. |
@@ -6925,7 +6927,7 @@ await corsair.moco.api.invoices.create({
 | `items` | `object[] \| null` | No | Invoice line items in display order. |
 | `payments` | `object[] \| null` | No | Payments linked to this invoice. |
 | `reminders` | `object[] \| null` | No | Payment reminders linked to this invoice. |
-| `internal_contact` | `object \| null` | No | — |
+| `internal_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `activity_hours_modified` | `boolean \| null` | No | Indicates that invoiced activity hours were modified. |
 
 <AccordionGroup>
@@ -7145,9 +7147,9 @@ await corsair.moco.api.invoices.get({ id: 777001 });
 | `tags` | `string[] \| null` | No | Invoice tags. |
 | `letter_paper_id` | `number \| null \| null` | No | Letter paper ID used for this invoice. Available letter papers can be fetched via `GET /api/v1/letter_papers`. |
 | `without_letter_paper` | `boolean \| null` | No | Whether the invoice is set to be printed without letter paper (white). When `true`, `letter_paper_id` will be `null`. |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `file_url` | `string \| null \| null` | No | Download URL to the invoice file. URL is temporary and can change. |
-| `debt_collection_procedure` | `object \| null` | No | — |
+| `debt_collection_procedure` | `object \| null` | No | A debt collection procedure linked to an invoice. |
 | `created_at` | `string \| null` | No | Creation timestamp in UTC. |
 | `updated_at` | `string \| null` | No | Last update timestamp in UTC. |
 | `created_on` | `string \| null` | No | Deprecated date-only version of `created_at`. |
@@ -7157,7 +7159,7 @@ await corsair.moco.api.invoices.get({ id: 777001 });
 | `items` | `object[] \| null` | No | Invoice line items in display order. |
 | `payments` | `object[] \| null` | No | Payments linked to this invoice. |
 | `reminders` | `object[] \| null` | No | Payment reminders linked to this invoice. |
-| `internal_contact` | `object \| null` | No | — |
+| `internal_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `activity_hours_modified` | `boolean \| null` | No | Indicates that invoiced activity hours were modified. |
 
 <AccordionGroup>
@@ -8330,7 +8332,7 @@ await corsair.moco.api.offerConfirmations.create({ offer_id: 456001 });
 | `salutation_raw` | `string \| null` | No | Salutation text (raw HTML). |
 | `footer_raw` | `string \| null` | No | Footer text (raw HTML). |
 | `file_url` | `string \| null` | No | Full URL to the generated PDF document via the API v1 endpoint. |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `offer` | `object \| null` | No | Parent offer. |
 
 <AccordionGroup>
@@ -8445,7 +8447,7 @@ await corsair.moco.api.offerConfirmations.get({ id: 1234567 });
 | `salutation_raw` | `string \| null` | No | Salutation text (raw HTML). |
 | `footer_raw` | `string \| null` | No | Footer text (raw HTML). |
 | `file_url` | `string \| null` | No | Full URL to the generated PDF document via the API v1 endpoint. |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `offer` | `object \| null` | No | Parent offer. |
 
 <AccordionGroup>
@@ -8609,7 +8611,7 @@ await corsair.moco.api.offerConfirmations.update({ id: 1234567 });
 | `salutation_raw` | `string \| null` | No | Salutation text (raw HTML). |
 | `footer_raw` | `string \| null` | No | Footer text (raw HTML). |
 | `file_url` | `string \| null` | No | Full URL to the generated PDF document via the API v1 endpoint. |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `offer` | `object \| null` | No | Parent offer. |
 
 <AccordionGroup>
@@ -8688,7 +8690,7 @@ await corsair.moco.api.offers.assign({ id: 1234567 });
 | `company` | `object \| null` | No | — |
 | `project` | `object \| null` | No | — |
 | `deal` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `offer_confirmation` | `object \| null` | No | — |
 | `customer_approval` | `object \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
@@ -8699,7 +8701,7 @@ await corsair.moco.api.offers.assign({ id: 1234567 });
 | `salutation` | `string \| null \| null` | No | — |
 | `footer` | `string \| null \| null` | No | — |
 | `items` | `object[] \| null` | No | — |
-| `internal_contact` | `object \| null` | No | — |
+| `internal_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
 
 <AccordionGroup>
 <Accordion title="vat full type">
@@ -8853,7 +8855,7 @@ Create offer attachment
 ```ts
 await corsair.moco.api.offers.attachments.create({
 	offer_id: 456001,
-	attachment: { filename: 'example', base64: 'example' },
+	attachment: { filename: 'receipt.pdf', base64: 'JVBERi0xLjQKJSVFT0YK' },
 });
 ```
 
@@ -9073,7 +9075,7 @@ await corsair.moco.api.offers.create({
 | `company` | `object \| null` | No | — |
 | `project` | `object \| null` | No | — |
 | `deal` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `offer_confirmation` | `object \| null` | No | — |
 | `customer_approval` | `object \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
@@ -9084,7 +9086,7 @@ await corsair.moco.api.offers.create({
 | `salutation` | `string \| null \| null` | No | — |
 | `footer` | `string \| null \| null` | No | — |
 | `items` | `object[] \| null` | No | — |
-| `internal_contact` | `object \| null` | No | — |
+| `internal_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
 
 <AccordionGroup>
 <Accordion title="vat full type">
@@ -9520,7 +9522,7 @@ await corsair.moco.api.offers.get({ id: 1234567 });
 | `company` | `object \| null` | No | — |
 | `project` | `object \| null` | No | — |
 | `deal` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `offer_confirmation` | `object \| null` | No | — |
 | `customer_approval` | `object \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
@@ -9531,7 +9533,7 @@ await corsair.moco.api.offers.get({ id: 1234567 });
 | `salutation` | `string \| null \| null` | No | — |
 | `footer` | `string \| null \| null` | No | — |
 | `items` | `object[] \| null` | No | — |
-| `internal_contact` | `object \| null` | No | — |
+| `internal_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
 
 <AccordionGroup>
 <Accordion title="vat full type">
@@ -9967,7 +9969,7 @@ await corsair.moco.api.offers.update({ id: 1234567 });
 | `company` | `object \| null` | No | — |
 | `project` | `object \| null` | No | — |
 | `deal` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `offer_confirmation` | `object \| null` | No | — |
 | `customer_approval` | `object \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
@@ -9978,7 +9980,7 @@ await corsair.moco.api.offers.update({ id: 1234567 });
 | `salutation` | `string \| null \| null` | No | — |
 | `footer` | `string \| null \| null` | No | — |
 | `items` | `object[] \| null` | No | — |
-| `internal_contact` | `object \| null` | No | — |
+| `internal_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
 
 <AccordionGroup>
 <Accordion title="vat full type">
@@ -10220,7 +10222,7 @@ await corsair.moco.api.plannedPurchases.create({
 | `currency` | `string \| null` | No | Currency code (ISO 4217). |
 | `company` | `object \| null` | No | — |
 | `purchase_budget` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `purchases` | `object[] \| null` | No | Linked purchases created from this planned purchase. |
 | `custom_properties` | `object \| null` | No | Custom property values for the planned purchase. |
 | `create_on_recur` | `boolean \| null` | No | Whether to automatically create purchases on recurrence. |
@@ -10404,7 +10406,7 @@ await corsair.moco.api.plannedPurchases.get({ id: 1234567 });
 | `currency` | `string \| null` | No | Currency code (ISO 4217). |
 | `company` | `object \| null` | No | — |
 | `purchase_budget` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `purchases` | `object[] \| null` | No | Linked purchases created from this planned purchase. |
 | `custom_properties` | `object \| null` | No | Custom property values for the planned purchase. |
 | `create_on_recur` | `boolean \| null` | No | Whether to automatically create purchases on recurrence. |
@@ -10616,7 +10618,7 @@ await corsair.moco.api.plannedPurchases.update({ id: 1234567 });
 | `currency` | `string \| null` | No | Currency code (ISO 4217). |
 | `company` | `object \| null` | No | — |
 | `purchase_budget` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `purchases` | `object[] \| null` | No | Linked purchases created from this planned purchase. |
 | `custom_properties` | `object \| null` | No | Custom property values for the planned purchase. |
 | `create_on_recur` | `boolean \| null` | No | Whether to automatically create purchases on recurrence. |
@@ -10729,7 +10731,7 @@ await corsair.moco.api.planningEntries.create({});
 | `symbol` | `number \| null \| null` | No | — |
 | `color` | `string \| null \| null` | No | — |
 | `read_only` | `boolean \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `project` | `object \| null` | No | — |
 | `task` | `object \| null` | No | — |
 | `deal` | `object \| null` | No | — |
@@ -10897,7 +10899,7 @@ await corsair.moco.api.planningEntries.get({ id: 1234567 });
 | `symbol` | `number \| null \| null` | No | — |
 | `color` | `string \| null \| null` | No | — |
 | `read_only` | `boolean \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `project` | `object \| null` | No | — |
 | `task` | `object \| null` | No | — |
 | `deal` | `object \| null` | No | — |
@@ -11088,7 +11090,7 @@ await corsair.moco.api.planningEntries.update({ id: 1234567 });
 | `symbol` | `number \| null \| null` | No | — |
 | `color` | `string \| null \| null` | No | — |
 | `read_only` | `boolean \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `project` | `object \| null` | No | — |
 | `task` | `object \| null` | No | — |
 | `deal` | `object \| null` | No | — |
@@ -11322,16 +11324,16 @@ await corsair.moco.api.projects.archive({ id: 1234567 });
 | `tags` | `string[] \| null` | No | Tag names assigned to this project. |
 | `labels` | `string[] \| null` | No | Deprecated alias for `tags`. |
 | `custom_properties` | `object \| null` | No | Custom field values keyed by custom field name. |
-| `leader` | `object \| null` | No | — |
-| `co_leader` | `object \| null` | No | — |
+| `leader` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `co_leader` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `customer` | `object \| null` | No | Customer representation. Returns `{id, name}` by default; full company payload when `include_company=true` is passed. |
 | `tasks` | `object[] \| null` | No | Project tasks/services. |
 | `contracts` | `object[] \| null` | No | Assigned user contracts. |
 | `deal` | `object \| null` | No | — |
 | `project_group` | `object \| null` | No | — |
-| `billing_contact` | `object \| null` | No | — |
-| `contact` | `object \| null` | No | — |
-| `secondary_contact` | `object \| null` | No | — |
+| `billing_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `contact` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `secondary_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `archived_on` | `string \| null \| null` | No | Timestamp when project was archived. |
 | `created_at` | `string \| null` | No | Creation timestamp in UTC. |
 | `updated_at` | `string \| null` | No | Last update timestamp in UTC. |
@@ -11589,16 +11591,16 @@ await corsair.moco.api.projects.assignProjectGroup({ id: 1234567, project_group_
 | `tags` | `string[] \| null` | No | Tag names assigned to this project. |
 | `labels` | `string[] \| null` | No | Deprecated alias for `tags`. |
 | `custom_properties` | `object \| null` | No | Custom field values keyed by custom field name. |
-| `leader` | `object \| null` | No | — |
-| `co_leader` | `object \| null` | No | — |
+| `leader` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `co_leader` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `customer` | `object \| null` | No | Customer representation. Returns `{id, name}` by default; full company payload when `include_company=true` is passed. |
 | `tasks` | `object[] \| null` | No | Project tasks/services. |
 | `contracts` | `object[] \| null` | No | Assigned user contracts. |
 | `deal` | `object \| null` | No | — |
 | `project_group` | `object \| null` | No | — |
-| `billing_contact` | `object \| null` | No | — |
-| `contact` | `object \| null` | No | — |
-| `secondary_contact` | `object \| null` | No | — |
+| `billing_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `contact` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `secondary_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `archived_on` | `string \| null \| null` | No | Timestamp when project was archived. |
 | `created_at` | `string \| null` | No | Creation timestamp in UTC. |
 | `updated_at` | `string \| null` | No | Last update timestamp in UTC. |
@@ -12175,16 +12177,16 @@ await corsair.moco.api.projects.create({ name: 'Website Relaunch', company_id: 8
 | `tags` | `string[] \| null` | No | Tag names assigned to this project. |
 | `labels` | `string[] \| null` | No | Deprecated alias for `tags`. |
 | `custom_properties` | `object \| null` | No | Custom field values keyed by custom field name. |
-| `leader` | `object \| null` | No | — |
-| `co_leader` | `object \| null` | No | — |
+| `leader` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `co_leader` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `customer` | `object \| null` | No | Customer representation. Returns `{id, name}` by default; full company payload when `include_company=true` is passed. |
 | `tasks` | `object[] \| null` | No | Project tasks/services. |
 | `contracts` | `object[] \| null` | No | Assigned user contracts. |
 | `deal` | `object \| null` | No | — |
 | `project_group` | `object \| null` | No | — |
-| `billing_contact` | `object \| null` | No | — |
-| `contact` | `object \| null` | No | — |
-| `secondary_contact` | `object \| null` | No | — |
+| `billing_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `contact` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `secondary_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `archived_on` | `string \| null \| null` | No | Timestamp when project was archived. |
 | `created_at` | `string \| null` | No | Creation timestamp in UTC. |
 | `updated_at` | `string \| null` | No | Last update timestamp in UTC. |
@@ -12833,11 +12835,11 @@ await corsair.moco.api.projects.expenses.create({ project_id: 1234567 });
 | `recurring_expense_id` | `number \| null \| null` | No | Linked recurring expense ID. |
 | `file_url` | `string \| null \| null` | No | Linked document URL. |
 | `custom_properties` | `object \| null` | No | Custom field values keyed by custom field name. |
-| `company` | `object \| null` | No | — |
-| `project` | `object \| null` | No | — |
+| `company` | `object \| null` | No | Minimal company reference used in nested resources. |
+| `project` | `object \| null` | No | Minimal project reference used in nested resources. |
 | `group` | `object \| null` | No | — |
 | `purchase_items` | `object[] \| null` | No | Linked purchase item allocations. |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `revenue_category` | `object \| null` | No | — |
 | `created_at` | `string \| null` | No | Creation timestamp in UTC. |
 | `updated_at` | `string \| null` | No | Last update timestamp in UTC. |
@@ -13044,7 +13046,7 @@ Disregard project expenses: marks selected expenses as disregarded for billing c
 ```ts
 await corsair.moco.api.projects.expenses.disregard({
 	project_id: 1234567,
-	reason: 'example',
+	reason: 'Created by mistake',
 	expense_ids: [1],
 });
 ```
@@ -13118,11 +13120,11 @@ await corsair.moco.api.projects.expenses.get({ project_id: 1234567, id: 1234567 
 | `recurring_expense_id` | `number \| null \| null` | No | Linked recurring expense ID. |
 | `file_url` | `string \| null \| null` | No | Linked document URL. |
 | `custom_properties` | `object \| null` | No | Custom field values keyed by custom field name. |
-| `company` | `object \| null` | No | — |
-| `project` | `object \| null` | No | — |
+| `company` | `object \| null` | No | Minimal company reference used in nested resources. |
+| `project` | `object \| null` | No | Minimal project reference used in nested resources. |
 | `group` | `object \| null` | No | — |
 | `purchase_items` | `object[] \| null` | No | Linked purchase item allocations. |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `revenue_category` | `object \| null` | No | — |
 | `created_at` | `string \| null` | No | Creation timestamp in UTC. |
 | `updated_at` | `string \| null` | No | Last update timestamp in UTC. |
@@ -13534,11 +13536,11 @@ await corsair.moco.api.projects.expenses.update({ project_id: 1234567, id: 12345
 | `recurring_expense_id` | `number \| null \| null` | No | Linked recurring expense ID. |
 | `file_url` | `string \| null \| null` | No | Linked document URL. |
 | `custom_properties` | `object \| null` | No | Custom field values keyed by custom field name. |
-| `company` | `object \| null` | No | — |
-| `project` | `object \| null` | No | — |
+| `company` | `object \| null` | No | Minimal company reference used in nested resources. |
+| `project` | `object \| null` | No | Minimal project reference used in nested resources. |
 | `group` | `object \| null` | No | — |
 | `purchase_items` | `object[] \| null` | No | Linked purchase item allocations. |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `revenue_category` | `object \| null` | No | — |
 | `created_at` | `string \| null` | No | Creation timestamp in UTC. |
 | `updated_at` | `string \| null` | No | Last update timestamp in UTC. |
@@ -13685,16 +13687,16 @@ await corsair.moco.api.projects.get({ id: 1234567, include_company: true });
 | `tags` | `string[] \| null` | No | Tag names assigned to this project. |
 | `labels` | `string[] \| null` | No | Deprecated alias for `tags`. |
 | `custom_properties` | `object \| null` | No | Custom field values keyed by custom field name. |
-| `leader` | `object \| null` | No | — |
-| `co_leader` | `object \| null` | No | — |
+| `leader` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `co_leader` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `customer` | `object \| null` | No | Customer representation. Returns `{id, name}` by default; full company payload when `include_company=true` is passed. |
 | `tasks` | `object[] \| null` | No | Project tasks/services. |
 | `contracts` | `object[] \| null` | No | Assigned user contracts. |
 | `deal` | `object \| null` | No | — |
 | `project_group` | `object \| null` | No | — |
-| `billing_contact` | `object \| null` | No | — |
-| `contact` | `object \| null` | No | — |
-| `secondary_contact` | `object \| null` | No | — |
+| `billing_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `contact` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `secondary_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `archived_on` | `string \| null \| null` | No | Timestamp when project was archived. |
 | `created_at` | `string \| null` | No | Creation timestamp in UTC. |
 | `updated_at` | `string \| null` | No | Last update timestamp in UTC. |
@@ -13924,7 +13926,7 @@ await corsair.moco.api.projects.groups.get({ id: 1234567 });
 |------|------|----------|-------------|
 | `id` | `number \| null` | No | — |
 | `name` | `string \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `company` | `object \| null` | No | — |
 | `budget` | `number \| null` | No | — |
 | `currency` | `string \| null \| null` | No | — |
@@ -14744,8 +14746,8 @@ await corsair.moco.api.projects.recurringExpenses.create({ project_id: 1234567 }
 | `purchase_assignment_locked` | `boolean \| null` | No | — |
 | `service_period_direction` | `string \| null` | No | — |
 | `custom_properties` | `object \| null` | No | — |
-| `project` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `project` | `object \| null` | No | Minimal project reference used in nested resources. |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `revenue_category` | `object \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
@@ -14922,8 +14924,8 @@ await corsair.moco.api.projects.recurringExpenses.get({ project_id: 1234567, id:
 | `purchase_assignment_locked` | `boolean \| null` | No | — |
 | `service_period_direction` | `string \| null` | No | — |
 | `custom_properties` | `object \| null` | No | — |
-| `project` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `project` | `object \| null` | No | Minimal project reference used in nested resources. |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `revenue_category` | `object \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
@@ -15114,11 +15116,11 @@ await corsair.moco.api.projects.recurringExpenses.recur({ project_id: 1234567, i
 | `recurring_expense_id` | `number \| null \| null` | No | Linked recurring expense ID. |
 | `file_url` | `string \| null \| null` | No | Linked document URL. |
 | `custom_properties` | `object \| null` | No | Custom field values keyed by custom field name. |
-| `company` | `object \| null` | No | — |
-| `project` | `object \| null` | No | — |
+| `company` | `object \| null` | No | Minimal company reference used in nested resources. |
+| `project` | `object \| null` | No | Minimal project reference used in nested resources. |
 | `group` | `object \| null` | No | — |
 | `purchase_items` | `object[] \| null` | No | Linked purchase item allocations. |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `revenue_category` | `object \| null` | No | — |
 | `created_at` | `string \| null` | No | Creation timestamp in UTC. |
 | `updated_at` | `string \| null` | No | Last update timestamp in UTC. |
@@ -15282,8 +15284,8 @@ await corsair.moco.api.projects.recurringExpenses.update({ project_id: 1234567, 
 | `purchase_assignment_locked` | `boolean \| null` | No | — |
 | `service_period_direction` | `string \| null` | No | — |
 | `custom_properties` | `object \| null` | No | — |
-| `project` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `project` | `object \| null` | No | Minimal project reference used in nested resources. |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `revenue_category` | `object \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
@@ -15770,16 +15772,16 @@ await corsair.moco.api.projects.unarchive({ id: 1234567 });
 | `tags` | `string[] \| null` | No | Tag names assigned to this project. |
 | `labels` | `string[] \| null` | No | Deprecated alias for `tags`. |
 | `custom_properties` | `object \| null` | No | Custom field values keyed by custom field name. |
-| `leader` | `object \| null` | No | — |
-| `co_leader` | `object \| null` | No | — |
+| `leader` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `co_leader` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `customer` | `object \| null` | No | Customer representation. Returns `{id, name}` by default; full company payload when `include_company=true` is passed. |
 | `tasks` | `object[] \| null` | No | Project tasks/services. |
 | `contracts` | `object[] \| null` | No | Assigned user contracts. |
 | `deal` | `object \| null` | No | — |
 | `project_group` | `object \| null` | No | — |
-| `billing_contact` | `object \| null` | No | — |
-| `contact` | `object \| null` | No | — |
-| `secondary_contact` | `object \| null` | No | — |
+| `billing_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `contact` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `secondary_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `archived_on` | `string \| null \| null` | No | Timestamp when project was archived. |
 | `created_at` | `string \| null` | No | Creation timestamp in UTC. |
 | `updated_at` | `string \| null` | No | Last update timestamp in UTC. |
@@ -16036,16 +16038,16 @@ await corsair.moco.api.projects.unassignProjectGroup({ id: 1234567 });
 | `tags` | `string[] \| null` | No | Tag names assigned to this project. |
 | `labels` | `string[] \| null` | No | Deprecated alias for `tags`. |
 | `custom_properties` | `object \| null` | No | Custom field values keyed by custom field name. |
-| `leader` | `object \| null` | No | — |
-| `co_leader` | `object \| null` | No | — |
+| `leader` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `co_leader` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `customer` | `object \| null` | No | Customer representation. Returns `{id, name}` by default; full company payload when `include_company=true` is passed. |
 | `tasks` | `object[] \| null` | No | Project tasks/services. |
 | `contracts` | `object[] \| null` | No | Assigned user contracts. |
 | `deal` | `object \| null` | No | — |
 | `project_group` | `object \| null` | No | — |
-| `billing_contact` | `object \| null` | No | — |
-| `contact` | `object \| null` | No | — |
-| `secondary_contact` | `object \| null` | No | — |
+| `billing_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `contact` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `secondary_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `archived_on` | `string \| null \| null` | No | Timestamp when project was archived. |
 | `created_at` | `string \| null` | No | Creation timestamp in UTC. |
 | `updated_at` | `string \| null` | No | Last update timestamp in UTC. |
@@ -16346,16 +16348,16 @@ await corsair.moco.api.projects.update({ id: 1234567, name: 'Website Relaunch 20
 | `tags` | `string[] \| null` | No | Tag names assigned to this project. |
 | `labels` | `string[] \| null` | No | Deprecated alias for `tags`. |
 | `custom_properties` | `object \| null` | No | Custom field values keyed by custom field name. |
-| `leader` | `object \| null` | No | — |
-| `co_leader` | `object \| null` | No | — |
+| `leader` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `co_leader` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `customer` | `object \| null` | No | Customer representation. Returns `{id, name}` by default; full company payload when `include_company=true` is passed. |
 | `tasks` | `object[] \| null` | No | Project tasks/services. |
 | `contracts` | `object[] \| null` | No | Assigned user contracts. |
 | `deal` | `object \| null` | No | — |
 | `project_group` | `object \| null` | No | — |
-| `billing_contact` | `object \| null` | No | — |
-| `contact` | `object \| null` | No | — |
-| `secondary_contact` | `object \| null` | No | — |
+| `billing_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `contact` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `secondary_contact` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `archived_on` | `string \| null \| null` | No | Timestamp when project was archived. |
 | `created_at` | `string \| null` | No | Creation timestamp in UTC. |
 | `updated_at` | `string \| null` | No | Last update timestamp in UTC. |
@@ -16630,7 +16632,7 @@ await corsair.moco.api.purchases.bookkeepingExports.create({});
 | `to` | `string \| null` | No | — |
 | `purchase_ids` | `number[] \| null` | No | — |
 | `comment` | `string \| null \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `status` | `string \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
@@ -16681,7 +16683,7 @@ await corsair.moco.api.purchases.bookkeepingExports.get({ id: 1234567 });
 | `to` | `string \| null` | No | — |
 | `purchase_ids` | `number[] \| null` | No | — |
 | `comment` | `string \| null \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `status` | `string \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
@@ -17156,7 +17158,7 @@ await corsair.moco.api.purchases.create({});
 | `company` | `object \| null` | No | — |
 | `purchase_budget` | `object \| null` | No | — |
 | `payments` | `object[] \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `refund_request` | `object \| null` | No | — |
 | `approval_status` | `string \| null \| null` | No | — |
 | `credit_card_transaction` | `object \| null` | No | — |
@@ -17466,7 +17468,7 @@ await corsair.moco.api.purchases.drafts.create({ title: 'Website Relaunch' });
 | `title` | `string \| null \| null` | No | — |
 | `email_from` | `string \| null \| null` | No | — |
 | `email_body` | `string \| null \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `file_url` | `string \| null \| null` | No | — |
 | `net_total` | `number \| null \| null` | No | — |
 | `gross_total` | `number \| null \| null` | No | — |
@@ -17584,7 +17586,7 @@ await corsair.moco.api.purchases.drafts.get({ id: 1234567 });
 | `title` | `string \| null \| null` | No | — |
 | `email_from` | `string \| null \| null` | No | — |
 | `email_body` | `string \| null \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `file_url` | `string \| null \| null` | No | — |
 | `net_total` | `number \| null \| null` | No | — |
 | `gross_total` | `number \| null \| null` | No | — |
@@ -17763,7 +17765,7 @@ await corsair.moco.api.purchases.get({ id: 1234567 });
 | `company` | `object \| null` | No | — |
 | `purchase_budget` | `object \| null` | No | — |
 | `payments` | `object[] \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `refund_request` | `object \| null` | No | — |
 | `approval_status` | `string \| null \| null` | No | — |
 | `credit_card_transaction` | `object \| null` | No | — |
@@ -18619,7 +18621,7 @@ await corsair.moco.api.purchases.update({ id: 1234567 });
 | `company` | `object \| null` | No | — |
 | `purchase_budget` | `object \| null` | No | — |
 | `payments` | `object[] \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `refund_request` | `object \| null` | No | — |
 | `approval_status` | `string \| null \| null` | No | — |
 | `credit_card_transaction` | `object \| null` | No | — |
@@ -18852,7 +18854,7 @@ await corsair.moco.api.receipts.create({});
 | `items` | `object[] \| null` | No | — |
 | `project` | `object \| null` | No | — |
 | `info` | `string \| null \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `refund_request` | `object \| null` | No | — |
 | `attachment_url` | `string \| null \| null` | No | — |
 
@@ -19034,7 +19036,7 @@ await corsair.moco.api.receipts.get({ id: 1234567 });
 | `items` | `object[] \| null` | No | — |
 | `project` | `object \| null` | No | — |
 | `info` | `string \| null \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `refund_request` | `object \| null` | No | — |
 | `attachment_url` | `string \| null \| null` | No | — |
 
@@ -19261,7 +19263,7 @@ await corsair.moco.api.receipts.update({ id: 1234567 });
 | `items` | `object[] \| null` | No | — |
 | `project` | `object \| null` | No | — |
 | `info` | `string \| null \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `refund_request` | `object \| null` | No | — |
 | `attachment_url` | `string \| null \| null` | No | — |
 
@@ -19954,7 +19956,7 @@ await corsair.moco.api.schedules.create({});
 | `pm` | `boolean \| null` | No | — |
 | `symbol` | `string \| null \| null` | No | — |
 | `assignment` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -20078,7 +20080,7 @@ await corsair.moco.api.schedules.get({ id: 1234567 });
 | `pm` | `boolean \| null` | No | — |
 | `symbol` | `string \| null \| null` | No | — |
 | `assignment` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -20221,7 +20223,7 @@ await corsair.moco.api.schedules.update({ id: 1234567 });
 | `pm` | `boolean \| null` | No | — |
 | `symbol` | `string \| null \| null` | No | — |
 | `assignment` | `object \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -20649,8 +20651,8 @@ await corsair.moco.api.todos.get({ id: 1234567 });
 | `todoable_id` | `number \| null` | No | — |
 | `todoable_type` | `string \| null` | No | — |
 | `todoable_description` | `string \| null` | No | — |
-| `created_by` | `object \| null` | No | — |
-| `assigned_to` | `object \| null` | No | — |
+| `created_by` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `assigned_to` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -21064,7 +21066,7 @@ Create user absence request
 
 ```ts
 await corsair.moco.api.users.absenceRequests.create({
-	approver_user_id: 'example',
+	approver_user_id: '933590696',
 	type: 'vacation',
 	entries: [{ date: '2026-04-09', am: true, pm: true }],
 });
@@ -21118,9 +21120,9 @@ await corsair.moco.api.users.absenceRequests.create({
 | `approved_at` | `string \| null \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
-| `user` | `object \| null` | No | — |
-| `approver` | `object \| null` | No | — |
-| `selected_approver` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `approver` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `selected_approver` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `custom_properties` | `object \| null` | No | Custom field values keyed by custom field name. |
 
 <AccordionGroup>
@@ -21190,7 +21192,7 @@ Delete user absence request
 **Risk:** `destructive` · **Irreversible**
 
 ```ts
-await corsair.moco.api.users.absenceRequests.delete({ id: 1234567, comment: 'example' });
+await corsair.moco.api.users.absenceRequests.delete({ id: 1234567, comment: 'Approved for the April offsite' });
 ```
 
 **Input**
@@ -21282,9 +21284,9 @@ await corsair.moco.api.users.absenceRequests.get({ id: 1234567 });
 | `approved_at` | `string \| null \| null` | No | — |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
-| `user` | `object \| null` | No | — |
-| `approver` | `object \| null` | No | — |
-| `selected_approver` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `approver` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `selected_approver` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `custom_properties` | `object \| null` | No | Custom field values keyed by custom field name. |
 
 <AccordionGroup>
@@ -21649,7 +21651,7 @@ await corsair.moco.api.users.employments.create({});
 | `pattern` | `object \| null` | No | — |
 | `from` | `string \| null` | No | — |
 | `to` | `string \| null \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -21761,7 +21763,7 @@ await corsair.moco.api.users.employments.get({ id: 1234567 });
 | `pattern` | `object \| null` | No | — |
 | `from` | `string \| null` | No | — |
 | `to` | `string \| null \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -21899,7 +21901,7 @@ await corsair.moco.api.users.employments.update({ id: 1234567 });
 | `pattern` | `object \| null` | No | — |
 | `from` | `string \| null` | No | — |
 | `to` | `string \| null \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -22043,8 +22045,8 @@ await corsair.moco.api.users.holidays.create({});
 | `title` | `string \| null` | No | — |
 | `days` | `number \| null` | No | — |
 | `hours` | `number \| null` | No | — |
-| `user` | `object \| null` | No | — |
-| `creator` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `creator` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -22159,8 +22161,8 @@ await corsair.moco.api.users.holidays.get({ id: 1234567 });
 | `title` | `string \| null` | No | — |
 | `days` | `number \| null` | No | — |
 | `hours` | `number \| null` | No | — |
-| `user` | `object \| null` | No | — |
-| `creator` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `creator` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -22290,8 +22292,8 @@ await corsair.moco.api.users.holidays.update({ id: 1234567 });
 | `title` | `string \| null` | No | — |
 | `days` | `number \| null` | No | — |
 | `hours` | `number \| null` | No | — |
-| `user` | `object \| null` | No | — |
-| `creator` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `creator` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -22494,7 +22496,7 @@ await corsair.moco.api.users.presences.create({});
 | `from` | `string \| null \| null` | No | — |
 | `to` | `string \| null \| null` | No | — |
 | `is_home_office` | `boolean \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -22593,7 +22595,7 @@ await corsair.moco.api.users.presences.get({ id: 1234567 });
 | `from` | `string \| null \| null` | No | — |
 | `to` | `string \| null \| null` | No | — |
 | `is_home_office` | `boolean \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -22704,7 +22706,7 @@ await corsair.moco.api.users.presences.touch({});
 | `from` | `string \| null \| null` | No | — |
 | `to` | `string \| null \| null` | No | — |
 | `is_home_office` | `boolean \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -22758,7 +22760,7 @@ await corsair.moco.api.users.presences.update({ id: 1234567 });
 | `from` | `string \| null \| null` | No | — |
 | `to` | `string \| null \| null` | No | — |
 | `is_home_office` | `boolean \| null` | No | — |
-| `user` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -22978,8 +22980,8 @@ await corsair.moco.api.users.workTimeAdjustments.create({});
 | `date` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
 | `hours` | `number \| null` | No | — |
-| `user` | `object \| null` | No | — |
-| `creator` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `creator` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -23092,8 +23094,8 @@ await corsair.moco.api.users.workTimeAdjustments.get({ id: 1234567 });
 | `date` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
 | `hours` | `number \| null` | No | — |
-| `user` | `object \| null` | No | — |
-| `creator` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `creator` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
@@ -23219,8 +23221,8 @@ await corsair.moco.api.users.workTimeAdjustments.update({ id: 1234567 });
 | `date` | `string \| null` | No | — |
 | `description` | `string \| null` | No | — |
 | `hours` | `number \| null` | No | — |
-| `user` | `object \| null` | No | — |
-| `creator` | `object \| null` | No | — |
+| `user` | `object \| null` | No | Minimal user reference used in nested resources. |
+| `creator` | `object \| null` | No | Minimal user reference used in nested resources. |
 | `created_at` | `string \| null` | No | — |
 | `updated_at` | `string \| null` | No | — |
 
