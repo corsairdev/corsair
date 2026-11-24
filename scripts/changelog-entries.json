@@ -12257,5 +12257,62 @@
     "version": "0.1.93",
     "isNew": false,
     "changes": []
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/hubspot",
+    "dir": "packages/hubspot",
+    "name": "HubSpot",
+    "version": "0.1.9",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2722,
+        "title": "Recent records are the newest, and company domain search is a POST"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/linear",
+    "dir": "packages/linear",
+    "name": "Linear",
+    "version": "0.1.9",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2724,
+        "title": "Issues.list filters by assignee, state, label and project"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/outlook",
+    "dir": "packages/outlook",
+    "name": "Outlook",
+    "version": "0.1.8",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "fix",
+        "breaking": false,
+        "pr": 2723,
+        "title": "Events.list honors timezone and expands recurring events"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.94",
+    "isNew": false,
+    "changes": []
   }
 ]
