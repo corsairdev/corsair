@@ -1,21 +1,21 @@
 ---
 title: Agent signup
-description: An agent can make a Lug account for itself in one HTTP call, start working in it, and have its person claim it later.
+description: An agent can make a Corsair account for itself in one HTTP call, start working in it, and have its person claim it later.
 ---
 
-An AI agent can make a [Lug](https://lug.dev) account for itself, with no browser and no sign-in. One call gives it its own MCP address and API key, and it can start with Corsair's built-in apps straight away. Its person claims the account later, from a link in an email or with a 6-digit code, and then connects their own apps.
+An AI agent can make a [Corsair](https://corsair.dev) account for itself, with no browser and no sign-in. One call gives it its own MCP address and API key, and it can start with Corsair's built-in apps straight away. Its person claims the account later, from a link in an email or with a 6-digit code, and then connects their own apps.
 
-Agents read the same steps, written for them, at [hub.corsair.dev/auth.md](https://hub.corsair.dev/auth.md).
+Agents read the same steps, written for them, at [corsair.dev/auth.md](https://corsair.dev/auth.md). If you're there to sign in yourself, give your agent [corsair.dev/skill.md](https://corsair.dev/skill.md) instead: it adds Corsair to the client it runs in, and you sign in once in the browser.
 
 ## Give your agent this prompt
 
 Paste this into Claude Code, Codex, Cursor or any agent that can make HTTP requests:
 
 ```text wrap
-Sign up for Lug by following https://hub.corsair.dev/auth.md. My email is you@example.com.
+Sign up for Corsair by following https://corsair.dev/auth.md. My email is you@example.com.
 ```
 
-The agent makes the account, adds it to its MCP client and has Lug email you a link to claim it.
+The agent makes the account, adds it to its MCP client and has Corsair email you a link to claim it.
 
 ## How it works
 
@@ -27,7 +27,7 @@ The agent makes the account, adds it to its MCP client and has Lug email you a l
     Before anyone claims it, the account has Corsair's built-in apps: PM, CRM, skills and routines. The agent can't connect your Gmail or Slack yet.
   </Step>
   <Step title="You get an email">
-    If the agent gave your address, Lug emails you "*Agent name* set up Lug for you", with a **Claim your Lug** button, the note the agent wrote and a 6-digit code. If you already have Lug, nothing was made yet: the email says "*Agent name* wants to connect to your Lug" and asks you to approve it.
+    If the agent gave your address, Corsair emails you "*Agent name* set up Corsair for you", with a **Claim your account** button, the note the agent wrote and a 6-digit code. If you already have a Corsair account, nothing was made yet: the email says "*Agent name* wants to connect to your Corsair account" and asks you to approve it.
   </Step>
   <Step title="You claim it">
     Open the link and sign in, or read the code to your agent. After the claim, the agent can ask you to connect apps.
@@ -50,20 +50,20 @@ A claimed agent's link starts in Cautious [mode](/cloud/mcp#modes-and-approvals)
 
 <Tabs>
   <Tab title="From the email">
-    Open **Claim your Lug** and sign in. If the agent named your address, sign in as that address.
+    Open **Claim your account** and sign in. If the agent named your address, sign in as that address.
 
-    If you have no Lug account yet, choose **Claim**. The workspace the agent made becomes yours, with everything the agent did in it.
+    If you have no Corsair account yet, choose **Claim**. The workspace the agent made becomes yours, with everything the agent did in it.
 
-    If you already have Lug and the agent named your address, it made no account of its own. Choose **Approve** and it gets a link at `/agent` on your handle, or another path if `/agent` is taken, with the key it already holds. Its address never changes after that.
+    If you already have a Corsair account and the agent named your address, it made no account of its own. Choose **Approve** and it gets a link at `/agent` on your handle, or another path if `/agent` is taken, with the key it already holds. Its address never changes after that.
 
-    If you already have Lug and claim an account the agent made without naming you, choose **Approve**. The agent gets a new link on your Lug that keeps its API key, and the account it made is closed. Its MCP address moves to your handle, and the agent reads the new address from `GET /status`.
+    If you already have a Corsair account and claim an account the agent made without naming you, choose **Approve**. The agent gets a new link on your account that keeps its API key, and the account it made is closed. Its MCP address moves to your handle, and the agent reads the new address from `GET /status`.
 
     Signed in at [hub.corsair.dev/me](https://hub.corsair.dev/me), you also see each agent waiting for you as a card with **Approve** and **Not me**. The card shows the code your agent should be showing, such as `R5BS-NHUE`, so you can tell which agent it is.
   </Tab>
   <Tab title="With the code">
     If your agent asks, read it the 6-digit code from the email. The agent sends it to `/verify` and the account becomes yours under the address the email went to.
 
-    A code lasts 48 hours and allows 5 tries. It only works for an address that has no Lug account yet. If you already have one, the email has no code: you approve from the email or your `/me` page, and a `/verify` call gets `approval_required`.
+    A code lasts 48 hours and allows 5 tries. It only works for an address that has no Corsair account yet. If you already have one, the email has no code: you approve from the email or your `/me` page, and a `/verify` call gets `approval_required`.
   </Tab>
 </Tabs>
 
@@ -79,7 +79,7 @@ curl -X POST \
   -H 'content-type: application/json' \
   -d '{
     "human_email": "person@example.com",
-    "note_to_human": "I set up Lug to use your apps.",
+    "note_to_human": "I set up Corsair to use your apps.",
     "agent_name": "Research Assistant",
     "harness": "claude-code"
   }'
@@ -107,15 +107,15 @@ The response is `201`:
   "setup": {
     "header": "Authorization: Bearer mcpk_...",
     "claude_code": "claude mcp add ...",
-    "mcp_json": { "mcpServers": { "lug": "..." } }
+    "mcp_json": { "mcpServers": { "corsair": "..." } }
   },
-  "message": "Lug account made. Store api_key now: ..."
+  "message": "Corsair account made. Store api_key now: ..."
 }
 ```
 
-If `human_email` already has a Lug, the response is `202` with `"status": "approval_pending"`, and `mcp_url`, `handle` and `setup` are `null`. No account is made. Store `api_key` anyway: it starts working once your person approves you, on a link on their Lug. Until then, `GET /status` returns `approval_pending`, and it returns your `mcp_url` once they approve.
+If `human_email` already has a Corsair account, the response is `202` with `"status": "approval_pending"`, and `mcp_url`, `handle` and `setup` are `null`. No account is made. Store `api_key` anyway: it starts working once your person approves you, on a link on their account. Until then, `GET /status` returns `approval_pending`, and it returns your `mcp_url` once they approve.
 
-Store `api_key` right away. Lug shows it once and keeps only a hash. `message` tells the agent what to do next, and `user_code` is the code your person sees on their `/me` card.
+Store `api_key` right away. Corsair shows it once and keeps only a hash. `message` tells the agent what to do next, and `user_code` is the code your person sees on their `/me` card.
 
 ### Connect to the MCP server
 
@@ -124,21 +124,21 @@ Send the key as a Bearer header to `mcp_url`. `setup` in the response has the Cl
 <Tabs>
   <Tab title="Claude Code">
     ```bash
-    claude mcp add --transport http lug \
+    claude mcp add --transport http corsair \
       https://agent-k3x9q2ab.lug.dev/agent \
       --header "Authorization: Bearer mcpk_..."
     ```
   </Tab>
   <Tab title="Cursor">
-    Add this to `~/.cursor/mcp.json`, or `.cursor/mcp.json` in a project. Cursor fills in `${env:LUG_API_KEY}` from the environment, so the key stays out of a file you might commit. Set `LUG_API_KEY` to your key in your shell profile, then restart Cursor.
+    Add this to `~/.cursor/mcp.json`, or `.cursor/mcp.json` in a project. Cursor fills in `${env:CORSAIR_API_KEY}` from the environment, so the key stays out of a file you might commit. Set `CORSAIR_API_KEY` to your key in your shell profile, then restart Cursor.
 
     ```json
     {
       "mcpServers": {
-        "lug": {
+        "corsair": {
           "url": "https://agent-k3x9q2ab.lug.dev/agent",
           "headers": {
-            "Authorization": "Bearer ${env:LUG_API_KEY}"
+            "Authorization": "Bearer ${env:CORSAIR_API_KEY}"
           }
         }
       }
@@ -153,17 +153,17 @@ Send the key as a Bearer header to `mcp_url`. `setup` in the response has the Cl
       "inputs": [
         {
           "type": "promptString",
-          "id": "lug-api-key",
-          "description": "Lug API key",
+          "id": "corsair-api-key",
+          "description": "Corsair API key",
           "password": true
         }
       ],
       "servers": {
-        "lug": {
+        "corsair": {
           "type": "http",
           "url": "https://agent-k3x9q2ab.lug.dev/agent",
           "headers": {
-            "Authorization": "Bearer ${input:lug-api-key}"
+            "Authorization": "Bearer ${input:corsair-api-key}"
           }
         }
       }
@@ -181,7 +181,7 @@ Send the key as a Bearer header to `mcp_url`. `setup` in the response has the Cl
 </Tabs>
 
 <Note>
-The address can change once. If your person already has a Lug handle and claims an account the agent made first, its link moves to their handle and the old address stops working. The key stays the same. Read the new `mcp_url` from `GET /status` and point your client at it: in Claude Code, run `claude mcp remove lug` and add it again with the new address; in Cursor or VS Code, change `url` in `mcp.json`.
+The address can change once. If your person already has a handle and claims an account the agent made first, its link moves to their handle and the old address stops working. The key stays the same. Read the new `mcp_url` from `GET /status` and point your client at it: in Claude Code, run `claude mcp remove corsair` and add it again with the new address; in Cursor or VS Code, change `url` in `mcp.json`.
 </Note>
 
 The agent gets the same tools as any [Corsair MCP](/cloud/mcp#what-the-agent-can-do) client. `list_integrations` shows the built-in apps from the first call.
@@ -197,11 +197,11 @@ Each of these takes the key as `Authorization: Bearer <api_key>`.
 | `POST /api/lug/agent-signup/resend` | `{"human_email": "..."}` | Sends the claim email again, or to someone new. One every 5 minutes. While waiting for approval, only to the same person |
 | `POST /api/lug/agent-signup/revoke` | | Gives the account up. An unclaimed account turns off; for a claimed one, only the agent's link closes |
 
-All paths are on `https://hub.corsair.dev`. Call `/status` after a claim. If your person already had a Lug handle, `mcp_url` now points at it and the old address stops working, so update your client as described in [Connect to the MCP server](#connect-to-the-mcp-server).
+All paths are on `https://hub.corsair.dev`. Call `/status` after a claim. If your person already had a handle, `mcp_url` now points at it and the old address stops working, so update your client as described in [Connect to the MCP server](#connect-to-the-mcp-server).
 
 ### The auth.md protocol
 
-Lug also supports [auth.md](https://github.com/workos/auth.md), for clients that sign agents up through OAuth. The authorization server metadata at `https://hub.corsair.dev/.well-known/oauth-authorization-server/mcp-auth` carries an `agent_auth` block with:
+Corsair also supports [auth.md](https://github.com/workos/auth.md), for clients that sign agents up through OAuth. The authorization server metadata at `https://hub.corsair.dev/.well-known/oauth-authorization-server/mcp-auth` carries an `agent_auth` block with:
 
 - anonymous and `service_auth` registration at `/api/lug/agent/identity`, with the person's email as `login_hint`
 - a claim flow at `/api/lug/agent/identity/claim`, where your person signs in and approves a `user_code`
@@ -225,13 +225,13 @@ Errors are JSON with `error`, `error_description` and `agent_support`, which say
 | `error` | Status | Meaning |
 | --- | --- | --- |
 | `rate_limited` | 429 | Too many signups from this IP or network, or too many emails to this person or company today. `retry_after` gives the seconds to wait |
-| `agent_signup_paused` | 503 | Signups are paused for the day. Send your person to [lug.dev](https://lug.dev) |
+| `agent_signup_paused` | 503 | Signups are paused for the day. Send your person to [corsair.dev/start](https://corsair.dev/start) |
 | `agent_signup_disabled` | 503 | Agent signup is turned off |
 | `invalid_key` | 401 | The Bearer key is missing or wrong, or the account was declined or given up |
-| `invalid_email` | 422 | `human_email` isn't an address Lug accepts, such as a disposable one |
+| `invalid_email` | 422 | `human_email` isn't an address Corsair accepts, such as a disposable one |
 | `invalid_code` | 401 | The code is wrong. `attempts_left` says how many tries remain |
 | `code_expired` / `too_many_attempts` | 410 / 429 | Call `/resend` for a new code |
-| `approval_required` | 409 | The address already has a Lug account. Your person approves from the email; check `GET /status` |
+| `approval_required` | 409 | The address already has a Corsair account. Your person approves from the email; check `GET /status` |
 | `approval_pending` | 409 | You asked to resend to someone else while waiting for approval. Revoke and sign up again to name someone new |
 
 ## Removing an agent
