@@ -27,6 +27,11 @@ import {
 import { claimHref, hubMeSkillUrl } from '@/lib/site-links';
 import { socialMetadata } from '@/lib/social-metadata';
 
+/** "Every Monday at 10:00" → "every Monday at 10:00": day names keep their capital. */
+function lowerFirst(text: string): string {
+	return text.charAt(0).toLowerCase() + text.slice(1);
+}
+
 type Params = { params: Promise<{ slug: string }> };
 
 export const dynamicParams = false;
@@ -69,7 +74,7 @@ function setupSteps(skill: GatewaySkill): { title: string; body: string }[] {
 		{
 			title: 'Paste the prompt into your agent',
 			body: skill.schedule
-				? `Corsair gives you one prompt for Claude, ChatGPT, Cursor or Codex. The agent saves the skill, runs it once and schedules it: ${skill.schedule.toLowerCase()}.`
+				? `Corsair gives you one prompt for Claude, ChatGPT, Cursor or Codex. The agent saves the skill, runs it once and schedules it: ${lowerFirst(skill.schedule)}.`
 				: 'Corsair gives you one prompt for Claude, ChatGPT, Cursor or Codex. The agent saves the skill and runs it once. Ask for it again any time.',
 		},
 	];
@@ -216,7 +221,7 @@ export default async function SkillPage({ params }: Params) {
 			>
 				<p className="mt-5 font-[family-name:var(--landing-font-mono)] text-[13px] text-[#1c1c1c99]">
 					{skill.schedule
-						? `Runs ${skill.schedule.toLowerCase()}`
+						? `Runs ${lowerFirst(skill.schedule)}`
 						: 'Runs when you ask'}
 				</p>
 			</PageHero>
