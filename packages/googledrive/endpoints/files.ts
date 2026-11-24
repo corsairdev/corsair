@@ -32,17 +32,24 @@ async function saveFile<T extends { id: string }>(
 	await table.upsertByEntityId(data.id, { ...prior, ...data });
 }
 
-// A mask without mimeType cannot say folder or file, so a saved folder row decides.
+// A mask without mimeType cannot say folder or file, so the table that already
+// holds the id decides; an id saved nowhere is skipped rather than guessed.
 export async function saveDriveFile(
 	ctx: Parameters<GoogleDriveEndpoints['filesGet']>[0],
 	file: File,
 ): Promise<void> {
 	if (!file.id) return;
 	const row = { ...file, id: file.id, createdAt: new Date() };
-	const isFolder = file.mimeType
-		? file.mimeType === 'application/vnd.google-apps.folder'
-		: Boolean(await ctx.db.folders?.findByEntityId(file.id));
-	await saveFile(isFolder ? ctx.db.folders : ctx.db.files, row);
+	if (file.mimeType) {
+		const isFolder = file.mimeType === 'application/vnd.google-apps.folder';
+		return saveFile(isFolder ? ctx.db.folders : ctx.db.files, row);
+	}
+	if (await ctx.db.folders?.findByEntityId(file.id)) {
+		return saveFile(ctx.db.folders, row);
+	}
+	if (await ctx.db.files?.findByEntityId(file.id)) {
+		return saveFile(ctx.db.files, row);
+	}
 }
 
 // A fields mask without nextPageToken silently ends pagination.

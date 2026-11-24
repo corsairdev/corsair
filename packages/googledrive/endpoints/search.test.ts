@@ -123,4 +123,13 @@ describe('googledrive search.filesAndFolders fields', () => {
 		expect(folders['dir-1']).toMatchObject({ name: 'Plans 2' });
 		expect(stored['dir-1']).toBeUndefined();
 	});
+
+	it('does not save a row it cannot tell apart as file or folder', async () => {
+		const { ctx: c, stored, folders } = ctx();
+		mockRequest.mockResolvedValue({ files: [{ id: 'dir-2', name: 'Plans' }] });
+		await filesAndFolders(c, { q: 'x', fields: 'files(id,name)' });
+
+		expect(stored['dir-2']).toBeUndefined();
+		expect(folders['dir-2']).toBeUndefined();
+	});
 });
