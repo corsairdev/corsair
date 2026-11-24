@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAuthenticatedGoogleDriveRequest } from '../client';
 import type { GoogleDriveEndpoints } from '../index';
+import { saveFile } from './files';
 import type { GoogleDriveEndpointOutputs } from './types';
 
 export const filesAndFolders: GoogleDriveEndpoints['searchFilesAndFolders'] =
@@ -22,6 +23,11 @@ export const filesAndFolders: GoogleDriveEndpoints['searchFilesAndFolders'] =
 				supportsAllDrives: input.supportsAllDrives,
 				supportsTeamDrives: input.supportsTeamDrives,
 				teamDriveId: input.teamDriveId,
+				// A fields mask without nextPageToken silently ends pagination.
+				fields:
+					input.fields && !input.fields.includes('nextPageToken')
+						? `nextPageToken,${input.fields}`
+						: input.fields,
 			},
 		});
 
@@ -31,19 +37,11 @@ export const filesAndFolders: GoogleDriveEndpoints['searchFilesAndFolders'] =
 					if (item.id) {
 						const isFolder =
 							item.mimeType === 'application/vnd.google-apps.folder';
-						if (isFolder && ctx.db.folders) {
-							await ctx.db.folders.upsertByEntityId(item.id, {
-								...item,
-								id: item.id,
-								createdAt: new Date(),
-							});
-						} else if (!isFolder && ctx.db.files) {
-							await ctx.db.files.upsertByEntityId(item.id, {
-								...item,
-								id: item.id,
-								createdAt: new Date(),
-							});
-						}
+						await saveFile(
+							isFolder ? ctx.db.folders : ctx.db.files,
+							{ ...item, id: item.id, createdAt: new Date() },
+							Boolean(input.fields),
+						);
 					}
 				}
 			} catch (error) {

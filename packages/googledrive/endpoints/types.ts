@@ -253,6 +253,7 @@ const SearchFilesAndFoldersInputSchema = z.object({
 	supportsAllDrives: z.boolean().optional(),
 	supportsTeamDrives: z.boolean().optional(),
 	teamDriveId: z.string().optional(),
+	fields: z.string().optional(),
 });
 
 const StorageGetQuotaInputSchema = z.object({});

@@ -16,7 +16,7 @@ import {
 
 // A fields mask returns part of a file. Upsert replaces the stored row, so a
 // partial response is laid over what is already saved instead of erasing it.
-async function saveFile<T extends { id: string }>(
+export async function saveFile<T extends { id: string }>(
 	table:
 		| {
 				findByEntityId(id: string): Promise<{ data: T } | null | undefined>;
