@@ -995,6 +995,10 @@ describe('every operation', () => {
 			chart({ rows: Array.from({ length: 101 }, () => ({ cells: cells(1) })) }),
 		).toBe(false);
 		expect(chart({ rows: [{ cells: cells(21) }] })).toBe(false);
+		expect(chart({ column_configs: [{ type: 'number' }], rows: [] })).toBe(
+			false,
+		);
+		expect(chart({ rows: [] })).toBe(true);
 		expect(
 			sheet({ rows: Array.from({ length: 101 }, () => ({ cells: cells(1) })) }),
 		).toBe(true);

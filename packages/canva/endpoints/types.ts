@@ -1157,12 +1157,9 @@ function dataTable<Cell extends z.ZodTypeAny>(
 					message: 'Every row needs the same number of cells',
 				});
 			}
-			const width = table.rows[0]?.cells.length;
-			if (
-				table.column_configs &&
-				width !== undefined &&
-				table.column_configs.length !== width
-			) {
+			// An empty table has no columns, so it takes no column_configs either.
+			const width = table.rows[0]?.cells.length ?? 0;
+			if (table.column_configs && table.column_configs.length !== width) {
 				issue.addIssue({
 					code: 'custom',
 					message: 'column_configs needs one entry per column',
@@ -1174,7 +1171,7 @@ function dataTable<Cell extends z.ZodTypeAny>(
 					message: `A chart takes at most ${limits.rows} rows`,
 				});
 			}
-			if (limits && (width ?? 0) > limits.columns) {
+			if (limits && width > limits.columns) {
 				issue.addIssue({
 					code: 'custom',
 					message: `A chart takes at most ${limits.columns} columns`,
