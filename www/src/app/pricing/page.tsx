@@ -115,7 +115,7 @@ export default function PricingPage() {
 					</p>
 					<p>
 						Building integrations into your own product with the SDK?{' '}
-						<a href="/#pricing" className={textLink}>
+						<a href="/developers#pricing" className={textLink}>
 							See the SDK plans
 						</a>
 						.

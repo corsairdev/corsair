@@ -10,10 +10,10 @@ import type {
 
 export type { GatewaySkill } from './gateway-content';
 
-export function skillBySlug(
-	skills: readonly GatewaySkill[],
+export function skillBySlug<S extends { slug: string }>(
+	skills: readonly S[],
 	slug: string,
-): GatewaySkill | undefined {
+): S | undefined {
 	return skills.find((s) => s.slug === slug);
 }
 

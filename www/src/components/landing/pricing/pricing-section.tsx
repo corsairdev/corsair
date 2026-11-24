@@ -1,50 +1,10 @@
-import { APP_URL } from '@/lib/site-links';
+import { TIERS } from '@/lib/pricing-tiers';
 import { PlusCorner } from '../icons';
 import { FeatureInfoPopover } from './feature-info-popover';
 import { PRICING_FEATURE_INFO } from './pricing-feature-info';
 import { PricingTierCta } from './pricing-tier-cta';
 
 type TierId = 'hobby' | 'pro' | 'enterprise';
-
-const TIERS = [
-	{
-		id: 'hobby' as const,
-		name: 'Hobby',
-		price: '$0',
-		priceSuffix: '/mo',
-		description: 'For small projects',
-		cta: {
-			label: 'Get started',
-			href: APP_URL,
-			external: true,
-			variant: 'link' as const,
-		},
-		highlighted: false,
-	},
-	{
-		id: 'pro' as const,
-		name: 'Pro',
-		price: '$200',
-		priceSuffix: '/mo',
-		description: 'For teams in production',
-		cta: {
-			label: 'Get started',
-			href: `${APP_URL}/login?redirect=${encodeURIComponent('/upgrade')}`,
-			external: true,
-			variant: 'link' as const,
-		},
-		highlighted: true,
-	},
-	{
-		id: 'enterprise' as const,
-		name: 'Enterprise',
-		price: 'Custom',
-		priceSuffix: null,
-		description: 'For custom needs',
-		cta: { label: 'Contact us', variant: 'dialog' as const },
-		highlighted: false,
-	},
-] as const;
 
 type FeatureRow = {
 	id: string;
