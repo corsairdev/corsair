@@ -51,7 +51,10 @@ function readDraft(): string | null {
  * in sessionStorage so a refresh keeps it. Ported from lug.dev's
  * claim/use-passage.ts.
  */
-export function usePassage(appIds: ReadonlySet<string>) {
+export function usePassage(
+	appIds: ReadonlySet<string>,
+	skillSlugs: ReadonlySet<string>,
+) {
 	// null until the saved draft is read, so nothing is written back before it is.
 	const [loaded, dispatch] = useReducer(
 		(p: Passage | null, a: Action): Passage | null =>
@@ -70,16 +73,17 @@ export function usePassage(appIds: ReadonlySet<string>) {
 			readDraft(),
 			navigator.userAgent,
 			appIds,
+			skillSlugs,
 		);
 		dispatch({ type: 'load', passage });
 		return passage;
-	}, [appIds]);
+	}, [appIds, skillSlugs]);
 
 	useLayoutEffect(() => {
 		const passage = load();
-		const fromLink = prefill(window.location.search, appIds).handle;
+		const fromLink = prefill(window.location.search, appIds, skillSlugs).handle;
 		setClaimedOnArrival(fromLink !== '' && passage.step !== 'claim');
-	}, [load, appIds]);
+	}, [load, appIds, skillSlugs]);
 
 	useEffect(() => {
 		const onPop = () => load();

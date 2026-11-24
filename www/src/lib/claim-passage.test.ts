@@ -33,10 +33,12 @@ const APPS = new Set([
 	'zoom',
 	'sentry',
 ]);
+// The starter skills come from Hub; these are the slugs the tests use.
+const SKILLS = new Set(['release-notes', 'revenue-digest', 'morning-brief']);
 const advance = (p: Passage, e: PassageEvent) => advanceWith(p, e, APPS);
-const prefill = (search: string) => prefillWith(search, APPS);
+const prefill = (search: string) => prefillWith(search, APPS, SKILLS);
 const restore = (search: string, saved: string | null, ua: string) =>
-	restoreWith(search, saved, ua, APPS);
+	restoreWith(search, saved, ua, APPS, SKILLS);
 
 const CHROME =
 	'Mozilla/5.0 (Macintosh) AppleWebKit/537.36 Chrome/131.0 Safari/537.36';

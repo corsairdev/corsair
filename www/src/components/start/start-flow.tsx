@@ -11,6 +11,7 @@ import { claimClientById } from '@/lib/claim-clients';
 import { linkProblem } from '@/lib/claim-handle';
 import { buildHubUrl, HUB_URL, hubSignInUrl } from '@/lib/claim-hub-url';
 import type { PassageEvent, Step } from '@/lib/claim-passage';
+import type { StartSkill } from '@/lib/claim-skills';
 import { cn } from '@/lib/utils';
 
 import { NameStep } from './name-step';
@@ -212,9 +213,22 @@ function ChosenApps({
 }
 
 /** corsair.dev/start: name the URL, pick apps, pick agents, then Hub's sign-in. */
-export function StartFlow({ apps }: { apps: ClaimApp[] }) {
+export function StartFlow({
+	apps,
+	skills,
+	appNames,
+}: {
+	apps: ClaimApp[];
+	/** The starter skills a Set up link can name, from Hub. */
+	skills: readonly StartSkill[];
+	appNames: Record<string, string>;
+}) {
 	const catalog = useMemo(() => appCatalog(apps), [apps]);
-	const api = useFunnelEvents(usePassage(catalog.ids));
+	const skillSlugs = useMemo(
+		() => new Set(skills.map((s) => s.slug)),
+		[skills],
+	);
+	const api = useFunnelEvents(usePassage(catalog.ids, skillSlugs));
 	const { p, send, ready, href, claimReady } = api;
 	const [leaving, setLeaving] = useState(false);
 
@@ -274,13 +288,18 @@ export function StartFlow({ apps }: { apps: ClaimApp[] }) {
 					className="min-h-[164px] overflow-hidden rounded-2xl border border-[#1c1c1c1a] bg-white shadow-[0_18px_50px_-30px_rgba(0,0,0,0.3)]"
 				>
 					{!ready ? null : p.step === 'claim' ? (
-						<NameStep api={api} />
+						<NameStep api={api} skills={skills} />
 					) : (
 						<>
 							<UrlRow api={api} label={label} disabled={disabled} />
 							<ChosenApps api={api} catalog={catalog} />
 							{p.step === 'pick' ? (
-								<PickPanel api={api} catalog={catalog} />
+								<PickPanel
+									api={api}
+									catalog={catalog}
+									skills={skills}
+									appNames={appNames}
+								/>
 							) : (
 								<ReviewPanel api={api} />
 							)}

@@ -7,7 +7,6 @@ import { CLAIM_CLIENTS } from './claim-clients';
 import type { NameProblem } from './claim-handle';
 import { handleProblem, linkProblem, tidyTyped } from './claim-handle';
 import { DEFAULT_LINK } from './claim-hub-url';
-import { skillBySlug } from './gateway-skills';
 import type { LugHandleAnswer } from './lug-handle';
 
 export const STEPS = ['claim', 'pick', 'review'] as const;
@@ -203,6 +202,7 @@ function cleanApps(ids: readonly unknown[], appIds: ReadonlySet<string>) {
 export function prefill(
 	search: string,
 	appIds: ReadonlySet<string>,
+	skillSlugs: ReadonlySet<string>,
 ): { handle: string; apps: string[]; clients?: string[]; skill: string } {
 	const params = new URLSearchParams(search);
 	const split = (value: string | null) =>
@@ -220,7 +220,7 @@ export function prefill(
 		handle: handleProblem(handle) ? '' : handle,
 		apps,
 		clients: clients.length ? clients : undefined,
-		skill: skillBySlug(skill) ? skill : '',
+		skill: skillSlugs.has(skill) ? skill : '',
 	};
 }
 
@@ -229,6 +229,7 @@ type Draft = Omit<Passage, 'step'>;
 function readDraft(
 	saved: string | null,
 	appIds: ReadonlySet<string>,
+	skillSlugs: ReadonlySet<string>,
 ): Draft | null {
 	let raw: unknown;
 	try {
@@ -248,7 +249,8 @@ function readDraft(
 				: DEFAULT_LINK,
 		apps: cleanApps(d.apps, appIds),
 		clients: cleanClients(Array.isArray(d.clients) ? d.clients : []),
-		skill: typeof d.skill === 'string' && skillBySlug(d.skill) ? d.skill : '',
+		skill:
+			typeof d.skill === 'string' && skillSlugs.has(d.skill) ? d.skill : '',
 	};
 }
 
@@ -257,9 +259,10 @@ export function restore(
 	saved: string | null,
 	ua: string,
 	appIds: ReadonlySet<string>,
+	skillSlugs: ReadonlySet<string>,
 ): Passage {
-	const fromLink = prefill(search, appIds);
-	const draft = readDraft(saved, appIds);
+	const fromLink = prefill(search, appIds, skillSlugs);
+	const draft = readDraft(saved, appIds, skillSlugs);
 	// Apps or a skill in the link come from a "Set up" button, a fresh choice:
 	// they replace the draft's apps and skill. Otherwise the draft keeps its own.
 	const freshPick = fromLink.apps.length > 0 || fromLink.skill !== '';

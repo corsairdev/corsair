@@ -5,6 +5,8 @@ import { SiteMenu } from '@/components/landing/menu/site-menu';
 import { StartFlow } from '@/components/start/start-flow';
 import '@/components/landing/theme.css';
 import { CAMPAIGN_INIT } from '@/lib/claim-campaign';
+import { toStartSkills } from '@/lib/claim-skills';
+import { getGatewayContent } from '@/lib/gateway-content';
 import { socialMetadata } from '@/lib/social-metadata';
 
 import { loadStartApps } from './start-apps';
@@ -24,14 +26,21 @@ export const metadata: Metadata = {
 };
 
 export default async function StartPage() {
-	const apps = await loadStartApps();
+	const [apps, gateway] = await Promise.all([
+		loadStartApps(),
+		getGatewayContent(),
+	]);
 	return (
 		<div className="landing min-h-screen overflow-x-clip bg-[#f4f4f4]">
 			{/* Saves ?utm_* before the steps rewrite the query; the hand-off reads them back. */}
 			<script dangerouslySetInnerHTML={{ __html: CAMPAIGN_INIT }} />
 			<SiteMenu />
 			<main>
-				<StartFlow apps={apps} />
+				<StartFlow
+					apps={apps}
+					skills={toStartSkills(gateway.skills)}
+					appNames={gateway.appNames}
+				/>
 			</main>
 			<SiteFooter />
 		</div>

@@ -3,6 +3,7 @@
 import { useId, useRef } from 'react';
 
 import { HANDLE_MAX_LENGTH } from '@/lib/claim-handle';
+import type { StartSkill } from '@/lib/claim-skills';
 import { skillBySlug } from '@/lib/gateway-skills';
 import { cn } from '@/lib/utils';
 
@@ -27,9 +28,12 @@ function formatHint(handle: string): string {
 	return "It can't have two hyphens there.";
 }
 
-function status(api: PassageApi): { text: string; tone: Tone } {
+function status(
+	api: PassageApi,
+	skills: readonly StartSkill[],
+): { text: string; tone: Tone } {
 	const { p, problem, checkFailed, claimReady } = api;
-	const skill = p.skill ? skillBySlug(p.skill) : undefined;
+	const skill = p.skill ? skillBySlug(skills, p.skill) : undefined;
 	if (!p.handle) {
 		return {
 			text: skill
@@ -59,11 +63,17 @@ function status(api: PassageApi): { text: string; tone: Tone } {
 }
 
 /** Step 1: the name in yourname.lug.dev, checked with Hub as it's typed. */
-export function NameStep({ api }: { api: PassageApi }) {
+export function NameStep({
+	api,
+	skills,
+}: {
+	api: PassageApi;
+	skills: readonly StartSkill[];
+}) {
 	const { p, send, claimReady, suggestion } = api;
 	const id = useId();
 	const input = useRef<HTMLInputElement>(null);
-	const { text, tone } = status(api);
+	const { text, tone } = status(api, skills);
 	const chars = Math.max(1, p.handle.length || 'yourname'.length);
 
 	return (

@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 import type { AppCatalog } from '@/lib/claim-apps';
 import { MAX_APPS } from '@/lib/claim-passage';
+import type { StartSkill } from '@/lib/claim-skills';
 import { listNames, skillApps, skillBySlug } from '@/lib/gateway-skills';
 import { cn } from '@/lib/utils';
 
@@ -17,13 +18,17 @@ const SEARCH_LIMIT = 18;
 export function PickPanel({
 	api,
 	catalog,
+	skills,
+	appNames,
 }: {
 	api: PassageApi;
 	catalog: AppCatalog;
+	skills: readonly StartSkill[];
+	appNames: Record<string, string>;
 }) {
 	const { p, send } = api;
 	const [query, setQuery] = useState('');
-	const skill = p.skill ? skillBySlug(p.skill) : undefined;
+	const skill = p.skill ? skillBySlug(skills, p.skill) : undefined;
 	const nameOf = (id: string) => catalog.byId(id)?.name ?? id;
 	const grid = query
 		? catalog.search(query, SEARCH_LIMIT).map((a) => a.id)
@@ -38,7 +43,7 @@ export function PickPanel({
 					Setting up{' '}
 					<span className="font-medium text-[#1c1c1c]">{skill.name}</span>
 					{needs.length
-						? `. It needs ${listNames(needs)}; the others add to it.`
+						? `. It needs ${listNames(appNames, needs)}; the others add to it.`
 						: '. Keep the apps you use.'}
 				</p>
 			) : null}
