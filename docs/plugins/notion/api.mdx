@@ -445,7 +445,7 @@ await corsair.notion.api.databasePages.getManyDatabasePages({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `database_id` | `string` | Yes | — |
-| `filter` | `any` | No | &#123;"property":"Status","select":&#123;"equals":"Done"&#125;&#125;: the inner key is the property type, and the property name is case sensitive. Combine with &#123;"and":[...]&#125; or &#123;"or":[...]&#125;. |
+| `filter` | `any` | No | &#123;"property":"Status","select":&#123;"equals":"Done"&#125;&#125;: the inner key is the property type. Combine with &#123;"and":[...]&#125; or &#123;"or":[...]&#125;. |
 | `sorts` | `any[]` | No | [&#123;"property":"Due","direction":"ascending"&#125;] |
 | `start_cursor` | `string` | No | — |
 | `page_size` | `number` | No | — |

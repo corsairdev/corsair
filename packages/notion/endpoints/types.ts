@@ -149,7 +149,7 @@ const DatabasePagesGetManyDatabasePagesInputSchema = z.object({
 		.unknown()
 		.optional()
 		.describe(
-			'{"property":"Status","select":{"equals":"Done"}}: the inner key is the property type, and the property name is case sensitive. Combine with {"and":[...]} or {"or":[...]}.',
+			'{"property":"Status","select":{"equals":"Done"}}: the inner key is the property type. Combine with {"and":[...]} or {"or":[...]}.',
 		),
 	// NOTE: Sorts array contains sort objects that vary by property type.
 	// Each sort can be ascending/descending and property-based.
