@@ -464,6 +464,7 @@ export type {
 	EndpointJob,
 	EndpointMetaEntry,
 	EndpointRiskLevel,
+	EndpointSearch,
 	KeyBuilderContext,
 	OAuthConfig,
 	PermissionMode,
@@ -473,8 +474,14 @@ export type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
+	SearchChoices,
+	SearchDateFormat,
+	SearchJson,
+	SearchPart,
 	WebhookHooks,
 } from './plugins';
+export type { SearchHints } from './plugins/search-args';
+export { searchArgs } from './plugins/search-args';
 // Workflow runs namespace
 export type {
 	CorsairRunsNamespace,
