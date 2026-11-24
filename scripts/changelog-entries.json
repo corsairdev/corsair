@@ -12456,5 +12456,14 @@
     "version": "0.1.0",
     "isNew": true,
     "changes": []
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/moco",
+    "dir": "packages/moco",
+    "name": "Moco",
+    "version": "0.1.0",
+    "isNew": true,
+    "changes": []
   }
 ]
