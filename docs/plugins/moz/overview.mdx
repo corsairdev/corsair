@@ -1,10 +1,10 @@
 ---
 title: "Moz plugin"
 sidebarTitle: "Overview"
-description: "SEO data with Moz - read Domain Authority, Page Authority and Spam Score for sites, list backlinks, linking domains, anchor texts and top pages, find link intersects and ranking competitors, and check API quota."
+description: "SEO data with Moz - site metrics (Domain Authority, Page Authority, Spam Score, Brand Authority, histories), backlinks, linking domains, anchor texts, top pages, ranking keywords, keyword metrics, SERPs and suggestions, competitors, global top lists, and Moz Local accounts, groups, locations, listings and insights."
 ---
 
-Use **Moz** through Corsair: one client, typed API calls.
+Use **Moz** through Corsair: one client, typed API calls, and incoming webhooks.
 
 Generate an API token on the Moz API dashboard
 (https://api.moz.com) and Corsair sends it in the x-moz-token header on
@@ -20,8 +20,8 @@ api.limits.mozscape.rows bucket.
 - **Errors are JSON-RPC envelopes** with a stable `code`: -32651 is a bad
 token (401), -32670 is exhausted quota (403), -32658 and -32650 are the
 two 429 rate limits (a per-method one with Retry-After and an edge one
-without). The plugin retries the 429s and 5xx on reads and never retries
-auth or quota errors.
+without). Errors come back as core ApiErrors carrying that code; core
+retries an HTTP 429 and nothing else is retried.
 - **The competitor lookup is asynchronous.** competitors.fetch answers
 with an async_call receipt; follow it with jobs.lookup until the status
 is complete, then read async_call.result (or .error). Poll no more than
@@ -29,12 +29,28 @@ once every five seconds; lookups are free.
 - **Paging is token-based.** List methods take offset.limit (1-50) and an
 optional offset.token; the response's offset.token is null when there is
 no next page.
-- **Nothing writes.** The Moz data API is read-only, so every operation
-here is a read.
+- **Keywords.** keywords.metrics returns difficulty, volume, organic CTR,
+priority and intent at once; the single-metric fetches cost one row
+each. keywords.suggestions, keywords.generateMetrics and
+keywords.generateSerp are asynchronous; the two generate methods start a
+fresh SERP collection billed per call, so they are destructive.
+- **Moz Local** (local.*) manages business listings for Moz Local
+customers; most of it is Enterprise only. Creating a location adds a
+billed listing; cancelling, closing and changing a location's level
+change billing or unpublish it, so those are destructive.
+- **Webhooks.** Moz sends Moz Local location events (created, updated,
+canceled, closed) with the Standard Webhooks signature. Moz's team sets
+them up per account; save the `whsec_` secret as the account's
+webhook_signature (or the webhookSecret option).
+- **Schemas come from Moz's method reference.** Inputs follow each
+method's payload definition and reject unknown fields; Moz Local inputs
+stay open because Moz's own examples use fields its schema leaves out.
+Responses are parsed leniently.
 
 **What you get:**
 
-- 11 typed API operations
+- 74 typed API operations
+- 4 incoming webhook event types
 
 ## Setup
 
@@ -130,18 +146,30 @@ await tenant.moz.api.metrics.fetch({
 ```
 
 
-**Write**
+**`keywords.generateMetrics`**
 
-_No write-style endpoint inferred; pick any operation from the [API](/plugins/moz/api) reference._
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.moz.api.keywords.generateMetrics({});
+```
 
 
 See the full list on the [API](/plugins/moz/api) page.
+
+## Webhooks
+
+This plugin registers **4** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/moz/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
 
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="API reference" href="/plugins/moz/api">
     Every `moz.api.*` operation with input and output types.
+  </Card>
+  <Card title="Webhooks" href="/plugins/moz/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
   </Card>
   <Card title="Connect / OAuth" href="/management/connect">
     createLink, Hub delivery, and tenant connect flows.

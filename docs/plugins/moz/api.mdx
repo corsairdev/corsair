@@ -14,7 +14,7 @@ description: "API reference for the Moz plugin in Corsair: every `moz.api.*` ope
 
 `anchorText.list`
 
-List the anchor texts used to link to a target with unique root domain and page counts
+Use this endpoint to get data about anchor text used to link to a specified site. Costs rows per result returned.
 
 **Risk:** `read`
 
@@ -26,8 +26,8 @@ await corsair.moz.api.anchorText.list({ site_query: { query: 'moz.com', scope: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `site_query` | `object` | Yes | — |
-| `offset` | `object` | No | — |
+| `site_query` | `object` | Yes | A SiteQuery provides a target URL along with a scope to define how the query is parsed. |
+| `offset` | `object` | No | Defines the input parameters used to retrieve anchor text data for a given target. It allows controlling the pagination, and number of results returned. |
 
 <AccordionGroup>
 <Accordion title="site_query full type">
@@ -44,7 +44,7 @@ await corsair.moz.api.anchorText.list({ site_query: { query: 'moz.com', scope: '
 
 ```ts
 {
-  token?: string,
+  token?: string | null,
   limit?: number
 }
 ```
@@ -57,28 +57,28 @@ await corsair.moz.api.anchorText.list({ site_query: { query: 'moz.com', scope: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `site_query` | `object` | Yes | — |
-| `offset` | `object` | Yes | — |
-| `anchor_texts` | `object[]` | Yes | — |
+| `site_query` | `object \| null` | No | — |
+| `offset` | `object \| null` | No | — |
+| `anchor_texts` | `any[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="site_query full type">
 
 ```ts
 {
-  query: string,
-  scope: domain | subdomain | subfolder | url,
-  original_site_query: {
-    query: string,
-    scope: domain | subdomain | subfolder | url
-  },
+  query?: string | null,
+  scope?: string | null,
+  original_site_query?: {
+    query?: string | null,
+    scope?: string | null
+  } | null,
   site_query_suggestion?: {
-    query: string,
-    scope: domain | subdomain | subfolder | url,
-    explanation: string,
-    issue: string
+    query?: string | null,
+    scope?: string | null,
+    explanation?: string | null,
+    issue?: string | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -88,19 +88,8 @@ await corsair.moz.api.anchorText.list({ site_query: { query: 'moz.com', scope: '
 {
   provided_token?: string | null,
   token?: string | null,
-  limit: number
-}
-```
-</Accordion>
-
-<Accordion title="anchor_texts full type">
-
-```ts
-{
-  text: string,
-  external_root_domains: number,
-  external_pages: number
-}[]
+  limit?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -115,7 +104,7 @@ await corsair.moz.api.anchorText.list({ site_query: { query: 'moz.com', scope: '
 
 `competitors.fetch`
 
-Start the ranking-competitors lookup for a site; answers with an async_call receipt to follow with jobs.lookup. Spends mozscape quota
+Get the top ranking competitors for a given target site, sorted by rivalry descending. Asynchronous: answers with an async_call to poll with jobs.lookup. Draws on the mozscape rows quota.
 
 **Risk:** `read`
 
@@ -127,12 +116,11 @@ await corsair.moz.api.competitors.fetch({ target_query: { query: 'moz.com', scop
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `target_query` | `object` | Yes | — |
+| `target_query` | `object` | Yes | The target site to fetch competitors for. |
 
 `data.site.competitor.fetch` is asynchronous: the answer is an
 async_call receipt, and the competitors arrive through jobs.lookup once
-the status is complete. It spends the mozscape quota bucket, so the
-plugin never replays it after a failure.
+the status is complete. It spends the mozscape quota bucket.
 
 <AccordionGroup>
 <Accordion title="target_query full type">
@@ -153,33 +141,191 @@ plugin never replays it after a failure.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `async_call` | `object` | Yes | — |
+| `async_call` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="async_call full type">
 
 ```ts
 {
-  id: string,
-  action: string,
-  status: pending | processing | complete,
-  ttl: number,
-  result?: Record<string, unknown> | null,
+  id?: string | null,
+  action?: string | null,
+  status?: string | null,
+  ttl?: number | null,
+  result?: {
+    target_query?: {
+      query?: string | null,
+      scope?: string | null,
+      locale?: string | null,
+      original_target_query?: {
+        query?: string | null,
+        scope?: string | null,
+        locale?: string | null
+      } | null,
+      suggestion?: {
+        query?: string | null,
+        scope?: string | null,
+        locale?: string | null,
+        explanation?: string | null,
+        issue?: string | null
+      } | null
+    } | null,
+    competitors?: any[] | null
+  } | null,
   error?: {
-    message: string,
-    code: number,
-    status: number,
+    message?: string | null,
+    code?: number | null,
+    status?: number | null,
     data?: {
-      explanation?: string,
-      issue?: string,
-      key?: string,
-      value?: unknown
-    }
+      explanation?: string | null,
+      issue?: string | null,
+      key?: string | null,
+      value?: Record<string, any> | null
+    } | null
   } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Global
+
+### topDomains
+
+`global.topDomains`
+
+Get the top ranking domains globally. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.global.topDomains({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object` | No | Control how much data is returned by providing a specific page number (n) and limit to the number of results in a given page. |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  n?: number,
+  limit?: number
 }
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object \| null` | No | — |
+| `top_domains` | `any[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  n?: number | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### topPages
+
+`global.topPages`
+
+Get the top ranking pages globally. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.global.topPages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object` | No | Control how much data is returned by providing a specific page number (n) and limit to the number of results in a given page. |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  n?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object \| null` | No | — |
+| `top_pages` | `any[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  n?: number | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Index
+
+### fetch
+
+`index.fetch`
+
+Use this endpoint to track when the index is updated with new data. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.index.fetch({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `index_id` | `string \| null` | No | — |
 
 
 
@@ -191,7 +337,7 @@ plugin never replays it after a failure.
 
 `jobs.lookup`
 
-Read an async_call by id: pending or processing means poll again, complete carries the result or the error. Free
+Fetch an `async_call` by ID to retrieve the result or error. Free (no quota).
 
 **Risk:** `read`
 
@@ -203,7 +349,7 @@ await corsair.moz.api.jobs.lookup({ id: 'c3397e5a-ce31-42fb-8607-ed40487aea18' }
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `id` | `string` | Yes | The async_call.id returned by the asynchronous action that started the request. |
+| `id` | `string` | Yes | The ID of the `async_call` to lookup. This is the `async_call.id` returned by the asynchronous action that started the request. |
 
 `async.call.lookup` is free and safe to poll every five seconds. A
 completed call carries exactly one of async_call.result and
@@ -215,30 +361,1061 @@ async_call.error, and is only retained for twenty seconds.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `async_call` | `object` | Yes | — |
+| `async_call` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="async_call full type">
 
 ```ts
 {
-  id: string,
-  action: string,
-  status: pending | processing | complete,
-  ttl: number,
-  result?: Record<string, unknown> | null,
+  id?: string | null,
+  action?: string | null,
+  status?: string | null,
+  ttl?: number | null,
+  result?: Record<string, any> | null,
   error?: {
-    message: string,
-    code: number,
-    status: number,
+    message?: string | null,
+    code?: number | null,
+    status?: number | null,
     data?: {
-      explanation?: string,
-      issue?: string,
-      key?: string,
-      value?: unknown
-    }
+      explanation?: string | null,
+      issue?: string | null,
+      key?: string | null,
+      value?: Record<string, any> | null
+    } | null
   } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Keywords
+
+### difficulty
+
+`keywords.difficulty`
+
+Retrieve the most recent difficulty metric for any keyword that exists in our database. Costs 1 row per call.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.keywords.difficulty({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serp_query` | `object` | Yes | The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary). |
+| `options` | `object` | No | Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided. |
+
+<AccordionGroup>
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword: string,
+  locale: string,
+  device: desktop | mobile_android | mobile_ios,
+  engine: google | bing | yahoo,
+  vicinity?: string
 }
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  include_intent?: boolean,
+  max_age?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword_metrics` | `object \| null` | No | — |
+| `serp_query` | `object \| null` | No | — |
+| `options` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="keyword_metrics full type">
+
+```ts
+{
+  metadata?: {
+    collected_at?: string | null
+  } | null,
+  volume: any,
+  difficulty?: number | null,
+  organic_ctr: any,
+  priority: any,
+  intent: any
+} | null
+```
+</Accordion>
+
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword?: string | null,
+  locale?: string | null,
+  device?: string | null,
+  engine?: string | null,
+  vicinity?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  include_intent?: boolean | number | null,
+  max_age?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generateMetrics
+
+`keywords.generateMetrics`
+
+Trigger on-demand collection of a SERP and return the refreshed metrics once collection is complete. Asynchronous: answers with an async_call to poll with jobs.lookup. Quota cost varies by request. Runs a fresh on-demand SERP collection, billed per call.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moz.api.keywords.generateMetrics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serp_query` | `object` | Yes | The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary). |
+
+<AccordionGroup>
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword: string,
+  locale: string,
+  device: desktop | mobile_android | mobile_ios,
+  engine: google | bing | yahoo,
+  vicinity?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `async_call` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="async_call full type">
+
+```ts
+{
+  id?: string | null,
+  action?: string | null,
+  status?: string | null,
+  ttl?: number | null,
+  result?: {
+    keyword_metrics?: {
+      volume?: number | null,
+      difficulty?: number | null,
+      organic_ctr?: number | null,
+      priority?: number | null,
+      intent?: {
+        primary_intents?: (string | null)[] | null,
+        all_intents?: any[] | null
+      } | null
+    } | null,
+    serp_query?: {
+      keyword?: string | null,
+      locale?: string | null,
+      device?: string | null,
+      engine?: string | null,
+      vicinity?: string | null
+    } | null
+  } | null,
+  error?: {
+    message?: string | null,
+    code?: number | null,
+    status?: number | null,
+    data?: {
+      explanation?: string | null,
+      issue?: string | null,
+      key?: string | null,
+      value?: Record<string, any> | null
+    } | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generateSerp
+
+`keywords.generateSerp`
+
+Trigger on-demand collection of a SERP, returning it upon completion. Asynchronous: answers with an async_call to poll with jobs.lookup. Quota cost varies by request. Runs a fresh on-demand SERP collection, billed per call.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moz.api.keywords.generateSerp({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serp_query` | `object` | Yes | The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary). |
+
+<AccordionGroup>
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword: string,
+  locale: string,
+  device: desktop | mobile_android | mobile_ios,
+  engine: google | bing | yahoo,
+  vicinity?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `async_call` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="async_call full type">
+
+```ts
+{
+  id?: string | null,
+  action?: string | null,
+  status?: string | null,
+  ttl?: number | null,
+  result?: {
+    serp_query?: {
+      keyword?: string | null,
+      locale?: string | null,
+      device?: string | null,
+      engine?: string | null,
+      vicinity?: string | null
+    } | null,
+    serp?: {
+      metadata?: {
+        collected_at?: string | null
+      } | null,
+      metrics?: {
+        volume?: number | null,
+        difficulty?: number | null,
+        organic_ctr?: number | null,
+        priority?: number | null,
+        intent?: {
+          primary_intents?: (string | null)[] | null,
+          all_intents?: any[] | null
+        } | null
+      } | null,
+      results?: any[] | null
+    } | null
+  } | null,
+  error?: {
+    message?: string | null,
+    code?: number | null,
+    status?: number | null,
+    data?: {
+      explanation?: string | null,
+      issue?: string | null,
+      key?: string | null,
+      value?: Record<string, any> | null
+    } | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### intent
+
+`keywords.intent`
+
+Retrieve the most recent search intent scores (navigational, informational, commercial, and transactional) for any keyword that exists in our database. Costs 1 row per call.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.keywords.intent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serp_query` | `object` | Yes | The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary). |
+| `options` | `object` | No | Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided. |
+
+<AccordionGroup>
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword: string,
+  locale: string,
+  device: desktop | mobile_android | mobile_ios,
+  engine: google | bing | yahoo,
+  vicinity?: string
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  include_intent?: boolean,
+  max_age?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword_metrics` | `object \| null` | No | — |
+| `serp_query` | `object \| null` | No | — |
+| `options` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="keyword_metrics full type">
+
+```ts
+{
+  metadata?: {
+    collected_at?: string | null
+  } | null,
+  volume: any,
+  difficulty: any,
+  organic_ctr: any,
+  priority: any,
+  intent?: {
+    primary_intents?: (string | null)[] | null,
+    all_intents?: any[] | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword?: string | null,
+  locale?: string | null,
+  device?: string | null,
+  engine?: string | null,
+  vicinity?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  include_intent?: boolean | number | null,
+  max_age?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### metrics
+
+`keywords.metrics`
+
+Retrieve the most recent difficulty, volume, organic CTR, priority, and/or search intent metrics for any keyword that exists in our database. Costs rows per value requested.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.keywords.metrics({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serp_query` | `object` | Yes | The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary). |
+| `options` | `object` | No | Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided. |
+
+`data.keyword.metrics.fetch`. Pick metrics with `metrics` (difficulty,
+volume, opportunity, priority, intent); costs one row per metric.
+
+<AccordionGroup>
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword: string,
+  locale: string,
+  device: desktop | mobile_android | mobile_ios,
+  engine: google | bing | yahoo,
+  vicinity?: string
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  include_intent?: boolean,
+  max_age?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword_metrics` | `object \| null` | No | — |
+| `serp_query` | `object \| null` | No | — |
+| `options` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="keyword_metrics full type">
+
+```ts
+{
+  volume?: number | null,
+  difficulty?: number | null,
+  organic_ctr?: number | null,
+  priority?: number | null,
+  intent?: {
+    primary_intents?: (string | null)[] | null,
+    all_intents?: any[] | null
+  } | null,
+  metadata?: {
+    collected_at?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword?: string | null,
+  locale?: string | null,
+  device?: string | null,
+  engine?: string | null,
+  vicinity?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  include_intent?: boolean | number | null,
+  max_age?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### metricsMultiple
+
+`keywords.metricsMultiple`
+
+Retrieve difficulty, volume, organic CTR, priority, and search intent metrics for up to 50 keywords in a single request. Costs rows per result returned.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.keywords.metricsMultiple({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serp_queries` | `any[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results_by_serp_query` | `any[] \| null` | No | — |
+| `errors_by_serp_query` | `any[] \| null` | No | — |
+
+
+
+---
+
+### opportunity
+
+`keywords.opportunity`
+
+Retrieve the most recent organic CTR (opportunity) metric for any keyword that exists in our database. Costs 1 row per call.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.keywords.opportunity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serp_query` | `object` | Yes | The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary). |
+| `options` | `object` | No | Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided. |
+
+<AccordionGroup>
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword: string,
+  locale: string,
+  device: desktop | mobile_android | mobile_ios,
+  engine: google | bing | yahoo,
+  vicinity?: string
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  include_intent?: boolean,
+  max_age?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword_metrics` | `object \| null` | No | — |
+| `serp_query` | `object \| null` | No | — |
+| `options` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="keyword_metrics full type">
+
+```ts
+{
+  metadata?: {
+    collected_at?: string | null
+  } | null,
+  volume: any,
+  difficulty: any,
+  organic_ctr?: number | null,
+  priority: any,
+  intent: any
+} | null
+```
+</Accordion>
+
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword?: string | null,
+  locale?: string | null,
+  device?: string | null,
+  engine?: string | null,
+  vicinity?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  include_intent?: boolean | number | null,
+  max_age?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### priority
+
+`keywords.priority`
+
+Retrieve the most recent priority metric for any keyword that exists in our database. Costs 1 row per call.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.keywords.priority({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serp_query` | `object` | Yes | The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary). |
+| `options` | `object` | No | Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided. |
+
+<AccordionGroup>
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword: string,
+  locale: string,
+  device: desktop | mobile_android | mobile_ios,
+  engine: google | bing | yahoo,
+  vicinity?: string
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  include_intent?: boolean,
+  max_age?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword_metrics` | `object \| null` | No | — |
+| `serp_query` | `object \| null` | No | — |
+| `options` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="keyword_metrics full type">
+
+```ts
+{
+  metadata?: {
+    collected_at?: string | null
+  } | null,
+  volume: any,
+  difficulty: any,
+  organic_ctr: any,
+  priority?: number | null,
+  intent: any
+} | null
+```
+</Accordion>
+
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword?: string | null,
+  locale?: string | null,
+  device?: string | null,
+  engine?: string | null,
+  vicinity?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  include_intent?: boolean | number | null,
+  max_age?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### serp
+
+`keywords.serp`
+
+Retrieve the most recently collected SERP for a given query. Quota cost varies by request.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.keywords.serp({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serp_query` | `object` | Yes | The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary). |
+| `options` | `object` | No | Options to further refine the cached SERP that is returned. |
+
+<AccordionGroup>
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword: string,
+  locale: string,
+  device: desktop | mobile_android | mobile_ios,
+  engine: google | bing | yahoo,
+  vicinity?: string
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  max_age?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serp_query` | `object \| null` | No | — |
+| `options` | `object \| null` | No | — |
+| `serp` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword?: string | null,
+  locale?: string | null,
+  device?: string | null,
+  engine?: string | null,
+  vicinity?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  max_age?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="serp full type">
+
+```ts
+{
+  metadata?: {
+    collected_at?: string | null
+  } | null,
+  metrics?: {
+    volume?: number | null,
+    difficulty?: number | null,
+    organic_ctr?: number | null,
+    priority?: number | null,
+    intent?: {
+      primary_intents?: (string | null)[] | null,
+      all_intents?: any[] | null
+    } | null
+  } | null,
+  results?: any[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### suggestions
+
+`keywords.suggestions`
+
+Retrieve a list of related keyword suggestions for a given input keyword. Asynchronous: answers with an async_call to poll with jobs.lookup. Costs rows per result returned.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.keywords.suggestions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serp_query` | `object` | Yes | The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary). |
+| `options` | `object` | No | Options to further filter or refine which keyword suggestions are returned. Strategy will default to `default` if not provided. |
+| `page` | `object` | No | Control how much data is returned by providing a specific page number (n) and limit to the number of results in a given page. |
+
+<AccordionGroup>
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword: string,
+  locale: string,
+  device: desktop,
+  engine: google,
+  vicinity?: string
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  strategy?: default | related_synonyms | related_topics
+}
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  n?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `async_call` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="async_call full type">
+
+```ts
+{
+  id?: string | null,
+  action?: string | null,
+  status?: string | null,
+  ttl?: number | null,
+  result?: {
+    suggestions?: any[] | null,
+    serp_query?: {
+      keyword?: string | null,
+      locale?: string | null,
+      device?: string | null,
+      engine?: string | null,
+      vicinity?: string | null
+    } | null,
+    options?: {
+      strategy?: string | null
+    } | null,
+    page?: {
+      n?: number | null,
+      limit?: number | null
+    } | null
+  } | null,
+  error?: {
+    message?: string | null,
+    code?: number | null,
+    status?: number | null,
+    data?: {
+      explanation?: string | null,
+      issue?: string | null,
+      key?: string | null,
+      value?: Record<string, any> | null
+    } | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### volume
+
+`keywords.volume`
+
+Retrieve the most recent volume metric for any keyword that exists in our database. Costs 1 row per call.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.keywords.volume({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `serp_query` | `object` | Yes | The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary). |
+| `options` | `object` | No | Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided. |
+
+<AccordionGroup>
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword: string,
+  locale: string,
+  device: desktop | mobile_android | mobile_ios,
+  engine: google | bing | yahoo,
+  vicinity?: string
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  include_intent?: boolean,
+  max_age?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyword_metrics` | `object \| null` | No | — |
+| `serp_query` | `object \| null` | No | — |
+| `options` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="keyword_metrics full type">
+
+```ts
+{
+  metadata?: {
+    collected_at?: string | null
+  } | null,
+  volume?: number | null,
+  difficulty: any,
+  organic_ctr: any,
+  priority: any,
+  intent: any
+} | null
+```
+</Accordion>
+
+<Accordion title="serp_query full type">
+
+```ts
+{
+  keyword?: string | null,
+  locale?: string | null,
+  device?: string | null,
+  engine?: string | null,
+  vicinity?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  include_intent?: boolean | number | null,
+  max_age?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -253,7 +1430,7 @@ async_call.error, and is only retained for twenty seconds.
 
 `linkingDomains.list`
 
-List the root domains linking to a target with authority, link propensity and per-domain link counts
+Use this endpoint to get a list of linking root domains to a target, with information about each root domain and the aggregate number of links to the target. Costs rows per result returned.
 
 **Risk:** `read`
 
@@ -265,9 +1442,9 @@ await corsair.moz.api.linkingDomains.list({ site_query: { query: 'moz.com', scop
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `site_query` | `object` | Yes | — |
-| `options` | `object` | No | — |
-| `offset` | `object` | No | — |
+| `site_query` | `object` | Yes | A SiteQuery provides a target URL along with a scope to define how the query is parsed. |
+| `options` | `object` | No | Options for fetching linking domains. |
+| `offset` | `object` | No | Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results. |
 
 `data.site.linking-domain.list`. One row per returned root domain. With
 several filters, `external` must be one of them.
@@ -297,7 +1474,7 @@ several filters, `external` must be one of them.
 
 ```ts
 {
-  token?: string,
+  token?: string | null,
   limit?: number
 }
 ```
@@ -310,29 +1487,29 @@ several filters, `external` must be one of them.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `site_query` | `object` | Yes | — |
-| `offset` | `object` | Yes | — |
-| `linking_domains` | `object[]` | Yes | — |
-| `options` | `object` | Yes | — |
+| `site_query` | `object \| null` | No | — |
+| `offset` | `object \| null` | No | — |
+| `linking_domains` | `any[] \| null` | No | — |
+| `options` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="site_query full type">
 
 ```ts
 {
-  query: string,
-  scope: domain | subdomain | subfolder | url,
-  original_site_query: {
-    query: string,
-    scope: domain | subdomain | subfolder | url
-  },
+  query?: string | null,
+  scope?: string | null,
+  original_site_query?: {
+    query?: string | null,
+    scope?: string | null
+  } | null,
   site_query_suggestion?: {
-    query: string,
-    scope: domain | subdomain | subfolder | url,
-    explanation: string,
-    issue: string
+    query?: string | null,
+    scope?: string | null,
+    explanation?: string | null,
+    issue?: string | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -342,73 +1519,8 @@ several filters, `external` must be one of them.
 {
   provided_token?: string | null,
   token?: string | null,
-  limit: number
-}
-```
-</Accordion>
-
-<Accordion title="linking_domains full type">
-
-```ts
-{
-  site_metrics: {
-    page: string,
-    subdomain: string,
-    root_domain: string,
-    title: string,
-    last_crawled: string,
-    http_code: number,
-    pages_to_page: number,
-    nofollow_pages_to_page: number,
-    redirect_pages_to_page: number,
-    external_pages_to_page: number,
-    external_nofollow_pages_to_page: number,
-    external_redirect_pages_to_page: number,
-    deleted_pages_to_page: number,
-    root_domains_to_page: number,
-    indirect_root_domains_to_page: number,
-    deleted_root_domains_to_page: number,
-    nofollow_root_domains_to_page: number,
-    pages_to_subdomain: number,
-    nofollow_pages_to_subdomain: number,
-    redirect_pages_to_subdomain: number,
-    external_pages_to_subdomain: number,
-    external_nofollow_pages_to_subdomain: number,
-    external_redirect_pages_to_subdomain: number,
-    deleted_pages_to_subdomain: number,
-    root_domains_to_subdomain: number,
-    deleted_root_domains_to_subdomain: number,
-    nofollow_root_domains_to_subdomain: number,
-    pages_to_root_domain: number,
-    nofollow_pages_to_root_domain: number,
-    redirect_pages_to_root_domain: number,
-    external_pages_to_root_domain: number,
-    external_indirect_pages_to_root_domain: number,
-    external_nofollow_pages_to_root_domain: number,
-    external_redirect_pages_to_root_domain: number,
-    deleted_pages_to_root_domain: number,
-    root_domains_to_root_domain: number,
-    indirect_root_domains_to_root_domain: number,
-    deleted_root_domains_to_root_domain: number,
-    nofollow_root_domains_to_root_domain: number,
-    page_authority: number,
-    domain_authority: number,
-    link_propensity: number,
-    spam_score: number,
-    root_domains_from_page: number,
-    nofollow_root_domains_from_page: number,
-    pages_from_page: number,
-    nofollow_pages_from_page: number,
-    root_domains_from_root_domain: number,
-    nofollow_root_domains_from_root_domain: number,
-    pages_from_root_domain: number,
-    nofollow_pages_from_root_domain: number,
-    pages_crawled_from_root_domain: number
-  },
-  link_propensity: number,
-  targeted_pages: number,
-  targeted_nofollow_pages: number
-}[]
+  limit?: number | null
+} | null
 ```
 </Accordion>
 
@@ -416,9 +1528,229 @@ several filters, `external` must be one of them.
 
 ```ts
 {
-  sort?: source_domain_authority | source_link_propensity | source_spam_score,
-  filters?: (external | follow | nofollow | deleted | not_deleted)[]
+  sort?: string | null,
+  filters?: (string | null)[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### recentlyGained
+
+`linkingDomains.recentlyGained`
+
+This endpoint will return information about external root domains that added new links to a target during the past 60 days. Costs rows per result returned.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.linkingDomains.recentlyGained({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | A SiteQuery provides a target URL along with a scope to define how the query is parsed. |
+| `options` | `object` | No | Optional date ranges to filter by. |
+| `offset` | `object` | No | Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results. |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
 }
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  begin_date?: string | null,
+  end_date?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  token: string | null,
+  limit: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object \| null` | No | — |
+| `offset` | `object \| null` | No | — |
+| `gained_linking_domains` | `any[] \| null` | No | — |
+| `options` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query?: string | null,
+  scope?: string | null,
+  original_site_query?: {
+    query?: string | null,
+    scope?: string | null
+  } | null,
+  site_query_suggestion?: {
+    query?: string | null,
+    scope?: string | null,
+    explanation?: string | null,
+    issue?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  provided_token?: string | null,
+  token?: string | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  begin_date?: string | null,
+  end_date?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### recentlyLost
+
+`linkingDomains.recentlyLost`
+
+This endpoint will return information about root domains that removed links to a target during the past 60 days. Costs rows per result returned.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.linkingDomains.recentlyLost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | A SiteQuery provides a target URL along with a scope to define how the query is parsed. |
+| `options` | `object` | No | Optional date ranges to filter by. |
+| `offset` | `object` | No | Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results. |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  begin_date?: string | null,
+  end_date?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  token: string | null,
+  limit: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object \| null` | No | — |
+| `offset` | `object \| null` | No | — |
+| `lost_linking_domains` | `any[] \| null` | No | — |
+| `options` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query?: string | null,
+  scope?: string | null,
+  original_site_query?: {
+    query?: string | null,
+    scope?: string | null
+  } | null,
+  site_query_suggestion?: {
+    query?: string | null,
+    scope?: string | null,
+    explanation?: string | null,
+    issue?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  provided_token?: string | null,
+  token?: string | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  begin_date?: string | null,
+  end_date?: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -429,11 +1761,273 @@ several filters, `external` must be one of them.
 
 ## Links
 
+### filterByAnchorText
+
+`links.filterByAnchorText`
+
+Use this endpoint to get a list of links to a target where the anchor text exactly matches a particular string. Costs rows per result returned.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.links.filterByAnchorText({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | A SiteQuery provides a target URL along with a scope to define how the query is parsed. |
+| `anchor_text` | `string \| null` | Yes | The anchor text provided for filtering in the original request. Pass an explicit `null` to request links with no anchor text. |
+| `options` | `object` | No | Options for filtering links by anchor text. |
+| `offset` | `object` | No | Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results. |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  scope?: subdomain | domain | page,
+  subdomains_limited_to_one?: string[],
+  sort?: source_page_authority | source_domain_authority | source_link_propensity | source_spam_score,
+  filters?: (external | follow | nofollow | deleted | not_deleted | redirect | not_redirect | rel_canonical | not_rel_canonical | via_redirect | not_via_redirect | via_rel_canonical | not_via_rel_canonical | gained_last_60_days | lost_last_60_days)[]
+}
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  token?: string | null,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object \| null` | No | — |
+| `offset` | `object \| null` | No | — |
+| `links` | `any[] \| null` | No | — |
+| `options` | `object \| null` | No | — |
+| `anchor_text` | `any \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query?: string | null,
+  scope?: string | null,
+  original_site_query?: {
+    query?: string | null,
+    scope?: string | null
+  } | null,
+  site_query_suggestion?: {
+    query?: string | null,
+    scope?: string | null,
+    explanation?: string | null,
+    issue?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  provided_token?: string | null,
+  token?: string | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  scope?: string | null,
+  subdomains_limited_to_one?: (string | null)[] | null,
+  sort?: string | null,
+  filters?: (string | null)[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### filterByDomain
+
+`links.filterByDomain`
+
+Use this endpoint to find links pointing to a target only if they originate from a particular root domain. Costs rows per result returned.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.links.filterByDomain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | A SiteQuery provides a target URL along with a scope to define how the query is parsed. |
+| `domain_site_query` | `object` | Yes | Specify the source domain to filter by. Must be a fully resolved site_query with a scope of `domain`. |
+| `options` | `object` | No | Options for filtering links by domain. |
+| `offset` | `object` | No | Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results. |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
+}
+```
+</Accordion>
+
+<Accordion title="domain_site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  scope?: subdomain | domain | page,
+  subdomains_limited_to_one?: string[],
+  sort?: source_page_authority,
+  filters?: (external | follow | nofollow | deleted | not_deleted | gained_last_60_days | lost_last_60_days)[]
+}
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  token?: string | null,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object \| null` | No | — |
+| `domain_site_query` | `object \| null` | No | — |
+| `offset` | `object \| null` | No | — |
+| `links` | `any[] \| null` | No | — |
+| `options` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query?: string | null,
+  scope?: string | null,
+  original_site_query?: {
+    query?: string | null,
+    scope?: string | null
+  } | null,
+  site_query_suggestion?: {
+    query?: string | null,
+    scope?: string | null,
+    explanation?: string | null,
+    issue?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="domain_site_query full type">
+
+```ts
+{
+  query?: string | null,
+  scope?: string | null,
+  original_site_query?: {
+    query?: string | null,
+    scope?: string | null
+  } | null,
+  site_query_suggestion?: {
+    query?: string | null,
+    scope?: string | null,
+    explanation?: string | null,
+    issue?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  provided_token?: string | null,
+  token?: string | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  scope?: string | null,
+  subdomains_limited_to_one?: (string | null)[] | null,
+  sort?: string | null,
+  filters?: (string | null)[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ### intersect
 
 `links.intersect`
 
-Find sources that link to some targets but not others, a Venn diagram of link profiles (up to 6 targets)
+This endpoint returns information about sites that point to two or more specified domains, or that point at some domains but not others. Quota cost varies by request.
 
 **Risk:** `read`
 
@@ -445,111 +2039,16 @@ await corsair.moz.api.links.intersect({ is_linking_to: [{ query: 'moz.com', scop
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `is_linking_to` | `object[]` | Yes | Get sources that link to at least one of these sites, or more if minimum_matching_targets is set. |
-| `not_linking_to` | `object[]` | No | Optionally, ensure that the returned sources do not link to any of these sites. |
+| `is_linking_to` | `any[]` | Yes | Get sources that link to at least one of the provided sites, or more if `minimum_matching_targets` is set (see description of `minimum_matching_targets` below). Up to 6 total targets may be specified in the `is_linking_to` and `not_linking_to` fields combined, and at least one target must be specified in `is_linking_to`. |
+| `not_linking_to` | `any[]` | No | Optionally, ensure that the returned sources that do not link to any of the provided sites. |
 | `options` | `object` | No | — |
-| `offset` | `object` | No | — |
+| `offset` | `object` | No | Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results. |
 
 `data.site.link.intersect.fetch`. At least one target in
 is_linking_to, at most six targets across both arrays, and it costs N
 rows per result where N is the number of targets in the request.
 
 <AccordionGroup>
-<Accordion title="is_linking_to full type">
-
-```ts
-{
-  query: string,
-  scope: domain | subdomain | subfolder | url
-}[]
-```
-</Accordion>
-
-<Accordion title="not_linking_to full type">
-
-```ts
-{
-  query: string,
-  scope: domain | subdomain | subfolder | url
-}[]
-```
-</Accordion>
-
-<Accordion title="options full type">
-
-```ts
-{
-  minimum_matching_targets?: number,
-  scope?: page | domain,
-  sort?: matching_target_count | source_spam_score | source_domain_authority
-}
-```
-</Accordion>
-
-<Accordion title="offset full type">
-
-```ts
-{
-  token?: string,
-  limit?: number
-}
-```
-</Accordion>
-</AccordionGroup>
-
-
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `is_linking_to` | `object[]` | Yes | — |
-| `not_linking_to` | `object[]` | Yes | — |
-| `options` | `object` | Yes | — |
-| `offset` | `object` | Yes | — |
-| `link_intersects` | `object[]` | Yes | Sources matching the intersect, one entry per source page. |
-
-<AccordionGroup>
-<Accordion title="is_linking_to full type">
-
-```ts
-{
-  query: string,
-  scope: domain | subdomain | subfolder | url,
-  original_site_query: {
-    query: string,
-    scope: domain | subdomain | subfolder | url
-  },
-  site_query_suggestion?: {
-    query: string,
-    scope: domain | subdomain | subfolder | url,
-    explanation: string,
-    issue: string
-  } | null
-}[]
-```
-</Accordion>
-
-<Accordion title="not_linking_to full type">
-
-```ts
-{
-  query: string,
-  scope: domain | subdomain | subfolder | url,
-  original_site_query: {
-    query: string,
-    scope: domain | subdomain | subfolder | url
-  },
-  site_query_suggestion?: {
-    query: string,
-    scope: domain | subdomain | subfolder | url,
-    explanation: string,
-    issue: string
-  } | null
-}[]
-```
-</Accordion>
-
 <Accordion title="options full type">
 
 ```ts
@@ -565,27 +2064,45 @@ rows per result where N is the number of targets in the request.
 
 ```ts
 {
-  provided_token?: string | null,
   token?: string | null,
-  limit: number
+  limit?: number
 }
 ```
 </Accordion>
+</AccordionGroup>
 
-<Accordion title="link_intersects full type">
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_linking_to` | `any[] \| null` | No | — |
+| `not_linking_to` | `any[] \| null` | No | — |
+| `options` | `object \| null` | No | — |
+| `offset` | `object \| null` | No | — |
+| `link_intersects` | `any[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
 
 ```ts
 {
-  page: string,
-  title: string,
-  domain_authority: number,
-  spam_score: number,
-  matching_target_indexes?: number[],
-  matching_source_pages?: {
-    page: string,
-    page_authority: number
-  }[]
-}[]
+  minimum_matching_targets?: number | null,
+  scope?: string | null,
+  sort?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="offset full type">
+
+```ts
+{
+  provided_token?: string | null,
+  token?: string | null,
+  limit?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -598,7 +2115,7 @@ rows per result where N is the number of targets in the request.
 
 `links.list`
 
-List the links pointing at a target with source and target metrics, filters, sorting and token paging
+Use this endpoint to get a list of links to a target. Costs rows per result returned.
 
 **Risk:** `read`
 
@@ -610,9 +2127,9 @@ await corsair.moz.api.links.list({ site_query: { query: 'moz.com/blog', scope: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `site_query` | `object` | Yes | — |
-| `options` | `object` | No | — |
-| `offset` | `object` | No | — |
+| `site_query` | `object` | Yes | A SiteQuery provides a target URL along with a scope to define how the query is parsed. |
+| `options` | `object` | No | Options for fetching linking domains. |
+| `offset` | `object` | No | Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results. |
 
 `data.site.link.list`. One row per returned link. The offset.token in
 the response is the next page's cursor; it is null when the list is
@@ -645,7 +2162,7 @@ exhausted. Setting options.subdomains_limited_to_one requires a sort.
 
 ```ts
 {
-  token?: string,
+  token?: string | null,
   limit?: number
 }
 ```
@@ -658,29 +2175,29 @@ exhausted. Setting options.subdomains_limited_to_one requires a sort.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `site_query` | `object` | Yes | — |
-| `offset` | `object` | Yes | — |
-| `links` | `object[]` | Yes | — |
-| `options` | `object` | Yes | — |
+| `site_query` | `object \| null` | No | — |
+| `offset` | `object \| null` | No | — |
+| `links` | `any[] \| null` | No | — |
+| `options` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="site_query full type">
 
 ```ts
 {
-  query: string,
-  scope: domain | subdomain | subfolder | url,
-  original_site_query: {
-    query: string,
-    scope: domain | subdomain | subfolder | url
-  },
+  query?: string | null,
+  scope?: string | null,
+  original_site_query?: {
+    query?: string | null,
+    scope?: string | null
+  } | null,
   site_query_suggestion?: {
-    query: string,
-    scope: domain | subdomain | subfolder | url,
-    explanation: string,
-    issue: string
+    query?: string | null,
+    scope?: string | null,
+    explanation?: string | null,
+    issue?: string | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -690,133 +2207,8 @@ exhausted. Setting options.subdomains_limited_to_one requires a sort.
 {
   provided_token?: string | null,
   token?: string | null,
-  limit: number
-}
-```
-</Accordion>
-
-<Accordion title="links full type">
-
-```ts
-{
-  source_site_metrics: {
-    page: string,
-    subdomain: string,
-    root_domain: string,
-    title: string,
-    last_crawled: string,
-    http_code: number,
-    pages_to_page: number,
-    nofollow_pages_to_page: number,
-    redirect_pages_to_page: number,
-    external_pages_to_page: number,
-    external_nofollow_pages_to_page: number,
-    external_redirect_pages_to_page: number,
-    deleted_pages_to_page: number,
-    root_domains_to_page: number,
-    indirect_root_domains_to_page: number,
-    deleted_root_domains_to_page: number,
-    nofollow_root_domains_to_page: number,
-    pages_to_subdomain: number,
-    nofollow_pages_to_subdomain: number,
-    redirect_pages_to_subdomain: number,
-    external_pages_to_subdomain: number,
-    external_nofollow_pages_to_subdomain: number,
-    external_redirect_pages_to_subdomain: number,
-    deleted_pages_to_subdomain: number,
-    root_domains_to_subdomain: number,
-    deleted_root_domains_to_subdomain: number,
-    nofollow_root_domains_to_subdomain: number,
-    pages_to_root_domain: number,
-    nofollow_pages_to_root_domain: number,
-    redirect_pages_to_root_domain: number,
-    external_pages_to_root_domain: number,
-    external_indirect_pages_to_root_domain: number,
-    external_nofollow_pages_to_root_domain: number,
-    external_redirect_pages_to_root_domain: number,
-    deleted_pages_to_root_domain: number,
-    root_domains_to_root_domain: number,
-    indirect_root_domains_to_root_domain: number,
-    deleted_root_domains_to_root_domain: number,
-    nofollow_root_domains_to_root_domain: number,
-    page_authority: number,
-    domain_authority: number,
-    link_propensity: number,
-    spam_score: number,
-    root_domains_from_page: number,
-    nofollow_root_domains_from_page: number,
-    pages_from_page: number,
-    nofollow_pages_from_page: number,
-    root_domains_from_root_domain: number,
-    nofollow_root_domains_from_root_domain: number,
-    pages_from_root_domain: number,
-    nofollow_pages_from_root_domain: number,
-    pages_crawled_from_root_domain: number
-  },
-  target_site_metrics: {
-    page: string,
-    subdomain: string,
-    root_domain: string,
-    title: string,
-    last_crawled: string,
-    http_code: number,
-    pages_to_page: number,
-    nofollow_pages_to_page: number,
-    redirect_pages_to_page: number,
-    external_pages_to_page: number,
-    external_nofollow_pages_to_page: number,
-    external_redirect_pages_to_page: number,
-    deleted_pages_to_page: number,
-    root_domains_to_page: number,
-    indirect_root_domains_to_page: number,
-    deleted_root_domains_to_page: number,
-    nofollow_root_domains_to_page: number,
-    pages_to_subdomain: number,
-    nofollow_pages_to_subdomain: number,
-    redirect_pages_to_subdomain: number,
-    external_pages_to_subdomain: number,
-    external_nofollow_pages_to_subdomain: number,
-    external_redirect_pages_to_subdomain: number,
-    deleted_pages_to_subdomain: number,
-    root_domains_to_subdomain: number,
-    deleted_root_domains_to_subdomain: number,
-    nofollow_root_domains_to_subdomain: number,
-    pages_to_root_domain: number,
-    nofollow_pages_to_root_domain: number,
-    redirect_pages_to_root_domain: number,
-    external_pages_to_root_domain: number,
-    external_indirect_pages_to_root_domain: number,
-    external_nofollow_pages_to_root_domain: number,
-    external_redirect_pages_to_root_domain: number,
-    deleted_pages_to_root_domain: number,
-    root_domains_to_root_domain: number,
-    indirect_root_domains_to_root_domain: number,
-    deleted_root_domains_to_root_domain: number,
-    nofollow_root_domains_to_root_domain: number,
-    page_authority: number,
-    domain_authority: number,
-    link_propensity: number,
-    spam_score: number,
-    root_domains_from_page: number,
-    nofollow_root_domains_from_page: number,
-    pages_from_page: number,
-    nofollow_pages_from_page: number,
-    root_domains_from_root_domain: number,
-    nofollow_root_domains_from_root_domain: number,
-    pages_from_root_domain: number,
-    nofollow_pages_from_root_domain: number,
-    pages_crawled_from_root_domain: number
-  },
-  anchor_text: string,
-  date_first_seen: string,
-  date_last_seen: string,
-  date_disappeared?: string | null,
-  nofollow: boolean,
-  redirect: boolean,
-  rel_canonical: boolean,
-  via_redirect: boolean,
-  via_rel_canonical: boolean
-}[]
+  limit?: number | null
+} | null
 ```
 </Accordion>
 
@@ -824,11 +2216,1993 @@ exhausted. Setting options.subdomains_limited_to_one requires a sort.
 
 ```ts
 {
-  scope?: subdomain | domain | page,
-  subdomains_limited_to_one?: string[],
-  sort?: root_domains_to_source_root_domain | root_domains_to_source_page | source_page_authority | source_domain_authority | source_link_propensity | source_spam_score,
-  filters?: (external | follow | nofollow | deleted | not_deleted | redirect | not_redirect | rel_canonical | not_rel_canonical | via_redirect | not_via_redirect | via_rel_canonical | not_via_rel_canonical | gained_last_60_days | lost_last_60_days)[]
+  scope?: string | null,
+  subdomains_limited_to_one?: (string | null)[] | null,
+  sort?: string | null,
+  filters?: (string | null)[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### status
+
+`links.status`
+
+Use this endpoint to get the status of a link from a source to a target. Costs 1 row per call.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.links.status({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target_site_query` | `object` | Yes | Specify the target to check for an existing link. |
+| `source_site_query` | `object` | Yes | Specify the source to check for an existing link. |
+
+<AccordionGroup>
+<Accordion title="target_site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
 }
+```
+</Accordion>
+
+<Accordion title="source_site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target_site_query` | `object \| null` | No | — |
+| `source_site_query` | `object \| null` | No | — |
+| `exists` | `boolean \| number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="target_site_query full type">
+
+```ts
+{
+  query?: string | null,
+  scope?: string | null,
+  original_site_query?: {
+    query?: string | null,
+    scope?: string | null
+  } | null,
+  site_query_suggestion?: {
+    query?: string | null,
+    scope?: string | null,
+    explanation?: string | null,
+    issue?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="source_site_query full type">
+
+```ts
+{
+  query?: string | null,
+  scope?: string | null,
+  original_site_query?: {
+    query?: string | null,
+    scope?: string | null
+  } | null,
+  site_query_suggestion?: {
+    query?: string | null,
+    scope?: string | null,
+    explanation?: string | null,
+    issue?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### statusMultiple
+
+`links.statusMultiple`
+
+Use this endpoint to get the status of multiple links from a source to a target. Costs rows per result returned.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.links.statusMultiple({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queries` | `any[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results_by_query` | `any[] \| null` | No | — |
+| `errors_by_query` | `any[] \| null` | No | — |
+
+
+
+---
+
+## Local
+
+### accounts.create
+
+`local.accounts.create`
+
+Creates a new Moz Local Account. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `write`
+
+```ts
+await corsair.moz.api.local.accounts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `object` | Yes | A payload to create a local account. |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  name?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### accounts.list
+
+`local.accounts.list`
+
+List all Moz Local Accounts. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.accounts.list({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accounts` | `any[] \| string \| null` | No | — |
+
+
+
+---
+
+### accounts.lookup
+
+`local.accounts.lookup`
+
+Lookup a specific Moz Local Account by ID. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.accounts.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The ID of the local account. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="account full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### customFields.create
+
+`local.customFields.create`
+
+Creates a location custom field definition on a Moz Local Account. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `write`
+
+```ts
+await corsair.moz.api.local.customFields.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `custom_field` | `object` | Yes | A payload to create a local account custom field. |
+
+<AccordionGroup>
+<Accordion title="custom_field full type">
+
+```ts
+{
+  account_id?: any,
+  name?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `custom_field` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_field full type">
+
+```ts
+{
+  id?: number | null,
+  account_id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### customFields.listForAccount
+
+`local.customFields.listForAccount`
+
+List all location custom fields for a given Moz Local Account ID. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.customFields.listForAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `number` | Yes | The account ID the custom field is attached to. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `custom_fields` | `any[] \| string \| null` | No | — |
+
+
+
+---
+
+### customFields.lookup
+
+`local.customFields.lookup`
+
+Lookup a specific custom field by ID for a Moz Local Account. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.customFields.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `number` | Yes | The account ID the custom field is attached to. |
+| `id` | `number` | Yes | The ID of a local account custom field. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `custom_field` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_field full type">
+
+```ts
+{
+  id?: number | null,
+  account_id?: number | null,
+  name?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### groups.addLocation
+
+`local.groups.addLocation`
+
+Add a location to a group. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `write`
+
+```ts
+await corsair.moz.api.local.groups.addLocation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | The ID of the local group. |
+| `location_id` | `number` | Yes | The id of the location |
+
+
+
+**Output:** `Record<string, any> \| null`
+
+
+---
+
+### groups.create
+
+`local.groups.create`
+
+Creates a new group in a Moz Local Account to organize locations. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `write`
+
+```ts
+await corsair.moz.api.local.groups.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `object` | Yes | A payload to create a local group. |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  name?: any,
+  account_id?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  account_id?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### groups.list
+
+`local.groups.list`
+
+List all local groups. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.groups.list({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groups` | `any[] \| string \| null` | No | — |
+
+
+
+---
+
+### groups.listForAccount
+
+`local.groups.listForAccount`
+
+List all groups for a given Moz Local Account ID. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.groups.listForAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `account_id` | `number \| null` | Yes | The id of the local account the location resides in. May be null for legacy inactive locations. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `groups` | `any[] \| string \| null` | No | — |
+
+
+
+---
+
+### groups.listLocations
+
+`local.groups.listLocations`
+
+List locations in a given group. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.groups.listLocations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | The ID of the local group. |
+| `page` | `object` | No | Control the number of results returned per call in addition to fetching additional results. The default `limit` is 25 with an `n` value of 0 (indicating the first page of results). Make subsequent calls to the endpoint with incrementing `n` values to fetch additional pages of results. To get all results, you must continue making calls with incrementing `n` values until an empty result set is retur |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  n?: any,
+  limit?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locations` | `any[] \| string \| null` | No | — |
+| `page` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  n?: number | null,
+  limit?: number | null,
+  order?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### groups.lookup
+
+`local.groups.lookup`
+
+Lookup a specific group by ID. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.groups.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The ID of the local group. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="group full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  account_id?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### groups.removeLocation
+
+`local.groups.removeLocation`
+
+Remove a location from a group. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `write`
+
+```ts
+await corsair.moz.api.local.groups.removeLocation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_id` | `number` | Yes | The ID of the local group. |
+| `location_id` | `number` | Yes | The id of the location |
+
+
+
+**Output:** `Record<string, any> \| null`
+
+
+---
+
+### locations.cancel
+
+`local.locations.cancel`
+
+Cancel a specific location by ID. Moz Local Enterprise only. Free (no quota). Stops the paid listing service for the location.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.moz.api.local.locations.cancel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The id of the location |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  id?: number | null,
+  level?: string | null,
+  status?: string | null,
+  account_id?: number | null,
+  auto_sync_enabled?: boolean | number | null,
+  custom_fields?: Record<string, any> | null,
+  remote_id?: string | null,
+  listings_name?: string | null,
+  location_name?: string | null,
+  website_url?: string | null,
+  email_address?: string | null,
+  timezone?: string | null,
+  store_code?: string | null,
+  short_description?: string | null,
+  long_description?: string | null,
+  languages?: (string | null)[] | string | null,
+  keywords?: (string | null)[] | string | null,
+  brands?: (string | null)[] | string | null,
+  payment_forms?: (string | null)[] | string | null,
+  price_range?: string | null,
+  service_areas?: any[] | string | null,
+  service_area_only?: boolean | number | null,
+  services?: (string | null)[] | string | null,
+  primary_category?: string | null,
+  additional_categories?: (string | null)[] | string | null,
+  attributes?: any[] | string | null,
+  address?: {
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    sublocality?: string | null,
+    county?: string | null,
+    city?: string | null,
+    state_province?: string | null,
+    postal_code?: string | null,
+    country?: string | null
+  } | null,
+  lat?: number | null,
+  long?: number | null,
+  opening_status?: string | null,
+  reopen_date?: string | null,
+  hours?: {
+    monday?: (string | null)[] | string | null,
+    tuesday?: (string | null)[] | string | null,
+    wednesday?: (string | null)[] | string | null,
+    thursday?: (string | null)[] | string | null,
+    friday?: (string | null)[] | string | null,
+    saturday?: (string | null)[] | string | null,
+    sunday?: (string | null)[] | string | null
+  } | null,
+  more_hours?: Record<string, any> | null,
+  opening_hours_notes?: string | null,
+  opening_date?: string | null,
+  special_hours?: Record<string, any> | null,
+  phone?: string | null,
+  fax?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### locations.categories
+
+`local.locations.categories`
+
+Retrieve a list of Google category IDs that can be used for `primary_category` or `additional_categories` when creating or updating a location. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.categories({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `categories` | `any[] \| string \| null` | No | — |
+
+
+
+---
+
+### locations.close
+
+`local.locations.close`
+
+Closes a location, setting its status to closed and opening status to permanently closed. Moz Local Enterprise only. Free (no quota). Marks the business permanently closed on every directory.
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.moz.api.local.locations.close({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The id of the location |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  id?: number | null,
+  level?: string | null,
+  status?: string | null,
+  account_id?: number | null,
+  auto_sync_enabled?: boolean | number | null,
+  custom_fields?: Record<string, any> | null,
+  remote_id?: string | null,
+  listings_name?: string | null,
+  location_name?: string | null,
+  website_url?: string | null,
+  email_address?: string | null,
+  timezone?: string | null,
+  store_code?: string | null,
+  short_description?: string | null,
+  long_description?: string | null,
+  languages?: (string | null)[] | string | null,
+  keywords?: (string | null)[] | string | null,
+  brands?: (string | null)[] | string | null,
+  payment_forms?: (string | null)[] | string | null,
+  price_range?: string | null,
+  service_areas?: any[] | string | null,
+  service_area_only?: boolean | number | null,
+  services?: (string | null)[] | string | null,
+  primary_category?: string | null,
+  additional_categories?: (string | null)[] | string | null,
+  attributes?: any[] | string | null,
+  address?: {
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    sublocality?: string | null,
+    county?: string | null,
+    city?: string | null,
+    state_province?: string | null,
+    postal_code?: string | null,
+    country?: string | null
+  } | null,
+  lat?: number | null,
+  long?: number | null,
+  opening_status?: string | null,
+  reopen_date?: string | null,
+  hours?: {
+    monday?: (string | null)[] | string | null,
+    tuesday?: (string | null)[] | string | null,
+    wednesday?: (string | null)[] | string | null,
+    thursday?: (string | null)[] | string | null,
+    friday?: (string | null)[] | string | null,
+    saturday?: (string | null)[] | string | null,
+    sunday?: (string | null)[] | string | null
+  } | null,
+  more_hours?: Record<string, any> | null,
+  opening_hours_notes?: string | null,
+  opening_date?: string | null,
+  special_hours?: Record<string, any> | null,
+  phone?: string | null,
+  fax?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### locations.create
+
+`local.locations.create`
+
+Creates a new location. Moz Local Enterprise only. Free (no quota). Adds a billed Moz Local location.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moz.api.local.locations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `object` | Yes | A location to be created. |
+
+`local.location.create` adds a billed Moz Local location at the given
+`level`; check levels with local.locations.levels first.
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  level?: any,
+  account_id?: any,
+  auto_sync_enabled?: any,
+  custom_fields?: Record<string, any>,
+  remote_id?: any,
+  listings_name?: any,
+  location_name?: any,
+  website_url?: any,
+  email_address?: any,
+  timezone?: any,
+  store_code?: any,
+  short_description?: any,
+  long_description?: any,
+  languages?: any,
+  keywords?: any,
+  brands?: any,
+  payment_forms?: any,
+  price_range?: any,
+  service_areas?: any,
+  service_area_only?: any,
+  services?: any,
+  primary_category?: any,
+  additional_categories?: any,
+  attributes?: any,
+  address?: {
+    address_line_1?: any,
+    address_line_2?: any,
+    sublocality?: any,
+    county?: any,
+    city?: any,
+    state_province?: any,
+    postal_code?: any,
+    country?: any
+  },
+  lat?: any,
+  long?: any,
+  opening_status?: any,
+  reopen_date?: any,
+  hours?: {
+    monday?: any,
+    tuesday?: any,
+    wednesday?: any,
+    thursday?: any,
+    friday?: any,
+    saturday?: any,
+    sunday?: any
+  },
+  opening_hours_notes?: any,
+  opening_date?: any,
+  special_hours?: Record<string, any>,
+  phone?: any,
+  fax?: any,
+  published?: any,
+  create_pages?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  id?: number | null,
+  level?: string | null,
+  status?: string | null,
+  account_id?: any | null,
+  auto_sync_enabled?: boolean | number | null,
+  custom_fields?: Record<string, any> | null,
+  remote_id?: string | null,
+  listings_name?: string | null,
+  location_name?: string | null,
+  website_url?: string | null,
+  email_address?: string | null,
+  timezone?: string | null,
+  store_code?: string | null,
+  short_description?: string | null,
+  long_description?: string | null,
+  languages?: (string | null)[] | string | null,
+  keywords?: (string | null)[] | string | null,
+  brands?: (string | null)[] | string | null,
+  payment_forms?: (string | null)[] | string | null,
+  price_range?: string | null,
+  service_areas?: any[] | string | null,
+  service_area_only?: boolean | number | null,
+  services?: (string | null)[] | string | null,
+  primary_category?: string | null,
+  additional_categories?: (string | null)[] | string | null,
+  attributes?: any[] | string | null,
+  address?: {
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    sublocality?: string | null,
+    county?: string | null,
+    city?: string | null,
+    state_province?: string | null,
+    postal_code?: string | null,
+    country?: string | null
+  } | null,
+  lat?: number | null,
+  long?: number | null,
+  opening_status?: string | null,
+  reopen_date?: string | null,
+  hours?: {
+    monday?: (string | null)[] | string | null,
+    tuesday?: (string | null)[] | string | null,
+    wednesday?: (string | null)[] | string | null,
+    thursday?: (string | null)[] | string | null,
+    friday?: (string | null)[] | string | null,
+    saturday?: (string | null)[] | string | null,
+    sunday?: (string | null)[] | string | null
+  } | null,
+  more_hours?: Record<string, any> | null,
+  opening_hours_notes?: string | null,
+  opening_date?: string | null,
+  special_hours?: Record<string, any> | null,
+  phone?: string | null,
+  fax?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### locations.fieldIssues
+
+`local.locations.fieldIssues`
+
+Returns field-level discrepancy issues for a given location. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.fieldIssues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `number` | Yes | The id of the location |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field_issues` | `any[] \| string \| null` | No | — |
+
+
+
+---
+
+### locations.fieldStatuses
+
+`local.locations.fieldStatuses`
+
+Returns field-level listing health data for a given location. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.fieldStatuses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `number` | Yes | The id of the location |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `field_statuses` | `any[] \| string \| null` | No | — |
+
+
+
+---
+
+### locations.gbpImpressionHistory
+
+`local.locations.gbpImpressionHistory`
+
+Returns Google Business Profile keyword-impression history over time (month by month) for a location's top-performing keywords. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.gbpImpressionHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `number` | Yes | The id of the location |
+| `date_start` | `string` | Yes | Inclusive range start, `YYYY-MM-DD`. |
+| `date_end` | `string` | Yes | Inclusive range end, `YYYY-MM-DD`. Date range may not exceed 12 months. |
+| `keyword_limit` | `number` | No | Max number of top keywords returned per Google Business Profile impression bucket. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gbp_impression_history` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="gbp_impression_history full type">
+
+```ts
+{
+  location_id?: number | null,
+  date_start?: string | null,
+  date_end?: string | null,
+  keyword_limit?: number | null,
+  gbp_impression_history_reports?: any[] | string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### locations.gbpImpressionTotals
+
+`local.locations.gbpImpressionTotals`
+
+Returns total Google Business Profile keyword impressions for a given location and date range, ordered from most to least impressions. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.gbpImpressionTotals({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `number` | Yes | The id of the location |
+| `date_start` | `string` | Yes | Inclusive range start, `YYYY-MM-DD`. |
+| `date_end` | `string` | Yes | Inclusive range end, `YYYY-MM-DD`. Date range may not exceed 12 months. |
+| `page` | `object` | No | Control the number of results returned per call in addition to fetching additional results. The default `limit` is 25 with an `n` value of 0 (indicating the first page of results). Make subsequent calls to the endpoint with incrementing `n` values to fetch additional pages of results. To get all results, you must continue making calls with incrementing `n` values until an empty result set is retur |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  n?: any,
+  limit?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gbp_impression_total` | `object \| null` | No | — |
+| `page` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="gbp_impression_total full type">
+
+```ts
+{
+  location_id?: number | null,
+  date_start?: string | null,
+  date_end?: string | null,
+  gbp_impression_keyword_totals?: any[] | string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  n?: number | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### locations.gbpLeadHistory
+
+`local.locations.gbpLeadHistory`
+
+Returns Google Business Profile lead history over time for a given location, bucketed by day, week, or month. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.gbpLeadHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `number` | Yes | The id of the location |
+| `date_start` | `string` | Yes | Inclusive range start, `YYYY-MM-DD`. |
+| `date_end` | `string` | Yes | Inclusive range end, `YYYY-MM-DD`. Date range may not exceed 12 months. |
+| `date_aggregation` | `day \| week \| month` | No | The bucket size used to aggregate a Google Business Profile insight time series. Accepted and returned in lowercase. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `gbp_lead_history` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="gbp_lead_history full type">
+
+```ts
+{
+  location_id?: number | null,
+  date_start?: string | null,
+  date_end?: string | null,
+  date_aggregation?: string | null,
+  gbp_lead_history_reports?: any[] | string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### locations.levels
+
+`local.locations.levels`
+
+List the available levels of service for locations. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.levels({});
+```
+
+**Input:** `Record<string, any>`
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `levels` | `(string \| null)[] \| string \| null` | No | — |
+
+
+
+---
+
+### locations.list
+
+`local.locations.list`
+
+List all locations. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object` | No | Control the number of results returned per call in addition to fetching additional results. The default `limit` is 25 with an `n` value of 0 (indicating the first page of results). Make subsequent calls to the endpoint with incrementing `n` values to fetch additional pages of results. To get all results, you must continue making calls with incrementing `n` values until an empty result set is retur |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  n?: any,
+  limit?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locations` | `any[] \| string \| null` | No | — |
+
+
+
+---
+
+### locations.listByStatus
+
+`local.locations.listByStatus`
+
+List locations filtered by status. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.listByStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object` | No | Control the number of results returned per call in addition to fetching additional results. The default `limit` is 25 with an `n` value of 0 (indicating the first page of results). Make subsequent calls to the endpoint with incrementing `n` values to fetch additional pages of results. To get all results, you must continue making calls with incrementing `n` values until an empty result set is retur |
+| `status` | `active \| canceled \| closed \| suspended` | Yes | The status of the location |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  n?: any,
+  limit?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `locations` | `any[] \| string \| null` | No | — |
+
+
+
+---
+
+### locations.listForAccount
+
+`local.locations.listForAccount`
+
+List all active locations filtered by Moz Local Account ID. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.listForAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `object` | No | Control the number of results returned per call in addition to fetching additional results. The default `limit` is 25 with an `n` value of 0 (indicating the first page of results). Make subsequent calls to the endpoint with incrementing `n` values to fetch additional pages of results. To get all results, you must continue making calls with incrementing `n` values until an empty result set is retur |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  n?: any,
+  limit?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locations` | `any[] \| string \| null` | No | — |
+| `account_id` | `any \| null` | No | — |
+| `page` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="page full type">
+
+```ts
+{
+  n?: number | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### locations.listings
+
+`local.locations.listings`
+
+Returns a list of listings for a given location. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.listings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `number` | Yes | The id of the location |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listings` | `any[] \| string \| null` | No | — |
+
+
+
+---
+
+### locations.localGridHistory
+
+`local.locations.localGridHistory`
+
+Returns all Local Grid results over time for a given keyword, device, engine, and location, including every dot of each grid. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.localGridHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `number` | Yes | The id of the location |
+| `keyword` | `string` | Yes | The Local Grid keyword the grid ranks are for. |
+| `device` | `desktop \| mobile` | Yes | The device to perform the query for. |
+| `engine` | `google` | Yes | The engine for the query. |
+| `date_start` | `string` | Yes | Inclusive range start, `YYYY-MM-DD`. |
+| `date_end` | `string` | Yes | Inclusive range end, `YYYY-MM-DD`. Date range may not exceed 12 months. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `local_grid_history` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="local_grid_history full type">
+
+```ts
+{
+  location_id?: number | null,
+  date_start?: string | null,
+  date_end?: string | null,
+  keyword?: string | null,
+  device?: string | null,
+  engine?: string | null,
+  grids?: any[] | string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### locations.localGridKeywords
+
+`local.locations.localGridKeywords`
+
+Returns the keywords available to generate a Local Grid report on for a given location. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.localGridKeywords({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `number` | Yes | The id of the location |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keywords` | `(string \| null)[] \| string \| null` | No | — |
+
+
+
+---
+
+### locations.lookup
+
+`local.locations.lookup`
+
+Lookup a specific location by ID. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.lookup({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The id of the location |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  id?: number | null,
+  level?: string | null,
+  status?: string | null,
+  account_id?: number | null,
+  auto_sync_enabled?: boolean | number | null,
+  custom_fields?: Record<string, any> | null,
+  remote_id?: string | null,
+  listings_name?: string | null,
+  location_name?: string | null,
+  website_url?: string | null,
+  email_address?: string | null,
+  timezone?: string | null,
+  store_code?: string | null,
+  short_description?: string | null,
+  long_description?: string | null,
+  languages?: (string | null)[] | string | null,
+  keywords?: (string | null)[] | string | null,
+  brands?: (string | null)[] | string | null,
+  payment_forms?: (string | null)[] | string | null,
+  price_range?: string | null,
+  service_areas?: any[] | string | null,
+  service_area_only?: boolean | number | null,
+  services?: (string | null)[] | string | null,
+  primary_category?: string | null,
+  additional_categories?: (string | null)[] | string | null,
+  attributes?: any[] | string | null,
+  address?: {
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    sublocality?: string | null,
+    county?: string | null,
+    city?: string | null,
+    state_province?: string | null,
+    postal_code?: string | null,
+    country?: string | null
+  } | null,
+  lat?: number | null,
+  long?: number | null,
+  opening_status?: string | null,
+  reopen_date?: string | null,
+  hours?: {
+    monday?: (string | null)[] | string | null,
+    tuesday?: (string | null)[] | string | null,
+    wednesday?: (string | null)[] | string | null,
+    thursday?: (string | null)[] | string | null,
+    friday?: (string | null)[] | string | null,
+    saturday?: (string | null)[] | string | null,
+    sunday?: (string | null)[] | string | null
+  } | null,
+  more_hours?: Record<string, any> | null,
+  opening_hours_notes?: string | null,
+  opening_date?: string | null,
+  special_hours?: Record<string, any> | null,
+  phone?: string | null,
+  fax?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### locations.networks
+
+`local.locations.networks`
+
+Returns a list of networks for a given location. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.networks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `number` | Yes | The id of the location |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `networks` | `any[] \| string \| null` | No | — |
+
+
+
+---
+
+### locations.networkStatuses
+
+`local.locations.networkStatuses`
+
+Returns a list of statuses per network for a given location. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.networkStatuses({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `number` | Yes | The id of the location |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `network_statuses` | `any[] \| string \| null` | No | — |
+
+
+
+---
+
+### locations.rankingHistory
+
+`local.locations.rankingHistory`
+
+Returns keyword ranking position over time for a location's tracked keywords. Moz Local Enterprise only. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.local.locations.rankingHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location_id` | `number` | Yes | The id of the location |
+| `date_start` | `string` | Yes | Inclusive range start, `YYYY-MM-DD`. |
+| `date_end` | `string` | Yes | Inclusive range end, `YYYY-MM-DD`. Date range may not exceed 12 months. |
+| `engine` | `google` | Yes | The engine for the query. |
+| `device` | `desktop \| mobile` | Yes | The device to perform the query for. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ranking_history` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="ranking_history full type">
+
+```ts
+{
+  location_id?: number | null,
+  date_start?: string | null,
+  date_end?: string | null,
+  engine?: string | null,
+  device?: string | null,
+  ranking_history_reports?: any[] | string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### locations.update
+
+`local.locations.update`
+
+Update a single location. Moz Local Enterprise only. Free (no quota). Moz Local publishes the change to the business listings on every directory.
+
+**Risk:** `write`
+
+```ts
+await corsair.moz.api.local.locations.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `object` | Yes | A payload to update one or more fields for a location. |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  id?: any,
+  auto_sync_enabled?: any,
+  custom_fields?: Record<string, any>,
+  remote_id?: any,
+  listings_name?: any,
+  location_name?: any,
+  website_url?: any,
+  email_address?: any,
+  timezone?: any,
+  store_code?: any,
+  short_description?: any,
+  long_description?: any,
+  languages?: any,
+  keywords?: any,
+  brands?: any,
+  payment_forms?: any,
+  price_range?: any,
+  service_areas?: any,
+  service_area_only?: any,
+  services?: any,
+  primary_category?: any,
+  additional_categories?: any,
+  attributes?: any,
+  address?: {
+    address_line_1?: any,
+    address_line_2?: any,
+    sublocality?: any,
+    county?: any,
+    city?: any,
+    state_province?: any,
+    postal_code?: any,
+    country?: any
+  },
+  lat?: any,
+  long?: any,
+  opening_status?: any,
+  reopen_date?: any,
+  hours?: {
+    monday?: any,
+    tuesday?: any,
+    wednesday?: any,
+    thursday?: any,
+    friday?: any,
+    saturday?: any,
+    sunday?: any
+  },
+  opening_hours_notes?: any,
+  opening_date?: any,
+  special_hours?: Record<string, any>,
+  phone?: any,
+  fax?: any,
+  create_pages?: any,
+  published?: any
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  id?: number | null,
+  level?: string | null,
+  status?: string | null,
+  account_id?: number | null,
+  auto_sync_enabled?: boolean | number | null,
+  custom_fields?: Record<string, any> | null,
+  remote_id?: string | null,
+  listings_name?: string | null,
+  location_name?: string | null,
+  website_url?: string | null,
+  email_address?: string | null,
+  timezone?: string | null,
+  store_code?: string | null,
+  short_description?: string | null,
+  long_description?: string | null,
+  languages?: (string | null)[] | string | null,
+  keywords?: (string | null)[] | string | null,
+  brands?: (string | null)[] | string | null,
+  payment_forms?: (string | null)[] | string | null,
+  price_range?: string | null,
+  service_areas?: any[] | string | null,
+  service_area_only?: boolean | number | null,
+  services?: (string | null)[] | string | null,
+  primary_category?: string | null,
+  additional_categories?: (string | null)[] | string | null,
+  attributes?: any[] | string | null,
+  address?: {
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    sublocality?: string | null,
+    county?: string | null,
+    city?: string | null,
+    state_province?: string | null,
+    postal_code?: string | null,
+    country?: string | null
+  } | null,
+  lat?: number | null,
+  long?: number | null,
+  opening_status?: string | null,
+  reopen_date?: string | null,
+  hours?: {
+    monday?: (string | null)[] | string | null,
+    tuesday?: (string | null)[] | string | null,
+    wednesday?: (string | null)[] | string | null,
+    thursday?: (string | null)[] | string | null,
+    friday?: (string | null)[] | string | null,
+    saturday?: (string | null)[] | string | null,
+    sunday?: (string | null)[] | string | null
+  } | null,
+  more_hours?: Record<string, any> | null,
+  opening_hours_notes?: string | null,
+  opening_date?: string | null,
+  special_hours?: Record<string, any> | null,
+  phone?: string | null,
+  fax?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### locations.updateLevel
+
+`local.locations.updateLevel`
+
+Updates the tier of service for a single location. Moz Local Enterprise only. Free (no quota). Changes the billed service level.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moz.api.local.locations.updateLevel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | The id of the location |
+| `level` | `string` | Yes | The name of the tier of service for the location. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  id?: number | null,
+  level?: string | null,
+  status?: string | null,
+  account_id?: number | null,
+  auto_sync_enabled?: boolean | number | null,
+  custom_fields?: Record<string, any> | null,
+  remote_id?: string | null,
+  listings_name?: string | null,
+  location_name?: string | null,
+  website_url?: string | null,
+  email_address?: string | null,
+  timezone?: string | null,
+  store_code?: string | null,
+  short_description?: string | null,
+  long_description?: string | null,
+  languages?: (string | null)[] | string | null,
+  keywords?: (string | null)[] | string | null,
+  brands?: (string | null)[] | string | null,
+  payment_forms?: (string | null)[] | string | null,
+  price_range?: string | null,
+  service_areas?: any[] | string | null,
+  service_area_only?: boolean | number | null,
+  services?: (string | null)[] | string | null,
+  primary_category?: string | null,
+  additional_categories?: (string | null)[] | string | null,
+  attributes?: any[] | string | null,
+  address?: {
+    address_line_1?: string | null,
+    address_line_2?: string | null,
+    sublocality?: string | null,
+    county?: string | null,
+    city?: string | null,
+    state_province?: string | null,
+    postal_code?: string | null,
+    country?: string | null
+  } | null,
+  lat?: number | null,
+  long?: number | null,
+  opening_status?: string | null,
+  reopen_date?: string | null,
+  hours?: {
+    monday?: (string | null)[] | string | null,
+    tuesday?: (string | null)[] | string | null,
+    wednesday?: (string | null)[] | string | null,
+    thursday?: (string | null)[] | string | null,
+    friday?: (string | null)[] | string | null,
+    saturday?: (string | null)[] | string | null,
+    sunday?: (string | null)[] | string | null
+  } | null,
+  more_hours?: Record<string, any> | null,
+  opening_hours_notes?: string | null,
+  opening_date?: string | null,
+  special_hours?: Record<string, any> | null,
+  phone?: string | null,
+  fax?: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -843,7 +4217,7 @@ exhausted. Setting options.subdomains_limited_to_one requires a sort.
 
 `locales.list`
 
-List every locale a search engine (google, bing or yahoo) supports; costs no rows
+Use this endpoint to list every locale a search engine supports. Free (no quota).
 
 **Risk:** `read`
 
@@ -855,7 +4229,7 @@ await corsair.moz.api.locales.list({ engine: 'google' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `google \| bing \| yahoo` | Yes | The search engine to list supported locales for; each engine supports a different set. |
+| `engine` | `google \| bing \| yahoo` | Yes | The search engine to list supported locales for. |
 
 
 
@@ -863,8 +4237,8 @@ await corsair.moz.api.locales.list({ engine: 'google' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `engine` | `google \| bing \| yahoo` | Yes | — |
-| `locales` | `string[]` | Yes | Every locale the engine supports, e.g. en-US; some have a regional variant such as es-419-AR. |
+| `engine` | `string \| null` | No | — |
+| `locales` | `(string \| null)[] \| null` | No | — |
 
 
 
@@ -872,16 +4246,16 @@ await corsair.moz.api.locales.list({ engine: 'google' });
 
 ## Metrics
 
-### fetch
+### brandAuthority
 
-`metrics.fetch`
+`metrics.brandAuthority`
 
-Read Domain Authority, Page Authority, Spam Score and link counts for one URL, subdomain, subfolder or domain
+This endpoint returns a Brand Authority™ score for the provided site. Costs 1 row per call.
 
 **Risk:** `read`
 
 ```ts
-await corsair.moz.api.metrics.fetch({ site_query: { query: 'moz.com', scope: 'domain' } });
+await corsair.moz.api.metrics.brandAuthority({});
 ```
 
 **Input**
@@ -889,6 +4263,80 @@ await corsair.moz.api.metrics.fetch({ site_query: { query: 'moz.com', scope: 'do
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `site_query` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_metrics` | `object \| null` | No | — |
+| `site_query` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="site_metrics full type">
+
+```ts
+{
+  brand_authority_score?: number | null
+} | null
+```
+</Accordion>
+
+<Accordion title="site_query full type">
+
+```ts
+{
+  query?: string | null,
+  scope?: string | null,
+  original_site_query?: {
+    query?: string | null,
+    scope?: string | null
+  } | null,
+  site_query_suggestion?: {
+    query?: string | null,
+    scope?: string | null,
+    explanation?: string | null,
+    issue?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### distributions
+
+`metrics.distributions`
+
+Fetch Site Metrics Distributions. Costs 1 row per call.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.metrics.distributions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | A SiteQuery provides a target URL along with a scope to define how the query is parsed. |
 
 <AccordionGroup>
 <Accordion title="site_query full type">
@@ -908,8 +4356,73 @@ await corsair.moz.api.metrics.fetch({ site_query: { query: 'moz.com', scope: 'do
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `site_query` | `object` | Yes | — |
-| `site_metrics` | `object` | Yes | — |
+| `site_query` | `object \| null` | No | — |
+| `site_metrics_distributions` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query?: string | null,
+  scope?: string | null,
+  original_site_query?: {
+    query?: string | null,
+    scope?: string | null
+  } | null,
+  site_query_suggestion?: {
+    query?: string | null,
+    scope?: string | null,
+    explanation?: string | null,
+    issue?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="site_metrics_distributions full type">
+
+```ts
+{
+  root_domains_to_page_by_root_domains?: (number | null)[] | null,
+  root_domains_to_root_domain_by_root_domains?: (number | null)[] | null,
+  nofollow_root_domains_to_root_domain_by_root_domains?: (number | null)[] | null,
+  root_domains_to_page_by_domain_authority?: (number | null)[] | null,
+  root_domains_to_subdomain_by_domain_authority?: (number | null)[] | null,
+  root_domains_to_root_domain_by_domain_authority?: (number | null)[] | null,
+  nofollow_root_domains_to_root_domain_by_domain_authority?: (number | null)[] | null,
+  pages_to_root_domain_by_spam_score?: (number | null)[] | null,
+  nofollow_pages_to_root_domain_by_spam_score?: (number | null)[] | null,
+  root_domains_to_page_by_spam_score?: (number | null)[] | null,
+  root_domains_to_subdomain_by_spam_score?: (number | null)[] | null,
+  root_domains_to_root_domain_by_spam_score?: (number | null)[] | null,
+  nofollow_root_domains_to_root_domain_by_spam_score?: (number | null)[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### fetch
+
+`metrics.fetch`
+
+Use this endpoint to get metrics such as Domain Authority, Page Authority, Spam Score, link counts and more for one URL. Costs 1 row per call.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.metrics.fetch({ site_query: { query: 'moz.com', scope: 'domain' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | A SiteQuery provides a target URL along with a scope to define how the query is parsed. |
 
 <AccordionGroup>
 <Accordion title="site_query full type">
@@ -917,18 +4430,39 @@ await corsair.moz.api.metrics.fetch({ site_query: { query: 'moz.com', scope: 'do
 ```ts
 {
   query: string,
-  scope: domain | subdomain | subfolder | url,
-  original_site_query: {
-    query: string,
-    scope: domain | subdomain | subfolder | url
-  },
-  site_query_suggestion?: {
-    query: string,
-    scope: domain | subdomain | subfolder | url,
-    explanation: string,
-    issue: string
-  } | null
+  scope: domain | subdomain | subfolder | url
 }
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object \| null` | No | — |
+| `site_metrics` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query?: string | null,
+  scope?: string | null,
+  original_site_query?: {
+    query?: string | null,
+    scope?: string | null
+  } | null,
+  site_query_suggestion?: {
+    query?: string | null,
+    scope?: string | null,
+    explanation?: string | null,
+    issue?: string | null
+  } | null
+} | null
 ```
 </Accordion>
 
@@ -936,59 +4470,59 @@ await corsair.moz.api.metrics.fetch({ site_query: { query: 'moz.com', scope: 'do
 
 ```ts
 {
-  page: string,
-  subdomain: string,
-  root_domain: string,
-  title: string,
-  last_crawled: string,
-  http_code: number,
-  pages_to_page: number,
-  nofollow_pages_to_page: number,
-  redirect_pages_to_page: number,
-  external_pages_to_page: number,
-  external_nofollow_pages_to_page: number,
-  external_redirect_pages_to_page: number,
-  deleted_pages_to_page: number,
-  root_domains_to_page: number,
-  indirect_root_domains_to_page: number,
-  deleted_root_domains_to_page: number,
-  nofollow_root_domains_to_page: number,
-  pages_to_subdomain: number,
-  nofollow_pages_to_subdomain: number,
-  redirect_pages_to_subdomain: number,
-  external_pages_to_subdomain: number,
-  external_nofollow_pages_to_subdomain: number,
-  external_redirect_pages_to_subdomain: number,
-  deleted_pages_to_subdomain: number,
-  root_domains_to_subdomain: number,
-  deleted_root_domains_to_subdomain: number,
-  nofollow_root_domains_to_subdomain: number,
-  pages_to_root_domain: number,
-  nofollow_pages_to_root_domain: number,
-  redirect_pages_to_root_domain: number,
-  external_pages_to_root_domain: number,
-  external_indirect_pages_to_root_domain: number,
-  external_nofollow_pages_to_root_domain: number,
-  external_redirect_pages_to_root_domain: number,
-  deleted_pages_to_root_domain: number,
-  root_domains_to_root_domain: number,
-  indirect_root_domains_to_root_domain: number,
-  deleted_root_domains_to_root_domain: number,
-  nofollow_root_domains_to_root_domain: number,
-  page_authority: number,
-  domain_authority: number,
-  link_propensity: number,
-  spam_score: number,
-  root_domains_from_page: number,
-  nofollow_root_domains_from_page: number,
-  pages_from_page: number,
-  nofollow_pages_from_page: number,
-  root_domains_from_root_domain: number,
-  nofollow_root_domains_from_root_domain: number,
-  pages_from_root_domain: number,
-  nofollow_pages_from_root_domain: number,
-  pages_crawled_from_root_domain: number
-}
+  page?: string | null,
+  subdomain?: string | null,
+  root_domain?: string | null,
+  title?: string | null,
+  last_crawled?: string | null,
+  http_code?: number | null,
+  pages_to_page?: number | null,
+  nofollow_pages_to_page?: number | null,
+  redirect_pages_to_page?: number | null,
+  external_pages_to_page?: number | null,
+  external_nofollow_pages_to_page?: number | null,
+  external_redirect_pages_to_page?: number | null,
+  deleted_pages_to_page?: number | null,
+  root_domains_to_page?: number | null,
+  indirect_root_domains_to_page?: number | null,
+  deleted_root_domains_to_page?: number | null,
+  nofollow_root_domains_to_page?: number | null,
+  pages_to_subdomain?: number | null,
+  nofollow_pages_to_subdomain?: number | null,
+  redirect_pages_to_subdomain?: number | null,
+  external_pages_to_subdomain?: number | null,
+  external_nofollow_pages_to_subdomain?: number | null,
+  external_redirect_pages_to_subdomain?: number | null,
+  deleted_pages_to_subdomain?: number | null,
+  root_domains_to_subdomain?: number | null,
+  deleted_root_domains_to_subdomain?: number | null,
+  nofollow_root_domains_to_subdomain?: number | null,
+  pages_to_root_domain?: number | null,
+  nofollow_pages_to_root_domain?: number | null,
+  redirect_pages_to_root_domain?: number | null,
+  external_pages_to_root_domain?: number | null,
+  external_indirect_pages_to_root_domain?: number | null,
+  external_nofollow_pages_to_root_domain?: number | null,
+  external_redirect_pages_to_root_domain?: number | null,
+  deleted_pages_to_root_domain?: number | null,
+  root_domains_to_root_domain?: number | null,
+  indirect_root_domains_to_root_domain?: number | null,
+  deleted_root_domains_to_root_domain?: number | null,
+  nofollow_root_domains_to_root_domain?: number | null,
+  page_authority?: number | null,
+  domain_authority?: number | null,
+  link_propensity?: number | null,
+  spam_score?: number | null,
+  root_domains_from_page?: number | null,
+  nofollow_root_domains_from_page?: number | null,
+  pages_from_page?: number | null,
+  nofollow_pages_from_page?: number | null,
+  root_domains_from_root_domain?: number | null,
+  nofollow_root_domains_from_root_domain?: number | null,
+  pages_from_root_domain?: number | null,
+  nofollow_pages_from_root_domain?: number | null,
+  pages_crawled_from_root_domain?: number | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1001,7 +4535,7 @@ await corsair.moz.api.metrics.fetch({ site_query: { query: 'moz.com', scope: 'do
 
 `metrics.fetchMultiple`
 
-Read the same site metrics for several targets at once, with a per-target success or error split
+Use this endpoint to get metrics such as Domain Authority, Page Authority, Spam Score, link counts and more about one or more URLs. Costs rows per result returned.
 
 **Risk:** `read`
 
@@ -1013,16 +4547,51 @@ await corsair.moz.api.metrics.fetchMultiple({ site_queries: [{ query: 'moz.com',
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `site_queries` | `object[]` | Yes | The targets to fetch metrics for, one or more. |
+| `site_queries` | `any[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results_by_site` | `any[] \| null` | No | — |
+| `errors_by_site` | `any[] \| null` | No | — |
+
+
+
+---
+
+### histories
+
+`metrics.histories`
+
+Use this endpoint to get daily or monthly metric histories for a single site. Costs rows per value requested.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.metrics.histories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | A SiteQuery provides a target URL along with a scope to define how the query is parsed. |
+| `get_daily_history_deltas_for` | `(pages_to_page \| nofollow_pages_to_page \| redirect_pages_to_page \| external_pages_to_page \| external_nofollow_pages_to_page \| external_redirect_pages_to_page \| root_domains_to_page \| indirect_root_domains_to_page \| nofollow_root_domains_to_page \| pages_to_subdomain \| nofollow_pages_to_subdomain \| redirect_pages_to_subdomain \| external_pages_to_subdomain \| external_nofollow_pages_to_subdomain \| external_redirect_pages_to_subdomain \| root_domains_to_subdomain \| nofollow_root_domains_to_subdomain \| pages_to_root_domain \| nofollow_pages_to_root_domain \| redirect_pages_to_root_domain \| external_pages_to_root_domain \| external_indirect_pages_to_root_domain \| external_nofollow_pages_to_root_domain \| external_redirect_pages_to_root_domain \| root_domains_to_root_domain \| indirect_root_domains_to_root_domain \| nofollow_root_domains_to_root_domain \| page_authority \| domain_authority)[]` | No | Optional array of values for which to get daily history deltas. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, and `domain_authority`. At least one value must be provided between `get_daily_history_deltas_for`, `get_daily_history_values_for`, `get_monthl |
+| `get_daily_history_values_for` | `(pages_to_page \| nofollow_pages_to_page \| redirect_pages_to_page \| external_pages_to_page \| external_nofollow_pages_to_page \| external_redirect_pages_to_page \| root_domains_to_page \| indirect_root_domains_to_page \| nofollow_root_domains_to_page \| pages_to_subdomain \| nofollow_pages_to_subdomain \| redirect_pages_to_subdomain \| external_pages_to_subdomain \| external_nofollow_pages_to_subdomain \| external_redirect_pages_to_subdomain \| root_domains_to_subdomain \| nofollow_root_domains_to_subdomain \| pages_to_root_domain \| nofollow_pages_to_root_domain \| redirect_pages_to_root_domain \| external_pages_to_root_domain \| external_indirect_pages_to_root_domain \| external_nofollow_pages_to_root_domain \| external_redirect_pages_to_root_domain \| root_domains_to_root_domain \| indirect_root_domains_to_root_domain \| nofollow_root_domains_to_root_domain \| page_authority \| domain_authority \| root_domains_to_root_domain_by_root_domains \| nofollow_root_domains_to_root_domain_by_root_domains \| pages_to_root_domain_by_spam_score \| nofollow_pages_to_root_domain_by_spam_score \| root_domains_to_root_domain_by_spam_score \| nofollow_root_domains_to_root_domain_by_spam_score)[]` | No | Optional array of values for which to get daily history values. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, `domain_authority`, `nofollow_pages_to_root_domain_by_spam_score`, `nofollow_root_domains_to_root_domain_by_root_domains`, `nofollow_root_domai |
+| `get_monthly_history_deltas_for` | `(pages_to_page \| nofollow_pages_to_page \| redirect_pages_to_page \| external_pages_to_page \| external_nofollow_pages_to_page \| external_redirect_pages_to_page \| root_domains_to_page \| indirect_root_domains_to_page \| nofollow_root_domains_to_page \| pages_to_subdomain \| nofollow_pages_to_subdomain \| redirect_pages_to_subdomain \| external_pages_to_subdomain \| external_nofollow_pages_to_subdomain \| external_redirect_pages_to_subdomain \| root_domains_to_subdomain \| nofollow_root_domains_to_subdomain \| pages_to_root_domain \| nofollow_pages_to_root_domain \| redirect_pages_to_root_domain \| external_pages_to_root_domain \| external_indirect_pages_to_root_domain \| external_nofollow_pages_to_root_domain \| external_redirect_pages_to_root_domain \| root_domains_to_root_domain \| indirect_root_domains_to_root_domain \| nofollow_root_domains_to_root_domain \| page_authority \| domain_authority)[]` | No | Optional array of values for which to get monthly history deltas. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, and `domain_authority`. At least one value must be provided between `get_daily_history_deltas_for`, `get_daily_history_values_for`, `get_mont |
+| `get_monthly_history_values_for` | `(pages_to_page \| nofollow_pages_to_page \| redirect_pages_to_page \| external_pages_to_page \| external_nofollow_pages_to_page \| external_redirect_pages_to_page \| root_domains_to_page \| indirect_root_domains_to_page \| nofollow_root_domains_to_page \| pages_to_subdomain \| nofollow_pages_to_subdomain \| redirect_pages_to_subdomain \| external_pages_to_subdomain \| external_nofollow_pages_to_subdomain \| external_redirect_pages_to_subdomain \| root_domains_to_subdomain \| nofollow_root_domains_to_subdomain \| pages_to_root_domain \| nofollow_pages_to_root_domain \| redirect_pages_to_root_domain \| external_pages_to_root_domain \| external_indirect_pages_to_root_domain \| external_nofollow_pages_to_root_domain \| external_redirect_pages_to_root_domain \| root_domains_to_root_domain \| indirect_root_domains_to_root_domain \| nofollow_root_domains_to_root_domain \| page_authority \| domain_authority \| root_domains_to_root_domain_by_root_domains \| nofollow_root_domains_to_root_domain_by_root_domains \| pages_to_root_domain_by_spam_score \| nofollow_pages_to_root_domain_by_spam_score \| root_domains_to_root_domain_by_spam_score \| nofollow_root_domains_to_root_domain_by_spam_score)[]` | No | Optional array of values for which to get monthly history values. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, `domain_authority`, `nofollow_pages_to_root_domain_by_spam_score`, `nofollow_root_domains_to_root_domain_by_root_domains`, `nofollow_root_dom |
 
 <AccordionGroup>
-<Accordion title="site_queries full type">
+<Accordion title="site_query full type">
 
 ```ts
 {
   query: string,
   scope: domain | subdomain | subfolder | url
-}[]
+}
 ```
 </Accordion>
 </AccordionGroup>
@@ -1033,115 +4602,39 @@ await corsair.moz.api.metrics.fetchMultiple({ site_queries: [{ query: 'moz.com',
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results_by_site` | `object[]` | Yes | The fetched metrics for the targets that succeeded. |
-| `errors_by_site` | `object[]` | Yes | The targets that failed, each with the reason. |
+| `site_query` | `object \| null` | No | — |
+| `site_metrics_histories` | `object \| null` | No | — |
 
 <AccordionGroup>
-<Accordion title="results_by_site full type">
+<Accordion title="site_query full type">
 
 ```ts
 {
-  site_query: {
-    query: string,
-    scope: domain | subdomain | subfolder | url,
-    original_site_query: {
-      query: string,
-      scope: domain | subdomain | subfolder | url
-    },
-    site_query_suggestion?: {
-      query: string,
-      scope: domain | subdomain | subfolder | url,
-      explanation: string,
-      issue: string
-    } | null
-  },
-  site_metrics: {
-    page: string,
-    subdomain: string,
-    root_domain: string,
-    title: string,
-    last_crawled: string,
-    http_code: number,
-    pages_to_page: number,
-    nofollow_pages_to_page: number,
-    redirect_pages_to_page: number,
-    external_pages_to_page: number,
-    external_nofollow_pages_to_page: number,
-    external_redirect_pages_to_page: number,
-    deleted_pages_to_page: number,
-    root_domains_to_page: number,
-    indirect_root_domains_to_page: number,
-    deleted_root_domains_to_page: number,
-    nofollow_root_domains_to_page: number,
-    pages_to_subdomain: number,
-    nofollow_pages_to_subdomain: number,
-    redirect_pages_to_subdomain: number,
-    external_pages_to_subdomain: number,
-    external_nofollow_pages_to_subdomain: number,
-    external_redirect_pages_to_subdomain: number,
-    deleted_pages_to_subdomain: number,
-    root_domains_to_subdomain: number,
-    deleted_root_domains_to_subdomain: number,
-    nofollow_root_domains_to_subdomain: number,
-    pages_to_root_domain: number,
-    nofollow_pages_to_root_domain: number,
-    redirect_pages_to_root_domain: number,
-    external_pages_to_root_domain: number,
-    external_indirect_pages_to_root_domain: number,
-    external_nofollow_pages_to_root_domain: number,
-    external_redirect_pages_to_root_domain: number,
-    deleted_pages_to_root_domain: number,
-    root_domains_to_root_domain: number,
-    indirect_root_domains_to_root_domain: number,
-    deleted_root_domains_to_root_domain: number,
-    nofollow_root_domains_to_root_domain: number,
-    page_authority: number,
-    domain_authority: number,
-    link_propensity: number,
-    spam_score: number,
-    root_domains_from_page: number,
-    nofollow_root_domains_from_page: number,
-    pages_from_page: number,
-    nofollow_pages_from_page: number,
-    root_domains_from_root_domain: number,
-    nofollow_root_domains_from_root_domain: number,
-    pages_from_root_domain: number,
-    nofollow_pages_from_root_domain: number,
-    pages_crawled_from_root_domain: number
-  }
-}[]
+  query?: string | null,
+  scope?: string | null,
+  original_site_query?: {
+    query?: string | null,
+    scope?: string | null
+  } | null,
+  site_query_suggestion?: {
+    query?: string | null,
+    scope?: string | null,
+    explanation?: string | null,
+    issue?: string | null
+  } | null
+} | null
 ```
 </Accordion>
 
-<Accordion title="errors_by_site full type">
+<Accordion title="site_metrics_histories full type">
 
 ```ts
 {
-  site_query: {
-    query: string,
-    scope: domain | subdomain | subfolder | url,
-    original_site_query: {
-      query: string,
-      scope: domain | subdomain | subfolder | url
-    },
-    site_query_suggestion?: {
-      query: string,
-      scope: domain | subdomain | subfolder | url,
-      explanation: string,
-      issue: string
-    } | null
-  },
-  error: {
-    message: string,
-    name: string,
-    data?: {
-      key?: string,
-      value?: string
-    },
-    httpStatus: number,
-    jsonrpcCode: number
-  }
-}[]
+  daily_history_deltas?: any[] | null,
+  daily_history_values?: any[] | null,
+  monthly_history_deltas?: any[] | null,
+  monthly_history_values?: any[] | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1156,7 +4649,7 @@ await corsair.moz.api.metrics.fetchMultiple({ site_queries: [{ query: 'moz.com',
 
 `quota.lookup`
 
-Read how much API quota is used and remaining for a billing period, and whether overages are enabled
+Check how much quota is used/available for the current billing period, as well as additional information about the quota such as whether or not overages are enabled. Free (no quota).
 
 **Risk:** `read`
 
@@ -1168,7 +4661,7 @@ await corsair.moz.api.quota.lookup({ path: 'api.limits.data.rows' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `path` | `api.limits.mozscape.rows \| api.limits.data.rows \| api.limits.beta.rows` | Yes | The quota to look up: api.limits.mozscape.rows (competitor fetches), api.limits.data.rows (everything else) or api.limits.beta.rows (beta methods). |
+| `path` | `api.limits.mozscape.rows \| api.limits.data.rows \| api.limits.beta.rows` | Yes | The quota path specifies a particular quota for which to retrieve information (e.g. beta or production quotas). The quota used by a particular method is specified in the Quota Usage section at the bottom of the method documentation. |
 
 `quota.lookup` is free. The path picks the bucket: api.limits.data.rows
 for everything except competitors, api.limits.mozscape.rows for the
@@ -1180,23 +4673,428 @@ competitor fetch, api.limits.beta.rows for beta methods.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `quota` | `object` | Yes | — |
+| `quota` | `object \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="quota full type">
 
 ```ts
 {
-  path: string,
-  account_id: number,
-  allotted: number,
-  used: number,
-  report: month | week | day | hour | minute,
-  reset: never | month | week | day | hour | minute,
-  overage: boolean,
+  path?: string | null,
+  account_id?: number | null,
+  allotted?: number | null,
+  used?: number | null,
+  report?: string | null,
+  reset?: string | null,
+  overage?: boolean | number | null,
   period_start?: number | null,
   period_reset?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ranking Keywords
+
+### count
+
+`rankingKeywords.count`
+
+Retrieve a summary of the number of keywords for which the provided query (domain, subdomain, or page) ranks in the top 50. Costs 1 row per call.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.rankingKeywords.count({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target_query` | `object` | Yes | The target query to use for the ranking keyword count. |
+
+<AccordionGroup>
+<Accordion title="target_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | url,
+  locale: en-US | en-GB | en-CA | en-AU
 }
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ranking_keyword_count` | `object \| null` | No | — |
+| `target_query` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="ranking_keyword_count full type">
+
+```ts
+{
+  total?: number | null,
+  position?: {
+    rank_1?: number | null,
+    rank_2?: number | null,
+    rank_3?: number | null,
+    rank_4?: number | null,
+    rank_5?: number | null,
+    rank_6?: number | null,
+    rank_7?: number | null,
+    rank_8?: number | null,
+    rank_9?: number | null,
+    rank_10?: number | null,
+    rank_11?: number | null,
+    rank_12?: number | null,
+    rank_13?: number | null,
+    rank_14?: number | null,
+    rank_15?: number | null,
+    rank_16?: number | null,
+    rank_17?: number | null,
+    rank_18?: number | null,
+    rank_19?: number | null,
+    rank_20?: number | null,
+    rank_21?: number | null,
+    rank_22?: number | null,
+    rank_23?: number | null,
+    rank_24?: number | null,
+    rank_25?: number | null,
+    rank_26?: number | null,
+    rank_27?: number | null,
+    rank_28?: number | null,
+    rank_29?: number | null,
+    rank_30?: number | null,
+    rank_31?: number | null,
+    rank_32?: number | null,
+    rank_33?: number | null,
+    rank_34?: number | null,
+    rank_35?: number | null,
+    rank_36?: number | null,
+    rank_37?: number | null,
+    rank_38?: number | null,
+    rank_39?: number | null,
+    rank_40?: number | null,
+    rank_41?: number | null,
+    rank_42?: number | null,
+    rank_43?: number | null,
+    rank_44?: number | null,
+    rank_45?: number | null,
+    rank_46?: number | null,
+    rank_47?: number | null,
+    rank_48?: number | null,
+    rank_49?: number | null,
+    rank_50?: number | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="target_query full type">
+
+```ts
+{
+  query?: string | null,
+  scope?: string | null,
+  locale?: string | null,
+  original_target_query?: {
+    query?: string | null,
+    scope?: string | null,
+    locale?: string | null
+  } | null,
+  suggestion?: {
+    query?: string | null,
+    scope?: string | null,
+    locale?: string | null,
+    explanation?: string | null,
+    issue?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`rankingKeywords.list`
+
+Retrieve a list of keywords for which the provided site (domain, subdomain, subfolder, or page) ranks in the top 50, along with the ranking position and the difficulty and monthly search volume for each keyword. Costs rows per result returned.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.rankingKeywords.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `target_query` | `object` | Yes | A TargetQuery provides a target URL along with several options to specify how the query is run. |
+| `options` | `object` | No | The options used when generating site ranking keywords result. |
+| `page` | `object` | No | Control the number of results returned per call in addition to fetching additional results. The default "limit" is 25 with an "n" value of 0 (indicating the first page of results). Make subsequent calls to the endpoint with incrementing "n" values to fetch additional pages of results. |
+
+`data.site.ranking-keyword.list`: keywords a site ranks for in the top 50,
+one row per result. rankingKeywords.count is one row.
+
+<AccordionGroup>
+<Accordion title="target_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url,
+  locale: en-US | en-GB | en-CA | en-AU
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  sort: rank | alpha | difficulty | volume
+}
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  n?: number,
+  limit?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ranking_keywords` | `any[] \| null` | No | — |
+| `target_query` | `object \| null` | No | — |
+| `options` | `object \| null` | No | — |
+| `page` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="target_query full type">
+
+```ts
+{
+  query?: string | null,
+  scope?: string | null,
+  locale?: string | null,
+  original_target_query?: {
+    query?: string | null,
+    scope?: string | null,
+    locale?: string | null
+  } | null,
+  suggestion?: {
+    query?: string | null,
+    scope?: string | null,
+    locale?: string | null,
+    explanation?: string | null,
+    issue?: string | null
+  } | null
+} | null
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+  sort?: string | null
+} | null
+```
+</Accordion>
+
+<Accordion title="page full type">
+
+```ts
+{
+  n?: number | null,
+  limit?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Redirects
+
+### fetch
+
+`redirects.fetch`
+
+Use this endpoint to see the final redirect target of a page after following known redirects in the index. Costs 1 row per call.
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.redirects.fetch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object` | Yes | A SiteQuery provides a target URL along with a scope to define how the query is parsed. |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `site_query` | `object \| null` | No | — |
+| `destination` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="site_query full type">
+
+```ts
+{
+  query?: string | null,
+  scope?: string | null,
+  original_site_query?: {
+    query?: string | null,
+    scope?: string | null
+  } | null,
+  site_query_suggestion?: {
+    query?: string | null,
+    scope?: string | null,
+    explanation?: string | null,
+    issue?: string | null
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Test
+
+### ping
+
+`test.ping`
+
+Use this endpoint to verify that your integration with the Moz JSON-RPC API works end to end, without spending any quota. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.test.ping({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | A message to return to the caller. |
+| `error` | `boolean` | No | If true, the request will fail instead of returning a message. Use this to exercise the error handling in your integration. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string \| null` | No | — |
+
+
+
+---
+
+### pingAsync
+
+`test.pingAsync`
+
+Use this endpoint to verify that your integration correctly handles the asynchronous methods in the Moz JSON-RPC API, without spending any quota. Asynchronous: answers with an async_call to poll with jobs.lookup. Free (no quota).
+
+**Risk:** `read`
+
+```ts
+await corsair.moz.api.test.pingAsync({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | A message to return to the caller. |
+| `error` | `boolean` | No | If true, the request will fail instead of returning a message. Use this to exercise the error handling in your integration. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `async_call` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="async_call full type">
+
+```ts
+{
+  id?: string | null,
+  action?: string | null,
+  status?: string | null,
+  ttl?: number | null,
+  result?: {
+    message?: string | null
+  } | null,
+  error?: {
+    message?: string | null,
+    code?: number | null,
+    status?: number | null,
+    data?: {
+      explanation?: string | null,
+      issue?: string | null,
+      key?: string | null,
+      value?: Record<string, any> | null
+    } | null
+  } | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -1211,7 +5109,7 @@ competitor fetch, api.limits.beta.rows for beta methods.
 
 `topPages.list`
 
-List a target's top pages sorted by page authority, linking root domains or external linking pages
+Use this endpoint to return a list of the top pages on a target domain, sorted by descending page authority, linking root domains, or external linking pages. Costs rows per result returned.
 
 **Risk:** `read`
 
@@ -1223,9 +5121,9 @@ await corsair.moz.api.topPages.list({ site_query: { query: 'moz.com', scope: 'do
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `site_query` | `object` | Yes | — |
-| `options` | `object` | No | — |
-| `offset` | `object` | No | — |
+| `site_query` | `object` | Yes | A SiteQuery provides a target URL along with a scope to define how the query is parsed. |
+| `options` | `object` | No | Options for fetching top pages. |
+| `offset` | `object` | No | Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results. |
 
 <AccordionGroup>
 <Accordion title="site_query full type">
@@ -1252,7 +5150,7 @@ await corsair.moz.api.topPages.list({ site_query: { query: 'moz.com', scope: 'do
 
 ```ts
 {
-  token?: string,
+  token?: string | null,
   limit?: number
 }
 ```
@@ -1265,29 +5163,29 @@ await corsair.moz.api.topPages.list({ site_query: { query: 'moz.com', scope: 'do
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `site_query` | `object` | Yes | — |
-| `offset` | `object` | Yes | — |
-| `options` | `object` | Yes | — |
-| `top_pages` | `object[]` | Yes | — |
+| `site_query` | `object \| null` | No | — |
+| `offset` | `object \| null` | No | — |
+| `options` | `object \| null` | No | — |
+| `top_pages` | `any[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="site_query full type">
 
 ```ts
 {
-  query: string,
-  scope: domain | subdomain | subfolder | url,
-  original_site_query: {
-    query: string,
-    scope: domain | subdomain | subfolder | url
-  },
+  query?: string | null,
+  scope?: string | null,
+  original_site_query?: {
+    query?: string | null,
+    scope?: string | null
+  } | null,
   site_query_suggestion?: {
-    query: string,
-    scope: domain | subdomain | subfolder | url,
-    explanation: string,
-    issue: string
+    query?: string | null,
+    scope?: string | null,
+    explanation?: string | null,
+    issue?: string | null
   } | null
-}
+} | null
 ```
 </Accordion>
 
@@ -1297,8 +5195,8 @@ await corsair.moz.api.topPages.list({ site_query: { query: 'moz.com', scope: 'do
 {
   provided_token?: string | null,
   token?: string | null,
-  limit: number
-}
+  limit?: number | null
+} | null
 ```
 </Accordion>
 
@@ -1306,69 +5204,9 @@ await corsair.moz.api.topPages.list({ site_query: { query: 'moz.com', scope: 'do
 
 ```ts
 {
-  filter?: all | status_200 | status_301 | status_302 | status_4xx | status_5xx,
-  sort?: page_authority | root_domains_to_page | external_pages_to_page
-}
-```
-</Accordion>
-
-<Accordion title="top_pages full type">
-
-```ts
-{
-  page: string,
-  subdomain: string,
-  root_domain: string,
-  title: string,
-  last_crawled: string,
-  http_code: number,
-  pages_to_page: number,
-  nofollow_pages_to_page: number,
-  redirect_pages_to_page: number,
-  external_pages_to_page: number,
-  external_nofollow_pages_to_page: number,
-  external_redirect_pages_to_page: number,
-  deleted_pages_to_page: number,
-  root_domains_to_page: number,
-  indirect_root_domains_to_page: number,
-  deleted_root_domains_to_page: number,
-  nofollow_root_domains_to_page: number,
-  pages_to_subdomain: number,
-  nofollow_pages_to_subdomain: number,
-  redirect_pages_to_subdomain: number,
-  external_pages_to_subdomain: number,
-  external_nofollow_pages_to_subdomain: number,
-  external_redirect_pages_to_subdomain: number,
-  deleted_pages_to_subdomain: number,
-  root_domains_to_subdomain: number,
-  deleted_root_domains_to_subdomain: number,
-  nofollow_root_domains_to_subdomain: number,
-  pages_to_root_domain: number,
-  nofollow_pages_to_root_domain: number,
-  redirect_pages_to_root_domain: number,
-  external_pages_to_root_domain: number,
-  external_indirect_pages_to_root_domain: number,
-  external_nofollow_pages_to_root_domain: number,
-  external_redirect_pages_to_root_domain: number,
-  deleted_pages_to_root_domain: number,
-  root_domains_to_root_domain: number,
-  indirect_root_domains_to_root_domain: number,
-  deleted_root_domains_to_root_domain: number,
-  nofollow_root_domains_to_root_domain: number,
-  page_authority: number,
-  domain_authority: number,
-  link_propensity: number,
-  spam_score: number,
-  root_domains_from_page: number,
-  nofollow_root_domains_from_page: number,
-  pages_from_page: number,
-  nofollow_pages_from_page: number,
-  root_domains_from_root_domain: number,
-  nofollow_root_domains_from_root_domain: number,
-  pages_from_root_domain: number,
-  nofollow_pages_from_root_domain: number,
-  pages_crawled_from_root_domain: number
-}[]
+  filter?: string | null,
+  sort?: string | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
