@@ -70,6 +70,25 @@ function withoutQuery(url: string): string {
 	return index === -1 ? url : url.slice(0, index);
 }
 
+// unknown: an HTTP error body is whatever JSON or text the server sent; it
+// is round-tripped through JSON only to mask addresses, never trusted.
+function maskBody(body: unknown): unknown {
+	if (typeof body === 'string') return maskEmails(body.slice(0, 300));
+	if (body === null || typeof body !== 'object') return body;
+	try {
+		return JSON.parse(maskEmails(JSON.stringify(body)));
+	} catch {
+		return undefined;
+	}
+}
+
+/**
+ * Errors built from an HTTP-200 envelope, as opposed to a real HTTP failure
+ * whose JSON body happens to look like one. Core already retried an HTTP 429;
+ * only envelope 429s need the plugin's retry.
+ */
+const envelopeErrors = new WeakSet<ApiError>();
+
 /** Rebuilds an HTTP ApiError without the request body, keeping its status. */
 function withoutRequestBody(error: ApiError): ApiError {
 	const rebuilt = new ApiError(
@@ -79,11 +98,9 @@ function withoutRequestBody(error: ApiError): ApiError {
 			ok: false,
 			status: error.status,
 			statusText: error.statusText,
-			// A gateway error page is HTML; keep only a short text sample.
-			body:
-				typeof error.body === 'string'
-					? maskEmails(error.body.slice(0, 300))
-					: error.body,
+			// A gateway error page is HTML; keep a short masked sample. A JSON
+			// body keeps its fields with any email address masked.
+			body: maskBody(error.body),
 		},
 		`Moosend HTTP ${error.status}: request failed`,
 		{
@@ -93,15 +110,14 @@ function withoutRequestBody(error: ApiError): ApiError {
 			rateLimitLimit: error.rateLimitLimit,
 		},
 	);
-	rebuilt.stack = error.stack;
+	// The original stack starts with the provider's message, which can quote
+	// an address, so the rebuilt error keeps its own stack.
 	return rebuilt;
 }
 
 /** True for an ApiError built from a nonzero envelope Code. */
 export function isEnvelopeError(error: Error): error is ApiError {
-	if (!(error instanceof ApiError)) return false;
-	const body = asRecord(error.body);
-	return typeof body?.Code === 'number';
+	return error instanceof ApiError && envelopeErrors.has(error);
 }
 
 /** The envelope's Error string of an ApiError built from one. */
@@ -166,7 +182,7 @@ export async function makeMoosendRequest(
 	if (code !== 0) {
 		const name = errorText ?? 'UNKNOWN_ERROR';
 		const status = statusForEnvelope(code, name);
-		throw new ApiError(
+		const envelopeError = new ApiError(
 			strippedRequest(requestOptions),
 			{
 				url: `${MOOSEND_API_BASE}${path}`,
@@ -177,6 +193,8 @@ export async function makeMoosendRequest(
 			},
 			`Moosend ${code}: ${name}`,
 		);
+		envelopeErrors.add(envelopeError);
+		throw envelopeError;
 	}
 
 	return { code, notice: errorText, context: record.Context };

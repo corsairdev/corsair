@@ -141,6 +141,16 @@ describe('makeMoosendRequest', () => {
 		expect(dump).not.toContain('secret-key');
 	});
 
+	it('masks addresses in a JSON HTTP error body and keeps them out of the stack', async () => {
+		respond({ message: 'jana@example.com is blocked' }, 422);
+		const thrown = await failure();
+		expect(thrown.status).toBe(422);
+		expect(JSON.stringify(thrown.body)).toContain('[email]');
+		expect(JSON.stringify(thrown.body)).not.toContain('jana@');
+		expect(thrown.message).not.toContain('jana@');
+		expect(thrown.stack ?? '').not.toContain('jana@');
+	});
+
 	it('fails a 200 answer without the envelope instead of returning it', async () => {
 		respond({ hello: 'world' });
 		const thrown = await failure();
@@ -180,18 +190,23 @@ describe('errorHandlers', () => {
 	const read = context('lists.list');
 	const write = context('subscribers.subscribe');
 
-	it('retries an envelope 429 (core never saw it) but not an HTTP 429', async () => {
-		const envelope429 = apiError(429, { Code: 429, Error: 'RATE_LIMITING' });
+	it('retries an envelope 429 (core never saw it) but not an HTTP 429 with the same body', async () => {
+		const body = { Code: 429, Error: 'RATE_LIMITING', Context: null };
+		respond(body);
+		const envelope429 = await failure();
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(envelope429)).toBe(true);
 		await expect(
 			errorHandlers.RATE_LIMIT_ERROR.handler(envelope429),
 		).resolves.toMatchObject({ maxRetries: 3 });
 
-		const http429 = apiError(429, 'Too Many Requests');
+		// corsair/http retries an HTTP 429 three times before it throws.
+		for (let i = 0; i < 4; i++) respond(body, 429);
+		const http429 = await failure();
+		expect(http429.status).toBe(429);
 		await expect(
 			errorHandlers.RATE_LIMIT_ERROR.handler(http429),
 		).resolves.toEqual({ maxRetries: 0 });
-	});
+	}, 30_000);
 
 	it('never retries a bad key or a validation error', () => {
 		expect(errorHandlers.AUTH_ERROR.match(apiError(401, {}))).toBe(true);
