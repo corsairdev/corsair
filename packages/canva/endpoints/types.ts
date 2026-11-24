@@ -1095,7 +1095,9 @@ const ResizesGetResponseSchema = z
 
 // ── autofills ──────────────────────────────────────────────────────────────
 
-const DataTableCellSchema = z.discriminatedUnion('type', [
+// Cells Canva accepts in an autofill table. Number formatting metadata is
+// refused by autofill, so it is refused here rather than sent and rejected.
+const ScalarCellSchemas = [
 	z.object({
 		type: z.literal('string'),
 		value: z.string().max(10000).optional(),
@@ -1103,42 +1105,105 @@ const DataTableCellSchema = z.discriminatedUnion('type', [
 	z.object({
 		type: z.literal('number'),
 		value: z.number().optional(),
-		// unknown: Canva's number-format metadata, passed through as given.
-		metadata: z.record(z.string(), z.unknown()).optional(),
+		metadata: z
+			.never({ message: 'Canva autofill refuses number formatting metadata' })
+			.optional(),
 	}),
 	z.object({ type: z.literal('boolean'), value: z.boolean().optional() }),
 	z.object({
 		type: z.literal('date'),
 		value: z.number().int().optional().describe('Unix seconds.'),
 	}),
-	// A media cell's value is a list of image or video uploads Canva defines.
-	z
-		.object({ type: z.literal('media') })
-		.passthrough(),
-]);
+] as const;
 
-const DataTableSchema = z
-	.object({
-		column_configs: z
-			.array(
-				z.object({
-					name: z.string().optional(),
-					type: z.enum(['string', 'number', 'boolean', 'date', 'media']),
-				}),
-			)
-			.optional(),
-		rows: z.array(z.object({ cells: z.array(DataTableCellSchema) })),
-	})
-	.describe(
-		'{ rows: [{ cells: [{ type, value }] }], column_configs? }; every row has the same number of cells.',
-	);
+// A media cell's value is a list of image or video uploads Canva defines.
+const MediaCellSchema = z.object({ type: z.literal('media') }).passthrough();
+
+const SCALAR_COLUMNS = [
+	'string',
+	'number',
+	'boolean',
+	'date',
+	'variant',
+] as const;
+
+/**
+ * A data table as autofill takes it: every row the same width, and
+ * column_configs (when given) one per column. `variant` is a column whose
+ * cells mix types.
+ */
+function dataTable<Cell extends z.ZodTypeAny>(
+	cell: Cell,
+	columnTypes: readonly [string, ...string[]],
+	limits?: { rows: number; columns: number },
+) {
+	return z
+		.object({
+			column_configs: z
+				.array(
+					z.object({
+						name: z.string().optional(),
+						type: z.enum(columnTypes),
+					}),
+				)
+				.optional(),
+			rows: z.array(z.object({ cells: z.array(cell) })),
+		})
+		.superRefine((table, issue) => {
+			const widths = new Set(table.rows.map((row) => row.cells.length));
+			if (widths.size > 1) {
+				issue.addIssue({
+					code: 'custom',
+					message: 'Every row needs the same number of cells',
+				});
+			}
+			const width = table.rows[0]?.cells.length;
+			if (
+				table.column_configs &&
+				width !== undefined &&
+				table.column_configs.length !== width
+			) {
+				issue.addIssue({
+					code: 'custom',
+					message: 'column_configs needs one entry per column',
+				});
+			}
+			if (limits && table.rows.length > limits.rows) {
+				issue.addIssue({
+					code: 'custom',
+					message: `A chart takes at most ${limits.rows} rows`,
+				});
+			}
+			if (limits && (width ?? 0) > limits.columns) {
+				issue.addIssue({
+					code: 'custom',
+					message: `A chart takes at most ${limits.columns} columns`,
+				});
+			}
+		})
+		.describe(
+			'{ rows: [{ cells: [{ type, value }] }], column_configs? }; every row has the same number of cells.',
+		);
+}
+
+// Chart autofill: at most 100 rows and 20 columns, and no media cells.
+const ChartDataTableSchema = dataTable(
+	z.discriminatedUnion('type', [...ScalarCellSchemas]),
+	SCALAR_COLUMNS,
+	{ rows: 100, columns: 20 },
+);
+
+const SheetDataTableSchema = dataTable(
+	z.discriminatedUnion('type', [...ScalarCellSchemas, MediaCellSchema]),
+	[...SCALAR_COLUMNS, 'media'],
+);
 
 export const AutofillDataFieldSchema = z.discriminatedUnion('type', [
 	z.object({ type: z.literal('text'), text: z.string() }),
 	z.object({ type: z.literal('image'), asset_id: z.string() }),
 	z.object({ type: z.literal('video'), asset_id: z.string() }),
-	z.object({ type: z.literal('chart'), chart_data: DataTableSchema }),
-	z.object({ type: z.literal('sheet'), sheet_data: DataTableSchema }),
+	z.object({ type: z.literal('chart'), chart_data: ChartDataTableSchema }),
+	z.object({ type: z.literal('sheet'), sheet_data: SheetDataTableSchema }),
 ]);
 
 export type AutofillDataField = z.infer<typeof AutofillDataFieldSchema>;

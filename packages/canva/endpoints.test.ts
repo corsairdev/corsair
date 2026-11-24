@@ -913,6 +913,9 @@ describe('every operation', () => {
 			url: 'https://files.test/acme/payroll.png?X-Amz-Signature=secret',
 		});
 		expect(calls[2]?.body).toMatchObject({ title: 'Acme board deck' });
+		expect(calls[3]?.body).toMatchObject({
+			message_plaintext: 'Move the launch to May',
+		});
 	});
 
 	it("follows Canva's documented shapes", () => {
@@ -950,6 +953,84 @@ describe('every operation', () => {
 				},
 			]),
 		).toBe(true);
+	});
+
+	it("checks autofill tables the way Canva's autofill does", () => {
+		const fill = (field: Record<string, unknown>) =>
+			CanvaEndpointInputSchemas.autofillsCreate.safeParse({
+				brand_template_id: 'B1',
+				data: { table: field },
+			}).success;
+		const chart = (chart_data: unknown) => fill({ type: 'chart', chart_data });
+		const sheet = (sheet_data: unknown) => fill({ type: 'sheet', sheet_data });
+		const cells = (n: number) =>
+			Array.from({ length: n }, (_, i) => ({ type: 'number', value: i }));
+		expect(chart({ rows: [{ cells: cells(2) }, { cells: cells(2) }] })).toBe(
+			true,
+		);
+		expect(chart({ rows: [{ cells: cells(1) }, { cells: cells(2) }] })).toBe(
+			false,
+		);
+		expect(
+			chart({
+				column_configs: [{ type: 'number' }],
+				rows: [{ cells: cells(2) }],
+			}),
+		).toBe(false);
+		expect(
+			sheet({
+				column_configs: [{ type: 'variant' }],
+				rows: [
+					{ cells: [{ type: 'string', value: 'N/A' }] },
+					{ cells: [{ type: 'number', value: 3 }] },
+				],
+			}),
+		).toBe(true);
+		expect(
+			chart({
+				rows: Array.from({ length: 100 }, () => ({ cells: cells(20) })),
+			}),
+		).toBe(true);
+		expect(
+			chart({ rows: Array.from({ length: 101 }, () => ({ cells: cells(1) })) }),
+		).toBe(false);
+		expect(chart({ rows: [{ cells: cells(21) }] })).toBe(false);
+		expect(
+			sheet({ rows: Array.from({ length: 101 }, () => ({ cells: cells(1) })) }),
+		).toBe(true);
+		expect(
+			chart({
+				rows: [
+					{
+						cells: [
+							{ type: 'number', value: 1, metadata: { formatting: '0.00' } },
+						],
+					},
+				],
+			}),
+		).toBe(false);
+		expect(chart({ rows: [{ cells: [{ type: 'media', value: [] }] }] })).toBe(
+			false,
+		);
+		expect(sheet({ rows: [{ cells: [{ type: 'media', value: [] }] }] })).toBe(
+			true,
+		);
+	});
+
+	it('logs an autofill without its title or data', async () => {
+		jest.mocked(logEventFromContext).mockClear();
+		reply(job());
+		await api.autofills.create(ctx, {
+			brand_template_id: 'B1',
+			title: 'Acme offer letter',
+			data: { name: { type: 'text', text: 'Ada Lovelace' } },
+		});
+		const logged = JSON.stringify(
+			jest.mocked(logEventFromContext).mock.calls.map((c) => c[2]),
+		);
+		expect(logged).not.toContain('Acme offer letter');
+		expect(logged).not.toContain('Ada Lovelace');
+		expect(logged).toContain('"fields":["name"]');
 	});
 
 	it('refuses an empty base64 upload before any request', async () => {

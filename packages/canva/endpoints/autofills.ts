@@ -46,7 +46,7 @@ export const create: CanvaEndpoints['autofillsCreate'] = async (ctx, input) => {
 			type,
 			brand_template_id: parsed.brand_template_id,
 			design_id: parsed.design_id,
-			title: parsed.title,
+			title: parsed.title === undefined ? undefined : '[omitted]',
 			fields: Object.keys(parsed.data),
 		},
 		'completed',
