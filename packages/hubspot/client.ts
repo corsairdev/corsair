@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
+import { parseSince, RecentInputSchema } from './endpoints/types';
 
 export class HubSpotAPIError extends Error {
 	constructor(
@@ -65,4 +66,26 @@ export async function makeHubSpotRequest<T>(
 			error instanceof Error ? error.message : 'Unknown error',
 		);
 	}
+}
+
+export function recentSearchBody(
+	rawInput: { count?: number; after?: string; since?: string } | undefined,
+	property: string,
+) {
+	const { count, after, since } = RecentInputSchema.parse(rawInput ?? {});
+	const sinceMs = since && String(parseSince(since));
+	return {
+		limit: count,
+		after,
+		sorts: [{ propertyName: property, direction: 'DESCENDING' }],
+		...(sinceMs && {
+			filterGroups: [
+				{
+					filters: [
+						{ propertyName: property, operator: 'GTE', value: sinceMs },
+					],
+				},
+			],
+		}),
+	};
 }
