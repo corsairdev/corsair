@@ -1,511 +1,297 @@
-import { logEventFromContext } from 'corsair/core';
-import {
-	Activities,
-	Companies,
-	Contacts,
-	Deals,
-	Invoices,
-	Profile,
-	Projects,
-	Session,
-	Users,
-} from './endpoints';
-import type { MocoEndpointOutputSchemas as Outputs } from './endpoints/types';
-import {
-	activity,
-	company,
-	contact,
-	deal,
-	invoice,
-	invoiceDetail,
-	mocoUser,
-	profile,
-	project,
-	projectReport,
-	sessionVerify,
-	validationErrors,
-} from './test-fixtures';
+import { ApiError } from 'corsair/http';
+import { mocoEndpointsNested } from './endpoints/catalog';
+import { fileNameFor, nextPageOf, queryEntries } from './endpoints/operations';
+import type { MocoContext } from './index';
 
-jest.mock('corsair/core', () => ({
-	...jest.requireActual('corsair/core'),
-	logEventFromContext: jest.fn().mockResolvedValue(null),
-}));
+// Every call goes through the real client and core transport; only fetch is fake.
 
-const mockLog = jest.mocked(logEventFromContext);
-const API_KEY = 'moco-key-123';
-
-const ctx = {
-	key: API_KEY,
-	options: { subdomain: 'beachy' },
-	keys: { get_subdomain: jest.fn().mockResolvedValue(null) },
+type Captured = {
+	url: string;
+	method: string;
+	headers: Record<string, string>;
+	// `unknown` because the sent body is a JSON string or a FormData.
+	body: unknown;
 };
 
-// never parameters: every concrete endpoint is assignable to this because
-// parameters are contravariant. Each endpoint returns its own output type,
-// so the shared return is unknown.
-type AnyEndpoint = (ctx: never, input: never) => Promise<unknown>;
+let calls: Captured[] = [];
 
-// unknown: negative cases pass values no schema accepts.
-function invoke(endpoint: AnyEndpoint, input: unknown) {
-	// The fake context only carries what the endpoints read.
-	return endpoint(ctx as never, input as never);
-}
-
-let fetchMock: jest.SpyInstance;
-
-// unknown: response bodies are arbitrary JSON or an empty delete answer.
-function respond(body: unknown, status = 200) {
-	const payload = typeof body === 'string' ? body : JSON.stringify(body);
-	fetchMock.mockResolvedValueOnce(
-		new Response(payload, {
+function reply(
+	status: number,
+	// `unknown` because each case answers its own JSON body.
+	body: unknown,
+	contentType = 'application/json',
+) {
+	jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, init) => {
+		const headers: Record<string, string> = {};
+		new Headers(init?.headers).forEach((value, key) => {
+			headers[key] = value;
+		});
+		calls.push({
+			url: String(input),
+			method: init?.method ?? 'GET',
+			headers,
+			body: init?.body,
+		});
+		const payload =
+			body instanceof Uint8Array
+				? body
+				: body === undefined
+					? null
+					: JSON.stringify(body);
+		return new Response(payload, {
 			status,
-			headers: { 'Content-Type': 'application/json' },
-		}),
-	);
+			headers: body === undefined ? {} : { 'content-type': contentType },
+		});
+	});
 }
 
-function lastRequest() {
-	const [url, init] = fetchMock.mock.calls.at(-1) as [string, RequestInit];
-	const parsed = new URL(url);
+function ctx(subdomain: string | undefined = 'acme'): MocoContext {
 	return {
-		origin: parsed.origin,
-		path: parsed.pathname,
-		query: Object.fromEntries(parsed.searchParams),
-		method: init.method,
-		headers: new Headers(init.headers),
-		// unknown: the request body is whatever the endpoint serialized.
-		body: init.body ? (JSON.parse(String(init.body)) as unknown) : undefined,
-	};
+		endpoints: {},
+		$getAccountId: () => Promise.resolve('test-account'),
+		key: 'moco_test_key',
+		options: subdomain ? { subdomain } : {},
+		keys: {
+			get_api_key: () => Promise.resolve('moco_test_key'),
+			get_subdomain: () => Promise.resolve('stored-sub'),
+		},
+		db: {},
+		// `unknown` because a test context fills only the fields the endpoints read.
+	} as unknown as MocoContext;
+}
+
+// `unknown` because the endpoint tree holds functions of many input types.
+type AnyEndpoint = (ctx: MocoContext, input: unknown) => Promise<unknown>;
+
+function endpointFor(id: string): AnyEndpoint {
+	// `unknown` because the walk goes through nested groups of endpoints.
+	let node: unknown = mocoEndpointsNested;
+	for (const part of id.split('.')) {
+		node = (node as Record<string, unknown>)[part];
+	}
+	return node as AnyEndpoint;
 }
 
 beforeEach(() => {
-	fetchMock = jest.spyOn(globalThis, 'fetch');
-	mockLog.mockClear();
+	calls = [];
 });
 
 afterEach(() => {
-	fetchMock.mockRestore();
+	jest.restoreAllMocks();
 });
 
-describe('session.verify', () => {
-	it('GETs /session with the Token header', async () => {
-		respond(sessionVerify);
+describe('requests', () => {
+	it('sends a GET to the account host with Token auth', async () => {
+		reply(200, { id: 7, name: 'Relaunch' });
+		const out = await endpointFor('projects.get')(ctx(), { id: 7 });
+		expect(out).toEqual({ id: 7, name: 'Relaunch' });
+		expect(calls[0]?.url).toBe('https://acme.mocoapp.com/api/v1/projects/7');
+		expect(calls[0]?.method).toBe('GET');
+		expect(calls[0]?.headers.authorization).toBe('Token token=moco_test_key');
+	});
 
-		const result = await invoke(Session.verify, {});
+	it('reads the subdomain from the account when options leave it out', async () => {
+		reply(200, { id: 1, uuid: 'u' });
+		await endpointFor('session.verify')(ctx(''), {});
+		expect(calls[0]?.url).toBe('https://stored-sub.mocoapp.com/api/v1/session');
+	});
 
-		expect(lastRequest()).toMatchObject({
-			origin: 'https://beachy.mocoapp.com',
-			method: 'GET',
-			path: '/api/v1/session',
+	it('refuses a subdomain that is not one DNS label', async () => {
+		reply(200, {});
+		await expect(
+			endpointFor('session.verify')(ctx('evil.com/x'), {}),
+		).rejects.toThrow(/one DNS label/);
+		expect(calls).toHaveLength(0);
+	});
+
+	it('fills nested path ids and sends the rest as the JSON body', async () => {
+		reply(201, { id: 9, name: 'Design' });
+		await endpointFor('projects.tasks.create')(ctx(), {
+			project_id: 12,
+			name: 'Design',
+			billable: true,
 		});
-		expect(new Headers(lastRequest().headers).get('authorization')).toBe(
-			`Token token=${API_KEY}`,
+		expect(calls[0]?.url).toBe(
+			'https://acme.mocoapp.com/api/v1/projects/12/tasks',
 		);
-		expect(result).toEqual(sessionVerify);
-	});
-});
-
-describe('profile.get', () => {
-	it('GETs /profile', async () => {
-		respond(profile);
-
-		const result = await invoke(Profile.get, {});
-
-		expect(lastRequest().path).toBe('/api/v1/profile');
-		expect(result).toEqual(profile);
-	});
-});
-
-describe('activities', () => {
-	it('lists with filters and derives next_page on a full page', async () => {
-		respond(Array(100).fill(activity));
-
-		const result = (await invoke(Activities.list, {
-			project_id: 1234567,
+		expect(calls[0]?.method).toBe('POST');
+		expect(JSON.parse(String(calls[0]?.body))).toEqual({
+			name: 'Design',
 			billable: true,
-			term: 'kickoff',
-			page: 2,
-		})) as ReturnType<typeof Outputs.activitiesList.parse>;
-
-		expect(lastRequest().query).toEqual({
-			project_id: '1234567',
-			billable: 'true',
-			term: 'kickoff',
-			page: '2',
 		});
-		expect(result).toMatchObject({ next_page: 3 });
-		expect(result.items).toHaveLength(100);
 	});
 
-	it('returns a null next_page on a short page', async () => {
-		respond([activity]);
-
-		const result = await invoke(Activities.list, {});
-
-		expect(result).toEqual({ items: [activity], next_page: null });
-	});
-
-	it('creates with hours and the ids', async () => {
-		respond(activity);
-
-		const result = await invoke(Activities.create, {
+	it('sends the impersonation header when asked', async () => {
+		reply(201, { id: 3 });
+		await endpointFor('activities.create')(ctx(), {
 			date: '2026-04-09',
-			project_id: 1234567,
-			task_id: 7536,
-			seconds: 5400,
-			description: 'Kickoff call',
-			billable: true,
+			project_id: 1,
+			task_id: 2,
+			seconds: 1800,
+			impersonate_user_id: 55,
 		});
-
-		expect(lastRequest()).toMatchObject({
-			method: 'POST',
-			path: '/api/v1/activities',
-		});
-		expect(lastRequest().body).toEqual({
-			date: '2026-04-09',
-			project_id: 1234567,
-			task_id: 7536,
-			company_id: undefined,
-			hours: undefined,
-			seconds: 5400,
-			description: 'Kickoff call',
-			tag: undefined,
-			billable: true,
-			remote_service: undefined,
-			remote_url: undefined,
-			remote_id: undefined,
-			stop_timer: undefined,
-		});
-		expect(result).toEqual(activity);
-	});
-
-	it('rejects hours together with seconds', async () => {
-		await expect(
-			invoke(Activities.create, {
-				date: '2026-04-09',
-				project_id: 1,
-				task_id: 2,
-				hours: 1,
-				seconds: 3600,
-			}),
-		).rejects.toThrow('hours or seconds');
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
-
-	it('rejects an unknown remote_service', async () => {
-		await expect(
-			invoke(Activities.create, { remote_service: 'slack' }),
-		).rejects.toThrow();
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
-
-	it('updates with PATCH', async () => {
-		respond(activity);
-
-		await invoke(Activities.update, {
-			id: 654321,
-			description: 'Updated note',
-		});
-
-		expect(lastRequest()).toMatchObject({
-			method: 'PATCH',
-			path: '/api/v1/activities/654321',
-		});
-	});
-
-	it('deletes and accepts an empty body', async () => {
-		respond('');
-
-		await expect(invoke(Activities.remove, { id: 654321 })).resolves.toEqual({
-			success: true,
-			id: 654321,
-		});
-		expect(lastRequest().method).toBe('DELETE');
-	});
-
-	it('fails loudly when a delete answers a real body', async () => {
-		respond({ unexpected: 'payload' });
-
-		await expect(invoke(Activities.remove, { id: 654321 })).rejects.toThrow(
-			'unexpected body',
+		expect(calls[0]?.headers['x-impersonate-user-id']).toBe('55');
+		expect(JSON.parse(String(calls[0]?.body))).not.toHaveProperty(
+			'impersonate_user_id',
 		);
 	});
-});
 
-describe('projects', () => {
-	it('lists with filters', async () => {
-		respond([project]);
-
-		const result = await invoke(Projects.list, {
-			include_archived: true,
-			company_id: 889,
+	it('writes lists and custom property maps the way Rails reads them', () => {
+		expect(queryEntries('kinds', ['a', 'b'])).toEqual({
+			'kinds[]': ['a', 'b'],
 		});
-
-		expect(lastRequest().query).toEqual({
-			include_archived: 'true',
-			company_id: '889',
+		expect(
+			queryEntries('custom_properties', { Region: 'North', Tags: ['x', 'y'] }),
+		).toEqual({
+			'custom_properties[Region]': 'North',
+			'custom_properties[Tags][]': ['x', 'y'],
 		});
-		expect(result).toEqual({ items: [project], next_page: null });
+		expect(queryEntries('page', 2)).toEqual({ page: 2 });
 	});
 
-	it('gets with include_company', async () => {
-		respond(project);
-
-		await invoke(Projects.get, { id: 1234567, include_company: true });
-
-		expect(lastRequest()).toMatchObject({
-			method: 'GET',
-			path: '/api/v1/projects/1234567',
+	it('puts list filters in the query string', async () => {
+		reply(200, []);
+		await endpointFor('reports.finance')(ctx(), {
+			from: '2026-01-01',
+			to: '2026-01-31',
+			kinds: ['incoming_invoices', 'outgoing_purchases'],
 		});
-		expect(lastRequest().query).toEqual({ include_company: 'true' });
-	});
-
-	it('creates and updates', async () => {
-		respond(project);
-
-		await invoke(Projects.create, {
-			name: 'Website Relaunch',
-			company_id: 889,
-			currency: 'EUR',
-		});
-
-		expect(lastRequest().method).toBe('POST');
-		expect(lastRequest().body).toMatchObject({
-			name: 'Website Relaunch',
-			company_id: 889,
-		});
-
-		respond(project);
-		await invoke(Projects.update, { id: 1234567, name: 'Renamed' });
-
-		expect(lastRequest()).toMatchObject({
-			method: 'PATCH',
-			path: '/api/v1/projects/1234567',
-		});
-	});
-
-	it('archives and unarchives', async () => {
-		respond(project);
-		await invoke(Projects.archive, { id: 1234567 });
-		expect(lastRequest()).toMatchObject({
-			method: 'PUT',
-			path: '/api/v1/projects/1234567/archive',
-		});
-
-		respond(project);
-		await invoke(Projects.unarchive, { id: 1234567 });
-		expect(lastRequest()).toMatchObject({
-			method: 'PUT',
-			path: '/api/v1/projects/1234567/unarchive',
-		});
-	});
-
-	it('reads the report as a free-form object', async () => {
-		respond(projectReport);
-
-		const result = await invoke(Projects.report, { id: 1234567 });
-
-		expect(lastRequest().path).toBe('/api/v1/projects/1234567/report');
-		expect(result).toEqual({ report: projectReport });
+		const url = new URL(String(calls[0]?.url));
+		expect(url.pathname).toBe('/api/v1/report/finance');
+		expect(url.searchParams.getAll('kinds[]')).toEqual([
+			'incoming_invoices',
+			'outgoing_purchases',
+		]);
 	});
 });
 
-describe('companies', () => {
-	it('lists with a type filter and rejects an unknown type', async () => {
-		respond([company]);
-
-		const result = await invoke(Companies.list, { type: 'customer' });
-
-		expect(lastRequest().query).toEqual({ type: 'customer' });
-		expect(result).toEqual({ items: [company], next_page: null });
-
-		await expect(invoke(Companies.list, { type: 'partner' })).rejects.toThrow();
-		// Only the first (successful) call reached fetch.
-		expect(fetchMock).toHaveBeenCalledTimes(1);
+describe('responses', () => {
+	it('returns a list page as items with the next page number', async () => {
+		reply(
+			200,
+			Array.from({ length: 2 }, (_, i) => ({ id: i + 1 })),
+		);
+		const full = await endpointFor('projects.list')(ctx(), {
+			page: 3,
+			per_page: 2,
+		});
+		expect(full).toEqual({ items: [{ id: 1 }, { id: 2 }], next_page: 4 });
+		expect(new URL(String(calls[0]?.url)).searchParams.get('page')).toBe('3');
 	});
 
-	it('creates a company', async () => {
-		respond(company);
-
-		await invoke(Companies.create, {
-			name: 'Beachy',
-			type: 'customer',
-			country_code: 'DE',
-		});
-
-		expect(lastRequest()).toMatchObject({
-			method: 'POST',
-			path: '/api/v1/companies',
-		});
-		expect(lastRequest().body).toMatchObject({ name: 'Beachy' });
+	it('ends paging on a short page', async () => {
+		reply(200, [{ id: 1 }]);
+		const last = await endpointFor('companies.list')(ctx(), {});
+		expect(last).toEqual({ items: [{ id: 1 }], next_page: null });
+		expect(nextPageOf({}, 100)).toBe(2);
+		expect(nextPageOf({ page: 4 }, 99)).toBeNull();
 	});
 
-	it('archives and unarchives', async () => {
-		respond(company);
-		await invoke(Companies.archive, { id: 889 });
-		expect(lastRequest().path).toBe('/api/v1/companies/889/archive');
+	it('answers success for a 204', async () => {
+		reply(204, undefined);
+		const out = await endpointFor('invoices.updateStatus')(ctx(), {
+			id: 5,
+			status: 'sent',
+		});
+		expect(out).toEqual({ success: true });
+		expect(calls[0]?.method).toBe('PUT');
+		expect(calls[0]?.url).toBe(
+			'https://acme.mocoapp.com/api/v1/invoices/5/update_status',
+		);
+	});
 
-		respond(company);
-		await invoke(Companies.unarchive, { id: 889 });
-		expect(lastRequest().path).toBe('/api/v1/companies/889/unarchive');
+	it('answers success for a delete with no body', async () => {
+		reply(204, undefined);
+		await expect(
+			endpointFor('activities.delete')(ctx(), { id: 4 }),
+		).resolves.toEqual({ success: true });
+	});
+
+	it('returns a PDF as a file output', async () => {
+		reply(200, new Uint8Array([37, 80, 68, 70]), 'application/pdf');
+		const out = (await endpointFor('invoices.getPdf')(ctx(), { id: 77 })) as {
+			filename?: string;
+			contentType?: string;
+			byteLength?: number;
+		};
+		expect(calls[0]?.url).toBe(
+			'https://acme.mocoapp.com/api/v1/invoices/77.pdf',
+		);
+		expect(out).toMatchObject({
+			contentType: 'application/pdf',
+			byteLength: 4,
+			filename: 'moco-invoices-77.pdf',
+		});
+		expect(fileNameFor('invoices.getPdf', { id: 77 })).toBe(
+			'moco-invoices-77.pdf',
+		);
+		expect(fileNameFor('invoices.getTimesheetPdf', { id: 77 })).toBe(
+			'moco-invoices-timesheet-77.pdf',
+		);
+	});
+
+	it('uploads a purchase document as multipart', async () => {
+		reply(200, undefined);
+		await endpointFor('purchases.storeDocument')(ctx(), {
+			id: 8,
+			file: {
+				base64: Buffer.from('%PDF-1.4').toString('base64'),
+				filename: 'r.pdf',
+			},
+		});
+		expect(calls[0]?.method).toBe('PATCH');
+		expect(calls[0]?.body).toBeInstanceOf(FormData);
+		expect((calls[0]?.body as FormData).get('file')).toBeInstanceOf(Blob);
+	});
+
+	it('refuses a body that does not match the documented response', async () => {
+		reply(200, 'not json at all', 'text/plain');
+		await expect(endpointFor('projects.get')(ctx(), { id: 1 })).rejects.toThrow(
+			/did not match its documented schema/,
+		);
 	});
 });
 
-describe('contacts', () => {
-	it('lists, creates, updates and deletes', async () => {
-		respond([contact]);
-		const result = await invoke(Contacts.list, { term: 'Jana' });
-		expect(lastRequest().query).toEqual({ term: 'Jana' });
-		expect(result).toEqual({ items: [contact], next_page: null });
-
-		respond(contact);
-		await invoke(Contacts.create, {
-			firstname: 'Jana',
-			lastname: 'Berger',
+describe('errors', () => {
+	it('keeps the status and MOCO reason and drops the request data', async () => {
+		reply(422, {
+			errors: {
+				name: ['muss ausgefüllt werden'],
+				email: ['Secret Person is taken'],
+			},
+		});
+		const error = (await endpointFor('contacts.create')(ctx(), {
+			firstname: 'Secret',
+			lastname: 'Person',
 			gender: 'F',
-			company_id: 889,
-		});
-		expect(lastRequest().method).toBe('POST');
-		expect(lastRequest().body).toMatchObject({ firstname: 'Jana' });
-
-		respond(contact);
-		await invoke(Contacts.update, { id: 4471, job_position: 'CEO' });
-		expect(lastRequest()).toMatchObject({
-			method: 'PATCH',
-			path: '/api/v1/contacts/people/4471',
-		});
-
-		respond('');
-		await expect(invoke(Contacts.remove, { id: 4471 })).resolves.toEqual({
-			success: true,
-			id: 4471,
-		});
-		expect(lastRequest().method).toBe('DELETE');
+		}).catch((e: unknown) => e)) as ApiError;
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error.status).toBe(422);
+		expect(error.message).toContain('MOCO 422: name: muss ausgefüllt werden');
+		expect(error.message).not.toContain('Secret');
+		expect(JSON.stringify(error.request)).not.toContain('Secret');
+		expect(JSON.stringify(error.request)).not.toContain('moco_test_key');
+		expect(error.url).toBe('https://acme.mocoapp.com/api/v1/contacts/people');
 	});
 
-	it('rejects an unknown gender', async () => {
-		await expect(invoke(Contacts.create, { gender: 'X' })).rejects.toThrow();
-		expect(fetchMock).not.toHaveBeenCalled();
-	});
-});
-
-describe('deals', () => {
-	it('lists with a status filter and rejects an unknown status', async () => {
-		respond([deal]);
-
-		const result = await invoke(Deals.list, { status: 'pending' });
-
-		expect(lastRequest().query).toEqual({ status: 'pending' });
-		expect(result).toEqual({ items: [deal], next_page: null });
-
-		await expect(invoke(Deals.list, { status: 'archived' })).rejects.toThrow();
-		// Only the first (successful) call reached fetch.
-		expect(fetchMock).toHaveBeenCalledTimes(1);
+	it('uses the message body for a 404', async () => {
+		reply(404, { message: 'Not found' });
+		const error = (await endpointFor('deals.get')(ctx(), { id: 1 }).catch(
+			(e: unknown) => e,
+		)) as ApiError;
+		expect(error.status).toBe(404);
+		expect(error.message).toBe('MOCO 404: Not found');
+		expect(error.url).toBe('https://acme.mocoapp.com/api/v1/deals/{id}');
 	});
 
-	it('creates a deal', async () => {
-		respond(deal);
-
-		await invoke(Deals.create, {
-			name: 'Website Relaunch',
-			deal_category_id: 12,
-			money: 50000,
-			currency: 'EUR',
-			status: 'pending',
-		});
-
-		expect(lastRequest()).toMatchObject({
-			method: 'POST',
-			path: '/api/v1/deals',
-		});
-		expect(lastRequest().body).toMatchObject({ deal_category_id: 12 });
-	});
-
-	it('deletes and accepts an empty body', async () => {
-		respond('');
-		await expect(invoke(Deals.remove, { id: 991 })).resolves.toEqual({
-			success: true,
-			id: 991,
-		});
-	});
-});
-
-describe('invoices', () => {
-	it('lists with filters', async () => {
-		respond([invoice]);
-
-		const result = await invoke(Invoices.list, {
-			status: 'created',
-			date_from: '2026-01-01',
-		});
-
-		expect(lastRequest().query).toEqual({
-			status: 'created',
-			date_from: '2026-01-01',
-		});
-		expect(result).toEqual({ items: [invoice], next_page: null });
-	});
-
-	it('gets the detail with line items', async () => {
-		respond(invoiceDetail);
-
-		const result = await invoke(Invoices.get, { id: 777001 });
-
-		expect(lastRequest().path).toBe('/api/v1/invoices/777001');
-		expect(result).toEqual(invoiceDetail);
-	});
-
-	it('updates the status and rejects one the API does not accept', async () => {
-		respond('');
+	it('rejects bad input before sending anything', async () => {
+		reply(200, {});
 		await expect(
-			invoke(Invoices.updateStatus, { id: 777001, status: 'sent' }),
-		).resolves.toEqual({ success: true, id: 777001 });
-		expect(lastRequest()).toMatchObject({
-			method: 'PUT',
-			path: '/api/v1/invoices/777001/update_status',
-		});
-		expect(lastRequest().body).toEqual({ status: 'sent' });
-
-		await expect(
-			invoke(Invoices.updateStatus, { id: 777001, status: 'paid' }),
-		).rejects.toThrow();
-		expect(fetchMock).toHaveBeenCalledTimes(1);
-	});
-});
-
-describe('users', () => {
-	it('lists and gets', async () => {
-		respond([mocoUser]);
-		const result = await invoke(Users.list, { email: 'michael@example.com' });
-		expect(lastRequest().query).toEqual({
-			email: 'michael@example.com',
-		});
-		expect(result).toEqual({ items: [mocoUser], next_page: null });
-
-		respond(mocoUser);
-		await expect(invoke(Users.get, { id: 933590696 })).resolves.toEqual(
-			mocoUser,
-		);
-	});
-});
-
-describe('error handling', () => {
-	it('rejects a malformed list body instead of returning an empty page', async () => {
-		respond('<html>nope</html>');
-
-		await expect(invoke(Activities.list, {})).rejects.toThrow('no array');
-	});
-
-	it('surfaces the API validation errors on the error object', async () => {
-		respond(validationErrors, 422);
-
-		// unknown: a promise can reject with any value, so the rejection reason
-		// has no static type; the assertions narrow it.
-		const error = await invoke(Companies.create, {}).catch(
-			(caught: unknown) => caught,
-		);
-
-		expect(error).toMatchObject({ status: 422 });
-		expect((error as { message: string }).message).toContain("can't be blank");
+			endpointFor('invoices.updateStatus')(ctx(), {
+				id: 1,
+				status: 'paid-ish',
+			}),
+		).rejects.toThrow(/Invalid input for moco invoices.updateStatus/);
+		expect(calls).toHaveLength(0);
 	});
 });

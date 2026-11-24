@@ -1,43 +1,44 @@
 ---
 title: "Moco plugin"
 sidebarTitle: "Overview"
-description: "Business management with Moco - track time entries, manage projects, clients, contacts and deals, read invoices and set their status, and look up users and the current profile."
+description: "Business management with MOCO: time tracking, projects and tasks, clients, contacts and deals, offers, invoices, payments and reminders, purchases and expenses, planning and schedules, staff (users, employments, holidays, presences, absences), reports, tags, comments and account settings (290 operations)."
 ---
 
 Use **Moco** through Corsair: one client, typed API calls.
 
-Moco serves every account from its own subdomain, so the account stores two
-things: the API key (user key from profile &gt; Integrations, or an account key
-from Settings &gt; Extensions &gt; API & Webhooks) and the subdomain of
-`{subdomain}.mocoapp.com`. Requests authenticate with
+MOCO serves every account from its own subdomain, so the account stores two
+things: the API key (a user key from profile &gt; Integrations, or an account
+key from Settings &gt; Extensions &gt; API & Webhooks, read-only or full access)
+and the subdomain of `{subdomain}.mocoapp.com`. Requests authenticate with
 `Authorization: Token token=<key>`.
 
 - **Lists are paginated in response headers**, which the client cannot
-return, so every list takes a 1-based `page` and derives `next_page`: it is
-the next page number while the page comes back with the full default 100
-entries and null once it is short.
-- **Time entries belong to the authenticated user.** Moco has no
-`user_id` filter on create; an account key with the staff permission can act
-as another user via the API's `X-IMPERSONATE-USER-ID` header, which this
-plugin does not set. Send `hours` or `seconds`, not both.
-- **Nothing to create is required at the schema level** because Moco's spec
-marks no upsert field as required; a request the server rejects answers 422
-with field errors, which the thrown error carries on `errors`.
+return, so every paginated list takes a 1-based `page` (and `per_page`, up
+to 100) and returns `{ items, next_page }`: `next_page` is the next page
+number while the page came back full and null once it is short.
+- **Acting as another user.** Time entries and presences belong to the user
+whose key is used. An account key with the Staff permission can act for
+another user: set `impersonate_user_id` (sent as `X-IMPERSONATE-USER-ID`) on
+the operations that take it.
+- **Sends and money.** `invoices.sendEmail`, `offers.sendEmail` and
+`invoiceReminders.sendEmail` email customers, bookkeeping exports can submit
+to the accounting service, and `users.create` adds a billed seat and emails
+a welcome message unless `welcome_email` is false: all are `destructive`, as
+are deletes and `taggings.replace`.
+- **PDFs** (invoices, timesheets, offers, offer confirmations, purchase
+drafts) come back as files, saved to Files when Corsair runs with a file
+store.
 - **Archiving is reversible** by the matching unarchive call; deletes are
-not. Deleting a billed time entry is refused by Moco.
-- **Invoice status changes** accept created, sent, overdue and ignored.
-Paid, partially paid, draft and disregarded states are reached through
-payments and other API calls this plugin does not wrap.
-- **PDF downloads** (`/invoices/{id}.pdf`, `/offers/{id}.pdf`) are not
-wrapped: they are binary responses the client cannot hand back.
-- **Rate limits.** About 120 requests per 2 minutes (unlimited plan 1200).
-The plugin retries 429 with exponential backoff and never replays a write
-after a 5xx or a network failure, because Moco documents no idempotency
-keys.
+not. MOCO refuses to delete billed time entries and locked invoices.
+- **Rate limits.** About 120 requests per 2 minutes (1200 on the unlimited
+plan). Core retries a 429 three times; a 5xx is retried for reads only,
+because MOCO has no idempotency keys for writes.
+- Not wrapped: `POST /session`, which trades an email and password for an
+API key (the plugin already holds one).
 
 **What you get:**
 
-- 35 typed API operations
+- 290 typed API operations
 
 ## Setup
 
@@ -93,16 +94,10 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-Store two things on the account before the first call: the Moco API key and the account subdomain (the `{subdomain}` part of `{subdomain}.mocoapp.com`). The key comes from profile > Integrations (user key) or Settings > Extensions > API & Webhooks (account key).
-
-```sh
-pnpm corsair setup --plugin=moco --tenant=acme api_key=<your-key> subdomain=<your-subdomain>
-```
-
-Or pass them as plugin options (`key`, `subdomain`). Requests authenticate with `Authorization: Token token=<key>`. See [API key auth](/concepts/api-key).
+Store the Moco API key before the first call: `pnpm corsair setup --plugin=moco --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
-moco({ key: '...', subdomain: 'acme' })
+moco()
 ```
 
 More: [API Key](/concepts/api-key)

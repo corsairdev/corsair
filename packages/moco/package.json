@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/moco",
   "version": "0.1.0",
-  "description": "Business management with Moco - track time entries, manage projects, clients, contacts and deals, read invoices and set their status, and look up users and the current profile.",
+  "description": "Business management with MOCO: time tracking, projects and tasks, clients, contacts and deals, offers, invoices, payments and reminders, purchases and expenses, planning and schedules, staff (users, employments, holidays, presences, absences), reports, tags, comments and account settings (290 operations).",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -37,7 +37,9 @@
     "moco",
     "plugin",
     "time-tracking",
-    "invoicing"
+    "invoicing",
+    "project-management",
+    "crm"
   ],
   "author": "Corsair (https://corsair.dev)",
   "license": "Apache-2.0",

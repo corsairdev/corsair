@@ -1,36 +1,40 @@
+# Display copy for the docs, the catalog, corsair.dev and Hub, and one call
+# example per operation. Generated with the plugin from MOCO's OpenAPI spec;
+# docs-examples.test.ts parses every example with its input schema.
 displayName: Moco
-description: Business management with Moco - track time entries, manage projects, clients, contacts and deals, read invoices and set their status, and look up users and the current profile.
 domain: mocoapp.com
+description: "Business management with MOCO: time tracking, projects and tasks, clients, contacts and deals, offers, invoices, payments and reminders, purchases and expenses, planning and schedules, staff (users, employments, holidays, presences, absences), reports, tags, comments and account settings (290 operations)."
 recommendedAuth: api_key
 overviewNote: |
-  Moco serves every account from its own subdomain, so the account stores two
-  things: the API key (user key from profile > Integrations, or an account key
-  from Settings > Extensions > API & Webhooks) and the subdomain of
-  `{subdomain}.mocoapp.com`. Requests authenticate with
+  MOCO serves every account from its own subdomain, so the account stores two
+  things: the API key (a user key from profile > Integrations, or an account
+  key from Settings > Extensions > API & Webhooks, read-only or full access)
+  and the subdomain of `{subdomain}.mocoapp.com`. Requests authenticate with
   `Authorization: Token token=<key>`.
 
   - **Lists are paginated in response headers**, which the client cannot
-  return, so every list takes a 1-based `page` and derives `next_page`: it is
-  the next page number while the page comes back with the full default 100
-  entries and null once it is short.
-  - **Time entries belong to the authenticated user.** Moco has no
-  `user_id` filter on create; an account key with the staff permission can act
-  as another user via the API's `X-IMPERSONATE-USER-ID` header, which this
-  plugin does not set. Send `hours` or `seconds`, not both.
-  - **Nothing to create is required at the schema level** because Moco's spec
-  marks no upsert field as required; a request the server rejects answers 422
-  with field errors, which the thrown error carries on `errors`.
+  return, so every paginated list takes a 1-based `page` (and `per_page`, up
+  to 100) and returns `{ items, next_page }`: `next_page` is the next page
+  number while the page came back full and null once it is short.
+  - **Acting as another user.** Time entries and presences belong to the user
+  whose key is used. An account key with the Staff permission can act for
+  another user: set `impersonate_user_id` (sent as `X-IMPERSONATE-USER-ID`) on
+  the operations that take it.
+  - **Sends and money.** `invoices.sendEmail`, `offers.sendEmail` and
+  `invoiceReminders.sendEmail` email customers, bookkeeping exports can submit
+  to the accounting service, and `users.create` adds a billed seat and emails
+  a welcome message unless `welcome_email` is false: all are `destructive`, as
+  are deletes and `taggings.replace`.
+  - **PDFs** (invoices, timesheets, offers, offer confirmations, purchase
+  drafts) come back as files, saved to Files when Corsair runs with a file
+  store.
   - **Archiving is reversible** by the matching unarchive call; deletes are
-  not. Deleting a billed time entry is refused by Moco.
-  - **Invoice status changes** accept created, sent, overdue and ignored.
-  Paid, partially paid, draft and disregarded states are reached through
-  payments and other API calls this plugin does not wrap.
-  - **PDF downloads** (`/invoices/{id}.pdf`, `/offers/{id}.pdf`) are not
-  wrapped: they are binary responses the client cannot hand back.
-  - **Rate limits.** About 120 requests per 2 minutes (unlimited plan 1200).
-  The plugin retries 429 with exponential backoff and never replays a write
-  after a 5xx or a network failure, because Moco documents no idempotency
-  keys.
+  not. MOCO refuses to delete billed time entries and locked invoices.
+  - **Rate limits.** About 120 requests per 2 minutes (1200 on the unlimited
+  plan). Core retries a 429 three times; a 5xx is retried for reads only,
+  because MOCO has no idempotency keys for writes.
+  - Not wrapped: `POST /session`, which trades an email and password for an
+  API key (the plugin already holds one).
 examples:
   read:
     path: projects.list
@@ -39,98 +43,585 @@ examples:
   write:
     path: activities.create
     title: Track half an hour on a task
-    args:
-      date: '2026-04-09'
-      project_id: 1234567
-      task_id: 7536
-      seconds: 1800
-      description: Kickoff call
-      billable: true
+    args: {"date": "2026-04-09", "project_id": 1234567, "task_id": 7536, "seconds": 1800, "description": "Kickoff call", "billable": true}
 apiExamples:
-  session.verify: {}
-  profile.get: {}
-  activities.list:
-    call: "{ from: '2026-04-01', to: '2026-04-30', project_id: 1234567 }"
-  activities.get:
-    call: "{ id: 654321 }"
+  account.catalogServices.create:
+    args: {}
+  account.catalogServices.delete:
+    args: {"id": 1234567}
+  account.catalogServices.get:
+    args: {"id": 1234567}
+  account.catalogServices.items.create:
+    args: {"catalog_service_id": 12}
+  account.catalogServices.items.delete:
+    args: {"catalog_service_id": 12, "id": 1234567}
+  account.catalogServices.items.get:
+    args: {"catalog_service_id": 12, "id": 1234567}
+  account.catalogServices.items.update:
+    args: {"catalog_service_id": 12, "id": 1234567}
+  account.catalogServices.list:
+    args: {}
+  account.catalogServices.update:
+    args: {"id": 1234567}
+  account.customProperties.create:
+    args: {}
+  account.customProperties.delete:
+    args: {"id": 1234567}
+  account.customProperties.get:
+    args: {"id": 1234567}
+  account.customProperties.list:
+    args: {}
+  account.customProperties.update:
+    args: {"id": 1234567}
+  account.expenseTemplates.create:
+    args: {}
+  account.expenseTemplates.delete:
+    args: {"id": 1234567}
+  account.expenseTemplates.get:
+    args: {"id": 1234567}
+  account.expenseTemplates.list:
+    args: {}
+  account.expenseTemplates.update:
+    args: {"id": 1234567}
+  account.fixedCosts.list:
+    args: {}
+  account.hourlyRates.get:
+    args: {}
+  account.internalHourlyRates.get:
+    args: {}
+  account.internalHourlyRates.update:
+    args: {"year": 2026, "rates": [{"user_id": 933590696, "rate": 1}]}
+  account.taskTemplates.create:
+    args: {}
+  account.taskTemplates.delete:
+    args: {"id": 1234567}
+  account.taskTemplates.get:
+    args: {"id": 1234567}
+  account.taskTemplates.list:
+    args: {}
+  account.taskTemplates.update:
+    args: {"id": 1234567}
+  account.webHooks.create:
+    args: {"target": "Activity", "event": "example", "hook": "example"}
+  account.webHooks.delete:
+    args: {"id": 1234567}
+  account.webHooks.disable:
+    args: {"id": 1234567}
+  account.webHooks.enable:
+    args: {"id": 1234567}
+  account.webHooks.get:
+    args: {"id": 1234567}
+  account.webHooks.list:
+    args: {}
+  account.webHooks.update:
+    args: {"id": 1234567, "hook": "example"}
+  activities.bulkCreate:
+    args: {"activities": [{}]}
   activities.create:
-    call: "{ date: '2026-04-09', project_id: 1234567, task_id: 7536, seconds: 1800, description: 'Kickoff call', billable: true }"
-  activities.update:
-    call: "{ id: 654321, description: 'Kickoff call with follow-up', seconds: 2700 }"
+    args: {"date": "2026-04-09", "project_id": 1234567, "task_id": 7536, "seconds": 1800, "description": "Kickoff call", "billable": true}
   activities.delete:
-    call: "{ id: 654321 }"
-  projects.list:
-    call: "{ include_archived: false, company_id: 889 }"
-  projects.get:
-    call: "{ id: 1234567, include_company: true }"
-  projects.create:
-    call: "{ name: 'Website Relaunch', company_id: 889, currency: 'EUR' }"
-  projects.update:
-    call: "{ id: 1234567, name: 'Website Relaunch 2026' }"
-  projects.archive:
-    call: "{ id: 1234567 }"
-  projects.unarchive:
-    call: "{ id: 1234567 }"
-  projects.report:
-    call: "{ id: 1234567 }"
-  companies.list:
-    call: "{ type: 'customer', term: 'beachy' }"
-  companies.get:
-    call: "{ id: 889 }"
-  companies.create:
-    call: "{ name: 'Beachy', type: 'customer', country_code: 'DE', currency: 'EUR' }"
-  companies.update:
-    call: "{ id: 889, info: 'Retainer client' }"
+    args: {"id": 654321}
+  activities.disregard:
+    args: {"company_id": 889, "reason": "example", "activity_ids": [1]}
+  activities.get:
+    args: {"id": 654321}
+  activities.list:
+    args: {"from": "2026-04-01", "to": "2026-04-30", "project_id": 1234567}
+  activities.startTimer:
+    args: {"id": 1234567}
+  activities.stopTimer:
+    args: {"id": 1234567}
+  activities.update:
+    args: {"id": 654321, "description": "Kickoff call with follow-up", "seconds": 2700}
+  activities.updateBillableSeconds:
+    args: {"id": 1234567}
+  approvals.approve:
+    args: {"id": 1234567}
+  approvals.create:
+    args: {"target_type": "invoice", "target_id": 1, "approver_id": 1}
+  approvals.delete:
+    args: {"id": 1234567}
+  approvals.deny:
+    args: {"id": 1234567}
+  approvals.get:
+    args: {"id": 1234567}
+  approvals.list:
+    args: {}
+  comments.bulkCreate:
+    args: {"commentable_type": "Company", "commentable_ids": [1], "text": "Please find the invoice attached."}
+  comments.create:
+    args: {}
+  comments.delete:
+    args: {"id": 1234567}
+  comments.get:
+    args: {"id": 1234567}
+  comments.list:
+    args: {}
+  comments.update:
+    args: {"id": 1234567}
   companies.archive:
-    call: "{ id: 889 }"
+    args: {"id": 889}
+  companies.create:
+    args: {"name": "Beachy", "type": "customer", "country_code": "DE", "currency": "EUR"}
+  companies.delete:
+    args: {"id": 1234567}
+  companies.get:
+    args: {"id": 889}
+  companies.list:
+    args: {"type": "customer", "term": "beachy"}
   companies.unarchive:
-    call: "{ id: 889 }"
-  contacts.list:
-    call: "{ term: 'jana' }"
-  contacts.get:
-    call: "{ id: 4471 }"
+    args: {"id": 889}
+  companies.update:
+    args: {"id": 889, "info": "Retainer client"}
   contacts.create:
-    call: "{ firstname: 'Jana', lastname: 'Berger', gender: 'F', company_id: 889, work_email: 'jana.berger@beachy.example' }"
-  contacts.update:
-    call: "{ id: 4471, job_position: 'CEO' }"
+    args: {"firstname": "Jana", "lastname": "Berger", "gender": "F", "company_id": 889, "work_email": "jana.berger@beachy.example"}
   contacts.delete:
-    call: "{ id: 4471 }"
-  deals.list:
-    call: "{ status: 'pending' }"
-  deals.get:
-    call: "{ id: 991 }"
+    args: {"id": 4471}
+  contacts.get:
+    args: {"id": 4471}
+  contacts.list:
+    args: {"term": "jana"}
+  contacts.update:
+    args: {"id": 4471, "job_position": "CEO"}
+  dealCategories.create:
+    args: {}
+  dealCategories.delete:
+    args: {"id": 1234567}
+  dealCategories.get:
+    args: {"id": 1234567}
+  dealCategories.list:
+    args: {}
+  dealCategories.update:
+    args: {"id": 1234567}
   deals.create:
-    call: "{ name: 'Website Relaunch', deal_category_id: 12, money: 50000, currency: 'EUR', status: 'pending' }"
-  deals.update:
-    call: "{ id: 991, status: 'won', closed_on: '2026-04-15' }"
+    args: {"name": "Website Relaunch", "deal_category_id": 12, "money": 50000, "currency": "EUR", "status": "pending"}
   deals.delete:
-    call: "{ id: 991 }"
-  invoices.list:
-    call: "{ status: 'created', date_from: '2026-01-01' }"
+    args: {"id": 991}
+  deals.get:
+    args: {"id": 991}
+  deals.list:
+    args: {"status": "pending"}
+  deals.update:
+    args: {"id": 991, "status": "won", "closed_on": "2026-04-15"}
+  invoiceReminders.create:
+    args: {}
+  invoiceReminders.delete:
+    args: {"id": 1234567}
+  invoiceReminders.get:
+    args: {"id": 1234567}
+  invoiceReminders.list:
+    args: {}
+  invoiceReminders.sendEmail:
+    args: {"id": 1234567, "subject": "Your invoice", "text": "Please find the invoice attached."}
+  invoices.attachments.create:
+    args: {"invoice_id": 777001, "attachment": {"filename": "example", "base64": "example"}}
+  invoices.attachments.delete:
+    args: {"invoice_id": 777001, "id": 1234567}
+  invoices.attachments.list:
+    args: {"invoice_id": 777001}
+  invoices.bookkeepingExports.create:
+    args: {}
+  invoices.bookkeepingExports.get:
+    args: {"id": 1234567}
+  invoices.bookkeepingExports.list:
+    args: {}
+  invoices.create:
+    args: {"customer_id": 1, "recipient_address": "example", "date": "2026-04-09", "due_date": "example", "title": "Website Relaunch", "currency": "EUR", "items": [{"type": "title"}]}
+  invoices.delete:
+    args: {"id": 1234567}
   invoices.get:
-    call: "{ id: 777001 }"
+    args: {"id": 777001}
+  invoices.getPdf:
+    args: {"id": 1234567}
+  invoices.getTimesheet:
+    args: {"id": 1234567}
+  invoices.getTimesheetPdf:
+    args: {"id": 1234567}
+  invoices.list:
+    args: {"status": "created", "date_from": "2026-01-01"}
+  invoices.listExpenses:
+    args: {"id": 1234567}
+  invoices.listLocked:
+    args: {}
+  invoices.payments.bulkCreate:
+    args: {"bulk_data": [{}]}
+  invoices.payments.create:
+    args: {"date": "2026-04-09", "paid_total": 1, "invoice_id": 777001}
+  invoices.payments.delete:
+    args: {"id": 1234567}
+  invoices.payments.get:
+    args: {"id": 1234567}
+  invoices.payments.list:
+    args: {}
+  invoices.payments.update:
+    args: {"id": 1234567, "date": "2026-04-09", "paid_total": 1, "invoice_id": 777001}
+  invoices.sendEmail:
+    args: {"id": 777001, "emails_to": "billing@example.com", "subject": "Your invoice", "text": "Please find the invoice attached."}
   invoices.updateStatus:
-    call: "{ id: 777001, status: 'sent' }"
-  users.list:
-    call: "{ include_archived: false }"
+    args: {"id": 777001, "status": "sent"}
+  letterPapers.list:
+    args: {}
+  offerConfirmations.create:
+    args: {"offer_id": 456001}
+  offerConfirmations.delete:
+    args: {"id": 1234567}
+  offerConfirmations.get:
+    args: {"id": 1234567}
+  offerConfirmations.getPdf:
+    args: {"id": 1234567}
+  offerConfirmations.list:
+    args: {}
+  offerConfirmations.update:
+    args: {"id": 1234567}
+  offers.assign:
+    args: {"id": 1234567}
+  offers.attachments.create:
+    args: {"offer_id": 456001, "attachment": {"filename": "example", "base64": "example"}}
+  offers.attachments.delete:
+    args: {"offer_id": 456001, "id": 1234567}
+  offers.attachments.list:
+    args: {"offer_id": 456001}
+  offers.create:
+    args: {"vat_code_id": 1, "items": [{"type": "title"}]}
+  offers.customerApproval.activate:
+    args: {"offer_id": 456001}
+  offers.customerApproval.deactivate:
+    args: {"offer_id": 456001}
+  offers.customerApproval.get:
+    args: {"offer_id": 456001}
+  offers.delete:
+    args: {"id": 1234567}
+  offers.get:
+    args: {"id": 1234567}
+  offers.getPdf:
+    args: {"id": 1234567}
+  offers.list:
+    args: {}
+  offers.sendEmail:
+    args: {"id": 1234567, "subject": "Your invoice", "text": "Please find the invoice attached."}
+  offers.update:
+    args: {"id": 1234567}
+  offers.updateStatus:
+    args: {"id": 1234567, "status": "sent"}
+  plannedPurchases.create:
+    args: {"date": "2026-04-09", "title": "Website Relaunch", "net_total": 1, "currency": "EUR", "user_id": 933590696}
+  plannedPurchases.delete:
+    args: {"id": 1234567}
+  plannedPurchases.get:
+    args: {"id": 1234567}
+  plannedPurchases.list:
+    args: {}
+  plannedPurchases.update:
+    args: {"id": 1234567}
+  planningEntries.create:
+    args: {}
+  planningEntries.delete:
+    args: {"id": 1234567}
+  planningEntries.get:
+    args: {"id": 1234567}
+  planningEntries.list:
+    args: {}
+  planningEntries.update:
+    args: {"id": 1234567}
+  profile.get:
+    args: {}
+  profile.performanceReport:
+    args: {}
+  projects.archive:
+    args: {"id": 1234567}
+  projects.assignProjectGroup:
+    args: {"id": 1234567, "project_group_id": 1}
+  projects.contracts.create:
+    args: {"project_id": 1234567}
+  projects.contracts.delete:
+    args: {"project_id": 1234567, "id": 1234567}
+  projects.contracts.get:
+    args: {"project_id": 1234567, "id": 1234567}
+  projects.contracts.list:
+    args: {"project_id": 1234567}
+  projects.contracts.update:
+    args: {"project_id": 1234567, "id": 1234567}
+  projects.create:
+    args: {"name": "Website Relaunch", "company_id": 889, "currency": "EUR"}
+  projects.delete:
+    args: {"id": 1234567}
+  projects.disableShare:
+    args: {"id": 1234567}
+  projects.expenses.bulkCreate:
+    args: {"project_id": 1234567, "bulk_data": [{}]}
+  projects.expenses.create:
+    args: {"project_id": 1234567}
+  projects.expenses.delete:
+    args: {"project_id": 1234567, "id": 1234567}
+  projects.expenses.disregard:
+    args: {"project_id": 1234567, "reason": "example", "expense_ids": [1]}
+  projects.expenses.get:
+    args: {"project_id": 1234567, "id": 1234567}
+  projects.expenses.list:
+    args: {"project_id": 1234567}
+  projects.expenses.listAll:
+    args: {}
+  projects.expenses.update:
+    args: {"project_id": 1234567, "id": 1234567}
+  projects.get:
+    args: {"id": 1234567, "include_company": true}
+  projects.groups.get:
+    args: {"id": 1234567}
+  projects.groups.list:
+    args: {}
+  projects.list:
+    args: {"include_archived": false, "company_id": 889}
+  projects.listAssigned:
+    args: {}
+  projects.paymentSchedules.create:
+    args: {"project_id": 1234567}
+  projects.paymentSchedules.delete:
+    args: {"project_id": 1234567, "id": 1234567}
+  projects.paymentSchedules.get:
+    args: {"project_id": 1234567, "id": 1234567}
+  projects.paymentSchedules.list:
+    args: {"project_id": 1234567}
+  projects.paymentSchedules.listAll:
+    args: {}
+  projects.paymentSchedules.update:
+    args: {"project_id": 1234567, "id": 1234567}
+  projects.recurringExpenses.create:
+    args: {"project_id": 1234567}
+  projects.recurringExpenses.delete:
+    args: {"project_id": 1234567, "id": 1234567}
+  projects.recurringExpenses.get:
+    args: {"project_id": 1234567, "id": 1234567}
+  projects.recurringExpenses.list:
+    args: {"project_id": 1234567}
+  projects.recurringExpenses.recur:
+    args: {"project_id": 1234567, "id": 1234567}
+  projects.recurringExpenses.update:
+    args: {"project_id": 1234567, "id": 1234567}
+  projects.report:
+    args: {"id": 1234567}
+  projects.share:
+    args: {"id": 1234567}
+  projects.tasks.create:
+    args: {"project_id": 1234567, "name": "Design", "billable": true}
+  projects.tasks.delete:
+    args: {"project_id": 1234567, "id": 1234567}
+  projects.tasks.deleteAll:
+    args: {"project_id": 1234567}
+  projects.tasks.get:
+    args: {"project_id": 1234567, "id": 1234567}
+  projects.tasks.list:
+    args: {"project_id": 1234567}
+  projects.tasks.update:
+    args: {"project_id": 1234567, "id": 1234567}
+  projects.unarchive:
+    args: {"id": 1234567}
+  projects.unassignProjectGroup:
+    args: {"id": 1234567}
+  projects.update:
+    args: {"id": 1234567, "name": "Website Relaunch 2026"}
+  purchases.assignToProject:
+    args: {"id": 1234567, "project_id": 1234567}
+  purchases.bookkeepingExports.create:
+    args: {}
+  purchases.bookkeepingExports.get:
+    args: {"id": 1234567}
+  purchases.bookkeepingExports.list:
+    args: {}
+  purchases.budgets.create:
+    args: {"title": "Website Relaunch"}
+  purchases.budgets.delete:
+    args: {"id": 1234567}
+  purchases.budgets.list:
+    args: {}
+  purchases.budgets.update:
+    args: {"id": 1234567}
+  purchases.budgets.updateTarget:
+    args: {"id": 1234567, "target_amount": 1}
+  purchases.categories.get:
+    args: {"id": 1234567}
+  purchases.categories.list:
+    args: {}
+  purchases.create:
+    args: {}
+  purchases.delete:
+    args: {"id": 1234567}
+  purchases.drafts.create:
+    args: {"title": "Website Relaunch"}
+  purchases.drafts.delete:
+    args: {"id": 1234567}
+  purchases.drafts.get:
+    args: {"id": 1234567}
+  purchases.drafts.getPdf:
+    args: {"id": 1234567}
+  purchases.drafts.list:
+    args: {}
+  purchases.get:
+    args: {"id": 1234567}
+  purchases.list:
+    args: {}
+  purchases.payments.bulkCreate:
+    args: {"bulk_data": [{"date": "2026-04-09", "total": 1, "purchase_id": 1}]}
+  purchases.payments.create:
+    args: {"date": "2026-04-09", "total": 1, "purchase_id": 1}
+  purchases.payments.delete:
+    args: {"id": 1234567}
+  purchases.payments.get:
+    args: {"id": 1234567}
+  purchases.payments.list:
+    args: {}
+  purchases.payments.update:
+    args: {"id": 1234567, "date": "2026-04-09", "total": 1, "purchase_id": 1}
+  purchases.storeDocument:
+    args: {"id": 1234567, "file": {"base64": "JVBERi0xLjQKJSVFT0YK", "filename": "receipt.pdf", "contentType": "application/pdf"}}
+  purchases.update:
+    args: {"id": 1234567}
+  purchases.updateStatus:
+    args: {"id": 1234567, "status": "pending"}
+  receipts.create:
+    args: {}
+  receipts.delete:
+    args: {"id": 1234567}
+  receipts.get:
+    args: {"id": 1234567}
+  receipts.list:
+    args: {}
+  receipts.update:
+    args: {"id": 1234567}
+  recurringExpenses.list:
+    args: {}
+  reports.absences:
+    args: {}
+  reports.cashflow:
+    args: {}
+  reports.finance:
+    args: {"from": "2026-01-01", "to": "2026-01-31", "kinds": ["incoming_invoices"]}
+  reports.plannedVsTracked:
+    args: {}
+  reports.utilization:
+    args: {}
+  revenueCategories.create:
+    args: {}
+  revenueCategories.delete:
+    args: {"id": 1234567}
+  revenueCategories.get:
+    args: {"id": 1234567}
+  revenueCategories.list:
+    args: {}
+  revenueCategories.update:
+    args: {"id": 1234567}
+  schedules.create:
+    args: {}
+  schedules.delete:
+    args: {"id": 1234567}
+  schedules.get:
+    args: {"id": 1234567}
+  schedules.list:
+    args: {}
+  schedules.update:
+    args: {"id": 1234567}
+  session.verify:
+    args: {}
+  taggings.add:
+    args: {"taggable_type": "Project", "taggable_id": 1234567, "tags": ["Lead"]}
+  taggings.list:
+    args: {"taggable_type": "Project", "taggable_id": 1234567}
+  taggings.remove:
+    args: {"taggable_type": "Project", "taggable_id": 1234567}
+  taggings.replace:
+    args: {"taggable_type": "Project", "taggable_id": 1234567}
+  tags.create:
+    args: {}
+  tags.delete:
+    args: {"id": 1234567}
+  tags.get:
+    args: {"id": 1234567}
+  tags.list:
+    args: {}
+  tags.update:
+    args: {"id": 1234567}
+  todos.get:
+    args: {"id": 1234567}
+  todos.list:
+    args: {}
+  units.create:
+    args: {}
+  units.delete:
+    args: {"id": 1234567}
+  units.get:
+    args: {"id": 1234567}
+  units.list:
+    args: {}
+  units.update:
+    args: {"id": 1234567}
+  users.absenceRequests.create:
+    args: {"approver_user_id": "example", "type": "vacation", "entries": [{"date": "2026-04-09", "am": true, "pm": true}]}
+  users.absenceRequests.delete:
+    args: {"id": 1234567, "comment": "example"}
+  users.absenceRequests.get:
+    args: {"id": 1234567}
+  users.absenceRequests.list:
+    args: {}
+  users.create:
+    args: {}
+  users.delete:
+    args: {"id": 1234567}
+  users.employments.create:
+    args: {}
+  users.employments.delete:
+    args: {"id": 1234567}
+  users.employments.get:
+    args: {"id": 1234567}
+  users.employments.list:
+    args: {}
+  users.employments.update:
+    args: {"id": 1234567}
   users.get:
-    call: "{ id: 933590696 }"
-apiNotes:
-  activities.list: |
-    `GET /activities` with from, to, user_id, task_id, company_id, project_id,
-    deal_id, billable, billed, term, tag and remote_id filters. The bare array
-    is returned as `{ items, next_page }`.
-  activities.create: |
-    `POST /activities`. The entry belongs to the authenticated user. The spec
-    marks no request field as required; Moco answers 422 with
-    `{ errors: { field: [messages] } }` for a missing one.
-  projects.report: |
-    `GET /projects/{id}/report`. The body is a free-form set of indicators
-    (budget, invoiced total, hours, costs by task), passed through as
-    `{ report }`.
-  invoices.updateStatus: |
-    `PUT /invoices/{id}/update_status` with `{ status }` in
-    created, sent, overdue or ignored. Locked invoices refuse with 422.
-  session.verify: |
-    `GET /session`. Returns `{ id, uuid }` for the key's user; a cheap check
-    that the key and subdomain work.
+    args: {"id": 933590696}
+  users.holidays.create:
+    args: {}
+  users.holidays.delete:
+    args: {"id": 1234567}
+  users.holidays.get:
+    args: {"id": 1234567}
+  users.holidays.list:
+    args: {}
+  users.holidays.update:
+    args: {"id": 1234567}
+  users.list:
+    args: {"include_archived": false}
+  users.performanceReport:
+    args: {"id": 1234567}
+  users.presences.create:
+    args: {}
+  users.presences.delete:
+    args: {"id": 1234567}
+  users.presences.get:
+    args: {"id": 1234567}
+  users.presences.list:
+    args: {}
+  users.presences.touch:
+    args: {}
+  users.presences.update:
+    args: {"id": 1234567}
+  users.roles.list:
+    args: {}
+  users.update:
+    args: {"id": 1234567}
+  users.workTimeAdjustments.create:
+    args: {}
+  users.workTimeAdjustments.delete:
+    args: {"id": 1234567}
+  users.workTimeAdjustments.get:
+    args: {"id": 1234567}
+  users.workTimeAdjustments.list:
+    args: {}
+  users.workTimeAdjustments.update:
+    args: {"id": 1234567}
+  vatCodePurchases.get:
+    args: {"id": 1234567}
+  vatCodePurchases.list:
+    args: {}
+  vatCodeSales.get:
+    args: {"id": 1234567}
+  vatCodeSales.list:
+    args: {}
