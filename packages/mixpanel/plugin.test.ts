@@ -1,163 +1,183 @@
 import { AuthMissingError } from 'corsair/core';
+import { parseMixpanelKey, parseProjectId, parseRegion } from './client';
 import { mixpanel, mixpanelAuthConfig, mixpanelEndpointSchemas } from './index';
 
-// The key builder only reads the username and secret accessors plus authType.
-function keyContext(stored: {
-	username?: string | null;
-	secret?: string | null;
-}) {
+// unknown: the endpoint tree is walked structurally.
+function paths(tree: unknown, prefix = ''): string[] {
+	return Object.entries(tree as Record<string, unknown>).flatMap(
+		([key, value]) =>
+			typeof value === 'function'
+				? [`${prefix}${key}`]
+				: paths(value, `${prefix}${key}.`),
+	);
+}
+
+function keyContext(stored: Record<string, string | null>) {
+	const get = (name: string) =>
+		jest.fn().mockResolvedValue(stored[name] ?? null);
 	return {
 		authType: 'api_key' as const,
 		options: {},
 		tenantId: 'default',
 		keys: {
-			get_service_account_username: jest
-				.fn()
-				.mockResolvedValue(stored.username),
-			get_service_account_secret: jest.fn().mockResolvedValue(stored.secret),
-			get_project_id: jest.fn().mockResolvedValue('3141592'),
+			get_api_key: get('api_key'),
+			get_service_account_username: get('service_account_username'),
+			get_project_id: get('project_id'),
+			get_region: get('region'),
+			get_project_token: get('project_token'),
+			get_gdpr_token: get('gdpr_token'),
 		},
 	};
 }
 
-function buildKey(
-	plugin: ReturnType<typeof mixpanel>,
-	ctx: ReturnType<typeof keyContext>,
-) {
-	// The fake context is not a full KeyBuilderContext.
-	return plugin.keyBuilder?.(ctx as never, 'endpoint');
-}
-
-const operations = [
-	'cohorts.list',
-	'events.import',
-	'export.events',
-	'funnels.list',
-	'insights.query',
-	'profiles.query',
-	'retention.query',
-];
+const complete = {
+	api_key: 'secret-123456',
+	service_account_username: 'corsair.abc.mp-service-account',
+	project_id: '4086621',
+};
 
 describe('mixpanel plugin definition', () => {
 	const plugin = mixpanel();
 
-	it('registers as mixpanel with api_key auth, a region default and no webhooks', () => {
-		expect(plugin.id).toBe('mixpanel');
-		expect(plugin.options?.authType).toBe('api_key');
-		expect(plugin.options?.region).toBe('us');
-		expect(plugin.webhooks).toEqual({});
-		expect(
-			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
-		).toBe(false);
+	it('registers every operation once with schemas and metadata', () => {
+		const nested = paths(plugin.endpoints).sort();
+		expect(nested.length).toBe(119);
+		expect(Object.keys(mixpanelEndpointSchemas).sort()).toEqual(nested);
+		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(nested);
+		for (const entry of Object.values(plugin.endpointMeta ?? {})) {
+			expect(entry.description?.length).toBeGreaterThan(15);
+		}
 	});
 
-	it('declares the extra account credential fields', () => {
-		expect(mixpanelAuthConfig.api_key?.account).toEqual([
-			'service_account_username',
-			'service_account_secret',
-			'project_id',
-		]);
+	it('keeps the seven original operation names', () => {
+		const nested = paths(plugin.endpoints);
+		for (const name of [
+			'events.import',
+			'profiles.query',
+			'cohorts.list',
+			'insights.query',
+			'funnels.list',
+			'retention.query',
+			'export.events',
+		]) {
+			expect(nested).toContain(name);
+		}
 	});
 
-	it('exposes exactly the seven catalog operations across seven groups', () => {
-		const nested = Object.entries(plugin.endpoints ?? {}).flatMap(
-			([group, fns]) => Object.keys(fns).map((name) => `${group}.${name}`),
-		);
-		expect(nested.sort()).toEqual(operations);
-		expect(Object.keys(plugin.endpoints ?? {})).toHaveLength(7);
-	});
-
-	it('gives every endpoint a description and the right risk level', () => {
+	it('marks deletes, merges, replacements and credential minting destructive', () => {
 		const meta = plugin.endpointMeta ?? {};
-		expect(Object.keys(meta).sort()).toEqual(operations);
-		for (const entry of Object.values(meta)) {
-			expect(entry.description?.length).toBeGreaterThan(10);
+		const destructive = Object.entries(meta)
+			.filter(([, entry]) => entry.riskLevel === 'destructive')
+			.map(([name]) => name);
+		for (const name of Object.keys(meta)) {
+			if (
+				/\.(delete\w*|cancel)$/.test(name) &&
+				name !== 'gdpr.cancelDeletion'
+			) {
+				expect(destructive).toContain(name);
+			}
 		}
-		expect(
-			Object.fromEntries(
-				Object.entries(meta).map(([name, entry]) => [name, entry.riskLevel]),
-			),
-		).toEqual({
-			'events.import': 'write',
-			'profiles.query': 'read',
-			'cohorts.list': 'read',
-			'insights.query': 'read',
-			'funnels.list': 'read',
-			'retention.query': 'read',
-			'export.events': 'read',
-		});
+		for (const name of [
+			'identity.merge',
+			'lookupTables.replace',
+			'lexicon.upsertMany',
+			'serviceAccounts.create',
+			'gdpr.createDeletion',
+			'profiles.unset',
+			'profiles.batchUpdate',
+			'experiments.launch',
+			'pipelines.create',
+		]) {
+			expect(destructive).toContain(name);
+		}
 	});
 
-	it('has input and output schemas for every endpoint', () => {
-		expect(Object.keys(mixpanelEndpointSchemas).sort()).toEqual(operations);
-		for (const schemas of Object.values(mixpanelEndpointSchemas)) {
-			expect(typeof schemas.input.safeParse).toBe('function');
-			expect(typeof schemas.output.safeParse).toBe('function');
+	it('marks every list, get and query read', () => {
+		for (const [name, entry] of Object.entries(plugin.endpointMeta ?? {})) {
+			if (
+				/\.(list\w*|get\w*|query|definitions|history|status|timeline)$/.test(
+					name,
+				)
+			) {
+				expect([name, entry.riskLevel]).toEqual([name, 'read']);
+			}
 		}
 	});
 
-	it('keeps DEFAULT last when caller handlers are merged', () => {
-		const custom = mixpanel({
-			errorHandlers: {
-				QUOTA_ERROR: {
-					match: () => false,
-					handler: async () => ({ maxRetries: 0 }),
-				},
-			},
-		});
-		const names = Object.keys(custom.errorHandlers ?? {});
-		expect(names.at(-1)).toBe('DEFAULT');
-		expect(names).toContain('QUOTA_ERROR');
-		expect(names).toContain('RATE_LIMIT_ERROR');
+	it('declares the account fields beside the api_key secret', () => {
+		expect(mixpanelAuthConfig.api_key.account).toEqual([
+			'service_account_username',
+			'project_id',
+			'region',
+			'project_token',
+			'gdpr_token',
+		]);
 	});
 });
 
-describe('mixpanel key builder', () => {
-	it('prefers the inline service account pair', async () => {
-		const ctx = keyContext({
-			username: 'stored-user',
-			secret: 'stored-secret',
+describe('keyBuilder', () => {
+	const build = (stored: Record<string, string | null>, options = {}) =>
+		mixpanel(options).keyBuilder?.(keyContext(stored) as never, 'endpoint');
+
+	it('packs the stored account into the key', async () => {
+		const key = await build({
+			...complete,
+			region: 'EU',
+			project_token: 'tok-123456',
 		});
-
-		await expect(
-			buildKey(
-				mixpanel({
-					serviceAccountUsername: 'inline-user',
-					serviceAccountSecret: 'inline-secret',
-				}),
-				ctx,
-			),
-		).resolves.toBe('inline-user:inline-secret');
-		expect(ctx.keys.get_service_account_username).not.toHaveBeenCalled();
+		expect(parseMixpanelKey(key as string)).toEqual({
+			username: complete.service_account_username,
+			secret: complete.api_key,
+			projectId: 4086621,
+			region: 'eu',
+			projectToken: 'tok-123456',
+			gdprToken: undefined,
+		});
 	});
 
-	it('joins the stored username and secret', async () => {
-		await expect(
-			buildKey(
-				mixpanel(),
-				keyContext({ username: 'stored-user', secret: 'stored-secret' }),
-			),
-		).resolves.toBe('stored-user:stored-secret');
+	it('defaults the region to us', async () => {
+		const key = await build(complete);
+		expect(parseMixpanelKey(key as string).region).toBe('us');
 	});
 
-	it('throws AuthMissingError when the secret is missing', async () => {
+	it.each(['api_key', 'service_account_username', 'project_id'])(
+		'asks for a connection when %s is missing',
+		async (field) => {
+			await expect(
+				build({ ...complete, [field]: null }),
+			).rejects.toBeInstanceOf(AuthMissingError);
+		},
+	);
+
+	it('rejects a non-endpoint source', async () => {
 		await expect(
-			buildKey(mixpanel(), keyContext({ username: 'stored-user' })),
+			mixpanel().keyBuilder?.(keyContext(complete) as never, 'webhook'),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
+});
 
-	it('throws AuthMissingError when nothing is stored', async () => {
-		await expect(buildKey(mixpanel(), keyContext({}))).rejects.toBeInstanceOf(
-			AuthMissingError,
-		);
+describe('stored value parsing', () => {
+	it.each(['42.5', '42oops', '0', '-3', 'abc', '1e3'])(
+		'rejects project id %s',
+		(value) => {
+			expect(() => parseProjectId(value)).toThrow(/positive integer/);
+		},
+	);
+
+	it('accepts whole positive integers', () => {
+		expect(parseProjectId('42')).toBe(42);
+		expect(parseProjectId(' 4086621 ')).toBe(4086621);
+		expect(parseProjectId(7)).toBe(7);
+		expect(parseProjectId(null)).toBeUndefined();
 	});
 
-	it('refuses webhook keys: there are no inbound webhooks', async () => {
-		await expect(
-			mixpanel().keyBuilder?.(
-				keyContext({ username: 'u', secret: 's' }) as never,
-				'webhook',
-			),
-		).rejects.toBeInstanceOf(AuthMissingError);
+	it('accepts the three regions in any case and rejects others', () => {
+		expect(parseRegion('IN')).toBe('in');
+		expect(parseRegion('')).toBeUndefined();
+		expect(() => parseRegion('asia')).toThrow(/us, eu or in/);
+	});
+
+	it('refuses an unpacked key', () => {
+		expect(() => parseMixpanelKey('user:secret')).toThrow(/missing/);
 	});
 });
