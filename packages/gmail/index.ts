@@ -307,6 +307,31 @@ const gmailEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Returns only id and threadId per message, no subject or body. Use messages.get to read one',
+		search: {
+			kinds: ['messages'],
+			rows: 'messages',
+			id: 'id',
+			open: { op: 'messages.get', idArg: 'id' },
+			limit: { arg: 'maxResults', default: 25, max: 100 },
+			hints: {
+				topic: { arg: 'q', text: '{v}' },
+				people: {
+					arg: 'q',
+					text: ['from:{v}', 'to:{v}', 'cc:{v}'],
+					join: 'or',
+				},
+				places: { arg: 'q', text: 'label:{v}', join: 'or' },
+				after: { arg: 'q', text: 'after:{v}', format: 'epoch' },
+				before: { arg: 'q', text: 'before:{v}', format: 'epoch' },
+				states: {
+					map: {
+						unread: { arg: 'q', text: 'is:unread' },
+						sent: { arg: 'q', text: 'in:sent' },
+						attachment: { arg: 'q', text: 'has:attachment' },
+					},
+				},
+			},
+		},
 	},
 	'messages.get': {
 		riskLevel: 'read',

@@ -314,6 +314,37 @@ const linearEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Lists issues, newest created first, across the workspace or one team; filter by assignee, state, labels or project.',
+		search: {
+			kinds: ['issues'],
+			rows: 'nodes',
+			id: 'id',
+			open: { op: 'issues.get', idArg: 'id' },
+			limit: { arg: 'first', default: 25, max: 100 },
+			fixed: { orderBy: 'updatedAt' },
+			hints: {
+				topic: {
+					arg: 'filter.or',
+					list: [
+						{ title: { containsIgnoreCase: '{v}' } },
+						{ description: { containsIgnoreCase: '{v}' } },
+					] as const,
+				},
+				people: { arg: 'filter.assignee.email.in', list: ['{v}'] },
+				places: { arg: 'filter.project.name.in', list: ['{v}'] },
+				after: { arg: 'filter.updatedAt.gte', set: '{v}', format: 'iso' },
+				before: { arg: 'filter.updatedAt.lt', set: '{v}', format: 'iso' },
+				states: {
+					max: 1,
+					map: {
+						open: {
+							arg: 'filter.state.type.nin',
+							set: ['completed', 'canceled'],
+						},
+						'in progress': { arg: 'filter.state.type.eq', set: 'started' },
+					},
+				},
+			},
+		},
 	},
 	'issues.get': {
 		riskLevel: 'read',

@@ -557,6 +557,25 @@ const slackEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Search messages with Slack search syntax, e.g. "deploy in:#channel from:@user". Needs a user token.',
+		search: {
+			kinds: ['messages'],
+			rows: 'messages.matches',
+			id: 'ts',
+			limit: { arg: 'count', default: 15, max: 100 },
+			fixed: { sort: 'timestamp', sort_dir: 'desc' },
+			hints: {
+				topic: { arg: 'query', text: '{v}' },
+				people: { arg: 'query', text: 'from:{v}', max: 1 },
+				places: { arg: 'query', text: 'in:{v}', max: 1 },
+				after: {
+					arg: 'query',
+					text: 'after:{v}',
+					format: 'YYYY-MM-DD',
+					shiftDays: -1,
+				},
+				before: { arg: 'query', text: 'before:{v}', format: 'YYYY-MM-DD' },
+			},
+		},
 	},
 	'messages.post': {
 		riskLevel: 'write',

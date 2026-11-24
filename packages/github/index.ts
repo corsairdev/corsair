@@ -1818,6 +1818,36 @@ const githubEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Search issues and pull requests with GitHub qualifiers in q, e.g. "is:issue is:open repo:owner/name assignee:login". users.getAuthenticated gives your own login.',
+		search: {
+			kinds: ['issues', 'pullRequests'],
+			rows: 'items',
+			id: 'id',
+			limit: { arg: 'perPage', default: 20, max: 100 },
+			fixed: { sort: 'updated', order: 'desc' },
+			hints: {
+				topic: { arg: 'q', text: '{v}', cap: 256 },
+				people: { arg: 'q', text: 'involves:{v}' },
+				places: { arg: 'q', text: 'repo:{v}' },
+				after: { arg: 'q', text: 'updated:>={v}', format: 'iso' },
+				before: { arg: 'q', text: 'updated:<{v}', format: 'iso' },
+				window: { arg: 'q', text: 'updated:{after}..{before}', format: 'iso' },
+				kinds: {
+					max: 1,
+					map: {
+						issues: { arg: 'q', text: 'is:issue' },
+						pullRequests: { arg: 'q', text: 'is:pr' },
+					},
+				},
+				states: {
+					max: 1,
+					map: {
+						open: { arg: 'q', text: 'is:open' },
+						closed: { arg: 'q', text: 'is:closed' },
+						merged: { arg: 'q', text: 'is:merged' },
+					},
+				},
+			},
+		},
 	},
 	'search.repositories': {
 		riskLevel: 'read',
