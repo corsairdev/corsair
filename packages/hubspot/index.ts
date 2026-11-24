@@ -444,7 +444,8 @@ const hubspotEndpointMeta = {
 	'contacts.get': { riskLevel: 'read', description: 'Get a specific contact' },
 	'contacts.getMany': {
 		riskLevel: 'read',
-		description: 'Get multiple contacts',
+		description:
+			'Pages through contacts in id order, default properties only unless properties is set. To find contacts by field or date use contacts.search.',
 	},
 	'contacts.create': {
 		riskLevel: 'write',
@@ -461,17 +462,24 @@ const hubspotEndpointMeta = {
 	},
 	'contacts.getRecentlyCreated': {
 		riskLevel: 'read',
-		description: 'List recently created contacts',
+		description:
+			'Newest contacts first by creation date; since keeps only those created at or after it. Page with paging.next.after.',
 	},
 	'contacts.getRecentlyUpdated': {
 		riskLevel: 'read',
-		description: 'List recently updated contacts',
+		description:
+			'Most recently modified contacts first; since keeps only those modified at or after it. Page with paging.next.after.',
 	},
-	'contacts.search': { riskLevel: 'read', description: 'Search contacts' },
+	'contacts.search': {
+		riskLevel: 'read',
+		description:
+			'Search with query text and/or filterGroups; only default properties come back unless properties is set. Up to 200 per page and 10,000 results; follow paging.next.after.',
+	},
 	'companies.get': { riskLevel: 'read', description: 'Get a specific company' },
 	'companies.getMany': {
 		riskLevel: 'read',
-		description: 'Get multiple companies',
+		description:
+			'Pages through companies in id order, default properties only unless properties is set. To find a company by domain use companies.searchByDomain.',
 	},
 	'companies.create': {
 		riskLevel: 'write',
@@ -488,18 +496,25 @@ const hubspotEndpointMeta = {
 	},
 	'companies.getRecentlyCreated': {
 		riskLevel: 'read',
-		description: 'List recently created companies',
+		description:
+			'Newest companies first by creation date; since keeps only those created at or after it. Page with paging.next.after.',
 	},
 	'companies.getRecentlyUpdated': {
 		riskLevel: 'read',
-		description: 'List recently updated companies',
+		description:
+			'Most recently modified companies first; since keeps only those modified at or after it. Page with paging.next.after.',
 	},
 	'companies.searchByDomain': {
 		riskLevel: 'read',
-		description: 'Search companies by domain name',
+		description:
+			'Finds companies whose domain equals domain exactly (a search, not a prefix match).',
 	},
 	'deals.get': { riskLevel: 'read', description: 'Get a specific deal' },
-	'deals.getMany': { riskLevel: 'read', description: 'Get multiple deals' },
+	'deals.getMany': {
+		riskLevel: 'read',
+		description:
+			'Pages through deals in id order, default properties only unless properties is set. To find deals by field or date use deals.search.',
+	},
 	'deals.create': { riskLevel: 'write', description: 'Create a new deal' },
 	'deals.update': {
 		riskLevel: 'write',
@@ -512,15 +527,25 @@ const hubspotEndpointMeta = {
 	},
 	'deals.getRecentlyCreated': {
 		riskLevel: 'read',
-		description: 'List recently created deals',
+		description:
+			'Newest deals first by creation date; since keeps only those created at or after it. Page with paging.next.after.',
 	},
 	'deals.getRecentlyUpdated': {
 		riskLevel: 'read',
-		description: 'List recently updated deals',
+		description:
+			'Most recently modified deals first; since keeps only those modified at or after it. Page with paging.next.after.',
 	},
-	'deals.search': { riskLevel: 'read', description: 'Search deals' },
+	'deals.search': {
+		riskLevel: 'read',
+		description:
+			'Search with query text and/or filterGroups; only default properties come back unless properties is set. Up to 200 per page and 10,000 results; follow paging.next.after.',
+	},
 	'tickets.get': { riskLevel: 'read', description: 'Get a specific ticket' },
-	'tickets.getMany': { riskLevel: 'read', description: 'Get multiple tickets' },
+	'tickets.getMany': {
+		riskLevel: 'read',
+		description:
+			'Pages through tickets in id order, default properties only unless properties is set.',
+	},
 	'tickets.create': {
 		riskLevel: 'write',
 		description: 'Create a new support ticket',

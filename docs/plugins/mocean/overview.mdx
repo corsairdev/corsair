@@ -1,0 +1,163 @@
+---
+title: "Mocean plugin"
+sidebarTitle: "Overview"
+description: "Messaging with Mocean - SMS and delivery status, verify codes over SMS and Telegram, voice calls, WhatsApp messages and templates, number lookup, and account balance and pricing."
+---
+
+Use **Mocean** through Corsair: one client, typed API calls.
+
+Create an API token in the Mocean dashboard under API Account and store it
+as the account key. Requests authenticate with `Authorization: Bearer`, and
+every `/rest/2` call asks Mocean for JSON, since the default is XML.
+
+- **Errors.** Mocean answers many failures with HTTP 202 and a body
+`status`, and the same number means different things per API: 1 is a bad
+token for SMS but throttling for Verify. The plugin throws core's `ApiError`
+with the HTTP status the body status means: 429 throttled (retried with
+backoff), 401 bad token, 402 out of credit, 503 system down, 500 system
+error, 400 for a bad request. Some failures come as real HTTP 400/404 with
+the same `{ status, err_msg }` body; those keep their HTTP status. The
+original code is on `error.body.status`. Error messages are URL-decoded and
+have phone numbers masked; request bodies are never kept.
+- **Sends report per receiver.** `sms.send` returns one row per receiver
+with its own `status` and `msgid`; a failed row (28 invalid number) does not
+fail the others. `voice.dial` does the same in `calls[]`.
+- **Costs.** Sends, verify requests and resends, calls and WhatsApp messages
+spend credit and are `destructive`. `lookup.request` also spends prepaid
+credit but only returns data, so it stays `read` like other metered reads.
+- **Numbers and prices.** `price` and `credit_deducted` come back as
+numbers although the reference says strings; status codes on voice routes
+can come back as strings. `mocean_mcc` and `mocean_mnc` go together (either
+one alone answers status 46).
+- **Scheduling is Malaysia time.** `mocean_schedule` is
+`YYYY-MM-DD hh:mm:ss` in GMT+8.
+- **Downloads.** `voice.recording` and `whatsapp.downloadMedia` return the
+file (base64 with its type and size). A status answer instead of a file
+becomes an error.
+- **Callbacks are not received.** Delivery reports, inbound SMS, call events,
+WhatsApp events and asynchronous number lookups go to URLs you host; Mocean
+does not sign them, and this plugin has no webhooks. The number lookup
+result arrives as a `PUT` to `mocean_nl_url`; delivery reports arrive as a
+`PUT` to `mocean_dlr_url`.
+- **WhatsApp and voice** need a WhatsApp Business sender or voice enabled
+on the Mocean account; without it those routes answer 401 or 403.
+
+**What you get:**
+
+- 20 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/mocean better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/mocean better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/mocean better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/mocean better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { mocean } from '@corsair-dev/mocean';
+
+export const corsair = createCorsair({
+	plugins: [
+		mocean(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Mocean API key before the first call: `pnpm corsair setup --plugin=mocean --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+mocean()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'mocean',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**Read the account balance**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.mocean.api.account.balance({});
+```
+
+
+**Send an SMS**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.mocean.api.sms.send({ mocean_from: 'Acme', mocean_to: '60123456789', mocean_text: 'Your order has shipped.' });
+```
+
+
+See the full list on the [API](/plugins/mocean/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/mocean/api">
+    Every `mocean.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

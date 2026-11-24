@@ -1,0 +1,118 @@
+displayName: Mocean
+description: Messaging with Mocean - SMS and delivery status, verify codes over SMS and Telegram, voice calls, WhatsApp messages and templates, number lookup, and account balance and pricing.
+domain: moceanapi.com
+recommendedAuth: api_key
+overviewNote: |
+  Create an API token in the Mocean dashboard under API Account and store it
+  as the account key. Requests authenticate with `Authorization: Bearer`, and
+  every `/rest/2` call asks Mocean for JSON, since the default is XML.
+
+  - **Errors.** Mocean answers many failures with HTTP 202 and a body
+  `status`, and the same number means different things per API: 1 is a bad
+  token for SMS but throttling for Verify. The plugin throws core's `ApiError`
+  with the HTTP status the body status means: 429 throttled (retried with
+  backoff), 401 bad token, 402 out of credit, 503 system down, 500 system
+  error, 400 for a bad request. Some failures come as real HTTP 400/404 with
+  the same `{ status, err_msg }` body; those keep their HTTP status. The
+  original code is on `error.body.status`. Error messages are URL-decoded and
+  have phone numbers masked; request bodies are never kept.
+  - **Sends report per receiver.** `sms.send` returns one row per receiver
+  with its own `status` and `msgid`; a failed row (28 invalid number) does not
+  fail the others. `voice.dial` does the same in `calls[]`.
+  - **Costs.** Sends, verify requests and resends, calls and WhatsApp messages
+  spend credit and are `destructive`. `lookup.request` also spends prepaid
+  credit but only returns data, so it stays `read` like other metered reads.
+  - **Numbers and prices.** `price` and `credit_deducted` come back as
+  numbers although the reference says strings; status codes on voice routes
+  can come back as strings. `mocean_mcc` and `mocean_mnc` go together (either
+  one alone answers status 46).
+  - **Scheduling is Malaysia time.** `mocean_schedule` is
+  `YYYY-MM-DD hh:mm:ss` in GMT+8.
+  - **Downloads.** `voice.recording` and `whatsapp.downloadMedia` return the
+  file (base64 with its type and size). A status answer instead of a file
+  becomes an error.
+  - **Callbacks are not received.** Delivery reports, inbound SMS, call events,
+  WhatsApp events and asynchronous number lookups go to URLs you host; Mocean
+  does not sign them, and this plugin has no webhooks. The number lookup
+  result arrives as a `PUT` to `mocean_nl_url`; delivery reports arrive as a
+  `PUT` to `mocean_dlr_url`.
+  - **WhatsApp and voice** need a WhatsApp Business sender or voice enabled
+  on the Mocean account; without it those routes answer 401 or 403.
+references:
+  - title: Mocean API reference
+    url: https://moceanapi.com/docs
+  - title: Mocean documentation MCP server
+    url: https://moceanapi.com/developer/ai/mcp
+examples:
+  read:
+    path: account.balance
+    title: Read the account balance
+    args: {}
+  write:
+    path: sms.send
+    title: Send an SMS
+    args:
+      mocean_from: Acme
+      mocean_to: '60123456789'
+      mocean_text: Your order has shipped.
+apiExamples:
+  sms.send:
+    call: "{ mocean_from: 'Acme', mocean_to: '60123456789 60198765432', mocean_text: 'Your order has shipped.' }"
+  sms.status:
+    call: "{ mocean_msgid: 'cust20013050311050614001' }"
+  sms.reportConversion:
+    call: "{ mocean_msgid: 'cust20013050311050614001', mocean_delivered: true }"
+  account.balance: {}
+  account.pricing:
+    call: "{ mocean_mcc: '502', mocean_mnc: '13', mocean_type: 'sms' }"
+  verify.request:
+    call: "{ mocean_to: '60123456789', mocean_brand: 'Acme', mocean_code_length: 6, mocean_pin_validity: 300 }"
+  verify.requestTelegram:
+    call: "{ mocean_to: '123456789', mocean_from: 'acme_bot', mocean_brand: 'Acme' }"
+  verify.resend:
+    call: "{ mocean_reqid: 'moceanq5672285037' }"
+  verify.check:
+    call: "{ mocean_reqid: 'moceanq5672285037', mocean_code: '123456' }"
+  lookup.request:
+    call: "{ mocean_to: '60123456789' }"
+  voice.dial:
+    call: "{ mocean_to: '60123456789', mocean_command: [{ action: 'say', language: 'en-US', text: 'Your code is 1 2 3 4' }] }"
+  voice.hangup:
+    call: "{ mocean_call_uuid: 'xxx-xxx-xxx-xxx' }"
+  voice.recording:
+    call: "{ mocean_call_uuid: 'xxx-xxx-xxx-xxx' }"
+  whatsapp.send:
+    call: "{ mocean_from: '60111111111', mocean_to: '60123456789', mocean_content: { type: 'text', text: 'Your order has shipped.' } }"
+  whatsapp.downloadMedia:
+    call: "{ mocean_from: '60111111111', mocean_media_id: '1234567890' }"
+  templates.list:
+    call: "{ limit: 20, status: 'APPROVED' }"
+  templates.get:
+    call: "{ templateId: '5653923468721315' }"
+  templates.create:
+    call: "{ name: 'order_ready', language: 'en_US', category: 'UTILITY', components: [{ type: 'BODY', text: 'Your order {{1}} is ready', example: { body_text: [['1042']] } }] }"
+  templates.edit:
+    call: "{ templateId: '5653923468721315', name: 'order_ready', language: 'en_US', category: 'UTILITY', components: [{ type: 'BODY', text: 'Order {{1}} is ready for pickup' }] }"
+  templates.delete:
+    call: "{ name: 'order_ready', hsm_id: '5653923468721315' }"
+apiNotes:
+  sms.send: |
+    `POST /rest/2/sms` with a form-encoded body. Mocean answers HTTP 202 with
+    `{ messages: [{ status, receiver, msgid }] }`; each row can fail on its own.
+    A request with no receiver answers HTTP 400 with the same shape.
+  sms.status: |
+    `GET /rest/2/report/message`. `message_status` is 1 success, 2 failed,
+    3 expired, 4 pending, 5 not found (an unknown msgid answers 5, not an
+    error).
+  verify.check: |
+    `POST /rest/2/verify/check`. An expired or unknown reqid answers HTTP 404
+    with body status 17; a wrong code is status 16.
+  lookup.request: |
+    `POST /rest/2/nl`. Synchronous without `mocean_nl_url`; with it, Mocean
+    sends the result as a `PUT` to that URL, which the plugin does not receive.
+  voice.dial: |
+    `POST /rest/2/voice/dial`. `mocean_command` is sent as one JSON string
+    field, as Mocean expects.
+  templates.delete: |
+    `DELETE /template/whatsapp/message_templates?name=...&hsm_id=...`. Without
+    `hsm_id` every language of the template is deleted.

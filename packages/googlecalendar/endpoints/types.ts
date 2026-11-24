@@ -192,21 +192,54 @@ const EventsCreateInputSchema = z.object({
 });
 
 const EventsGetInputSchema = z.object({
-	calendarId: z.string().optional(),
-	id: z.string(),
+	calendarId: z
+		.string()
+		.optional()
+		.describe('Calendar ID. Defaults to "primary".'),
+	id: z
+		.string()
+		.describe(
+			'Event id, not the iCalUID. Occurrences of a recurring event have their own ids.',
+		),
 	timeZone: z.string().optional(),
 	maxAttendees: z.number().optional(),
 });
 
 const EventsGetManyInputSchema = z.object({
-	calendarId: z.string().optional(),
-	timeMin: z.string().optional(),
-	timeMax: z.string().optional(),
+	calendarId: z
+		.string()
+		.optional()
+		.describe('Calendar ID. Defaults to "primary".'),
+	timeMin: z
+		.string()
+		.optional()
+		.describe(
+			'RFC 3339 with a time zone offset, e.g. "2025-06-03T00:00:00-07:00" or "2025-06-03T00:00:00Z"; a plain date is rejected. Lower bound on event end time, exclusive.',
+		),
+	timeMax: z
+		.string()
+		.optional()
+		.describe(
+			'RFC 3339 with a time zone offset, e.g. "2025-06-04T00:00:00-07:00" or "2025-06-04T00:00:00Z"; a plain date is rejected. Upper bound on event start time, exclusive.',
+		),
 	timeZone: z.string().optional(),
 	updatedMin: z.string().optional(),
-	singleEvents: z.boolean().optional(),
-	maxResults: z.number().optional(),
-	pageToken: z.string().optional(),
+	singleEvents: z
+		.boolean()
+		.optional()
+		.describe(
+			'Defaults to false, which returns a recurring event once instead of its occurrences. Set true to expand occurrences; orderBy "startTime" needs it.',
+		),
+	maxResults: z
+		.number()
+		.optional()
+		.describe(
+			'Page size, default 250. A page can be short or empty while more remain; follow nextPageToken.',
+		),
+	pageToken: z
+		.string()
+		.optional()
+		.describe('nextPageToken from the previous response.'),
 	q: z.string().optional(),
 	orderBy: z.enum(['startTime', 'updated']).optional(),
 	iCalUID: z.string().optional(),
@@ -236,8 +269,16 @@ const EventsDeleteInputSchema = z.object({
 });
 
 const CalendarGetAvailabilityInputSchema = z.object({
-	timeMin: z.string(),
-	timeMax: z.string(),
+	timeMin: z
+		.string()
+		.describe(
+			'RFC 3339 with a time zone offset, e.g. "2025-06-03T00:00:00-07:00".',
+		),
+	timeMax: z
+		.string()
+		.describe(
+			'RFC 3339 with a time zone offset, e.g. "2025-06-04T00:00:00-07:00".',
+		),
 	timeZone: z.string().optional(),
 	groupExpansionMax: z.number().optional(),
 	calendarExpansionMax: z.number().optional(),
@@ -247,7 +288,8 @@ const CalendarGetAvailabilityInputSchema = z.object({
 				id: z.string(),
 			}),
 		)
-		.optional(),
+		.optional()
+		.describe('Calendars to check, by calendar id (usually an email address).'),
 });
 
 export const GoogleCalendarEndpointInputSchemas = {

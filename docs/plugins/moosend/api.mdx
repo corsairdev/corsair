@@ -1,0 +1,2823 @@
+---
+title: "Moosend API reference"
+sidebarTitle: "API"
+description: "API reference for the Moosend plugin in Corsair: every `moosend.api.*` operation with its input and output types, taken from the plugin's Zod schemas."
+---
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Campaigns
+
+### abSummary
+
+`campaigns.abSummary`
+
+Read an A/B campaign's totals per version
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.campaigns.abSummary({ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | The campaign ID |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### activityByLocation
+
+`campaigns.activityByLocation`
+
+Count campaign opens per country
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.campaigns.activityByLocation({ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | The campaign ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Paging` | `object \| null` | No | — |
+| `Analytics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Paging full type">
+
+```ts
+{
+  PageSize?: number | null,
+  CurrentPage?: number | null,
+  TotalResults?: number | null,
+  TotalPageCount?: number | null,
+  SortExpression?: string | null,
+  SortIsAscending?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="Analytics full type">
+
+```ts
+{
+  Context?: string | null,
+  ContextName?: string | null,
+  ContextDescription?: string | null,
+  TotalCount?: number | null,
+  UniqueCount?: number | null,
+  Email?: string | null,
+  IpAddress?: string | null,
+  MailingListId?: string | null,
+  MemberID?: string | null,
+  Name?: string | null,
+  Status?: number | string | null,
+  Timestamp?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### clone
+
+`campaigns.clone`
+
+Copy a campaign into a new draft and return the copy
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.campaigns.clone({ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | The campaign ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `Name` | `string \| null` | No | — |
+| `Subject` | `string \| null` | No | — |
+| `WebLocation` | `string \| null` | No | — |
+| `HTMLContent` | `string \| null` | No | — |
+| `PlainContent` | `string \| null` | No | — |
+| `Sender` | `object \| null` | No | — |
+| `DeliveredOn` | `string \| null` | No | — |
+| `ReplyToEmail` | `object \| null` | No | — |
+| `CreatedOn` | `string \| null` | No | — |
+| `UpdatedOn` | `string \| null` | No | — |
+| `ScheduledFor` | `string \| null` | No | — |
+| `Timezone` | `string \| null` | No | — |
+| `FormatType` | `number \| string \| null` | No | — |
+| `ABCampaignData` | `any` | Yes | — |
+| `MailingLists` | `object[] \| null` | No | — |
+| `ConfirmationTo` | `string \| null` | No | — |
+| `Status` | `number \| string \| null` | No | — |
+| `IsTransactional` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Sender full type">
+
+```ts
+{
+  ID?: string | null,
+  Name?: string | null,
+  Email?: string | null,
+  CreatedOn?: string | null,
+  IsEnabled?: boolean | null,
+  SpfVerified?: boolean | null,
+  DkimVerified?: boolean | null,
+  DkimPublic?: string | null,
+  DmarcVerified?: boolean | null,
+  IsVerified?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="ReplyToEmail full type">
+
+```ts
+{
+  ID?: string | null,
+  Name?: string | null,
+  Email?: string | null,
+  CreatedOn?: string | null,
+  IsEnabled?: boolean | null,
+  SpfVerified?: boolean | null,
+  DkimVerified?: boolean | null,
+  DkimPublic?: string | null,
+  DmarcVerified?: boolean | null,
+  IsVerified?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="MailingLists full type">
+
+```ts
+{
+  MailingListID?: string | null,
+  SegmentID?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`campaigns.create`
+
+Create a draft campaign (regular or A/B); nothing is sent
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.campaigns.create({ name: 'November newsletter', subject: 'News', senderEmail: 'news@example.com', htmlContent: '<p>Hello</p>', mailingLists: [{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Campaign name |
+| `subject` | `string` | Yes | Subject line |
+| `senderEmail` | `string` | Yes | Email of one of the account senders |
+| `replyToEmail` | `string` | No | Reply-to address; must be one of the account senders (sender when omitted) |
+| `confirmationToEmail` | `string` | No | Where Moosend sends its "campaign sent" confirmation (sender when omitted) |
+| `htmlContent` | `string` | No | Full HTML body |
+| `webLocation` | `string` | No | URL Moosend fetches the HTML body from |
+| `mailingLists` | `object[]` | No | Lists (and optional segments) the campaign goes to |
+| `trackInGoogleAnalytics` | `boolean` | No | — |
+| `isAB` | `boolean` | No | Create an A/B split campaign (false when omitted) |
+| `abCampaignType` | `Subjectline \| Content \| Sender` | No | — |
+| `subjectB` | `string` | No | — |
+| `htmlContentB` | `string` | No | — |
+| `webLocationB` | `string` | No | — |
+| `senderEmailB` | `string` | No | — |
+| `hoursToTest` | `number` | No | — |
+| `listPercentage` | `number` | No | — |
+| `abWinnerSelectionType` | `OpenRate \| TotalUniqueClicks` | No | — |
+
+<AccordionGroup>
+<Accordion title="mailingLists full type">
+
+```ts
+{
+  mailingListId: string,
+  segmentId?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`campaigns.delete`
+
+Delete a campaign; cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.campaigns.delete({ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | The campaign ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### get
+
+`campaigns.get`
+
+Read one campaign with its content, sender and mailing lists (no statistics)
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.campaigns.get({ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | The campaign ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `Name` | `string \| null` | No | — |
+| `Subject` | `string \| null` | No | — |
+| `WebLocation` | `string \| null` | No | — |
+| `HTMLContent` | `string \| null` | No | — |
+| `PlainContent` | `string \| null` | No | — |
+| `Sender` | `object \| null` | No | — |
+| `DeliveredOn` | `string \| null` | No | — |
+| `ReplyToEmail` | `object \| null` | No | — |
+| `CreatedOn` | `string \| null` | No | — |
+| `UpdatedOn` | `string \| null` | No | — |
+| `ScheduledFor` | `string \| null` | No | — |
+| `Timezone` | `string \| null` | No | — |
+| `FormatType` | `number \| string \| null` | No | — |
+| `ABCampaignData` | `any` | Yes | — |
+| `MailingLists` | `object[] \| null` | No | — |
+| `ConfirmationTo` | `string \| null` | No | — |
+| `Status` | `number \| string \| null` | No | — |
+| `IsTransactional` | `boolean \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Sender full type">
+
+```ts
+{
+  ID?: string | null,
+  Name?: string | null,
+  Email?: string | null,
+  CreatedOn?: string | null,
+  IsEnabled?: boolean | null,
+  SpfVerified?: boolean | null,
+  DkimVerified?: boolean | null,
+  DkimPublic?: string | null,
+  DmarcVerified?: boolean | null,
+  IsVerified?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="ReplyToEmail full type">
+
+```ts
+{
+  ID?: string | null,
+  Name?: string | null,
+  Email?: string | null,
+  CreatedOn?: string | null,
+  IsEnabled?: boolean | null,
+  SpfVerified?: boolean | null,
+  DkimVerified?: boolean | null,
+  DkimPublic?: string | null,
+  DmarcVerified?: boolean | null,
+  IsVerified?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="MailingLists full type">
+
+```ts
+{
+  MailingListID?: string | null,
+  SegmentID?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### linkActivity
+
+`campaigns.linkActivity`
+
+Count campaign clicks per link
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.campaigns.linkActivity({ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | The campaign ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Paging` | `object \| null` | No | — |
+| `Analytics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Paging full type">
+
+```ts
+{
+  PageSize?: number | null,
+  CurrentPage?: number | null,
+  TotalResults?: number | null,
+  TotalPageCount?: number | null,
+  SortExpression?: string | null,
+  SortIsAscending?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="Analytics full type">
+
+```ts
+{
+  Context?: string | null,
+  ContextName?: string | null,
+  ContextDescription?: string | null,
+  TotalCount?: number | null,
+  UniqueCount?: number | null,
+  Email?: string | null,
+  IpAddress?: string | null,
+  MailingListId?: string | null,
+  MemberID?: string | null,
+  Name?: string | null,
+  Status?: number | string | null,
+  Timestamp?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`campaigns.list`
+
+List campaigns (drafts, scheduled and sent) with their totals, optionally by page and page size
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.campaigns.list({ page: 1, pageSize: 20, sortBy: 'CreatedOn', sortMethod: 'DESC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Page number, starting at 1 |
+| `pageSize` | `number` | No | Results per page (needs page) |
+| `sortBy` | `string` | No | Sort by this campaign property (needs pageSize) |
+| `sortMethod` | `ASC \| DESC` | No | Sort direction |
+
+No paging input calls `GET /campaigns.json`; `page` alone calls
+`/campaigns/{page}.json`; `pageSize` calls `/campaigns/{page}/{pageSize}.json`
+(page 1 when omitted) with the sort options.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Paging` | `object \| null` | No | — |
+| `Campaigns` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Paging full type">
+
+```ts
+{
+  PageSize?: number | null,
+  CurrentPage?: number | null,
+  TotalResults?: number | null,
+  TotalPageCount?: number | null,
+  SortExpression?: string | null,
+  SortIsAscending?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="Campaigns full type">
+
+```ts
+{
+  ID: string,
+  Name?: string | null,
+  Subject?: string | null,
+  SiteName?: string | null,
+  ConfirmationTo?: string | null,
+  CreatedOn?: string | null,
+  Status?: number | string | null,
+  DeliveredOn?: string | null,
+  ScheduledFor?: string | null,
+  ScheduledForTimezone?: string | null,
+  MailingLists?: {
+    MailingList?: {
+      ID: string,
+      Name?: string | null,
+      ActiveMemberCount?: number | null,
+      BouncedMemberCount?: number | null,
+      RemovedMemberCount?: number | null,
+      UnsubscribedMemberCount?: number | null,
+      Status?: number | string | null,
+      CustomFieldsDefinition?: {
+        ID?: string | null,
+        Name?: string | null,
+        Context?: string | null,
+        IsRequired?: boolean | null,
+        IsHidden?: boolean | null,
+        Type?: number | string | null
+      }[] | null,
+      CreatedBy?: string | null,
+      CreatedOn?: string | null,
+      UpdatedBy?: string | null,
+      UpdatedOn?: string | null,
+      Preferences?: {
+        FallbackValue?: string | null,
+        IsRequired?: boolean | null,
+        Options?: string[] | null,
+        SelectType?: number | string | null
+      } | null
+    } | null,
+    Segment?: {
+      ID: number,
+      Name?: string | null,
+      MatchType?: number | string | null,
+      Criteria?: {
+        ID?: number | null,
+        SegmentID?: number | null,
+        Field?: number | string | null,
+        CustomFieldID?: string | null,
+        Comparer?: number | string | null,
+        Value?: string | null,
+        DateFrom?: string | null,
+        DateTo?: string | null,
+        OtherMailingListID?: string | null,
+        CampaignID?: string | null,
+        ProductCode?: string | null,
+        DateFunction?: number | string | null,
+        LastXMinutes?: number | null,
+        WebsiteId?: string | null
+      }[] | null,
+      CreatedBy?: string | null,
+      CreatedOn?: string | null,
+      UpdatedBy?: string | null,
+      UpdatedOn?: string | null,
+      FetchType?: number | string | null,
+      FetchValue?: number | null,
+      Description?: string | null,
+      SortBy?: string | null,
+      SegmentType?: number | string | null
+    } | null
+  }[] | null,
+  TotalSent?: number | null,
+  TotalOpens?: number | null,
+  UniqueOpens?: number | null,
+  TotalBounces?: number | null,
+  TotalForwards?: number | null,
+  UniqueForwards?: number | null,
+  TotalLinkClicks?: number | null,
+  UniqueLinkClicks?: number | null,
+  RecipientsCount?: number | null,
+  IsTransactional?: boolean | null,
+  TotalComplaints?: number | null,
+  TotalUnsubscribes?: number | null,
+  CampaignType?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### schedule
+
+`campaigns.schedule`
+
+Schedule a draft campaign to be sent at a set time
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.campaigns.schedule({ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65', dateTime: '24-12-2026 09:00', timezone: 'GMT Standard Time' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | The campaign ID |
+| `dateTime` | `string` | Yes | When to send, as Moosend expects it: "dd-MM-yyyy HH:mm" |
+| `timezone` | `string` | No | Windows time zone name, e.g. "US Eastern Standard Time" |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### send
+
+`campaigns.send`
+
+Send a draft campaign to its mailing lists now
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.campaigns.send({ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | The campaign ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### sendTest
+
+`campaigns.sendTest`
+
+Email a test copy of a campaign to up to 5 addresses
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.campaigns.sendTest({ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65', testEmails: ['qa@example.com'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | The campaign ID |
+| `testEmails` | `string[]` | Yes | Who gets the test email |
+
+`POST /campaigns/{CampaignID}/send_test.json`. The current docs show
+`send-test`, which answers 404.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### stats
+
+`campaigns.stats`
+
+List per-recipient campaign activity of one type (sent, opened, clicked, bounced, unsubscribed, complained), with paging and dates
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.campaigns.stats({ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65', type: 'Opened', page: 1, pageSize: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | The campaign ID |
+| `type` | `Sent \| Opened \| LinkClicked \| Forward \| Unsubscribed \| Bounced \| Complained \| Activity` | No | Which activity to list (Sent when omitted) |
+| `page` | `number` | No | Page number, starting at 1 |
+| `pageSize` | `number` | No | Results per page |
+| `from` | `string` | No | Only activity on or after this date |
+| `to` | `string` | No | Only activity on or before this date |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Paging` | `object \| null` | No | — |
+| `Analytics` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Paging full type">
+
+```ts
+{
+  PageSize?: number | null,
+  CurrentPage?: number | null,
+  TotalResults?: number | null,
+  TotalPageCount?: number | null,
+  SortExpression?: string | null,
+  SortIsAscending?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="Analytics full type">
+
+```ts
+{
+  Context?: string | null,
+  ContextName?: string | null,
+  ContextDescription?: string | null,
+  TotalCount?: number | null,
+  UniqueCount?: number | null,
+  Email?: string | null,
+  IpAddress?: string | null,
+  MailingListId?: string | null,
+  MemberID?: string | null,
+  Name?: string | null,
+  Status?: number | string | null,
+  Timestamp?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### summary
+
+`campaigns.summary`
+
+Read a campaign's totals: sent, opens, clicks, bounces, complaints, unsubscribes
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.campaigns.summary({ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | The campaign ID |
+
+`GET /campaigns/{CampaignID}/view_summary.json`. The current docs show
+`view-summary`, which Moosend routes to the paging route and rejects.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `CampaignID` | `string \| null` | No | — |
+| `ABVersion` | `string \| null` | No | — |
+| `CampaignName` | `string \| null` | No | — |
+| `CampaignSubject` | `string \| null` | No | — |
+| `MailingLists` | `object[] \| null` | No | — |
+| `CampaignDeliveredOn` | `string \| null` | No | — |
+| `To` | `string \| null` | No | — |
+| `From` | `string \| null` | No | — |
+| `TotalOpens` | `number \| null` | No | — |
+| `UniqueOpens` | `number \| null` | No | — |
+| `TotalBounces` | `number \| null` | No | — |
+| `TotalComplaints` | `number \| null` | No | — |
+| `TotalForwards` | `number \| null` | No | — |
+| `UniqueForwards` | `number \| null` | No | — |
+| `TotalUnsubscribes` | `number \| null` | No | — |
+| `TotalLinkClicks` | `number \| null` | No | — |
+| `UniqueLinkClicks` | `number \| null` | No | — |
+| `Sent` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="MailingLists full type">
+
+```ts
+{
+  MailingListID?: string | null,
+  SegmentID?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unschedule
+
+`campaigns.unschedule`
+
+Cancel a scheduled send; the campaign goes back to draft
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.campaigns.unschedule({ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | The campaign ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### update
+
+`campaigns.update`
+
+Change a draft campaign; nothing is sent
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.campaigns.update({ campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65', name: 'November newsletter', subject: 'News, take 2', senderEmail: 'news@example.com', htmlContent: '<p>Hello again</p>' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `campaignId` | `string` | Yes | The campaign ID |
+| `name` | `string` | Yes | Campaign name |
+| `subject` | `string` | Yes | Subject line |
+| `senderEmail` | `string` | Yes | Email of one of the account senders |
+| `replyToEmail` | `string` | No | Reply-to address; must be one of the account senders (sender when omitted) |
+| `confirmationToEmail` | `string` | No | Where Moosend sends its "campaign sent" confirmation (sender when omitted) |
+| `htmlContent` | `string` | No | Full HTML body |
+| `webLocation` | `string` | No | URL Moosend fetches the HTML body from |
+| `mailingLists` | `object[]` | No | Lists (and optional segments) the campaign goes to |
+| `trackInGoogleAnalytics` | `boolean` | No | — |
+| `isAB` | `boolean` | No | Create an A/B split campaign (false when omitted) |
+| `abCampaignType` | `Subjectline \| Content \| Sender` | No | — |
+| `subjectB` | `string` | No | — |
+| `htmlContentB` | `string` | No | — |
+| `webLocationB` | `string` | No | — |
+| `senderEmailB` | `string` | No | — |
+| `hoursToTest` | `number` | No | — |
+| `listPercentage` | `number` | No | — |
+| `abWinnerSelectionType` | `OpenRate \| TotalUniqueClicks` | No | — |
+
+<AccordionGroup>
+<Accordion title="mailingLists full type">
+
+```ts
+{
+  mailingListId: string,
+  segmentId?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+## Custom Fields
+
+### create
+
+`customFields.create`
+
+Add a custom field (text, number, date, dropdown or checkbox) to a mailing list
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.customFields.create({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', name: 'Town', type: 'SingleSelectDropdown', options: ['Athens', 'London'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `name` | `string` | Yes | Name of the custom field |
+| `type` | `Text \| Number \| DateTime \| SingleSelectDropdown \| CheckBox` | No | Data type of the field (Text when omitted) |
+| `options` | `string[]` | No | Choices for a SingleSelectDropdown field |
+| `isRequired` | `boolean` | No | Whether a value is required when adding a subscriber |
+| `isHidden` | `boolean` | No | Whether the field is hidden on the subscriber's profile page |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `customFieldId` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`customFields.delete`
+
+Remove a custom field and every subscriber's value for it; cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.customFields.delete({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', customFieldId: 'd7d6775a-c56a-45bf-a69d-649c905647a2' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `customFieldId` | `string` | Yes | The custom field ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### update
+
+`customFields.update`
+
+Change a custom field's name, type, options or visibility
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.customFields.update({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', customFieldId: 'd7d6775a-c56a-45bf-a69d-649c905647a2', name: 'Country', isHidden: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `customFieldId` | `string` | Yes | The custom field ID |
+| `name` | `string` | Yes | Name of the custom field |
+| `type` | `Text \| Number \| DateTime \| SingleSelectDropdown \| CheckBox` | No | Data type of the field (Text when omitted) |
+| `options` | `string[]` | No | Choices for a SingleSelectDropdown field |
+| `isRequired` | `boolean` | No | Whether a value is required when adding a subscriber |
+| `isHidden` | `boolean` | No | Whether the field is hidden on the subscriber's profile page |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+## Lists
+
+### create
+
+`lists.create`
+
+Create an empty mailing list
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.lists.create({ name: 'Newsletter', confirmationPage: 'https://example.com/thanks' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Name of the mailing list |
+| `confirmationPage` | `string` | No | URL shown at the end of the subscription process |
+| `redirectAfterUnsubscribePage` | `string` | No | URL subscribers land on after they unsubscribe |
+| `preferences` | `object` | No | Preference options subscribers can pick (up to 10) |
+| `preferencePageId` | `string` | No | ID of the preference page to use |
+
+<AccordionGroup>
+<Accordion title="preferences full type">
+
+```ts
+{
+  selectType: SingleSelect | MultiSelect,
+  options: string[],
+  isRequired?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | — |
+
+
+
+---
+
+### delete
+
+`lists.delete`
+
+Delete a mailing list and its subscribers; cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.lists.delete({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### get
+
+`lists.get`
+
+Read one mailing list with its custom field definitions
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.lists.get({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `withStatistics` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `Name` | `string \| null` | No | — |
+| `ActiveMemberCount` | `number \| null` | No | — |
+| `BouncedMemberCount` | `number \| null` | No | — |
+| `RemovedMemberCount` | `number \| null` | No | — |
+| `UnsubscribedMemberCount` | `number \| null` | No | — |
+| `Status` | `number \| string \| null` | No | — |
+| `CustomFieldsDefinition` | `object[] \| null` | No | — |
+| `CreatedBy` | `string \| null` | No | — |
+| `CreatedOn` | `string \| null` | No | — |
+| `UpdatedBy` | `string \| null` | No | — |
+| `UpdatedOn` | `string \| null` | No | — |
+| `Preferences` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="CustomFieldsDefinition full type">
+
+```ts
+{
+  ID?: string | null,
+  Name?: string | null,
+  Context?: string | null,
+  IsRequired?: boolean | null,
+  IsHidden?: boolean | null,
+  Type?: number | string | null
+}[] | null
+```
+</Accordion>
+
+<Accordion title="Preferences full type">
+
+```ts
+{
+  FallbackValue?: string | null,
+  IsRequired?: boolean | null,
+  Options?: string[] | null,
+  SelectType?: number | string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`lists.list`
+
+List the active mailing lists with subscriber counts and custom field definitions (first page of 10)
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.lists.list({ withStatistics: true, sortBy: 'Name', sortMethod: 'ASC' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `withStatistics` | `boolean` | No | Include subscriber counts (true when omitted) |
+| `sortBy` | `string` | No | List property to sort by |
+| `sortMethod` | `ASC \| DESC` | No | Sort direction |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Paging` | `object \| null` | No | — |
+| `MailingLists` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Paging full type">
+
+```ts
+{
+  PageSize?: number | null,
+  CurrentPage?: number | null,
+  TotalResults?: number | null,
+  TotalPageCount?: number | null,
+  SortExpression?: string | null,
+  SortIsAscending?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="MailingLists full type">
+
+```ts
+{
+  ID: string,
+  Name?: string | null,
+  ActiveMemberCount?: number | null,
+  BouncedMemberCount?: number | null,
+  RemovedMemberCount?: number | null,
+  UnsubscribedMemberCount?: number | null,
+  Status?: number | string | null,
+  CustomFieldsDefinition?: {
+    ID?: string | null,
+    Name?: string | null,
+    Context?: string | null,
+    IsRequired?: boolean | null,
+    IsHidden?: boolean | null,
+    Type?: number | string | null
+  }[] | null,
+  CreatedBy?: string | null,
+  CreatedOn?: string | null,
+  UpdatedBy?: string | null,
+  UpdatedOn?: string | null,
+  Preferences?: {
+    FallbackValue?: string | null,
+    IsRequired?: boolean | null,
+    Options?: string[] | null,
+    SelectType?: number | string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPaged
+
+`lists.listPaged`
+
+List mailing lists one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.lists.listPaged({ page: 1, pageSize: 10 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | Yes | Page number, starting at 1 |
+| `pageSize` | `number` | Yes | Results per page |
+| `sortBy` | `string` | No | — |
+| `sortMethod` | `ASC \| DESC` | No | Sort direction |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Paging` | `object \| null` | No | — |
+| `MailingLists` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Paging full type">
+
+```ts
+{
+  PageSize?: number | null,
+  CurrentPage?: number | null,
+  TotalResults?: number | null,
+  TotalPageCount?: number | null,
+  SortExpression?: string | null,
+  SortIsAscending?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="MailingLists full type">
+
+```ts
+{
+  ID: string,
+  Name?: string | null,
+  ActiveMemberCount?: number | null,
+  BouncedMemberCount?: number | null,
+  RemovedMemberCount?: number | null,
+  UnsubscribedMemberCount?: number | null,
+  Status?: number | string | null,
+  CustomFieldsDefinition?: {
+    ID?: string | null,
+    Name?: string | null,
+    Context?: string | null,
+    IsRequired?: boolean | null,
+    IsHidden?: boolean | null,
+    Type?: number | string | null
+  }[] | null,
+  CreatedBy?: string | null,
+  CreatedOn?: string | null,
+  UpdatedBy?: string | null,
+  UpdatedOn?: string | null,
+  Preferences?: {
+    FallbackValue?: string | null,
+    IsRequired?: boolean | null,
+    Options?: string[] | null,
+    SelectType?: number | string | null
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`lists.update`
+
+Change a mailing list's name, confirmation and unsubscribe pages, or preferences
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.lists.update({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', name: 'Newsletter 2026' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `name` | `string` | Yes | Name of the mailing list |
+| `confirmationPage` | `string` | No | URL shown at the end of the subscription process |
+| `redirectAfterUnsubscribePage` | `string` | No | URL subscribers land on after they unsubscribe |
+| `preferences` | `object` | No | Preference options subscribers can pick (up to 10) |
+| `preferencePageId` | `string` | No | ID of the preference page to use |
+
+<AccordionGroup>
+<Accordion title="preferences full type">
+
+```ts
+{
+  selectType: SingleSelect | MultiSelect,
+  options: string[],
+  isRequired?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | — |
+
+
+
+---
+
+## Segments
+
+### addCriteria
+
+`segments.addCriteria`
+
+Add one criterion to a segment; returns its position for updateCriteria
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.segments.addCriteria({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', segmentId: 587912, field: 'DateAdded', dateFunction: 'Year', comparer: 'Is', value: '2026' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `segmentId` | `number` | Yes | The segment ID (Moosend segment IDs are integers) |
+| `field` | `string` | Yes | What to filter on: DateAdded, DateUpdated, RecipientName, RecipientEmail, SubscribeMethod, MailingListIncluded, CampaignsOpened, LinksClicked, CampaignName, LinkURL, CampaignSent, Platform, OperatingSystems, EmailClient, WebBrowser, MobileBrowser, AddedAnythingToCart, ViewedProduct, PurchasedProduct, ViewedProductCategory, PurchasedProductCategory, ViewedProductBrand, PurchasedProductBrand, Preference; or, to filter on a custom field, the ID of that field from lists.get (CustomFieldsDefinition[].ID) |
+| `comparer` | `string` | Yes | Operator: Is, IsNot, Contains, DoesNotContain, StartsWith, DoesNotStartWith, EndsWith, DoesNotEndWith, IsGreaterThan, IsGreaterThanOrEqualTo, IsLessThan, IsLessThanOrEqualTo, IsBefore, IsAfter, IsEmpty, IsNotEmpty, IsTrue, IsFalse |
+| `value` | `string` | No | The value to compare against |
+| `lastXMinutes` | `number` | No | Only count activity in the last X minutes |
+| `dateFrom` | `string` | No | Start of a date span |
+| `dateTo` | `string` | No | End of a date span |
+| `dateFunction` | `string` | No | For date fields: Year, Month, Day, DayOfWeek, ... |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `criterionNumber` | `number` | Yes | The new criterion's position in the segment; segments.updateCriteria takes it |
+
+
+
+---
+
+### create
+
+`segments.create`
+
+Create a segment of a mailing list, empty or with criteria
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.segments.create({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', name: 'Gmail readers', criteria: [{ field: 'RecipientEmail', comparer: 'EndsWith', value: 'gmail.com' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `name` | `string` | Yes | Name of the segment |
+| `matchType` | `All \| Any` | No | Match all criteria (default) or any of them |
+| `fetchType` | `All \| Top \| TopPercent` | No | Keep every match, the top N, or the top N percent |
+| `fetchValue` | `number` | No | N for Top, or the percentage for TopPercent |
+| `criteria` | `object[]` | No | Filters; an empty segment matches every subscriber |
+
+<AccordionGroup>
+<Accordion title="criteria full type">
+
+```ts
+{
+  field: string,
+  comparer: string,
+  value?: string,
+  lastXMinutes?: number,
+  dateFrom?: string,
+  dateTo?: string,
+  dateFunction?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `segmentId` | `number` | Yes | — |
+
+
+
+---
+
+### delete
+
+`segments.delete`
+
+Delete a segment; its subscribers stay on the list. Cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.segments.delete({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', segmentId: 587912 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `segmentId` | `number` | Yes | The segment ID (Moosend segment IDs are integers) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### get
+
+`segments.get`
+
+Read one segment with its criteria
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.segments.get({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', segmentId: 587912 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `segmentId` | `number` | Yes | The segment ID (Moosend segment IDs are integers) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `number` | Yes | — |
+| `Name` | `string \| null` | No | — |
+| `MatchType` | `number \| string \| null` | No | — |
+| `Criteria` | `object[] \| null` | No | — |
+| `CreatedBy` | `string \| null` | No | — |
+| `CreatedOn` | `string \| null` | No | — |
+| `UpdatedBy` | `string \| null` | No | — |
+| `UpdatedOn` | `string \| null` | No | — |
+| `FetchType` | `number \| string \| null` | No | — |
+| `FetchValue` | `number \| null` | No | — |
+| `Description` | `string \| null` | No | — |
+| `SortBy` | `string \| null` | No | — |
+| `SegmentType` | `number \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="Criteria full type">
+
+```ts
+{
+  ID?: number | null,
+  SegmentID?: number | null,
+  Field?: number | string | null,
+  CustomFieldID?: string | null,
+  Comparer?: number | string | null,
+  Value?: string | null,
+  DateFrom?: string | null,
+  DateTo?: string | null,
+  OtherMailingListID?: string | null,
+  CampaignID?: string | null,
+  ProductCode?: string | null,
+  DateFunction?: number | string | null,
+  LastXMinutes?: number | null,
+  WebsiteId?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`segments.list`
+
+List a mailing list's segments with their criteria
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.segments.list({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Paging` | `object \| null` | No | — |
+| `Segments` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Paging full type">
+
+```ts
+{
+  PageSize?: number | null,
+  CurrentPage?: number | null,
+  TotalResults?: number | null,
+  TotalPageCount?: number | null,
+  SortExpression?: string | null,
+  SortIsAscending?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="Segments full type">
+
+```ts
+{
+  ID: number,
+  Name?: string | null,
+  MatchType?: number | string | null,
+  Criteria?: {
+    ID?: number | null,
+    SegmentID?: number | null,
+    Field?: number | string | null,
+    CustomFieldID?: string | null,
+    Comparer?: number | string | null,
+    Value?: string | null,
+    DateFrom?: string | null,
+    DateTo?: string | null,
+    OtherMailingListID?: string | null,
+    CampaignID?: string | null,
+    ProductCode?: string | null,
+    DateFunction?: number | string | null,
+    LastXMinutes?: number | null,
+    WebsiteId?: string | null
+  }[] | null,
+  CreatedBy?: string | null,
+  CreatedOn?: string | null,
+  UpdatedBy?: string | null,
+  UpdatedOn?: string | null,
+  FetchType?: number | string | null,
+  FetchValue?: number | null,
+  Description?: string | null,
+  SortBy?: string | null,
+  SegmentType?: number | string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### members
+
+`segments.members`
+
+List the subscribers a segment matches, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.segments.members({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', segmentId: 587912, page: 1, pageSize: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `segmentId` | `number` | Yes | The segment ID (Moosend segment IDs are integers) |
+| `page` | `number` | No | Page number, starting at 1 |
+| `pageSize` | `number` | No | Results per page |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Paging` | `object \| null` | No | — |
+| `Subscribers` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Paging full type">
+
+```ts
+{
+  PageSize?: number | null,
+  CurrentPage?: number | null,
+  TotalResults?: number | null,
+  TotalPageCount?: number | null,
+  SortExpression?: string | null,
+  SortIsAscending?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="Subscribers full type">
+
+```ts
+{
+  ID: string,
+  Name?: string | null,
+  Mobile?: string | null,
+  Email?: string | null,
+  CreatedOn?: string | null,
+  UpdatedOn?: string | null,
+  UnsubscribedOn?: string | null,
+  UnsubscribedFromID?: string | null,
+  SubscribeType?: number | string | null,
+  SubscribeMethod?: number | string | null,
+  CustomFields?: {
+    CustomFieldID?: string | null,
+    Name?: string | null,
+    Value: any
+  }[] | null,
+  RemovedOn?: string | null,
+  Tags?: string[] | null,
+  Preferences: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`segments.update`
+
+Change a segment's name and match settings; criteria, when given, replace all existing ones
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.segments.update({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', segmentId: 587912, name: 'Gmail readers', matchType: 'Any' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `segmentId` | `number` | Yes | The segment ID (Moosend segment IDs are integers) |
+| `name` | `string` | Yes | Name of the segment |
+| `matchType` | `All \| Any` | No | Match all criteria (default) or any of them |
+| `fetchType` | `All \| Top \| TopPercent` | No | Keep every match, the top N, or the top N percent |
+| `fetchValue` | `number` | No | N for Top, or the percentage for TopPercent |
+| `criteria` | `object[]` | No | When given, replaces every existing criterion |
+
+<AccordionGroup>
+<Accordion title="criteria full type">
+
+```ts
+{
+  field: string,
+  comparer: string,
+  value?: string,
+  lastXMinutes?: number,
+  dateFrom?: string,
+  dateTo?: string,
+  dateFunction?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### updateCriteria
+
+`segments.updateCriteria`
+
+Change one segment criterion, addressed by its position (1 = first)
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.segments.updateCriteria({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', segmentId: 587912, criterionNumber: 1, field: 'RecipientName', comparer: 'Contains', value: 'Jana' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `segmentId` | `number` | Yes | The segment ID (Moosend segment IDs are integers) |
+| `criterionNumber` | `number` | Yes | The criterion's position in the segment, starting at 1 (not its ID) |
+| `field` | `string` | Yes | What to filter on: DateAdded, DateUpdated, RecipientName, RecipientEmail, SubscribeMethod, MailingListIncluded, CampaignsOpened, LinksClicked, CampaignName, LinkURL, CampaignSent, Platform, OperatingSystems, EmailClient, WebBrowser, MobileBrowser, AddedAnythingToCart, ViewedProduct, PurchasedProduct, ViewedProductCategory, PurchasedProductCategory, ViewedProductBrand, PurchasedProductBrand, Preference; or, to filter on a custom field, the ID of that field from lists.get (CustomFieldsDefinition[].ID) |
+| `comparer` | `string` | Yes | Operator: Is, IsNot, Contains, DoesNotContain, StartsWith, DoesNotStartWith, EndsWith, DoesNotEndWith, IsGreaterThan, IsGreaterThanOrEqualTo, IsLessThan, IsLessThanOrEqualTo, IsBefore, IsAfter, IsEmpty, IsNotEmpty, IsTrue, IsFalse |
+| `value` | `string` | No | The value to compare against |
+| `lastXMinutes` | `number` | No | Only count activity in the last X minutes |
+| `dateFrom` | `string` | No | Start of a date span |
+| `dateTo` | `string` | No | End of a date span |
+| `dateFunction` | `string` | No | For date fields: Year, Month, Day, DayOfWeek, ... |
+
+`POST /lists/{MailingListID}/segments/{SegmentID}/criteria/{n}/update.json`
+where `n` is the criterion's position in the segment (1 = first), not its
+`ID`; the ID answers `SEGMENT_CRITERIA_NOT_FOUND`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+## Senders
+
+### get
+
+`senders.get`
+
+Read one sender by email address
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.senders.get({ email: 'news@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string \| null` | No | — |
+| `Name` | `string \| null` | No | — |
+| `Email` | `string \| null` | No | — |
+| `CreatedOn` | `string \| null` | No | — |
+| `IsEnabled` | `boolean \| null` | No | — |
+| `SpfVerified` | `boolean \| null` | No | — |
+| `DkimVerified` | `boolean \| null` | No | — |
+| `DkimPublic` | `string \| null` | No | — |
+| `DmarcVerified` | `boolean \| null` | No | — |
+| `IsVerified` | `boolean \| null` | No | — |
+
+
+
+---
+
+### list
+
+`senders.list`
+
+List the account senders (from addresses) with their SPF, DKIM and DMARC checks
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.senders.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `senders` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="senders full type">
+
+```ts
+{
+  ID?: string | null,
+  Name?: string | null,
+  Email?: string | null,
+  CreatedOn?: string | null,
+  IsEnabled?: boolean | null,
+  SpfVerified?: boolean | null,
+  DkimVerified?: boolean | null,
+  DkimPublic?: string | null,
+  DmarcVerified?: boolean | null,
+  IsVerified?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Subscribers
+
+### addTags
+
+`subscribers.addTags`
+
+Add tags to up to 1,000 subscribers of one mailing list
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.subscribers.addTags({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', members: [{ subscriberId: 'dc3bdb0f-cbdd-a2b5-8c0f-ebcfee204170', tags: ['vip-customer'] }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `members` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  subscriberId: string,
+  tags: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### delete
+
+`subscribers.delete`
+
+Delete a subscriber from one mailing list for good; cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.subscribers.delete({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', email: 'jana@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### deleteFromAccount
+
+`subscribers.deleteFromAccount`
+
+Delete an email address from every mailing list in the account (and optionally its sub-accounts); cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.subscribers.deleteFromAccount({ email: 'jana@example.com', includeAllSubAccounts: false });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `includeAllSubAccounts` | `boolean` | No | Also delete the address from every sub-account |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### deleteMany
+
+`subscribers.deleteMany`
+
+Delete up to 1,000 subscribers from one mailing list for good; cannot be undone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.subscribers.deleteMany({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', emails: ['a@example.com', 'b@example.com'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `emails` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `EmailsProcessed` | `number \| null` | No | — |
+| `EmailsIgnored` | `number \| null` | No | — |
+
+
+
+---
+
+### getByEmail
+
+`subscribers.getByEmail`
+
+Find a subscriber by email address in one mailing list
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.subscribers.getByEmail({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', email: 'jana@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `Name` | `string \| null` | No | — |
+| `Mobile` | `string \| null` | No | — |
+| `Email` | `string \| null` | No | — |
+| `CreatedOn` | `string \| null` | No | — |
+| `UpdatedOn` | `string \| null` | No | — |
+| `UnsubscribedOn` | `string \| null` | No | — |
+| `UnsubscribedFromID` | `string \| null` | No | — |
+| `SubscribeType` | `number \| string \| null` | No | 1 subscribed, 2 unsubscribed, 3 bounced, 4 removed |
+| `SubscribeMethod` | `number \| string \| null` | No | — |
+| `CustomFields` | `object[] \| null` | No | — |
+| `RemovedOn` | `string \| null` | No | — |
+| `Tags` | `string[] \| null` | No | — |
+| `Preferences` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+  CustomFieldID?: string | null,
+  Name?: string | null,
+  Value: any
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getById
+
+`subscribers.getById`
+
+Find a subscriber by ID in one mailing list
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.subscribers.getById({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', subscriberId: 'dc3bdb0f-cbdd-a2b5-8c0f-ebcfee204170' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `subscriberId` | `string` | Yes | The subscriber ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `Name` | `string \| null` | No | — |
+| `Mobile` | `string \| null` | No | — |
+| `Email` | `string \| null` | No | — |
+| `CreatedOn` | `string \| null` | No | — |
+| `UpdatedOn` | `string \| null` | No | — |
+| `UnsubscribedOn` | `string \| null` | No | — |
+| `UnsubscribedFromID` | `string \| null` | No | — |
+| `SubscribeType` | `number \| string \| null` | No | 1 subscribed, 2 unsubscribed, 3 bounced, 4 removed |
+| `SubscribeMethod` | `number \| string \| null` | No | — |
+| `CustomFields` | `object[] \| null` | No | — |
+| `RemovedOn` | `string \| null` | No | — |
+| `Tags` | `string[] \| null` | No | — |
+| `Preferences` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+  CustomFieldID?: string | null,
+  Name?: string | null,
+  Value: any
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getByIdAnyList
+
+`subscribers.getByIdAnyList`
+
+Find a subscriber by ID without naming the mailing list
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.subscribers.getByIdAnyList({ subscriberId: 'dc3bdb0f-cbdd-a2b5-8c0f-ebcfee204170' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscriberId` | `string` | Yes | The subscriber ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `Name` | `string \| null` | No | — |
+| `Mobile` | `string \| null` | No | — |
+| `Email` | `string \| null` | No | — |
+| `CreatedOn` | `string \| null` | No | — |
+| `UpdatedOn` | `string \| null` | No | — |
+| `UnsubscribedOn` | `string \| null` | No | — |
+| `UnsubscribedFromID` | `string \| null` | No | — |
+| `SubscribeType` | `number \| string \| null` | No | 1 subscribed, 2 unsubscribed, 3 bounced, 4 removed |
+| `SubscribeMethod` | `number \| string \| null` | No | — |
+| `CustomFields` | `object[] \| null` | No | — |
+| `RemovedOn` | `string \| null` | No | — |
+| `Tags` | `string[] \| null` | No | — |
+| `Preferences` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+  CustomFieldID?: string | null,
+  Name?: string | null,
+  Value: any
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`subscribers.list`
+
+List a mailing list's subscribed, unsubscribed, bounced or removed members, one page at a time
+
+**Risk:** `read`
+
+```ts
+await corsair.moosend.api.subscribers.list({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', status: 'Unsubscribed', page: 1, pageSize: 100 });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `status` | `Subscribed \| Unsubscribed \| Bounced \| Removed` | No | Which subscribers to list (Subscribed when omitted) |
+| `page` | `number` | No | Page number, starting at 1 |
+| `pageSize` | `number` | No | Results per page |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `Paging` | `object \| null` | No | — |
+| `Subscribers` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="Paging full type">
+
+```ts
+{
+  PageSize?: number | null,
+  CurrentPage?: number | null,
+  TotalResults?: number | null,
+  TotalPageCount?: number | null,
+  SortExpression?: string | null,
+  SortIsAscending?: boolean | null
+} | null
+```
+</Accordion>
+
+<Accordion title="Subscribers full type">
+
+```ts
+{
+  ID: string,
+  Name?: string | null,
+  Mobile?: string | null,
+  Email?: string | null,
+  CreatedOn?: string | null,
+  UpdatedOn?: string | null,
+  UnsubscribedOn?: string | null,
+  UnsubscribedFromID?: string | null,
+  SubscribeType?: number | string | null,
+  SubscribeMethod?: number | string | null,
+  CustomFields?: {
+    CustomFieldID?: string | null,
+    Name?: string | null,
+    Value: any
+  }[] | null,
+  RemovedOn?: string | null,
+  Tags?: string[] | null,
+  Preferences: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### remove
+
+`subscribers.remove`
+
+Mark a subscriber as removed from one mailing list (no more campaigns)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.subscribers.remove({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', email: 'jana@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### removeMany
+
+`subscribers.removeMany`
+
+Mark up to 1,000 subscribers as removed from one mailing list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.subscribers.removeMany({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', emails: ['a@example.com', 'b@example.com'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `emails` | `string[]` | Yes | — |
+
+`POST /subscribers/{MailingListID}/remove_many.json` with the addresses as
+one comma-separated string. The current docs show `remove-many`, which
+answers 404.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `EmailsProcessed` | `number \| null` | No | — |
+| `EmailsIgnored` | `number \| null` | No | — |
+
+
+
+---
+
+### removeTags
+
+`subscribers.removeTags`
+
+Remove tags from up to 1,000 subscribers of one mailing list
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.subscribers.removeTags({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', members: [{ subscriberId: 'dc3bdb0f-cbdd-a2b5-8c0f-ebcfee204170', tags: ['vip-customer'] }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `members` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="members full type">
+
+```ts
+{
+  subscriberId: string,
+  tags: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### subscribe
+
+`subscribers.subscribe`
+
+Add a subscriber or update the one with that email; re-subscribes an unsubscribed contact, clears custom fields left out, and on a double opt-in list emails a confirmation unless hasExternalDoubleOptIn is true
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.subscribers.subscribe({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', email: 'jana@example.com', name: 'Jana', customFields: { Country: 'NL' }, tags: ['newsletter'], hasExternalDoubleOptIn: true });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `email` | `string` | Yes | Email address of the subscriber |
+| `name` | `string` | No | Subscriber name |
+| `customFields` | `Record<string, string \| number \| boolean>` | No | Custom field values by field name; fields left out are cleared on an existing subscriber |
+| `tags` | `string[]` | No | Tags to set on the subscriber |
+| `preferences` | `string[]` | No | The list's preference options the subscriber picked |
+| `hasExternalDoubleOptIn` | `boolean` | No | True when consent was collected elsewhere, so a double opt-in list does not email a confirmation |
+
+`POST /subscribers/{MailingListID}/subscribe.json`. An upsert: an existing
+email is updated, an unsubscribed one is re-subscribed, and custom fields
+left out are cleared. `customFields` is sent as `['Name=Value', ...]`.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `Name` | `string \| null` | No | — |
+| `Mobile` | `string \| null` | No | — |
+| `Email` | `string \| null` | No | — |
+| `CreatedOn` | `string \| null` | No | — |
+| `UpdatedOn` | `string \| null` | No | — |
+| `UnsubscribedOn` | `string \| null` | No | — |
+| `UnsubscribedFromID` | `string \| null` | No | — |
+| `SubscribeType` | `number \| string \| null` | No | 1 subscribed, 2 unsubscribed, 3 bounced, 4 removed |
+| `SubscribeMethod` | `number \| string \| null` | No | — |
+| `CustomFields` | `object[] \| null` | No | — |
+| `RemovedOn` | `string \| null` | No | — |
+| `Tags` | `string[] \| null` | No | — |
+| `Preferences` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+  CustomFieldID?: string | null,
+  Name?: string | null,
+  Value: any
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### subscribeMany
+
+`subscribers.subscribeMany`
+
+Add or update up to 1,000 subscribers in one call (same effects as subscribe); Moosend skips invalid addresses and reports them in notice
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.subscribers.subscribeMany({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', subscribers: [{ email: 'a@example.com' }, { email: 'b@example.com', name: 'B' }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `subscribers` | `object[]` | Yes | — |
+| `hasExternalDoubleOptIn` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  email: string,
+  name?: string,
+  customFields?: Record<string, string | number | boolean>,
+  tags?: string[],
+  preferences?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscribers` | `object[]` | Yes | — |
+| `notice` | `string \| null` | Yes | Moosend skips invalid addresses and says how many here; null when all were added |
+
+<AccordionGroup>
+<Accordion title="subscribers full type">
+
+```ts
+{
+  ID: string,
+  Name?: string | null,
+  Mobile?: string | null,
+  Email?: string | null,
+  CreatedOn?: string | null,
+  UpdatedOn?: string | null,
+  UnsubscribedOn?: string | null,
+  UnsubscribedFromID?: string | null,
+  SubscribeType?: number | string | null,
+  SubscribeMethod?: number | string | null,
+  CustomFields?: {
+    CustomFieldID?: string | null,
+    Name?: string | null,
+    Value: any
+  }[] | null,
+  RemovedOn?: string | null,
+  Tags?: string[] | null,
+  Preferences: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unsubscribe
+
+`subscribers.unsubscribe`
+
+Unsubscribe an email address from one mailing list
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.subscribers.unsubscribe({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', email: 'jana@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### unsubscribeFromAccount
+
+`subscribers.unsubscribeFromAccount`
+
+Unsubscribe an email address from every mailing list in the account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.subscribers.unsubscribeFromAccount({ email: 'jana@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### unsubscribeFromCampaign
+
+`subscribers.unsubscribeFromCampaign`
+
+Unsubscribe an email address from one mailing list and count it against a campaign
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.subscribers.unsubscribeFromCampaign({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', campaignId: '5b52365a-f2ad-4978-9232-d7a3194b6b65', email: 'jana@example.com' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `campaignId` | `string` | Yes | The campaign ID |
+| `email` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | Moosend answered Code 0 for the request |
+
+
+
+---
+
+### update
+
+`subscribers.update`
+
+Update a subscriber's email, name, tags, preferences and custom fields; custom fields left out are cleared
+
+**Risk:** `write`
+
+```ts
+await corsair.moosend.api.subscribers.update({ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3', subscriberId: 'dc3bdb0f-cbdd-a2b5-8c0f-ebcfee204170', email: 'jana@example.com', name: 'Jana B.', customFields: { Country: 'DE' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mailingListId` | `string` | Yes | The mailing list ID |
+| `subscriberId` | `string` | Yes | The subscriber ID |
+| `email` | `string` | Yes | Email address of the subscriber |
+| `name` | `string` | No | Subscriber name |
+| `customFields` | `Record<string, string \| number \| boolean>` | No | Custom field values by field name; fields left out are cleared on an existing subscriber |
+| `tags` | `string[]` | No | Tags to set on the subscriber |
+| `preferences` | `string[]` | No | The list's preference options the subscriber picked |
+| `hasExternalDoubleOptIn` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `Name` | `string \| null` | No | — |
+| `Mobile` | `string \| null` | No | — |
+| `Email` | `string \| null` | No | — |
+| `CreatedOn` | `string \| null` | No | — |
+| `UpdatedOn` | `string \| null` | No | — |
+| `UnsubscribedOn` | `string \| null` | No | — |
+| `UnsubscribedFromID` | `string \| null` | No | — |
+| `SubscribeType` | `number \| string \| null` | No | 1 subscribed, 2 unsubscribed, 3 bounced, 4 removed |
+| `SubscribeMethod` | `number \| string \| null` | No | — |
+| `CustomFields` | `object[] \| null` | No | — |
+| `RemovedOn` | `string \| null` | No | — |
+| `Tags` | `string[] \| null` | No | — |
+| `Preferences` | `any` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="CustomFields full type">
+
+```ts
+{
+  CustomFieldID?: string | null,
+  Name?: string | null,
+  Value: any
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transactional
+
+### send
+
+`transactional.send`
+
+Send a transactional email (from a template or inline content) to the given recipients
+
+**Risk:** `destructive`
+
+```ts
+await corsair.moosend.api.transactional.send({ templateName: 'order-receipt', from: { email: 'shop@example.com', name: 'Shop' }, personalizations: [{ to: [{ email: 'jana@example.com', name: 'Jana' }], substitutions: { order: { id: 1042 } } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `templateId` | `string` | No | Transactional campaign to send and record statistics on |
+| `templateName` | `string` | No | Transactional campaign name; a new one is created when unknown |
+| `from` | `object` | No | A verified sender |
+| `replyTo` | `object` | No | — |
+| `subject` | `string` | No | — |
+| `cc` | `string[]` | No | — |
+| `bcc` | `string[]` | No | — |
+| `content` | `object[]` | No | Message body; overrides the template content |
+| `personalizations` | `object[]` | Yes | One entry per recipient group, with its substitutions |
+| `mailSettings` | `object` | No | — |
+| `attachments` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="replyTo full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="content full type">
+
+```ts
+{
+  type: string,
+  value?: string,
+  webLocation?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="personalizations full type">
+
+```ts
+{
+  to: {
+    email: string,
+    name?: string
+  }[],
+  cc?: string[],
+  bcc?: string[],
+  substitutions?: Record<string, any>,
+  customArguments?: Record<string, string>
+}[]
+```
+</Accordion>
+
+<Accordion title="mailSettings full type">
+
+```ts
+{
+  bypassUnsubscribeManagement?: boolean,
+  includeUnsubscribeLink?: boolean,
+  scheduledForDatetime?: string,
+  scheduledForTimezone?: string
+}
+```
+</Accordion>
+
+<Accordion title="attachments full type">
+
+```ts
+{
+  content: string,
+  type: string,
+  fileName: string,
+  disposition: inline | attachment,
+  contentId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `result` | `any` | Yes | — |
+
+
+
+---
+

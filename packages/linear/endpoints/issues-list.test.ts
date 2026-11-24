@@ -80,6 +80,37 @@ describe('linear issues.list parses its input', () => {
 	});
 });
 
+describe('linear issues.list filters by assignee, state, label and project', () => {
+	const filter = {
+		assignee: { isMe: { eq: true } },
+		state: { type: { in: ['unstarted', 'started'] } },
+		labels: { some: { name: { eq: 'Bug' } } },
+		project: { id: { eq: 'p1' } },
+	};
+
+	it('accepts them and sends them to Linear unchanged', async () => {
+		expect(
+			LinearEndpointInputSchemas.issuesList.safeParse({ filter }).success,
+		).toBe(true);
+		await list(ctx, { filter });
+		expect(sent().variables.filter).toEqual(filter);
+	});
+
+	it('ands them with the team', async () => {
+		await list(ctx, { teamId: 't1', filter });
+		expect(sent().variables.filter).toEqual({
+			and: [{ team: { id: { eq: 't1' } } }, filter],
+		});
+	});
+
+	it('accepts unassigned and no-project filters', () => {
+		const parsed = LinearEndpointInputSchemas.issuesList.safeParse({
+			filter: { assignee: { null: true }, project: { null: true } },
+		});
+		expect(parsed.success).toBe(true);
+	});
+});
+
 describe('linear issues.list input schema', () => {
 	const parse = (input: object) =>
 		LinearEndpointInputSchemas.issuesList.safeParse(input);
@@ -104,7 +135,13 @@ describe('linear issues.list input schema', () => {
 		['a non-object filter', { filter: false }],
 		['a string filter', { filter: 'team' }],
 		['an array filter', { filter: [] }],
-		['an unsupported key', { filter: { assignee: { id: { eq: 'a' } } } }],
+		['an unsupported key', { filter: { cycle: { id: { eq: 'a' } } } }],
+		[
+			'an unknown assignee key',
+			{ filter: { assignee: { handle: { eq: 'a' } } } },
+		],
+		['a non-boolean isMe', { filter: { assignee: { isMe: { eq: 'yes' } } } }],
+		['a bare label id', { filter: { labels: { eq: 'l1' } } }],
 		['an unknown comparator', { filter: { title: { like: 'a' } } }],
 		['a non-string comparator value', { filter: { updatedAt: { gte: 5 } } }],
 		['a bad nested filter', { filter: { and: [{ title: { eq: 1 } }] } }],

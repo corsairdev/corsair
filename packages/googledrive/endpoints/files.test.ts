@@ -60,7 +60,14 @@ function ctx() {
 		// carries the whole runtime, so this stand-in is cast once, here.
 		ctx: {
 			key: 'test-token',
-			db: { files, fileContents, folders: { upsertByEntityId: jest.fn() } },
+			db: {
+				files,
+				fileContents,
+				folders: {
+					findByEntityId: jest.fn(async () => null),
+					upsertByEntityId: jest.fn(),
+				},
+			},
 			$getAccountId: async () => 'account-1',
 		} as never,
 	};
