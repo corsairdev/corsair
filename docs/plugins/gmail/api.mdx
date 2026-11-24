@@ -857,6 +857,45 @@ await corsair.gmail.api.messages.get({});
 
 ---
 
+### getAttachment
+
+`messages.getAttachment`
+
+Fetch an attachment of a message by partId (as shown in search results) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId.
+
+**Risk:** `read`
+
+```ts
+await corsair.gmail.api.messages.getAttachment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | No | — |
+| `messageId` | `string` | Yes | — |
+| `partId` | `string` | No | Part id of the attachment, as shown in search results (message &lt;id&gt;, part &lt;partId&gt;). Give partId or attachmentId. |
+| `attachmentId` | `string` | No | Gmail attachmentId, if already known. Give partId or attachmentId; with partId, the part's own attachment is read. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentBase64` | `string` | No | The file, base64-encoded. Missing when the file came back as text or contentOmitted is set. |
+| `text` | `string` | No | The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8. |
+| `contentType` | `string` | Yes | Media type of the file, for example application/pdf. |
+| `byteLength` | `number` | Yes | Size of the file in bytes. |
+| `filename` | `string` | No | The file name, when known. |
+| `contentOmitted` | `not_requested \| over_limit` | No | Set when the content was left out: the caller did not ask for it, or the file was over the limit. |
+| `fileId` | `string` | No | Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text. |
+
+
+
+---
+
 ### list
 
 `messages.list`

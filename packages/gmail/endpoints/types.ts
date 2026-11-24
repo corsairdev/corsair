@@ -1,3 +1,5 @@
+import type { FileOutput } from 'corsair/http';
+import { FileOutputSchema } from 'corsair/http';
 import { z } from 'zod';
 import type {
 	Draft,
@@ -64,6 +66,23 @@ const MessagesTrashInputSchema = z.object({
 const MessagesUntrashInputSchema = z.object({
 	userId: z.string().optional(),
 	id: z.string(),
+});
+
+const MessagesGetAttachmentInputSchema = z.object({
+	userId: z.string().optional(),
+	messageId: z.string(),
+	partId: z
+		.string()
+		.optional()
+		.describe(
+			'Part id of the attachment, as shown in search results (message <id>, part <partId>). Give partId or attachmentId.',
+		),
+	attachmentId: z
+		.string()
+		.optional()
+		.describe(
+			"Gmail attachmentId, if already known. Give partId or attachmentId; with partId, the part's own attachment is read.",
+		),
 });
 
 const LabelsListInputSchema = z.object({
@@ -211,6 +230,7 @@ export const GmailEndpointInputSchemas = {
 	messagesBatchModify: MessagesBatchModifyInputSchema,
 	messagesTrash: MessagesTrashInputSchema,
 	messagesUntrash: MessagesUntrashInputSchema,
+	messagesGetAttachment: MessagesGetAttachmentInputSchema,
 	labelsList: LabelsListInputSchema,
 	labelsGet: LabelsGetInputSchema,
 	labelsCreate: LabelsCreateInputSchema,
@@ -370,6 +390,7 @@ export const GmailEndpointOutputSchemas = {
 	messagesBatchModify: z.void(),
 	messagesTrash: MessageSchema,
 	messagesUntrash: MessageSchema,
+	messagesGetAttachment: FileOutputSchema,
 	labelsList: LabelListResponseSchema,
 	labelsGet: LabelSchema,
 	labelsCreate: LabelSchema,
@@ -397,6 +418,7 @@ export type GmailEndpointOutputs = {
 	messagesBatchModify: void;
 	messagesTrash: Message;
 	messagesUntrash: Message;
+	messagesGetAttachment: FileOutput;
 	labelsList: LabelListResponse;
 	labelsGet: Label;
 	labelsCreate: Label;

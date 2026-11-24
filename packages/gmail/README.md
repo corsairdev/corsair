@@ -30,6 +30,7 @@ pnpm add @corsair-dev/gmail
 | `messages.send` | `gmail.api.messages.send` | `write` | Send an email to one or more recipients |
 | `messages.trash` | `gmail.api.messages.trash` | `write` | Move a message to the trash |
 | `messages.untrash` | `gmail.api.messages.untrash` | `write` | Restore a message from the trash |
+| `messages.getAttachment` | `gmail.api.messages.getAttachment` | `read` | Fetch a message attachment by partId or attachmentId |
 | `threads.get` | `gmail.api.threads.get` | `read` | Get a specific thread |
 | `threads.list` | `gmail.api.threads.list` | `read` | List threads in the mailbox |
 | `threads.modify` | `gmail.api.threads.modify` | `write` | Add or remove labels from a thread |

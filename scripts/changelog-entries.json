@@ -12232,5 +12232,30 @@
         "title": "Require corsair 0.2.31, the first release with PKCE"
       }
     ]
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/gmail",
+    "dir": "packages/gmail",
+    "name": "Gmail",
+    "version": "0.1.10",
+    "isNew": false,
+    "changes": [
+      {
+        "type": "feat",
+        "breaking": false,
+        "pr": 2710,
+        "title": "Add messages.getAttachment"
+      }
+    ]
+  },
+  {
+    "date": "2026-11-24",
+    "package": "@corsair-dev/ui",
+    "dir": "packages/ui",
+    "name": "ui",
+    "version": "0.1.93",
+    "isNew": false,
+    "changes": []
   }
 ]
