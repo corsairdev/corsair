@@ -28,10 +28,12 @@ makes an account with one call and emails your person to claim it.
 
 ## 1. Is Corsair already connected?
 
-Look for these tools (some clients prefix them, e.g. `mcp__corsair__search`):
-`list_integrations`, `search`, `list_operations`, `run_script`.
+Look for `search` and `list_integrations` (some clients prefix them, e.g.
+`mcp__corsair__search`). Every connection has them.
 
-- **They're there:** skip to [Use it](#3-use-it).
+- **They're there:** skip to [Use it](#3-use-it). If `run_script` is missing,
+  the client only uses read tools (ChatGPT on personal plans does this): you
+  can look things up but not make changes.
 - **They're not:** do [Set up](#2-set-up-once).
 
 ## 2. Set up (once)
@@ -115,9 +117,11 @@ Every action is checked against the link's mode, whatever your client allows:
 | Open | Everything, without asking. |
 
 When a reply says an action needs approval, it includes a link that shows
-exactly what will run. Give your person that link, wait for them to approve or
-deny it, then call again. One approval covers that one action once. Don't look
-for another way to make the same change. If a mode blocks you, tell your person
+exactly what will run. Give your person that link and wait for them to approve
+or deny it. Then call again with **only that action**, in its own `run_script`:
+if the script made other changes before it stopped, running all of it again
+makes them twice. One approval covers that one action once. Don't look for
+another way to make the same change. If a mode blocks you, tell your person
 they can change it at https://hub.corsair.dev/me.
 
 ### Replies that need your person
@@ -132,7 +136,8 @@ they can change it at https://hub.corsair.dev/me.
 - Ask before you send, post, delete or set up a routine that acts on its own,
   unless your person already told you to do exactly that.
 - Prefer one `search` over many narrow calls. Prefer one `run_script` that does
-  its own lookups over a chain of calls.
+  its own lookups over a chain of calls. When a change may need approval (any
+  delete, or any write on a Strict link), give it a `run_script` of its own.
 - Never paste a token, password or API key into a tool call or into chat.
   Corsair already holds the credentials.
 - Quote ids and links from replies exactly; later calls take them as given.
