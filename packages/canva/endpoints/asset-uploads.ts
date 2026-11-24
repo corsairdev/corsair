@@ -1,9 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
-import { decodeBase64ToBytes, encodeUtf8ToBase64 } from '../base64';
+import { encodeUtf8ToBase64 } from '../base64';
 import { makeCanvaRequest } from '../client';
 import type { CanvaContext, CanvaEndpoints } from '../index';
-import { toAssetEntity, withoutBase64 } from './mappers';
+import { bodyFrom, loggable, toAssetEntity } from './mappers';
+import { seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
+import { CanvaEndpointInputSchemas } from './types';
 
 async function upsertAssetFromJob(
 	ctx: CanvaContext,
@@ -24,9 +26,8 @@ export const create: CanvaEndpoints['assetUploadsCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const binaryBody = new Blob([decodeBase64ToBytes(input.contentBase64)], {
-		type: 'application/octet-stream',
-	});
+	const parsed = CanvaEndpointInputSchemas.assetUploadsCreate.parse(input);
+	const binaryBody = await bodyFrom(parsed, parsed.name);
 
 	const result = await makeCanvaRequest<
 		CanvaEndpointOutputs['assetUploadsCreate']
@@ -45,7 +46,7 @@ export const create: CanvaEndpoints['assetUploadsCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.assetUploads.create',
-		withoutBase64(input),
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -54,14 +55,14 @@ export const create: CanvaEndpoints['assetUploadsCreate'] = async (
 export const get: CanvaEndpoints['assetUploadsGet'] = async (ctx, input) => {
 	const result = await makeCanvaRequest<
 		CanvaEndpointOutputs['assetUploadsGet']
-	>(`v1/asset-uploads/${input.jobId}`, ctx.key, { method: 'GET' });
+	>(`v1/asset-uploads/${seg(input.jobId)}`, ctx.key, { method: 'GET' });
 
 	await upsertAssetFromJob(ctx, result.job);
 
 	await logEventFromContext(
 		ctx,
 		'canva.assetUploads.get',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -81,7 +82,7 @@ export const createFromUrl: CanvaEndpoints['assetUploadsCreateFromUrl'] =
 		await logEventFromContext(
 			ctx,
 			'canva.assetUploads.createFromUrl',
-			{ ...input },
+			loggable(input),
 			'completed',
 		);
 		return result;
@@ -93,14 +94,14 @@ export const getFromUrl: CanvaEndpoints['assetUploadsGetFromUrl'] = async (
 ) => {
 	const result = await makeCanvaRequest<
 		CanvaEndpointOutputs['assetUploadsGetFromUrl']
-	>(`v1/url-asset-uploads/${input.jobId}`, ctx.key, { method: 'GET' });
+	>(`v1/url-asset-uploads/${seg(input.jobId)}`, ctx.key, { method: 'GET' });
 
 	await upsertAssetFromJob(ctx, result.job);
 
 	await logEventFromContext(
 		ctx,
 		'canva.assetUploads.getFromUrl',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
