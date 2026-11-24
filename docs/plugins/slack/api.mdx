@@ -515,7 +515,7 @@ await corsair.slack.api.channels.get({});
 
 `channels.getHistory`
 
-Fetch message history for a channel
+Top-level messages of one conversation. Thread replies are not included; use channels.getReplies.
 
 **Risk:** `read`
 
@@ -527,13 +527,13 @@ await corsair.slack.api.channels.getHistory({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `channel` | `string` | Yes | — |
-| `latest` | `string` | No | — |
-| `oldest` | `string` | No | — |
-| `inclusive` | `boolean` | No | — |
+| `channel` | `string` | Yes | Conversation id such as C0123ABCD, not the name. channels.list and channels.listMine return ids. |
+| `latest` | `string` | No | Unix timestamp such as "1700000000.000000", not an ISO date. Only messages before it. |
+| `oldest` | `string` | No | Unix timestamp such as "1700000000.000000", not an ISO date. Only messages after it. |
+| `inclusive` | `boolean` | No | Also return messages at exactly oldest or latest. Ignored unless one is set. |
 | `include_all_metadata` | `boolean` | No | — |
 | `cursor` | `string` | No | — |
-| `limit` | `number` | No | — |
+| `limit` | `number` | No | Default 100, at most 999. A page can be shorter; follow the cursor. |
 
 
 
@@ -665,7 +665,7 @@ await corsair.slack.api.channels.getMembers({});
 
 `channels.getReplies`
 
-Fetch replies for a thread
+Messages of one thread. ts is the parent message's ts, from channels.getHistory or messages.search.
 
 **Risk:** `read`
 
@@ -677,14 +677,14 @@ await corsair.slack.api.channels.getReplies({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `channel` | `string` | Yes | — |
-| `ts` | `string` | Yes | — |
-| `latest` | `string` | No | — |
-| `oldest` | `string` | No | — |
-| `inclusive` | `boolean` | No | — |
+| `channel` | `string` | Yes | Conversation id such as C0123ABCD, not the name. |
+| `ts` | `string` | Yes | ts of the thread parent, or of a message in the thread, e.g. "1700000000.000100". With no replies only that message comes back. |
+| `latest` | `string` | No | Unix timestamp such as "1700000000.000000". Only messages before it. |
+| `oldest` | `string` | No | Unix timestamp such as "1700000000.000000". Only messages after it. |
+| `inclusive` | `boolean` | No | Also return messages at exactly oldest or latest. Ignored unless one is set. |
 | `include_all_metadata` | `boolean` | No | — |
 | `cursor` | `string` | No | — |
-| `limit` | `number` | No | — |
+| `limit` | `number` | No | Default 1000. |
 
 
 
@@ -1047,6 +1047,97 @@ await corsair.slack.api.channels.list({});
 |------|------|----------|-------------|
 | `exclude_archived` | `boolean` | No | — |
 | `types` | `string` | No | — |
+| `team_id` | `string` | No | — |
+| `cursor` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `boolean` | Yes | — |
+| `error` | `string` | No | — |
+| `needed` | `string` | No | — |
+| `provided` | `string` | No | — |
+| `response_metadata` | `object` | No | — |
+| `channels` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="response_metadata full type">
+
+```ts
+{
+  next_cursor?: string,
+  messages?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="channels full type">
+
+```ts
+{
+  id: string,
+  name?: string,
+  is_channel?: boolean,
+  is_group?: boolean,
+  is_im?: boolean,
+  is_mpim?: boolean,
+  is_private?: boolean,
+  created?: number,
+  is_archived?: boolean,
+  is_general?: boolean,
+  unlinked?: number,
+  name_normalized?: string,
+  is_shared?: boolean,
+  is_org_shared?: boolean,
+  is_pending_ext_shared?: boolean,
+  pending_shared?: string[],
+  context_team_id?: string,
+  updated?: number,
+  creator?: string,
+  is_member?: boolean,
+  num_members?: number,
+  topic?: {
+    value: string,
+    creator: string,
+    last_set: number
+  },
+  purpose?: {
+    value: string,
+    creator: string,
+    last_set: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listMine
+
+`channels.listMine`
+
+List the connected user's own conversations (needs a user token)
+
+**Risk:** `read`
+
+```ts
+await corsair.slack.api.channels.listMine({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `string` | No | — |
+| `types` | `string` | No | — |
+| `exclude_archived` | `boolean` | No | — |
 | `team_id` | `string` | No | — |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
@@ -1525,7 +1616,7 @@ await corsair.slack.api.channels.unarchive({});
 
 `files.get`
 
-Get info about a file
+Get metadata of one file by id, not its content.
 
 **Risk:** `read`
 
@@ -1537,7 +1628,7 @@ await corsair.slack.api.files.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `file` | `string` | Yes | — |
+| `file` | `string` | Yes | File id such as F2147483862. |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `page` | `number` | No | — |
@@ -1636,7 +1727,7 @@ await corsair.slack.api.files.get({});
 
 `files.list`
 
-List files in the workspace
+List file metadata, not file content. Filter by channel, user, types or ts_from/ts_to.
 
 **Risk:** `read`
 
@@ -1650,13 +1741,13 @@ await corsair.slack.api.files.list({});
 |------|------|----------|-------------|
 | `channel` | `string` | No | — |
 | `user` | `string` | No | — |
-| `types` | `string` | No | — |
-| `ts_from` | `string` | No | — |
-| `ts_to` | `string` | No | — |
+| `types` | `string` | No | Comma-separated: all, spaces, snippets, images, gdocs, zips, pdfs. Default all. |
+| `ts_from` | `string` | No | Unix timestamp. Files created at or after it. |
+| `ts_to` | `string` | No | Unix timestamp. Files created at or before it. |
 | `show_files_hidden_by_limit` | `boolean` | No | — |
 | `team_id` | `string` | No | — |
-| `page` | `number` | No | — |
-| `count` | `number` | No | — |
+| `page` | `number` | No | Default 1. |
+| `count` | `number` | No | Files per page, default 100. |
 
 
 
@@ -2056,7 +2147,7 @@ await corsair.slack.api.messages.post({});
 
 `messages.search`
 
-Search messages in the workspace
+Search messages with Slack search syntax, e.g. "deploy in:#channel from:@user". Needs a user token.
 
 **Risk:** `read`
 
@@ -2068,15 +2159,15 @@ await corsair.slack.api.messages.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `query` | `string` | Yes | — |
-| `sort` | `score \| timestamp` | No | — |
-| `sort_dir` | `asc \| desc` | No | — |
+| `query` | `string` | Yes | Slack search string; modifiers such as in:#channel, from:@user and has: narrow it. |
+| `sort` | `score \| timestamp` | No | Default score (relevance). Use timestamp to sort by time. |
+| `sort_dir` | `asc \| desc` | No | Default desc. |
 | `highlight` | `boolean` | No | — |
 | `team_id` | `string` | No | — |
 | `cursor` | `string` | No | — |
 | `limit` | `number` | No | — |
-| `page` | `number` | No | — |
-| `count` | `number` | No | — |
+| `page` | `number` | No | Default 1. |
+| `count` | `number` | No | Results per page, default 20, at most 100. |
 
 
 
@@ -3441,7 +3532,7 @@ await corsair.slack.api.users.getProfile({});
 
 `users.list`
 
-List all users in the workspace
+List workspace members, including invited, deactivated and deleted users. profile.email needs the users:read.email scope. Use users.get for a known id.
 
 **Risk:** `read`
 
@@ -3456,7 +3547,7 @@ await corsair.slack.api.users.list({});
 | `include_locale` | `boolean` | No | — |
 | `team_id` | `string` | No | — |
 | `cursor` | `string` | No | — |
-| `limit` | `number` | No | — |
+| `limit` | `number` | No | Set it. With no limit Slack tries to return every user, which can fail with limit_required or HTTP 500 on a large workspace. Follow the cursor. |
 
 
 

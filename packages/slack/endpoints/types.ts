@@ -38,13 +38,37 @@ const ChannelsListMineInputSchema = z.object({
 });
 
 const ChannelsGetHistoryInputSchema = z.object({
-	channel: z.string(),
-	latest: z.string().optional(),
-	oldest: z.string().optional(),
-	inclusive: z.boolean().optional(),
+	channel: z
+		.string()
+		.describe(
+			'Conversation id such as C0123ABCD, not the name. channels.list and channels.listMine return ids.',
+		),
+	latest: z
+		.string()
+		.optional()
+		.describe(
+			'Unix timestamp such as "1700000000.000000", not an ISO date. Only messages before it.',
+		),
+	oldest: z
+		.string()
+		.optional()
+		.describe(
+			'Unix timestamp such as "1700000000.000000", not an ISO date. Only messages after it.',
+		),
+	inclusive: z
+		.boolean()
+		.optional()
+		.describe(
+			'Also return messages at exactly oldest or latest. Ignored unless one is set.',
+		),
 	include_all_metadata: z.boolean().optional(),
 	cursor: z.string().optional(),
-	limit: z.number().optional(),
+	limit: z
+		.number()
+		.optional()
+		.describe(
+			'Default 100, at most 999. A page can be shorter; follow the cursor.',
+		),
 });
 
 const ChannelsInviteInputSchema = z.object({
@@ -85,14 +109,35 @@ const ChannelsRenameInputSchema = z.object({
 });
 
 const ChannelsGetRepliesInputSchema = z.object({
-	channel: z.string(),
-	ts: z.string(),
-	latest: z.string().optional(),
-	oldest: z.string().optional(),
-	inclusive: z.boolean().optional(),
+	channel: z
+		.string()
+		.describe('Conversation id such as C0123ABCD, not the name.'),
+	ts: z
+		.string()
+		.describe(
+			'ts of the thread parent, or of a message in the thread, e.g. "1700000000.000100". With no replies only that message comes back.',
+		),
+	latest: z
+		.string()
+		.optional()
+		.describe(
+			'Unix timestamp such as "1700000000.000000". Only messages before it.',
+		),
+	oldest: z
+		.string()
+		.optional()
+		.describe(
+			'Unix timestamp such as "1700000000.000000". Only messages after it.',
+		),
+	inclusive: z
+		.boolean()
+		.optional()
+		.describe(
+			'Also return messages at exactly oldest or latest. Ignored unless one is set.',
+		),
 	include_all_metadata: z.boolean().optional(),
 	cursor: z.string().optional(),
-	limit: z.number().optional(),
+	limit: z.number().optional().describe('Default 1000.'),
 });
 
 const ChannelsSetPurposeInputSchema = z.object({
@@ -118,7 +163,12 @@ const UsersListInputSchema = z.object({
 	include_locale: z.boolean().optional(),
 	team_id: z.string().optional(),
 	cursor: z.string().optional(),
-	limit: z.number().optional(),
+	limit: z
+		.number()
+		.optional()
+		.describe(
+			'Set it. With no limit Slack tries to return every user, which can fail with limit_required or HTTP 500 on a large workspace. Follow the cursor.',
+		),
 });
 
 const UsersGetProfileInputSchema = z.object({
@@ -176,7 +226,7 @@ const UserGroupsUpdateInputSchema = z.object({
 });
 
 const FilesGetInputSchema = z.object({
-	file: z.string(),
+	file: z.string().describe('File id such as F2147483862.'),
 	cursor: z.string().optional(),
 	limit: z.number().optional(),
 	page: z.number().optional(),
@@ -186,13 +236,24 @@ const FilesGetInputSchema = z.object({
 const FilesListInputSchema = z.object({
 	channel: z.string().optional(),
 	user: z.string().optional(),
-	types: z.string().optional(),
-	ts_from: z.string().optional(),
-	ts_to: z.string().optional(),
+	types: z
+		.string()
+		.optional()
+		.describe(
+			'Comma-separated: all, spaces, snippets, images, gdocs, zips, pdfs. Default all.',
+		),
+	ts_from: z
+		.string()
+		.optional()
+		.describe('Unix timestamp. Files created at or after it.'),
+	ts_to: z
+		.string()
+		.optional()
+		.describe('Unix timestamp. Files created at or before it.'),
 	show_files_hidden_by_limit: z.boolean().optional(),
 	team_id: z.string().optional(),
-	page: z.number().optional(),
-	count: z.number().optional(),
+	page: z.number().optional().describe('Default 1.'),
+	count: z.number().optional().describe('Files per page, default 100.'),
 });
 
 const FilesUploadInputSchema = z.object({
@@ -218,15 +279,25 @@ const MessagesGetPermalinkInputSchema = z.object({
 });
 
 const MessagesSearchInputSchema = z.object({
-	query: z.string(),
-	sort: z.enum(['score', 'timestamp']).optional(),
-	sort_dir: z.enum(['asc', 'desc']).optional(),
+	query: z
+		.string()
+		.describe(
+			'Slack search string; modifiers such as in:#channel, from:@user and has: narrow it.',
+		),
+	sort: z
+		.enum(['score', 'timestamp'])
+		.optional()
+		.describe('Default score (relevance). Use timestamp to sort by time.'),
+	sort_dir: z.enum(['asc', 'desc']).optional().describe('Default desc.'),
 	highlight: z.boolean().optional(),
 	team_id: z.string().optional(),
 	cursor: z.string().optional(),
 	limit: z.number().optional(),
-	page: z.number().optional(),
-	count: z.number().optional(),
+	page: z.number().optional().describe('Default 1.'),
+	count: z
+		.number()
+		.optional()
+		.describe('Results per page, default 20, at most 100.'),
 });
 
 const PostMessageInputSchema = z.object({
