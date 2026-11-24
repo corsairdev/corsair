@@ -7,6 +7,8 @@ const nextConfig: NextConfig = {
 			'../explorer/icons/**/*',
 			'../explorer/data/icon-manifest.json',
 		],
+		// /start's app list when there's no database (previews, local runs).
+		'/start': ['../explorer/data/catalog.json'],
 	},
 	images: {
 		remotePatterns: [

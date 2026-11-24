@@ -78,10 +78,10 @@ function MachineView({
 						index.md
 					</a>
 					<a
-						href="/skill.md"
+						href="/auth.md"
 						className="font-medium text-[#4a38f5] no-underline hover:underline"
 					>
-						skill.md
+						auth.md
 					</a>
 					<button
 						type="button"

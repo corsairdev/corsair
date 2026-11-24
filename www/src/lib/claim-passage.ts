@@ -179,6 +179,7 @@ export function save(p: Passage): { search: string; saved: string } {
 }
 
 /** Known agent ids, deduplicated, in order; unknown ones are dropped. */
+// `unknown`: the ids come from the URL or a stored draft, so each is checked.
 function cleanClients(ids: readonly unknown[]): string[] {
 	const known = ids.filter(
 		(id): id is string => typeof id === 'string' && CLIENT_IDS.has(id),
@@ -186,6 +187,7 @@ function cleanClients(ids: readonly unknown[]): string[] {
 	return Array.from(new Set(known)).slice(0, MAX_CLIENTS);
 }
 
+// `unknown`: the ids come from the URL or a stored draft, so each is checked.
 function cleanApps(ids: readonly unknown[], appIds: ReadonlySet<string>) {
 	const known = ids.filter(
 		(id): id is string => typeof id === 'string' && appIds.has(id),
@@ -231,6 +233,7 @@ function readDraft(
 	appIds: ReadonlySet<string>,
 	skillSlugs: ReadonlySet<string>,
 ): Draft | null {
+	// `unknown`: parsed from sessionStorage, which anyone can edit; checked field by field below.
 	let raw: unknown;
 	try {
 		raw = saved ? JSON.parse(saved) : null;

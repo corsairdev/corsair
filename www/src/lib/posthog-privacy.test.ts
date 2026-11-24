@@ -23,6 +23,14 @@ describe('scrubHandle', () => {
 		);
 	});
 
+	it('catches a percent-encoded name too', () => {
+		assert.equal(
+			scrubHandle('https://corsair.dev/start?%68andle=maya&apps=gmail'),
+			'https://corsair.dev/start?%68andle=:value&apps=gmail',
+		);
+		assert.equal(scrubHandle('/start?HANDLE=maya'), '/start?HANDLE=:value');
+	});
+
 	it('leaves other text alone', () => {
 		assert.equal(
 			scrubHandle('https://corsair.dev/pricing'),

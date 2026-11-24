@@ -20,10 +20,15 @@ const MAX_VALUE = 200;
 // A tagged visit still counts for a sign-up a week later, in another tab.
 export const CAMPAIGN_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000;
 
+// `unknown`: values come from a URL or from storage that anyone can edit, so
+// the type is only known after the typeof check.
 function clip(value: unknown): string | undefined {
 	if (typeof value !== 'string') return undefined;
 	const trimmed = value.trim();
-	return trimmed ? trimmed.slice(0, MAX_VALUE) : undefined;
+	// Cutting at 200 can split an emoji; a lone half makes encodeURIComponent throw.
+	return trimmed
+		? trimmed.slice(0, MAX_VALUE).replace(/[\uD800-\uDBFF]$/, '')
+		: undefined;
 }
 
 const isEmpty = (c: Campaign) => Object.keys(c).length === 0;
@@ -42,6 +47,7 @@ export function campaignFrom(search: string): Campaign {
 /** The tags CAMPAIGN_INIT saved, or none when missing, garbled or older than a week. */
 export function storedCampaign(raw: string | null, now: number): Campaign {
 	if (!raw) return {};
+	// `unknown`: parsed from localStorage, which anyone can edit; checked below.
 	let parsed: unknown;
 	try {
 		parsed = JSON.parse(raw);
@@ -66,14 +72,21 @@ export function storedCampaign(raw: string | null, now: number): Campaign {
 	return campaign;
 }
 
-/** What the hand-off carries: tags on the page's own URL win, else the last tagged visit's. */
+/**
+ * What the hand-off carries: tags on the page's own URL win, else the last
+ * tagged visit's from storage, else the tags this page opened with (`landing`),
+ * which still count when storage is blocked and the steps have rewritten the URL.
+ */
 export function handoffCampaign(
 	search: string,
 	raw: string | null,
 	now: number,
+	landing: Campaign = {},
 ): Campaign {
 	const here = campaignFrom(search);
-	return isEmpty(here) ? storedCampaign(raw, now) : here;
+	if (!isEmpty(here)) return here;
+	const stored = storedCampaign(raw, now);
+	return isEmpty(stored) ? landing : stored;
 }
 
 /** `&utm_source=...` for each tag, in a fixed order, ready to append to a URL that has a query. */
@@ -87,6 +100,11 @@ export function campaignParams(campaign: Campaign | undefined): string {
 	return out;
 }
 
+// The tags this page opened with, read when the module loads: before the
+// /start steps rewrite the URL.
+const LANDING: Campaign =
+	typeof window === 'undefined' ? {} : campaignFrom(window.location.search);
+
 /** In the browser, at the click. */
 export function currentCampaign(): Campaign {
 	if (typeof window === 'undefined') return {};
@@ -96,11 +114,11 @@ export function currentCampaign(): Campaign {
 	} catch {
 		// Storage blocked (private mode, a strict setting): the URL's own tags still count.
 	}
-	return handoffCampaign(window.location.search, raw, Date.now());
+	return handoffCampaign(window.location.search, raw, Date.now(), LANDING);
 }
 
 /** Inline, before hydration: saves the URL's tags. An untagged visit leaves the last tagged one in place. */
 export const CAMPAIGN_INIT =
 	`try{var q=new URLSearchParams(location.search),c={},n=0;` +
-	`${JSON.stringify(CAMPAIGN_KEYS)}.forEach(function(k){var v=(q.get(k)||"").trim().slice(0,${MAX_VALUE});if(v){c[k]=v;n++}});` +
+	`${JSON.stringify(CAMPAIGN_KEYS)}.forEach(function(k){var v=(q.get(k)||"").trim().slice(0,${MAX_VALUE}).replace(/[\\uD800-\\uDBFF]$/,"");if(v){c[k]=v;n++}});` +
 	`if(n)localStorage.setItem(${JSON.stringify(CAMPAIGN_STORE_KEY)},JSON.stringify({c:c,at:Date.now()}))}catch(e){}`;

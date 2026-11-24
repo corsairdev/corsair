@@ -3,12 +3,25 @@ import type { CaptureResult } from 'posthog-js';
 // The name someone types for their MCP URL travels in URLs on this site
 // (/start?handle=, /api/lug-handle?handle=). PostHog doesn't need it, so its
 // value is blanked wherever a URL lands in an event. lug.dev did the same.
-const HANDLE_PARAM = /([?&]handle=)[^&#\s"'<>]*/g;
+// Any query pair; its name is decoded before comparing, so %68andle counts too.
+const QUERY_PAIR = /([?&])([^=&#\s"'<>]+)=([^&#\s"'<>]*)/g;
 
-export function scrubHandle(value: string): string {
-	return value.replace(HANDLE_PARAM, '$1:value');
+function decodedName(name: string): string {
+	try {
+		return decodeURIComponent(name.replace(/\+/g, ' ')).toLowerCase();
+	} catch {
+		return name.toLowerCase();
+	}
 }
 
+export function scrubHandle(value: string): string {
+	return value.replace(QUERY_PAIR, (pair, sep: string, name: string) =>
+		decodedName(name) === 'handle' ? `${sep}${name}=:value` : pair,
+	);
+}
+
+// `unknown`: PostHog event properties hold any JSON, so this walks whatever is
+// there and only rewrites strings.
 function scrubValue(value: unknown): unknown {
 	if (typeof value === 'string') return scrubHandle(value);
 	if (Array.isArray(value)) return value.map(scrubValue);

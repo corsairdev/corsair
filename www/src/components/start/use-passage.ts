@@ -38,11 +38,15 @@ const stepIndex = (search: string) =>
 		STEPS.findIndex((s) => s === new URLSearchParams(search).get('step')),
 	);
 
+// The draft as last written, for browser Back when sessionStorage is blocked.
+// A refresh still starts over then, as it always did without storage.
+let memoryDraft: string | null = null;
+
 function readDraft(): string | null {
 	try {
-		return window.sessionStorage.getItem(DRAFT_KEY);
+		return window.sessionStorage.getItem(DRAFT_KEY) ?? memoryDraft;
 	} catch {
-		return null;
+		return memoryDraft;
 	}
 }
 
@@ -94,6 +98,7 @@ export function usePassage(
 	useEffect(() => {
 		if (!loaded) return;
 		const { search, saved } = save(loaded);
+		memoryDraft = saved;
 		try {
 			window.sessionStorage.setItem(DRAFT_KEY, saved);
 		} catch {

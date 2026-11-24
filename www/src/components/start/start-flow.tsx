@@ -242,7 +242,7 @@ export function StartFlow({
 	}, []);
 
 	const handOff = () => {
-		if (!href || leaving) return;
+		if (!href || leaving || p.apps.length === 0) return;
 		track('lug_handoff', {
 			kind: 'claim',
 			apps: p.apps.length,
@@ -263,7 +263,8 @@ export function StartFlow({
 				? 'Taking you to sign in…'
 				: 'Sign in to finish'
 			: 'Continue';
-	const disabled = p.step === 'review' ? !href || leaving : p.apps.length === 0;
+	const disabled =
+		p.apps.length === 0 || (p.step === 'review' && (!href || leaving));
 
 	return (
 		<div className="mx-auto max-w-[1440px] px-4 sm:px-6 md:px-10">

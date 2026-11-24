@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { runInNewContext } from 'node:vm';
+import { createContext, runInContext } from 'node:vm';
 
 import {
 	CAMPAIGN_INIT,
@@ -15,6 +15,7 @@ import {
 // Ported from lug.dev (hub apps/lug/src/lib/campaign.test.ts).
 
 const NOW = Date.UTC(2026, 10, 17, 12);
+// `unknown`: these tests store deliberately wrong shapes too.
 const saved = (c: unknown, at = NOW) => JSON.stringify({ c, at });
 
 // Runs the inline script the way the browser does, against a fake location and storage.
@@ -29,11 +30,14 @@ function runInit(
 			store.set(key, value);
 		},
 	};
-	runInNewContext(CAMPAIGN_INIT, {
-		location: { search },
-		localStorage,
-		URLSearchParams,
-	});
+	// The script is a fixed string from this repo, not user input. It runs in a
+	// locked-down context: only these three globals, no eval or new Function
+	// inside it, no WebAssembly, and a time limit.
+	const context = createContext(
+		{ location: { search }, localStorage, URLSearchParams },
+		{ codeGeneration: { strings: false, wasm: false } },
+	);
+	runInContext(CAMPAIGN_INIT, context, { timeout: 1000 });
 }
 
 describe('campaignFrom', () => {
@@ -172,5 +176,30 @@ describe('CAMPAIGN_INIT', () => {
 				.utm_source?.length,
 			200,
 		);
+	});
+});
+
+describe('campaign edge cases', () => {
+	it('never splits an emoji at the 200-character cut', () => {
+		const value = `${'a'.repeat(199)}🙂`;
+		const c = campaignFrom(`?utm_source=${encodeURIComponent(value)}`);
+		assert.equal(c.utm_source, 'a'.repeat(199));
+		assert.doesNotThrow(() => campaignParams(c));
+		const store = new Map<string, string>();
+		runInit(`?utm_source=${encodeURIComponent(value)}`, store);
+		const saved = JSON.parse(store.get(CAMPAIGN_STORE_KEY) ?? '{}');
+		assert.equal(saved.c.utm_source, 'a'.repeat(199));
+	});
+
+	it('falls back to the tags the page opened with when storage had none', () => {
+		const landing = { utm_source: 'video' };
+		assert.deepEqual(
+			handoffCampaign('?step=review', null, 0, landing),
+			landing,
+		);
+		// Tags on the URL and stored tags still come first.
+		assert.deepEqual(handoffCampaign('?utm_source=post', null, 0, landing), {
+			utm_source: 'post',
+		});
 	});
 });
