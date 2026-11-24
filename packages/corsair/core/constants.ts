@@ -464,6 +464,7 @@ export const BaseProviders = [
 	'moonclerk',
 	'moosend',
 	'mopinion',
+	'moz',
 	'motion',
 	'mrscraper',
 	'nango',
@@ -1250,6 +1251,7 @@ export const ProviderDisplayNames = {
 	moonclerk: 'MoonClerk',
 	moosend: 'Moosend',
 	mopinion: 'Mopinion',
+	moz: 'Moz',
 	motion: 'Motion',
 	mrscraper: 'MrScraper',
 	nango: 'Nango',
@@ -2043,6 +2045,7 @@ export type AllProviders =
 	| 'moonclerk'
 	| 'moosend'
 	| 'mopinion'
+	| 'moz'
 	| 'motion'
 	| 'mrscraper'
 	| 'nango'

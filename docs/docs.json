@@ -3863,6 +3863,15 @@
                 ]
               },
               {
+                "group": "Moz",
+                "pages": [
+                  "plugins/moz/overview",
+                  "plugins/moz/api",
+                  "plugins/moz/database",
+                  "plugins/moz/webhooks"
+                ]
+              },
+              {
                 "group": "MrScraper",
                 "pages": [
                   "plugins/mrscraper/overview",
