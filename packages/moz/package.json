@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/moz",
   "version": "0.1.0",
-  "description": "SEO data with Moz - read Domain Authority, Page Authority and Spam Score for sites, list backlinks, linking domains, anchor texts and top pages, find link intersects and ranking competitors, and check API quota.",
+  "description": "SEO data with Moz - site metrics (Domain Authority, Page Authority, Spam Score, Brand Authority, histories), backlinks, linking domains, anchor texts, top pages, ranking keywords, keyword metrics, SERPs and suggestions, competitors, global top lists, and Moz Local accounts, groups, locations, listings and insights.",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

@@ -1,22 +1,218 @@
-import * as AnchorText from './anchor-text';
-import * as Competitors from './competitors';
-import * as Jobs from './jobs';
-import * as LinkingDomains from './linking-domains';
-import * as Links from './links';
-import * as Locales from './locales';
-import * as Metrics from './metrics';
-import * as Quota from './quota';
-import * as TopPages from './top-pages';
+import { lazySchemas, op } from './call';
 
-export {
-	AnchorText,
-	Competitors,
-	Jobs,
-	LinkingDomains,
-	Links,
-	Locales,
-	Metrics,
-	Quota,
-	TopPages,
-};
+export const mozEndpointsNested = {
+	anchorText: {
+		list: op('anchorText.list'),
+	},
+	competitors: {
+		fetch: op('competitors.fetch'),
+	},
+	global: {
+		topDomains: op('global.topDomains'),
+		topPages: op('global.topPages'),
+	},
+	index: {
+		fetch: op('index.fetch'),
+	},
+	jobs: {
+		lookup: op('jobs.lookup'),
+	},
+	keywords: {
+		difficulty: op('keywords.difficulty'),
+		generateMetrics: op('keywords.generateMetrics'),
+		generateSerp: op('keywords.generateSerp'),
+		intent: op('keywords.intent'),
+		metrics: op('keywords.metrics'),
+		metricsMultiple: op('keywords.metricsMultiple'),
+		opportunity: op('keywords.opportunity'),
+		priority: op('keywords.priority'),
+		serp: op('keywords.serp'),
+		suggestions: op('keywords.suggestions'),
+		volume: op('keywords.volume'),
+	},
+	linkingDomains: {
+		list: op('linkingDomains.list'),
+		recentlyGained: op('linkingDomains.recentlyGained'),
+		recentlyLost: op('linkingDomains.recentlyLost'),
+	},
+	links: {
+		filterByAnchorText: op('links.filterByAnchorText'),
+		filterByDomain: op('links.filterByDomain'),
+		intersect: op('links.intersect'),
+		list: op('links.list'),
+		status: op('links.status'),
+		statusMultiple: op('links.statusMultiple'),
+	},
+	local: {
+		accounts: {
+			create: op('local.accounts.create'),
+			list: op('local.accounts.list'),
+			lookup: op('local.accounts.lookup'),
+		},
+		customFields: {
+			create: op('local.customFields.create'),
+			listForAccount: op('local.customFields.listForAccount'),
+			lookup: op('local.customFields.lookup'),
+		},
+		groups: {
+			addLocation: op('local.groups.addLocation'),
+			create: op('local.groups.create'),
+			list: op('local.groups.list'),
+			listForAccount: op('local.groups.listForAccount'),
+			listLocations: op('local.groups.listLocations'),
+			lookup: op('local.groups.lookup'),
+			removeLocation: op('local.groups.removeLocation'),
+		},
+		locations: {
+			cancel: op('local.locations.cancel'),
+			categories: op('local.locations.categories'),
+			close: op('local.locations.close'),
+			create: op('local.locations.create'),
+			fieldIssues: op('local.locations.fieldIssues'),
+			fieldStatuses: op('local.locations.fieldStatuses'),
+			gbpImpressionHistory: op('local.locations.gbpImpressionHistory'),
+			gbpImpressionTotals: op('local.locations.gbpImpressionTotals'),
+			gbpLeadHistory: op('local.locations.gbpLeadHistory'),
+			levels: op('local.locations.levels'),
+			list: op('local.locations.list'),
+			listByStatus: op('local.locations.listByStatus'),
+			listForAccount: op('local.locations.listForAccount'),
+			listings: op('local.locations.listings'),
+			localGridHistory: op('local.locations.localGridHistory'),
+			localGridKeywords: op('local.locations.localGridKeywords'),
+			lookup: op('local.locations.lookup'),
+			networkStatuses: op('local.locations.networkStatuses'),
+			networks: op('local.locations.networks'),
+			rankingHistory: op('local.locations.rankingHistory'),
+			update: op('local.locations.update'),
+			updateLevel: op('local.locations.updateLevel'),
+		},
+	},
+	locales: {
+		list: op('locales.list'),
+	},
+	metrics: {
+		brandAuthority: op('metrics.brandAuthority'),
+		distributions: op('metrics.distributions'),
+		fetch: op('metrics.fetch'),
+		fetchMultiple: op('metrics.fetchMultiple'),
+		histories: op('metrics.histories'),
+	},
+	quota: {
+		lookup: op('quota.lookup'),
+	},
+	rankingKeywords: {
+		count: op('rankingKeywords.count'),
+		list: op('rankingKeywords.list'),
+	},
+	redirects: {
+		fetch: op('redirects.fetch'),
+	},
+	test: {
+		ping: op('test.ping'),
+		pingAsync: op('test.pingAsync'),
+	},
+	topPages: {
+		list: op('topPages.list'),
+	},
+} as const;
+
+/** Lazy `{ input, output }` per operation, keyed by its dotted path. */
+export const mozEndpointSchemaMap = {
+	'anchorText.list': lazySchemas('anchorText.list'),
+	'competitors.fetch': lazySchemas('competitors.fetch'),
+	'global.topDomains': lazySchemas('global.topDomains'),
+	'global.topPages': lazySchemas('global.topPages'),
+	'index.fetch': lazySchemas('index.fetch'),
+	'jobs.lookup': lazySchemas('jobs.lookup'),
+	'keywords.difficulty': lazySchemas('keywords.difficulty'),
+	'keywords.generateMetrics': lazySchemas('keywords.generateMetrics'),
+	'keywords.generateSerp': lazySchemas('keywords.generateSerp'),
+	'keywords.intent': lazySchemas('keywords.intent'),
+	'keywords.metrics': lazySchemas('keywords.metrics'),
+	'keywords.metricsMultiple': lazySchemas('keywords.metricsMultiple'),
+	'keywords.opportunity': lazySchemas('keywords.opportunity'),
+	'keywords.priority': lazySchemas('keywords.priority'),
+	'keywords.serp': lazySchemas('keywords.serp'),
+	'keywords.suggestions': lazySchemas('keywords.suggestions'),
+	'keywords.volume': lazySchemas('keywords.volume'),
+	'linkingDomains.list': lazySchemas('linkingDomains.list'),
+	'linkingDomains.recentlyGained': lazySchemas('linkingDomains.recentlyGained'),
+	'linkingDomains.recentlyLost': lazySchemas('linkingDomains.recentlyLost'),
+	'links.filterByAnchorText': lazySchemas('links.filterByAnchorText'),
+	'links.filterByDomain': lazySchemas('links.filterByDomain'),
+	'links.intersect': lazySchemas('links.intersect'),
+	'links.list': lazySchemas('links.list'),
+	'links.status': lazySchemas('links.status'),
+	'links.statusMultiple': lazySchemas('links.statusMultiple'),
+	'local.accounts.create': lazySchemas('local.accounts.create'),
+	'local.accounts.list': lazySchemas('local.accounts.list'),
+	'local.accounts.lookup': lazySchemas('local.accounts.lookup'),
+	'local.customFields.create': lazySchemas('local.customFields.create'),
+	'local.customFields.listForAccount': lazySchemas(
+		'local.customFields.listForAccount',
+	),
+	'local.customFields.lookup': lazySchemas('local.customFields.lookup'),
+	'local.groups.addLocation': lazySchemas('local.groups.addLocation'),
+	'local.groups.create': lazySchemas('local.groups.create'),
+	'local.groups.list': lazySchemas('local.groups.list'),
+	'local.groups.listForAccount': lazySchemas('local.groups.listForAccount'),
+	'local.groups.listLocations': lazySchemas('local.groups.listLocations'),
+	'local.groups.lookup': lazySchemas('local.groups.lookup'),
+	'local.groups.removeLocation': lazySchemas('local.groups.removeLocation'),
+	'local.locations.cancel': lazySchemas('local.locations.cancel'),
+	'local.locations.categories': lazySchemas('local.locations.categories'),
+	'local.locations.close': lazySchemas('local.locations.close'),
+	'local.locations.create': lazySchemas('local.locations.create'),
+	'local.locations.fieldIssues': lazySchemas('local.locations.fieldIssues'),
+	'local.locations.fieldStatuses': lazySchemas('local.locations.fieldStatuses'),
+	'local.locations.gbpImpressionHistory': lazySchemas(
+		'local.locations.gbpImpressionHistory',
+	),
+	'local.locations.gbpImpressionTotals': lazySchemas(
+		'local.locations.gbpImpressionTotals',
+	),
+	'local.locations.gbpLeadHistory': lazySchemas(
+		'local.locations.gbpLeadHistory',
+	),
+	'local.locations.levels': lazySchemas('local.locations.levels'),
+	'local.locations.list': lazySchemas('local.locations.list'),
+	'local.locations.listByStatus': lazySchemas('local.locations.listByStatus'),
+	'local.locations.listForAccount': lazySchemas(
+		'local.locations.listForAccount',
+	),
+	'local.locations.listings': lazySchemas('local.locations.listings'),
+	'local.locations.localGridHistory': lazySchemas(
+		'local.locations.localGridHistory',
+	),
+	'local.locations.localGridKeywords': lazySchemas(
+		'local.locations.localGridKeywords',
+	),
+	'local.locations.lookup': lazySchemas('local.locations.lookup'),
+	'local.locations.networkStatuses': lazySchemas(
+		'local.locations.networkStatuses',
+	),
+	'local.locations.networks': lazySchemas('local.locations.networks'),
+	'local.locations.rankingHistory': lazySchemas(
+		'local.locations.rankingHistory',
+	),
+	'local.locations.update': lazySchemas('local.locations.update'),
+	'local.locations.updateLevel': lazySchemas('local.locations.updateLevel'),
+	'locales.list': lazySchemas('locales.list'),
+	'metrics.brandAuthority': lazySchemas('metrics.brandAuthority'),
+	'metrics.distributions': lazySchemas('metrics.distributions'),
+	'metrics.fetch': lazySchemas('metrics.fetch'),
+	'metrics.fetchMultiple': lazySchemas('metrics.fetchMultiple'),
+	'metrics.histories': lazySchemas('metrics.histories'),
+	'quota.lookup': lazySchemas('quota.lookup'),
+	'rankingKeywords.count': lazySchemas('rankingKeywords.count'),
+	'rankingKeywords.list': lazySchemas('rankingKeywords.list'),
+	'redirects.fetch': lazySchemas('redirects.fetch'),
+	'test.ping': lazySchemas('test.ping'),
+	'test.pingAsync': lazySchemas('test.pingAsync'),
+	'topPages.list': lazySchemas('topPages.list'),
+} as const;
+
+export type { MozOperationName } from './manifest';
+export { mozEndpointMetaMap, mozMethods } from './manifest';
 export * from './types';
