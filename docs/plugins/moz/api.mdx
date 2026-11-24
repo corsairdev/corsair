@@ -59,7 +59,7 @@ await corsair.moz.api.anchorText.list({ site_query: { query: 'moz.com', scope: '
 |------|------|----------|-------------|
 | `site_query` | `object \| null` | No | — |
 | `offset` | `object \| null` | No | — |
-| `anchor_texts` | `any[] \| null` | No | — |
+| `anchor_texts` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="site_query full type">
@@ -90,6 +90,19 @@ await corsair.moz.api.anchorText.list({ site_query: { query: 'moz.com', scope: '
   token?: string | null,
   limit?: number | null
 } | null
+```
+</Accordion>
+
+<Accordion title="anchor_texts full type">
+
+```ts
+(
+  {
+    text?: string | null,
+    external_root_domains?: number | null,
+    external_pages?: number | null
+  } | null
+)[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -170,7 +183,17 @@ the status is complete. It spends the mozscape quota bucket.
         issue?: string | null
       } | null
     } | null,
-    competitors?: any[] | null
+    competitors?: (
+      {
+        domain?: string | null,
+        domain_authority?: number | null,
+        proximity?: number | null,
+        overlap?: number | null,
+        relevance?: number | null,
+        rivalry?: number | null,
+        keywords?: (string | null)[] | null
+      } | null
+    )[] | null
   } | null,
   error?: {
     message?: string | null,
@@ -231,7 +254,7 @@ await corsair.moz.api.global.topDomains({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `object \| null` | No | — |
-| `top_domains` | `any[] \| null` | No | — |
+| `top_domains` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="page full type">
@@ -241,6 +264,68 @@ await corsair.moz.api.global.topDomains({});
   n?: number | null,
   limit?: number | null
 } | null
+```
+</Accordion>
+
+<Accordion title="top_domains full type">
+
+```ts
+(
+  {
+    page?: string | null,
+    subdomain?: string | null,
+    root_domain?: string | null,
+    title?: string | null,
+    last_crawled?: string | null,
+    http_code?: number | null,
+    pages_to_page?: number | null,
+    nofollow_pages_to_page?: number | null,
+    redirect_pages_to_page?: number | null,
+    external_pages_to_page?: number | null,
+    external_nofollow_pages_to_page?: number | null,
+    external_redirect_pages_to_page?: number | null,
+    deleted_pages_to_page?: number | null,
+    root_domains_to_page?: number | null,
+    indirect_root_domains_to_page?: number | null,
+    deleted_root_domains_to_page?: number | null,
+    nofollow_root_domains_to_page?: number | null,
+    pages_to_subdomain?: number | null,
+    nofollow_pages_to_subdomain?: number | null,
+    redirect_pages_to_subdomain?: number | null,
+    external_pages_to_subdomain?: number | null,
+    external_nofollow_pages_to_subdomain?: number | null,
+    external_redirect_pages_to_subdomain?: number | null,
+    deleted_pages_to_subdomain?: number | null,
+    root_domains_to_subdomain?: number | null,
+    deleted_root_domains_to_subdomain?: number | null,
+    nofollow_root_domains_to_subdomain?: number | null,
+    pages_to_root_domain?: number | null,
+    nofollow_pages_to_root_domain?: number | null,
+    redirect_pages_to_root_domain?: number | null,
+    external_pages_to_root_domain?: number | null,
+    external_indirect_pages_to_root_domain?: number | null,
+    external_nofollow_pages_to_root_domain?: number | null,
+    external_redirect_pages_to_root_domain?: number | null,
+    deleted_pages_to_root_domain?: number | null,
+    root_domains_to_root_domain?: number | null,
+    indirect_root_domains_to_root_domain?: number | null,
+    deleted_root_domains_to_root_domain?: number | null,
+    nofollow_root_domains_to_root_domain?: number | null,
+    page_authority?: number | null,
+    domain_authority?: number | null,
+    link_propensity?: number | null,
+    spam_score?: number | null,
+    root_domains_from_page?: number | null,
+    nofollow_root_domains_from_page?: number | null,
+    pages_from_page?: number | null,
+    nofollow_pages_from_page?: number | null,
+    root_domains_from_root_domain?: number | null,
+    nofollow_root_domains_from_root_domain?: number | null,
+    pages_from_root_domain?: number | null,
+    nofollow_pages_from_root_domain?: number | null,
+    pages_crawled_from_root_domain?: number | null
+  } | null
+)[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -286,7 +371,7 @@ await corsair.moz.api.global.topPages({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `page` | `object \| null` | No | — |
-| `top_pages` | `any[] \| null` | No | — |
+| `top_pages` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="page full type">
@@ -296,6 +381,68 @@ await corsair.moz.api.global.topPages({});
   n?: number | null,
   limit?: number | null
 } | null
+```
+</Accordion>
+
+<Accordion title="top_pages full type">
+
+```ts
+(
+  {
+    page?: string | null,
+    subdomain?: string | null,
+    root_domain?: string | null,
+    title?: string | null,
+    last_crawled?: string | null,
+    http_code?: number | null,
+    pages_to_page?: number | null,
+    nofollow_pages_to_page?: number | null,
+    redirect_pages_to_page?: number | null,
+    external_pages_to_page?: number | null,
+    external_nofollow_pages_to_page?: number | null,
+    external_redirect_pages_to_page?: number | null,
+    deleted_pages_to_page?: number | null,
+    root_domains_to_page?: number | null,
+    indirect_root_domains_to_page?: number | null,
+    deleted_root_domains_to_page?: number | null,
+    nofollow_root_domains_to_page?: number | null,
+    pages_to_subdomain?: number | null,
+    nofollow_pages_to_subdomain?: number | null,
+    redirect_pages_to_subdomain?: number | null,
+    external_pages_to_subdomain?: number | null,
+    external_nofollow_pages_to_subdomain?: number | null,
+    external_redirect_pages_to_subdomain?: number | null,
+    deleted_pages_to_subdomain?: number | null,
+    root_domains_to_subdomain?: number | null,
+    deleted_root_domains_to_subdomain?: number | null,
+    nofollow_root_domains_to_subdomain?: number | null,
+    pages_to_root_domain?: number | null,
+    nofollow_pages_to_root_domain?: number | null,
+    redirect_pages_to_root_domain?: number | null,
+    external_pages_to_root_domain?: number | null,
+    external_indirect_pages_to_root_domain?: number | null,
+    external_nofollow_pages_to_root_domain?: number | null,
+    external_redirect_pages_to_root_domain?: number | null,
+    deleted_pages_to_root_domain?: number | null,
+    root_domains_to_root_domain?: number | null,
+    indirect_root_domains_to_root_domain?: number | null,
+    deleted_root_domains_to_root_domain?: number | null,
+    nofollow_root_domains_to_root_domain?: number | null,
+    page_authority?: number | null,
+    domain_authority?: number | null,
+    link_propensity?: number | null,
+    spam_score?: number | null,
+    root_domains_from_page?: number | null,
+    nofollow_root_domains_from_page?: number | null,
+    pages_from_page?: number | null,
+    nofollow_pages_from_page?: number | null,
+    root_domains_from_root_domain?: number | null,
+    nofollow_root_domains_from_root_domain?: number | null,
+    pages_from_root_domain?: number | null,
+    nofollow_pages_from_root_domain?: number | null,
+    pages_crawled_from_root_domain?: number | null
+  } | null
+)[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -552,7 +699,12 @@ await corsair.moz.api.keywords.generateMetrics({});
       priority?: number | null,
       intent?: {
         primary_intents?: (string | null)[] | null,
-        all_intents?: any[] | null
+        all_intents?: (
+          {
+            label?: string | null,
+            score?: number | null
+          } | null
+        )[] | null
       } | null
     } | null,
     serp_query?: {
@@ -652,10 +804,98 @@ await corsair.moz.api.keywords.generateSerp({});
         priority?: number | null,
         intent?: {
           primary_intents?: (string | null)[] | null,
-          all_intents?: any[] | null
+          all_intents?: (
+            {
+              label?: string | null,
+              score?: number | null
+            } | null
+          )[] | null
         } | null
       } | null,
-      results?: any[] | null
+      results?: (
+        {
+          type?: string | null,
+          description?: string | null,
+          position?: string | null,
+          title?: string | null,
+          traits?: (string | null)[] | null,
+          url?: string | null,
+          price?: string | null,
+          rating?: string | null,
+          reviews?: string | null,
+          question?: string | null,
+          displayed_path?: string | null,
+          job_title?: string | null,
+          job_employer?: string | null,
+          job_location?: string | null,
+          job_source?: string | null,
+          job_posted_on?: string | null,
+          job_travel_time?: string | null,
+          job_details?: string | null,
+          business_name?: string | null,
+          related_searches?: (string | null)[] | null,
+          results?: (Record<string, any> | null)[] | null,
+          sitelinks?: (Record<string, any> | null)[] | null,
+          one_line_sitelinks?: (Record<string, any> | null)[] | null,
+          position_index?: number | null,
+          rank?: number | null,
+          brand_authority?: number | null,
+          url_metrics?: {
+            page?: string | null,
+            subdomain?: string | null,
+            root_domain?: string | null,
+            title?: string | null,
+            last_crawled?: string | null,
+            http_code?: number | null,
+            pages_to_page?: number | null,
+            nofollow_pages_to_page?: number | null,
+            redirect_pages_to_page?: number | null,
+            external_pages_to_page?: number | null,
+            external_nofollow_pages_to_page?: number | null,
+            external_redirect_pages_to_page?: number | null,
+            deleted_pages_to_page?: number | null,
+            root_domains_to_page?: number | null,
+            indirect_root_domains_to_page?: number | null,
+            deleted_root_domains_to_page?: number | null,
+            nofollow_root_domains_to_page?: number | null,
+            pages_to_subdomain?: number | null,
+            nofollow_pages_to_subdomain?: number | null,
+            redirect_pages_to_subdomain?: number | null,
+            external_pages_to_subdomain?: number | null,
+            external_nofollow_pages_to_subdomain?: number | null,
+            external_redirect_pages_to_subdomain?: number | null,
+            deleted_pages_to_subdomain?: number | null,
+            root_domains_to_subdomain?: number | null,
+            deleted_root_domains_to_subdomain?: number | null,
+            nofollow_root_domains_to_subdomain?: number | null,
+            pages_to_root_domain?: number | null,
+            nofollow_pages_to_root_domain?: number | null,
+            redirect_pages_to_root_domain?: number | null,
+            external_pages_to_root_domain?: number | null,
+            external_indirect_pages_to_root_domain?: number | null,
+            external_nofollow_pages_to_root_domain?: number | null,
+            external_redirect_pages_to_root_domain?: number | null,
+            deleted_pages_to_root_domain?: number | null,
+            root_domains_to_root_domain?: number | null,
+            indirect_root_domains_to_root_domain?: number | null,
+            deleted_root_domains_to_root_domain?: number | null,
+            nofollow_root_domains_to_root_domain?: number | null,
+            page_authority?: number | null,
+            domain_authority?: number | null,
+            link_propensity?: number | null,
+            spam_score?: number | null,
+            root_domains_from_page?: number | null,
+            nofollow_root_domains_from_page?: number | null,
+            pages_from_page?: number | null,
+            nofollow_pages_from_page?: number | null,
+            root_domains_from_root_domain?: number | null,
+            nofollow_root_domains_from_root_domain?: number | null,
+            pages_from_root_domain?: number | null,
+            nofollow_pages_from_root_domain?: number | null,
+            pages_crawled_from_root_domain?: number | null
+          } | null
+        } | null
+      )[] | null
     } | null
   } | null,
   error?: {
@@ -746,7 +986,12 @@ await corsair.moz.api.keywords.intent({});
   priority: any,
   intent?: {
     primary_intents?: (string | null)[] | null,
-    all_intents?: any[] | null
+    all_intents?: (
+      {
+        label?: string | null,
+        score?: number | null
+      } | null
+    )[] | null
   } | null
 } | null
 ```
@@ -799,8 +1044,9 @@ await corsair.moz.api.keywords.metrics({});
 | `serp_query` | `object` | Yes | The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary). |
 | `options` | `object` | No | Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided. |
 
-`data.keyword.metrics.fetch`. Pick metrics with `metrics` (difficulty,
-volume, opportunity, priority, intent); costs one row per metric.
+`data.keyword.metrics.fetch` returns difficulty, volume, organic CTR and
+priority for one `serp_query`; set `options.include_intent` to add the
+search intent scores.
 
 <AccordionGroup>
 <Accordion title="serp_query full type">
@@ -848,7 +1094,12 @@ volume, opportunity, priority, intent); costs one row per metric.
   priority?: number | null,
   intent?: {
     primary_intents?: (string | null)[] | null,
-    all_intents?: any[] | null
+    all_intents?: (
+      {
+        label?: string | null,
+        score?: number | null
+      } | null
+    )[] | null
   } | null,
   metadata?: {
     collected_at?: string | null
@@ -901,7 +1152,22 @@ await corsair.moz.api.keywords.metricsMultiple({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `serp_queries` | `any[]` | Yes | — |
+| `serp_queries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="serp_queries full type">
+
+```ts
+{
+  keyword: string,
+  locale: string,
+  device: desktop | mobile_android | mobile_ios,
+  engine: google | bing | yahoo,
+  vicinity?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -909,8 +1175,69 @@ await corsair.moz.api.keywords.metricsMultiple({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results_by_serp_query` | `any[] \| null` | No | — |
-| `errors_by_serp_query` | `any[] \| null` | No | — |
+| `results_by_serp_query` | `object[] \| null` | No | — |
+| `errors_by_serp_query` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results_by_serp_query full type">
+
+```ts
+(
+  {
+    serp_query?: {
+      keyword?: string | null,
+      locale?: string | null,
+      device?: string | null,
+      engine?: string | null,
+      vicinity?: string | null
+    } | null,
+    keyword_metrics?: {
+      volume?: number | null,
+      difficulty?: number | null,
+      organic_ctr?: number | null,
+      priority?: number | null,
+      intent?: {
+        primary_intents?: (string | null)[] | null,
+        all_intents?: (
+          {
+            label?: string | null,
+            score?: number | null
+          } | null
+        )[] | null
+      } | null
+    } | null
+  } | null
+)[] | null
+```
+</Accordion>
+
+<Accordion title="errors_by_serp_query full type">
+
+```ts
+(
+  {
+    serp_query?: {
+      keyword?: string | null,
+      locale?: string | null,
+      device?: string | null,
+      engine?: string | null,
+      vicinity?: string | null
+    } | null,
+    error?: {
+      message?: string | null,
+      name?: string | null,
+      data?: {
+        key?: string | null,
+        value?: string | null
+      } | null,
+      httpStatus?: number | null,
+      jsonrpcCode?: number | null
+    } | null
+  } | null
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -1204,10 +1531,98 @@ await corsair.moz.api.keywords.serp({});
     priority?: number | null,
     intent?: {
       primary_intents?: (string | null)[] | null,
-      all_intents?: any[] | null
+      all_intents?: (
+        {
+          label?: string | null,
+          score?: number | null
+        } | null
+      )[] | null
     } | null
   } | null,
-  results?: any[] | null
+  results?: (
+    {
+      type?: string | null,
+      description?: string | null,
+      position?: string | null,
+      title?: string | null,
+      traits?: (string | null)[] | null,
+      url?: string | null,
+      price?: string | null,
+      rating?: string | null,
+      reviews?: string | null,
+      question?: string | null,
+      displayed_path?: string | null,
+      job_title?: string | null,
+      job_employer?: string | null,
+      job_location?: string | null,
+      job_source?: string | null,
+      job_posted_on?: string | null,
+      job_travel_time?: string | null,
+      job_details?: string | null,
+      business_name?: string | null,
+      related_searches?: (string | null)[] | null,
+      results?: (Record<string, any> | null)[] | null,
+      sitelinks?: (Record<string, any> | null)[] | null,
+      one_line_sitelinks?: (Record<string, any> | null)[] | null,
+      position_index?: number | null,
+      rank?: number | null,
+      brand_authority?: number | null,
+      url_metrics?: {
+        page?: string | null,
+        subdomain?: string | null,
+        root_domain?: string | null,
+        title?: string | null,
+        last_crawled?: string | null,
+        http_code?: number | null,
+        pages_to_page?: number | null,
+        nofollow_pages_to_page?: number | null,
+        redirect_pages_to_page?: number | null,
+        external_pages_to_page?: number | null,
+        external_nofollow_pages_to_page?: number | null,
+        external_redirect_pages_to_page?: number | null,
+        deleted_pages_to_page?: number | null,
+        root_domains_to_page?: number | null,
+        indirect_root_domains_to_page?: number | null,
+        deleted_root_domains_to_page?: number | null,
+        nofollow_root_domains_to_page?: number | null,
+        pages_to_subdomain?: number | null,
+        nofollow_pages_to_subdomain?: number | null,
+        redirect_pages_to_subdomain?: number | null,
+        external_pages_to_subdomain?: number | null,
+        external_nofollow_pages_to_subdomain?: number | null,
+        external_redirect_pages_to_subdomain?: number | null,
+        deleted_pages_to_subdomain?: number | null,
+        root_domains_to_subdomain?: number | null,
+        deleted_root_domains_to_subdomain?: number | null,
+        nofollow_root_domains_to_subdomain?: number | null,
+        pages_to_root_domain?: number | null,
+        nofollow_pages_to_root_domain?: number | null,
+        redirect_pages_to_root_domain?: number | null,
+        external_pages_to_root_domain?: number | null,
+        external_indirect_pages_to_root_domain?: number | null,
+        external_nofollow_pages_to_root_domain?: number | null,
+        external_redirect_pages_to_root_domain?: number | null,
+        deleted_pages_to_root_domain?: number | null,
+        root_domains_to_root_domain?: number | null,
+        indirect_root_domains_to_root_domain?: number | null,
+        deleted_root_domains_to_root_domain?: number | null,
+        nofollow_root_domains_to_root_domain?: number | null,
+        page_authority?: number | null,
+        domain_authority?: number | null,
+        link_propensity?: number | null,
+        spam_score?: number | null,
+        root_domains_from_page?: number | null,
+        nofollow_root_domains_from_page?: number | null,
+        pages_from_page?: number | null,
+        nofollow_pages_from_page?: number | null,
+        root_domains_from_root_domain?: number | null,
+        nofollow_root_domains_from_root_domain?: number | null,
+        pages_from_root_domain?: number | null,
+        nofollow_pages_from_root_domain?: number | null,
+        pages_crawled_from_root_domain?: number | null
+      } | null
+    } | null
+  )[] | null
 } | null
 ```
 </Accordion>
@@ -1289,7 +1704,12 @@ await corsair.moz.api.keywords.suggestions({});
   status?: string | null,
   ttl?: number | null,
   result?: {
-    suggestions?: any[] | null,
+    suggestions?: (
+      {
+        keyword?: string | null,
+        relevance?: number | null
+      } | null
+    )[] | null,
     serp_query?: {
       keyword?: string | null,
       locale?: string | null,
@@ -1489,7 +1909,7 @@ several filters, `external` must be one of them.
 |------|------|----------|-------------|
 | `site_query` | `object \| null` | No | — |
 | `offset` | `object \| null` | No | — |
-| `linking_domains` | `any[] \| null` | No | — |
+| `linking_domains` | `object[] \| null` | No | — |
 | `options` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -1521,6 +1941,75 @@ several filters, `external` must be one of them.
   token?: string | null,
   limit?: number | null
 } | null
+```
+</Accordion>
+
+<Accordion title="linking_domains full type">
+
+```ts
+(
+  {
+    site_metrics?: {
+      page?: string | null,
+      subdomain?: string | null,
+      root_domain?: string | null,
+      title?: string | null,
+      last_crawled?: string | null,
+      http_code?: number | null,
+      pages_to_page?: number | null,
+      nofollow_pages_to_page?: number | null,
+      redirect_pages_to_page?: number | null,
+      external_pages_to_page?: number | null,
+      external_nofollow_pages_to_page?: number | null,
+      external_redirect_pages_to_page?: number | null,
+      deleted_pages_to_page?: number | null,
+      root_domains_to_page?: number | null,
+      indirect_root_domains_to_page?: number | null,
+      deleted_root_domains_to_page?: number | null,
+      nofollow_root_domains_to_page?: number | null,
+      pages_to_subdomain?: number | null,
+      nofollow_pages_to_subdomain?: number | null,
+      redirect_pages_to_subdomain?: number | null,
+      external_pages_to_subdomain?: number | null,
+      external_nofollow_pages_to_subdomain?: number | null,
+      external_redirect_pages_to_subdomain?: number | null,
+      deleted_pages_to_subdomain?: number | null,
+      root_domains_to_subdomain?: number | null,
+      deleted_root_domains_to_subdomain?: number | null,
+      nofollow_root_domains_to_subdomain?: number | null,
+      pages_to_root_domain?: number | null,
+      nofollow_pages_to_root_domain?: number | null,
+      redirect_pages_to_root_domain?: number | null,
+      external_pages_to_root_domain?: number | null,
+      external_indirect_pages_to_root_domain?: number | null,
+      external_nofollow_pages_to_root_domain?: number | null,
+      external_redirect_pages_to_root_domain?: number | null,
+      deleted_pages_to_root_domain?: number | null,
+      root_domains_to_root_domain?: number | null,
+      indirect_root_domains_to_root_domain?: number | null,
+      deleted_root_domains_to_root_domain?: number | null,
+      nofollow_root_domains_to_root_domain?: number | null,
+      page_authority?: number | null,
+      domain_authority?: number | null,
+      link_propensity?: number | null,
+      spam_score?: number | null,
+      root_domains_from_page?: number | null,
+      nofollow_root_domains_from_page?: number | null,
+      pages_from_page?: number | null,
+      nofollow_pages_from_page?: number | null,
+      root_domains_from_root_domain?: number | null,
+      nofollow_root_domains_from_root_domain?: number | null,
+      pages_from_root_domain?: number | null,
+      nofollow_pages_from_root_domain?: number | null,
+      pages_crawled_from_root_domain?: number | null
+    } | null,
+    link_propensity?: number | null,
+    targeted_pages?: number | null,
+    targeted_nofollow_pages?: number | null,
+    targeted_redirect_pages?: number | null,
+    targeted_deleted_pages?: number | null
+  } | null
+)[] | null
 ```
 </Accordion>
 
@@ -1599,7 +2088,7 @@ await corsair.moz.api.linkingDomains.recentlyGained({});
 |------|------|----------|-------------|
 | `site_query` | `object \| null` | No | — |
 | `offset` | `object \| null` | No | — |
-| `gained_linking_domains` | `any[] \| null` | No | — |
+| `gained_linking_domains` | `object[] \| null` | No | — |
 | `options` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -1631,6 +2120,76 @@ await corsair.moz.api.linkingDomains.recentlyGained({});
   token?: string | null,
   limit?: number | null
 } | null
+```
+</Accordion>
+
+<Accordion title="gained_linking_domains full type">
+
+```ts
+(
+  {
+    site_metrics?: {
+      page?: string | null,
+      subdomain?: string | null,
+      root_domain?: string | null,
+      title?: string | null,
+      last_crawled?: string | null,
+      http_code?: number | null,
+      pages_to_page?: number | null,
+      nofollow_pages_to_page?: number | null,
+      redirect_pages_to_page?: number | null,
+      external_pages_to_page?: number | null,
+      external_nofollow_pages_to_page?: number | null,
+      external_redirect_pages_to_page?: number | null,
+      deleted_pages_to_page?: number | null,
+      root_domains_to_page?: number | null,
+      indirect_root_domains_to_page?: number | null,
+      deleted_root_domains_to_page?: number | null,
+      nofollow_root_domains_to_page?: number | null,
+      pages_to_subdomain?: number | null,
+      nofollow_pages_to_subdomain?: number | null,
+      redirect_pages_to_subdomain?: number | null,
+      external_pages_to_subdomain?: number | null,
+      external_nofollow_pages_to_subdomain?: number | null,
+      external_redirect_pages_to_subdomain?: number | null,
+      deleted_pages_to_subdomain?: number | null,
+      root_domains_to_subdomain?: number | null,
+      deleted_root_domains_to_subdomain?: number | null,
+      nofollow_root_domains_to_subdomain?: number | null,
+      pages_to_root_domain?: number | null,
+      nofollow_pages_to_root_domain?: number | null,
+      redirect_pages_to_root_domain?: number | null,
+      external_pages_to_root_domain?: number | null,
+      external_indirect_pages_to_root_domain?: number | null,
+      external_nofollow_pages_to_root_domain?: number | null,
+      external_redirect_pages_to_root_domain?: number | null,
+      deleted_pages_to_root_domain?: number | null,
+      root_domains_to_root_domain?: number | null,
+      indirect_root_domains_to_root_domain?: number | null,
+      deleted_root_domains_to_root_domain?: number | null,
+      nofollow_root_domains_to_root_domain?: number | null,
+      page_authority?: number | null,
+      domain_authority?: number | null,
+      link_propensity?: number | null,
+      spam_score?: number | null,
+      root_domains_from_page?: number | null,
+      nofollow_root_domains_from_page?: number | null,
+      pages_from_page?: number | null,
+      nofollow_pages_from_page?: number | null,
+      root_domains_from_root_domain?: number | null,
+      nofollow_root_domains_from_root_domain?: number | null,
+      pages_from_root_domain?: number | null,
+      nofollow_pages_from_root_domain?: number | null,
+      pages_crawled_from_root_domain?: number | null
+    } | null,
+    link_propensity?: number | null,
+    targeted_pages?: number | null,
+    targeted_nofollow_pages?: number | null,
+    targeted_redirect_pages?: number | null,
+    targeted_deleted_pages?: number | null,
+    date_gained?: string | null
+  } | null
+)[] | null
 ```
 </Accordion>
 
@@ -1709,7 +2268,7 @@ await corsair.moz.api.linkingDomains.recentlyLost({});
 |------|------|----------|-------------|
 | `site_query` | `object \| null` | No | — |
 | `offset` | `object \| null` | No | — |
-| `lost_linking_domains` | `any[] \| null` | No | — |
+| `lost_linking_domains` | `object[] \| null` | No | — |
 | `options` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -1741,6 +2300,76 @@ await corsair.moz.api.linkingDomains.recentlyLost({});
   token?: string | null,
   limit?: number | null
 } | null
+```
+</Accordion>
+
+<Accordion title="lost_linking_domains full type">
+
+```ts
+(
+  {
+    site_metrics?: {
+      page?: string | null,
+      subdomain?: string | null,
+      root_domain?: string | null,
+      title?: string | null,
+      last_crawled?: string | null,
+      http_code?: number | null,
+      pages_to_page?: number | null,
+      nofollow_pages_to_page?: number | null,
+      redirect_pages_to_page?: number | null,
+      external_pages_to_page?: number | null,
+      external_nofollow_pages_to_page?: number | null,
+      external_redirect_pages_to_page?: number | null,
+      deleted_pages_to_page?: number | null,
+      root_domains_to_page?: number | null,
+      indirect_root_domains_to_page?: number | null,
+      deleted_root_domains_to_page?: number | null,
+      nofollow_root_domains_to_page?: number | null,
+      pages_to_subdomain?: number | null,
+      nofollow_pages_to_subdomain?: number | null,
+      redirect_pages_to_subdomain?: number | null,
+      external_pages_to_subdomain?: number | null,
+      external_nofollow_pages_to_subdomain?: number | null,
+      external_redirect_pages_to_subdomain?: number | null,
+      deleted_pages_to_subdomain?: number | null,
+      root_domains_to_subdomain?: number | null,
+      deleted_root_domains_to_subdomain?: number | null,
+      nofollow_root_domains_to_subdomain?: number | null,
+      pages_to_root_domain?: number | null,
+      nofollow_pages_to_root_domain?: number | null,
+      redirect_pages_to_root_domain?: number | null,
+      external_pages_to_root_domain?: number | null,
+      external_indirect_pages_to_root_domain?: number | null,
+      external_nofollow_pages_to_root_domain?: number | null,
+      external_redirect_pages_to_root_domain?: number | null,
+      deleted_pages_to_root_domain?: number | null,
+      root_domains_to_root_domain?: number | null,
+      indirect_root_domains_to_root_domain?: number | null,
+      deleted_root_domains_to_root_domain?: number | null,
+      nofollow_root_domains_to_root_domain?: number | null,
+      page_authority?: number | null,
+      domain_authority?: number | null,
+      link_propensity?: number | null,
+      spam_score?: number | null,
+      root_domains_from_page?: number | null,
+      nofollow_root_domains_from_page?: number | null,
+      pages_from_page?: number | null,
+      nofollow_pages_from_page?: number | null,
+      root_domains_from_root_domain?: number | null,
+      nofollow_root_domains_from_root_domain?: number | null,
+      pages_from_root_domain?: number | null,
+      nofollow_pages_from_root_domain?: number | null,
+      pages_crawled_from_root_domain?: number | null
+    } | null,
+    link_propensity?: number | null,
+    targeted_pages?: number | null,
+    targeted_nofollow_pages?: number | null,
+    targeted_redirect_pages?: number | null,
+    targeted_deleted_pages?: number | null,
+    date_lost?: string | null
+  } | null
+)[] | null
 ```
 </Accordion>
 
@@ -1824,7 +2453,7 @@ await corsair.moz.api.links.filterByAnchorText({});
 |------|------|----------|-------------|
 | `site_query` | `object \| null` | No | — |
 | `offset` | `object \| null` | No | — |
-| `links` | `any[] \| null` | No | — |
+| `links` | `object[] \| null` | No | — |
 | `options` | `object \| null` | No | — |
 | `anchor_text` | `any \| null` | No | — |
 
@@ -1857,6 +2486,133 @@ await corsair.moz.api.links.filterByAnchorText({});
   token?: string | null,
   limit?: number | null
 } | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+(
+  {
+    source_site_metrics?: {
+      page?: string | null,
+      subdomain?: string | null,
+      root_domain?: string | null,
+      title?: string | null,
+      last_crawled?: string | null,
+      http_code?: number | null,
+      pages_to_page?: number | null,
+      nofollow_pages_to_page?: number | null,
+      redirect_pages_to_page?: number | null,
+      external_pages_to_page?: number | null,
+      external_nofollow_pages_to_page?: number | null,
+      external_redirect_pages_to_page?: number | null,
+      deleted_pages_to_page?: number | null,
+      root_domains_to_page?: number | null,
+      indirect_root_domains_to_page?: number | null,
+      deleted_root_domains_to_page?: number | null,
+      nofollow_root_domains_to_page?: number | null,
+      pages_to_subdomain?: number | null,
+      nofollow_pages_to_subdomain?: number | null,
+      redirect_pages_to_subdomain?: number | null,
+      external_pages_to_subdomain?: number | null,
+      external_nofollow_pages_to_subdomain?: number | null,
+      external_redirect_pages_to_subdomain?: number | null,
+      deleted_pages_to_subdomain?: number | null,
+      root_domains_to_subdomain?: number | null,
+      deleted_root_domains_to_subdomain?: number | null,
+      nofollow_root_domains_to_subdomain?: number | null,
+      pages_to_root_domain?: number | null,
+      nofollow_pages_to_root_domain?: number | null,
+      redirect_pages_to_root_domain?: number | null,
+      external_pages_to_root_domain?: number | null,
+      external_indirect_pages_to_root_domain?: number | null,
+      external_nofollow_pages_to_root_domain?: number | null,
+      external_redirect_pages_to_root_domain?: number | null,
+      deleted_pages_to_root_domain?: number | null,
+      root_domains_to_root_domain?: number | null,
+      indirect_root_domains_to_root_domain?: number | null,
+      deleted_root_domains_to_root_domain?: number | null,
+      nofollow_root_domains_to_root_domain?: number | null,
+      page_authority?: number | null,
+      domain_authority?: number | null,
+      link_propensity?: number | null,
+      spam_score?: number | null,
+      root_domains_from_page?: number | null,
+      nofollow_root_domains_from_page?: number | null,
+      pages_from_page?: number | null,
+      nofollow_pages_from_page?: number | null,
+      root_domains_from_root_domain?: number | null,
+      nofollow_root_domains_from_root_domain?: number | null,
+      pages_from_root_domain?: number | null,
+      nofollow_pages_from_root_domain?: number | null,
+      pages_crawled_from_root_domain?: number | null
+    } | null,
+    target_site_metrics?: {
+      page?: string | null,
+      subdomain?: string | null,
+      root_domain?: string | null,
+      title?: string | null,
+      last_crawled?: string | null,
+      http_code?: number | null,
+      pages_to_page?: number | null,
+      nofollow_pages_to_page?: number | null,
+      redirect_pages_to_page?: number | null,
+      external_pages_to_page?: number | null,
+      external_nofollow_pages_to_page?: number | null,
+      external_redirect_pages_to_page?: number | null,
+      deleted_pages_to_page?: number | null,
+      root_domains_to_page?: number | null,
+      indirect_root_domains_to_page?: number | null,
+      deleted_root_domains_to_page?: number | null,
+      nofollow_root_domains_to_page?: number | null,
+      pages_to_subdomain?: number | null,
+      nofollow_pages_to_subdomain?: number | null,
+      redirect_pages_to_subdomain?: number | null,
+      external_pages_to_subdomain?: number | null,
+      external_nofollow_pages_to_subdomain?: number | null,
+      external_redirect_pages_to_subdomain?: number | null,
+      deleted_pages_to_subdomain?: number | null,
+      root_domains_to_subdomain?: number | null,
+      deleted_root_domains_to_subdomain?: number | null,
+      nofollow_root_domains_to_subdomain?: number | null,
+      pages_to_root_domain?: number | null,
+      nofollow_pages_to_root_domain?: number | null,
+      redirect_pages_to_root_domain?: number | null,
+      external_pages_to_root_domain?: number | null,
+      external_indirect_pages_to_root_domain?: number | null,
+      external_nofollow_pages_to_root_domain?: number | null,
+      external_redirect_pages_to_root_domain?: number | null,
+      deleted_pages_to_root_domain?: number | null,
+      root_domains_to_root_domain?: number | null,
+      indirect_root_domains_to_root_domain?: number | null,
+      deleted_root_domains_to_root_domain?: number | null,
+      nofollow_root_domains_to_root_domain?: number | null,
+      page_authority?: number | null,
+      domain_authority?: number | null,
+      link_propensity?: number | null,
+      spam_score?: number | null,
+      root_domains_from_page?: number | null,
+      nofollow_root_domains_from_page?: number | null,
+      pages_from_page?: number | null,
+      nofollow_pages_from_page?: number | null,
+      root_domains_from_root_domain?: number | null,
+      nofollow_root_domains_from_root_domain?: number | null,
+      pages_from_root_domain?: number | null,
+      nofollow_pages_from_root_domain?: number | null,
+      pages_crawled_from_root_domain?: number | null
+    } | null,
+    anchor_text?: string | null,
+    date_first_seen?: string | null,
+    date_last_seen?: string | null,
+    date_disappeared?: string | null,
+    nofollow?: boolean | number | null,
+    redirect?: boolean | number | null,
+    rel_canonical?: boolean | number | null,
+    via_redirect?: boolean | number | null,
+    via_rel_canonical?: boolean | number | null
+  } | null
+)[] | null
 ```
 </Accordion>
 
@@ -1951,7 +2707,7 @@ await corsair.moz.api.links.filterByDomain({});
 | `site_query` | `object \| null` | No | — |
 | `domain_site_query` | `object \| null` | No | — |
 | `offset` | `object \| null` | No | — |
-| `links` | `any[] \| null` | No | — |
+| `links` | `object[] \| null` | No | — |
 | `options` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -2006,6 +2762,133 @@ await corsair.moz.api.links.filterByDomain({});
 ```
 </Accordion>
 
+<Accordion title="links full type">
+
+```ts
+(
+  {
+    source_site_metrics?: {
+      page?: string | null,
+      subdomain?: string | null,
+      root_domain?: string | null,
+      title?: string | null,
+      last_crawled?: string | null,
+      http_code?: number | null,
+      pages_to_page?: number | null,
+      nofollow_pages_to_page?: number | null,
+      redirect_pages_to_page?: number | null,
+      external_pages_to_page?: number | null,
+      external_nofollow_pages_to_page?: number | null,
+      external_redirect_pages_to_page?: number | null,
+      deleted_pages_to_page?: number | null,
+      root_domains_to_page?: number | null,
+      indirect_root_domains_to_page?: number | null,
+      deleted_root_domains_to_page?: number | null,
+      nofollow_root_domains_to_page?: number | null,
+      pages_to_subdomain?: number | null,
+      nofollow_pages_to_subdomain?: number | null,
+      redirect_pages_to_subdomain?: number | null,
+      external_pages_to_subdomain?: number | null,
+      external_nofollow_pages_to_subdomain?: number | null,
+      external_redirect_pages_to_subdomain?: number | null,
+      deleted_pages_to_subdomain?: number | null,
+      root_domains_to_subdomain?: number | null,
+      deleted_root_domains_to_subdomain?: number | null,
+      nofollow_root_domains_to_subdomain?: number | null,
+      pages_to_root_domain?: number | null,
+      nofollow_pages_to_root_domain?: number | null,
+      redirect_pages_to_root_domain?: number | null,
+      external_pages_to_root_domain?: number | null,
+      external_indirect_pages_to_root_domain?: number | null,
+      external_nofollow_pages_to_root_domain?: number | null,
+      external_redirect_pages_to_root_domain?: number | null,
+      deleted_pages_to_root_domain?: number | null,
+      root_domains_to_root_domain?: number | null,
+      indirect_root_domains_to_root_domain?: number | null,
+      deleted_root_domains_to_root_domain?: number | null,
+      nofollow_root_domains_to_root_domain?: number | null,
+      page_authority?: number | null,
+      domain_authority?: number | null,
+      link_propensity?: number | null,
+      spam_score?: number | null,
+      root_domains_from_page?: number | null,
+      nofollow_root_domains_from_page?: number | null,
+      pages_from_page?: number | null,
+      nofollow_pages_from_page?: number | null,
+      root_domains_from_root_domain?: number | null,
+      nofollow_root_domains_from_root_domain?: number | null,
+      pages_from_root_domain?: number | null,
+      nofollow_pages_from_root_domain?: number | null,
+      pages_crawled_from_root_domain?: number | null
+    } | null,
+    target_site_metrics?: {
+      page?: string | null,
+      subdomain?: string | null,
+      root_domain?: string | null,
+      title?: string | null,
+      last_crawled?: string | null,
+      http_code?: number | null,
+      pages_to_page?: number | null,
+      nofollow_pages_to_page?: number | null,
+      redirect_pages_to_page?: number | null,
+      external_pages_to_page?: number | null,
+      external_nofollow_pages_to_page?: number | null,
+      external_redirect_pages_to_page?: number | null,
+      deleted_pages_to_page?: number | null,
+      root_domains_to_page?: number | null,
+      indirect_root_domains_to_page?: number | null,
+      deleted_root_domains_to_page?: number | null,
+      nofollow_root_domains_to_page?: number | null,
+      pages_to_subdomain?: number | null,
+      nofollow_pages_to_subdomain?: number | null,
+      redirect_pages_to_subdomain?: number | null,
+      external_pages_to_subdomain?: number | null,
+      external_nofollow_pages_to_subdomain?: number | null,
+      external_redirect_pages_to_subdomain?: number | null,
+      deleted_pages_to_subdomain?: number | null,
+      root_domains_to_subdomain?: number | null,
+      deleted_root_domains_to_subdomain?: number | null,
+      nofollow_root_domains_to_subdomain?: number | null,
+      pages_to_root_domain?: number | null,
+      nofollow_pages_to_root_domain?: number | null,
+      redirect_pages_to_root_domain?: number | null,
+      external_pages_to_root_domain?: number | null,
+      external_indirect_pages_to_root_domain?: number | null,
+      external_nofollow_pages_to_root_domain?: number | null,
+      external_redirect_pages_to_root_domain?: number | null,
+      deleted_pages_to_root_domain?: number | null,
+      root_domains_to_root_domain?: number | null,
+      indirect_root_domains_to_root_domain?: number | null,
+      deleted_root_domains_to_root_domain?: number | null,
+      nofollow_root_domains_to_root_domain?: number | null,
+      page_authority?: number | null,
+      domain_authority?: number | null,
+      link_propensity?: number | null,
+      spam_score?: number | null,
+      root_domains_from_page?: number | null,
+      nofollow_root_domains_from_page?: number | null,
+      pages_from_page?: number | null,
+      nofollow_pages_from_page?: number | null,
+      root_domains_from_root_domain?: number | null,
+      nofollow_root_domains_from_root_domain?: number | null,
+      pages_from_root_domain?: number | null,
+      nofollow_pages_from_root_domain?: number | null,
+      pages_crawled_from_root_domain?: number | null
+    } | null,
+    anchor_text?: string | null,
+    date_first_seen?: string | null,
+    date_last_seen?: string | null,
+    date_disappeared?: string | null,
+    nofollow?: boolean | number | null,
+    redirect?: boolean | number | null,
+    rel_canonical?: boolean | number | null,
+    via_redirect?: boolean | number | null,
+    via_rel_canonical?: boolean | number | null
+  } | null
+)[] | null
+```
+</Accordion>
+
 <Accordion title="options full type">
 
 ```ts
@@ -2039,8 +2922,8 @@ await corsair.moz.api.links.intersect({ is_linking_to: [{ query: 'moz.com', scop
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `is_linking_to` | `any[]` | Yes | Get sources that link to at least one of the provided sites, or more if `minimum_matching_targets` is set (see description of `minimum_matching_targets` below). Up to 6 total targets may be specified in the `is_linking_to` and `not_linking_to` fields combined, and at least one target must be specified in `is_linking_to`. |
-| `not_linking_to` | `any[]` | No | Optionally, ensure that the returned sources that do not link to any of the provided sites. |
+| `is_linking_to` | `object[]` | Yes | Get sources that link to at least one of the provided sites, or more if `minimum_matching_targets` is set (see description of `minimum_matching_targets` below). Up to 6 total targets may be specified in the `is_linking_to` and `not_linking_to` fields combined, and at least one target must be specified in `is_linking_to`. |
+| `not_linking_to` | `object[]` | No | Optionally, ensure that the returned sources that do not link to any of the provided sites. |
 | `options` | `object` | No | — |
 | `offset` | `object` | No | Limit and pagination controls. Optionally specify the total number of desired results and, after the first request has been made, access results on the next page of results. |
 
@@ -2049,6 +2932,26 @@ is_linking_to, at most six targets across both arrays, and it costs N
 rows per result where N is the number of targets in the request.
 
 <AccordionGroup>
+<Accordion title="is_linking_to full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
+}[]
+```
+</Accordion>
+
+<Accordion title="not_linking_to full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
+}[]
+```
+</Accordion>
+
 <Accordion title="options full type">
 
 ```ts
@@ -2077,13 +2980,57 @@ rows per result where N is the number of targets in the request.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `is_linking_to` | `any[] \| null` | No | — |
-| `not_linking_to` | `any[] \| null` | No | — |
+| `is_linking_to` | `object[] \| null` | No | — |
+| `not_linking_to` | `object[] \| null` | No | — |
 | `options` | `object \| null` | No | — |
 | `offset` | `object \| null` | No | — |
-| `link_intersects` | `any[] \| null` | No | — |
+| `link_intersects` | `object[] \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="is_linking_to full type">
+
+```ts
+(
+  {
+    query?: string | null,
+    scope?: string | null,
+    original_site_query?: {
+      query?: string | null,
+      scope?: string | null
+    } | null,
+    site_query_suggestion?: {
+      query?: string | null,
+      scope?: string | null,
+      explanation?: string | null,
+      issue?: string | null
+    } | null
+  } | null
+)[] | null
+```
+</Accordion>
+
+<Accordion title="not_linking_to full type">
+
+```ts
+(
+  {
+    query?: string | null,
+    scope?: string | null,
+    original_site_query?: {
+      query?: string | null,
+      scope?: string | null
+    } | null,
+    site_query_suggestion?: {
+      query?: string | null,
+      scope?: string | null,
+      explanation?: string | null,
+      issue?: string | null
+    } | null
+  } | null
+)[] | null
+```
+</Accordion>
+
 <Accordion title="options full type">
 
 ```ts
@@ -2103,6 +3050,27 @@ rows per result where N is the number of targets in the request.
   token?: string | null,
   limit?: number | null
 } | null
+```
+</Accordion>
+
+<Accordion title="link_intersects full type">
+
+```ts
+(
+  {
+    page?: string | null,
+    title?: string | null,
+    domain_authority?: number | null,
+    spam_score?: number | null,
+    matching_target_indexes?: (number | null)[] | null,
+    matching_source_pages?: (
+      {
+        page?: string | null,
+        page_authority?: number | null
+      } | null
+    )[] | null
+  } | null
+)[] | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -2177,7 +3145,7 @@ exhausted. Setting options.subdomains_limited_to_one requires a sort.
 |------|------|----------|-------------|
 | `site_query` | `object \| null` | No | — |
 | `offset` | `object \| null` | No | — |
-| `links` | `any[] \| null` | No | — |
+| `links` | `object[] \| null` | No | — |
 | `options` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -2209,6 +3177,133 @@ exhausted. Setting options.subdomains_limited_to_one requires a sort.
   token?: string | null,
   limit?: number | null
 } | null
+```
+</Accordion>
+
+<Accordion title="links full type">
+
+```ts
+(
+  {
+    source_site_metrics?: {
+      page?: string | null,
+      subdomain?: string | null,
+      root_domain?: string | null,
+      title?: string | null,
+      last_crawled?: string | null,
+      http_code?: number | null,
+      pages_to_page?: number | null,
+      nofollow_pages_to_page?: number | null,
+      redirect_pages_to_page?: number | null,
+      external_pages_to_page?: number | null,
+      external_nofollow_pages_to_page?: number | null,
+      external_redirect_pages_to_page?: number | null,
+      deleted_pages_to_page?: number | null,
+      root_domains_to_page?: number | null,
+      indirect_root_domains_to_page?: number | null,
+      deleted_root_domains_to_page?: number | null,
+      nofollow_root_domains_to_page?: number | null,
+      pages_to_subdomain?: number | null,
+      nofollow_pages_to_subdomain?: number | null,
+      redirect_pages_to_subdomain?: number | null,
+      external_pages_to_subdomain?: number | null,
+      external_nofollow_pages_to_subdomain?: number | null,
+      external_redirect_pages_to_subdomain?: number | null,
+      deleted_pages_to_subdomain?: number | null,
+      root_domains_to_subdomain?: number | null,
+      deleted_root_domains_to_subdomain?: number | null,
+      nofollow_root_domains_to_subdomain?: number | null,
+      pages_to_root_domain?: number | null,
+      nofollow_pages_to_root_domain?: number | null,
+      redirect_pages_to_root_domain?: number | null,
+      external_pages_to_root_domain?: number | null,
+      external_indirect_pages_to_root_domain?: number | null,
+      external_nofollow_pages_to_root_domain?: number | null,
+      external_redirect_pages_to_root_domain?: number | null,
+      deleted_pages_to_root_domain?: number | null,
+      root_domains_to_root_domain?: number | null,
+      indirect_root_domains_to_root_domain?: number | null,
+      deleted_root_domains_to_root_domain?: number | null,
+      nofollow_root_domains_to_root_domain?: number | null,
+      page_authority?: number | null,
+      domain_authority?: number | null,
+      link_propensity?: number | null,
+      spam_score?: number | null,
+      root_domains_from_page?: number | null,
+      nofollow_root_domains_from_page?: number | null,
+      pages_from_page?: number | null,
+      nofollow_pages_from_page?: number | null,
+      root_domains_from_root_domain?: number | null,
+      nofollow_root_domains_from_root_domain?: number | null,
+      pages_from_root_domain?: number | null,
+      nofollow_pages_from_root_domain?: number | null,
+      pages_crawled_from_root_domain?: number | null
+    } | null,
+    target_site_metrics?: {
+      page?: string | null,
+      subdomain?: string | null,
+      root_domain?: string | null,
+      title?: string | null,
+      last_crawled?: string | null,
+      http_code?: number | null,
+      pages_to_page?: number | null,
+      nofollow_pages_to_page?: number | null,
+      redirect_pages_to_page?: number | null,
+      external_pages_to_page?: number | null,
+      external_nofollow_pages_to_page?: number | null,
+      external_redirect_pages_to_page?: number | null,
+      deleted_pages_to_page?: number | null,
+      root_domains_to_page?: number | null,
+      indirect_root_domains_to_page?: number | null,
+      deleted_root_domains_to_page?: number | null,
+      nofollow_root_domains_to_page?: number | null,
+      pages_to_subdomain?: number | null,
+      nofollow_pages_to_subdomain?: number | null,
+      redirect_pages_to_subdomain?: number | null,
+      external_pages_to_subdomain?: number | null,
+      external_nofollow_pages_to_subdomain?: number | null,
+      external_redirect_pages_to_subdomain?: number | null,
+      deleted_pages_to_subdomain?: number | null,
+      root_domains_to_subdomain?: number | null,
+      deleted_root_domains_to_subdomain?: number | null,
+      nofollow_root_domains_to_subdomain?: number | null,
+      pages_to_root_domain?: number | null,
+      nofollow_pages_to_root_domain?: number | null,
+      redirect_pages_to_root_domain?: number | null,
+      external_pages_to_root_domain?: number | null,
+      external_indirect_pages_to_root_domain?: number | null,
+      external_nofollow_pages_to_root_domain?: number | null,
+      external_redirect_pages_to_root_domain?: number | null,
+      deleted_pages_to_root_domain?: number | null,
+      root_domains_to_root_domain?: number | null,
+      indirect_root_domains_to_root_domain?: number | null,
+      deleted_root_domains_to_root_domain?: number | null,
+      nofollow_root_domains_to_root_domain?: number | null,
+      page_authority?: number | null,
+      domain_authority?: number | null,
+      link_propensity?: number | null,
+      spam_score?: number | null,
+      root_domains_from_page?: number | null,
+      nofollow_root_domains_from_page?: number | null,
+      pages_from_page?: number | null,
+      nofollow_pages_from_page?: number | null,
+      root_domains_from_root_domain?: number | null,
+      nofollow_root_domains_from_root_domain?: number | null,
+      pages_from_root_domain?: number | null,
+      nofollow_pages_from_root_domain?: number | null,
+      pages_crawled_from_root_domain?: number | null
+    } | null,
+    anchor_text?: string | null,
+    date_first_seen?: string | null,
+    date_last_seen?: string | null,
+    date_disappeared?: string | null,
+    nofollow?: boolean | number | null,
+    redirect?: boolean | number | null,
+    rel_canonical?: boolean | number | null,
+    via_redirect?: boolean | number | null,
+    via_rel_canonical?: boolean | number | null
+  } | null
+)[] | null
 ```
 </Accordion>
 
@@ -2342,7 +3437,25 @@ await corsair.moz.api.links.statusMultiple({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `queries` | `any[]` | Yes | — |
+| `queries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="queries full type">
+
+```ts
+{
+  target_site_query?: {
+    query: string,
+    scope: domain | subdomain | subfolder | url
+  },
+  source_site_query?: {
+    query: string,
+    scope: domain | subdomain | subfolder | url
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2350,8 +3463,97 @@ await corsair.moz.api.links.statusMultiple({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results_by_query` | `any[] \| null` | No | — |
-| `errors_by_query` | `any[] \| null` | No | — |
+| `results_by_query` | `object[] \| null` | No | — |
+| `errors_by_query` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results_by_query full type">
+
+```ts
+(
+  {
+    target_site_query?: {
+      query?: string | null,
+      scope?: string | null,
+      original_site_query?: {
+        query?: string | null,
+        scope?: string | null
+      } | null,
+      site_query_suggestion?: {
+        query?: string | null,
+        scope?: string | null,
+        explanation?: string | null,
+        issue?: string | null
+      } | null
+    } | null,
+    source_site_query?: {
+      query?: string | null,
+      scope?: string | null,
+      original_site_query?: {
+        query?: string | null,
+        scope?: string | null
+      } | null,
+      site_query_suggestion?: {
+        query?: string | null,
+        scope?: string | null,
+        explanation?: string | null,
+        issue?: string | null
+      } | null
+    } | null,
+    exists?: boolean | number | null
+  } | null
+)[] | null
+```
+</Accordion>
+
+<Accordion title="errors_by_query full type">
+
+```ts
+(
+  {
+    target_site_query?: {
+      query?: string | null,
+      scope?: string | null,
+      original_site_query?: {
+        query?: string | null,
+        scope?: string | null
+      } | null,
+      site_query_suggestion?: {
+        query?: string | null,
+        scope?: string | null,
+        explanation?: string | null,
+        issue?: string | null
+      } | null
+    } | null,
+    source_site_query?: {
+      query?: string | null,
+      scope?: string | null,
+      original_site_query?: {
+        query?: string | null,
+        scope?: string | null
+      } | null,
+      site_query_suggestion?: {
+        query?: string | null,
+        scope?: string | null,
+        explanation?: string | null,
+        issue?: string | null
+      } | null
+    } | null,
+    error?: {
+      message?: string | null,
+      name?: string | null,
+      data?: {
+        key?: string | null,
+        value?: string | null
+      } | null,
+      httpStatus?: number | null,
+      jsonrpcCode?: number | null
+    } | null
+  } | null
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2431,7 +3633,21 @@ await corsair.moz.api.local.accounts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `accounts` | `any[] \| string \| null` | No | — |
+| `accounts` | `object[] \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="accounts full type">
+
+```ts
+(
+  {
+    id?: number | null,
+    name?: string | null
+  } | null
+)[] | string | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2558,7 +3774,22 @@ await corsair.moz.api.local.customFields.listForAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `custom_fields` | `any[] \| string \| null` | No | — |
+| `custom_fields` | `object[] \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="custom_fields full type">
+
+```ts
+(
+  {
+    id?: number | null,
+    account_id?: number | null,
+    name?: string | null
+  } | null
+)[] | string | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2708,7 +3939,22 @@ await corsair.moz.api.local.groups.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `groups` | `any[] \| string \| null` | No | — |
+| `groups` | `object[] \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+(
+  {
+    id?: number | null,
+    name?: string | null,
+    account_id?: number | null
+  } | null
+)[] | string | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2738,7 +3984,22 @@ await corsair.moz.api.local.groups.listForAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `groups` | `any[] \| string \| null` | No | — |
+| `groups` | `object[] \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="groups full type">
+
+```ts
+(
+  {
+    id?: number | null,
+    name?: string | null,
+    account_id?: number | null
+  } | null
+)[] | string | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -2781,10 +4042,21 @@ await corsair.moz.api.local.groups.listLocations({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `locations` | `any[] \| string \| null` | No | — |
+| `locations` | `object[] \| string \| null` | No | — |
 | `page` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+(
+  {
+    id?: number | null
+  } | null
+)[] | string | null
+```
+</Accordion>
+
 <Accordion title="page full type">
 
 ```ts
@@ -2921,12 +4193,22 @@ await corsair.moz.api.local.locations.cancel({});
   brands?: (string | null)[] | string | null,
   payment_forms?: (string | null)[] | string | null,
   price_range?: string | null,
-  service_areas?: any[] | string | null,
+  service_areas?: (
+    {
+      text?: string | null,
+      id?: string | null
+    } | null
+  )[] | string | null,
   service_area_only?: boolean | number | null,
   services?: (string | null)[] | string | null,
   primary_category?: string | null,
   additional_categories?: (string | null)[] | string | null,
-  attributes?: any[] | string | null,
+  attributes?: (
+    {
+      id?: string | null,
+      value?: string | null
+    } | null
+  )[] | string | null,
   address?: {
     address_line_1?: string | null,
     address_line_2?: string | null,
@@ -2984,7 +4266,21 @@ await corsair.moz.api.local.locations.categories({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `categories` | `any[] \| string \| null` | No | — |
+| `categories` | `object[] \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="categories full type">
+
+```ts
+(
+  {
+    id?: string | null,
+    name?: string | null
+  } | null
+)[] | string | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3041,12 +4337,22 @@ await corsair.moz.api.local.locations.close({});
   brands?: (string | null)[] | string | null,
   payment_forms?: (string | null)[] | string | null,
   price_range?: string | null,
-  service_areas?: any[] | string | null,
+  service_areas?: (
+    {
+      text?: string | null,
+      id?: string | null
+    } | null
+  )[] | string | null,
   service_area_only?: boolean | number | null,
   services?: (string | null)[] | string | null,
   primary_category?: string | null,
   additional_categories?: (string | null)[] | string | null,
-  attributes?: any[] | string | null,
+  attributes?: (
+    {
+      id?: string | null,
+      value?: string | null
+    } | null
+  )[] | string | null,
   address?: {
     address_line_1?: string | null,
     address_line_2?: string | null,
@@ -3203,12 +4509,22 @@ await corsair.moz.api.local.locations.create({});
   brands?: (string | null)[] | string | null,
   payment_forms?: (string | null)[] | string | null,
   price_range?: string | null,
-  service_areas?: any[] | string | null,
+  service_areas?: (
+    {
+      text?: string | null,
+      id?: string | null
+    } | null
+  )[] | string | null,
   service_area_only?: boolean | number | null,
   services?: (string | null)[] | string | null,
   primary_category?: string | null,
   additional_categories?: (string | null)[] | string | null,
-  attributes?: any[] | string | null,
+  attributes?: (
+    {
+      id?: string | null,
+      value?: string | null
+    } | null
+  )[] | string | null,
   address?: {
     address_line_1?: string | null,
     address_line_2?: string | null,
@@ -3271,7 +4587,23 @@ await corsair.moz.api.local.locations.fieldIssues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `field_issues` | `any[] \| string \| null` | No | — |
+| `field_issues` | `object[] \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="field_issues full type">
+
+```ts
+(
+  {
+    location_id?: number | null,
+    network_type?: string | null,
+    network_name?: string | null,
+    field_name?: string | null
+  } | null
+)[] | string | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3301,7 +4633,25 @@ await corsair.moz.api.local.locations.fieldStatuses({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `field_statuses` | `any[] \| string \| null` | No | — |
+| `field_statuses` | `object[] \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="field_statuses full type">
+
+```ts
+(
+  {
+    field_name?: string | null,
+    networks_with_field?: number | null,
+    healthy_networks?: number | null,
+    pending_issues?: number | null,
+    solved_issues?: number | null,
+    dismissed_issues?: number | null
+  } | null
+)[] | string | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3345,7 +4695,17 @@ await corsair.moz.api.local.locations.gbpImpressionHistory({});
   date_start?: string | null,
   date_end?: string | null,
   keyword_limit?: number | null,
-  gbp_impression_history_reports?: any[] | string | null
+  gbp_impression_history_reports?: (
+    {
+      date?: string | null,
+      impressions?: (
+        {
+          keyword?: string | null,
+          value?: number | null
+        } | null
+      )[] | string | null
+    } | null
+  )[] | string | null
 } | null
 ```
 </Accordion>
@@ -3405,7 +4765,12 @@ await corsair.moz.api.local.locations.gbpImpressionTotals({});
   location_id?: number | null,
   date_start?: string | null,
   date_end?: string | null,
-  gbp_impression_keyword_totals?: any[] | string | null
+  gbp_impression_keyword_totals?: (
+    {
+      keyword?: string | null,
+      value?: number | null
+    } | null
+  )[] | string | null
 } | null
 ```
 </Accordion>
@@ -3463,7 +4828,17 @@ await corsair.moz.api.local.locations.gbpLeadHistory({});
   date_start?: string | null,
   date_end?: string | null,
   date_aggregation?: string | null,
-  gbp_lead_history_reports?: any[] | string | null
+  gbp_lead_history_reports?: (
+    {
+      date?: string | null,
+      total_leads?: number | null,
+      actions_website?: number | null,
+      actions_phone?: number | null,
+      actions_driving_directions?: number | null,
+      total_impressions?: number | null,
+      ctr?: number | null
+    } | null
+  )[] | string | null
 } | null
 ```
 </Accordion>
@@ -3534,7 +4909,84 @@ await corsair.moz.api.local.locations.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `locations` | `any[] \| string \| null` | No | — |
+| `locations` | `object[] \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+(
+  {
+    id?: number | null,
+    level?: string | null,
+    status?: string | null,
+    account_id?: number | null,
+    auto_sync_enabled?: boolean | number | null,
+    custom_fields?: Record<string, any> | null,
+    remote_id?: string | null,
+    listings_name?: string | null,
+    location_name?: string | null,
+    website_url?: string | null,
+    email_address?: string | null,
+    timezone?: string | null,
+    store_code?: string | null,
+    short_description?: string | null,
+    long_description?: string | null,
+    languages?: (string | null)[] | string | null,
+    keywords?: (string | null)[] | string | null,
+    brands?: (string | null)[] | string | null,
+    payment_forms?: (string | null)[] | string | null,
+    price_range?: string | null,
+    service_areas?: (
+      {
+        text?: string | null,
+        id?: string | null
+      } | null
+    )[] | string | null,
+    service_area_only?: boolean | number | null,
+    services?: (string | null)[] | string | null,
+    primary_category?: string | null,
+    additional_categories?: (string | null)[] | string | null,
+    attributes?: (
+      {
+        id?: string | null,
+        value?: string | null
+      } | null
+    )[] | string | null,
+    address?: {
+      address_line_1?: string | null,
+      address_line_2?: string | null,
+      sublocality?: string | null,
+      county?: string | null,
+      city?: string | null,
+      state_province?: string | null,
+      postal_code?: string | null,
+      country?: string | null
+    } | null,
+    lat?: number | null,
+    long?: number | null,
+    opening_status?: string | null,
+    reopen_date?: string | null,
+    hours?: {
+      monday?: (string | null)[] | string | null,
+      tuesday?: (string | null)[] | string | null,
+      wednesday?: (string | null)[] | string | null,
+      thursday?: (string | null)[] | string | null,
+      friday?: (string | null)[] | string | null,
+      saturday?: (string | null)[] | string | null,
+      sunday?: (string | null)[] | string | null
+    } | null,
+    more_hours?: Record<string, any> | null,
+    opening_hours_notes?: string | null,
+    opening_date?: string | null,
+    special_hours?: Record<string, any> | null,
+    phone?: string | null,
+    fax?: string | null
+  } | null
+)[] | string | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3578,7 +5030,84 @@ await corsair.moz.api.local.locations.listByStatus({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `status` | `string \| null` | No | — |
-| `locations` | `any[] \| string \| null` | No | — |
+| `locations` | `object[] \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+(
+  {
+    id?: number | null,
+    level?: string | null,
+    status?: string | null,
+    account_id?: number | null,
+    auto_sync_enabled?: boolean | number | null,
+    custom_fields?: Record<string, any> | null,
+    remote_id?: string | null,
+    listings_name?: string | null,
+    location_name?: string | null,
+    website_url?: string | null,
+    email_address?: string | null,
+    timezone?: string | null,
+    store_code?: string | null,
+    short_description?: string | null,
+    long_description?: string | null,
+    languages?: (string | null)[] | string | null,
+    keywords?: (string | null)[] | string | null,
+    brands?: (string | null)[] | string | null,
+    payment_forms?: (string | null)[] | string | null,
+    price_range?: string | null,
+    service_areas?: (
+      {
+        text?: string | null,
+        id?: string | null
+      } | null
+    )[] | string | null,
+    service_area_only?: boolean | number | null,
+    services?: (string | null)[] | string | null,
+    primary_category?: string | null,
+    additional_categories?: (string | null)[] | string | null,
+    attributes?: (
+      {
+        id?: string | null,
+        value?: string | null
+      } | null
+    )[] | string | null,
+    address?: {
+      address_line_1?: string | null,
+      address_line_2?: string | null,
+      sublocality?: string | null,
+      county?: string | null,
+      city?: string | null,
+      state_province?: string | null,
+      postal_code?: string | null,
+      country?: string | null
+    } | null,
+    lat?: number | null,
+    long?: number | null,
+    opening_status?: string | null,
+    reopen_date?: string | null,
+    hours?: {
+      monday?: (string | null)[] | string | null,
+      tuesday?: (string | null)[] | string | null,
+      wednesday?: (string | null)[] | string | null,
+      thursday?: (string | null)[] | string | null,
+      friday?: (string | null)[] | string | null,
+      saturday?: (string | null)[] | string | null,
+      sunday?: (string | null)[] | string | null
+    } | null,
+    more_hours?: Record<string, any> | null,
+    opening_hours_notes?: string | null,
+    opening_date?: string | null,
+    special_hours?: Record<string, any> | null,
+    phone?: string | null,
+    fax?: string | null
+  } | null
+)[] | string | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3620,11 +5149,86 @@ await corsair.moz.api.local.locations.listForAccount({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `locations` | `any[] \| string \| null` | No | — |
+| `locations` | `object[] \| string \| null` | No | — |
 | `account_id` | `any \| null` | No | — |
 | `page` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+(
+  {
+    id?: number | null,
+    level?: string | null,
+    status?: string | null,
+    account_id?: number | null,
+    auto_sync_enabled?: boolean | number | null,
+    custom_fields?: Record<string, any> | null,
+    remote_id?: string | null,
+    listings_name?: string | null,
+    location_name?: string | null,
+    website_url?: string | null,
+    email_address?: string | null,
+    timezone?: string | null,
+    store_code?: string | null,
+    short_description?: string | null,
+    long_description?: string | null,
+    languages?: (string | null)[] | string | null,
+    keywords?: (string | null)[] | string | null,
+    brands?: (string | null)[] | string | null,
+    payment_forms?: (string | null)[] | string | null,
+    price_range?: string | null,
+    service_areas?: (
+      {
+        text?: string | null,
+        id?: string | null
+      } | null
+    )[] | string | null,
+    service_area_only?: boolean | number | null,
+    services?: (string | null)[] | string | null,
+    primary_category?: string | null,
+    additional_categories?: (string | null)[] | string | null,
+    attributes?: (
+      {
+        id?: string | null,
+        value?: string | null
+      } | null
+    )[] | string | null,
+    address?: {
+      address_line_1?: string | null,
+      address_line_2?: string | null,
+      sublocality?: string | null,
+      county?: string | null,
+      city?: string | null,
+      state_province?: string | null,
+      postal_code?: string | null,
+      country?: string | null
+    } | null,
+    lat?: number | null,
+    long?: number | null,
+    opening_status?: string | null,
+    reopen_date?: string | null,
+    hours?: {
+      monday?: (string | null)[] | string | null,
+      tuesday?: (string | null)[] | string | null,
+      wednesday?: (string | null)[] | string | null,
+      thursday?: (string | null)[] | string | null,
+      friday?: (string | null)[] | string | null,
+      saturday?: (string | null)[] | string | null,
+      sunday?: (string | null)[] | string | null
+    } | null,
+    more_hours?: Record<string, any> | null,
+    opening_hours_notes?: string | null,
+    opening_date?: string | null,
+    special_hours?: Record<string, any> | null,
+    phone?: string | null,
+    fax?: string | null
+  } | null
+)[] | string | null
+```
+</Accordion>
+
 <Accordion title="page full type">
 
 ```ts
@@ -3664,7 +5268,22 @@ await corsair.moz.api.local.locations.listings({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `listings` | `any[] \| string \| null` | No | — |
+| `listings` | `object[] \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="listings full type">
+
+```ts
+(
+  {
+    name?: string | null,
+    status?: string | null,
+    url?: string | null
+  } | null
+)[] | string | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3712,7 +5331,26 @@ await corsair.moz.api.local.locations.localGridHistory({});
   keyword?: string | null,
   device?: string | null,
   engine?: string | null,
-  grids?: any[] | string | null
+  grids?: (
+    {
+      grid_size?: number | null,
+      grid_distance?: number | null,
+      grid_distance_unit?: string | null,
+      formatted_grid_distance?: string | null,
+      date?: string | null,
+      dots?: (
+        {
+          row?: number | null,
+          column?: number | null,
+          lat?: number | null,
+          long?: number | null,
+          rank?: number | null,
+          rating?: number | null,
+          votes_count?: number | null
+        } | null
+      )[] | string | null
+    } | null
+  )[] | string | null
 } | null
 ```
 </Accordion>
@@ -3803,12 +5441,22 @@ await corsair.moz.api.local.locations.lookup({});
   brands?: (string | null)[] | string | null,
   payment_forms?: (string | null)[] | string | null,
   price_range?: string | null,
-  service_areas?: any[] | string | null,
+  service_areas?: (
+    {
+      text?: string | null,
+      id?: string | null
+    } | null
+  )[] | string | null,
   service_area_only?: boolean | number | null,
   services?: (string | null)[] | string | null,
   primary_category?: string | null,
   additional_categories?: (string | null)[] | string | null,
-  attributes?: any[] | string | null,
+  attributes?: (
+    {
+      id?: string | null,
+      value?: string | null
+    } | null
+  )[] | string | null,
   address?: {
     address_line_1?: string | null,
     address_line_2?: string | null,
@@ -3871,7 +5519,26 @@ await corsair.moz.api.local.locations.networks({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `networks` | `any[] \| string \| null` | No | — |
+| `networks` | `object[] \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="networks full type">
+
+```ts
+(
+  {
+    type?: string | null,
+    id?: number | null,
+    name?: string | null,
+    remote_network_id?: string | null,
+    picture?: string | null,
+    profile_url?: string | null,
+    error?: string | null
+  } | null
+)[] | string | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3901,7 +5568,23 @@ await corsair.moz.api.local.locations.networkStatuses({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `network_statuses` | `any[] \| string \| null` | No | — |
+| `network_statuses` | `object[] \| string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="network_statuses full type">
+
+```ts
+(
+  {
+    network_name?: string | null,
+    network_type?: string | null,
+    monitored_fields?: number | null,
+    healthy_fields?: number | null
+  } | null
+)[] | string | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -3947,7 +5630,17 @@ await corsair.moz.api.local.locations.rankingHistory({});
   date_end?: string | null,
   engine?: string | null,
   device?: string | null,
-  ranking_history_reports?: any[] | string | null
+  ranking_history_reports?: (
+    {
+      date?: string | null,
+      ranks?: (
+        {
+          keyword?: string | null,
+          rank?: number | null
+        } | null
+      )[] | string | null
+    } | null
+  )[] | string | null
 } | null
 ```
 </Accordion>
@@ -4071,12 +5764,22 @@ await corsair.moz.api.local.locations.update({});
   brands?: (string | null)[] | string | null,
   payment_forms?: (string | null)[] | string | null,
   price_range?: string | null,
-  service_areas?: any[] | string | null,
+  service_areas?: (
+    {
+      text?: string | null,
+      id?: string | null
+    } | null
+  )[] | string | null,
   service_area_only?: boolean | number | null,
   services?: (string | null)[] | string | null,
   primary_category?: string | null,
   additional_categories?: (string | null)[] | string | null,
-  attributes?: any[] | string | null,
+  attributes?: (
+    {
+      id?: string | null,
+      value?: string | null
+    } | null
+  )[] | string | null,
   address?: {
     address_line_1?: string | null,
     address_line_2?: string | null,
@@ -4167,12 +5870,22 @@ await corsair.moz.api.local.locations.updateLevel({});
   brands?: (string | null)[] | string | null,
   payment_forms?: (string | null)[] | string | null,
   price_range?: string | null,
-  service_areas?: any[] | string | null,
+  service_areas?: (
+    {
+      text?: string | null,
+      id?: string | null
+    } | null
+  )[] | string | null,
   service_area_only?: boolean | number | null,
   services?: (string | null)[] | string | null,
   primary_category?: string | null,
   additional_categories?: (string | null)[] | string | null,
-  attributes?: any[] | string | null,
+  attributes?: (
+    {
+      id?: string | null,
+      value?: string | null
+    } | null
+  )[] | string | null,
   address?: {
     address_line_1?: string | null,
     address_line_2?: string | null,
@@ -4547,7 +6260,19 @@ await corsair.moz.api.metrics.fetchMultiple({ site_queries: [{ query: 'moz.com',
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `site_queries` | `any[]` | Yes | — |
+| `site_queries` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="site_queries full type">
+
+```ts
+{
+  query: string,
+  scope: domain | subdomain | subfolder | url
+}[]
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4555,8 +6280,122 @@ await corsair.moz.api.metrics.fetchMultiple({ site_queries: [{ query: 'moz.com',
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `results_by_site` | `any[] \| null` | No | — |
-| `errors_by_site` | `any[] \| null` | No | — |
+| `results_by_site` | `object[] \| null` | No | — |
+| `errors_by_site` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results_by_site full type">
+
+```ts
+(
+  {
+    site_query?: {
+      query?: string | null,
+      scope?: string | null,
+      original_site_query?: {
+        query?: string | null,
+        scope?: string | null
+      } | null,
+      site_query_suggestion?: {
+        query?: string | null,
+        scope?: string | null,
+        explanation?: string | null,
+        issue?: string | null
+      } | null
+    } | null,
+    site_metrics?: {
+      page?: string | null,
+      subdomain?: string | null,
+      root_domain?: string | null,
+      title?: string | null,
+      last_crawled?: string | null,
+      http_code?: number | null,
+      pages_to_page?: number | null,
+      nofollow_pages_to_page?: number | null,
+      redirect_pages_to_page?: number | null,
+      external_pages_to_page?: number | null,
+      external_nofollow_pages_to_page?: number | null,
+      external_redirect_pages_to_page?: number | null,
+      deleted_pages_to_page?: number | null,
+      root_domains_to_page?: number | null,
+      indirect_root_domains_to_page?: number | null,
+      deleted_root_domains_to_page?: number | null,
+      nofollow_root_domains_to_page?: number | null,
+      pages_to_subdomain?: number | null,
+      nofollow_pages_to_subdomain?: number | null,
+      redirect_pages_to_subdomain?: number | null,
+      external_pages_to_subdomain?: number | null,
+      external_nofollow_pages_to_subdomain?: number | null,
+      external_redirect_pages_to_subdomain?: number | null,
+      deleted_pages_to_subdomain?: number | null,
+      root_domains_to_subdomain?: number | null,
+      deleted_root_domains_to_subdomain?: number | null,
+      nofollow_root_domains_to_subdomain?: number | null,
+      pages_to_root_domain?: number | null,
+      nofollow_pages_to_root_domain?: number | null,
+      redirect_pages_to_root_domain?: number | null,
+      external_pages_to_root_domain?: number | null,
+      external_indirect_pages_to_root_domain?: number | null,
+      external_nofollow_pages_to_root_domain?: number | null,
+      external_redirect_pages_to_root_domain?: number | null,
+      deleted_pages_to_root_domain?: number | null,
+      root_domains_to_root_domain?: number | null,
+      indirect_root_domains_to_root_domain?: number | null,
+      deleted_root_domains_to_root_domain?: number | null,
+      nofollow_root_domains_to_root_domain?: number | null,
+      page_authority?: number | null,
+      domain_authority?: number | null,
+      link_propensity?: number | null,
+      spam_score?: number | null,
+      root_domains_from_page?: number | null,
+      nofollow_root_domains_from_page?: number | null,
+      pages_from_page?: number | null,
+      nofollow_pages_from_page?: number | null,
+      root_domains_from_root_domain?: number | null,
+      nofollow_root_domains_from_root_domain?: number | null,
+      pages_from_root_domain?: number | null,
+      nofollow_pages_from_root_domain?: number | null,
+      pages_crawled_from_root_domain?: number | null
+    } | null
+  } | null
+)[] | null
+```
+</Accordion>
+
+<Accordion title="errors_by_site full type">
+
+```ts
+(
+  {
+    site_query?: {
+      query?: string | null,
+      scope?: string | null,
+      original_site_query?: {
+        query?: string | null,
+        scope?: string | null
+      } | null,
+      site_query_suggestion?: {
+        query?: string | null,
+        scope?: string | null,
+        explanation?: string | null,
+        issue?: string | null
+      } | null
+    } | null,
+    error?: {
+      message?: string | null,
+      name?: string | null,
+      data?: {
+        key?: string | null,
+        value?: string | null
+      } | null,
+      httpStatus?: number | null,
+      jsonrpcCode?: number | null
+    } | null
+  } | null
+)[] | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -4630,10 +6469,66 @@ await corsair.moz.api.metrics.histories({});
 
 ```ts
 {
-  daily_history_deltas?: any[] | null,
-  daily_history_values?: any[] | null,
-  monthly_history_deltas?: any[] | null,
-  monthly_history_values?: any[] | null
+  daily_history_deltas?: (
+    {
+      metric_name?: string | null,
+      metric_deltas?: {
+        gained?: (
+          {
+            date?: string | null,
+            count?: number | null
+          } | null
+        )[] | null,
+        lost?: (
+          {
+            date?: string | null,
+            count?: number | null
+          } | null
+        )[] | null
+      } | null
+    } | null
+  )[] | null,
+  daily_history_values?: (
+    {
+      metric_name?: string | null,
+      metric_values?: (
+        {
+          date?: string | null,
+          value?: number | null
+        } | null
+      )[] | null
+    } | null
+  )[] | null,
+  monthly_history_deltas?: (
+    {
+      metric_name?: string | null,
+      metric_deltas?: {
+        gained?: (
+          {
+            date?: string | null,
+            count?: number | null
+          } | null
+        )[] | null,
+        lost?: (
+          {
+            date?: string | null,
+            count?: number | null
+          } | null
+        )[] | null
+      } | null
+    } | null
+  )[] | null,
+  monthly_history_values?: (
+    {
+      metric_name?: string | null,
+      metric_values?: (
+        {
+          date?: string | null,
+          value?: number | null
+        } | null
+      )[] | null
+    } | null
+  )[] | null
 } | null
 ```
 </Accordion>
@@ -4891,12 +6786,27 @@ one row per result. rankingKeywords.count is one row.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `ranking_keywords` | `any[] \| null` | No | — |
+| `ranking_keywords` | `object[] \| null` | No | — |
 | `target_query` | `object \| null` | No | — |
 | `options` | `object \| null` | No | — |
 | `page` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="ranking_keywords full type">
+
+```ts
+(
+  {
+    keyword?: string | null,
+    ranking_page?: string | null,
+    rank_position?: number | null,
+    difficulty?: number | null,
+    volume?: number | null
+  } | null
+)[] | null
+```
+</Accordion>
+
 <Accordion title="target_query full type">
 
 ```ts
@@ -5166,7 +7076,7 @@ await corsair.moz.api.topPages.list({ site_query: { query: 'moz.com', scope: 'do
 | `site_query` | `object \| null` | No | — |
 | `offset` | `object \| null` | No | — |
 | `options` | `object \| null` | No | — |
-| `top_pages` | `any[] \| null` | No | — |
+| `top_pages` | `object[] \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="site_query full type">
@@ -5207,6 +7117,68 @@ await corsair.moz.api.topPages.list({ site_query: { query: 'moz.com', scope: 'do
   filter?: string | null,
   sort?: string | null
 } | null
+```
+</Accordion>
+
+<Accordion title="top_pages full type">
+
+```ts
+(
+  {
+    page?: string | null,
+    subdomain?: string | null,
+    root_domain?: string | null,
+    title?: string | null,
+    last_crawled?: string | null,
+    http_code?: number | null,
+    pages_to_page?: number | null,
+    nofollow_pages_to_page?: number | null,
+    redirect_pages_to_page?: number | null,
+    external_pages_to_page?: number | null,
+    external_nofollow_pages_to_page?: number | null,
+    external_redirect_pages_to_page?: number | null,
+    deleted_pages_to_page?: number | null,
+    root_domains_to_page?: number | null,
+    indirect_root_domains_to_page?: number | null,
+    deleted_root_domains_to_page?: number | null,
+    nofollow_root_domains_to_page?: number | null,
+    pages_to_subdomain?: number | null,
+    nofollow_pages_to_subdomain?: number | null,
+    redirect_pages_to_subdomain?: number | null,
+    external_pages_to_subdomain?: number | null,
+    external_nofollow_pages_to_subdomain?: number | null,
+    external_redirect_pages_to_subdomain?: number | null,
+    deleted_pages_to_subdomain?: number | null,
+    root_domains_to_subdomain?: number | null,
+    deleted_root_domains_to_subdomain?: number | null,
+    nofollow_root_domains_to_subdomain?: number | null,
+    pages_to_root_domain?: number | null,
+    nofollow_pages_to_root_domain?: number | null,
+    redirect_pages_to_root_domain?: number | null,
+    external_pages_to_root_domain?: number | null,
+    external_indirect_pages_to_root_domain?: number | null,
+    external_nofollow_pages_to_root_domain?: number | null,
+    external_redirect_pages_to_root_domain?: number | null,
+    deleted_pages_to_root_domain?: number | null,
+    root_domains_to_root_domain?: number | null,
+    indirect_root_domains_to_root_domain?: number | null,
+    deleted_root_domains_to_root_domain?: number | null,
+    nofollow_root_domains_to_root_domain?: number | null,
+    page_authority?: number | null,
+    domain_authority?: number | null,
+    link_propensity?: number | null,
+    spam_score?: number | null,
+    root_domains_from_page?: number | null,
+    nofollow_root_domains_from_page?: number | null,
+    pages_from_page?: number | null,
+    nofollow_pages_from_page?: number | null,
+    root_domains_from_root_domain?: number | null,
+    nofollow_root_domains_from_root_domain?: number | null,
+    pages_from_root_domain?: number | null,
+    nofollow_pages_from_root_domain?: number | null,
+    pages_crawled_from_root_domain?: number | null
+  } | null
+)[] | null
 ```
 </Accordion>
 </AccordionGroup>
