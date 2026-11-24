@@ -8,6 +8,405 @@ description: "API reference for the Mixpanel plugin in Corsair: every `mixpanel.
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
+## Annotations
+
+### create
+
+`annotations.create`
+
+Create a chart annotation marking an event on a date
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.annotations.create({ date: '2026-04-01 09:00:00', description: 'Pricing page launched' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `date` | `string` | Yes | When, as "YYYY-MM-DD HH:mm:ss" in the project timezone. |
+| `description` | `string` | Yes | — |
+| `tags` | `number[]` | No | Annotation tag ids. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  date?: string | null,
+  description?: string | null,
+  user?: {
+    id?: number | null,
+    first_name?: string | null,
+    last_name?: string | null
+  } | null,
+  tags?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createTag
+
+`annotations.createTag`
+
+Create an annotation tag
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.annotations.createTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `project_id` | `number \| null` | No | — |
+| `has_annotations` | `boolean \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`annotations.delete`
+
+Delete an annotation
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.annotations.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `annotation_id` | `number` | Yes | The annotation id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`annotations.get`
+
+Get one annotation by id
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.annotations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `annotation_id` | `number` | Yes | The annotation id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  date?: string | null,
+  description?: string | null,
+  user?: {
+    id?: number | null,
+    first_name?: string | null,
+    last_name?: string | null
+  } | null,
+  tags?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`annotations.list`
+
+List the chart annotations in the project, optionally by date range
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.annotations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fromDate` | `string` | No | Only annotations on or after this date. |
+| `toDate` | `string` | No | Only annotations on or before this date. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  date?: string | null,
+  description?: string | null,
+  user?: {
+    id?: number | null,
+    first_name?: string | null,
+    last_name?: string | null
+  } | null,
+  tags?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTags
+
+`annotations.listTags`
+
+List the annotation tags in the project
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.annotations.listTags({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  project_id?: number | null,
+  has_annotations?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`annotations.update`
+
+Change an annotation's description or tags
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.annotations.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `annotation_id` | `number` | Yes | The annotation id. |
+| `description` | `string` | No | — |
+| `tags` | `number[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  date?: string | null,
+  description?: string | null,
+  user?: {
+    id?: number | null,
+    first_name?: string | null,
+    last_name?: string | null
+  } | null,
+  tags?: {
+    id?: number | null,
+    name?: string | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Audit Logs
+
+### query
+
+`auditLogs.query`
+
+Query the organization's audit log (who changed what, when), filtered by user, type, service and date
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.auditLogs.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | The organization id (Organization Settings, Overview). |
+| `page_size` | `number` | No | — |
+| `cursor` | `string` | No | next_cursor from the previous page. |
+| `order` | `asc \| desc` | No | — |
+| `user_ids` | `string[]` | No | — |
+| `user_emails` | `string[]` | No | — |
+| `exclude_user_ids` | `string[]` | No | — |
+| `exclude_user_emails` | `string[]` | No | — |
+| `types` | `string[]` | No | Audit event types. |
+| `services` | `string[]` | No | — |
+| `project_ids` | `string[]` | No | — |
+| `created_after` | `string` | No | ISO 8601. |
+| `created_before` | `string` | No | ISO 8601. |
+| `user_email_search` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  previous_cursor?: string | null,
+  next_cursor?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Cohorts
 
 ### list
@@ -26,10 +425,10 @@ await corsair.mixpanel.api.cohorts.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `workspace_id` | `number` | No | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
 
-`POST /cohorts/list` on the query host. Mixpanel answers a bare array; the
-plugin returns it as `{ cohorts }`.
+`POST /cohorts/list` on the query host; Mixpanel answers a bare array,
+returned as `{ cohorts }`. 402 on the free plan.
 
 
 
@@ -60,18 +459,697 @@ plugin returns it as `{ cohorts }`.
 
 ---
 
+## Data Definitions
+
+### create
+
+`dataDefinitions.create`
+
+Create a Lexicon data definition (event, property, custom event, metric, behavior or cohort)
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.dataDefinitions.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | No | Use the workspace-scoped route for this workspace instead of the project. |
+| `type` | `event \| custom_event \| event_property \| custom_property \| metric \| behavior \| cohort` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string \| null` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `tags` | `string[]` | No | — |
+| `owners` | `object[]` | No | — |
+| `event_name` | `string \| null` | No | For event properties. |
+| `definition` | `object` | No | For custom events, custom properties, metrics, behaviors and cohorts. |
+
+<AccordionGroup>
+<Accordion title="owners full type">
+
+```ts
+{
+  type: string,
+  id: string
+}[]
+```
+</Accordion>
+
+<Accordion title="definition full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `owners` | `object[] \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `blocked` | `boolean \| null` | No | — |
+| `verified` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="owners full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`dataDefinitions.delete`
+
+Delete a data definition
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.dataDefinitions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | No | Use the workspace-scoped route for this workspace instead of the project. |
+| `definition_id` | `string` | Yes | The data definition id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity` | `object \| null` | No | — |
+| `deleted_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="entity full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`dataDefinitions.get`
+
+Get one Lexicon data definition
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.dataDefinitions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | No | Use the workspace-scoped route for this workspace instead of the project. |
+| `definition_id` | `string` | Yes | The data definition id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `owners` | `object[] \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `blocked` | `boolean \| null` | No | — |
+| `verified` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="owners full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`dataDefinitions.list`
+
+List Lexicon data definitions (events, properties, metrics, cohorts) with filters, paged by cursor
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.dataDefinitions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | No | Use the workspace-scoped route for this workspace instead of the project. |
+| `page_size` | `number` | No | — |
+| `cursor` | `string` | No | next_cursor from the previous page. |
+| `order` | `asc \| desc` | No | — |
+| `name` | `string` | No | — |
+| `type` | `(event \| custom_event \| event_property \| custom_property \| metric \| behavior \| cohort)[]` | No | — |
+| `event_name` | `string` | No | — |
+| `hidden` | `boolean` | No | — |
+| `blocked` | `boolean` | No | — |
+| `verified` | `boolean` | No | — |
+| `has_description` | `boolean` | No | — |
+| `has_owner` | `boolean` | No | — |
+| `tag` | `string[]` | No | — |
+
+Platform API (`platform-<region>.mixpanel.com/v1`). Pass `workspace_id`
+for the workspace-scoped routes; otherwise the project's. Pages by
+`cursor` (`pagination.next_cursor`).
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  type?: string | null,
+  description?: string | null,
+  display_name?: string | null,
+  tags?: string[] | null,
+  owners?: {
+  }[] | null,
+  hidden?: boolean | null,
+  blocked?: boolean | null,
+  verified?: boolean | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  previous_cursor?: string | null,
+  next_cursor?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### merge
+
+`dataDefinitions.merge`
+
+Merge event or property definitions into one canonical definition
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.dataDefinitions.merge({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | No | Use the workspace-scoped route for this workspace instead of the project. |
+| `type` | `event \| event_property` | Yes | — |
+| `canonical` | `string` | Yes | The definition the others merge into. |
+| `sources` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `canonical` | `object \| null` | No | — |
+| `sources` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="canonical full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="sources full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unmerge
+
+`dataDefinitions.unmerge`
+
+Undo a merge of data definitions
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.dataDefinitions.unmerge({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | No | Use the workspace-scoped route for this workspace instead of the project. |
+| `type` | `event \| event_property` | Yes | — |
+| `canonical` | `string` | Yes | — |
+| `sources` | `string[]` | No | Omit to unmerge every source. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `canonical` | `object \| null` | No | — |
+| `sources` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="canonical full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+
+<Accordion title="sources full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`dataDefinitions.update`
+
+Update a data definition's description, display name, tags, owners or hidden/blocked/verified flags
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.dataDefinitions.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | No | Use the workspace-scoped route for this workspace instead of the project. |
+| `definition_id` | `string` | Yes | The data definition id. |
+| `name` | `string` | No | — |
+| `description` | `string \| null` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `tags` | `object` | No | — |
+| `owners` | `object` | No | — |
+| `hidden` | `boolean` | No | — |
+| `blocked` | `boolean` | No | True drops the data at ingestion. |
+| `verified` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  operation: add | set | remove,
+  values: string[]
+}
+```
+</Accordion>
+
+<Accordion title="owners full type">
+
+```ts
+{
+  operation: add | set | remove,
+  values: {
+    type: string,
+    id: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `display_name` | `string \| null` | No | — |
+| `tags` | `string[] \| null` | No | — |
+| `owners` | `object[] \| null` | No | — |
+| `hidden` | `boolean \| null` | No | — |
+| `blocked` | `boolean \| null` | No | — |
+| `verified` | `boolean \| null` | No | — |
+| `created_at` | `string \| null` | No | — |
+| `updated_at` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="owners full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Data Definition Tags
+
+### create
+
+`dataDefinitionTags.create`
+
+Create a data definition tag
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.dataDefinitionTags.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | No | Use the workspace-scoped route for this workspace instead of the project. |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `entity_count` | `number \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`dataDefinitionTags.delete`
+
+Delete a data definition tag (it is removed from every definition)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.dataDefinitionTags.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | No | Use the workspace-scoped route for this workspace instead of the project. |
+| `tag_id` | `string` | Yes | The tag id. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`dataDefinitionTags.get`
+
+Get one data definition tag
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.dataDefinitionTags.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | No | Use the workspace-scoped route for this workspace instead of the project. |
+| `tag_id` | `string` | Yes | The tag id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `entity_count` | `number \| null` | No | — |
+
+
+
+---
+
+### list
+
+`dataDefinitionTags.list`
+
+List data definition tags with their usage counts
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.dataDefinitionTags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | No | Use the workspace-scoped route for this workspace instead of the project. |
+| `page_size` | `number` | No | — |
+| `cursor` | `string` | No | next_cursor from the previous page. |
+| `order` | `asc \| desc` | No | — |
+| `sort` | `name \| entity_count` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `pagination` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  entity_count?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  previous_cursor?: string | null,
+  next_cursor?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### rename
+
+`dataDefinitionTags.rename`
+
+Rename a data definition tag
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.dataDefinitionTags.rename({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | No | Use the workspace-scoped route for this workspace instead of the project. |
+| `tag_id` | `string` | Yes | The tag id. |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `entity_count` | `number \| null` | No | — |
+
+
+
+---
+
 ## Events
+
+### counts
+
+`events.counts`
+
+Aggregate counts of one or more events over time
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.events.counts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `string[]` | Yes | Event names. |
+| `type` | `general \| unique \| average` | Yes | general counts every event, unique counts users, average is per user. |
+| `unit` | `minute \| hour \| day \| week \| month` | Yes | — |
+| `interval` | `number` | No | — |
+| `from_date` | `string` | Yes | — |
+| `to_date` | `string` | Yes | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `legend_size` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  series?: string[] | null,
+  values?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### import
 
 `events.import`
 
-Import a batch of up to 2000 server-side events, validated per event when strict mode is on (the default)
+Import up to 2000 server-side events (service account auth, any age), validated per event unless strict is 0
 
 **Risk:** `write`
 
 ```ts
-await corsair.mixpanel.api.events.import({ events: [{ event: 'Signed up', properties: { time: 1618716477000, distinct_id: '91304156-cafc-4673-a237-623d1129c801', $insert_id: '29fc2962-6d9c-455d-95ad-95b84f09b9e4', ip: 0 } }] });
+await corsair.mixpanel.api.events.import({ events: [{ event: 'Signed up', properties: { time: 1618716477000, distinct_id: '91304156-cafc-4673-a237-623d1129c801', $insert_id: '29fc2962-6d9c-455d-95ad-95b84f09b9e4' } }] });
 ```
 
 **Input**
@@ -79,15 +1157,13 @@ await corsair.mixpanel.api.events.import({ events: [{ event: 'Signed up', proper
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `strict` | `0 \| 1` | No | Defaults to '1': Mixpanel validates the batch and rejects it with per-event errors instead of ingesting silently. |
-| `events` | `object[]` | Yes | Up to 2000 events and 10 MB uncompressed per request. |
+| `events` | `object[]` | Yes | Up to 2000 events and 10 MB uncompressed per request. Mixpanel deduplicates on (event, time, distinct_id, $insert_id). |
 
-`POST /import` on the ingestion host, authenticating with the service
-account over HTTP Basic plus `project_id` in the query. Mixpanel answers
-400 with `failed_records` naming each rejected event when `strict` is on
-(the default). Every event needs `time`, `distinct_id` and `$insert_id`;
-Mixpanel deduplicates on the event name plus those three, so retries are
-safe. `/track` is not wrapped: it authenticates with the project token
-meant for untrusted clients.
+`POST /import` on the ingestion host with the service account and
+`project_id`. Every event needs `time`, `distinct_id` and `$insert_id`;
+Mixpanel deduplicates on those plus the event name, so a retried batch
+cannot double-count. With the default `strict: '1'` a 400 lists the
+rejected events in `failed_records`; the error quotes the first message.
 
 <AccordionGroup>
 <Accordion title="events full type">
@@ -112,8 +1188,835 @@ meant for untrusted clients.
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `code` | `number \| null` | No | — |
-| `num_records_imported` | `number` | Yes | — |
+| `num_records_imported` | `number \| null` | No | — |
+| `status` | `string \| number \| null` | No | — |
+
+
+
+---
+
+### names
+
+`events.names`
+
+The most common event names over the last 31 days
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.events.names({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `general \| unique \| average` | Yes | general counts every event, unique counts users, average is per user. |
+| `limit` | `number` | No | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `names` | `string[]` | Yes | — |
+
+
+
+---
+
+### propertyCounts
+
+`events.propertyCounts`
+
+Aggregate counts of an event broken down by the values of one property
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.events.propertyCounts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `name` | `string` | Yes | The property name. |
+| `values` | `string[]` | No | Only these property values. |
+| `type` | `general \| unique \| average` | Yes | general counts every event, unique counts users, average is per user. |
+| `unit` | `minute \| hour \| day \| week \| month` | Yes | — |
+| `interval` | `number` | No | — |
+| `from_date` | `string` | Yes | — |
+| `to_date` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `legend_size` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  series?: string[] | null,
+  values?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### top
+
+`events.top`
+
+Today's top events with counts and change against yesterday
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.events.top({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `general \| unique \| average` | Yes | general counts every event, unique counts users, average is per user. |
+| `limit` | `number` | No | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[] \| null` | No | — |
+| `type` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  amount?: number | null,
+  event?: string | null,
+  percent_change?: number | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### topProperties
+
+`events.topProperties`
+
+The top property names of an event with their counts
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.events.topProperties({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
+
+
+
+**Output:** `Record<string, any>`
+
+
+---
+
+### topPropertyValues
+
+`events.topPropertyValues`
+
+The top values of one event property
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.events.topPropertyValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | — |
+| `name` | `string` | Yes | The property name. |
+| `limit` | `number` | No | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `values` | `string[]` | Yes | — |
+
+
+
+---
+
+### track
+
+`events.track`
+
+Track up to 2000 recent events (last 5 days) with the project token, the client-side ingestion route
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.events.track({ events: [{ event: 'Viewed pricing', properties: { distinct_id: 'user-42' } }] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | Yes | — |
+| `ip` | `boolean` | No | True to geolocate from the sender IP (the server running Corsair). |
+
+`POST /track` with the project token added to each event. Takes events
+from the last five days only; use events.import for older data.
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  event: string,
+  properties?: {
+    distinct_id?: string,
+    time?: number,
+    $insert_id?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+## Experiments
+
+### archive
+
+`experiments.archive`
+
+Archive an experiment
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.experiments.archive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace (data view) id, from the project URL (/project/&lt;id&gt;/view/&lt;workspace&gt;). |
+| `experiment_id` | `string` | Yes | The experiment id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
 | `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  hypothesis?: string | null,
+  status?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  variants?: {
+  }[] | null,
+  metrics?: {
+  }[] | null,
+  tags?: string[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### create
+
+`experiments.create`
+
+Create a draft experiment
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.experiments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace (data view) id, from the project URL (/project/&lt;id&gt;/view/&lt;workspace&gt;). |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `hypothesis` | `string` | No | — |
+| `settings` | `Record<string, any>` | No | — |
+| `variants` | `object[]` | No | — |
+| `metrics` | `object[]` | No | — |
+| `global_access_type` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="variants full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  hypothesis?: string | null,
+  status?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  variants?: {
+  }[] | null,
+  metrics?: {
+  }[] | null,
+  tags?: string[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### decide
+
+`experiments.decide`
+
+Record the decision on a concluded experiment (success and winning variant)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.experiments.decide({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace (data view) id, from the project URL (/project/&lt;id&gt;/view/&lt;workspace&gt;). |
+| `experiment_id` | `string` | Yes | The experiment id. |
+| `success` | `boolean` | Yes | Whether the experiment succeeded. |
+| `variant` | `string` | No | The winning variant key. |
+| `message` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  hypothesis?: string | null,
+  status?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  variants?: {
+  }[] | null,
+  metrics?: {
+  }[] | null,
+  tags?: string[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`experiments.delete`
+
+Delete an experiment
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.experiments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace (data view) id, from the project URL (/project/&lt;id&gt;/view/&lt;workspace&gt;). |
+| `experiment_id` | `string` | Yes | The experiment id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### forceConclude
+
+`experiments.forceConclude`
+
+Stop a running experiment now, ending exposure to its variants
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.experiments.forceConclude({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace (data view) id, from the project URL (/project/&lt;id&gt;/view/&lt;workspace&gt;). |
+| `experiment_id` | `string` | Yes | The experiment id. |
+| `end_date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  hypothesis?: string | null,
+  status?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  variants?: {
+  }[] | null,
+  metrics?: {
+  }[] | null,
+  tags?: string[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`experiments.get`
+
+Get one experiment
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.experiments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace (data view) id, from the project URL (/project/&lt;id&gt;/view/&lt;workspace&gt;). |
+| `experiment_id` | `string` | Yes | The experiment id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  hypothesis?: string | null,
+  status?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  variants?: {
+  }[] | null,
+  metrics?: {
+  }[] | null,
+  tags?: string[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### launch
+
+`experiments.launch`
+
+Launch an experiment: live users start getting its variants
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixpanel.api.experiments.launch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace (data view) id, from the project URL (/project/&lt;id&gt;/view/&lt;workspace&gt;). |
+| `experiment_id` | `string` | Yes | The experiment id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  hypothesis?: string | null,
+  status?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  variants?: {
+  }[] | null,
+  metrics?: {
+  }[] | null,
+  tags?: string[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`experiments.list`
+
+List the experiments of a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.experiments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace (data view) id, from the project URL (/project/&lt;id&gt;/view/&lt;workspace&gt;). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  hypothesis?: string | null,
+  status?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  variants?: {
+  }[] | null,
+  metrics?: {
+  }[] | null,
+  tags?: string[] | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unarchive
+
+`experiments.unarchive`
+
+Restore an archived experiment
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.experiments.unarchive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace (data view) id, from the project URL (/project/&lt;id&gt;/view/&lt;workspace&gt;). |
+| `experiment_id` | `string` | Yes | The experiment id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  hypothesis?: string | null,
+  status?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  variants?: {
+  }[] | null,
+  metrics?: {
+  }[] | null,
+  tags?: string[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`experiments.update`
+
+Update an experiment's fields
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.experiments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace (data view) id, from the project URL (/project/&lt;id&gt;/view/&lt;workspace&gt;). |
+| `experiment_id` | `string` | Yes | The experiment id. |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `hypothesis` | `string` | No | — |
+| `status` | `string` | No | — |
+| `settings` | `Record<string, any>` | No | — |
+| `variants` | `object[]` | No | — |
+| `metrics` | `object[]` | No | — |
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `global_access_type` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="variants full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  description?: string | null,
+  hypothesis?: string | null,
+  status?: string | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  variants?: {
+  }[] | null,
+  metrics?: {
+  }[] | null,
+  tags?: string[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
 
 
 
@@ -137,16 +2040,16 @@ await corsair.mixpanel.api.export.events({ from_date: '2026-04-01', to_date: '20
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `from_date` | `string` | Yes | Inclusive. |
+| `from_date` | `string` | Yes | Inclusive, in the project timezone. |
 | `to_date` | `string` | Yes | Inclusive. |
 | `event_names` | `string[]` | No | Only these events; omit for all of them. |
 | `where` | `string` | No | An expression to filter events by. |
 | `limit` | `number` | No | At most 100000. |
-| `time_in_ms` | `boolean` | No | Defaults to false: timestamps come back with second precision. |
+| `time_in_ms` | `boolean` | No | True for millisecond timestamps; default is seconds. |
 
 `GET /export` on the data host. The body is newline-delimited JSON; the
-plugin parses each line and fails loudly on one it cannot parse. One
-request covers one date range, capped by `limit` (at most 100000).
+plugin parses each line and fails, naming only the line number, on one it
+cannot parse. One request covers one date range, capped by `limit`.
 
 
 
@@ -162,8 +2065,398 @@ request covers one date range, capped by `limit` (at most 100000).
 ```ts
 {
   event?: string | null,
-  properties?: Record<string, unknown> | null
+  properties?: Record<string, any> | null
 }[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Feature Flags
+
+### create
+
+`featureFlags.create`
+
+Create a feature flag with variants and rollout rules
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.featureFlags.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `key` | `string` | Yes | The key code evaluates the flag by. |
+| `description` | `string \| null` | No | — |
+| `tags` | `string[]` | Yes | Tags; [] for none. |
+| `status` | `enabled \| disabled \| archived` | No | — |
+| `context` | `string` | Yes | The identity the flag is evaluated on, usually distinct_id. |
+| `serving_method` | `client \| server \| remote_or_local \| remote_only` | Yes | — |
+| `ruleset` | `object` | Yes | — |
+| `experiment_id` | `string \| null` | No | — |
+| `data_group_id` | `string \| number \| null` | No | — |
+| `is_experiment_active` | `boolean \| null` | No | — |
+| `hash_salt` | `string \| null` | No | — |
+| `reset_hash_salt` | `boolean` | No | — |
+| `workspace_id` | `number` | Yes | The workspace (data view) id, from the project URL (/project/&lt;id&gt;/view/&lt;workspace&gt;). |
+
+<AccordionGroup>
+<Accordion title="ruleset full type">
+
+```ts
+{
+  variants: {
+  }[],
+  rollout: {
+  }[],
+  test?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  key?: string | null,
+  description?: string | null,
+  status?: string | null,
+  tags?: string[] | null,
+  context?: string | null,
+  serving_method?: string | null,
+  ruleset?: {
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### definitions
+
+`featureFlags.definitions`
+
+Get the definitions of every flag, for local evaluation in server SDKs
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.featureFlags.definitions({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `flags` | `object[] \| null` | No | — |
+| `code` | `number \| null` | No | — |
+| `status` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="flags full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`featureFlags.delete`
+
+Delete a feature flag
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.featureFlags.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace (data view) id, from the project URL (/project/&lt;id&gt;/view/&lt;workspace&gt;). |
+| `flag_id` | `string` | Yes | The feature flag id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### evaluate
+
+`featureFlags.evaluate`
+
+Evaluate every enabled feature flag for one user and return the assigned variants
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.featureFlags.evaluate({ distinct_id: 'user-42' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | The user to evaluate flags for. |
+| `device_id` | `string` | No | — |
+| `custom_properties` | `Record<string, any>` | No | Properties the rollout rules can target. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `flags` | `object \| null` | No | — |
+| `code` | `number \| null` | No | — |
+| `status` | `string \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="flags full type">
+
+```ts
+Record<string, {
+}> | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`featureFlags.get`
+
+Get one feature flag with its ruleset
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.featureFlags.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace (data view) id, from the project URL (/project/&lt;id&gt;/view/&lt;workspace&gt;). |
+| `flag_id` | `string` | Yes | The feature flag id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  key?: string | null,
+  description?: string | null,
+  status?: string | null,
+  tags?: string[] | null,
+  context?: string | null,
+  serving_method?: string | null,
+  ruleset?: {
+  } | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`featureFlags.list`
+
+List the feature flags of a workspace
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.featureFlags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `workspace_id` | `number` | Yes | The workspace (data view) id, from the project URL (/project/&lt;id&gt;/view/&lt;workspace&gt;). |
+| `include_archived` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  key?: string | null,
+  description?: string | null,
+  status?: string | null,
+  tags?: string[] | null,
+  context?: string | null,
+  serving_method?: string | null,
+  ruleset?: {
+  } | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`featureFlags.update`
+
+Replace a feature flag (full PUT: send every field); changes what live users are served
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.featureFlags.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `key` | `string` | Yes | The key code evaluates the flag by. |
+| `description` | `string \| null` | No | — |
+| `tags` | `string[]` | Yes | Tags; [] for none. |
+| `status` | `enabled \| disabled \| archived` | No | — |
+| `context` | `string` | Yes | The identity the flag is evaluated on, usually distinct_id. |
+| `serving_method` | `client \| server \| remote_or_local \| remote_only` | Yes | — |
+| `ruleset` | `object` | Yes | — |
+| `experiment_id` | `string \| null` | No | — |
+| `data_group_id` | `string \| number \| null` | No | — |
+| `is_experiment_active` | `boolean \| null` | No | — |
+| `hash_salt` | `string \| null` | No | — |
+| `reset_hash_salt` | `boolean` | No | — |
+| `workspace_id` | `number` | Yes | The workspace (data view) id, from the project URL (/project/&lt;id&gt;/view/&lt;workspace&gt;). |
+| `flag_id` | `string` | Yes | The feature flag id. |
+
+<AccordionGroup>
+<Accordion title="ruleset full type">
+
+```ts
+{
+  variants: {
+  }[],
+  rollout: {
+  }[],
+  test?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null,
+  key?: string | null,
+  description?: string | null,
+  status?: string | null,
+  tags?: string[] | null,
+  context?: string | null,
+  serving_method?: string | null,
+  ruleset?: {
+  } | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
@@ -190,10 +2483,7 @@ await corsair.mixpanel.api.funnels.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `workspace_id` | `number` | No | — |
-
-`GET /funnels/list` on the query host. The saved-funnel query endpoints
-are in maintenance mode per Mixpanel's docs, so only the list is wrapped.
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
 
 
 
@@ -219,6 +2509,625 @@ are in maintenance mode per Mixpanel's docs, so only the list is wrapped.
 
 ---
 
+### query
+
+`funnels.query`
+
+Query a saved funnel for a date range, with optional segmentation and conversion window
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.funnels.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `funnel_id` | `number` | Yes | The saved funnel id (funnels.list). |
+| `from_date` | `string` | Yes | — |
+| `to_date` | `string` | Yes | — |
+| `length` | `number` | No | Conversion window length, in length_unit. |
+| `length_unit` | `day \| hour \| minute \| second` | No | — |
+| `interval` | `number` | No | — |
+| `unit` | `day \| week \| month` | No | — |
+| `on` | `string` | No | A property expression to segment on. |
+| `where` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object \| null` | No | — |
+| `data` | `Record<string, any> \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  dates?: string[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Gdpr
+
+### cancelDeletion
+
+`gdpr.cancelDeletion`
+
+Cancel a GDPR deletion job that has not started yet
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.gdpr.cancelDeletion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tracking_id` | `string` | Yes | The task_id the create call returned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### createDeletion
+
+`gdpr.createDeletion`
+
+Start a GDPR/CCPA deletion job that permanently deletes all events and profile data of the given users
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.gdpr.createDeletion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_ids` | `string[]` | Yes | The users the request covers. |
+| `compliance_type` | `GDPR \| CCPA` | No | Defaults to GDPR. |
+
+Needs `gdpr_token` and `project_token`. Deletes every event and profile
+of the users; Mixpanel runs it as a job you can cancel with
+gdpr.cancelDeletion until it starts.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  task_id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createRetrieval
+
+`gdpr.createRetrieval`
+
+Start a GDPR/CCPA data retrieval job that exports everything stored about the given users
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.gdpr.createRetrieval({ distinct_ids: ['user-42'] });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_ids` | `string[]` | Yes | The users the request covers. |
+| `compliance_type` | `GDPR \| CCPA` | No | Defaults to GDPR. |
+| `disclosure_type` | `Data \| Categories \| Sources` | No | CCPA only: what to disclose. Defaults to Data. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  task_id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDeletion
+
+`gdpr.getDeletion`
+
+Check a GDPR deletion job
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.gdpr.getDeletion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tracking_id` | `string` | Yes | The task_id the create call returned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  tracking_id?: string | null,
+  status?: string | null,
+  requesting_user?: string | null,
+  compliance_type?: string | null,
+  project_id?: number | null,
+  date_requested?: string | null,
+  distinct_ids?: string[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRetrieval
+
+`gdpr.getRetrieval`
+
+Check a GDPR data retrieval job
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.gdpr.getRetrieval({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tracking_id` | `string` | Yes | The task_id the create call returned. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  status?: string | null,
+  results?: string | null,
+  distinct_ids?: string[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Groups
+
+### batchUpdate
+
+`groups.batchUpdate`
+
+Apply up to 200 mixed group profile updates in one request; $unset and $delete entries remove data
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixpanel.api.groups.batchUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updates` | `object[]` | Yes | Up to 200 group updates, each with $group_key, $group_id and one operation. |
+
+<AccordionGroup>
+<Accordion title="updates full type">
+
+```ts
+{
+  $group_key: string,
+  $group_id: string,
+  $set?: Record<string, any>,
+  $set_once?: Record<string, any>,
+  $union?: Record<string, any[]>,
+  $remove?: Record<string, any>,
+  $unset?: string[],
+  $delete?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`groups.delete`
+
+Permanently delete a group profile and its properties
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.groups.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_key` | `string` | Yes | The group key, the property groups are keyed on (e.g. company). |
+| `group_id` | `string` | Yes | The id of the group to update. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### remove
+
+`groups.remove`
+
+Remove a value from list properties on a group profile
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.groups.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_key` | `string` | Yes | The group key, the property groups are keyed on (e.g. company). |
+| `group_id` | `string` | Yes | The id of the group to update. |
+| `$remove` | `Record<string, any>` | Yes | List properties and one value each to remove. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### set
+
+`groups.set`
+
+Set properties on a group profile, creating it if needed
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.groups.set({ group_key: 'company', group_id: 'Acme', $set: { tier: 'enterprise' } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_key` | `string` | Yes | The group key, the property groups are keyed on (e.g. company). |
+| `group_id` | `string` | Yes | The id of the group to update. |
+| `$set` | `Record<string, any>` | Yes | Properties to set, overwriting current values. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### setOnce
+
+`groups.setOnce`
+
+Set properties on a group profile only where they are not set yet
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.groups.setOnce({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_key` | `string` | Yes | The group key, the property groups are keyed on (e.g. company). |
+| `group_id` | `string` | Yes | The id of the group to update. |
+| `$set_once` | `Record<string, any>` | Yes | Properties to set only where not already set. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### union
+
+`groups.union`
+
+Merge values into list properties on a group profile, skipping duplicates
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.groups.union({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_key` | `string` | Yes | The group key, the property groups are keyed on (e.g. company). |
+| `group_id` | `string` | Yes | The id of the group to update. |
+| `$union` | `Record<string, any[]>` | Yes | List properties and the values to merge in. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### unset
+
+`groups.unset`
+
+Delete properties from a group profile
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixpanel.api.groups.unset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `group_key` | `string` | Yes | The group key, the property groups are keyed on (e.g. company). |
+| `group_id` | `string` | Yes | The id of the group to update. |
+| `$unset` | `string[]` | Yes | Property names to delete. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+## Identity
+
+### createAlias
+
+`identity.createAlias`
+
+Send a $create_alias event so a new id resolves to an existing distinct_id (legacy ID management)
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.identity.createAlias({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | The existing distinct_id. |
+| `alias` | `string` | Yes | The new id that should resolve to distinct_id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### createIdentity
+
+`identity.createIdentity`
+
+Send an $identify event linking an anonymous id to an identified id (original ID merge API)
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.identity.createIdentity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identified_id` | `string` | Yes | The id the user is known by after login ($identified_id). |
+| `anon_id` | `string` | Yes | The anonymous id used before login ($anon_id). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### merge
+
+`identity.merge`
+
+Merge two distinct_ids into one user with a $merge event (original ID merge API); cannot be undone
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.identity.merge({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_ids` | `[string, string]` | Yes | The two distinct_ids to merge into one user. |
+
+A `$merge` event through `/import`. Projects on Simplified ID Merge (every
+project created since 2023) refuse it: 400 "identity events are not
+allowed when project is using simplified identity management".
+`identity.createIdentity` and `identity.createAlias` are accepted there
+but have no effect.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number \| null` | No | — |
+| `num_records_imported` | `number \| null` | No | — |
+| `status` | `string \| number \| null` | No | — |
+
+
+
+---
+
 ## Insights
 
 ### query
@@ -238,11 +3147,7 @@ await corsair.mixpanel.api.insights.query({ bookmark_id: 12345 });
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `bookmark_id` | `number` | Yes | The id of the saved Insights report. |
-| `workspace_id` | `number` | No | — |
-
-`GET /insights?bookmark_id=...` on the query host. `series` passes through
-as Mixpanel sends it, since a report with a breakdown nests more than
-`{ date: count }`.
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
 
 
 
@@ -253,7 +3158,7 @@ as Mixpanel sends it, since a report with a breakdown nests more than
 | `computed_at` | `string \| null` | No | — |
 | `date_range` | `object \| null` | No | — |
 | `headers` | `string[] \| null` | No | — |
-| `series` | `Record<string, unknown> \| null` | No | — |
+| `series` | `Record<string, any> \| null` | No | — |
 
 <AccordionGroup>
 <Accordion title="date_range full type">
@@ -271,7 +3176,1083 @@ as Mixpanel sends it, since a report with a breakdown nests more than
 
 ---
 
+### run
+
+`insights.run`
+
+Run an ad hoc Insights query (events, funnels, retention, cohorts, formulas) without a saved report
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.insights.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `object[]` | Yes | What to measure; each has `type`: event, funnel, retention, cohort or formula (see Mixpanel Insights query reference). |
+| `time` | `object` | Yes | start/end as YYYY-MM-DD, YYYY-MM-DDTHH:mm or a relative date object; unit such as day or week. |
+| `filters` | `object[]` | No | — |
+| `breakdowns` | `object[]` | No | — |
+| `time_comparison` | `object` | No | — |
+| `lift_comparison` | `object` | No | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
+
+`POST /insights/query`: an ad hoc report from metrics, time, filters and
+breakdowns, in Mixpanel's Insights query format.
+
+<AccordionGroup>
+<Accordion title="metrics full type">
+
+```ts
+{
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="time full type">
+
+```ts
+{
+  start: string | {
+  },
+  end?: string | {
+  },
+  unit?: string
+}
+```
+</Accordion>
+
+<Accordion title="filters full type">
+
+```ts
+{
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="breakdowns full type">
+
+```ts
+{
+  type: string
+}[]
+```
+</Accordion>
+
+<Accordion title="time_comparison full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="lift_comparison full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Jql
+
+### run
+
+`jql.run`
+
+Run a JQL script (custom JavaScript query) over events and profiles; JQL is in maintenance mode at Mixpanel
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.jql.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `script` | `string` | Yes | The JQL script, a JavaScript main() function. |
+| `params` | `Record<string, any>` | No | Values the script reads as `params`. |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `any[]` | Yes | — |
+
+
+
+---
+
+## Lexicon
+
+### delete
+
+`lexicon.delete`
+
+Delete the Lexicon schema of one event or profile type
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.lexicon.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity_type` | `event \| profile` | Yes | event for event schemas, profile for user profile schemas. |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  delete_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteAll
+
+`lexicon.deleteAll`
+
+Delete every Lexicon schema in the project
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.lexicon.deleteAll({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  delete_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteForEntity
+
+`lexicon.deleteForEntity`
+
+Delete every Lexicon schema for events or for profiles
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.lexicon.deleteForEntity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity_type` | `event \| profile` | Yes | event for event schemas, profile for user profile schemas. |
+| `entity_name` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  delete_count?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`lexicon.get`
+
+Get the Lexicon schema of one event or profile type
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.lexicon.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity_type` | `event \| profile` | Yes | event for event schemas, profile for user profile schemas. |
+| `name` | `string` | Yes | The event name, or $user for user profiles. |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### list
+
+`lexicon.list`
+
+List every Lexicon schema in the project
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.lexicon.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  entityType?: string | null,
+  name?: string | null,
+  schemaJson?: Record<string, any> | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForEntity
+
+`lexicon.listForEntity`
+
+List the Lexicon schemas for events or for profiles
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.lexicon.listForEntity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity_type` | `event \| profile` | Yes | event for event schemas, profile for user profile schemas. |
+| `entity_name` | `string` | No | Only the schema of this event or profile. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object[] \| object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  entityType?: string | null,
+  name?: string | null,
+  schemaJson?: Record<string, any> | null
+}[] | {
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`lexicon.upsert`
+
+Create or replace the Lexicon schema of one event or profile type
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.lexicon.upsert({ entity_type: 'event', name: 'Signed up', schema: { description: 'A new account', properties: { plan: { type: 'string' } } } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entity_type` | `event \| profile` | Yes | event for event schemas, profile for user profile schemas. |
+| `name` | `string` | Yes | — |
+| `schema` | `object` | Yes | The JSON Schema to store, replacing any existing one. |
+
+<AccordionGroup>
+<Accordion title="schema full type">
+
+```ts
+{
+  description?: string,
+  properties?: Record<string, any>,
+  metadata?: Record<string, any>
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsertMany
+
+`lexicon.upsertMany`
+
+Create or replace many Lexicon schemas at once; truncate deletes every schema not uploaded
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixpanel.api.lexicon.upsertMany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `entries` | `object[]` | Yes | — |
+| `truncate` | `boolean` | No | True deletes every schema not in this upload. Defaults to false. |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  entityType: event | profile,
+  name: string,
+  schemaJson: {
+    description?: string,
+    properties?: Record<string, any>,
+    metadata?: Record<string, any>
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  added?: number | null,
+  deleted?: number | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Lookup Tables
+
+### list
+
+`lookupTables.list`
+
+List the lookup tables in the project with their ids
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.lookupTables.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number \| null` | No | — |
+| `status` | `string \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string | null,
+  name?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### replace
+
+`lookupTables.replace`
+
+Replace every row of a lookup table with new CSV content (max 100 MB); the old rows are gone
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixpanel.api.lookupTables.replace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | The lookup table id from lookupTables.list. |
+| `csv` | `string` | Yes | The whole table as CSV, header row first; the first column is the join key. Replaces every row. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `number \| null` | No | — |
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+## Pipelines
+
+### create
+
+`pipelines.create`
+
+Create a data pipeline that exports project data to a bucket or warehouse (a paid add-on that bills while it runs)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixpanel.api.pipelines.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `gcs-raw \| s3-raw \| azure-raw \| bigquery \| snowflake \| aws \| azure-blob \| gcs-schema` | Yes | Where to export: raw to a bucket, or schematized to a warehouse. |
+| `from_date` | `string` | No | Start of the export window (at most six months back); required unless trial is true. |
+| `to_date` | `string` | No | End of the window; omit to keep exporting. |
+| `trial` | `boolean` | No | A free 30-day trial pipeline. |
+| `data_source` | `events \| people` | No | — |
+| `frequency` | `daily \| hourly` | No | — |
+| `events` | `string[]` | No | Only these events. |
+| `where` | `string` | No | — |
+| `data_format` | `string` | No | — |
+| `settings` | `Record<string, string \| number \| boolean>` | No | Destination fields for this type, e.g. gcs_bucket and gcs_region, s3_bucket, s3_region and s3_role, bq_region, snowflake_*, azure_*. |
+
+
+
+**Output:** `object \| any[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### delete
+
+`pipelines.delete`
+
+Delete (cancel) a data pipeline
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.pipelines.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The pipeline name, from pipelines.list. |
+
+
+
+**Output:** `object \| any[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### edit
+
+`pipelines.edit`
+
+Change a pipeline's event filter or settings
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.pipelines.edit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The pipeline name, from pipelines.list. |
+| `events` | `string[]` | No | — |
+| `where` | `string` | No | — |
+| `settings` | `Record<string, string \| number \| boolean>` | No | Other fields the pipeline type allows editing. |
+
+
+
+**Output:** `object \| any[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`pipelines.list`
+
+List the data pipelines of the project
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.pipelines.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pipelines` | `object \| any[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="pipelines full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### pause
+
+`pipelines.pause`
+
+Pause a data pipeline
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.pipelines.pause({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The pipeline name, from pipelines.list. |
+
+
+
+**Output:** `object \| any[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### resume
+
+`pipelines.resume`
+
+Resume a paused data pipeline
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.pipelines.resume({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The pipeline name, from pipelines.list. |
+
+
+
+**Output:** `object \| any[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### status
+
+`pipelines.status`
+
+Get a pipeline's export jobs by status
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.pipelines.status({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | The pipeline name, from pipelines.list. |
+| `summary` | `boolean` | No | True for counts only. |
+| `status` | `(pending \| running \| retried \| failed \| canceled \| timed_out \| succeeded)[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `canceled` | `object[] \| null` | No | — |
+| `retried` | `object[] \| null` | No | — |
+| `succeeded` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="canceled full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="retried full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+
+<Accordion title="succeeded full type">
+
+```ts
+{
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### timeline
+
+`pipelines.timeline`
+
+List the dates a pipeline has synced
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.pipelines.timeline({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | The pipeline name, from pipelines.list. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timeline` | `object \| any[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="timeline full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
 ## Profiles
+
+### activity
+
+`profiles.activity`
+
+Return the event activity stream of one or more users' profiles for a date range
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.profiles.activity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_ids` | `string[]` | Yes | The users whose event stream to return. |
+| `from_date` | `string` | Yes | — |
+| `to_date` | `string` | Yes | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  events?: {
+    event?: string | null,
+    properties?: Record<string, any> | null
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### append
+
+`profiles.append`
+
+Append a value to list properties on a user profile
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.profiles.append({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | The profile to update. |
+| `$append` | `Record<string, any>` | Yes | List properties and one value each to append. |
+| `$ip` | `string` | No | An IP to geolocate the profile from; omit to skip it. |
+| `$ignore_time` | `boolean` | No | True to leave $last_seen unchanged. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### batchUpdate
+
+`profiles.batchUpdate`
+
+Apply up to 2000 mixed profile updates in one request; $unset and $delete entries remove data
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixpanel.api.profiles.batchUpdate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updates` | `object[]` | Yes | Up to 2000 profile updates, each with $distinct_id and one operation ($set, $set_once, $add, $union, $append, $remove, $unset or $delete). |
+
+<AccordionGroup>
+<Accordion title="updates full type">
+
+```ts
+{
+  $distinct_id: string,
+  $set?: Record<string, any>,
+  $set_once?: Record<string, any>,
+  $add?: Record<string, number>,
+  $union?: Record<string, any[]>,
+  $append?: Record<string, any>,
+  $remove?: Record<string, any>,
+  $unset?: string[],
+  $delete?: string,
+  $ip?: string,
+  $ignore_time?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### delete
+
+`profiles.delete`
+
+Permanently delete a user profile and its properties (events stay)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.profiles.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | The profile to update. |
+| `ignore_alias` | `boolean` | No | True to delete only this id, not profiles aliased to it. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### increment
+
+`profiles.increment`
+
+Add to (or subtract from) numeric properties on a user profile
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.profiles.increment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | The profile to update. |
+| `$add` | `Record<string, number>` | Yes | Numeric properties and the amount to add (negative to subtract). |
+| `$ip` | `string` | No | An IP to geolocate the profile from; omit to skip it. |
+| `$ignore_time` | `boolean` | No | True to leave $last_seen unchanged. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
 
 ### query
 
@@ -282,7 +4263,7 @@ Query user or group profiles with an expression, a cohort filter or exact distin
 **Risk:** `read`
 
 ```ts
-await corsair.mixpanel.api.profiles.query({ where: 'properties["$email"] == "jordan@example.com"', output_properties: ['$email', '$last_seen'] });
+await corsair.mixpanel.api.profiles.query({ where: 'properties["plan"] == "pro"', output_properties: ['$email', 'plan'] });
 ```
 
 **Input**
@@ -294,19 +4275,17 @@ await corsair.mixpanel.api.profiles.query({ where: 'properties["$email"] == "jor
 | `distinct_ids` | `string[]` | No | Retrieve exactly these profiles. |
 | `data_group_id` | `string` | No | The ID of the group key, to query group profiles instead of user profiles. |
 | `output_properties` | `string[]` | No | Only return these properties, which speeds the query up considerably. |
-| `session_id` | `string` | No | The id from a previous response, to keep paging through one query. |
-| `page` | `number` | No | Pages start at 0 and need the session_id from page 0. |
+| `session_id` | `string` | No | The session_id from the previous response, to keep paging through one query. |
+| `page` | `number` | No | Set to the previous response's next_page; pages after 0 need its session_id. |
 | `behaviors` | `number` | No | Needed when filtering with an event selector expression. |
 | `as_of_timestamp` | `number` | No | Required with `behaviors` when exporting more than 1000 profiles. |
 | `filter_by_cohort` | `number` | No | Only profiles in this cohort id. |
 | `include_all_users` | `boolean` | No | With `filter_by_cohort`: false keeps only distinct_ids that have a profile. Defaults to true. |
-| `workspace_id` | `number` | No | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
 
-`POST /engage` on the query host with a form-encoded body. Pages run
-through `session_id` and `page` (0-based); the response's derived
-`next_page` is null once a page comes back short. This reads profiles;
-the ingestion `/engage` property setters authenticate with the project
-token and are not wrapped.
+`POST /engage` on the query host. To page, pass the response's
+`next_page` as `page` with the same `session_id` and the same filters;
+stop when `next_page` is null.
 
 
 
@@ -314,13 +4293,13 @@ token and are not wrapped.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `page` | `number` | Yes | — |
-| `page_size` | `number` | Yes | — |
+| `page` | `number \| null` | No | — |
+| `page_size` | `number \| null` | No | — |
 | `results` | `object[]` | Yes | — |
 | `session_id` | `string \| null` | No | — |
 | `status` | `string \| null` | No | — |
 | `total` | `number \| null` | No | — |
-| `next_page` | `number \| null` | Yes | Derived: the page to request next while this one came back full, otherwise null. Mixpanel sends session_id and page instead of a cursor. |
+| `next_page` | `number \| null` | Yes | Derived: the page to request next while this one came back full, otherwise null. Pass it as `page` with the same session_id. |
 
 <AccordionGroup>
 <Accordion title="results full type">
@@ -328,7 +4307,7 @@ token and are not wrapped.
 ```ts
 {
   $distinct_id?: string | number | null,
-  $properties?: Record<string, unknown> | null
+  $properties?: Record<string, any> | null
 }[]
 ```
 </Accordion>
@@ -338,7 +4317,221 @@ token and are not wrapped.
 
 ---
 
+### remove
+
+`profiles.remove`
+
+Remove a value from list properties on a user profile
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.profiles.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | The profile to update. |
+| `$remove` | `Record<string, any>` | Yes | List properties and one value each to remove. |
+| `$ip` | `string` | No | An IP to geolocate the profile from; omit to skip it. |
+| `$ignore_time` | `boolean` | No | True to leave $last_seen unchanged. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### set
+
+`profiles.set`
+
+Set properties on a user profile, creating the profile if needed
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.profiles.set({ distinct_id: 'user-42', $set: { plan: 'pro', seats: 5 } });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | The profile to update. |
+| `$set` | `Record<string, any>` | Yes | Properties to set, overwriting current values. |
+| `$ip` | `string` | No | An IP to geolocate the profile from; omit to skip it. |
+| `$ignore_time` | `boolean` | No | True to leave $last_seen unchanged. |
+
+`POST /engage` with the project token. Every profile operation takes
+`distinct_id` and its Mixpanel operator field (`$set`, `$set_once`,
+`$add`, `$union`, `$append`, `$remove`, `$unset`). Mixpanel answers
+status 1 even for a wrong token, so check the project with
+profiles.query.
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### setOnce
+
+`profiles.setOnce`
+
+Set properties on a user profile only where they are not set yet
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.profiles.setOnce({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | The profile to update. |
+| `$set_once` | `Record<string, any>` | Yes | Properties to set only where not already set. |
+| `$ip` | `string` | No | An IP to geolocate the profile from; omit to skip it. |
+| `$ignore_time` | `boolean` | No | True to leave $last_seen unchanged. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### union
+
+`profiles.union`
+
+Merge values into list properties on a user profile, skipping values already present
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.profiles.union({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | The profile to update. |
+| `$union` | `Record<string, any[]>` | Yes | List properties and the values to merge in without duplicates. |
+| `$ip` | `string` | No | An IP to geolocate the profile from; omit to skip it. |
+| `$ignore_time` | `boolean` | No | True to leave $last_seen unchanged. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
+### unset
+
+`profiles.unset`
+
+Delete properties from a user profile
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixpanel.api.profiles.unset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `distinct_id` | `string` | Yes | The profile to update. |
+| `$unset` | `string[]` | Yes | Property names to delete. |
+| `$ip` | `string` | No | An IP to geolocate the profile from; omit to skip it. |
+| `$ignore_time` | `boolean` | No | True to leave $last_seen unchanged. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `number \| string \| null` | No | — |
+| `error` | `string \| null` | No | — |
+
+
+
+---
+
 ## Retention
+
+### frequency
+
+`retention.frequency`
+
+Frequency (addiction) report: how many users did an event on how many hours or days of each period
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.retention.frequency({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from_date` | `string` | Yes | — |
+| `to_date` | `string` | Yes | — |
+| `unit` | `day \| week \| month` | Yes | The overall time period to bucket users by. |
+| `addiction_unit` | `hour \| day` | Yes | The granularity to count how often users did the event. |
+| `event` | `string` | No | — |
+| `where` | `string` | No | — |
+| `on` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `Record<string, any> \| null` | No | — |
+
+
+
+---
 
 ### query
 
@@ -356,40 +4549,1066 @@ await corsair.mixpanel.api.retention.query({ from_date: '2026-04-01', to_date: '
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `from_date` | `string` | Yes | Inclusive. |
-| `to_date` | `string` | Yes | Inclusive. |
+| `from_date` | `string` | Yes | — |
+| `to_date` | `string` | Yes | — |
 | `retention_type` | `birth \| compounded` | No | Defaults to 'birth' (first time). 'compounded' is recurring retention. |
 | `born_event` | `string` | No | The first event, required when retention_type is 'birth'. |
 | `event` | `string` | No | The returning event. Omit to look across all events. |
-| `born_where` | `string` | No | An expression to filter born_event by. |
-| `where` | `string` | No | An expression to filter the returning event by. |
+| `born_where` | `string` | No | — |
+| `where` | `string` | No | — |
 | `interval` | `number` | No | Defaults to 1. At most 90 when unit is day. |
-| `interval_count` | `number` | No | How many buckets to return. Defaults to 1. |
-| `unit` | `day \| week \| month` | No | Defaults to day. |
-| `unbounded_retention` | `boolean` | No | Accumulate counts from right to left instead of per interval. |
-| `on` | `string` | No | A property expression to segment the returning event on. |
-| `limit` | `number` | No | Top segmentation values; only used with `on`. |
-| `workspace_id` | `number` | No | — |
-
-`GET /retention` on the query host. `born_event` is required while
-`retention_type` is `birth` (the default); `interval` cannot exceed 90
-when `unit` is `day`.
+| `interval_count` | `number` | No | — |
+| `unit` | `day \| week \| month` | No | — |
+| `unbounded_retention` | `boolean` | No | — |
+| `on` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
 
 
 
-**Output:** `object`
+**Output:** `Record<string, any>`
 
-<AccordionGroup>
-<Accordion title="Output full type">
+
+---
+
+## Segmentation
+
+### average
+
+`segmentation.average`
+
+Average a numeric property of an event per time unit
+
+**Risk:** `read`
 
 ```ts
-Record<string, {
-  counts?: number[] | null,
-  first?: number | null
-}>
+await corsair.mixpanel.api.segmentation.average({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event to segment. |
+| `from_date` | `string` | Yes | — |
+| `to_date` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
+| `on` | `string` | Yes | A numeric property expression to average. |
+| `unit` | `hour \| day` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `computed_at` | `string \| null` | No | — |
+| `results` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+### numeric
+
+`segmentation.numeric`
+
+Segment an event by numeric ranges of a property
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.segmentation.numeric({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event to segment. |
+| `from_date` | `string` | Yes | — |
+| `to_date` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
+| `on` | `string` | Yes | A numeric property expression to bucket. |
+| `unit` | `hour \| day` | No | — |
+| `type` | `general \| unique \| average` | No | general counts every event, unique counts users, average is per user. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `legend_size` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  series?: string[] | null,
+  values?: Record<string, any> | null
+} | null
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+### query
+
+`segmentation.query`
+
+Count an event over time, optionally segmented by a property (Segmentation report)
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.segmentation.query({ event: 'Signed up', from_date: '2026-04-01', to_date: '2026-04-07', on: 'properties["utm_source"]' });
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event to segment. |
+| `from_date` | `string` | Yes | — |
+| `to_date` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
+| `on` | `string` | No | A property expression to segment on. |
+| `unit` | `minute \| hour \| day \| month` | No | — |
+| `interval` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `type` | `general \| unique \| average` | No | general counts every event, unique counts users, average is per user. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object \| null` | No | — |
+| `legend_size` | `number \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  series?: string[] | null,
+  values?: Record<string, any> | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### sum
+
+`segmentation.sum`
+
+Sum a numeric property of an event per time unit
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.segmentation.sum({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `event` | `string` | Yes | The event to segment. |
+| `from_date` | `string` | Yes | — |
+| `to_date` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `workspace_id` | `number` | No | The workspace (data view) to run in; omit for the project default. |
+| `on` | `string` | Yes | A numeric property expression to sum. |
+| `unit` | `hour \| day` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `computed_at` | `string \| null` | No | — |
+| `results` | `Record<string, any> \| null` | No | — |
+
+
+
+---
+
+## Service Accounts
+
+### addToProjects
+
+`serviceAccounts.addToProjects`
+
+Grant service accounts access to projects with a role
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.serviceAccounts.addToProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | The organization id (Organization Settings, Overview). |
+| `service_account_ids` | `number[]` | Yes | — |
+| `projects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: number,
+  role: owner | admin | analyst | consumer
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### create
+
+`serviceAccounts.create`
+
+Create a service account and return its secret once; this mints a new credential with the given role
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixpanel.api.serviceAccounts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | The organization id (Organization Settings, Overview). |
+| `username` | `string` | Yes | A name for the service account. |
+| `role` | `owner \| admin \| analyst \| consumer` | No | Organization role; defaults to Mixpanel default. |
+| `expires` | `string` | No | ISO 8601 expiry; omit for no expiry. |
+| `projects` | `object[]` | No | Projects to grant, each with a role. |
+
+Returns the new account's secret once, in `results.token`. Organization
+calls need an organization admin or owner service account.
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: number,
+  role: owner | admin | analyst | consumer
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  last_used?: string | null,
+  expires?: string | null,
+  creator?: number | null,
+  creator_name?: string | null,
+  created?: string | null,
+  user?: number | null,
+  role?: string | null,
+  token?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`serviceAccounts.delete`
+
+Delete a service account; anything using its secret stops working (including this connection, if it is this one)
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.serviceAccounts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | The organization id (Organization Settings, Overview). |
+| `service_account_id` | `number` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### get
+
+`serviceAccounts.get`
+
+Get one service account of the organization
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.serviceAccounts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | The organization id (Organization Settings, Overview). |
+| `service_account_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `username` | `string \| null` | No | — |
+| `last_used` | `string \| null` | No | — |
+| `expires` | `string \| null` | No | — |
+| `creator` | `number \| null` | No | — |
+| `creator_name` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `user` | `number \| null` | No | — |
+| `role` | `string \| null` | No | — |
+
+
+
+---
+
+### list
+
+`serviceAccounts.list`
+
+List the organization's service accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.serviceAccounts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | The organization id (Organization Settings, Overview). |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  last_used?: string | null,
+  expires?: string | null,
+  creator?: number | null,
+  creator_name?: string | null,
+  created?: string | null,
+  user?: number | null,
+  role?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listForProject
+
+`serviceAccounts.listForProject`
+
+List the service accounts that can reach this project, with their roles
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.serviceAccounts.listForProject({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  username?: string | null,
+  last_used?: string | null,
+  expires?: string | null,
+  creator?: number | null,
+  creator_name?: string | null,
+  created?: string | null,
+  user?: number | null,
+  role?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### removeFromProjects
+
+`serviceAccounts.removeFromProjects`
+
+Remove service accounts from projects; they lose access at once
+
+**Risk:** `destructive`
+
+```ts
+await corsair.mixpanel.api.serviceAccounts.removeFromProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organization_id` | `number` | Yes | The organization id (Organization Settings, Overview). |
+| `projects` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: number,
+  service_account_ids: number[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+## Warehouse Imports
+
+### createEventStream
+
+`warehouseImports.createEventStream`
+
+Create an import that loads events from a warehouse table
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.warehouseImports.createEventStream({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouse_source_id` | `number` | Yes | The connected warehouse source. |
+| `table_params` | `Record<string, any>` | Yes | Where the table is, per warehouse (e.g. dataset_name and table_name for BigQuery). |
+| `run_every` | `0 \| 3600000000000 \| 86400000000000 \| 604800000000000` | No | Sync interval in nanoseconds: 0 (manual), hourly, daily or weekly. |
+| `json_properties_column_name` | `string` | No | — |
+| `property_mappings` | `Record<string, string>` | No | — |
+| `databricks_params` | `object` | No | — |
+| `time_column_name` | `string` | Yes | — |
+| `sync_mode` | `time_based \| mirror_mode \| full_sync \| one_time` | Yes | — |
+| `event_name` | `string` | No | One event name for every row. |
+| `event_column_name` | `string` | No | Or a column holding the event name. |
+| `user_column_name` | `string` | No | — |
+| `company_column_name` | `string` | No | — |
+| `device_column_name` | `string` | No | — |
+| `insert_id_column_name` | `string` | No | — |
+| `insert_time_column_name` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="databricks_params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  import_type?: string | null,
+  warehouse_source_id?: number | null,
+  paused?: boolean | null,
+  run_every?: number | null,
+  sync_mode?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createGroups
+
+`warehouseImports.createGroups`
+
+Create an import that loads group profiles from a warehouse table
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.warehouseImports.createGroups({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouse_source_id` | `number` | Yes | The connected warehouse source. |
+| `table_params` | `Record<string, any>` | Yes | Where the table is, per warehouse (e.g. dataset_name and table_name for BigQuery). |
+| `run_every` | `0 \| 3600000000000 \| 86400000000000 \| 604800000000000` | No | Sync interval in nanoseconds: 0 (manual), hourly, daily or weekly. |
+| `json_properties_column_name` | `string` | No | — |
+| `property_mappings` | `Record<string, string>` | No | — |
+| `databricks_params` | `object` | No | — |
+| `group_key` | `string` | Yes | — |
+| `group_id_column` | `string` | Yes | — |
+| `sync_mode` | `time_based \| mirror_mode \| full_sync \| one_time` | Yes | — |
+| `insert_time_column_name` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="databricks_params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  import_type?: string | null,
+  warehouse_source_id?: number | null,
+  paused?: boolean | null,
+  run_every?: number | null,
+  sync_mode?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createLookupTable
+
+`warehouseImports.createLookupTable`
+
+Create an import that loads a lookup table from a warehouse table
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.warehouseImports.createLookupTable({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouse_source_id` | `number` | Yes | The connected warehouse source. |
+| `table_params` | `Record<string, any>` | Yes | Where the table is, per warehouse (e.g. dataset_name and table_name for BigQuery). |
+| `run_every` | `0 \| 3600000000000 \| 86400000000000 \| 604800000000000` | No | Sync interval in nanoseconds: 0 (manual), hourly, daily or weekly. |
+| `databricks_params` | `object` | No | — |
+| `mixpanel_property` | `object` | Yes | The Mixpanel property the table joins on. |
+| `property_key_column_name` | `string` | Yes | — |
+| `sync_mode` | `full_sync \| one_time` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="databricks_params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="mixpanel_property full type">
+
+```ts
+{
+  value: string,
+  resourceType: string,
+  customPropertyId?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  import_type?: string | null,
+  warehouse_source_id?: number | null,
+  paused?: boolean | null,
+  run_every?: number | null,
+  sync_mode?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createPeople
+
+`warehouseImports.createPeople`
+
+Create an import that loads user profiles from a warehouse table
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.warehouseImports.createPeople({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `warehouse_source_id` | `number` | Yes | The connected warehouse source. |
+| `table_params` | `Record<string, any>` | Yes | Where the table is, per warehouse (e.g. dataset_name and table_name for BigQuery). |
+| `run_every` | `0 \| 3600000000000 \| 86400000000000 \| 604800000000000` | No | Sync interval in nanoseconds: 0 (manual), hourly, daily or weekly. |
+| `json_properties_column_name` | `string` | No | — |
+| `property_mappings` | `Record<string, string>` | No | — |
+| `databricks_params` | `object` | No | — |
+| `user_column_name` | `string` | Yes | — |
+| `sync_mode` | `time_based \| mirror_mode \| full_sync \| one_time` | Yes | — |
+| `insert_time_column_name` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="databricks_params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  import_type?: string | null,
+  warehouse_source_id?: number | null,
+  paused?: boolean | null,
+  run_every?: number | null,
+  sync_mode?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`warehouseImports.delete`
+
+Delete a warehouse import, and with delete_data the data it imported
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.mixpanel.api.warehouseImports.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `import_id` | `number` | Yes | The warehouse import id. |
+| `delete_data` | `boolean` | No | True also deletes the data this import brought into Mixpanel. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+
+
+
+---
+
+### get
+
+`warehouseImports.get`
+
+Get one warehouse import with its settings
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.warehouseImports.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `import_id` | `number` | Yes | The warehouse import id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  import_type?: string | null,
+  warehouse_source_id?: number | null,
+  paused?: boolean | null,
+  run_every?: number | null,
+  sync_mode?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### history
+
+`warehouseImports.history`
+
+List the past sync runs of a warehouse import
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.warehouseImports.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `import_id` | `number` | Yes | The warehouse import id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  runs?: {
+  }[] | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`warehouseImports.list`
+
+List the warehouse imports of the project
+
+**Risk:** `read`
+
+```ts
+await corsair.mixpanel.api.warehouseImports.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object[] \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  import_type?: string | null,
+  warehouse_source_id?: number | null,
+  paused?: boolean | null,
+  run_every?: number | null,
+  sync_mode?: string | null
+}[] | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### run
+
+`warehouseImports.run`
+
+Start a sync of a warehouse import now
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.warehouseImports.run({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `import_id` | `number` | Yes | The warehouse import id. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  run_id?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`warehouseImports.update`
+
+Pause, resume or reschedule a warehouse import
+
+**Risk:** `write`
+
+```ts
+await corsair.mixpanel.api.warehouseImports.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `import_id` | `number` | Yes | The warehouse import id. |
+| `paused` | `boolean` | Yes | — |
+| `run_every` | `0 \| 3600000000000 \| 86400000000000 \| 604800000000000` | Yes | Sync interval in nanoseconds: 0 (manual), hourly, daily or weekly. |
+| `databricks_params` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="databricks_params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| null` | No | — |
+| `results` | `object \| null` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: number | null,
+  import_type?: string | null,
+  warehouse_source_id?: number | null,
+  paused?: boolean | null,
+  run_every?: number | null,
+  sync_mode?: string | null
+} | null
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---

@@ -1,49 +1,44 @@
 ---
 title: "Mixpanel plugin"
 sidebarTitle: "Overview"
-description: "Product analytics with Mixpanel - import server-side event batches, query profiles, cohorts, saved Insights reports, funnels and retention, and export raw events."
+description: "Product analytics with Mixpanel - ingest events and user or group profiles, run Insights, funnel, retention and segmentation reports, export raw events, and manage annotations, Lexicon schemas, feature flags, experiments, warehouse imports, data pipelines, service accounts and GDPR requests."
 ---
 
 Use **Mixpanel** through Corsair: one client, typed API calls.
 
-Create a service account in Mixpanel under Organization settings, Service
-Accounts (or Project settings, Service Accounts), with a role that can read
-the project; importing events needs the Owner or Admin role. The account
-stores three things: the service account username, the service account
-secret, and the project id, which every service-account request must carry.
-The region option switches hosts for EU (`eu`) and India (`in`) data
-residency projects; it defaults to `us`.
+Create a service account in Mixpanel (Project Settings, Service Accounts)
+with a role that fits what the agent should do: Consumer to read, Admin or
+Owner to import events and manage annotations, Lexicon, flags and
+experiments. Connect with:
 
-- **Requests authenticate with HTTP Basic** using the plain `username:secret`
-  pair, exactly as Mixpanel's docs show. A missing project id fails before
-  anything is sent, because the API would answer 401 and read like a bad
-  secret.
-- **events.import is the server-side ingestion call.** It replaces `/track`,
-  which this plugin does not wrap: `/track` authenticates with the project
-  token meant for untrusted clients, while `/import` takes the service
-  account and accepts events older than five days. Every event needs `time`,
-  `distinct_id` and `$insert_id`; Mixpanel deduplicates on the three plus the
-  event name, so a retried batch cannot double-count. With the default
-  `strict: '1'`, a 400 body lists each rejected event in `failed_records`.
-- **Profile updates are not wrapped.** The ingestion `/engage` property
-  setters authenticate with the project token, not a service account, so this
-  plugin reads profiles (`profiles.query`) but does not write them.
-- **profiles.query pages by session.** Take `session_id` and `page` from one
-  response, keep the `where` expression unchanged, and stop when `next_page`
-  comes back null.
-- **Funnels and Segmentation queries are in maintenance mode** per
-  Mixpanel's docs, so this plugin wraps only `funnels.list` (saved funnels)
-  and the Insights query for report data. Raw events come from
-  `export.events`, one request per date range with an optional `limit`.
-- **Rate limits.** The query API allows 60 queries per hour and 5 concurrent;
-  the export API allows 60 per hour and 3 per second; ingestion allows about
-  30k events per second or 2 GB per minute. The plugin retries 429, 502 and
-  503 with exponential backoff (honouring Retry-After when sent) and never
-  retries 400 validation failures.
+- **api_key**: the service account secret.
+- **service_account_username**: its username (`name.xxxxxx.mp-service-account`).
+- **project_id**: the project id (Project Settings, Overview).
+- **region**: `us` (default), `eu` or `in`, matching the project's data
+  residency. Every API switches to that region's hosts.
+- **project_token** (optional): needed for `events.track`, profile and group
+  updates, identity calls and GDPR, which authenticate with the token.
+- **gdpr_token** (optional): the GDPR API OAuth token from Personal Settings,
+  Data & Privacy. A service account gets 401 on the GDPR API.
+
+Plan limits seen on a free project (11-24): the Query API reports
+(insights, funnels, retention, segmentation, event counts, activity stream,
+cohorts, JQL) answer 402 `plan_restricted`; `profiles.query` and raw export
+work. Data Pipelines is a paid add-on (401), and the Platform API data
+definitions answer 404 until Mixpanel enables them for the project.
+Organization-level service account calls need an organization admin or
+owner service account (403 otherwise).
+
+- **Rate limits.** The Query API allows 60 queries per hour and 5 at once;
+  raw export 60 per hour and 3 per second. Core retries a 429 using
+  Retry-After; nothing else is retried.
+- **Errors** come back as core `ApiError`s with Mixpanel's message and
+  `error_code`. Request bodies (tokens, profiles, events) are stripped from
+  the error, and secrets Mixpanel echoes are redacted.
 
 **What you get:**
 
-- 7 typed API operations
+- 119 typed API operations
 
 ## Setup
 
@@ -99,16 +94,10 @@ With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick
 <Tabs>
 <Tab title="API Key (Recommended)">
 
-Create a service account in Mixpanel (Organization settings, Service Accounts; importing events needs the Owner or Admin role) and store three fields on the account: `service_account_username`, `service_account_secret` and `project_id`. For EU or India residency projects, also set the `region` option to `eu` or `in`.
-
-```sh
-pnpm corsair setup --plugin=mixpanel --tenant=acme service_account_username=<username> service_account_secret=<secret> project_id=<project-id>
-```
-
-Or pass them as plugin options (`serviceAccountUsername`, `serviceAccountSecret`, `projectId`, `region`). Requests authenticate with HTTP Basic using the plain `username:secret` pair. See [API key auth](/concepts/api-key).
+Store the Mixpanel API key before the first call: `pnpm corsair setup --plugin=mixpanel --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
 
 ```ts
-mixpanel({ region: 'eu' })
+mixpanel()
 ```
 
 More: [API Key](/concepts/api-key)
@@ -135,11 +124,14 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**List saved cohorts**
+**Find profiles on a plan**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.mixpanel.api.cohorts.list({});
+await tenant.mixpanel.api.profiles.query({
+	where: 'properties["plan"] == "pro"',
+	output_properties: ['$email', 'plan'],
+});
 ```
 
 
