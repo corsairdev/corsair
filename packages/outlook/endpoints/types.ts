@@ -454,6 +454,8 @@ const EventsListInputSchema = z.object({
 	skip: z.number().optional(),
 	timezone: z.string().optional(),
 	expand_recurring_events: z.boolean().optional(),
+	start_datetime: z.string().optional(),
+	end_datetime: z.string().optional(),
 });
 
 const EventsUpdateInputSchema = z.object({

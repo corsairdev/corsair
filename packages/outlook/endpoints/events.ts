@@ -136,19 +136,33 @@ export const listEvents: OutlookEndpoints['eventsList'] = async (
 		? `/calendars/${input.calendar_id}`
 		: '';
 
+	if (
+		input.expand_recurring_events &&
+		!(input.start_datetime && input.end_datetime)
+	) {
+		throw new Error(
+			'expand_recurring_events needs start_datetime and end_datetime',
+		);
+	}
+
+	const view = input.expand_recurring_events;
 	const result = await makeOutlookRequest<OutlookEndpointOutputs['eventsList']>(
-		`${base}${calendarPath}/events`,
+		`${base}${calendarPath}/${view ? 'calendarView' : 'events'}`,
 		ctx.key,
 		{
+			headers: input.timezone
+				? { Prefer: `outlook.timezone="${input.timezone}"` }
+				: undefined,
 			query: {
+				...(view && {
+					startDateTime: input.start_datetime,
+					endDateTime: input.end_datetime,
+				}),
 				...(input.top && { $top: input.top }),
 				...(input.skip && { $skip: input.skip }),
 				...(input.filter && { $filter: input.filter }),
 				...(input.select?.length && { $select: input.select.join(',') }),
 				...(input.orderby?.length && { $orderby: input.orderby.join(',') }),
-				...(input.timezone && {
-					Prefer: `outlook.timezone="${input.timezone}"`,
-				}),
 			},
 		},
 	);
