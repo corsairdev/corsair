@@ -690,7 +690,7 @@
     {
       "path": "googledrive.api.files.exportText",
       "shortPath": "files.exportText",
-      "description": "Get the plain text of a Google Doc across all of its tabs and store it",
+      "description": "Google Docs only; returns the plain text of all tabs, cut at 500,000 characters. For other files use files.export or files.download.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -746,7 +746,7 @@
     {
       "path": "googledrive.api.files.get",
       "shortPath": "files.get",
-      "description": "Get metadata for a specific file",
+      "description": "Metadata of one file; set fields to choose which, e.g. \"id,name,modifiedTime,owners,webViewLink,size\". For content use files.download, files.export or files.exportText.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -779,7 +779,8 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Response mask, e.g. \"id,name,modifiedTime,owners(emailAddress),webViewLink,size\"."
           }
         ]
       },
@@ -997,7 +998,7 @@
     {
       "path": "googledrive.api.files.list",
       "shortPath": "files.list",
-      "description": "List files in Google Drive",
+      "description": "Lists files, returning only id, name and mimeType unless fields is set. Includes trashed files unless q has \"trashed = false\". Page with nextPageToken.",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1005,12 +1006,14 @@
           {
             "key": "q",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Drive query, e.g. name contains 'budget' and mimeType = 'application/pdf' and trashed = false. Strings go in single quotes; escape ' and \\ with a backslash. Folders are mimeType 'application/vnd.google-apps.folder'."
           },
           {
             "key": "pageSize",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Max 1000."
           },
           {
             "key": "pageToken",
@@ -1025,7 +1028,8 @@
           {
             "key": "corpora",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Defaults to \"user\". For shared drives use \"allDrives\" with includeItemsFromAllDrives and supportsAllDrives true."
           },
           {
             "key": "driveId",
@@ -1045,7 +1049,8 @@
           {
             "key": "orderBy",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Comma-separated keys, each optionally followed by desc: \"modifiedTime desc,name\"."
           },
           {
             "key": "supportsAllDrives",
@@ -1065,7 +1070,8 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Response mask, e.g. \"nextPageToken,files(id,name,mimeType,modifiedTime,owners(emailAddress),webViewLink,size)\"."
           }
         ]
       },
@@ -2515,7 +2521,7 @@
     {
       "path": "googledrive.api.folders.list",
       "shortPath": "folders.list",
-      "description": "List folders in Google Drive",
+      "description": "Lists folders only. For what is inside a folder use files.list with q \"'FOLDER_ID' in parents and trashed = false\".",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -2752,7 +2758,7 @@
     {
       "path": "googledrive.api.search.filesAndFolders",
       "shortPath": "search.filesAndFolders",
-      "description": "Search for files and folders in Google Drive",
+      "description": "Files and folders matching a Drive q, returning only id, name and mimeType unless fields is set. Includes trashed files unless q has \"trashed = false\".",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -2760,12 +2766,14 @@
           {
             "key": "q",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Drive query, e.g. name contains 'budget' and mimeType = 'application/pdf' and trashed = false. Strings go in single quotes; escape ' and \\ with a backslash. Folders are mimeType 'application/vnd.google-apps.folder'."
           },
           {
             "key": "pageSize",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Max 1000."
           },
           {
             "key": "pageToken",
@@ -2780,7 +2788,8 @@
           {
             "key": "corpora",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Defaults to \"user\". For shared drives use \"allDrives\" with includeItemsFromAllDrives and supportsAllDrives true."
           },
           {
             "key": "driveId",
@@ -2800,7 +2809,8 @@
           {
             "key": "orderBy",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Comma-separated keys, each optionally followed by desc: \"modifiedTime desc,name\"."
           },
           {
             "key": "supportsAllDrives",
@@ -2816,6 +2826,12 @@
             "key": "teamDriveId",
             "optional": true,
             "type": "string"
+          },
+          {
+            "key": "fields",
+            "optional": true,
+            "type": "string",
+            "description": "Response mask, e.g. \"nextPageToken,files(id,name,mimeType,modifiedTime,owners(emailAddress),webViewLink,size)\"."
           }
         ]
       },
@@ -3029,7 +3045,8 @@
           {
             "key": "useDomainAdminAccess",
             "optional": true,
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Needs domain administrator rights; true returns every shared drive in the domain."
           }
         ]
       },

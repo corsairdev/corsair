@@ -169,7 +169,7 @@
     {
       "path": "jira.api.comments.list",
       "shortPath": "comments.list",
-      "description": "List all comments on a Jira issue",
+      "description": "Comments on one issue, 100 per page by default; page with start_at until startAt plus the count reaches total. Bodies are ADF JSON",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -187,12 +187,14 @@
           {
             "key": "max_results",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size, default 100."
           },
           {
             "key": "order_by",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "\"created\" or \"-created\"."
           }
         ]
       },
@@ -501,7 +503,7 @@
     {
       "path": "jira.api.issues.bulkFetch",
       "shortPath": "issues.bulkFetch",
-      "description": "Bulk fetch multiple Jira issues by ID or key",
+      "description": "Fetch up to 100 issues by id or key per call. fields is an array here, a comma-separated string in issues.search",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -509,12 +511,14 @@
           {
             "key": "issue_ids_or_keys",
             "optional": false,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Up to 100 per call."
           },
           {
             "key": "fields",
             "optional": true,
-            "type": "string[]"
+            "type": "string[]",
+            "description": "Array of field ids, unlike the comma-separated string in issues.search."
           },
           {
             "key": "expand",
@@ -720,7 +724,7 @@
     {
       "path": "jira.api.issues.get",
       "shortPath": "issues.get",
-      "description": "Get a Jira issue by ID or key",
+      "description": "Get one issue with all fields unless fields limits them. description is ADF JSON, not plain text",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -733,12 +737,14 @@
           {
             "key": "fields",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Comma-separated field ids, e.g. \"summary,status\". All fields by default."
           },
           {
             "key": "expand",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Comma-separated; \"renderedFields\" returns HTML versions of rich-text fields."
           }
         ]
       },
@@ -869,7 +875,7 @@
     {
       "path": "jira.api.issues.search",
       "shortPath": "issues.search",
-      "description": "Search issues using JQL",
+      "description": "JQL search. Returns only the issue id unless fields is set. No total: page with next_page_token until isLast is true. JQL must be bounded, e.g. project = ABC AND ...",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -877,22 +883,26 @@
           {
             "key": "jql",
             "optional": false,
-            "type": "string"
+            "type": "string",
+            "description": "Must be bounded by a search restriction, e.g. assignee = currentUser() ORDER BY updated DESC; \"ORDER BY key DESC\" alone is rejected."
           },
           {
             "key": "next_page_token",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "nextPageToken from the previous response; omit for the first page."
           },
           {
             "key": "max_results",
             "optional": true,
-            "type": "number"
+            "type": "number",
+            "description": "Page size, default 50. Jira may return fewer when many fields are requested."
           },
           {
             "key": "fields",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Comma-separated field ids, e.g. \"summary,status,assignee\". \"*all\" returns every field. Without it only the id comes back."
           },
           {
             "key": "expand",
@@ -1118,7 +1128,7 @@
     {
       "path": "jira.api.projects.list",
       "shortPath": "projects.list",
-      "description": "List Jira projects",
+      "description": "Projects the user can browse, 50 per page (max 100). query matches key or name",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1126,7 +1136,8 @@
           {
             "key": "query",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Case-insensitive match on project key or name."
           },
           {
             "key": "order_by",
@@ -1275,7 +1286,7 @@
     {
       "path": "jira.api.sprints.list",
       "shortPath": "sprints.list",
-      "description": "List sprints for a Jira board",
+      "description": "Sprints of one board; get board_id from sprints.listBoards. state is comma-separated future, active, closed: set active for the current sprint",
       "riskLevel": "read",
       "input": {
         "kind": "object",
@@ -1283,12 +1294,14 @@
           {
             "key": "board_id",
             "optional": false,
-            "type": "number"
+            "type": "number",
+            "description": "Board id from sprints.listBoards."
           },
           {
             "key": "state",
             "optional": true,
-            "type": "string"
+            "type": "string",
+            "description": "Comma-separated: future, active, closed. Use \"active\" for the current sprint."
           },
           {
             "key": "start_at",
@@ -1463,7 +1476,7 @@
     {
       "path": "jira.api.users.getAll",
       "shortPath": "users.getAll",
-      "description": "Get all Jira users",
+      "description": "Jira accounts 50 per page, inactive and deleted users included; page with start_at",
       "riskLevel": "read",
       "input": {
         "kind": "object",
