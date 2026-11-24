@@ -1,219 +1,189 @@
 import { asRecord } from 'corsair/core';
 import type {
 	ApiRequestOptions,
+	BinaryResponse,
 	OpenAPIConfig,
-	RateLimitConfig,
 } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
-export const MOCEAN_API_BASE = 'https://rest.moceanapi.com/rest/2';
+export const MOCEAN_API_BASE = 'https://rest.moceanapi.com';
 
 /**
- * Every Mocean response defaults to XML; the plugin asks for JSON on every
- * call. The parameter belongs in the query for GETs and in the form body for
- * POSTs, which the endpoints set.
+ * Every Mocean REST response defaults to XML; the plugin asks for JSON on
+ * every `/rest/2` call. It goes in the query for GETs and in the form body
+ * for POSTs, which the endpoints set.
  */
 export const MOCEAN_RESP_FORMAT = 'json';
 
 /**
- * Mocean answers most failures with HTTP 200/202 and a body status code, so
- * the client throws after reading the body. The status means different things
- * per API family: 2 is "insufficient balance" for SMS and number lookup but
- * "Authorization failed" for Verify, whose throttled code is 1 (SMS's 1).
+ * Mocean answers most failures with HTTP 202 and a body `status`, and the
+ * same number means different things per API family: 2 is "insufficient
+ * balance" for SMS but "authorization failed" for Verify, whose throttle
+ * code is 1. Template and WhatsApp routes use plain HTTP statuses.
  */
-export type MoceanFamily = 'sms' | 'verify' | 'query';
-
-/** The body statuses Mocean documents as "try again": nothing was processed. */
-const RETRYABLE_BODY_STATUSES = new Set([40, 45]);
-
-/** The verify family's own codes for the same two conditions. */
-const VERIFY_RETRYABLE_BODY_STATUSES = new Set([3, 21]);
-
-/**
- * Wraps the error fields the handlers match on. `bodyStatus` carries the
- * body's numeric status, which is the real error signal on a 2xx.
- */
-export class MoceanAPIError extends Error {
-	readonly status?: number;
-	/** The body's numeric status, e.g. 1 for auth failed on SMS. */
-	readonly bodyStatus?: number;
-	/** The family whose status table applies. */
-	readonly family?: MoceanFamily;
-	/** Milliseconds from a Retry-After header, when Mocean sent one. */
-	readonly retryAfter?: number;
-	/** The HTTP method of the failed request. */
-	readonly method?: string;
-	/** True when the failed request can be sent again after a 5xx. */
-	readonly replayable?: boolean;
-	// unknown: an error body is JSON when json was requested, but the 401
-	// path answers XML regardless.
-	readonly body?: unknown;
-
-	constructor(
-		message: string,
-		options: {
-			cause?: Error;
-			status?: number;
-			// unknown: same open error body as the field above.
-			body?: unknown;
-			bodyStatus?: number;
-			family?: MoceanFamily;
-			retryAfter?: number;
-			method?: string;
-			replayable?: boolean;
-		} = {},
-	) {
-		super(message, options.cause ? { cause: options.cause } : undefined);
-		this.name = 'MoceanAPIError';
-		const cause = options.cause instanceof ApiError ? options.cause : undefined;
-		this.status = options.status ?? cause?.status;
-		this.body = options.body ?? cause?.body;
-		this.bodyStatus = options.bodyStatus ?? readBodyStatus(this.body);
-		this.family = options.family;
-		this.retryAfter = options.retryAfter ?? cause?.retryAfter;
-		this.method = options.method ?? cause?.request.method;
-		this.replayable = options.replayable;
-	}
-
-	/** True for an HTTP 401 or the family's body auth-failed status. */
-	get isAuthError(): boolean {
-		if (this.status === 401) return true;
-		const authStatus = this.family === 'verify' ? 2 : 1;
-		return this.bodyStatus === authStatus;
-	}
-
-	/** True when the account cannot pay for the operation. */
-	get isBalanceError(): boolean {
-		return this.family === 'verify'
-			? this.bodyStatus === 18
-			: this.bodyStatus === 2;
-	}
-
-	/** True for throttling: retrying later is the documented remedy. */
-	get isThrottled(): boolean {
-		// The verify family codes throttling as 1; every other family uses 32.
-		return (
-			this.bodyStatus === 32 ||
-			(this.family === 'verify' && this.bodyStatus === 1)
-		);
-	}
-
-	/** True for the documented "try again" statuses: nothing was processed. */
-	get isRetryableServerSide(): boolean {
-		if (this.family === 'verify') {
-			return VERIFY_RETRYABLE_BODY_STATUSES.has(this.bodyStatus as number);
-		}
-		return RETRYABLE_BODY_STATUSES.has(this.bodyStatus as number);
-	}
-}
-
-// unknown: the record is an untyped error body; read one field at a time.
-function readString(
-	record: Record<string, unknown> | null | undefined,
-	key: string,
-): string | undefined {
-	const value = record?.[key];
-	return typeof value === 'string' && value.length > 0 ? value : undefined;
-}
-
-// unknown: the record is an untyped error body; read one field at a time.
-function readNumber(
-	record: Record<string, unknown> | null | undefined,
-	key: string,
-): number | undefined {
-	const value = record?.[key];
-	return typeof value === 'number' ? value : undefined;
-}
-
-// unknown: the body is an untyped error or response body; only the status
-// field is read.
-function readBodyStatus(body: unknown): number | undefined {
-	return readNumber(asRecord(body), 'status');
-}
-
-// unknown: the body is JSON on most failures, but the 401 path answers XML
-// regardless of the requested format, so it is typed open.
-export function describeMoceanError(
-	status: number | undefined,
-	body: unknown,
-	fallback: string,
-): string {
-	const record = asRecord(body);
-	const text =
-		readString(record, 'err_msg') ??
-		readString(record, 'error') ??
-		readString(record, 'message');
-	if (text) {
-		return status === undefined
-			? `Mocean: ${text}`
-			: `Mocean ${status}: ${text}`;
-	}
-	// The 401 path answers XML even when JSON was requested. URL-decode the
-	// err_msg out of it rather than printing the whole document.
-	if (typeof body === 'string' && body.includes('err_msg')) {
-		const match = /<err_msg>([^<]+)<\/err_msg>/.exec(body);
-		const decoded = match?.[1]?.replace(/\+/g, ' ');
-		if (decoded) {
-			return status === undefined
-				? `Mocean: ${decoded}`
-				: `Mocean ${status}: ${decoded}`;
-		}
-	}
-	if (typeof body === 'string' && body.trim().length > 0) {
-		return status === undefined
-			? `Mocean: ${body.trim()}`
-			: `Mocean ${status}: ${body.trim()}`;
-	}
-	return status === undefined
-		? `Mocean: ${fallback}`
-		: `Mocean ${status}: ${fallback}`;
-}
+export type MoceanFamily = 'sms' | 'verify' | 'query' | 'voice' | 'whatsapp';
 
 export type MoceanQuery = Record<string, string | number | boolean | undefined>;
 
 export type MoceanRequest = {
 	family: MoceanFamily;
-	method: 'GET' | 'POST';
+	method: 'GET' | 'POST' | 'DELETE';
 	path: string;
 	query?: MoceanQuery;
 	/**
 	 * A string body is sent verbatim with `mediaType` (Mocean takes
-	 * form-encoded bodies); anything else is serialized as JSON.
+	 * form-encoded bodies on `/rest/2`); anything else is sent as JSON.
 	 */
 	// unknown: the endpoint's input schema has already validated the body.
 	body?: unknown;
 	mediaType?: string;
-	/**
-	 * True when a 5xx or a network drop can replay the request: reads only.
-	 * A send that may have reached the gateway is never replayed.
-	 */
-	replayable?: boolean;
+	/** Downloads (recordings, WhatsApp media) come back as bytes. */
+	responseType?: 'binary';
 };
 
-// error-handlers.ts owns retries, so the client makes one attempt and only
-// reads Retry-After into the error. Mocean does not document that header;
-// throttling (body status 32) is the documented rate-limit signal.
-const MOCEAN_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: { retryAfter: 'retry-after' },
-};
+const PHONE = /\+?\d[\d\s-]{6,}\d/g;
+const EMAIL = /[^\s@()<>"',;:]+@[^\s@()<>"',;:]+/g;
 
-// unknown: callers parse the body with the endpoint's zod output schema.
-export async function makeMoceanRequest(
+/**
+ * Mocean URL-encodes some messages ("Associated+verify+request+has+...") and
+ * can quote the receiver's number back. Decode, then mask numbers and emails.
+ */
+export function cleanMessage(text: string): string {
+	let decoded = text.replace(/\+/g, ' ');
+	try {
+		decoded = decodeURIComponent(decoded);
+	} catch {
+		// keep the '+'-decoded text when it is not valid percent-encoding
+	}
+	return decoded.replace(EMAIL, '[email]').replace(PHONE, '[number]');
+}
+
+/** Reads a body status that Mocean sends as a number or, on voice, a string. */
+// unknown: any parsed response body; only `status` is read.
+export function readBodyStatus(body: unknown): number | undefined {
+	const value = asRecord(body)?.status;
+	if (typeof value === 'number') return value;
+	if (typeof value === 'string' && /^\d+$/.test(value)) return Number(value);
+	return undefined;
+}
+
+/** The HTTP status a body status means, per family, for Corsair's handlers. */
+export function statusForBody(family: MoceanFamily, code: number): number {
+	if (family === 'verify') {
+		if (code === 1) return 429;
+		if (code === 2) return 401;
+		if (code === 3 || code === 21 || code === 40) return 503;
+		if (code === 18) return 402;
+		return 400;
+	}
+	if (code === 1) return 401;
+	if (code === 2) return 402;
+	if (code === 32) return 429;
+	if (code === 40) return 503;
+	if (code === 24 || code === 45) return 500;
+	return 400;
+}
+
+/**
+ * Errors built from a 2xx body status, as opposed to an HTTP failure.
+ * Core already retried an HTTP 429; only a body throttle needs the plugin's
+ * retry.
+ */
+const bodyStatusErrors = new WeakSet<ApiError>();
+
+export function isBodyStatusError(error: Error): error is ApiError {
+	return error instanceof ApiError && bodyStatusErrors.has(error);
+}
+
+// unknown: whatever the server sent; only status and err_msg survive.
+function safeBody(
+	body: unknown,
+): { status?: number; err_msg?: string; hint?: string } | string {
+	const record = asRecord(body);
+	if (record) {
+		// A send's validation error wraps the status in messages[0].
+		const first = Array.isArray(record.messages)
+			? asRecord(record.messages[0])
+			: undefined;
+		const source =
+			readBodyStatus(record) === undefined && first ? first : record;
+		const status = readBodyStatus(source);
+		const message =
+			typeof source.err_msg === 'string'
+				? cleanMessage(source.err_msg)
+				: undefined;
+		const hint =
+			typeof source.hint === 'string' ? cleanMessage(source.hint) : undefined;
+		return {
+			...(status === undefined ? {} : { status }),
+			...(message === undefined ? {} : { err_msg: message }),
+			...(hint === undefined ? {} : { hint }),
+		};
+	}
+	return typeof body === 'string'
+		? cleanMessage(body.replace(/<[^>]+>/g, ' ').trim()).slice(0, 300)
+		: '';
+}
+
+function strippedRequest(options: ApiRequestOptions): ApiRequestOptions {
+	// Form and JSON bodies carry phone numbers, message text and PINs, and
+	// queries can carry a number or a message id. The token is a header.
+	return {
+		method: options.method,
+		url: options.url,
+		query: undefined,
+		body: undefined,
+		formData: undefined,
+		headers: undefined,
+	};
+}
+
+function messageOf(prefix: string, body: ReturnType<typeof safeBody>): string {
+	if (typeof body === 'string') return body ? `${prefix}: ${body}` : prefix;
+	return body.err_msg ? `${prefix}: ${body.err_msg}` : prefix;
+}
+
+/** Rebuilds an HTTP ApiError without request data, keeping status and retry info. */
+function withoutRequestData(error: ApiError): ApiError {
+	const body = safeBody(error.body);
+	return new ApiError(
+		strippedRequest(error.request),
+		{
+			url: error.url.split('?')[0] ?? error.url,
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body,
+		},
+		messageOf(`Mocean HTTP ${error.status}`, body),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+}
+
+/**
+ * Sends one request. HTTP failures become core's ApiError without request
+ * data; a 2xx body with a nonzero `status` becomes one too, with the HTTP
+ * status that body status means. A send's per-receiver results
+ * (`messages[]`, `calls[]`) are returned as they are: one failed receiver
+ * does not fail the others.
+ */
+// unknown: the default return type; callers parse it with an output schema.
+export async function makeMoceanRequest<T = unknown>(
 	apiKey: string,
-	{ family, method, path, query, body, mediaType, replayable }: MoceanRequest,
-): Promise<unknown> {
+	{ family, method, path, query, body, mediaType, responseType }: MoceanRequest,
+): Promise<T> {
 	const config: OpenAPIConfig = {
 		BASE: MOCEAN_API_BASE,
-		VERSION: '1.0.0',
+		VERSION: '2.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: {
-			Accept: 'application/json',
-			// The current API authenticates with a Bearer API token.
+			Accept: responseType === 'binary' ? '*/*' : 'application/json',
 			Authorization: `Bearer ${apiKey}`,
 		},
 	};
@@ -224,55 +194,73 @@ export async function makeMoceanRequest(
 		query,
 		body,
 		mediaType,
+		...(responseType ? { responseType } : {}),
 	};
 
+	// unknown: a JSON body, a BinaryResponse, or a body-status error.
+	let raw: unknown;
 	try {
-		const raw = await request<unknown>(config, requestOptions, {
-			rateLimitConfig: MOCEAN_RATE_LIMIT_CONFIG,
-		});
-		// A 2xx body with a nonzero status is the normal failure path here.
-		const bodyStatus = readBodyStatus(raw);
-		if (bodyStatus !== undefined && bodyStatus !== 0) {
-			throw new MoceanAPIError(
-				describeMoceanError(
-					undefined,
-					raw,
-					`request failed (status ${bodyStatus})`,
-				),
-				{
-					status: undefined,
-					body: raw,
-					bodyStatus,
-					family,
-					method,
-					replayable,
-				},
-			);
-		}
-		return raw;
+		raw = await request<unknown>(config, requestOptions);
 	} catch (error) {
-		// Rethrow our own error untouched: the generic branch below would
-		// re-wrap it and hide the fields the handlers match on.
-		if (error instanceof MoceanAPIError) {
-			throw error;
-		}
-		if (error instanceof ApiError) {
-			throw new MoceanAPIError(
-				describeMoceanError(error.status, error.body, error.message),
-				{ cause: error, family, replayable },
-			);
-		}
-		// DOMException (fetch timeouts) can fail instanceof Error across realms.
-		if (error instanceof Error || error instanceof DOMException) {
-			throw new MoceanAPIError(error.message, {
-				cause: error,
-				family,
-				method,
-				replayable,
-			});
-		}
-		throw new MoceanAPIError('Unknown Mocean error', { family, replayable });
+		if (error instanceof ApiError) throw withoutRequestData(error);
+		throw error;
 	}
+
+	// A download that failed answers JSON (or XML) instead of the file.
+	if (responseType === 'binary') {
+		const binary = raw as BinaryResponse;
+		const type = binary.contentType ?? '';
+		if (/json|xml/i.test(type)) {
+			const text = new TextDecoder().decode(binary.bytes);
+			// unknown: the error body is parsed only to read status and err_msg.
+			let parsed: unknown = text;
+			try {
+				parsed = JSON.parse(text);
+			} catch {
+				// XML or text: read below as a string
+			}
+			const code = readBodyStatus(parsed) ?? 24;
+			throw bodyStatusError(requestOptions, path, family, code, parsed);
+		}
+		if (binary.bytes.byteLength === 0) {
+			throw bodyStatusError(requestOptions, path, family, 24, 'empty file');
+		}
+		return raw as T;
+	}
+
+	const code = readBodyStatus(raw);
+	if (code !== undefined && code !== 0) {
+		throw bodyStatusError(requestOptions, path, family, code, raw);
+	}
+	return raw as T;
+}
+
+function bodyStatusError(
+	requestOptions: ApiRequestOptions,
+	path: string,
+	family: MoceanFamily,
+	code: number,
+	// unknown: the failing body, reduced to status and err_msg by safeBody.
+	raw: unknown,
+): ApiError {
+	const cleaned = safeBody(raw);
+	const body =
+		typeof cleaned === 'string'
+			? { status: code, err_msg: cleaned }
+			: { ...cleaned, status: code };
+	const error = new ApiError(
+		strippedRequest(requestOptions),
+		{
+			url: `${MOCEAN_API_BASE}${path}`,
+			ok: false,
+			status: statusForBody(family, code),
+			statusText: `Mocean status ${code}`,
+			body,
+		},
+		messageOf(`Mocean status ${code}`, body),
+	);
+	bodyStatusErrors.add(error);
+	return error;
 }
 
 /** Encodes one path segment. */

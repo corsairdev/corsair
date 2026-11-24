@@ -1,77 +1,64 @@
-import type { CorsairErrorHandler } from 'corsair/core';
-import { MoceanAPIError } from './client';
+import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
+import { isBodyStatusError } from './client';
+import { moceanEndpointMeta } from './endpoints/meta';
 
-function asMoceanError(error: Error): MoceanAPIError | undefined {
-	return error instanceof MoceanAPIError ? error : undefined;
+function statusOf(error: Error): number | undefined {
+	return error instanceof ApiError ? error.status : undefined;
+}
+
+/** Reads only: a send after a 5xx or a dropped answer may already be charged. */
+function isRead(context: ErrorContext): boolean {
+	const meta = (moceanEndpointMeta as Record<string, { riskLevel: string }>)[
+		context.operation
+	];
+	return meta?.riskLevel === 'read';
 }
 
 /**
- * Statuses and body codes: https://moceanapi.com/docs, per-API error tables.
- * Mocean answers most failures with HTTP 200/202 and a body status, so the
- * handlers mostly read `bodyStatus`, not the HTTP status.
+ * The client turns Mocean's 2xx body statuses into core's ApiError with the
+ * HTTP status they mean: 429 throttled, 401 bad token, 402 out of credit,
+ * 503 system down, 500 system error, 400 for a bad request.
  */
 export const errorHandlers = {
-	// Body status 32 is the documented throttle on every family (1 on the
-	// verify family). Mocean does not document a Retry-After header, so the
-	// exponential backoff below carries the wait.
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => asMoceanError(error)?.isThrottled === true,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			headersRetryAfterMs: asMoceanError(error)?.retryAfter ?? undefined,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		match: (error: Error) => statusOf(error) === 429,
+		// An HTTP 429 was already retried by corsair/http. A throttle in a 2xx
+		// body never reached core's retry; Mocean refused the request before
+		// running it, so any method can be sent again.
+		handler: async (error: Error) =>
+			isBodyStatusError(error)
+				? { maxRetries: 3, retryStrategy: 'exponential_backoff' as const }
+				: { maxRetries: 0 },
 	},
-	// HTTP 401, body status 1 (2 on the verify family): a bad or expired
-	// token. Never retried.
 	AUTH_ERROR: {
-		match: (error: Error) => asMoceanError(error)?.isAuthError === true,
+		match: (error: Error) => statusOf(error) === 401 || statusOf(error) === 403,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// Body status 2 (18 on verify): the account cannot pay for at least one
-	// destination. No wait clears it, so it never retries.
-	INSUFFICIENT_BALANCE_ERROR: {
-		match: (error: Error) => asMoceanError(error)?.isBalanceError === true,
-		handler: async () => ({ maxRetries: 0 }),
-	},
-	// 40 maintenance and 45 "system error, please try again" mean the gateway
-	// refused the request before running it, so any method can be sent again;
-	// the same holds for the verify family's 3 and 21.
-	RETRYABLE_SERVER_SIDE: {
-		match: (error: Error) =>
-			asMoceanError(error)?.isRetryableServerSide === true,
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
-	},
-	// Every other body status is a request problem (bad number, invalid
-	// message id, wrong code, ...): the same input fails the same way.
+	// Out of credit, a bad number, a wrong code: the same input fails again.
 	VALIDATION_ERROR: {
-		match: (error: Error) =>
-			error.name === 'ZodError' ||
-			(asMoceanError(error)?.bodyStatus !== undefined &&
-				asMoceanError(error)?.status === undefined),
+		match: (error: Error) => {
+			const status = statusOf(error);
+			return (
+				error.name === 'ZodError' ||
+				(status !== undefined && status >= 400 && status < 500)
+			);
+		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
-	// A 5xx is retried only for reads: a send that reached the gateway may
-	// have charged the account even if the answer was lost.
 	SERVER_ERROR: {
-		match: (error: Error) =>
-			asMoceanError(error)?.replayable === true &&
-			(asMoceanError(error)?.status ?? 0) >= 500,
+		match: (error: Error, context: ErrorContext) =>
+			(statusOf(error) ?? 0) >= 500 && isRead(context),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},
-	// A transport failure (reset, DNS, abort) never reached Mocean, so a read
-	// can be replayed without a status to gate on.
-	TRANSPORT_ERROR: {
-		match: (error: Error) =>
-			asMoceanError(error)?.status === undefined &&
-			asMoceanError(error)?.bodyStatus === undefined &&
-			asMoceanError(error)?.replayable === true,
+	NETWORK_ERROR: {
+		match: (error: Error, context: ErrorContext) =>
+			!(error instanceof ApiError) &&
+			error.name !== 'ZodError' &&
+			isRead(context),
 		handler: async () => ({
 			maxRetries: 2,
 			retryStrategy: 'exponential_backoff' as const,
