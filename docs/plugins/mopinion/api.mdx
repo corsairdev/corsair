@@ -31,9 +31,37 @@ await corsair.mopinion.api.account.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `name` | `string \| null` | No | — |
+| `package` | `string \| null` | No | — |
+| `enddate` | `string \| null` | No | — |
+| `number_users` | `number \| null` | No | — |
+| `number_charts` | `number \| null` | No | — |
+| `number_forms` | `number \| null` | No | — |
+| `number_reports` | `number \| null` | No | — |
+| `reports` | `object[] \| null` | No | — |
 | `_meta` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="reports full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  description?: string | null,
+  language?: string | null,
+  created?: string | null,
+  dataSets?: {
+    id?: number | null,
+    name?: string | null,
+    report_id?: number | null,
+    description?: string | null,
+    data_source?: string | null
+  }[] | null
+}[] | null
+```
+</Accordion>
+
 <Accordion title="_meta full type">
 
 ```ts
@@ -79,7 +107,7 @@ await corsair.mopinion.api.datasets.feedback({ datasetId: '12345', page: 1, limi
 | `limit` | `number` | No | Defaults to 10, at most 1000. |
 | `sort` | `created \| datetime` | No | — |
 | `order` | `asc \| desc` | No | Defaults to desc. |
-| `datasetId` | `string` | Yes | — |
+| `datasetId` | `number \| string` | Yes | — |
 | `filters` | `Record<string, string \| number>` | No | — |
 
 `GET /datasets/{datasetId}/feedback` with page, limit (max 1000), sort
@@ -92,9 +120,28 @@ arrives in `_meta` (has_more, next, previous, count, total).
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
 | `_meta` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  report_id?: number | null,
+  dataset_id?: number | null,
+  fields?: {
+    key?: string | null,
+    label?: string | null,
+    value: any
+  }[] | null,
+  tags?: string[] | null
+}[] | null
+```
+</Accordion>
+
 <Accordion title="_meta full type">
 
 ```ts
@@ -134,8 +181,11 @@ await corsair.mopinion.api.datasets.feedbackItem({ datasetId: '12345', feedbackI
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `datasetId` | `string` | Yes | — |
-| `feedbackId` | `string` | Yes | — |
+| `datasetId` | `number \| string` | Yes | — |
+| `feedbackId` | `number \| string` | Yes | — |
+
+`GET /datasets/{datasetId}/feedback/{feedbackId}`. Mopinion answers with
+the same `{ data: [item], _meta }` envelope as the list.
 
 
 
@@ -143,9 +193,28 @@ await corsair.mopinion.api.datasets.feedbackItem({ datasetId: '12345', feedbackI
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
 | `_meta` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  report_id?: number | null,
+  dataset_id?: number | null,
+  fields?: {
+    key?: string | null,
+    label?: string | null,
+    value: any
+  }[] | null,
+  tags?: string[] | null
+}[] | null
+```
+</Accordion>
+
 <Accordion title="_meta full type">
 
 ```ts
@@ -185,7 +254,7 @@ await corsair.mopinion.api.datasets.fields({ datasetId: '12345' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `datasetId` | `string` | Yes | — |
+| `datasetId` | `number \| string` | Yes | — |
 
 
 
@@ -193,9 +262,24 @@ await corsair.mopinion.api.datasets.fields({ datasetId: '12345' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
 | `_meta` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  key?: string | null,
+  label?: string | null,
+  short_label?: string | null,
+  type?: string | null,
+  report_id?: number | null,
+  dataset_id?: number | null
+}[] | null
+```
+</Accordion>
+
 <Accordion title="_meta full type">
 
 ```ts
@@ -228,14 +312,14 @@ Read basic info on one feedback dataset
 **Risk:** `read`
 
 ```ts
-await corsair.mopinion.api.datasets.get({ id: '12345' });
+await corsair.mopinion.api.datasets.get({ datasetId: '12345' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `datasetId` | `string` | Yes | — |
+| `datasetId` | `number \| string` | Yes | — |
 
 
 
@@ -243,6 +327,11 @@ await corsair.mopinion.api.datasets.get({ id: '12345' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `report_id` | `number \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `data_source` | `string \| null` | No | — |
 | `_meta` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -280,14 +369,14 @@ Read one deployment
 **Risk:** `read`
 
 ```ts
-await corsair.mopinion.api.deployments.get({ id: '5544' });
+await corsair.mopinion.api.deployments.get({ deploymentId: 'a1B2c3D4e5f6' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `deploymentId` | `string` | Yes | — |
+| `deploymentId` | `number \| string` | Yes | — |
 
 
 
@@ -295,6 +384,16 @@ await corsair.mopinion.api.deployments.get({ id: '5544' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `id` | `string \| null` | No | — |
+| `key` | `string \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `domain` | `string \| null` | No | — |
+| `org_id` | `number \| null` | No | — |
+| `datetime` | `string \| null` | No | — |
+| `published` | `boolean \| null` | No | — |
+| `revision` | `number \| null` | No | — |
+| `type` | `string \| null` | No | — |
+| `rules` | `any[] \| null` | No | — |
 | `_meta` | `object \| null` | No | — |
 
 <AccordionGroup>
@@ -325,26 +424,52 @@ await corsair.mopinion.api.deployments.get({ id: '5544' });
 
 `deployments.list`
 
-List the deployments (feedback collection forms)
+List the deployments (the containers that publish feedback forms on a website or app), one page at a time
 
 **Risk:** `read`
 
 ```ts
-await corsair.mopinion.api.deployments.list({});
+await corsair.mopinion.api.deployments.list({ page: 1, limit: 20 });
 ```
 
-**Input:** _empty object_
+**Input**
 
-`GET /deployments`. Deployments are the feedback collection forms.
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | Defaults to 1. |
+| `limit` | `number` | No | Defaults to 10, at most 1000. |
+
+`GET /deployments` with page and limit. A deployment is the container
+that publishes feedback forms on a website or in an app.
+
 
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
 | `_meta` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string | null,
+  key?: string | null,
+  name?: string | null,
+  domain?: string | null,
+  org_id?: number | null,
+  datetime?: string | null,
+  published?: boolean | null,
+  revision?: number | null,
+  type?: string | null,
+  rules?: any[] | null
+}[] | null
+```
+</Accordion>
+
 <Accordion title="_meta full type">
 
 ```ts
@@ -390,7 +515,7 @@ await corsair.mopinion.api.reports.feedback({ reportId: '42', page: 1, limit: 10
 | `limit` | `number` | No | Defaults to 10, at most 1000. |
 | `sort` | `created \| datetime` | No | — |
 | `order` | `asc \| desc` | No | Defaults to desc. |
-| `reportId` | `string` | Yes | — |
+| `reportId` | `number \| string` | Yes | — |
 | `filters` | `Record<string, string \| number>` | No | — |
 
 `GET /reports/{reportId}/feedback`. Same paging and filtering behaviour
@@ -402,9 +527,28 @@ as the dataset feedback list.
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
 | `_meta` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  report_id?: number | null,
+  dataset_id?: number | null,
+  fields?: {
+    key?: string | null,
+    label?: string | null,
+    value: any
+  }[] | null,
+  tags?: string[] | null
+}[] | null
+```
+</Accordion>
+
 <Accordion title="_meta full type">
 
 ```ts
@@ -444,8 +588,8 @@ await corsair.mopinion.api.reports.feedbackItem({ reportId: '42', feedbackId: '9
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `reportId` | `string` | Yes | — |
-| `feedbackId` | `string` | Yes | — |
+| `reportId` | `number \| string` | Yes | — |
+| `feedbackId` | `number \| string` | Yes | — |
 
 
 
@@ -453,9 +597,28 @@ await corsair.mopinion.api.reports.feedbackItem({ reportId: '42', feedbackId: '9
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
 | `_meta` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: number | null,
+  created?: string | null,
+  report_id?: number | null,
+  dataset_id?: number | null,
+  fields?: {
+    key?: string | null,
+    label?: string | null,
+    value: any
+  }[] | null,
+  tags?: string[] | null
+}[] | null
+```
+</Accordion>
+
 <Accordion title="_meta full type">
 
 ```ts
@@ -495,7 +658,7 @@ await corsair.mopinion.api.reports.fields({ reportId: '42' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `reportId` | `string` | Yes | — |
+| `reportId` | `number \| string` | Yes | — |
 
 
 
@@ -503,9 +666,24 @@ await corsair.mopinion.api.reports.fields({ reportId: '42' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `data` | `object[] \| null` | No | — |
 | `_meta` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  key?: string | null,
+  label?: string | null,
+  short_label?: string | null,
+  type?: string | null,
+  report_id?: number | null,
+  dataset_id?: number | null
+}[] | null
+```
+</Accordion>
+
 <Accordion title="_meta full type">
 
 ```ts
@@ -538,14 +716,14 @@ Read basic info on one report
 **Risk:** `read`
 
 ```ts
-await corsair.mopinion.api.reports.get({ id: '42' });
+await corsair.mopinion.api.reports.get({ reportId: '42' });
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `reportId` | `string` | Yes | — |
+| `reportId` | `number \| string` | Yes | — |
 
 
 
@@ -553,9 +731,28 @@ await corsair.mopinion.api.reports.get({ id: '42' });
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
+| `id` | `number \| null` | No | — |
+| `name` | `string \| null` | No | — |
+| `description` | `string \| null` | No | — |
+| `language` | `string \| null` | No | — |
+| `created` | `string \| null` | No | — |
+| `dataSets` | `object[] \| null` | No | — |
 | `_meta` | `object \| null` | No | — |
 
 <AccordionGroup>
+<Accordion title="dataSets full type">
+
+```ts
+{
+  id?: number | null,
+  name?: string | null,
+  report_id?: number | null,
+  description?: string | null,
+  data_source?: string | null
+}[] | null
+```
+</Accordion>
+
 <Accordion title="_meta full type">
 
 ```ts
