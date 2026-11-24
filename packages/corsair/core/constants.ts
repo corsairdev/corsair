@@ -458,6 +458,7 @@ export const BaseProviders = [
 	'mixmax',
 	'mixpanel',
 	'mocean',
+	'moco',
 	'modelry',
 	'monday',
 	'mondaymcp',
@@ -1245,6 +1246,7 @@ export const ProviderDisplayNames = {
 	mixmax: 'Mixmax',
 	mixpanel: 'Mixpanel',
 	mocean: 'Mocean',
+	moco: 'Moco',
 	modelry: 'Modelry',
 	monday: 'Monday',
 	mondaymcp: 'Monday MCP',
@@ -2039,6 +2041,7 @@ export type AllProviders =
 	| 'mixmax'
 	| 'mixpanel'
 	| 'mocean'
+	| 'moco'
 	| 'modelry'
 	| 'monday'
 	| 'mondaymcp'
