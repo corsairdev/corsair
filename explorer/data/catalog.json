@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-11-23T19:33:33.807Z",
-  "corsairVersion": "0.2.29",
+  "generatedAt": "2026-11-24T06:41:48.374Z",
+  "corsairVersion": "0.2.31",
   "catalogVersion": 2,
   "plugins": [
     {
@@ -1832,7 +1832,7 @@
       ],
       "defaultAuthType": "oauth_2",
       "counts": {
-        "api": 39,
+        "api": 62,
         "webhooks": 0,
         "db": 4
       }
@@ -40028,236 +40028,374 @@
     {
       "pluginId": "canva",
       "kind": "api",
+      "shortPath": "analytics.get",
+      "haystack": "analytics.get canva.api.analytics.get get a design's total views, unique viewers and view time (canva enterprise, preview) read"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "analytics.listLinks",
+      "haystack": "analytics.listlinks canva.api.analytics.listlinks list a design's trackable links and their views (canva enterprise, preview) read"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "analytics.listPageViews",
+      "haystack": "analytics.listpageviews canva.api.analytics.listpageviews list view time per page of a design (canva enterprise, preview) read"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "analytics.listViewers",
+      "haystack": "analytics.listviewers canva.api.analytics.listviewers list who viewed a design, most recent first (canva enterprise, preview) read"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "analytics.listViewsOverTime",
+      "haystack": "analytics.listviewsovertime canva.api.analytics.listviewsovertime list a design's view counts per time bucket (canva enterprise, preview) read"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "apps.getJwks",
+      "haystack": "apps.getjwks canva.api.apps.getjwks get a canva app's public keys for verifying the jwts it sends to its backend read"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
       "shortPath": "assets.delete",
-      "haystack": "assets.delete canva.api.assets.delete delete an asset destructive"
+      "haystack": "assets.delete canva.api.assets.delete move an asset to the trash (designs that use it keep it) destructive"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "assets.get",
-      "haystack": "assets.get canva.api.assets.get get metadata for an asset read"
+      "haystack": "assets.get canva.api.assets.get get an image or video asset in the content library read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "assets.update",
-      "haystack": "assets.update canva.api.assets.update update an asset name or tags write"
+      "haystack": "assets.update canva.api.assets.update rename an asset or replace its tags write"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "assetUploads.create",
-      "haystack": "assetuploads.create canva.api.assetuploads.create start a job to upload an asset from binary content write"
+      "haystack": "assetuploads.create canva.api.assetuploads.create start uploading a file to the user's content library write"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "assetUploads.createFromUrl",
-      "haystack": "assetuploads.createfromurl canva.api.assetuploads.createfromurl start a job to upload an asset from a url write"
+      "haystack": "assetuploads.createfromurl canva.api.assetuploads.createfromurl start uploading a file from a public url to the user's content library write"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "assetUploads.get",
-      "haystack": "assetuploads.get canva.api.assetuploads.get get the status of an asset upload job read"
+      "haystack": "assetuploads.get canva.api.assetuploads.get get an asset upload job read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "assetUploads.getFromUrl",
-      "haystack": "assetuploads.getfromurl canva.api.assetuploads.getfromurl get the status of a url asset upload job read"
+      "haystack": "assetuploads.getfromurl canva.api.assetuploads.getfromurl get a url asset upload job read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "autofills.create",
-      "haystack": "autofills.create canva.api.autofills.create start a job to autofill a brand template with data write"
+      "haystack": "autofills.create canva.api.autofills.create start filling a brand template or design with text, images and chart data, as a new design or in place (canva pro, teams or enterprise) write"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "autofills.get",
-      "haystack": "autofills.get canva.api.autofills.get get the status of a design autofill job read"
+      "haystack": "autofills.get canva.api.autofills.get get a design autofill job read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "brandTemplates.get",
-      "haystack": "brandtemplates.get canva.api.brandtemplates.get get metadata for a brand template read"
+      "haystack": "brandtemplates.get canva.api.brandtemplates.get get a brand template read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "brandTemplates.getDataset",
-      "haystack": "brandtemplates.getdataset canva.api.brandtemplates.getdataset get the autofill dataset definition for a brand template read"
+      "haystack": "brandtemplates.getdataset canva.api.brandtemplates.getdataset get a brand template's autofill fields and the kind of data each takes read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "brandTemplates.list",
-      "haystack": "brandtemplates.list canva.api.brandtemplates.list list the user's brand templates read"
+      "haystack": "brandtemplates.list canva.api.brandtemplates.list list the user's brand templates (canva pro, teams or enterprise) read"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "brandTemplates.publish",
+      "haystack": "brandtemplates.publish canva.api.brandtemplates.publish publish a design as a brand template (canva preview; needs a brand designer or admin role) write"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "comments.createReply",
-      "haystack": "comments.createreply canva.api.comments.createreply reply to a comment thread on a design write"
+      "haystack": "comments.createreply canva.api.comments.createreply reply to a comment thread (canva preview) write"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "comments.createThread",
-      "haystack": "comments.createthread canva.api.comments.createthread create a new comment thread on a design write"
+      "haystack": "comments.createthread canva.api.comments.createthread start a comment thread on a design (canva preview) write"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "comments.getReply",
-      "haystack": "comments.getreply canva.api.comments.getreply get a reply to a comment thread on a design read"
+      "haystack": "comments.getreply canva.api.comments.getreply get a reply in a comment thread (canva preview) read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "comments.getThread",
-      "haystack": "comments.getthread canva.api.comments.getthread get a comment thread on a design read"
+      "haystack": "comments.getthread canva.api.comments.getthread get a comment or suggestion thread on a design (canva preview) read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "comments.listReplies",
-      "haystack": "comments.listreplies canva.api.comments.listreplies list replies to a comment thread on a design read"
+      "haystack": "comments.listreplies canva.api.comments.listreplies list the replies in a comment thread (canva preview) read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "designs.create",
-      "haystack": "designs.create canva.api.designs.create create a new canva design write"
+      "haystack": "designs.create canva.api.designs.create create a design: a preset or custom size (optionally with an image asset), a copy of a design, or a design from a brand template write"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "designs.get",
-      "haystack": "designs.get canva.api.designs.get get metadata for a design read"
+      "haystack": "designs.get canva.api.designs.get get a design: title, owner, page count, thumbnail, edit and view links read"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "designs.getDataset",
+      "haystack": "designs.getdataset canva.api.designs.getdataset get a design's autofill fields and the kind of data each takes read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "designs.getExportFormats",
-      "haystack": "designs.getexportformats canva.api.designs.getexportformats get the export formats available for a design read"
+      "haystack": "designs.getexportformats canva.api.designs.getexportformats list the file formats a design can be exported to read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "designs.getPages",
-      "haystack": "designs.getpages canva.api.designs.getpages get pages for a design read"
+      "haystack": "designs.getpages canva.api.designs.getpages list the pages of a design with their thumbnails and sizes (canva preview) read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "designs.list",
-      "haystack": "designs.list canva.api.designs.list list designs in the user projects read"
+      "haystack": "designs.list canva.api.designs.list list or search designs in the user's projects read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "exports.create",
-      "haystack": "exports.create canva.api.exports.create start a design export job write"
+      "haystack": "exports.create canva.api.exports.create start exporting a design to pdf, png, jpg, gif, pptx, mp4, html or csv; a multi-page png or jpg export gives one file per page. download links last 24 hours read"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "exports.download",
+      "haystack": "exports.download canva.api.exports.download download one file of a finished export (one page of a png or jpg export) and return it as a file; index picks which read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "exports.get",
-      "haystack": "exports.get canva.api.exports.get get the status of an export job read"
+      "haystack": "exports.get canva.api.exports.get get an export job's status and its download urls read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "folders.create",
-      "haystack": "folders.create canva.api.folders.create create a folder write"
+      "haystack": "folders.create canva.api.folders.create create a folder in projects, uploads or another folder write"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "folders.delete",
-      "haystack": "folders.delete canva.api.folders.delete delete a folder destructive"
+      "haystack": "folders.delete canva.api.folders.delete delete a folder; the user's content in it moves to the trash destructive"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "folders.get",
-      "haystack": "folders.get canva.api.folders.get get metadata for a folder read"
+      "haystack": "folders.get canva.api.folders.get get a folder read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "folders.listItems",
-      "haystack": "folders.listitems canva.api.folders.listitems list items in a folder read"
+      "haystack": "folders.listitems canva.api.folders.listitems list the designs, folders, images and brand templates in a folder read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "folders.moveItem",
-      "haystack": "folders.moveitem canva.api.folders.moveitem move an item to another folder write"
+      "haystack": "folders.moveitem canva.api.folders.moveitem move a design, folder or image to another folder write"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "folders.update",
-      "haystack": "folders.update canva.api.folders.update update a folder name write"
+      "haystack": "folders.update canva.api.folders.update rename a folder write"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "generations.create",
+      "haystack": "generations.create canva.api.generations.create start generating a presentation or doc from a text brief and optional outline (canva preview) write"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "generations.get",
+      "haystack": "generations.get canva.api.generations.get get a design generation job read"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "imageGenerations.create",
+      "haystack": "imagegenerations.create canva.api.imagegenerations.create start generating an image from a prompt, optionally saved to uploads (canva preview; uses canva ai quota) write"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "imageGenerations.get",
+      "haystack": "imagegenerations.get canva.api.imagegenerations.get get an image generation job and its download url read"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "imageTransformations.create",
+      "haystack": "imagetransformations.create canva.api.imagetransformations.create start removing the background of an image asset, saved as a new asset (canva preview) write"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "imageTransformations.get",
+      "haystack": "imagetransformations.get canva.api.imagetransformations.get get an image transformation job read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "imports.create",
-      "haystack": "imports.create canva.api.imports.create start a job to import a design from binary content write"
+      "haystack": "imports.create canva.api.imports.create start importing a file (pdf, powerpoint, keynote, word and more) as a new canva design write"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "imports.createFromImage",
+      "haystack": "imports.createfromimage canva.api.imports.createfromimage start turning an image asset into an editable design with magic layers (canva preview) write"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "imports.createFromUrl",
-      "haystack": "imports.createfromurl canva.api.imports.createfromurl start a job to import a design from a url write"
+      "haystack": "imports.createfromurl canva.api.imports.createfromurl start importing a file from a public url as a new canva design write"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "imports.get",
-      "haystack": "imports.get canva.api.imports.get get the status of a design import job read"
+      "haystack": "imports.get canva.api.imports.get get a design import job read"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "imports.getFromImage",
+      "haystack": "imports.getfromimage canva.api.imports.getfromimage get an image-to-design import job read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "imports.getFromUrl",
-      "haystack": "imports.getfromurl canva.api.imports.getfromurl get the status of a url design import job read"
+      "haystack": "imports.getfromurl canva.api.imports.getfromurl get a url design import job read"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "keys.list",
+      "haystack": "keys.list canva.api.keys.list get the public keys that verify canva webhook signatures (preview) read"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "merges.create",
+      "haystack": "merges.create canva.api.merges.create start inserting, moving or deleting pages: build a new design from other designs or change one in place (canva preview) write"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "merges.get",
+      "haystack": "merges.get canva.api.merges.get get a design merge job read"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "printPartner.createDesign",
+      "haystack": "printpartner.createdesign canva.api.printpartner.createdesign create a design for a print product (canva print partner apps only, preview) write"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "printPartner.createExport",
+      "haystack": "printpartner.createexport canva.api.printpartner.createexport start a print-ready export (canva print partner apps only, preview) read"
+    },
+    {
+      "pluginId": "canva",
+      "kind": "api",
+      "shortPath": "printPartner.getDesign",
+      "haystack": "printpartner.getdesign canva.api.printpartner.getdesign get a design with print proofing settings (canva print partner apps only, preview) read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "resizes.create",
-      "haystack": "resizes.create canva.api.resizes.create start a job to resize a design write"
+      "haystack": "resizes.create canva.api.resizes.create start making a resized copy of a design (canva pro; a few free trial uses) write"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "resizes.get",
-      "haystack": "resizes.get canva.api.resizes.get get the status of a design resize job read"
+      "haystack": "resizes.get canva.api.resizes.get get a design resize job read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "users.getCapabilities",
-      "haystack": "users.getcapabilities canva.api.users.getcapabilities get the authenticated user's capabilities read"
+      "haystack": "users.getcapabilities canva.api.users.getcapabilities list what the user's canva plan allows through the api (autofill, brand templates, resize, design and image generation, background removal, analytics) read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "users.getMe",
-      "haystack": "users.getme canva.api.users.getme get the authenticated user id and team id read"
+      "haystack": "users.getme canva.api.users.getme get the user id and team id of the connected canva account read"
     },
     {
       "pluginId": "canva",
       "kind": "api",
       "shortPath": "users.getProfile",
-      "haystack": "users.getprofile canva.api.users.getprofile get the authenticated user profile read"
+      "haystack": "users.getprofile canva.api.users.getprofile get the connected user's display name read"
     },
     {
       "pluginId": "canvas",
