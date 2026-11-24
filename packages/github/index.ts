@@ -1619,7 +1619,7 @@ const githubEndpointMeta = {
 	'issues.list': {
 		riskLevel: 'read',
 		description:
-			'List open issues in one repo unless state is set. Pull requests come back too, marked by a pullRequest key. For issues across repos or by person, use search.issues.',
+			'List open issues in one repo unless state is set. Pull requests come back too, marked by a pullRequest key.',
 	},
 	'issues.get': { riskLevel: 'read', description: 'Get a specific issue' },
 	'issues.create': { riskLevel: 'write', description: 'Create a new issue' },
@@ -1651,7 +1651,7 @@ const githubEndpointMeta = {
 	'repositories.list': {
 		riskLevel: 'read',
 		description:
-			"With no owner: repos the authenticated user owns, collaborates on or reaches through an org, private included. With owner: that account's public repos only. For other repos use search.repositories.",
+			"No owner: repos you own, collaborate on or reach through an org, private included. With owner: that account's public repos only. Other repos: search.repositories.",
 	},
 	'repositories.get': {
 		riskLevel: 'read',
@@ -1792,7 +1792,7 @@ const githubEndpointMeta = {
 	'users.list': {
 		riskLevel: 'read',
 		description:
-			'Pages through every account on GitHub in signup order by since, a user id. Not a way to find a person: use search.users or users.get.',
+			'Every GitHub account in id order, paged by since (a user id). To find a person use search.users or users.get.',
 	},
 	'users.get': {
 		riskLevel: 'read',

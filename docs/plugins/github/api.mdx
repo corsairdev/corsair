@@ -1781,7 +1781,7 @@ await corsair.github.api.issues.get({});
 
 `issues.list`
 
-List open issues in one repo unless state is set. Pull requests come back too, marked by a pullRequest key. For issues across repos or by person, use search.issues.
+List open issues in one repo unless state is set. Pull requests come back too, marked by a pullRequest key.
 
 **Risk:** `read`
 
@@ -3562,7 +3562,7 @@ await corsair.github.api.repositories.getContent({});
 
 `repositories.list`
 
-With no owner: repos the authenticated user owns, collaborates on or reaches through an org, private included. With owner: that account's public repos only. For other repos use search.repositories.
+No owner: repos you own, collaborate on or reach through an org, private included. With owner: that account's public repos only. Other repos: search.repositories.
 
 **Risk:** `read`
 
@@ -3983,7 +3983,7 @@ await corsair.github.api.search.issues({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `q` | `string` | Yes | Keywords then qualifiers: is:issue or is:pr (GitHub App user tokens get a 422 without one), repo:owner/name, author:, assignee:, label:, state:, updated:&gt;=2025-01-31. Max 256 characters and five AND/OR/NOT operators. 30 searches per minute. |
+| `q` | `string` | Yes | Keywords then qualifiers: is:issue or is:pr (GitHub App user tokens get a 422 without one), repo:owner/name, author:, assignee:, label:, state:, updated:&gt;=2025-01-31. Max 256 characters excluding operators and qualifiers, five AND/OR/NOT at most. |
 | `sort` | `comments \| reactions \| reactions-+1 \| reactions--1 \| reactions-smile \| reactions-thinking_face \| reactions-heart \| reactions-tada \| interactions \| created \| updated` | No | — |
 | `order` | `asc \| desc` | No | — |
 | `perPage` | `number` | No | — |
@@ -4635,7 +4635,7 @@ await corsair.github.api.users.getHovercard({});
 
 `users.list`
 
-Pages through every account on GitHub in signup order by since, a user id. Not a way to find a person: use search.users or users.get.
+Every GitHub account in id order, paged by since (a user id). To find a person use search.users or users.get.
 
 **Risk:** `read`
 

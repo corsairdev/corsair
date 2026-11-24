@@ -482,7 +482,7 @@ const SearchIssuesInputSchema = z.object({
 	q: z
 		.string()
 		.describe(
-			'Keywords then qualifiers: is:issue or is:pr (GitHub App user tokens get a 422 without one), repo:owner/name, author:, assignee:, label:, state:, updated:>=2025-01-31. Max 256 characters and five AND/OR/NOT operators. 30 searches per minute.',
+			'Keywords then qualifiers: is:issue or is:pr (GitHub App user tokens get a 422 without one), repo:owner/name, author:, assignee:, label:, state:, updated:>=2025-01-31. Max 256 characters excluding operators and qualifiers, five AND/OR/NOT at most.',
 		),
 	sort: z
 		.enum([

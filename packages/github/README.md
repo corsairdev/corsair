@@ -28,11 +28,12 @@ pnpm add @corsair-dev/github
 | `events.listPublicForUser` | `github.api.events.listPublicForUser` | `read` | List public events for a user |
 | `events.listPublicReceivedForUser` | `github.api.events.listPublicReceivedForUser` | `read` | List public events received by a user |
 | `events.listReceivedForUser` | `github.api.events.listReceivedForUser` | `read` | List events received by a user |
+| `forks.create` | `github.api.forks.create` | `write` | Create a fork of a repository |
 | `forks.list` | `github.api.forks.list` | `read` | List forks of a repository |
 | `issues.create` | `github.api.issues.create` | `write` | Create a new issue |
 | `issues.createComment` | `github.api.issues.createComment` | `write` | Post a comment on an issue |
 | `issues.get` | `github.api.issues.get` | `read` | Get a specific issue |
-| `issues.list` | `github.api.issues.list` | `read` | List open issues in one repo unless state is set. Pull requests come back too, marked by a pullRequest key. For issues across repos or by person, use search.issues. |
+| `issues.list` | `github.api.issues.list` | `read` | List open issues in one repo unless state is set. Pull requests come back too, marked by a pullRequest key. |
 | `issues.update` | `github.api.issues.update` | `write` | Update an existing issue |
 | `pullRequests.createReview` | `github.api.pullRequests.createReview` | `write` | Submit a pull request review |
 | `pullRequests.get` | `github.api.pullRequests.get` | `read` | Get a specific pull request |
@@ -45,7 +46,7 @@ pnpm add @corsair-dev/github
 | `repositories.checkStarred` | `github.api.repositories.checkStarred` | `read` | Check whether the authenticated user has starred a repository |
 | `repositories.get` | `github.api.repositories.get` | `read` | Get a specific repository |
 | `repositories.getContent` | `github.api.repositories.getContent` | `read` | A file returns base64-encoded content; a directory returns an array of entries without content, at most 1,000. |
-| `repositories.list` | `github.api.repositories.list` | `read` | With no owner: repos the authenticated user owns, collaborates on or reaches through an org, private included. With owner: that account's public repos only. For other repos use search.repositories. |
+| `repositories.list` | `github.api.repositories.list` | `read` | No owner: repos you own, collaborate on or reach through an org, private included. With owner: that account's public repos only. Other repos: search.repositories. |
 | `repositories.listBranches` | `github.api.repositories.listBranches` | `read` | List branches in a repository |
 | `repositories.listCommits` | `github.api.repositories.listCommits` | `read` | List commits in a repository |
 | `repositories.listStargazers` | `github.api.repositories.listStargazers` | `read` | List users who have starred a repository |
@@ -59,7 +60,7 @@ pnpm add @corsair-dev/github
 | `users.getAuthenticated` | `github.api.users.getAuthenticated` | `read` | Get the authenticated user |
 | `users.getById` | `github.api.users.getById` | `read` | Get a user by account ID |
 | `users.getHovercard` | `github.api.users.getHovercard` | `read` | Get contextual hovercard information for a user |
-| `users.list` | `github.api.users.list` | `read` | Pages through every account on GitHub in signup order by since, a user id. Not a way to find a person: use search.users or users.get. |
+| `users.list` | `github.api.users.list` | `read` | Every GitHub account in id order, paged by since (a user id). To find a person use search.users or users.get. |
 | `users.update` | `github.api.users.update` | `write` | Update the authenticated user profile |
 | `workflows.get` | `github.api.workflows.get` | `read` | Get a specific workflow |
 | `workflows.list` | `github.api.workflows.list` | `read` | List workflows in a repository |
