@@ -6,7 +6,7 @@
   "authTypes": ["oauth_2"],
   "defaultAuthType": "oauth_2",
   "counts": {
-    "api": 23,
+    "api": 24,
     "webhooks": 1,
     "db": 4
   },
@@ -703,6 +703,86 @@
             "optional": true,
             "type": "string",
             "description": "Full RFC 2822 message in base64url encoding (when format=raw). Not plain text — decode base64url before reading headers/body."
+          }
+        ]
+      }
+    },
+    {
+      "path": "gmail.api.messages.getAttachment",
+      "shortPath": "messages.getAttachment",
+      "description": "Fetch an attachment of a message by partId (as shown in search results) or attachmentId. Returns the file like Drive files.download: inline when small, otherwise saved by the host and returned as fileId.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "userId",
+            "optional": true,
+            "type": "string"
+          },
+          {
+            "key": "messageId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "partId",
+            "optional": true,
+            "type": "string",
+            "description": "Part id of the attachment, as shown in search results (message <id>, part <partId>). Give partId or attachmentId."
+          },
+          {
+            "key": "attachmentId",
+            "optional": true,
+            "type": "string",
+            "description": "Gmail attachmentId, if already known. Give partId or attachmentId; with partId, the part's own attachment is read."
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "contentBase64",
+            "optional": true,
+            "type": "string",
+            "description": "The file, base64-encoded. Missing when the file came back as text or contentOmitted is set."
+          },
+          {
+            "key": "text",
+            "optional": true,
+            "type": "string",
+            "description": "The file as text, in place of contentBase64, when it is a text file (CSV, JSON, Markdown, XML and the like) in UTF-8."
+          },
+          {
+            "key": "contentType",
+            "optional": false,
+            "type": "string",
+            "description": "Media type of the file, for example application/pdf."
+          },
+          {
+            "key": "byteLength",
+            "optional": false,
+            "type": "number",
+            "description": "Size of the file in bytes."
+          },
+          {
+            "key": "filename",
+            "optional": true,
+            "type": "string",
+            "description": "The file name, when known."
+          },
+          {
+            "key": "contentOmitted",
+            "optional": true,
+            "type": "not_requested | over_limit",
+            "description": "Set when the content was left out: the caller did not ask for it, or the file was over the limit."
+          },
+          {
+            "key": "fileId",
+            "optional": true,
+            "type": "string",
+            "description": "Where the host saved the file. Over the limit it comes in place of the content; a host that keeps every file sets it beside the content too. On Corsair it is a Files id (fil_…): pass it to another app wherever that app takes a file URL, or read a text file or PDF with files.read_text."
           }
         ]
       }
