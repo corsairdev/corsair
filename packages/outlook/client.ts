@@ -35,9 +35,10 @@ export async function makeOutlookRequest<T>(
 		// Graph API request bodies vary widely per endpoint; typed at call sites via the input schemas
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		headers?: Record<string, string>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, headers } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: OUTLOOK_API_BASE,
@@ -58,6 +59,7 @@ export async function makeOutlookRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
+		headers,
 		query: method === 'GET' ? query : undefined,
 	};
 
