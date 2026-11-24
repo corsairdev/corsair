@@ -19,6 +19,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			changeFrequency: 'weekly',
 			priority: 1.0,
 		},
+		// The MCP gateway pages, moved here from lug.dev.
+		...['/pricing', '/mcp-gateway', '/connect', '/skills', '/compare'].map(
+			(path) => ({
+				url: `https://corsair.dev${path}`,
+				changeFrequency: 'weekly' as const,
+				priority: 0.9,
+			}),
+		),
 		{
 			url: 'https://corsair.dev/blog',
 			changeFrequency: 'weekly',

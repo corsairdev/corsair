@@ -68,6 +68,17 @@ const nextConfig: NextConfig = {
 	// catch-all — first match wins.
 	async rewrites() {
 		return [
+			// The agent skills index (`npx skills add https://corsair.dev`) is served by
+			// the gateway app on lug.dev, so there is one copy of it. lug.dev keeps
+			// serving /.well-known after its pages move here.
+			{
+				source: '/.well-known/skills/:path*',
+				destination: 'https://lug.dev/.well-known/skills/:path*',
+			},
+			{
+				source: '/.well-known/agent-skills/:path*',
+				destination: 'https://lug.dev/.well-known/agent-skills/:path*',
+			},
 			{
 				source: '/ingest/static/:path*',
 				destination: 'https://us-assets.i.posthog.com/static/:path*',
