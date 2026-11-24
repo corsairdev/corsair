@@ -50,7 +50,7 @@ describeIfKey('mopinion live', () => {
 	// Ids found by walking the account: report -> dataset -> feedback item.
 	let reportId: number | undefined;
 	let datasetId: number | undefined;
-	let feedbackId: number | undefined;
+	let feedbackId: number | string | undefined;
 
 	it('reads the account and its reports', async () => {
 		const { corsair } = client as NonNullable<typeof client>;

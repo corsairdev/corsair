@@ -254,6 +254,23 @@ describe('deployments', () => {
 	});
 });
 
+describe('documented shapes the trial did not return', () => {
+	it('accepts a string feedback id, as the 2.x spec documents', async () => {
+		respond({ data: [{ ...feedbackItem, id: '218463' }], _meta: meta });
+		const result = (await invoke(Datasets.feedback, { datasetId: 1 })) as {
+			data: Array<{ id: unknown }>;
+		};
+		expect(result.data[0]?.id).toBe('218463');
+	});
+
+	it('accepts the deployments list as a bare array, as the 2.x spec documents', async () => {
+		respond([{ key: 'abc', name: 'Web' }]);
+		await expect(invoke(Deployments.list, {})).resolves.toEqual([
+			{ key: 'abc', name: 'Web' },
+		]);
+	});
+});
+
 describe('ids', () => {
 	it('takes numeric ids', async () => {
 		respond({ data: [], _meta: meta });

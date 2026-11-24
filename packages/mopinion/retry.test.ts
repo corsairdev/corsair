@@ -111,7 +111,7 @@ describe('retries through the bound client', () => {
 
 			const result = await corsair.mopinion.api.deployments.list({});
 
-			expect(result.data).toEqual([]);
+			expect(Array.isArray(result) ? result : result.data).toEqual([]);
 			expect(fetchMock).toHaveBeenCalledTimes(2);
 		} finally {
 			testDb.cleanup();

@@ -95,7 +95,8 @@ const FeedbackValueSchema = z
 
 const FeedbackSchema = z
 	.object({
-		id: z.number().nullish(),
+		// A number on the live 2.5 API; the 2.x spec documents a string ("218463").
+		id: z.union([z.number(), z.string()]).nullish(),
 		created: z.string().nullish(),
 		report_id: z.number().nullish(),
 		dataset_id: z.number().nullish(),
@@ -130,7 +131,13 @@ const ReportResponseSchema = ReportSchema.extend(ResponseMeta);
 const DeploymentResponseSchema = DeploymentSchema.extend(ResponseMeta);
 const FieldListSchema = listOf(FieldSchema);
 const FeedbackListSchema = listOf(FeedbackSchema);
-const DeploymentListSchema = listOf(DeploymentSchema);
+// GET /deployments answered 500 on every version for our trial account, so
+// its live shape is unconfirmed: the 2.x spec documents a bare array, the
+// other lists come back as `{ data, _meta }`. Both are accepted.
+const DeploymentListSchema = z.union([
+	listOf(DeploymentSchema),
+	z.array(DeploymentSchema),
+]);
 
 export type MopinionAccount = z.infer<typeof AccountSchema>;
 export type MopinionDataset = z.infer<typeof DatasetResponseSchema>;
