@@ -1,0 +1,184 @@
+---
+title: "Moosend plugin"
+sidebarTitle: "Overview"
+description: "Email marketing with Moosend - mailing lists, custom fields, subscribers and tags, segments, draft and sent campaigns with their reports, senders, and transactional email."
+---
+
+Use **Moosend** through Corsair: one client, typed API calls.
+
+Create an API key in Moosend under More → Settings → API key and store it
+on the account. Every call sends the key as the `apikey` query parameter;
+errors never carry it, the request body or the email addresses Moosend
+quotes back.
+
+- **Errors arrive as HTTP 200.** Moosend wraps every answer in
+  `{Code, Error, Context}` and signals failure with a nonzero Code. The
+  plugin throws core's `ApiError` with the HTTP status the code means:
+  429 for `RATE_LIMITING` (retried with backoff), 401 for
+  `API_KEY_NOT_VALID`, 404 for any `*_NOT_FOUND`, 400 for validation
+  errors, 500 for an internal error. The original Code and Error are on
+  `error.body`.
+- **Outputs keep Moosend's field names** (`ID`, `Name`, `MailingLists`,
+  `Paging`, ...). Dates come as ASP.NET strings such as
+  `/Date(1795515243966+0000)/`, and most enums as numbers (a subscriber's
+  `SubscribeType` is 1 subscribed, 2 unsubscribed, 3 bounced, 4 removed).
+- **subscribe is an upsert.** It updates the existing subscriber with that
+  email, re-subscribes one who unsubscribed, and clears custom fields left
+  out of the call (so does `subscribers.update`). On a double opt-in list
+  it emails a confirmation unless `hasExternalDoubleOptIn` is true. Both
+  subscribe operations are `destructive` for that reason.
+  `subscribers.subscribeMany` skips invalid addresses and reports them in
+  `notice`.
+- **remove, unsubscribe and delete differ.** `remove` marks the member
+  Removed (it stays visible under that status), `unsubscribe` marks it
+  Unsubscribed, and the `delete` operations erase it. Moosend refuses to
+  remove an address that already unsubscribed.
+- **Segment criteria are addressed by position.** `segments.addCriteria`
+  returns the new criterion's position (1 = first);
+  `segments.updateCriteria` takes that number, not the criterion's `ID`.
+  `segments.update` with `criteria` replaces all of them. To filter on a
+  custom field, set `field` to that field's ID from `lists.get`
+  (`CustomFieldsDefinition[].ID`); the documented `CustomField` +
+  `CustomFieldName` form is rejected by the API.
+- **No campaigns yet.** Moosend answers the campaign list routes with
+  `CAMPAIGN_NOT_FOUND` when the account has none; `campaigns.list` returns
+  an empty list for that answer.
+- **Sending.** `campaigns.send`, `campaigns.sendTest`, `campaigns.schedule`
+  and `transactional.send` email real people and are `destructive`.
+  Creating, updating and cloning campaigns only makes drafts.
+- **Rate limits.** Moosend limits some routes per API key: campaign
+  activity 2 calls a minute, adding subscribers 10 per 10 s, bulk adds 2 per
+  10 s, tag updates 5 per 10 s.
+- Moosend's website tracking API (track.moosend.com) is a separate,
+  site-ID based API and is not part of this plugin.
+
+**What you get:**
+
+- 52 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/moosend better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/moosend better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/moosend better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/moosend better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { moosend } from '@corsair-dev/moosend';
+
+export const corsair = createCorsair({
+	plugins: [
+		moosend(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Moosend API key before the first call: `pnpm corsair setup --plugin=moosend --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+moosend()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'moosend',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the subscribed members of a mailing list**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.moosend.api.subscribers.list({
+	mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3',
+	status: 'Subscribed',
+	page: 1,
+	pageSize: 50,
+});
+```
+
+
+**Create a draft campaign for a mailing list**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.moosend.api.campaigns.create({
+	name: 'November newsletter',
+	subject: 'What\'s new in November',
+	senderEmail: 'news@example.com',
+	htmlContent: '<p>Hello {{recipient:name}}</p>',
+	mailingLists: [{ mailingListId: '15c677cb-e8b2-438f-b338-1dc393caf0f3' }],
+});
+```
+
+
+See the full list on the [API](/plugins/moosend/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/moosend/api">
+    Every `moosend.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

@@ -3831,6 +3831,14 @@
                 ]
               },
               {
+                "group": "Moosend",
+                "pages": [
+                  "plugins/moosend/overview",
+                  "plugins/moosend/api",
+                  "plugins/moosend/database"
+                ]
+              },
+              {
                 "group": "Mopinion",
                 "pages": [
                   "plugins/mopinion/overview",
