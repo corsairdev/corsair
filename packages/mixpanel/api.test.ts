@@ -33,6 +33,15 @@ const organizationId = Number(process.env.MIXPANEL_ORGANIZATION_ID ?? '0');
 const today = new Date().toISOString().slice(0, 10);
 const RUN = `corsair-plugin-test-${Date.now()}`;
 
+// The reason each plan gate gives, so an unrelated error with the same status
+// (a wrong route's 404, a validation 400) still fails.
+const GATE_REASONS: Record<number, RegExp> = {
+	402: /plan_restricted/,
+	401: /authorization failed/i,
+	403: /does not have permissions/i,
+	404: /Not Found/,
+};
+
 type Outcome = { op: string; result: 'pass' | 'gated' | 'fail'; note: string };
 const outcomes: Outcome[] = [];
 
@@ -74,6 +83,7 @@ async function attempt<T>(
 	op: string,
 	fn: () => Promise<T>,
 	gatedStatus?: number,
+	gatedReason?: RegExp,
 ): Promise<T | undefined> {
 	try {
 		const value = await fn();
@@ -83,7 +93,8 @@ async function attempt<T>(
 		if (
 			gatedStatus !== undefined &&
 			error instanceof ApiError &&
-			error.status === gatedStatus
+			error.status === gatedStatus &&
+			(gatedReason ?? GATE_REASONS[gatedStatus] ?? /./).test(error.message)
 		) {
 			outcomes.push({ op, result: 'gated', note: `${error.status}` });
 			return undefined;
@@ -248,6 +259,7 @@ describeIfKey('mixpanel live', () => {
 					distinct_ids: [`${RUN}-known`, `${RUN}-anon`],
 				}),
 			400,
+			/simplified identity management/,
 		);
 	});
 
