@@ -1,22 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeCanvaRequest } from '../client';
 import type { CanvaContext, CanvaEndpoints } from '../index';
-import { toDesignEntity } from './mappers';
+import { loggable, saveDesign } from './mappers';
+import { seg } from './shared';
 import type { CanvaEndpointOutputs } from './types';
 
 async function upsertDesignFromJob(
 	ctx: CanvaContext,
 	job: CanvaEndpointOutputs['resizesGet']['job'],
 ) {
-	if (!job.result?.design || !ctx.db.designs) return;
-	try {
-		await ctx.db.designs.upsertByEntityId(
-			job.result.design.id,
-			toDesignEntity(job.result.design),
-		);
-	} catch (error) {
-		console.warn('Failed to save resized design to database:', error);
-	}
+	await saveDesign(ctx, job.result?.design);
 }
 
 export const create: CanvaEndpoints['resizesCreate'] = async (ctx, input) => {
@@ -37,7 +30,7 @@ export const create: CanvaEndpoints['resizesCreate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.resizes.create',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -45,7 +38,7 @@ export const create: CanvaEndpoints['resizesCreate'] = async (ctx, input) => {
 
 export const get: CanvaEndpoints['resizesGet'] = async (ctx, input) => {
 	const result = await makeCanvaRequest<CanvaEndpointOutputs['resizesGet']>(
-		`v1/resizes/${input.jobId}`,
+		`v1/resizes/${seg(input.jobId)}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
@@ -55,7 +48,7 @@ export const get: CanvaEndpoints['resizesGet'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.resizes.get',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;

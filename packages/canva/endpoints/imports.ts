@@ -1,28 +1,26 @@
 import { logEventFromContext } from 'corsair/core';
-import { decodeBase64ToBytes, encodeUtf8ToBase64 } from '../base64';
+import { encodeUtf8ToBase64 } from '../base64';
 import { makeCanvaRequest } from '../client';
 import type { CanvaContext, CanvaEndpoints } from '../index';
-import { toDesignEntity, withoutBase64 } from './mappers';
-import type { CanvaEndpointOutputs } from './types';
+import { bodyFrom, loggable, saveDesign } from './mappers';
+import { callCanva, seg } from './shared';
+import type { CanvaEndpointOutputs, DesignSummary } from './types';
+import { CanvaEndpointInputSchemas } from './types';
 
 async function upsertDesignsFromJob(
 	ctx: CanvaContext,
 	job: CanvaEndpointOutputs['importsGet']['job'],
 ) {
-	if (!job.result?.designs?.length || !ctx.db.designs) return;
-	try {
-		for (const design of job.result.designs) {
-			await ctx.db.designs.upsertByEntityId(design.id, toDesignEntity(design));
-		}
-	} catch (error) {
-		console.warn('Failed to save imported designs to database:', error);
-	}
+	for (const design of job.result?.designs ?? []) await saveDesign(ctx, design);
+}
+
+async function upsertDesign(ctx: CanvaContext, design?: DesignSummary) {
+	await saveDesign(ctx, design);
 }
 
 export const create: CanvaEndpoints['importsCreate'] = async (ctx, input) => {
-	const binaryBody = new Blob([decodeBase64ToBytes(input.contentBase64)], {
-		type: 'application/octet-stream',
-	});
+	const parsed = CanvaEndpointInputSchemas.importsCreate.parse(input);
+	const binaryBody = await bodyFrom(parsed, parsed.title);
 
 	const result = await makeCanvaRequest<CanvaEndpointOutputs['importsCreate']>(
 		'v1/imports',
@@ -46,7 +44,7 @@ export const create: CanvaEndpoints['importsCreate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.imports.create',
-		withoutBase64(input),
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -54,7 +52,7 @@ export const create: CanvaEndpoints['importsCreate'] = async (ctx, input) => {
 
 export const get: CanvaEndpoints['importsGet'] = async (ctx, input) => {
 	const result = await makeCanvaRequest<CanvaEndpointOutputs['importsGet']>(
-		`v1/imports/${input.jobId}`,
+		`v1/imports/${seg(input.jobId)}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
@@ -64,7 +62,7 @@ export const get: CanvaEndpoints['importsGet'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'canva.imports.get',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -90,7 +88,7 @@ export const createFromUrl: CanvaEndpoints['importsCreateFromUrl'] = async (
 	await logEventFromContext(
 		ctx,
 		'canva.imports.createFromUrl',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
 	return result;
@@ -102,15 +100,52 @@ export const getFromUrl: CanvaEndpoints['importsGetFromUrl'] = async (
 ) => {
 	const result = await makeCanvaRequest<
 		CanvaEndpointOutputs['importsGetFromUrl']
-	>(`v1/url-imports/${input.jobId}`, ctx.key, { method: 'GET' });
+	>(`v1/url-imports/${seg(input.jobId)}`, ctx.key, { method: 'GET' });
 
 	await upsertDesignsFromJob(ctx, result.job);
 
 	await logEventFromContext(
 		ctx,
 		'canva.imports.getFromUrl',
-		{ ...input },
+		loggable(input),
 		'completed',
 	);
+	return result;
+};
+
+export const createFromImage: CanvaEndpoints['importsCreateFromImage'] = async (
+	ctx,
+	input,
+) => {
+	const result = await callCanva<
+		CanvaEndpointOutputs['importsCreateFromImage']
+	>(
+		ctx,
+		'imports.createFromImage',
+		loggable(input),
+		'v1/image-to-design-imports',
+		{
+			method: 'POST',
+			body: {
+				image: { asset_id: input.asset_id },
+				...(input.title !== undefined && { title: input.title }),
+			},
+		},
+	);
+	await upsertDesign(ctx, result.job.result?.design);
+	return result;
+};
+
+export const getFromImage: CanvaEndpoints['importsGetFromImage'] = async (
+	ctx,
+	input,
+) => {
+	const result = await callCanva<CanvaEndpointOutputs['importsGetFromImage']>(
+		ctx,
+		'imports.getFromImage',
+		loggable(input),
+		`v1/image-to-design-imports/${seg(input.jobId)}`,
+	);
+	await upsertDesign(ctx, result.job.result?.design);
 	return result;
 };

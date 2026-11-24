@@ -1,4 +1,4 @@
-import { APP_URL, DOCS_URL } from '@/lib/site-links';
+import { CONSOLE_URL, DOCS_URL } from '@/lib/site-links';
 
 export function CompareCta() {
 	return (
@@ -13,12 +13,12 @@ export function CompareCta() {
 				</p>
 				<div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
 					<a
-						href={APP_URL}
+						href={CONSOLE_URL}
 						target="_blank"
 						rel="noopener noreferrer"
 						className="inline-flex w-full touch-manipulation items-center justify-center rounded-lg bg-[#4a38f5] px-6 py-3 text-sm font-medium text-white no-underline transition-colors hover:bg-[#3d2ee0] sm:w-auto"
 					>
-						Go to app
+						Go to console
 					</a>
 					<a
 						href={DOCS_URL}

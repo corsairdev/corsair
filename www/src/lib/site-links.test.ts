@@ -25,7 +25,7 @@ describe('hubMcpConnectUrl', () => {
 	it('returns to /me asking to add the app', () => {
 		const url = new URL(hubMcpConnectUrl('Linear'));
 		assert.equal(url.origin + url.pathname, 'https://hub.corsair.dev/login');
-		assert.equal(url.searchParams.get('mode'), 'www');
+		assert.equal(url.searchParams.get('mode'), 'lug');
 		assert.equal(url.searchParams.get('plugins'), 'linear');
 		assert.equal(url.searchParams.get('redirect'), '/me?add=linear');
 		assert.equal(url.searchParams.has('title'), false);

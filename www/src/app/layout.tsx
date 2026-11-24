@@ -44,20 +44,20 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
 	metadataBase: new URL('https://corsair.dev'),
 	title: {
-		default: 'Corsair — Open Source Integration Layer for AI Agents',
+		default: 'Corsair: MCP gateway, one URL for every app and agent',
 		template: '%s | Corsair',
 	},
 	description:
-		'Corsair helps AI products add secure, multi-tenant integrations with OAuth, permissions, MCP, webhooks, and hosted or self-hosted execution.',
+		'One MCP URL for Claude, ChatGPT, Cursor and Codex. Connect Gmail, Slack, GitHub and 700+ apps once, with your rules on every change. Free to start.',
 	icons: {
 		icon: '/corsair-logo.ico',
 		shortcut: '/corsair-logo.ico',
 		apple: '/corsair-logo.ico',
 	},
 	openGraph: {
-		title: 'Corsair — Open Source Integration Layer for AI Agents',
+		title: 'Corsair: MCP gateway, one URL for every app and agent',
 		description:
-			'Corsair helps AI products add secure, multi-tenant integrations with OAuth, permissions, MCP, webhooks, and hosted or self-hosted execution.',
+			'One MCP URL for Claude, ChatGPT, Cursor and Codex. Connect Gmail, Slack, GitHub and 700+ apps once, with your rules on every change. Free to start.',
 		url: 'https://corsair.dev',
 		siteName: 'Corsair',
 		images: [
@@ -73,9 +73,9 @@ export const metadata: Metadata = {
 	},
 	twitter: {
 		card: 'summary_large_image',
-		title: 'Corsair — Open Source Integration Layer for AI Agents',
+		title: 'Corsair: MCP gateway, one URL for every app and agent',
 		description:
-			'Corsair helps AI products add secure, multi-tenant integrations with OAuth, permissions, MCP, webhooks, and hosted or self-hosted execution.',
+			'One MCP URL for Claude, ChatGPT, Cursor and Codex. Connect Gmail, Slack, GitHub and 700+ apps once, with your rules on every change. Free to start.',
 		images: ['/og-image.png'],
 	},
 };
@@ -110,7 +110,7 @@ const jsonLd = {
 			applicationCategory: 'DeveloperApplication',
 			operatingSystem: 'All',
 			description:
-				'Corsair helps AI products add secure, multi-tenant integrations with OAuth, permissions, MCP, webhooks, and hosted or self-hosted execution.',
+				'One MCP URL for Claude, ChatGPT, Cursor and Codex. Connect Gmail, Slack, GitHub and 700+ apps once, with your rules on every change. Free to start.',
 			offers: {
 				'@type': 'Offer',
 				price: '0',
