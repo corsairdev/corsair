@@ -396,8 +396,20 @@
   "loyverse": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/loyverse.svg"
   },
+  "mailcoach": {
+    "from": "/tmp/claude-1000/-home-pranayasus-Corsair/3558f255-d742-4c4a-9cfe-871a112d2503/scratchpad/icondl/mailcoach-clean.svg",
+    "note": "mailcoach.app/favicons/icon.svg; inlined the #logo light fill (#142D6F), dropped the dark-mode media query"
+  },
   "mem0": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/mem0.svg"
+  },
+  "metaads": {
+    "from": "https://media.brand.dev/f8ab0ead-2e96-4bb4-9cea-d45ff36a90d6.svg",
+    "note": "found with the context.dev Brand API for meta.com"
+  },
+  "metabase": {
+    "from": "https://media.brand.dev/1940f711-5867-4a90-86ce-47ae9028f807.svg",
+    "note": "found with the context.dev Brand API for metabase.com"
   },
   "minerstat": {
     "from": "https://media.brand.dev/07684fb4-31a1-40ff-804a-0dc61c60e370.svg",
@@ -509,12 +521,20 @@
   "prisma": {
     "from": "https://svgl.app/library/prisma.svg"
   },
+  "productboard": {
+    "from": "https://media.brand.dev/d1df1d65-9316-47ce-b001-7d65ea3001f3.svg",
+    "note": "found with the context.dev Brand API for productboard.com"
+  },
   "qdrant": {
     "from": "https://svgl.app/library/qdrant-icon-light.svg"
   },
   "quaderno": {
     "from": "https://media.brand.dev/69c6e1c1-7b4e-4c82-b2b5-163cdcfc1f4c.svg",
     "note": "found with the context.dev Brand API for quadernoapp.com"
+  },
+  "quickbooks": {
+    "from": "https://media.brand.dev/738d6e2e-4391-423f-bdf7-965866e0a11e.svg",
+    "note": "found with the context.dev Brand API for quickbooks.com"
   },
   "reddit": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/reddit.svg"
@@ -749,6 +769,10 @@
   "zenrows": {
     "from": "https://media.brand.dev/aee129ca-82fe-423e-9790-44ccdde595fa.svg",
     "note": "found with the context.dev Brand API for zenrows.com"
+  },
+  "zohobooks": {
+    "from": "/tmp/claude-1000/-home-pranayasus-Corsair/3558f255-d742-4c4a-9cfe-871a112d2503/scratchpad/icondl/zohobooks-mark.svg",
+    "note": "zoho.com/books product logo (zohowebstatic productlogos/books.svg); kept only the book mark, dropped the Zoho Books wordmark, inlined .st1 fill #226DB4"
   },
   "zoominfo": {
     "from": "https://raw.githubusercontent.com/ComposioHQ/logo-cdn/5cdaa5321cc08604957fef40e6c7e79b9e0332bc/src/assets/zoominfo.svg"

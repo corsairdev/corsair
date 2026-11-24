@@ -1,0 +1,44 @@
+displayName: Fathom AI Notetaker
+description: AI meeting recorder that records, transcribes and summarizes calls, with endpoints for meetings, summaries, transcripts, recording downloads, teams, users and webhooks.
+domain: fathom.ai
+recommendedAuth: api_key
+overviewNote: |
+  This plugin is for the Fathom AI Notetaker (fathom.ai). The `fathom` plugin is a different product, Fathom Analytics.
+  Generate an API key in the API Access section of your Fathom User Settings and provide it as `key` or store it under `api_key`. The key sees meetings its owner recorded or that were shared with them or their team.
+
+  Things to know:
+  - **Rate limits:** 60 requests per minute per account. Summary and transcript calls, and `meetings.list` with `include_summary` or `include_transcript`, count against a stricter 30 per minute. `recordings.requestDownload` has its own 30 per minute limit.
+  - **Webhooks:** Create one with `webhooks.create` (or in Fathom's settings) and store the returned `whsec_` secret with `keys.set_webhook_signature`, or pass it as the `webhookSecret` option. Every delivery's Standard Webhooks signature is checked, but not its age: Fathom's `webhook-timestamp` is a frozen value hours older than the delivery, so the usual five minute window would refuse every real delivery. A repeated `webhook-id` is answered with 200 and not handled again (each process remembers the last 10,000 ids). Fathom sends the JSON body with `Content-Type: application/x-www-form-urlencoded`, so give `processWebhook` the raw body text. Fathom sends one delivery shape, a meeting whose content is ready.
+  - **Admin only:** `users.list` returns 403 unless the key belongs to an account admin.
+  - **Recording downloads:** `recordings.requestDownload` starts a job. Poll `recordings.getDownload` until `status` is `completed`, then fetch the signed `url` of whichever file came back before its `expires_at`: `video` for a video recording, `audio` for an audio-only one, which can complete straight away.
+  - **Stored data:** `meetings.list` and the webhook store meeting metadata only. Transcripts, summaries, action items, highlights and CRM matches are returned but not stored.
+apiNotes:
+  "recordings.getSummary": "`summary` is null when the recording has no generated summary (Fathom's onboarding demo call, for one), although the API reference marks it as always set."
+  "recordings.requestDownload": "Fathom answers 422 when the recording has no downloadable media."
+  "recordings.sendSummary": "Fathom POSTs `{recording_id, summary}` to destination_url within a second or two, signed like a webhook delivery (the API client's secret and the same frozen `webhook-timestamp`). The meetings.contentReady handler does not claim these callbacks."
+  "recordings.sendTranscript": "Fathom POSTs `{recording_id, transcript}` to destination_url, signed and stamped like the `recordings.sendSummary` callback."
+  "webhooks.create": "Set at least one of include_transcript, include_summary, include_action_items or include_crm_matches to true; Fathom rejects a webhook that includes nothing, and the input check does too."
+references:
+  - title: Fathom API Reference
+    url: https://developers.fathom.ai/api-reference
+  - title: Fathom Webhooks
+    url: https://developers.fathom.ai/webhooks
+examples:
+  read:
+    path: meetings.list
+    title: List recent meetings with action items
+    args:
+      created_after: '2025-01-01T00:00:00Z'
+      include_action_items: true
+  write:
+    path: webhooks.create
+    title: Send summaries for my recordings to a webhook
+    args:
+      destination_url: https://example.com/webhooks/fathom
+      triggered_for:
+        - my_recordings
+      include_summary: true
+dbExample:
+  entity: meetings
+  note: Search synced meetings without calling Fathom again.
+  limit: 50
