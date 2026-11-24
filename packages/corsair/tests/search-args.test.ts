@@ -99,6 +99,20 @@ describe('searchArgs', () => {
 		expect(searchArgs(mail, { topic: [], people: [], kinds: [] })).toBeNull();
 	});
 
+	it('compiles topic words alone when the caller asks for a broad read', () => {
+		expect(searchArgs(mail, { topic: ['budget'] }, { broad: true })).toEqual({
+			userId: 'me',
+			maxResults: 10,
+			q: 'budget',
+		});
+		expect(searchArgs(mail, {}, { broad: true })).toBeNull();
+		expect(searchArgs(mail, { topic: ['  '] }, { broad: true })).toBeNull();
+		expect(searchArgs(days, { topic: ['budget'] }, { broad: true })).toBeNull();
+		expect(
+			searchArgs(mail, { topic: ['budget'] }, { broad: false }),
+		).toBeNull();
+	});
+
 	it('returns null when every other hint is one the app does not map', () => {
 		expect(
 			searchArgs(mail, { states: ['merged'], kinds: ['events'] }),

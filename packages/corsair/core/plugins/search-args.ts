@@ -121,11 +121,13 @@ function written(
  * Turns what a caller is certain of into one operation's args, from the
  * operation's own declaration. Pure and deterministic; it holds no app names.
  * Returns null when no hint beyond topic words is one the app can use, so the
- * caller reads the app another way instead of sending a bare keyword search.
+ * caller reads the app another way instead of sending a bare keyword search;
+ * `broad` asks for that keyword search, for an app the saved copy has nothing on.
  */
 export function searchArgs(
 	decl: EndpointSearch,
 	hints: SearchHints,
+	options: { broad?: boolean } = {},
 ): Args | null {
 	const args = JSON.parse(JSON.stringify(decl.fixed ?? {})) as Args;
 	const { limit } = decl;
@@ -191,7 +193,9 @@ export function searchArgs(
 	};
 
 	const { hints: map } = decl;
-	if (map.topic) place(map.topic, clean(hints.topic, true));
+	const topicPlaced = map.topic
+		? place(map.topic, clean(hints.topic, true))
+		: false;
 	if (map.ids && place(map.ids, clean(hints.ids, true))) used = true;
 	if (map.people && place(map.people, clean(hints.people, true))) used = true;
 	if (map.places && place(map.places, clean(hints.places, true))) used = true;
@@ -216,5 +220,5 @@ export function searchArgs(
 		}
 	}
 
-	return used ? args : null;
+	return used || (options.broad && topicPlaced) ? args : null;
 }
