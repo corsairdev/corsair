@@ -1,0 +1,169 @@
+---
+title: "Fathom AI Notetaker plugin"
+sidebarTitle: "Overview"
+description: "AI meeting recorder that records, transcribes and summarizes calls, with endpoints for meetings, summaries, transcripts, recording downloads, teams, users and webhooks."
+---
+
+Use **Fathom AI Notetaker** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+This plugin is for the Fathom AI Notetaker (fathom.ai). The `fathom` plugin is a different product, Fathom Analytics.
+Generate an API key in the API Access section of your Fathom User Settings and provide it as `key` or store it under `api_key`. The key sees meetings its owner recorded or that were shared with them or their team.
+
+Things to know:
+- **Rate limits:** 60 requests per minute per account. Summary and transcript calls, and `meetings.list` with `include_summary` or `include_transcript`, count against a stricter 30 per minute. `recordings.requestDownload` has its own 30 per minute limit.
+- **Webhooks:** Create one with `webhooks.create` (or in Fathom's settings) and store the returned `whsec_` secret with `keys.set_webhook_signature`, or pass it as the `webhookSecret` option. Every delivery's Standard Webhooks signature is checked, but not its age: Fathom's `webhook-timestamp` is a frozen value hours older than the delivery, so the usual five minute window would refuse every real delivery. A repeated `webhook-id` is answered with 200 and not handled again (each process remembers the last 10,000 ids). Fathom sends the JSON body with `Content-Type: application/x-www-form-urlencoded`, so give `processWebhook` the raw body text. Fathom sends one delivery shape, a meeting whose content is ready.
+- **Admin only:** `users.list` returns 403 unless the key belongs to an account admin.
+- **Recording downloads:** `recordings.requestDownload` starts a job. Poll `recordings.getDownload` until `status` is `completed`, then fetch the signed `url` of whichever file came back before its `expires_at`: `video` for a video recording, `audio` for an audio-only one, which can complete straight away.
+- **Stored data:** `meetings.list` and the webhook store meeting metadata only. Transcripts, summaries, action items, highlights and CRM matches are returned but not stored.
+
+**What you get:**
+
+- 13 typed API operations
+- 5 synced entities (`meetings`, `meetingTypes`, `teamMembers`, `teams`, `users`) for fast `.search()` / `.list()`
+- 1 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/fathomai better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/fathomai better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/fathomai better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/fathomai better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { fathomai } from '@corsair-dev/fathomai';
+
+export const corsair = createCorsair({
+	plugins: [
+		fathomai(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Fathom AI Notetaker API key before the first call: `pnpm corsair setup --plugin=fathomai --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+fathomai()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'fathomai',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List recent meetings with action items**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.fathomai.api.meetings.list({ created_after: '2025-01-01T00:00:00Z', include_action_items: true });
+```
+
+
+**Send summaries for my recordings to a webhook**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.fathomai.api.webhooks.create({
+	destination_url: 'https://example.com/webhooks/fathom',
+	triggered_for: ['my_recordings'],
+	include_summary: true,
+});
+```
+
+
+See the full list on the [API](/plugins/fathomai/api) page.
+
+## Query synced data
+
+Search synced meetings without calling Fathom again.
+
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.fathomai.db.meetings.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `meetings`, `meetingTypes`, `teamMembers`, `teams`, `users`. See [Database](/plugins/fathomai/database) for filters and operators.
+
+## Webhooks
+
+This plugin registers **1** webhook event type. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/fathomai/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/fathomai/api">
+    Every `fathomai.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/fathomai/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/fathomai/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

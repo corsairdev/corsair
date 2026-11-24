@@ -1,0 +1,1763 @@
+{
+  "id": "productboard",
+  "displayName": "Productboard",
+  "description": "Read and manage Productboard notes, entities, relationships, field options, teams, members, Jira connections, Plugin Integrations, and webhook subscriptions through Public REST API v2.",
+  "npmPackageName": "@corsair-dev/productboard",
+  "authTypes": ["api_key"],
+  "defaultAuthType": "api_key",
+  "counts": {
+    "api": 58,
+    "webhooks": 0,
+    "db": 0
+  },
+  "auth": [
+    {
+      "authType": "api_key",
+      "integrationFields": [],
+      "accountFields": ["api_key", "webhook_signature"]
+    }
+  ],
+  "api": [
+    {
+      "path": "productboard.api.analytics.memberActivities",
+      "shortPath": "analytics.memberActivities",
+      "description": "List member activities with date filters and cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.entities.configurations.get",
+      "shortPath": "entities.configurations.get",
+      "description": "Get configuration for an entity type.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.entities.configurations.list",
+      "shortPath": "entities.configurations.list",
+      "description": "List workspace-specific entity configurations.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.entities.create",
+      "shortPath": "entities.create",
+      "description": "Create a workspace-configured Productboard entity.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.entities.customerScore",
+      "shortPath": "entities.customerScore",
+      "description": "Read the documented beta aggregated customer score.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.entities.delete",
+      "shortPath": "entities.delete",
+      "description": "Permanently delete an entity.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "productboard.api.entities.fieldValues.create",
+      "shortPath": "entities.fieldValues.create",
+      "description": "Create a value for a select-type or tag field (not STATUS).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fieldId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.entities.fieldValues.delete",
+      "shortPath": "entities.fieldValues.delete",
+      "description": "Delete a select-type or tag value (not STATUS).",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fieldId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "valueId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "productboard.api.entities.fieldValues.list",
+      "shortPath": "entities.fieldValues.list",
+      "description": "List paginated select, tag, or status field values.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fieldId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.entities.fieldValues.update",
+      "shortPath": "entities.fieldValues.update",
+      "description": "Update a select-type or tag value (not STATUS).",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "fieldId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "valueId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.entities.get",
+      "shortPath": "entities.get",
+      "description": "Get an entity by UUID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.entities.list",
+      "shortPath": "entities.list",
+      "description": "List entities across configured workspace resource types.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.entities.relationships.create",
+      "shortPath": "entities.relationships.create",
+      "description": "Create a relationship between two entities.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.entities.relationships.delete",
+      "shortPath": "entities.relationships.delete",
+      "description": "Delete an entity relationship.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "productboard.api.entities.relationships.list",
+      "shortPath": "entities.relationships.list",
+      "description": "List an entity’s parent, child, and linked relationships.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.entities.relationships.setParent",
+      "shortPath": "entities.relationships.setParent",
+      "description": "Replace an entity’s parent relationship.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.entities.search",
+      "shortPath": "entities.search",
+      "description": "Search entities using structured filters.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.entities.update",
+      "shortPath": "entities.update",
+      "description": "Update entity fields or patch operations.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.jiraIntegrations.connection",
+      "shortPath": "jiraIntegrations.connection",
+      "description": "Get one feature-to-Jira issue connection.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.jiraIntegrations.connections",
+      "shortPath": "jiraIntegrations.connections",
+      "description": "List feature-to-Jira issue connections.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.jiraIntegrations.get",
+      "shortPath": "jiraIntegrations.get",
+      "description": "Get one Jira integration.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.jiraIntegrations.list",
+      "shortPath": "jiraIntegrations.list",
+      "description": "List Jira integrations with cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.members.get",
+      "shortPath": "members.get",
+      "description": "Get one workspace member.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.members.list",
+      "shortPath": "members.list",
+      "description": "List workspace members; PII may be redacted by Productboard.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.members.search",
+      "shortPath": "members.search",
+      "description": "Search or batch-lookup workspace members.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.notes.configurations.get",
+      "shortPath": "notes.configurations.get",
+      "description": "Get configuration metadata for one note type.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "type",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.notes.configurations.list",
+      "shortPath": "notes.configurations.list",
+      "description": "List note-type configuration metadata.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.notes.create",
+      "shortPath": "notes.create",
+      "description": "Create a text or conversation note, optionally with relationships.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: { type: string, fields: { name: string }, metadata?: Record<string, JsonValue>, relationships?: ({ type: customer, target: { id: string, type: user | company } | { email: string, type: user } } | { type: link, target: { id: string, type: link } })[] } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.notes.delete",
+      "shortPath": "notes.delete",
+      "description": "Permanently delete a note.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "productboard.api.notes.get",
+      "shortPath": "notes.get",
+      "description": "Get a note by UUID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.notes.list",
+      "shortPath": "notes.list",
+      "description": "List notes using documented filters and cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.notes.relationships.create",
+      "shortPath": "notes.relationships.create",
+      "description": "Create a customer or product-link relationship for a note.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.notes.relationships.delete",
+      "shortPath": "notes.relationships.delete",
+      "description": "Remove a note relationship.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetType",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "targetId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "productboard.api.notes.relationships.list",
+      "shortPath": "notes.relationships.list",
+      "description": "List a note’s customer and product-link relationships.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.notes.relationships.setCustomer",
+      "shortPath": "notes.relationships.setCustomer",
+      "description": "Replace a note’s single customer relationship.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.notes.search",
+      "shortPath": "notes.search",
+      "description": "Search notes with structured filters and relationships.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.notes.update",
+      "shortPath": "notes.update",
+      "description": "Update note fields or apply documented patch operations.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.pluginIntegrations.connections.delete",
+      "shortPath": "pluginIntegrations.connections.delete",
+      "description": "Reset a connection to its initial state.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "productboard.api.pluginIntegrations.connections.get",
+      "shortPath": "pluginIntegrations.connections.get",
+      "description": "Get one connection; missing links return the initial state.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.pluginIntegrations.connections.list",
+      "shortPath": "pluginIntegrations.connections.list",
+      "description": "List non-initial connections with cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.pluginIntegrations.connections.search",
+      "shortPath": "pluginIntegrations.connections.search",
+      "description": "Search connections by documented state or entity-ID filters.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> } | {}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.pluginIntegrations.connections.update",
+      "shortPath": "pluginIntegrations.connections.update",
+      "description": "Create or replace a connection state via upsert; setting it to initial permanently resets the connection.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "entityId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.pluginIntegrations.create",
+      "shortPath": "pluginIntegrations.create",
+      "description": "Create an integration; Productboard probes its configured action URL.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.pluginIntegrations.delete",
+      "shortPath": "pluginIntegrations.delete",
+      "description": "Delete an integration and all associated connections.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "productboard.api.pluginIntegrations.get",
+      "shortPath": "pluginIntegrations.get",
+      "description": "Get an integration; its action authorization secret is write-only.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.pluginIntegrations.list",
+      "shortPath": "pluginIntegrations.list",
+      "description": "List configured plugin integrations with cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.pluginIntegrations.update",
+      "shortPath": "pluginIntegrations.update",
+      "description": "Update integration fields; changing an enabled action URL triggers a probe.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "integrationId",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.teams.create",
+      "shortPath": "teams.create",
+      "description": "Create a team.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.teams.delete",
+      "shortPath": "teams.delete",
+      "description": "Permanently delete a team and its memberships.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "productboard.api.teams.get",
+      "shortPath": "teams.get",
+      "description": "Get one team.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.teams.list",
+      "shortPath": "teams.list",
+      "description": "List teams with cursor pagination and filters.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, fields: { name: string, handle: string }, createdAt: string, updatedAt: string, links: { self: string } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.teams.members",
+      "shortPath": "teams.members",
+      "description": "List a team’s members with cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.teams.search",
+      "shortPath": "teams.search",
+      "description": "Search or batch-lookup teams.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> } | {}"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, fields: { name: string, handle: string }, createdAt: string, updatedAt: string, links: { self: string } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.teams.update",
+      "shortPath": "teams.update",
+      "description": "Update team fields or member assignments.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "id",
+            "optional": false,
+            "type": "string"
+          },
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: Record<string, JsonValue> }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.webhooks.create",
+      "shortPath": "webhooks.create",
+      "description": "Create a webhook subscription at a public HTTPS notification URL.",
+      "riskLevel": "write",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "body",
+            "optional": false,
+            "type": "{ data: { fields: { name: string, events: { eventType: feature.created | feature.updated | feature.deleted | component.created | component.updated | product.created | product.updated | release.created | release.updated | release.deleted | feature-release-assignment.updated | hierarchy-entity.custom-field-value.updated | note.created | note.updated | note.deleted | insight.created | insight.deleted | key-result.created | key-result.updated | key-result.deleted | objective.created | objective.updated | objective.deleted | initiative.created | initiative.updated | initiative.deleted }[], notification: { url: string, version: 1, headers?: { authorization?: string } } } } }"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, links: { self: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.webhooks.delete",
+      "shortPath": "webhooks.delete",
+      "description": "Permanently delete a webhook subscription.",
+      "riskLevel": "destructive",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "inline",
+        "type": "null"
+      }
+    },
+    {
+      "path": "productboard.api.webhooks.get",
+      "shortPath": "webhooks.get",
+      "description": "Get a webhook subscription by UUID.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "webhookId",
+            "optional": false,
+            "type": "string"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, createdAt?: string, fields: { name: string, events: { eventType: string }[], notification: { url: string, version: number } }, links: { self: string } }"
+          }
+        ]
+      }
+    },
+    {
+      "path": "productboard.api.webhooks.list",
+      "shortPath": "webhooks.list",
+      "description": "List webhook subscriptions with cursor pagination.",
+      "riskLevel": "read",
+      "input": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "query",
+            "optional": true,
+            "type": "Record<string, JsonValue>"
+          }
+        ]
+      },
+      "output": {
+        "kind": "object",
+        "fields": [
+          {
+            "key": "data",
+            "optional": false,
+            "type": "{ id: string, type: string, createdAt?: string, fields: { name: string, events: { eventType: string }[], notification: { url: string, version: number } }, links: { self: string } }[]"
+          },
+          {
+            "key": "links",
+            "optional": true,
+            "type": "{ next?: string | null }"
+          }
+        ]
+      }
+    }
+  ],
+  "webhooks": [],
+  "db": []
+}

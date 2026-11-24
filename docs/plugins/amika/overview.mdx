@@ -1,0 +1,129 @@
+---
+title: "Amika plugin"
+sidebarTitle: "Overview"
+description: "Give an agent its own coding agents: create rigs (isolated devbox VMs with a repo, its dependencies and agent credentials), send messages to Claude Code or Codex running in them, queue shell commands and read their output, schedule jobs, expose dev servers as preview URLs, snapshot rigs into base images, and manage hosts, secrets, agent credentials and repository MCP integrations (98 operations)."
+---
+
+Use **Amika** through Corsair: one client, typed API calls.
+
+Connect with an Amika API key (app.amika.dev → Settings → API Keys, or `amika auth api-key create`). rigs.create answers before the rig has booted: poll rigs.get until status is running and setup_status is ok, and stop if setup_status ends in -failed. commandRuns.create queues a command; read its output with commandRuns.listEvents. agentSessions.send needs a Claude or Codex credential stored in Amika first (agentCredentials.claude.create).
+
+**What you get:**
+
+- 98 typed API operations
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/amika better-sqlite3
+npm install --save-dev @types/better-sqlite3
+```
+```bash yarn
+yarn add corsair @corsair-dev/amika better-sqlite3
+yarn add --dev @types/better-sqlite3
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/amika better-sqlite3
+pnpm install --save-dev @types/better-sqlite3
+```
+```bash bun
+bun add corsair @corsair-dev/amika better-sqlite3
+bun add --dev @types/better-sqlite3
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { amika } from '@corsair-dev/amika';
+
+export const corsair = createCorsair({
+	plugins: [
+		amika(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	multiTenancy: true,
+	hub: {
+		projectApiKey: process.env.CORSAIR_API_KEY!,
+		signingSecret: process.env.CORSAIR_SIGNING_SECRET!,
+	},
+});
+```
+
+With `multiTenancy: true`, scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+Store the Amika API key before the first call: `pnpm corsair setup --plugin=amika --tenant=acme api_key=<your-key>` (leave out `--tenant` without `multiTenancy`), or pass it as `key` in the plugin options. With Hub, each tenant enters their own key on the connect page. See [API key auth](/concepts/api-key).
+
+```ts
+amika()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'amika',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**List the team's rigs**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.amika.api.rigs.list({});
+```
+
+
+**Run the test suite on a rig**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.amika.api.commandRuns.create({ rig_ref: 'dev-rig', command: 'pnpm install && pnpm test', timeout_ms: 600000 });
+```
+
+
+See the full list on the [API](/plugins/amika/api) page.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/amika/api">
+    Every `amika.api.*` operation with input and output types.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

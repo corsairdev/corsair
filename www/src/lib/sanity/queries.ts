@@ -12,7 +12,8 @@ export const postFields = /* groq */ `
 
 export const allPostsQuery = defineQuery(/* groq */ `
   *[_type == "post" && defined(slug.current)] | order(publishedAt desc) {
-    ${postFields}
+    ${postFields},
+    "updatedAt": _updatedAt
   }
 `);
 
