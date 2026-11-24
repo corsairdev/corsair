@@ -331,7 +331,7 @@ export const mozInputBuilders = {
 						include_intent: z
 							.boolean()
 							.describe(
-								'Whether to include the `intent` metric in the response. Defaults to `false`. When `true`, and intent is available for the SERP, the `intent` metric is returned and counts toward quota usage like any other metric.',
+								'Whether to include the `intent` metric in the response. Defaults to `false` until December 1, 2026 and to `true` from that date. When `true`, and intent is available for the SERP, the `intent` metric is returned and counts toward quota usage like any other metric.',
 							)
 							.optional(),
 						max_age: z
@@ -343,7 +343,7 @@ export const mozInputBuilders = {
 					})
 					.strict()
 					.describe(
-						'Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided.',
+						'Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided, until December 1, 2026; from that date intent is returned by default.',
 					)
 					.optional(),
 			})

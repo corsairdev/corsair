@@ -489,7 +489,7 @@ Fetch an `async_call` by ID to retrieve the result or error. Free (no quota).
 **Risk:** `read`
 
 ```ts
-await corsair.moz.api.jobs.lookup({ id: pending.async_call.id });
+await corsair.moz.api.jobs.lookup({ id: (await corsair.moz.api.test.pingAsync({ message: 'hi' })).async_call?.id ?? '' });
 ```
 
 **Input**
@@ -499,7 +499,8 @@ await corsair.moz.api.jobs.lookup({ id: pending.async_call.id });
 | `id` | `string` | Yes | The ID of the `async_call` to lookup. This is the `async_call.id` returned by the asynchronous action that started the request. |
 
 `async.call.lookup` is free and safe to poll every five seconds. Pass
-the `async_call.id` from the async method's response (`pending` above). A
+the `async_call.id` from the async method's response (above, a
+test.pingAsync call). A
 completed call carries exactly one of async_call.result and
 async_call.error. Poll within the current `ttl`: once a completed call
 is first retrieved, Moz keeps it for twenty more seconds, so use the
@@ -1045,7 +1046,7 @@ await corsair.moz.api.keywords.metrics({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `serp_query` | `object` | Yes | The SERP query object describes a keyword or search phrase in combination with several options to specify how the query is run (i.e. how a SERP should be retrieved for this keyword if necessary). |
-| `options` | `object` | No | Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided. |
+| `options` | `object` | No | Options to further refine the keyword metrics that are returned. `include_intent` defaults to `false` if not provided, until December 1, 2026; from that date intent is returned by default. |
 
 `data.keyword.metrics.fetch` returns difficulty, volume, organic CTR and
 priority for one `serp_query` (four rows). Search intent is opt-in with
@@ -6428,6 +6429,12 @@ await corsair.moz.api.metrics.histories({});
 | `get_daily_history_values_for` | `(pages_to_page \| nofollow_pages_to_page \| redirect_pages_to_page \| external_pages_to_page \| external_nofollow_pages_to_page \| external_redirect_pages_to_page \| root_domains_to_page \| indirect_root_domains_to_page \| nofollow_root_domains_to_page \| pages_to_subdomain \| nofollow_pages_to_subdomain \| redirect_pages_to_subdomain \| external_pages_to_subdomain \| external_nofollow_pages_to_subdomain \| external_redirect_pages_to_subdomain \| root_domains_to_subdomain \| nofollow_root_domains_to_subdomain \| pages_to_root_domain \| nofollow_pages_to_root_domain \| redirect_pages_to_root_domain \| external_pages_to_root_domain \| external_indirect_pages_to_root_domain \| external_nofollow_pages_to_root_domain \| external_redirect_pages_to_root_domain \| root_domains_to_root_domain \| indirect_root_domains_to_root_domain \| nofollow_root_domains_to_root_domain \| page_authority \| domain_authority \| root_domains_to_root_domain_by_root_domains \| nofollow_root_domains_to_root_domain_by_root_domains \| pages_to_root_domain_by_spam_score \| nofollow_pages_to_root_domain_by_spam_score \| root_domains_to_root_domain_by_spam_score \| nofollow_root_domains_to_root_domain_by_spam_score)[]` | No | Optional array of values for which to get daily history values. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](https://moz.com/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, `domain_authority`, `nofollow_pages_to_root_domain_by_spam_score`, `nofollow_root_domains_to_root_domain_by_root_domains`, `nofollow_root_domai |
 | `get_monthly_history_deltas_for` | `(pages_to_page \| nofollow_pages_to_page \| redirect_pages_to_page \| external_pages_to_page \| external_nofollow_pages_to_page \| external_redirect_pages_to_page \| root_domains_to_page \| indirect_root_domains_to_page \| nofollow_root_domains_to_page \| pages_to_subdomain \| nofollow_pages_to_subdomain \| redirect_pages_to_subdomain \| external_pages_to_subdomain \| external_nofollow_pages_to_subdomain \| external_redirect_pages_to_subdomain \| root_domains_to_subdomain \| nofollow_root_domains_to_subdomain \| pages_to_root_domain \| nofollow_pages_to_root_domain \| redirect_pages_to_root_domain \| external_pages_to_root_domain \| external_indirect_pages_to_root_domain \| external_nofollow_pages_to_root_domain \| external_redirect_pages_to_root_domain \| root_domains_to_root_domain \| indirect_root_domains_to_root_domain \| nofollow_root_domains_to_root_domain \| page_authority \| domain_authority)[]` | No | Optional array of values for which to get monthly history deltas. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](https://moz.com/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, and `domain_authority`. At least one value must be provided between `get_daily_history_deltas_for`, `get_daily_history_values_for`, `get_mont |
 | `get_monthly_history_values_for` | `(pages_to_page \| nofollow_pages_to_page \| redirect_pages_to_page \| external_pages_to_page \| external_nofollow_pages_to_page \| external_redirect_pages_to_page \| root_domains_to_page \| indirect_root_domains_to_page \| nofollow_root_domains_to_page \| pages_to_subdomain \| nofollow_pages_to_subdomain \| redirect_pages_to_subdomain \| external_pages_to_subdomain \| external_nofollow_pages_to_subdomain \| external_redirect_pages_to_subdomain \| root_domains_to_subdomain \| nofollow_root_domains_to_subdomain \| pages_to_root_domain \| nofollow_pages_to_root_domain \| redirect_pages_to_root_domain \| external_pages_to_root_domain \| external_indirect_pages_to_root_domain \| external_nofollow_pages_to_root_domain \| external_redirect_pages_to_root_domain \| root_domains_to_root_domain \| indirect_root_domains_to_root_domain \| nofollow_root_domains_to_root_domain \| page_authority \| domain_authority \| root_domains_to_root_domain_by_root_domains \| nofollow_root_domains_to_root_domain_by_root_domains \| pages_to_root_domain_by_spam_score \| nofollow_pages_to_root_domain_by_spam_score \| root_domains_to_root_domain_by_spam_score \| nofollow_root_domains_to_root_domain_by_spam_score)[]` | No | Optional array of values for which to get monthly history values. Valid values are all non-deleted link count metrics from the site_metrics object in [Fetch Site Metrics](https://moz.com/api/docs/methods/DataSiteMetricsFetchAction) (`pages_to_page`, etc), `page_authority`, `domain_authority`, `nofollow_pages_to_root_domain_by_spam_score`, `nofollow_root_domains_to_root_domain_by_root_domains`, `nofollow_root_dom |
+
+`data.site.metrics.histories.fetch`. Each of the four selector arrays
+(get_daily_history_deltas_for, get_daily_history_values_for,
+get_monthly_history_deltas_for, get_monthly_history_values_for) is
+optional, but together they must name at least one metric. It costs one
+row per metric returned across the four arrays.
 
 <AccordionGroup>
 <Accordion title="site_query full type">

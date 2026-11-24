@@ -79,7 +79,7 @@ apiExamples:
   competitors.fetch:
     call: "{ target_query: { query: 'moz.com', scope: 'domain', locale: 'en-US' } }"
   jobs.lookup:
-    call: "{ id: pending.async_call.id }"
+    call: "{ id: (await corsair.moz.api.test.pingAsync({ message: 'hi' })).async_call?.id ?? '' }"
 apiNotes:
   quota.lookup: |
     `quota.lookup` is free. The path picks the bucket: api.limits.data.rows
@@ -101,6 +101,12 @@ apiNotes:
     priority for one `serp_query` (four rows). Search intent is opt-in with
     `options.include_intent` until December 1, 2026 and on by default from
     that date; it adds one row when Moz has intent for the SERP.
+  metrics.histories: |
+    `data.site.metrics.histories.fetch`. Each of the four selector arrays
+    (get_daily_history_deltas_for, get_daily_history_values_for,
+    get_monthly_history_deltas_for, get_monthly_history_values_for) is
+    optional, but together they must name at least one metric. It costs one
+    row per metric returned across the four arrays.
   rankingKeywords.list: |
     `data.site.ranking-keyword.list`: keywords a site ranks for in the top 50,
     one row per result. rankingKeywords.count is one row.
@@ -113,7 +119,8 @@ apiNotes:
     the status is complete. It spends the mozscape quota bucket.
   jobs.lookup: |
     `async.call.lookup` is free and safe to poll every five seconds. Pass
-    the `async_call.id` from the async method's response (`pending` above). A
+    the `async_call.id` from the async method's response (above, a
+    test.pingAsync call). A
     completed call carries exactly one of async_call.result and
     async_call.error. Poll within the current `ttl`: once a completed call
     is first retrieved, Moz keeps it for twenty more seconds, so use the
