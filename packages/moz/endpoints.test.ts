@@ -8,6 +8,8 @@ import {
 } from './endpoints';
 import { mozInputSchema, mozOutputSchema } from './endpoints/call';
 
+// unknown in `.catch((e: unknown) => e)`: a rejection can be any value, and
+// each test narrows it with a cast or toBeInstanceOf before reading it.
 const fetchMock = jest.fn();
 const realFetch = global.fetch;
 const TOKEN = 'moz-token-abcdef-123456';
@@ -19,6 +21,7 @@ const ctx = {
 	},
 } as never;
 
+// unknown: a reply body is any JSON value.
 function reply(status: number, body: unknown) {
 	return new Response(JSON.stringify(body), {
 		status,
@@ -88,6 +91,16 @@ describe("Moz's documented examples", () => {
 });
 
 describe('inputs', () => {
+	it('types the batch query items (Moz puts object fields on the array node)', async () => {
+		await expect(
+			mozEndpointsNested.keywords.metricsMultiple(ctx, {
+				// @ts-expect-error items must be serp queries
+				serp_queries: [42],
+			}),
+		).rejects.toThrow();
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
 	it('rejects an unknown field before sending', async () => {
 		await expect(
 			mozEndpointsNested.metrics.fetch(ctx, {

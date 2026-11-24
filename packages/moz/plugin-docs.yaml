@@ -91,8 +91,9 @@ apiNotes:
     `data.site.linking-domain.list`. One row per returned root domain. With
     several filters, `external` must be one of them.
   keywords.metrics: |
-    `data.keyword.metrics.fetch`. Pick metrics with `metrics` (difficulty,
-    volume, opportunity, priority, intent); costs one row per metric.
+    `data.keyword.metrics.fetch` returns difficulty, volume, organic CTR and
+    priority for one `serp_query`; set `options.include_intent` to add the
+    search intent scores.
   rankingKeywords.list: |
     `data.site.ranking-keyword.list`: keywords a site ranks for in the top 50,
     one row per result. rankingKeywords.count is one row.
