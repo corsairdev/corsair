@@ -2,8 +2,10 @@
 // human/machine switch. Built from the same data the page renders.
 
 import { AGENT_ROLES } from '@/lib/agent-roles';
+import { GATEWAY_PLANS } from '@/lib/gateway-plans';
 import {
 	AGENT_SETUP_PROMPT,
+	BUILT_INS,
 	CONNECT_APPS,
 	DEVELOPER_POINTS,
 	HERO_CLIENTS,
@@ -19,14 +21,12 @@ import {
 	MONTHLY_FREE_CREDITS,
 	priceText,
 } from '@/lib/managed-tools';
-import { TIERS } from '@/lib/pricing-tiers';
 import {
+	AGENT_SIGNUP_URL,
 	APP_URL,
 	DOCS_URL,
 	GITHUB_URL,
-	LUG_URL,
 	MCP_URL,
-	SKILL_URL,
 } from '@/lib/site-links';
 
 const SITE = 'https://corsair.dev';
@@ -43,7 +43,7 @@ function prose(text: string): string {
 function pillarExtra(id: (typeof PILLARS)[number]['id']): string[] {
 	if (id === 'connect') {
 		return [
-			`Some of the apps: ${CONNECT_APPS.map((app) => app.name).join(', ')}, and 400+ more.`,
+			`Some of the apps: ${CONNECT_APPS.map((app) => app.name).join(', ')}, and 700+ more.`,
 		];
 	}
 	if (id === 'control') {
@@ -61,7 +61,7 @@ export function buildHomeMarkdown(): string {
 		'title: Corsair',
 		`description: ${HERO_SUBTITLE}`,
 		`canonical: ${SITE}/`,
-		`agent_skill: ${SKILL_URL}`,
+		`agent_signup: ${AGENT_SIGNUP_URL}`,
 		'---',
 		'',
 		`# ${HERO_TITLE}`,
@@ -72,13 +72,13 @@ export function buildHomeMarkdown(): string {
 		'',
 		'## For agents',
 		'',
-		`Read ${SKILL_URL} and follow it. It adds Corsair's MCP server (${MCP_URL}) to your client, has the user sign in and connect their apps, and says which tool to call for what. A user can hand you this line: "${AGENT_SETUP_PROMPT}".`,
+		`Read ${AGENT_SIGNUP_URL} and follow it: one POST with your person's email returns an MCP URL and a key that work right away with the built-in apps, and your person gets an email to claim the account. Or add Corsair's MCP server (${MCP_URL}) to your client and have your person sign in. A user can hand you this line: "${AGENT_SETUP_PROMPT}".`,
 		'',
 		'## For people',
 		'',
-		`Claim yourname.lug.dev at ${LUG_URL}, connect your apps once, and add that one address to every AI tool you use. Manage links, modes and apps at ${APP_URL}/me.`,
+		`Claim yourname.lug.dev at ${SITE}/start, connect your apps once, and add that one URL to every AI tool you use. Manage paths, modes and apps at ${APP_URL}/me. Setup for every client: ${SITE}/connect.`,
 		'',
-		'## One link. Every app. Your rules.',
+		'## One URL. Every app. Your rules.',
 		'',
 	];
 
@@ -109,6 +109,12 @@ export function buildHomeMarkdown(): string {
 			lines.push(`More: ${SITE}/use-cases/${role.useCase}`, '');
 		}
 	}
+
+	lines.push('## Built in', '');
+	for (const item of BUILT_INS) {
+		lines.push(`- ${item.name}: ${item.body}`);
+	}
+	lines.push('');
 
 	lines.push(
 		'## Tools with no API key, paid per call',
@@ -143,12 +149,12 @@ export function buildHomeMarkdown(): string {
 		'',
 		'## Pricing',
 		'',
-		...TIERS.map(
-			(tier) =>
-				`- ${tier.name}: ${tier.price}${tier.priceSuffix ?? ''}, ${tier.description.toLowerCase()}`,
+		...GATEWAY_PLANS.map(
+			(plan) =>
+				`- ${plan.name}: ${plan.price}${plan.per ?? ''}${plan.yearNote ? ` (or ${plan.yearPrice}/month, ${plan.yearNote.toLowerCase()})` : ''}. ${plan.features.join(', ')}.`,
 		),
 		'',
-		`Full table: ${SITE}/#pricing`,
+		`Plans and questions: ${SITE}/pricing. SDK plans: ${SITE}/developers#pricing.`,
 		'',
 		'## FAQ',
 		'',
@@ -160,8 +166,12 @@ export function buildHomeMarkdown(): string {
 	lines.push(
 		'## Links',
 		'',
-		`- Agent skill: ${SKILL_URL}`,
+		`- Agent signup: ${AGENT_SIGNUP_URL}`,
 		`- Agent index: ${SITE}/llms.txt`,
+		`- MCP gateway: ${SITE}/mcp-gateway`,
+		`- Connect a client: ${SITE}/connect`,
+		`- Skills: ${SITE}/skills`,
+		`- Pricing: ${SITE}/pricing`,
 		`- Integrations: ${SITE}/integrations`,
 		`- Use cases: ${SITE}/use-cases`,
 		`- Security: ${SITE}/security`,

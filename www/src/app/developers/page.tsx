@@ -4,6 +4,7 @@ import { DevelopersHero } from '@/components/landing/developers/developers-hero'
 import { SiteFooter } from '@/components/landing/footer/site-footer';
 import { LANDING_BACKGROUND } from '@/components/landing/landing-page';
 import { SiteMenu } from '@/components/landing/menu/site-menu';
+import { PricingSection } from '@/components/landing/pricing/pricing-section';
 import { ProblemStatementSection } from '@/components/landing/problem-statement/problem-statement-section';
 import { SolutionFramingSection } from '@/components/landing/solution-framing/solution-framing-section';
 import { TerminalTrioSection } from '@/components/landing/terminal-trio/terminal-trio-section';
@@ -37,6 +38,7 @@ export default async function DevelopersPage() {
 			<TerminalTrioSection />
 			<ProblemStatementSection />
 			<SolutionFramingSection />
+			<PricingSection />
 			<SiteFooter />
 		</div>
 	);

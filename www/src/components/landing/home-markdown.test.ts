@@ -4,21 +4,22 @@ import { describe, it } from 'node:test';
 import { AGENT_ROLES } from '@/lib/agent-roles';
 import {
 	AGENT_SETUP_PROMPT,
+	BUILT_INS,
 	HERO_SUBTITLE,
 	HERO_TITLE,
 	PILLARS,
 } from '@/lib/home-content';
 import { FAQ_ITEMS } from '@/lib/home-faq';
 import { MANAGED_TOOLS } from '@/lib/managed-tools';
-import { MCP_URL, SKILL_URL } from '@/lib/site-links';
+import { AGENT_SIGNUP_URL, MCP_URL } from '@/lib/site-links';
 import { buildHomeMarkdown } from './home-markdown';
 
 describe('buildHomeMarkdown', () => {
 	const markdown = buildHomeMarkdown();
 
-	it('opens with frontmatter that points agents at the skill', () => {
+	it('opens with frontmatter that points agents at signup', () => {
 		assert.ok(markdown.startsWith('---\ntitle: Corsair\n'));
-		assert.ok(markdown.includes(`agent_skill: ${SKILL_URL}`));
+		assert.ok(markdown.includes(`agent_signup: ${AGENT_SIGNUP_URL}`));
 		assert.ok(markdown.includes(`# ${HERO_TITLE}`));
 		assert.ok(markdown.includes(HERO_SUBTITLE));
 	});
@@ -37,6 +38,9 @@ describe('buildHomeMarkdown', () => {
 		}
 		for (const tool of MANAGED_TOOLS.filter((t) => t.live)) {
 			assert.ok(markdown.includes(`- ${tool.name}:`), tool.name);
+		}
+		for (const item of BUILT_INS) {
+			assert.ok(markdown.includes(`- ${item.name}:`), item.id);
 		}
 		for (const item of FAQ_ITEMS) {
 			assert.ok(markdown.includes(`### ${item.question}`), item.id);

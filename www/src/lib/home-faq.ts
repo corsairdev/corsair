@@ -2,45 +2,50 @@
 
 export const FAQ_ITEMS = [
 	{
-		id: 'different-from-others',
-		question: 'How is this different from existing integration products?',
-		answer: `Most are closed source. If they're missing an integration, you wait for them to add it. Corsair is open source. Add any integration yourself.
-
-			Also, if you're using Corsair Hub, none of your credentials stay with us. We are a relay between you and your integration. If our database is hacked tomorrow, it has none of your data.`,
+		id: 'what-is-it',
+		question: 'What is an MCP URL?',
+		answer:
+			'One address, such as yourname.lug.dev/work, that you add to Claude, ChatGPT, Cursor, Codex or any MCP client. Behind it are the apps you connected to Corsair. The agent sees a short list of tools and looks up an app’s operations only when it needs them, so 700+ apps don’t fill its context window.',
+		link: { href: '/mcp-gateway', label: 'How the MCP gateway works' },
 	},
 	{
-		id: 'vibe-code',
-		question: 'Why not just vibe code integrations myself?',
-		answer: `You can get 80% there fast. The other 20% (token refresh, webhook signature verification, API deprecations, rate limit handling, multi-tenant credential isolation) compounds into a maintenance burden that distracts from your actual product. Corsair is an easy drop-in that takes away all of those headaches.`,
+		id: 'clients',
+		question: 'Which agents does it work with?',
+		answer:
+			'Any client that takes a remote MCP URL: Claude, ChatGPT, Cursor, Claude Code, Codex, VS Code, Windsurf, Zed, OpenCode, Hermes, OpenClaw and more. ChatGPT, Cursor, Claude Code, Hermes and OpenClaw can also install Corsair from their own plugin directories.',
+		link: { href: '/connect', label: 'Setup for every client' },
 	},
 	{
 		id: 'api-keys',
 		question: 'Does my agent ever see my API keys?',
 		answer:
-			'No. Corsair resolves credentials internally at call time. Your agent sees method names and results only.',
-	},
-	{
-		id: 'caching',
-		question: 'How does caching work?',
-		answer:
-			'Data flowing through Corsair is stored and kept fresh via webhooks and polling, partitioned per tenant. This is useful if you need to query the same data repeatedly and are worried about rate limits. Reads hit the database, not the third-party API on every request.',
-	},
-	{
-		id: 'without-agent',
-		question: 'Can I use this without an AI agent?',
-		answer:
-			'Yes. Call it like any typed library. Add a "Sync from Airtable" button, a "Create calendar invite" action, a "Post to Slack" trigger. No agent required.',
-	},
-	{
-		id: 'missing-integration',
-		question: "What if I need an integration you don't have?",
-		answer:
-			"Open a PR, fork the repo, or scaffold a new plugin with one command and build it yourself. It's all open source TypeScript.",
+			'No. Corsair resolves credentials at call time. Your agent sees operation names and results only.',
 	},
 	{
 		id: 'hosted-security',
-		question: 'Is the hosted version secure?',
+		question: 'Is it safe to connect my Gmail and Slack?',
 		answer:
-			"The hosted version holds none of your credentials or data. All of that lives in your own database. That means if our database was suddenly opened up tomorrow, your data (and your customers' data) and credentials would not be compromised.",
+			"Corsair runs on the open-source SDK and uses envelope encryption: every account's API keys, tokens and synced data are encrypted with their own key, and the keys that unlock them are held in AWS KMS and rotate automatically. If our database leaked, your keys and data would stay unreadable. One customer can't reach another's data, and every action your agent takes is checked against your path's mode.",
+		link: { href: '/security', label: 'Learn more about security' },
+	},
+	{
+		id: 'cost',
+		question: 'What does it cost?',
+		answer:
+			"It's free for 10 connected accounts and 100 credits a month. Pro is $20 a month for 30 connections and 10,000 credits. Apps that run on Corsair's own key, such as Exa and Firecrawl, cost credits per call, and $5 buys 1,000 more.",
+		link: { href: '/pricing', label: 'See the plans' },
+	},
+	{
+		id: 'missing-integration',
+		question: "What if I need an app you don't have?",
+		answer:
+			"Tell us and we'll add it. Every integration is open-source TypeScript, so you can also open a PR or scaffold a new plugin with one command.",
+	},
+	{
+		id: 'developers',
+		question: 'Can I build this into my own product?',
+		answer:
+			'Yes. The Corsair SDK is open source under Apache 2.0. It runs inside your app, your users connect their own accounts, and their tokens stay encrypted in your own database. Or call the same plugins over HTTP from Corsair Cloud.',
+		link: { href: '/developers', label: 'Corsair for developers' },
 	},
 ] as const;

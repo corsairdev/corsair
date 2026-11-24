@@ -47,8 +47,9 @@ export function hubWwwPluginLoginUrl(pluginId: string): string {
  */
 export function hubMcpConnectUrl(pluginId: string): string {
 	const plugins = normalizePluginIds([pluginId]);
+	// mode=lug: Hub counts them as MCP gateway users, so later visits land on /me too.
 	const params = new URLSearchParams({
-		mode: 'www',
+		mode: 'lug',
 		plugins,
 		redirect: `/me?${new URLSearchParams({ add: plugins })}`,
 	});
@@ -116,10 +117,10 @@ export function hubLugClaimUrl(handle: string): string {
 }
 
 /**
- * Where "Claim your URL" buttons on the gateway pages go: the claim box on
- * the homepage.
+ * Where "Claim your URL" and "Get started" go: corsair.dev/start, the steps
+ * lug.dev had (name, apps, agents), which hand off to Hub's sign-in.
  */
-export const CLAIM_HREF = '/#lug';
+export const CLAIM_HREF = '/start';
 
 /**
  * Hub sign-in for people who already have an MCP URL. `mode=lug` is Hub's
@@ -131,22 +132,16 @@ export function hubMeSignInUrl(): string {
 	return `${APP_URL}/login?${params.toString()}`;
 }
 
-/**
- * "Set up" links that start the claim with apps (and a skill) already picked.
- * Until corsair.dev has the claim steps itself, they go to Hub's sign-in in
- * gateway mode, which ends on /me with the skill passed on.
- */
+/** "Set up" links that start the claim with apps (and a skill) already picked. */
 export function claimHref(
 	opts: { apps?: readonly string[]; skill?: string } = {},
 ): string {
 	const apps = normalizePluginIds(opts.apps ?? []);
-	if (!apps && !opts.skill) return CLAIM_HREF;
-	const me = opts.skill
-		? `/me?${new URLSearchParams({ skill: opts.skill })}`
-		: '/me';
-	const params = new URLSearchParams({ mode: 'lug', redirect: me });
-	if (apps) params.set('plugins', apps);
-	return `${APP_URL}/login?${params.toString()}`;
+	const params = new URLSearchParams();
+	if (apps) params.set('apps', apps);
+	if (opts.skill) params.set('skill', opts.skill);
+	const query = params.toString();
+	return query ? `${CLAIM_HREF}?${query}` : CLAIM_HREF;
 }
 
 /** Sign in and open /me with a skill ready to set up, for people who already have an MCP URL. */
@@ -157,6 +152,18 @@ export function hubMeSkillUrl(skill: string): string {
 	});
 	return `${APP_URL}/login?${params.toString()}`;
 }
+
+/**
+ * The agent signup steps (auth.md). corsair.dev/auth.md redirects to Hub's
+ * copy; an agent that reads it can sign its person up and send them a claim email.
+ */
+export const AGENT_SIGNUP_URL = 'https://corsair.dev/auth.md';
+
+/**
+ * The developer console on Hub. /console always opens the dashboard, even for
+ * someone who also has an MCP URL (Hub sends those to /me otherwise).
+ */
+export const CONSOLE_URL = `${APP_URL}/console`;
 
 /** Billing for an MCP URL's plan, on Hub. */
 export const HUB_ME_BILLING_URL = `${APP_URL}/me/billing`;

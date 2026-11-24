@@ -2,7 +2,7 @@
 
 import { Check, Copy } from '@phosphor-icons/react';
 import type { ReactNode } from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -139,12 +139,13 @@ export function ViewSwitch({
 
 	return (
 		<>
+			{/* Keyed: children and footer are server elements, which reach this client component without React's key check done. */}
 			{view === 'machine' ? (
-				<MachineView markdown={markdown} onChange={change} />
+				<MachineView key="machine" markdown={markdown} onChange={change} />
 			) : (
-				children
+				<Fragment key="human">{children}</Fragment>
 			)}
-			{footer}
+			<Fragment key="footer">{footer}</Fragment>
 			<div className="flex justify-center pb-8">
 				<Toggle view={view} onChange={change} />
 			</div>

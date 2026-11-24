@@ -2,10 +2,12 @@
 
 import { ArrowRight } from '@phosphor-icons/react';
 import type { FormEvent } from 'react';
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
+import { track } from '@/lib/claim-analytics';
+import { CAMPAIGN_KEYS } from '@/lib/claim-campaign';
 import { readLugHandleAnswer } from '@/lib/lug-handle';
-import { hubLugClaimUrl, LUG_URL, lugHandleProblem } from '@/lib/site-links';
+import { CLAIM_HREF, lugHandleProblem } from '@/lib/site-links';
 import { cn } from '@/lib/utils';
 
 function problemText(handle: string): string | null {
@@ -28,7 +30,18 @@ type Check =
 
 const CHECK_DELAY_MS = 400;
 
-/** Claim yourname.lug.dev, then sign in on Hub to finish. */
+/** /start with the name, plus the utm_* tags this page was opened with, so the hand-off still carries them. */
+function startUrl(handle: string): string {
+	const params = new URLSearchParams({ handle });
+	const here = new URLSearchParams(window.location.search);
+	for (const key of CAMPAIGN_KEYS) {
+		const value = here.get(key);
+		if (value) params.set(key, value);
+	}
+	return `${CLAIM_HREF}?${params.toString()}`;
+}
+
+/** Claim yourname.lug.dev, then pick apps and agents on /start, which hands off to Hub's sign-in. */
 export function LugClaimForm({
 	label = 'Claim your address',
 	className,
@@ -43,6 +56,8 @@ export function LugClaimForm({
 	const [check, setCheck] = useState<Check | null>(null);
 	// The name Claim was pressed for, while its check is still running.
 	const [pendingHandle, setPendingHandle] = useState<string | null>(null);
+	// Same funnel event lug.dev sent; /start sends lug_claim_submitted when it opens with a name.
+	const typed = useRef(false);
 	const handle = value.trim().toLowerCase();
 	const problem = problemText(handle);
 	const showProblem = Boolean(problem) && (submitted || handle.length > 2);
@@ -100,7 +115,7 @@ export function LugClaimForm({
 		if (!current || current.state === 'checking') return;
 		setPendingHandle(null);
 		if (current.state === 'free' || current.state === 'error') {
-			window.location.assign(hubLugClaimUrl(pendingHandle));
+			window.location.assign(startUrl(pendingHandle));
 		}
 	}, [pendingHandle, handle, current]);
 
@@ -124,8 +139,8 @@ export function LugClaimForm({
 						: current?.state === 'checking'
 							? 'Checking…'
 							: current?.state === 'error'
-								? "Couldn't check right now. Corsair checks again after you sign in."
-								: 'Sign in next to claim it.';
+								? "Couldn't check right now. Corsair checks again before you sign in."
+								: 'Next, pick your apps and agents.';
 	const tone =
 		showProblem || unavailable
 			? 'bad'
@@ -163,7 +178,13 @@ export function LugClaimForm({
 				<input
 					id={inputId}
 					value={value}
-					onChange={(event) => setValue(event.target.value.replace(/\s/g, '-'))}
+					onChange={(event) => {
+						if (!typed.current) {
+							typed.current = true;
+							track('lug_handle_typed', {});
+						}
+						setValue(event.target.value.replace(/\s/g, '-'));
+					}}
 					placeholder="yourname"
 					autoComplete="off"
 					autoCapitalize="none"
@@ -210,12 +231,10 @@ export function LugClaimForm({
 					<ArrowRight size={16} weight="bold" aria-hidden />
 				</button>
 				<a
-					href={LUG_URL}
-					target="_blank"
-					rel="noopener noreferrer"
+					href="/mcp-gateway"
 					className="text-[14px] font-medium text-[#4a38f5] no-underline hover:underline"
 				>
-					See how lug.dev works
+					How it works
 				</a>
 			</div>
 		</form>

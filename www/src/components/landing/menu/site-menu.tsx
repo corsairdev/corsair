@@ -4,14 +4,21 @@ import { BookOpen, DiscordLogo, GithubLogo } from '@phosphor-icons/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
-import { APP_URL, DISCORD_URL, DOCS_URL, GITHUB_URL } from '@/lib/site-links';
+import {
+	CLAIM_HREF,
+	DISCORD_URL,
+	DOCS_URL,
+	GITHUB_URL,
+	hubMeSignInUrl,
+} from '@/lib/site-links';
 import { PlusCorner } from '../icons';
 
 const NAV_LINKS = [
-	{ href: '/use-cases', label: 'Use cases' },
+	{ href: '/mcp-gateway', label: 'MCP gateway' },
 	{ href: '/integrations', label: 'Integrations' },
+	{ href: '/skills', label: 'Skills' },
+	{ href: '/pricing', label: 'Pricing' },
 	{ href: '/developers', label: 'Developers' },
-	{ href: '/#pricing', label: 'Pricing' },
 ] as const;
 
 function MenuIcon() {
@@ -157,24 +164,26 @@ export function SiteMenu() {
 							</a>
 						</div>
 						<a
-							href={APP_URL}
-							target="_blank"
-							rel="noopener noreferrer"
+							href={hubMeSignInUrl()}
+							className="ml-1 px-2 py-2 text-sm font-[family-name:var(--landing-font-sans)] font-medium text-[#1c1c1c99] no-underline transition-colors hover:text-[#1c1c1c]"
+						>
+							Sign in
+						</a>
+						<a
+							href={CLAIM_HREF}
 							className="ml-1 inline-flex items-center justify-center rounded-lg border border-[#1c1c1c] bg-[#1c1c1c] px-4 py-2 text-sm font-[family-name:var(--landing-font-sans)] font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] no-underline transition-all duration-300 ease-out hover:bg-[#2a2a2a] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_16px_rgba(0,0,0,0.15)] hover:-translate-y-0.5 active:translate-y-0"
 						>
-							Go to app
+							Get started
 						</a>
 					</div>
 
 					{/* Mobile Controls */}
 					<div className="ml-auto flex md:hidden items-center gap-1.5 sm:gap-2">
 						<a
-							href={APP_URL}
-							target="_blank"
-							rel="noopener noreferrer"
+							href={CLAIM_HREF}
 							className="inline-flex items-center justify-center rounded-lg border border-[#1c1c1c] bg-[#1c1c1c] px-3 py-1.5 text-xs font-[family-name:var(--landing-font-sans)] font-medium text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2)] no-underline transition-all duration-300 ease-out hover:bg-[#2a2a2a] active:translate-y-0"
 						>
-							Go to app
+							Get started
 						</a>
 						<button
 							onClick={() => setIsMobileMenuOpen((open) => !open)}
@@ -192,13 +201,16 @@ export function SiteMenu() {
 			{isMobileMenuOpen && (
 				<div className="md:hidden w-full border-t border-[#1c1c1c]/[0.07] bg-[#f4f4f4]/95 backdrop-blur-xl px-4 py-4 shadow-lg rounded-b-lg">
 					<div className="grid grid-cols-2 gap-2">
-						<Link
-							href="/#pricing"
-							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
-							onClick={() => setIsMobileMenuOpen(false)}
-						>
-							Pricing
-						</Link>
+						{NAV_LINKS.map((link) => (
+							<Link
+								key={link.href}
+								href={link.href}
+								className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
+								onClick={() => setIsMobileMenuOpen(false)}
+							>
+								{link.label}
+							</Link>
+						))}
 						<a
 							href={DOCS_URL}
 							target="_blank"
@@ -209,27 +221,13 @@ export function SiteMenu() {
 							Docs
 							<BookOpen size={16} weight="fill" className="text-[#1c1c1c]/50" />
 						</a>
-						<Link
-							href="/integrations"
+						<a
+							href={hubMeSignInUrl()}
 							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
 							onClick={() => setIsMobileMenuOpen(false)}
 						>
-							Integrations
-						</Link>
-						<Link
-							href="/use-cases"
-							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
-							onClick={() => setIsMobileMenuOpen(false)}
-						>
-							Use cases
-						</Link>
-						<Link
-							href="/developers"
-							className="flex items-center justify-between rounded-lg border border-[#1c1c1c]/10 bg-white/60 px-4 py-3 text-sm font-medium text-[#1c1c1c] no-underline transition-colors hover:bg-white font-[family-name:var(--landing-font-sans)]"
-							onClick={() => setIsMobileMenuOpen(false)}
-						>
-							Developers
-						</Link>
+							Sign in
+						</a>
 						<a
 							href={GITHUB_URL}
 							target="_blank"

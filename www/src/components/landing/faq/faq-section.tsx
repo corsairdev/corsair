@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { FAQ_ITEMS } from '@/lib/home-faq';
 import { ChevronIcon, PlusCorner } from '../icons';
 
@@ -43,6 +45,14 @@ export function FaqSection() {
 									<p className="text-[15px] leading-[1.65] text-[#1c1c1c99] md:text-base md:leading-[1.7]">
 										{item.answer}
 									</p>
+									{'link' in item ? (
+										<Link
+											href={item.link.href}
+											className="mt-3 inline-block text-[15px] font-medium text-[#4a38f5] no-underline hover:underline"
+										>
+											{item.link.label} →
+										</Link>
+									) : null}
 								</div>
 							</details>
 						))}

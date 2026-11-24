@@ -76,7 +76,7 @@ function Visual({ id }: { id: (typeof PILLARS)[number]['id'] }): ReactNode {
 	);
 }
 
-/** Connect, control, automate: the three things a link gives an agent. */
+/** Connect, control, automate: the three things an MCP URL gives an agent. */
 export function PillarsSection() {
 	return (
 		<section
@@ -90,7 +90,7 @@ export function PillarsSection() {
 						id="pillars-heading"
 						className="font-[family-name:var(--landing-font-serif)] text-[clamp(1.85rem,4vw,2.9rem)] font-light leading-[1.1] tracking-[-0.02em] text-[#1c1c1c]"
 					>
-						One link. Every app.{' '}
+						One URL. Every app.{' '}
 						<span className="text-[#4a38f5]">Your rules.</span>
 					</h2>
 				</div>

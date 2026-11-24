@@ -29,8 +29,8 @@ export function ManagedToolsSection() {
 					</h2>
 					<p className="mt-4 max-w-xl text-[16px] leading-relaxed text-[#1c1c1c99]">
 						For tools like Firecrawl, Exa, Apollo and Reducto, Corsair holds the
-						API key. Add one to your link and it&apos;s ready: no sign-up with
-						the provider, no key to paste, no monthly plan. Each call costs
+						API key. Add one to your MCP URL and it&apos;s ready: no sign-up
+						with the provider, no key to paste, no monthly plan. Each call costs
 						Corsair credits. When a call fails at the app, Corsair gives the
 						credits back.
 					</p>

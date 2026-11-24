@@ -1,4 +1,5 @@
 import { AgentRolesSection } from './agent-roles/agent-roles-section';
+import { BuiltInsSection } from './built-ins/built-ins-section';
 import { DevelopersSection } from './developers/developers-section';
 import { FaqSection } from './faq/faq-section';
 import { SiteFooter } from './footer/site-footer';
@@ -7,7 +8,7 @@ import { buildHomeMarkdown } from './home-markdown';
 import { ManagedToolsSection } from './managed-tools/managed-tools-section';
 import { SiteMenu } from './menu/site-menu';
 import { PillarsSection } from './pillars/pillars-section';
-import { PricingSection } from './pricing/pricing-section';
+import { GatewayPricingSection } from './pricing/gateway-pricing-section';
 import { ViewSwitch } from './view-switch/view-switch';
 
 export const LANDING_BACKGROUND = {
@@ -24,13 +25,16 @@ export function LandingPage({ starCount }: { starCount?: number | null }) {
 		>
 			<SiteMenu />
 			<ViewSwitch markdown={buildHomeMarkdown()} footer={<SiteFooter />}>
-				<LandingHero />
-				<AgentRolesSection />
-				<PillarsSection />
-				<ManagedToolsSection />
-				<DevelopersSection starCount={starCount} />
-				<PricingSection />
-				<FaqSection />
+				<>
+					<LandingHero />
+					<AgentRolesSection />
+					<PillarsSection />
+					<BuiltInsSection />
+					<ManagedToolsSection />
+					<DevelopersSection starCount={starCount} />
+					<GatewayPricingSection />
+					<FaqSection />
+				</>
 			</ViewSwitch>
 		</div>
 	);

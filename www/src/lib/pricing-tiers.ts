@@ -1,4 +1,4 @@
-import { APP_URL } from './site-links';
+import { APP_URL, CONSOLE_URL } from './site-links';
 
 // The pricing tiers on the homepage. Also rendered into /index.md.
 export const TIERS = [
@@ -10,7 +10,7 @@ export const TIERS = [
 		description: 'For small projects',
 		cta: {
 			label: 'Get started',
-			href: APP_URL,
+			href: CONSOLE_URL,
 			external: true,
 			variant: 'link' as const,
 		},
