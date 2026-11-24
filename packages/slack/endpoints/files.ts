@@ -81,6 +81,18 @@ export const upload: SlackEndpoints['filesUpload'] = async (ctx, input) => {
 	return result;
 };
 
+// Slack: send the token only to a Slack file host; a remote file's url_private
+// is app-supplied and can point anywhere.
+// https://docs.slack.dev/reference/objects/file-object
+function isSlackFileUrl(url: string): boolean {
+	try {
+		const { protocol, hostname } = new URL(url);
+		return protocol === 'https:' && hostname === 'files.slack.com';
+	} catch {
+		return false;
+	}
+}
+
 export const download: SlackEndpoints['filesDownload'] = async (ctx, input) => {
 	const token = await userKey(ctx);
 	const info = await makeSlackRequest<SlackEndpointOutputs['filesGet']>(
@@ -90,9 +102,10 @@ export const download: SlackEndpoints['filesDownload'] = async (ctx, input) => {
 	);
 	const file = info.file;
 	const url = file?.url_private_download ?? file?.url_private;
-	if (!file || !url) {
+	const external = file?.is_external === true || file?.mode === 'external';
+	if (!file || !url || external || !isSlackFileUrl(url)) {
 		throw new SlackAPIError(
-			`File ${input.file} has no private download URL (an external or deleted file).`,
+			`File ${input.file} is not hosted by Slack or has no private download URL, so it cannot be downloaded.`,
 			'file_not_downloadable',
 		);
 	}

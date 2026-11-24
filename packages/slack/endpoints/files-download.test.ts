@@ -127,6 +127,28 @@ describe('slack files.download', () => {
 		});
 	});
 
+	it.each([
+		[
+			'an external host',
+			{ url_private_download: 'https://evil.example/x.png' },
+		],
+		['plain http', { url_private_download: 'http://files.slack.com/x.png' }],
+		[
+			'a lookalike host',
+			{ url_private_download: 'https://files.slack.com.evil.example/x.png' },
+		],
+		['an external file', { is_external: true }],
+		['mode external', { mode: 'external' }],
+	])('never sends the token for %s', async (_n, extra) => {
+		serve({ ...file, ...extra });
+		await expect(
+			download(ctxOf('xoxp-user'), { file: 'F1' }),
+		).rejects.toMatchObject({
+			code: 'file_not_downloadable',
+		});
+		expect(asked.map((a) => a.url.hostname)).toEqual(['slack.com']);
+	});
+
 	it('hands the file to the host sink and returns its fileId', async () => {
 		const sink = jest.fn(() => 'file-1');
 		setFileSink(() => sink, { everyFile: true });
