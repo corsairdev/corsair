@@ -14,7 +14,7 @@ description: "API reference for Google Calendar: every `googlecalendar.api.*` op
 
 `calendar.getAvailability`
 
-Get free/busy availability for a calendar
+Busy time ranges only, no event details; use events.getMany to see the events
 
 **Risk:** `read`
 
@@ -26,12 +26,12 @@ await corsair.googlecalendar.api.calendar.getAvailability({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `timeMin` | `string` | Yes | — |
-| `timeMax` | `string` | Yes | — |
+| `timeMin` | `string` | Yes | RFC 3339 with a time zone offset, e.g. "2025-06-03T00:00:00-07:00". |
+| `timeMax` | `string` | Yes | RFC 3339 with a time zone offset, e.g. "2025-06-04T00:00:00-07:00". |
 | `timeZone` | `string` | No | — |
 | `groupExpansionMax` | `number` | No | — |
 | `calendarExpansionMax` | `number` | No | — |
-| `items` | `object[]` | No | — |
+| `items` | `object[]` | No | Calendars to check, by calendar id (usually an email address). |
 
 <AccordionGroup>
 <Accordion title="items full type">
@@ -421,7 +421,7 @@ await corsair.googlecalendar.api.events.delete({});
 
 `events.get`
 
-Get a specific calendar event
+Get one event by its event id, not the iCalUID. For one occurrence of a recurring event, use the instance id from events.getMany with singleEvents true
 
 **Risk:** `read`
 
@@ -433,8 +433,8 @@ await corsair.googlecalendar.api.events.get({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `calendarId` | `string` | No | — |
-| `id` | `string` | Yes | — |
+| `calendarId` | `string` | No | Calendar ID. Defaults to "primary". |
+| `id` | `string` | Yes | Event id, not the iCalUID. Occurrences of a recurring event have their own ids. |
 | `timeZone` | `string` | No | — |
 | `maxAttendees` | `number` | No | — |
 
@@ -655,7 +655,7 @@ await corsair.googlecalendar.api.events.get({});
 
 `events.getMany`
 
-List calendar events
+List events in a time window. Set singleEvents true or recurring events appear once; page with pageToken until nextPageToken is empty
 
 **Risk:** `read`
 
@@ -667,14 +667,14 @@ await corsair.googlecalendar.api.events.getMany({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `calendarId` | `string` | No | — |
-| `timeMin` | `string` | No | — |
-| `timeMax` | `string` | No | — |
+| `calendarId` | `string` | No | Calendar ID. Defaults to "primary". |
+| `timeMin` | `string` | No | RFC 3339 with a time zone offset, e.g. "2025-06-03T00:00:00-07:00" or "2025-06-03T00:00:00Z"; a plain date is rejected. Lower bound on event end time, exclusive. |
+| `timeMax` | `string` | No | RFC 3339 with a time zone offset, e.g. "2025-06-04T00:00:00-07:00" or "2025-06-04T00:00:00Z"; a plain date is rejected. Upper bound on event start time, exclusive. |
 | `timeZone` | `string` | No | — |
 | `updatedMin` | `string` | No | — |
-| `singleEvents` | `boolean` | No | — |
-| `maxResults` | `number` | No | — |
-| `pageToken` | `string` | No | — |
+| `singleEvents` | `boolean` | No | Defaults to false, which returns a recurring event once instead of its occurrences. Set true to expand occurrences; orderBy "startTime" needs it. |
+| `maxResults` | `number` | No | Page size, default 250. A page can be short or empty while more remain; follow nextPageToken. |
+| `pageToken` | `string` | No | nextPageToken from the previous response. |
 | `q` | `string` | No | — |
 | `orderBy` | `startTime \| updated` | No | — |
 | `iCalUID` | `string` | No | — |
